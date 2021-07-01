@@ -75,7 +75,7 @@
 
           &.active {
             a {
-              color: #0088cc;
+              color: $primary-color;
               background: white;
               border-top-left-radius: 10px;
               border-bottom-left-radius: 10px;
@@ -241,7 +241,7 @@
 
           svg {
             width: 17px;
-            color: #0088cc;
+            color: $primary-color;
           }
         }
       }
@@ -272,7 +272,7 @@
         text-transform: uppercase;
         font-weight: bold;
         font-size: 20px;
-        color: #0088cc;
+        color: $primary-color;
         white-space: pre;
       }
     }
@@ -351,9 +351,10 @@
 
       .ant-menu-submenu-title {
         &:hover {
-          svg {
+          color: $primary-color;
+          svg,
+          .ant-menu-submenu-arrow {
             color: $primary-color;
-            transition: 0.3s;
           }
         }
       }
@@ -415,7 +416,7 @@
         color: $primary-color;
 
         &:after {
-          border-right: 3px solid #08c;
+          border-right: 3px solid $primary-color;
         }
 
         span {

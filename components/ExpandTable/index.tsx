@@ -13,7 +13,7 @@ const ExpandTable = (props) => {
   return (
     <>
       {/* <TitlePage title={props.TitlePage} /> */}
-      <div className="wrap-table">
+      <div className="wrap-table table-expand">
         <Card
           className={`cardRadius ${props.addClass && props.addClass}`}
           title={props.Extra}

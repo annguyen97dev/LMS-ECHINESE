@@ -696,10 +696,11 @@ textarea.form-control {
 
 .ant-btn-primary {
   background: $primary-color !important;
+  border-color: $primary-color !important;
 
   &:hover {
-    background: #087cb6 !important;
-    border-color: #087cb6 !important;
+    background: $primary-hover !important;
+    border-color: $primary-hover !important;
   }
 }
 
@@ -724,6 +725,7 @@ textarea.form-control {
 
     li {
       border-radius: 4px !important;
+      border-color: $primary-color;
 
       &.ant-pagination-item-active a {
         color: $primary-color;
@@ -732,6 +734,11 @@ textarea.form-control {
       a,
       button {
         border-radius: 4px !important;
+      }
+    }
+    .ant-pagination-item-link {
+      &:hover {
+        color: $primary-color;
       }
     }
   }
@@ -1049,6 +1056,37 @@ hr {
   .ant-table-expanded-row {
     .ant-table-cell {
       padding: 15px !important;
+    }
+  }
+  &.table-expand {
+    .ant-table-thead {
+      tr:first-child {
+        th {
+          &:nth-child(1) {
+            border-top-left-radius: 0.575rem !important;
+          }
+          &:nth-child(2) {
+            border-top-left-radius: 0 !important;
+          }
+          &:last-child {
+            border-top-right-radius: 0.575rem !important;
+          }
+        }
+      }
+    }
+    tr.ant-table-row:last-child {
+      td {
+        &:nth-child(1) {
+          border-bottom-left-radius: 0.575rem !important;
+        }
+        &:nth-child(2) {
+          border-bottom-left-radius: 0 !important;
+        }
+
+        &:last-child {
+          border-bottom-right-radius: 0.575rem !important;
+        }
+      }
     }
   }
 }

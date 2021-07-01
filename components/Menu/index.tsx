@@ -353,7 +353,7 @@ const MenuDefault = ({
           <Link href="/dashboard">
             <a>
               {" "}
-              <img className="logo-img" src="/images/logo.png"></img>
+              {/* <img className="logo-img" src="/images/logo.png"></img> */}
             </a>
           </Link>
         </div>

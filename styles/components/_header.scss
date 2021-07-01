@@ -54,6 +54,10 @@
     transition: 0.3s width;
     box-shadow: 2px 1px 15px #0000000d;
 
+    .logo-img {
+      width: 70%;
+    }
+
     @include max-media(1000px) {
       display: none;
     }
@@ -227,7 +231,7 @@
             transition: 0.3s;
             i,
             svg {
-              color: #0088cc;
+              color: $primary-color;
               transition: 0.3s;
             }
           }
@@ -247,7 +251,7 @@
 
           i,
           svg {
-            color: #0088cc;
+            color: $primary-color;
             font-size: 20px;
             transition: 0.3s;
           }

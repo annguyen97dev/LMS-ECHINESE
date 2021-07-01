@@ -147,7 +147,8 @@ export default function Header({
         }`}
       >
         <Link href="/dashboard">
-          <a style={{ display: !isOpen ? "none" : "block" }}>Mona Media</a>
+          {/* <a style={{ display: !isOpen ? "none" : "block" }}>Mona Media</a> */}
+          <img className="logo-img" src="/images/logo-final.jpg"></img>
         </Link>
 
         <p style={{ display: !isOpen ? "block" : "none" }}>M</p>
