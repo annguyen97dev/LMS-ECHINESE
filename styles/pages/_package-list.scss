@@ -1,0 +1,17 @@
+.package-list-table {
+  table {
+    .ant-table-cell {
+      svg.icon-check {
+        color: #10ca93;
+      }
+    }
+    th,
+    td {
+      padding-left: 15px !important;
+    }
+
+    .text-no-ques {
+      color: rgb(102, 14, 14);
+    }
+  }
+}

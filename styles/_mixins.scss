@@ -1,0 +1,223 @@
+// MIXINS
+@mixin max-media($args) {
+  @media screen and (max-width: $args) {
+    @content;
+  }
+}
+@mixin min-media($args) {
+  @media screen and (min-width: $args) {
+    @content;
+  }
+}
+/* IE 10+ */
+@mixin ie {
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    @content;
+  }
+}
+@mixin br($radius) {
+  border-radius: $radius;
+  background-clip: padding-box; /* stops bg color from leaking outside the border: */
+}
+@mixin mid() {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+@mixin mid-flex() {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  -ms-align-items: center;
+  align-items: center;
+  -webkit-align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+}
+@mixin pos-full() {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+@mixin pos-full-fixed() {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+@mixin hidden() {
+  opacity: 0;
+  visibility: hidden;
+}
+@mixin visible() {
+  opacity: 1;
+  visibility: visible;
+}
+@mixin overtext($args) {
+  display: -webkit-inline-box;
+  -webkit-line-clamp: $args;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@mixin lh($lh, $fsz) {
+  line-height: ($lh / $fsz);
+}
+//calc to tracking in psd => letter spacing to css
+@mixin tracking($tracking) {
+  letter-spacing: ($tracking / 1000) * 1em;
+}
+@mixin offset($col: 0) {
+  margin-left: (100% / 12 * $col);
+}
+/* Custom scrollbar*/
+@mixin custom-scrollbar(
+  $width: $w-scroll,
+  $thumb: $main-cl,
+  $track: transparent
+) {
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: 99rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: $track;
+  }
+}
+@mixin custom-vertical-scrollbar(
+  $height: 2px,
+  $thumb: $main-cl,
+  $track: $bg-w-cl
+) {
+  &::-webkit-scrollbar {
+    height: $height;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: 99rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: $track;
+  }
+}
+
+/*FONT SIZE*/
+@mixin fz-65 {
+  font-size: 6.5rem;
+  @include max-media($bk-d-1200) {
+    font-size: 6rem;
+  }
+  @include max-media($bk-d-992) {
+    font-size: 5rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 4rem;
+  }
+}
+@mixin fz-60 {
+  font-size: 6rem;
+  @include max-media($bk-d-1200) {
+    font-size: 5rem;
+  }
+  @include max-media($bk-d-992) {
+    font-size: 4.5rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 4rem;
+  }
+}
+@mixin fz-50 {
+  font-size: 5rem;
+  @include max-media($bk-d-1200) {
+    font-size: 4rem;
+  }
+  @include max-media($bk-d-992) {
+    font-size: 3.6rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 3rem;
+  }
+}
+@mixin fz-40 {
+  font-size: 4rem;
+  @include max-media($bk-d-1200) {
+    font-size: 3.6rem;
+  }
+  @include max-media($bk-d-992) {
+    font-size: 3.2rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 3rem;
+  }
+}
+@mixin fz-36 {
+  font-size: 3.6rem;
+  @include max-media($bk-d-992) {
+    font-size: 3rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 2.8rem;
+  }
+}
+@mixin fz-30 {
+  font-size: 3rem;
+  @include max-media($bk-d-992) {
+    font-size: 2.8rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 2.4rem;
+  }
+}
+@mixin fz-28 {
+  font-size: 2.8rem;
+  @include max-media($bk-d-992) {
+    font-size: 2.4rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 2.2rem;
+  }
+}
+@mixin fz-24 {
+  font-size: 2.4rem;
+  @include max-media($bk-d-992) {
+    font-size: 2.2rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 2rem;
+  }
+}
+@mixin fz-22 {
+  font-size: 2.2rem;
+  @include max-media($bk-d-992) {
+    font-size: 2rem;
+  }
+  @include max-media($bk-d-768) {
+    font-size: 1.8rem;
+  }
+}
+@mixin fz-20 {
+  font-size: 2rem;
+  @include max-media($bk-d-992) {
+    font-size: 1.8rem;
+  }
+}
+@mixin fz-18 {
+  font-size: 1.8rem;
+  @include max-media($bk-d-992) {
+    font-size: 1.6rem;
+  }
+}
+/*FONT SIZE - END*/

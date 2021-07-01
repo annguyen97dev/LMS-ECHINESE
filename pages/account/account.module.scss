@@ -1,0 +1,40 @@
+.wrapAccount {
+  max-width: 500px;
+  margin: auto;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.btnLogin {
+  background: #0086da;
+  color: white;
+
+  &:hover {
+    background: #055a90;
+  }
+
+  &:focus {
+    border: none;
+    outline: 0;
+  }
+}
+.btnSignup {
+  background: #009e31;
+  color: white;
+
+  &:hover {
+    background: #009e31d1;
+  }
+}
+.btn {
+  margin: 0 5px;
+  border: none;
+  border-radius: 5px;
+  padding: 7px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}

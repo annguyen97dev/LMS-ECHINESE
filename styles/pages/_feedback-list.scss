@@ -1,0 +1,36 @@
+.feedback-user {
+  .info-profile-left {
+    ul.list-info-bonus {
+      padding-left: 10px;
+      li {
+        list-style-type: none;
+        display: flex;
+        margin-bottom: 10px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        b {
+          width: 100px;
+          margin-right: 10px;
+          color: #414141;
+          font-weight: 600;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        span {
+          width: calc(100% - 100px);
+        }
+      }
+    }
+  }
+
+  .list-comment {
+  }
+  .box-comment {
+    margin-bottom: 33px;
+  }
+}

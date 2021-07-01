@@ -1,0 +1,67 @@
+.tag {
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 3px 15px;
+  border-radius: 999px;
+  margin: 0 2px;
+  background: #0088cc;
+  display: inline-block;
+  white-space: pre;
+
+  &.green {
+    background: rgb(31, 217, 124);
+    background: linear-gradient(
+      0deg,
+      rgba(31, 217, 124, 1) 24%,
+      rgba(27, 196, 112, 1) 100%
+    );
+  }
+
+  &.red {
+    background: rgb(242, 87, 103);
+    background: linear-gradient(
+      0deg,
+      rgba(242, 87, 103, 1) 24%,
+      rgba(223, 77, 77, 1) 100%
+    );
+  }
+
+  &.gray {
+    background: #e8e8e8;
+    color: #666666;
+  }
+
+  &.blue {
+    background: rgb(0, 136, 204);
+    background: linear-gradient(
+      0deg,
+      rgba(0, 136, 204, 1) 24%,
+      rgba(77, 162, 204, 1) 100%
+    );
+  }
+
+  &.yellow {
+    background: rgb(255, 202, 44);
+    background: linear-gradient(
+      0deg,
+      rgba(255, 202, 44, 1) 24%,
+      rgba(255, 217, 102, 1) 100%
+    );
+  }
+
+  &.black {
+    background: #1d262b;
+  }
+
+  &.blue-weight {
+    background: #004a6f;
+  }
+}
+.row-tags {
+  display: flex;
+  justify-content: flex-start;
+  .tag {
+    margin-right: 10px;
+  }
+}

@@ -1,0 +1,462 @@
+.navbar-right {
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  box-shadow: 0px 0px 40px 0px rgb(82 63 105 / 10%) !important;
+  transition: 0.5s width;
+  display: flex;
+  z-index: 101;
+  transition: 0.3s width;
+
+  .navbar-right-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.137);
+    display: none;
+    z-index: 0;
+
+    a {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    &.active {
+      display: block;
+    }
+  }
+
+  @include max-media(1000px) {
+    width: 0;
+
+    &.mobile {
+      width: 330px;
+    }
+  }
+
+  .menu-parent {
+    position: relative;
+    z-index: 10;
+    width: 80px;
+    height: 100%;
+    background: $primary-color;
+
+    // @include max-media(1000px) {
+    //   display: none;
+    // }
+
+    .menu-parent-logo {
+      width: 100%;
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-img {
+      width: 40px;
+    }
+
+    .menu-parent-body {
+      padding-top: 15px;
+      padding-left: 12px;
+
+      .list-menu {
+        list-style-type: none;
+        padding-left: 0;
+
+        li {
+          color: white;
+
+          &.active {
+            a {
+              color: #0088cc;
+              background: white;
+              border-top-left-radius: 10px;
+              border-bottom-left-radius: 10px;
+            }
+          }
+
+          a {
+            color: white;
+            display: block;
+            padding: 14px 0 14px 18px;
+          }
+
+          svg {
+            width: 22px;
+            pointer-events: none;
+          }
+        }
+      }
+    }
+  }
+
+  .menu-child-bg {
+    position: fixed;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 8;
+    display: none;
+
+    &.close {
+      display: none;
+    }
+
+    &.open {
+      display: block;
+    }
+  }
+
+  .menu-child {
+    width: 250px;
+    transition: 0.3s width;
+    background: white;
+    position: fixed;
+    left: 80px;
+    top: 65px;
+    height: calc(100vh - 65px);
+    box-shadow: 10px 9px 15px #0000000d;
+    z-index: 9;
+
+    @include max-media(1000px) {
+      position: relative;
+      left: initial;
+      top: initial;
+      height: 100vh;
+    }
+
+    .anticon {
+      img {
+        opacity: 0.6;
+        width: 16px;
+      }
+    }
+
+    &.close {
+      width: 0;
+      box-shadow: none;
+
+      &.hover-open {
+        .menu-child-body {
+          width: 250px;
+          display: block;
+        }
+      }
+
+      .menu-child-body {
+        position: fixed;
+        width: 0;
+        border-top-right-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+        box-shadow: 10px 0px 15px #0000000d;
+        height: auto !important;
+        background: white;
+        display: none;
+
+        @include max-media(1000px) {
+          padding-top: 65px;
+        }
+
+        ul {
+          border-bottom-right-radius: 1rem;
+        }
+      }
+    }
+
+    &.open {
+      width: 250px;
+
+      // animation: ShowMenuChild 0.5s forwards;
+
+      // @keyframes ShowMenuChild {
+      //   0% {
+      //     left: -100%;
+      //   }
+
+      //   100% {
+      //     left: 80px;
+      //   }
+      // }
+    }
+
+    &.isHover {
+      width: 0;
+      box-shadow: none;
+    }
+
+    .menu-child-info {
+      padding: 25px 25px;
+
+      &.yellow {
+        background: rgba(255, 243, 224, 0.5);
+
+        .icon {
+          background: #fff3e0;
+
+          svg {
+            color: #ff9f00;
+          }
+        }
+      }
+
+      .wrap-chart {
+        margin-top: 10px;
+        margin-left: -7px;
+      }
+
+      .box-title {
+        position: relative;
+        .title {
+          font-weight: 500;
+          font-size: 15px;
+          color: #464646;
+        }
+        .des {
+          font-size: 13px;
+          opacity: 0.7;
+          margin-top: 5px;
+          margin-bottom: 0;
+          width: 70%;
+        }
+        .icon {
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 32px;
+          height: 32px;
+          border-radius: 0.575rem;
+          background: #0088cc17;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          svg {
+            width: 17px;
+            color: #0088cc;
+          }
+        }
+      }
+    }
+
+    .ant-menu-inline {
+      border-right: none;
+    }
+
+    .app-header-logo {
+      width: 100%;
+      height: 65px;
+      padding: 0 25px;
+      padding-right: 0;
+      border-bottom: 1px solid #ebeef6;
+      background: white;
+      transition: 0.2s width;
+      display: flex;
+      align-items: center;
+      display: none;
+
+      @include max-media(1000px) {
+        display: flex;
+      }
+
+      p {
+        margin: 0;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 20px;
+        color: #0088cc;
+        white-space: pre;
+      }
+    }
+  }
+
+  &.close {
+    .ant-menu-item-group-title {
+      display: none !important;
+    }
+  }
+
+  .menu-child-body {
+    padding-top: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100% !important;
+
+    &.change-height {
+      padding-right: 5px;
+      padding-bottom: 15px;
+
+      & > ul.ant-menu {
+        height: 75vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+
+        &::-webkit-scrollbar-track {
+          border-radius: 10px;
+          background-color: white;
+        }
+
+        &::-webkit-scrollbar {
+          border: none;
+          width: 4px;
+          background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 10px;
+          background-color: #e7e7e7;
+        }
+      }
+    }
+
+    &::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background-color: white;
+    }
+
+    &::-webkit-scrollbar {
+      border: none;
+      width: 4px;
+      background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: #e7e7e7;
+    }
+  }
+
+  // .ant-menu-root {
+  //   border-bottom: 1px solid #ebeef6;
+  // }
+
+  .ant-menu {
+    color: black;
+    height: auto;
+    width: 100%;
+
+    .ant-menu-inline {
+      background: transparent;
+    }
+    .ant-menu-submenu {
+      color: #504f56;
+
+      .ant-menu-submenu-title {
+        &:hover {
+          svg {
+            color: $primary-color;
+            transition: 0.3s;
+          }
+        }
+      }
+    }
+    .ant-menu-item-group-list {
+      width: 100%;
+    }
+    .ant-menu-submenu-title {
+      display: flex;
+      align-items: center;
+    }
+    .ant-menu-item-group {
+      margin-bottom: 15px;
+      width: 100%;
+
+      .ant-menu-submenu-arrow {
+        color: rgb(84 84 84 / 85%);
+      }
+
+      svg {
+        font-size: 17px;
+        color: #717171;
+        transition: 0.3s;
+        width: 16px;
+      }
+
+      .ant-menu-item-group-title {
+        width: 100%;
+        font-size: 14px;
+        color: #636363;
+        font-weight: bold;
+        padding-left: 25px;
+        text-transform: uppercase;
+      }
+    }
+
+    li.ant-menu-item {
+      display: flex;
+      align-items: center;
+      color: #504f56;
+      transition: 0.3s;
+
+      a {
+        text-decoration: none;
+        &:hover {
+          text-decoration: none;
+          color: $primary-color;
+        }
+      }
+
+      svg {
+        font-size: 17px;
+        color: #717171;
+        transition: 0.3s;
+      }
+
+      &.ant-menu-item-selected {
+        background-color: transparent !important;
+        color: $primary-color;
+
+        &:after {
+          border-right: 3px solid #08c;
+        }
+
+        span {
+          color: $primary-color;
+        }
+
+        svg {
+          color: $primary-color;
+          transition: 0.3s;
+        }
+
+        a {
+          color: $primary-color;
+        }
+      }
+
+      &:hover {
+        color: $primary-color;
+        transition: 0.3s;
+        span {
+          color: $primary-color;
+          transition: 0.3s;
+        }
+
+        svg {
+          color: $primary-color;
+          transition: 0.3s;
+        }
+      }
+
+      span {
+        // color: #545454;
+        transition: 0.3s;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.ant-menu-submenu-popup > .ant-menu {
+  @include min-media(800px) {
+    border-radius: 1rem;
+  }
+}

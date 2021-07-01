@@ -1,0 +1,124 @@
+.wrap-card-info-course {
+  .ant-card-body {
+    height: 85vh;
+    overflow: auto;
+
+    &::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background-color: white;
+    }
+
+    &::-webkit-scrollbar {
+      border: none;
+      width: 4px;
+      background-color: #f5f5f5;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: #e7e7e7;
+    }
+  }
+}
+.info-course {
+  .card {
+  }
+  .info-course-list {
+    margin-bottom: 0;
+  }
+  .info-course-item {
+    background: white;
+  }
+
+  .ant-collapse {
+    border: none;
+    background: white;
+    border-radius: 0.575rem;
+  }
+
+  .ant-collapse-item {
+    margin-bottom: 15px;
+    border-bottom: 0;
+    // box-shadow: 1px 2px 10px #00000024;
+    border-radius: 0.575rem;
+
+    &:last-child {
+      border-radius: 0.575rem;
+
+      .ant-collapse-header {
+        border-radius: 0.575rem;
+      }
+    }
+  }
+  .ant-collapse-content {
+    margin-top: 7px;
+    border-top: none;
+    border-radius: 0.575rem;
+    background: #f7f7f7;
+  }
+  .ant-collapse-header {
+    box-shadow: 1px 2px 10px #00000024;
+    background: $primary-color;
+    color: white !important;
+    // border-top-left-radius: 0.575rem;
+    // border-top-right-radius: 0.575rem;
+    border-radius: 0.575rem;
+
+    .info-course-item {
+      position: relative;
+      background: $primary-color;
+    }
+  }
+
+  .ant-checkbox-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    .ant-checkbox {
+      &:hover {
+        .ant-checkbox-inner {
+          background-color: #fffca3;
+          border-color: #fffca3;
+        }
+      }
+    }
+    .ant-checkbox-checked .ant-checkbox-inner::after {
+      border: 2px solid #868686;
+      border-top: 0;
+      border-left: 0;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+      background-color: #fffca3;
+      border-color: #fffca3;
+    }
+    .ant-checkbox-inner {
+      width: 20px;
+      height: 20px;
+      border-color: #fffca3;
+      &:hover {
+        background-color: #fffca3;
+        border-color: #fffca3;
+      }
+    }
+    .ant-checkbox-checked::after {
+      border: 1px solid #fffca3;
+    }
+    .ant-checkbox-inner::after {
+      left: 30%;
+    }
+  }
+}
+.btn-page-course {
+  .btn {
+    margin-right: 4px;
+  }
+}
+.info-course-save {
+  p {
+    span:first-child {
+      font-size: 15px;
+      display: block;
+      font-weight: 500;
+    }
+  }
+}

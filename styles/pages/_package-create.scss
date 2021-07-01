@@ -1,0 +1,86 @@
+.package-create {
+  .box-form {
+    width: 100%;
+
+    .form-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+
+      @include max-media(600px) {
+        flex-wrap: wrap;
+      }
+
+      & > label {
+        width: 100px;
+        font-weight: 600;
+
+        @include max-media(600px) {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+
+  .box-type-package {
+    position: relative;
+    padding: 15px;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 19vh;
+    border-radius: 0.575rem;
+    cursor: pointer;
+
+    @include max-media(800px) {
+      margin-bottom: 20px;
+      height: 22vh;
+    }
+
+    &.choose {
+      .box-detail {
+        background-color: #0088cc;
+      }
+    }
+
+    &:hover {
+      .box-detail {
+        background-color: #0088cc;
+        transition: 0.3s;
+      }
+    }
+
+    .box-detail {
+      position: absolute;
+      bottom: 0;
+      background: #884e125e;
+      width: 100%;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 25%;
+      color: white;
+      transition: 0.3s;
+
+      p {
+        margin-bottom: 0;
+        margin-left: 20px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      svg {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
+.package-create-card {
+  width: 75%;
+  @include max-media(800px) {
+    width: 100%;
+  }
+}

@@ -1,0 +1,120 @@
+.gx-card-full {
+  overflow: hidden;
+}
+.gx-card-full .gx-card-body {
+  padding: 0;
+}
+.gx-card-full .gx-card-body .recharts-legend-wrapper {
+  padding: 0 24px;
+}
+.gx-card-full .ant-card-body {
+  padding: 0;
+}
+.icon-menu-up:before {
+  content: "\e04b";
+}
+.gx-card-full .ant-card-body .recharts-legend-wrapper {
+  padding: 0 24px;
+}
+.gx-card-full .recharts-default-legend {
+  margin: 0 -10px !important;
+}
+.gx-card-full .recharts-default-legend li {
+  padding: 0 10px;
+  margin: 0 !important;
+  display: inline-block;
+  vertical-align: top;
+}
+.gx-card-full .recharts-default-legend li .recharts-legend-item-text {
+  margin-left: 10px;
+}
+
+.gx-chart-up {
+  color: #52c41a;
+}
+.gx-bg-geekblue .gx-chart-up {
+  color: #ffffff;
+}
+.gx-chart-down {
+  color: #f5222d;
+}
+.gx-chart-down .icon {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  display: inline-block;
+}
+.gx-barchart {
+  margin-top: -15px;
+}
+
+.gx-actchart {
+  margin-bottom: -4px;
+}
+
+.gx-pr-3,
+.gx-px-3 {
+  padding-right: 1rem !important;
+}
+
+.gx-pt-3,
+.gx-py-3 {
+  padding-top: 1rem !important;
+}
+
+.gx-card-widget {
+  -webkit-box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.03);
+  -moz-box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.03);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+.gx-card-widget.ant-card-bordered {
+  border: 0 none;
+}
+.gx-card-widget .ant-card-head {
+  border-bottom: 0 none;
+  min-height: 24px;
+  padding: 24px 24px 0;
+}
+.gx-card-widget .ant-card-head-wrapper {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+}
+.gx-card-widget .ant-card-head-title {
+  padding: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+.gx-card-widget.gx-ch-capitalize .ant-card-head-title {
+  text-transform: capitalize;
+  font-size: 14px;
+}
+.gx-card-widget .ant-card-extra {
+  padding: 0;
+}
+.gx-card-widget .ant-card-extra .gx-btn {
+  margin-bottom: 0;
+}
+.gx-card-widget .ant-card-body {
+  padding: 24px;
+}
+.chart-comment {
+  @include max-media(1000px) {
+    margin-top: 40px;
+  }
+}

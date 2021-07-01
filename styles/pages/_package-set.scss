@@ -1,0 +1,105 @@
+.package-set {
+  .wrap-set {
+    padding: 20px;
+    border-radius: 0.575rem;
+    background: #effaff;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e7f3ff;
+    margin-bottom: 20px;
+
+    .tag-free {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff416c; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #ff4b2b,
+        #ff416c
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #ff4b2b,
+        #ff416c
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+      color: white;
+      padding: 4px 15px;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      z-index: 3;
+    }
+
+    &:hover {
+      &:after {
+        width: 100%;
+      }
+    }
+
+    &:after {
+      position: absolute;
+      content: "";
+      transition: all 0.3s ease;
+      z-index: 0;
+      background: #d7f2ff;
+      width: 0;
+      height: 100%;
+      left: 0;
+      top: 0;
+      transition: 0.3s width;
+    }
+
+    .wrap-set-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    @include max-media(800px) {
+      width: 100%;
+    }
+
+    .set-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: rgb(0, 30, 71);
+      cursor: pointer;
+    }
+
+    .set-list {
+      padding-left: 0;
+      margin-top: 10;
+      margin-bottom: 20x;
+      li {
+        list-style-type: none;
+        display: inline-block;
+        margin-right: 20px;
+
+        &.price {
+          span {
+            color: #b12b1d;
+          }
+        }
+
+        &.status {
+          span {
+            color: #2b9e2b;
+          }
+        }
+
+        span {
+          font-weight: 600;
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+}
+
+.package-set-wrap {
+  width: 70%;
+  @include max-media(600px) {
+    width: 100%;
+  }
+}

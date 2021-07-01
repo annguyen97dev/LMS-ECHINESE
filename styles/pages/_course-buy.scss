@@ -1,0 +1,507 @@
+.course-buy {
+    .wrap-buy {
+      padding: 20px;
+      border-radius: 0.575rem;
+      background: #effaff;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #e7f3ff;
+      margin-bottom: 20px;
+  
+      .tag-rate {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 3;
+        .ant-rate {
+          background-color: #fff;
+          padding:  0 10px 6px;
+          border-radius: 0.575rem;
+          border: 1px solid #e7f3ff;
+          font-size: 16px;
+        }
+      }
+  
+      &:hover {
+        &:after {
+          width: 100%;
+        }
+      }
+  
+      &:after {
+        position: absolute;
+        content: "";
+        transition: all 0.3s ease;
+        z-index: 0;
+        background: #d7f2ff;
+        width: 0;
+        height: 100%;
+        left: 0;
+        top: 0;
+        transition: 0.3s width;
+      }
+  
+      .wrap-buy-content {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+
+        .buy-image {
+            flex-shrink: 0;
+            width: 150px;
+            height: 150px;
+            margin-right: 20px;
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 0.575rem;
+            }
+        }
+        @include max-media(500px) {
+          flex-direction: column;
+          .buy-image {
+            margin: 0 auto 15px;
+          }
+        }
+      }
+  
+      @include max-media(800px) {
+        width: 100%;
+      }
+  
+      .buy-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: rgb(0, 30, 71);
+        cursor: pointer;
+      }
+  
+      .buy-list {
+        padding-left: 0;
+        margin-top: 10;
+        margin-bottom: 20x;
+        li {
+          list-style-type: none;
+          display: inline-block;
+          margin-right: 20px;
+  
+          &.price {
+            span {
+              color: #b12b1d;
+            }
+          }
+
+          &.auth {
+            span {
+              color: $orange;
+            }
+          }
+  
+          &.status {
+            span {
+              color: #2b9e2b;
+            }
+          }
+  
+          span {
+            font-weight: 600;
+            margin-left: 8px;
+          }
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+        background-color: transparent;
+        color: #08c;
+    }
+
+    .ant-menu-submenu-selected {
+        color: #08c;
+    }
+
+    .ant-menu-item:hover, .ant-menu-item-active, .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open, .ant-menu-submenu-active, .ant-menu-submenu-title:hover{
+        color: #08c;
+    }
+    
+    .ant-menu-inline .ant-menu-selected::after, .ant-menu-inline .ant-menu-item-selected::after {
+        content: unset;
+    }
+
+    .ant-card-body {
+      height: calc(100vh - 206px);
+      padding-right: 10px;
+  
+      @include max-media(800px) {
+        height: auto;
+      }
+
+      .ant-card-body-list {
+        height: 100%;
+        overflow: auto;
+        padding-right: 15px;
+        @include max-media(800px) {
+          padding-right: 0;
+        }
+
+        &::-webkit-scrollbar-track {
+          border-radius: 10px;
+          background-color: white;
+        }
+
+        &::-webkit-scrollbar {
+          border: none;
+          width: 4px;
+          background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 10px;
+          background-color: rgb(153, 212, 241);
+        }
+      }
+    }
+
+    @include max-media(600px) {
+      .col-12 {
+        display: flex;
+        flex-direction: column-reverse;
+      }
+    }
+}
+
+.course-buy-detail {
+  > .col-12 {
+    @include max-media(600px) {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+  }
+}
+  
+.course-buy-wrap, .course-buy-content {
+    width: 70%;
+    display: inline-block;
+    float: left;
+    @include max-media(600px) {
+        width: 100%;
+    }
+}
+
+.course-buy-sidebar, .course-buy-aside {
+    width: 30%;
+    display: inline-block;
+    float: left;
+    padding-left: 20px;
+    .side-bar {
+      background-color: #fff;
+      border-radius: 0.575rem;
+      .ant-menu-inline .ant-menu-item, .ant-menu-inline .ant-menu-submenu-title {
+        width: 100%;
+      }
+      .ant-menu-sub.ant-menu-inline {
+        background-color: #fff;
+      }
+      @include max-media(600px) {
+        border: 0;
+      }
+      > .ant-menu {
+        border-radius: 0.575rem;
+        height: calc(100vh - 138px);
+        overflow: auto;
+
+        @include max-media(600px) {
+          height: auto;
+        }
+
+        &::-webkit-scrollbar-track {
+          border-radius: 10px;
+          background-color: white;
+        }
+
+        &::-webkit-scrollbar {
+          border: none;
+          width: 4px;
+          background-color: #f5f5f5;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 10px;
+          background-color: rgb(153, 212, 241);
+        }
+        @include max-media(600px) {
+          display: none;
+        }
+      }
+      .btn-dropdown-menu {
+        background-color: transparent;
+        padding-left: 24px;
+        width: calc(100% + 1px);
+        height: 44px;
+        line-height: 40px;
+        border: 0;
+        text-align: left;
+        position: relative;
+        background-color: #f2f8fc;
+        border-radius: 0.575rem;
+        border: 1px solid #f0f0f0;
+        transition: .2s;
+        color: #000;
+        display: none;
+        i {
+          transform: translateY(-50%) rotate(90deg);
+        }
+        @include max-media(600px) {
+          display: block;
+        }
+      }
+      &.active {
+        border-bottom: 1px solid #f0f0f0;
+        > .ant-menu {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          display: block;
+        }
+        .btn-dropdown-menu {
+          background-color: #d7f2ff;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        .btn-dropdown-menu i {
+          transform: translateY(-50%) rotate(-90deg);
+        }
+      }
+    }
+    @include max-media(600px) {
+        width: 100%;
+        padding-left: 0;
+        margin-bottom: 20px;
+    }
+}
+
+.course-buy-content .wrap-content {
+    background-color: #fff;
+    border-radius: 0.575rem;
+    border: 1px solid #f0f0f0;
+    padding: 20px 0;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .title-page-detail {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .rating {
+      margin-bottom: 5px;
+      .ant-rate {
+        font-size: 16px;
+      }
+    }
+    .auth {
+      margin-bottom: 5px;
+      &-name {
+        color: $orange;
+        font-weight: 600;
+      }
+    }
+    .time-update {
+      .time-text {
+        color: $primary-color;
+        font-weight: 600;
+      }
+    }
+}
+.course-buy-content .wrap-content-course {
+  padding: 0 20px;
+}
+
+.course-buy-aside .wrap-aside {
+    background-color: #fff;
+    border-radius: 0.575rem;
+    border: 1px solid #f0f0f0;
+    padding: 20px;
+    .video {
+      margin-bottom: 10px;
+        iframe, video {
+            width: 100%;
+            height: auto;
+        }
+    }
+    .aside-info {
+      .price {
+        margin-bottom: 15px;
+        font-size: 16px;
+        span {
+          color: #b12b1d;
+          font-weight: 600;
+        }
+      }
+      .name-course {
+        margin-bottom: 5px;
+        color: $primary-color;
+        font-size: 18px;
+        font-weight: 600;
+        display: none;
+        @include max-media(600px) {
+          display: block;
+        }
+      }
+      .time-update {
+        margin-bottom: 15px;
+        .time-text {
+          color: $primary-color;
+          font-weight: 600;
+        }
+        display: none;
+        @include max-media(600px) {
+          display: block;
+        }
+      }
+      .set-btn {
+        margin-bottom: 15px;
+        .btn {
+          display: block;
+        }
+      }
+      .rating {
+        margin-bottom: 5px;
+        font-size: 16px;
+        display: none;
+        @include max-media(600px) {
+          display: block;
+        }
+        .ant-rate {
+          font-size: 16px;
+        }
+      }
+      .auth {
+        margin-bottom: 5px;
+        display: none;
+        @include max-media(600px) {
+          display: block;
+        }
+        &-name {
+          color: $orange;
+          font-size: 16px;
+          font-weight: 600;
+        }
+      }
+    }
+    .course-incentive {
+      ul {
+        list-style: none;
+        font-size: 16px;
+        padding-left: 0;
+        margin-bottom: 0;
+        .lb-text {
+          font-weight: bold;
+        }
+        li {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          .anticon {
+            width: 16px;
+            margin-right: 10px;
+            font-size: 16px;
+            flex-shrink: 0;
+            -webkit-transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), color 0.3s;
+            -moz-transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), color 0.3s;
+            transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), color 0.3s;
+            img {
+              width: 100%;
+              height: auto;
+              object-fit: contain;
+            }
+          }
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+}
+
+.main-content-course {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.maint-content-timeline {
+  list-style: none;
+  padding-left: 0;
+  .lb-text {
+    font-weight: bold;
+  }
+  li {
+    display: inline-block;
+    margin-right: 15px;
+  }
+}
+
+.collapse-content {
+  background-color: #fff;
+  border-radius: 0.575rem;
+  .ant-collapse-item {
+    border: 1px solid #f0f0f0;
+    border-radius: 0.575rem!important;
+    .ant-collapse-header {
+      background-color: #f2f8fc;
+    }
+  }
+  .anticon {
+    width: 16px;
+    margin-right: 10px;
+    font-size: 16px;
+    flex-shrink: 0;
+    -webkit-transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), color 0.3s;
+    -moz-transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), color 0.3s;
+    transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), color 0.3s;
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+  .ant-collapse-item-active {
+    .ant-collapse-header {
+      border-bottom: 1px solid #f0f0f0;
+      background-color: #d7f2ff;
+    }
+  }
+}
+
+.ant-collapse-borderless > .ant-collapse-item:last-child, .ant-collapse-borderless > .ant-collapse-item:last-child .ant-collapse-header {
+  border-radius: 0.575rem 0.575rem 0 0;
+}
+
+.collapse-content > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+  padding: 15px!important;
+  ul {
+    margin-bottom: 0;
+    list-style: none;
+    padding-left: 0;
+    line-height: 2;
+    li {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.wrap-info-course {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 20px;
+  @include max-media(600px) {
+    display: none;
+  }
+}

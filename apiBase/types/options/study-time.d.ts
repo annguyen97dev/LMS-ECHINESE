@@ -1,0 +1,20 @@
+type IStudyTime = IBaseApi<{
+  ID: number;
+  ClassID: number;
+  ClassName: string;
+  ClassRoomID: number;
+  ClassRoom: string;
+  StudyTimeID: number;
+  StudyTime: string;
+  BranchID: number;
+  BranchName: string;
+  CurriculumsID: number;
+  CurriculumsName: string;
+  UserCareID: number;
+  UserCare: string;
+  UserTeacherID: number;
+  UserTeacher: string;
+  DateOfOpen: string;
+  DateOfClose: string;
+  Enable: boolean;
+}>;

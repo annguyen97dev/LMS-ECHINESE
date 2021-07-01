@@ -1,0 +1,38 @@
+.course-map-detail {
+  table {
+    td {
+      border: 1px solid white;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      font-size: medium;
+    }
+  }
+}
+.first-card {
+  transform: translateY(100px);
+}
+
+.second-card {
+  transform: translateY(80px);
+}
+
+.third-card {
+  transform: translateY(60px);
+}
+
+.fourth-card {
+  transform: translateY(40px);
+}
+
+.last-card {
+  transform: translateY(20px);
+}
+
+.first-row {
+  height: 55px;
+}
+
+.last-row {
+  background-color: $primary-color;
+}

@@ -1,0 +1,568 @@
+.container {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcontrol {
+  display: block;
+  position: relative;
+  width: auto;
+}
+
+.wrapBox {
+  position: relative;
+  width: 70%;
+  height: auto;
+  margin: 0 auto;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: flex;
+  border-radius: 10px;
+  box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
+}
+
+.wrapForm {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  padding: 0 60px;
+}
+
+.imgLogin {
+  // background: url('./../../../public/img/bg-login.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 80%;
+  width: 50%;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  // background-image: linear-gradient(
+  //   to right top,
+  //   #0086da,
+  //   #188fdf,
+  //   #2999e3,
+  //   #38a2e7,
+  //   #46abeb
+  // );
+
+  img {
+    width: 77%;
+    margin: auto;
+  }
+}
+
+.wrapIcon {
+  width: 100%;
+  text-align: center;
+
+  svg {
+    width: 3rem !important;
+    height: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+}
+
+.loginForm {
+  width: 100%;
+  height: auto;
+  padding: 20px 50px;
+  background: white;
+  border-radius: 7px;
+
+  .title {
+    font-size: 25px;
+    color: #0086da;
+    text-align: center;
+  }
+
+  /* Change Autocomplete styles in Chrome*/
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: inherit;
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #0000002e;
+    padding: 10px 15px;
+    padding-left: 0;
+    margin-bottom: 10px;
+    font-size: 14px;
+
+    &:focus {
+      outline: 0;
+      border-bottom: 1px solid #0086da;
+      transition: 0.3s;
+    }
+
+    &::-webkit-input-placeholder {
+      /* Edge */
+      opacity: 0.5;
+    }
+
+    &:-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      opacity: 0.5;
+    }
+
+    &::placeholder {
+      opacity: 0.5;
+    }
+  }
+
+  label {
+    line-height: 2;
+    text-align: left;
+    display: block;
+    // margin-bottom: 5px;
+    margin-top: 20px;
+    color: #424242;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  button[type="submit"],
+  input[type="submit"] {
+    cursor: pointer;
+    background: #0086da;
+    color: white;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 999px;
+    margin-top: 40px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    transition: 0.3s;
+  }
+
+  button[type="submit"]:hover,
+  input[type="submit"]:hover {
+    background: #0073bb;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+      rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+    transition: 0.3s;
+  }
+
+  button[type="submit"]:active,
+  input[type="button"]:active,
+  input[type="submit"]:active {
+    transition: 0.3s all;
+    transform: translateY(3px);
+    border: 1px solid transparent;
+    opacity: 0.8;
+  }
+
+  input:disabled {
+    opacity: 0.4;
+  }
+
+  input[type="button"]:hover {
+    transition: 0.3s all;
+  }
+
+  button[type="submit"],
+  input[type="button"],
+  input[type="submit"] {
+    -webkit-appearance: none;
+  }
+
+  button[type="button"] {
+    display: block;
+    appearance: none;
+    background: #333;
+    color: white;
+    border: none;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 4px;
+  }
+
+  hr {
+    margin-top: 30px;
+  }
+
+  button {
+    display: block;
+    appearance: none;
+    margin-top: 40px;
+    border: 1px solid #333;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 4px;
+  }
+}
+
+.App {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+// h1 {
+//   font-weight: 100;
+//   color: white;
+//   text-align: center;
+//   padding-bottom: 10px;
+//   border-bottom: 1px solid rgb(79, 98, 148);
+// }
+
+.form {
+  background: #0e101c;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.loginFormImg {
+  text-align: center;
+  margin-bottom: 20px;
+
+  img {
+    width: 100px;
+  }
+}
+
+// p {
+//   color: #bf1650;
+// }
+
+// p::before {
+//   display: inline;
+//   content: '⚠ ';
+// }
+
+.checkbox {
+  display: inline-block;
+  vertical-align: middle;
+  width: 50%;
+
+  // vertical-align: middle; // to center the item
+  // text-align: center; // to center the item
+
+  label {
+    display: inline-block; // to make it easier to click
+    color: #424242;
+    cursor: pointer;
+    position: relative; // important
+    margin-top: 0;
+
+    // Now we'll create the checkbox object
+
+    span {
+      display: inline-block;
+      position: relative;
+      background-color: transparent;
+      width: 20px;
+      height: 20px;
+
+      transform-origin: center;
+      border: 1px solid #d1d1d1;
+
+      vertical-align: -6px;
+      margin-right: 10px;
+      transition: background-color 150ms 200ms,
+        transform 350ms cubic-bezier(0.78, -1.22, 0.17, 1.89); // custom ease effect for bouncy animation
+
+      // Now we'll create the "tick" using pseudo elements - those will be basically two lines that will be rotated to form the "tick"
+
+      &:before {
+        content: "";
+        width: 0px;
+        height: 2px;
+        border-radius: 2px; // so that the tick has nice rounded look
+        background: #fff;
+        position: absolute;
+        transform: rotate(45deg);
+        top: 8px;
+        left: 6px;
+        transition: width 50ms ease 50ms;
+        transform-origin: 0% 0%;
+      }
+
+      &:after {
+        content: "";
+        width: 0;
+        height: 2px;
+        border-radius: 2px; // so that the tick has nice rounded look
+        background: #fff;
+        position: absolute;
+        transform: rotate(305deg);
+        top: 12px;
+        left: 7px;
+        transition: width 50ms ease;
+        transform-origin: 0% 0%;
+      }
+    }
+    // Time to add some life to it
+
+    &:hover {
+      span {
+        &:before {
+          width: 5px;
+          transition: width 100ms ease;
+        }
+
+        &:after {
+          width: 10px;
+          transition: width 150ms ease 100ms;
+        }
+      }
+    }
+  }
+
+  input[type="checkbox"] {
+    display: none; // hide the system checkbox
+
+    // Let's add some effects after the checkbox is checked
+
+    &:checked {
+      + label {
+        span {
+          border: 1px solid #0086da;
+          background-color: #0086da;
+          transform: scale(1.1); // enlarge the box
+
+          &:after {
+            width: 10px;
+            background: white;
+            transition: width 150ms ease 100ms; // enlarge the tick
+          }
+
+          &:before {
+            width: 5px;
+            background: white;
+            transition: width 150ms ease 100ms; // enlarge the tick
+          }
+        }
+
+        &:hover {
+          // copy the states for onMouseOver to avoid flickering
+          span {
+            background-color: #0086da;
+            transform: scale(1.1); // enlarge the box
+
+            &:after {
+              width: 10px;
+              background: white;
+              transition: width 150ms ease 100ms; // enlarge the tick
+            }
+
+            &:before {
+              width: 5px;
+              background: white;
+              transition: width 150ms ease 100ms; // enlarge the tick
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.forgetPass {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: right;
+  width: 50%;
+
+  a {
+    color: #d05151;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.boxSignup {
+  margin-top: 30px;
+  padding: 20px 0;
+  padding-bottom: 0;
+  border-top: 1px solid #d1d1d1;
+  color: #29292987;
+  font-size: 15px;
+  text-align: center;
+
+  a {
+    color: #d05151;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.boxSocial {
+  width: 100%;
+  margin-top: 20px;
+
+  ul {
+    text-align: center;
+
+    li {
+      position: relative;
+      display: inline-block;
+      margin: 0 8px;
+      width: 40px;
+      height: 40px;
+
+      a {
+        width: 100%;
+        height: 100%;
+        display: inline-block;
+        background: white;
+        border-radius: 50%;
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+
+        &:hover {
+          background: #0086da0a;
+        }
+      }
+
+      img {
+        width: 20px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+}
+
+.noteLogin {
+  position: relative;
+  margin-top: 20px;
+  z-index: 10;
+
+  &:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: #00000057;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    // display: none;
+  }
+
+  p {
+    position: relative;
+    z-index: 10;
+    width: 60%;
+    padding: 3px 10px;
+    background: #ffffff;
+    font-size: 15px;
+    opacity: 1;
+    text-align: center;
+    margin: auto;
+    margin-top: 0px;
+    color: #00000061;
+  }
+}
+
+.errorText {
+  font-size: 13px;
+  font-style: italic;
+  color: #d81e1e;
+  opacity: 0.8;
+  margin-top: -5px;
+  display: block;
+}
+
+@media screen and (max-width: 1600px) {
+  .wrapBox {
+    width: 90%;
+  }
+  .loginForm {
+    padding: 20px 30px;
+  }
+  .loginFormImg {
+    display: none;
+  }
+}
+
+.loginSelect {
+  position: relative;
+  display: block;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #0000002e;
+  padding: 10px 15px;
+  padding-left: 0;
+  margin-bottom: 10px;
+  font-size: 14px;
+
+  &:focus {
+    outline: 0;
+    border-bottom: 1px solid #0086da;
+    transition: 0.3s;
+  }
+}
+
+.boxSubmit {
+  position: relative;
+}
+
+.loading {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 150px;
+  border: 3px solid #e2e2e2;
+  border-top-color: #0086da;
+  box-sizing: border-box;
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  animation: loading 1.2s linear infinite;
+  -webkit-animation: loading 1.2s linear infinite;
+  z-index: 10;
+}
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
