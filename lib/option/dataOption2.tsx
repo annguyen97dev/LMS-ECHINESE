@@ -36,5 +36,10 @@ for (let i = 1; i < 99; i++) {
     idiom: `Ta đã ở bên nhau. Những năm tháng nhọc nhằn. You make me feel like....I got everything. Dù mai có ra sao. Ta vẫn sẽ tự hào. Vì đã luôn bên nhau. We do everything. Đưa tay đây nào. Mãi bên nhau bạn nhớ`,
     fbType: `Hỗ trợ học viên`,
     fbReason: `Xin nghỉ buổi học`,
+    teacherName: `Nguyễn Phi Hùng ${i}`,
+    tel: `1900100${i}`,
+    apiKey: `	DgIpOwp2QaiFerer-X9tYg`,
+    apiSr: `NrzjDgDWnK73QEzXUspdOrspz6ulDeFVnsGA`,
+    dateMod: `02/05/2021`,
   });
 }
