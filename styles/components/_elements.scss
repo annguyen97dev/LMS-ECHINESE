@@ -357,6 +357,20 @@
   }
 }
 
+.btn-show-image {
+  margin-left: 0.8rem;
+  border-radius: 0.375rem;
+  color: #1378ab;
+  background-color: #fff;
+  border-color: #1378ab;
+  border-width: 0.1rem;
+
+  &:hover {
+    color: #fff;
+    background-color: #1378ab;
+  }
+}
+
 // --------------------- FORM ----------------------
 .form-control {
   background: #fff;
@@ -1513,5 +1527,14 @@ hr {
 
   @include max-media(800px) {
     width: 100% !important;
+  }
+}
+
+.instructions {
+  padding-bottom: 14px;
+  color: blue;
+  &:hover {
+    color: rgb(0, 15, 151);
+    cursor: pointer;
   }
 }

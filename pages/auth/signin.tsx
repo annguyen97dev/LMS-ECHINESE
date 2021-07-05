@@ -30,6 +30,8 @@ export default function SignIn({ providers, csrfToken }) {
         case 404:
           console.log("Không truy cập được API");
           break;
+        case 500:
+          console.log("Lỗi API");
         default:
           console.log(JSON.stringify(erData));
           break;

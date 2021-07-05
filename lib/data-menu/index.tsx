@@ -78,6 +78,36 @@ export const dataMenu = [
         Route: "/course/course-buy",
         Text: "Danh sách khóa học - mua bán",
       },
+
+      {
+        ItemType: "sub-menu",
+        Key: "sub-course-zoom",
+        Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
+        TitleSub: "Quản lý Zoom",
+        SubMenuList: [
+          {
+            ItemType: "single",
+            Key: "/course/manage-zoom/teacher-config-zoom",
+            Route: "/course/manage-zoom/teacher-config-zoom",
+            Text: "Cấu hình",
+            Icon: "",
+          },
+          {
+            ItemType: "single",
+            Key: "/course/manage-zoom/meeting-zoom",
+            Route: "/course/manage-zoom/meeting-zoom",
+            Text: "Danh sách phòng học",
+            Icon: "",
+          },
+          {
+            ItemType: "single",
+            Key: "/course/manage-zoom/",
+            Route: "/course/manage-zoom/meeting-zoom",
+            Text: "Phòng họp nội bộ",
+            Icon: "",
+          },
+        ],
+      },
     ],
   },
 

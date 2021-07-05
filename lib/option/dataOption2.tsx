@@ -41,5 +41,9 @@ for (let i = 1; i < 99; i++) {
     apiKey: `	DgIpOwp2QaiFerer-X9tYg`,
     apiSr: `NrzjDgDWnK73QEzXUspdOrspz6ulDeFVnsGA`,
     dateMod: `02/05/2021`,
+    roomID: `898781150${i}`,
+    centerCourse: `[ZIM – 12 Huỳnh Lan Khanh] - AS-IELTS Intermediate, 04/09, 18:30-20:30`,
+    timeClass: `Ca 9:00 - 11:00`,
+    statusZoom: i,
   });
 }
