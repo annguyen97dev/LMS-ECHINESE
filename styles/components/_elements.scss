@@ -374,15 +374,17 @@
 
   &:hover {
     background-color: transparent;
-    border-color: #40a9ff!important;
+    border-color: #40a9ff !important;
     color: #000;
   }
 
   &:focus {
     box-shadow: none;
     background-color: transparent;
-    border-color: #40a9ff!important;
+    border-color: #40a9ff !important;
     color: #000;
+  }
+}
 .btn-show-image {
   margin-left: 0.8rem;
   border-radius: 0.375rem;
@@ -1564,7 +1566,6 @@ hr {
 .ant-form-item-control-input-content .ant-picker {
   width: 100%;
 }
-
 
 .instructions {
   padding-bottom: 14px;
