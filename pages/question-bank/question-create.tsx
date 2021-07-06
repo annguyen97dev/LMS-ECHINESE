@@ -9,6 +9,9 @@ import { dataBoxType } from "~/lib/question-bank/dataBoxType";
 import { data } from "~/lib/option/dataOption2";
 import SelectFilterBox from "~/components/Elements/SelectFilterBox";
 import LayoutBase from "~/components/LayoutBase";
+import QuestionSingle from "~/components/Global/QuestionBank/QuestionSingle";
+import QuestionMultiple from "~/components/Global/QuestionBank/QuestionMultiple";
+import QuestionWrite from "~/components/Global/QuestionBank/QuestionWrite";
 const { Option, OptGroup } = Select;
 const content = (
   <div className="question-bank-info">
@@ -235,22 +238,29 @@ const dataQuestion = [
 type initialState = {
   boxActive: string;
   showBoxType: boolean;
+  typeQuestion: string;
+  course: string;
 };
 
 type state = {
   boxActive: string;
   showBoxType: boolean;
+  typeQuestion: string;
+  course: string;
 };
 
 type action = {
   type: string;
   tab: string;
   isShow: boolean;
+  questionType: string;
 };
 
 const initialState: initialState = {
-  boxActive: "all",
-  showBoxType: false,
+  boxActive: "all", // Dạng câu hỏi 1 hay nhiều, map, ...
+  typeQuestion: "single", // Câu hỏi đơn hoặc nhóm
+  showBoxType: true, // xác định mới vào mở hay chưa
+  course: "", // chọn khóa học
 };
 
 const reducer = (state: state, action: action) => {
@@ -259,6 +269,8 @@ const reducer = (state: state, action: action) => {
       return { ...state, boxActive: action.tab };
     case "showBoxType":
       return { ...state, showBoxType: action.isShow };
+    case "showQuestionType":
+      return { ...state, showQuestionType: action.questionType };
     default:
       throw new Error();
   }
@@ -272,19 +284,38 @@ const QuestionCreate = () => {
 
   const changeBoxType = (e: any, TabName: string) => {
     e.preventDefault();
-    dispatch({ type: "changeTab", tab: TabName, isShow: state.showBoxType });
+    dispatch({
+      type: "changeTab",
+      tab: TabName,
+      isShow: state.showBoxType,
+      questionType: state.typeQuestion,
+    });
   };
 
   const handleChange_selectLesson = (value) => {
     console.log(`selected ${value}`);
 
     !state.showBoxType &&
-      dispatch({ type: "showBoxType", tab: "", isShow: true });
+      dispatch({
+        type: "showBoxType",
+        tab: "",
+        isShow: true,
+        questionType: state.typeQuestion,
+      });
     isLoadingSet(true);
 
     setTimeout(() => {
       isLoadingSet(false);
     }, 1000);
+  };
+
+  const handleChange_selectType = (value) => {
+    dispatch({
+      type: "showQuestionType",
+      tab: "",
+      isShow: true,
+      questionType: state.typeQuestion,
+    });
   };
 
   return (
@@ -327,60 +358,23 @@ const QuestionCreate = () => {
               <div
                 className={`question-list ${state.showBoxType ? "active" : ""}`}
               >
-                {dataQuestion?.map((item, index) => (
-                  <div className="question-item">
-                    <div className="box-detail">
-                      <div className="box-title">
-                        <span className="title-ques">
-                          {"Câu hỏi " + (index + 1)}
-                        </span>
-                        <p className="title-text">{item.TextQues}</p>
-                      </div>
-                      <div className="box-answer">
-                        <ul className="list-answer">
-                          {item.AnswerList?.map((ans, ind) => (
-                            <li>
-                              <span className="tick">
-                                {ind == 0
-                                  ? "A"
-                                  : ind == 1
-                                  ? "B"
-                                  : ind == 2
-                                  ? "C"
-                                  : ind == 3
-                                  ? "D"
-                                  : ""}
-                              </span>
-                              <span className="ans">
-                                {ans.TextAns + " " + ind}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="box-action">
-                      <Tooltip placement="topLeft" title="Sửa câu hỏi">
-                        <CreateQuestionForm isEdit={true} />
-                      </Tooltip>
-                      <Tooltip placement="topLeft" title="Xóa câu hỏi">
-                        <button className="btn btn-icon delete">
-                          <Trash2 />
-                        </button>
-                      </Tooltip>
-                    </div>
-                  </div>
-                ))}
+                {/** Q uesion Single */}
+                <QuestionSingle />
+                {/** Quesion Multiple */}
+                <QuestionMultiple />
+                {/** Question Write */}
+                <QuestionWrite />
               </div>
             )}
           </Card>
         </div>
         <div className="col-md-4 col-12">
           <Card className="card-box-type">
-            <div className="row">
-              <div className={`col-12 ${state.showBoxType ? "mb-4" : ""}`}>
+            <div className={`row ${state.showBoxType ? "mb-2" : ""}`}>
+              {/** CHỌN MÔN HỌC */}
+              <div className="col-md-6 col-12 ">
                 <div className="item-select">
-                  <p className="font-weight-black mb-2">Chọn môn học</p>
+                  {/* <p className="font-weight-black mb-2">Chọn môn học</p> */}
                   <Select
                     className="style-input"
                     defaultValue="Chọn môn học"
@@ -403,6 +397,40 @@ const QuestionCreate = () => {
                   </Select>
                 </div>
               </div>
+
+              {/** LOẠI MÔN HỌC  */}
+              <div className="col-md-6 col-12">
+                <div className="item-select">
+                  {/* <p className="font-weight-black mb-2">Loại môn học</p> */}
+                  <Select
+                    className="style-input"
+                    defaultValue="Chọn loại môn học"
+                    style={{ width: "100%" }}
+                    // onChange={handleChange_selectType}
+                  >
+                    <Option value="1">Phát âm</Option>
+                    <Option value="2">Ngữ pháp</Option>
+                  </Select>
+                </div>
+              </div>
+
+              {/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
+              <div className="col-md-12 col-12 mt-3">
+                <div className="item-select">
+                  {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
+                  <Select
+                    className="style-input"
+                    defaultValue="Chọn loại câu hỏi"
+                    style={{ width: "100%" }}
+                    onChange={handleChange_selectType}
+                  >
+                    <Option value="single">Câu hỏi đơn</Option>
+                    <Option value="group">Câu hỏi nhóm</Option>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <div className="row">
               <div
                 className={`wrap-type-question ${
                   state.showBoxType ? "active" : "nun-active"

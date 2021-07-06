@@ -8,6 +8,8 @@ const CreateQuestionForm = (props) => {
   const [value, setValue] = React.useState(1);
   const [openAns, setOpenAns] = useState(false);
 
+  const { isEdit } = props;
+
   const showDrawer = () => {
     setVisible(true);
   };
@@ -44,7 +46,7 @@ const CreateQuestionForm = (props) => {
       )}
 
       <Drawer
-        title={props.isEdit ? "Form sửa câu hỏi" : "Form tạo câu hỏi"}
+        title={isEdit ? "Form sửa câu hỏi" : "Form tạo câu hỏi"}
         placement="right"
         closable={false}
         onClose={onClose}
@@ -53,44 +55,48 @@ const CreateQuestionForm = (props) => {
       >
         <Form layout="vertical">
           <div className="row">
-            <div className="col-md-6 col-12">
-              <Form.Item label="Môn học">
-                <Select
-                  showSearch
-                  className="style-input"
-                  defaultValue="all"
-                  onChange={handleChange_select}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <Option value="jack">English</Option>
-                  <Option value="lucy">Toán</Option>
-                  <Option value="all">Ngữ Văn</Option>
-                </Select>
-              </Form.Item>
-            </div>
-            <div className="col-md-6 col-12">
-              <Form.Item label="Loại môn học">
-                <Select
-                  showSearch
-                  className="style-input"
-                  defaultValue="all"
-                  onChange={handleChange_select}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <Option value="jack">Phát âm</Option>
-                  <Option value="lucy">Ngữ pháp</Option>
-                  <Option value="all">None</Option>
-                </Select>
-              </Form.Item>
-            </div>
+            {!isEdit && (
+              <>
+                <div className="col-md-6 col-12">
+                  <Form.Item label="Môn học">
+                    <Select
+                      showSearch
+                      className="style-input"
+                      defaultValue="all"
+                      onChange={handleChange_select}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      <Option value="jack">English</Option>
+                      <Option value="lucy">Toán</Option>
+                      <Option value="all">Ngữ Văn</Option>
+                    </Select>
+                  </Form.Item>
+                </div>
+                <div className="col-md-6 col-12">
+                  <Form.Item label="Loại môn học">
+                    <Select
+                      showSearch
+                      className="style-input"
+                      defaultValue="all"
+                      onChange={handleChange_select}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      <Option value="jack">Phát âm</Option>
+                      <Option value="lucy">Ngữ pháp</Option>
+                      <Option value="all">None</Option>
+                    </Select>
+                  </Form.Item>
+                </div>
+              </>
+            )}
 
             <div className="col-md-12 col-12">
               <Form.Item label="Nhập câu hỏi">
@@ -162,7 +168,7 @@ const CreateQuestionForm = (props) => {
                   className="btn btn-primary"
                   style={{ marginRight: "10px" }}
                 >
-                  {props.isEdit ? "Sửa ngay" : "Tạo ngay"}
+                  {isEdit ? "Sửa ngay" : "Tạo ngay"}
                 </button>
                 <button className="btn btn-success">Up file</button>
               </Form.Item>
