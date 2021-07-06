@@ -101,8 +101,8 @@ export const dataMenu = [
           },
           {
             ItemType: "single",
-            Key: "/course/manage-zoom/",
-            Route: "/course/manage-zoom/meeting-zoom",
+            Key: "/course/manage-zoom/meeting-internal",
+            Route: "/course/manage-zoom/meeting-internal",
             Text: "Phòng họp nội bộ",
             Icon: "",
           },
