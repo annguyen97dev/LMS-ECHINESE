@@ -441,6 +441,13 @@ export const dataMenu = [
           },
         ],
       },
+      {
+        ItemType: "single",
+        Key: "/staff/manage-task",
+        Route: "/staff/manage-task",
+        Text: "Quản lí task",
+        Icon: "",
+      },
     ],
   },
   {

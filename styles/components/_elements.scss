@@ -66,6 +66,16 @@
 }
 
 // ------------------------ BUTTON -------------------- //
+.btn {
+  &.history {
+    height: 36px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 15px;
+  }
+}
+
 .btn.add-new {
   &:focus {
     color: inherit;
@@ -357,6 +367,25 @@
   }
 }
 
+.border.btn-default {
+  color: #000;
+  background-color: transparent;
+  border-color: #d9d9d9;
+
+  &:hover {
+    background-color: transparent;
+    border-color: #40a9ff!important;
+    color: #000;
+  }
+
+  &:focus {
+    box-shadow: none;
+    background-color: transparent;
+    border-color: #40a9ff!important;
+    color: #000;
+  }
+}
+
 // --------------------- FORM ----------------------
 .form-control {
   background: #fff;
@@ -399,7 +428,8 @@ textarea.form-control {
   .ant-select-selector,
   &.ant-input,
   .ant-picker-input input,
-  &.ant-picker {
+  &.ant-picker,
+  .ant-picker {
     font-size: 14px;
     border-radius: 0.375rem !important;
     height: 36px !important;
@@ -1515,3 +1545,13 @@ hr {
     width: 100% !important;
   }
 }
+
+.filter-datetime {
+  margin-right: 15px;
+}
+
+.ant-form-item-control-input-content .ant-picker {
+  width: 100%;
+}
+
+
