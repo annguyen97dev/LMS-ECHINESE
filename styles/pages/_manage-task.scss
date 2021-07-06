@@ -1,0 +1,30 @@
+.list-subtask {
+    margin-bottom: 24px;
+    .item-subtask {
+      margin-bottom: 10px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    .ant-checkbox-group {
+      height: 150px;
+      overflow: auto;
+      padding-right: 10px;
+  
+      &::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: white;
+      }
+  
+      &::-webkit-scrollbar {
+        border: none;
+        width: 4px;
+        background-color: #f5f5f5;
+      }
+  
+      &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: $primary-color;
+      }
+    }
+  }
