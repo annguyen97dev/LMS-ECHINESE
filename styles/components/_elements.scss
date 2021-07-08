@@ -112,15 +112,14 @@
 
   &:hover {
     color: #fff;
-    background-color: #1378ab;
-    border-color: #1378ab;
+    background-color: $primary-hover;
+    border-color: $primary-hover;
   }
-
   &:focus {
     box-shadow: none;
     color: #fff;
-    background-color: #1378ab;
-    border-color: #1378ab;
+    background-color: $primary-hover;
+    border-color: $primary-hover;
   }
 }
 
