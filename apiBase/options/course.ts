@@ -1,8 +1,12 @@
 import { instance } from "~/apiBase/instance";
 
 class CourseApi {
-  getAll = () =>
-    instance.get<IApiResultAcc<ICourse[]>>("/api/Course/GetAllCourse");
+  getAll = (page: number) =>
+    instance.get<IApiResultAcc<ICourse[]>>("/api/Course/GetAllCourse", {
+      params: {
+        page: page,
+      },
+    });
   getWithID = (CourseID: number) =>
     instance.get<IApiResult<ICourse[]>>("/api/Course/GetCourse", {
       params: {
