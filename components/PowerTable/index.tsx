@@ -75,6 +75,7 @@ const PowerTable = React.memo((props: any) => {
                 dataSource={dataSource}
                 size="middle"
                 pagination={{
+                  total: props.totalPage && props.totalPage,
                   onChange: (pageNumber) => changePagination(pageNumber),
                 }}
                 rowSelection={rowSelection}

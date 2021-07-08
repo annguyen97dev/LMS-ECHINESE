@@ -13,7 +13,7 @@ export const login = async (params) => {
     formData.append("username", params.username);
     formData.append("password", params.password);
 
-    const res = await instance.post("/api/Account/Login", formData, {
+    const res = await instance.post("/api/Account/LoginV2", formData, {
       headers: formData.getHeaders(),
     });
 

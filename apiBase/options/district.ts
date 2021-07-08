@@ -7,6 +7,14 @@ class DistrictApi {
         id: id,
       },
     });
+
+  getByArea = (areaID: number) =>
+    instance.get<IApiResultData<IDistrict[]>>("/api/District/GetByAreaID", {
+      params: {
+        id: areaID,
+      },
+    });
+
   //   post = (data: IBranch) => instance.post("/api/Branch/InsertBranch", data);
 }
 
