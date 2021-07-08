@@ -27,7 +27,7 @@ const MeetingInternal = () => {
                 <div className="wrap-zoom" key={item.id}>
                   <div className="row">
                     <div
-                      className="col-2 d-md-block d-sm-none d-none"
+                      className="col-2 image-wrap"
                       style={{ width: "150px" }}
                     >
                       <div className="zoom-image">

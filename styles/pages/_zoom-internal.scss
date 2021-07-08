@@ -11,6 +11,14 @@
     margin-bottom: 20px;
     .zoom-icons {
       padding-right: 0.8rem;
+      @include max-media(800px) {
+        display: none;
+      }
+    }
+    .image-wrap {
+      @include max-media(1100px) {
+        display: none;
+      }
     }
     .zoom-image {
       width: 120px;
@@ -26,6 +34,9 @@
     .zoom-title {
       margin: 2px 0px 0px 10px;
       color: crimson;
+      @include max-media(767px) {
+        margin: 10px 0px 0px 0px;
+      }
     }
 
     .zoom-content {
@@ -75,10 +86,10 @@
     }
   }
 
-  @include max-media(600px) {
-    .col-12 {
-      display: flex;
-      flex-direction: column-reverse;
-    }
-  }
+  // @include max-media(600px) {
+  //   .col-12 {
+  //     display: flex;
+  //     flex-direction: column-reverse;
+  //   }
+  // }
 }
