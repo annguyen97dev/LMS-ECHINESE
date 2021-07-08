@@ -117,12 +117,16 @@ const Center = () => {
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Input
+            value={valueSearch}
             placeholder={`Search ${dataIndex}`}
             onPressEnter={() => handleSearch()}
             onChange={getValueSearch}
             style={{ marginBottom: 8, display: "block" }}
           />
           <Space>
+            <Button onClick={handleReset} size="small" style={{ width: 90 }}>
+              Reset
+            </Button>
             <Button
               type="primary"
               onClick={() => handleSearch()}
@@ -131,9 +135,6 @@ const Center = () => {
               style={{ width: 90 }}
             >
               Search
-            </Button>
-            <Button onClick={handleReset} size="small" style={{ width: 90 }}>
-              Reset
             </Button>
           </Space>
         </div>
@@ -323,7 +324,6 @@ const Center = () => {
 
           <Tooltip title="Cập nhật trung tâm">
             <CenterForm
-              showIcon={true}
               branchId={data.ID}
               getBranchDetail={(branchId: number) => {
                 let res = getBranchDetail(branchId);
@@ -351,18 +351,17 @@ const Center = () => {
         TitlePage="Danh sách trung tâm"
         TitleCard={
           <CenterForm
-            showAdd={true}
             isLoading={isLoading}
             _onSubmit={(data: any) => _onSubmit(data)}
           />
         }
         dataSource={center}
         columns={columns}
-        // Extra={
-        //   <div className="extra-table">
-        //     <SortBox />
-        //   </div>
-        // }
+        Extra={
+          <div className="extra-table">
+            <SortBox />
+          </div>
+        }
       />
     </Fragment>
   );

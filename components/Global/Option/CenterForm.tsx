@@ -23,7 +23,7 @@ import { RotateCcw } from "react-feather";
 
 const CenterForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading } = props;
+
   const { showNoti } = useWrap();
   const [dataArea, setDataArea] = useState<IArea[]>(null);
   const {
@@ -41,7 +41,7 @@ const CenterForm = React.memo((props: any) => {
   const [loadingSelect, setLoadingSelect] = useState(false);
   const [dataDetail, setDataDetail] = useState<IBranch>();
 
-  const { rowData, branchId } = props;
+  const { rowData, branchId, isLoading, _onSubmit, getBranchDetail } = props;
   const [form] = Form.useForm();
 
   //GET DATA AREA
@@ -75,7 +75,7 @@ const CenterForm = React.memo((props: any) => {
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
-    let res = props._onSubmit(data);
+    let res = _onSubmit(data);
 
     res.then(function (rs: any) {
       rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
@@ -97,13 +97,12 @@ const CenterForm = React.memo((props: any) => {
     setValue(name, value);
   };
 
+  // Action khi mở modal sẽ run api area, và check coi tồn tại branchID hay ko
   useEffect(() => {
-    // isModalVisible && getAllArea();
-
     if (isModalVisible) {
       getAllArea();
       if (branchId) {
-        let res = props.getBranchDetail(branchId);
+        let res = getBranchDetail(branchId);
 
         res.then(function (rs: any) {
           rs && rs.status == 200 && setDataDetail(rs.data.data);
@@ -112,6 +111,7 @@ const CenterForm = React.memo((props: any) => {
     }
   }, [isModalVisible]);
 
+  // Sau khi lấy dc data chi tiết thì setValue cho nó
   useEffect(() => {
     if (dataDetail) {
       getDistrictByArea(dataDetail.AreaID);
@@ -121,13 +121,9 @@ const CenterForm = React.memo((props: any) => {
     }
   }, [dataDetail]);
 
-  useEffect(() => {
-    setValue("Enable", true);
-  }, []);
-
   return (
     <>
-      {props.showIcon && (
+      {branchId ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
@@ -138,8 +134,7 @@ const CenterForm = React.memo((props: any) => {
             <RotateCcw />
           </Tooltip>
         </button>
-      )}
-      {props.showAdd && (
+      ) : (
         <button
           className="btn btn-warning add-new"
           onClick={() => {
