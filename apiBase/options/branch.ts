@@ -1,22 +1,48 @@
 import { instance } from "~/apiBase/instance";
 
 class BranchApi {
-  getAll = () =>
-    instance.get<IApiResult<IBranch[]>>("/api/Branch/GetAllBranch");
-  getAllNoPage = () =>
-    instance.get<IApiResult<IBranch[]>>("/api/Branch/GetAll");
-  getPagination = (pageIndex: number) =>
-    instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAllBranch", {
+  // Lấy tất cả data có phân trang
+  getAll = (pageSize: number, pageIndex: number) =>
+    instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAll", {
       params: {
-        page: pageIndex,
+        pageSize: pageSize,
+        pageIndex: pageIndex,
       },
     });
 
-  getDetail = (id: number) =>
-    instance.get<IApiResult<IBranch>>(`/api/Branch/GetBranch?id=${id}`);
+  // Search branch code
+  searchBranchCode = (code: number) =>
+    instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAll", {
+      params: {
+        branchCode: code,
+      },
+    });
 
-  post = (data: IBranch) => instance.post("/api/Branch/InsertBranch", data);
-  put = (data: IBranch) => instance.put("/api/Branch/UpdateBranch", data, {});
+  // Search branch code
+  searchBranchName = (name: string) =>
+    instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAll", {
+      params: {
+        branchName: name,
+      },
+    });
+
+  // Lấy chi tiết data theo ID
+  getByID = (id: number) =>
+    instance.get<IApiResultData<IBranch>>(`/api/Branch/GetById`, {
+      params: {
+        id: id,
+      },
+    });
+
+  // Cập nhật trạng thái ẩn/hiện
+  changeStatus = (id: number) =>
+    instance.put<IApiResultData<IBranch[]>>(`/api/Branch/Hide/${id}`);
+
+  // Thêm mới data
+  add = (data: IBranch) => instance.post("/api/Branch/Insert", data);
+
+  // Cập nhật data
+  update = (data: IBranch) => instance.put("/api/Branch/Update", data, {});
 }
 
 export const branchApi = new BranchApi();

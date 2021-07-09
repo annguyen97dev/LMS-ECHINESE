@@ -112,15 +112,14 @@
 
   &:hover {
     color: #fff;
-    background-color: #1378ab;
-    border-color: #1378ab;
+    background-color: $primary-hover;
+    border-color: $primary-hover;
   }
-
   &:focus {
     box-shadow: none;
     color: #fff;
-    background-color: #1378ab;
-    border-color: #1378ab;
+    background-color: $primary-hover;
+    border-color: $primary-hover;
   }
 }
 
@@ -374,15 +373,28 @@
 
   &:hover {
     background-color: transparent;
-    border-color: #40a9ff!important;
+    border-color: #40a9ff !important;
     color: #000;
   }
 
   &:focus {
     box-shadow: none;
     background-color: transparent;
-    border-color: #40a9ff!important;
+    border-color: #40a9ff !important;
     color: #000;
+  }
+}
+.btn-show-image {
+  margin-left: 0.8rem;
+  border-radius: 0.375rem;
+  color: #1378ab;
+  background-color: #fff;
+  border-color: #1378ab;
+  border-width: 0.1rem;
+
+  &:hover {
+    color: #fff;
+    background-color: #1378ab;
   }
 }
 
@@ -1334,7 +1346,7 @@ hr {
   }
 }
 .wrap-breadcrumb {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   padding: 0 15px;
 }
 
@@ -1554,4 +1566,11 @@ hr {
   width: 100%;
 }
 
-
+.instructions {
+  padding-bottom: 14px;
+  color: blue;
+  &:hover {
+    color: rgb(0, 15, 151);
+    cursor: pointer;
+  }
+}

@@ -12,9 +12,7 @@ const FilterColumn = (dataIndex) => {
     searchText: "",
     searchedColumn: "",
   });
-
   const searchInput = useRef(null);
-
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setState({
@@ -22,7 +20,6 @@ const FilterColumn = (dataIndex) => {
       searchedColumn: dataIndex,
     });
   };
-
   const handleReset = (clearFilters) => {
     clearFilters();
     setState({
@@ -30,7 +27,6 @@ const FilterColumn = (dataIndex) => {
       searchText: "",
     });
   };
-
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -107,7 +103,6 @@ const FilterColumn = (dataIndex) => {
         text
       ),
   });
-
   return getColumnSearchProps(dataIndex);
 };
 

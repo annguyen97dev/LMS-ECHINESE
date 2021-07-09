@@ -40,7 +40,7 @@ const Grade = () => {
     });
     (async () => {
       try {
-        let res = await courseApi.getAll();
+        let res = await courseApi.getAll(indexPage);
         res.status == 200 && setDataCourse(res.data.acc);
       } catch (error) {
         showNoti("danger", error.message);

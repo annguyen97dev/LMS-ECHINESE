@@ -23,6 +23,13 @@
         padding-top: 0;
       }
 
+      .box-detail {
+        width: 90%;
+      }
+      .box-action {
+        width: 7%;
+      }
+
       .box-title {
         .title-ques {
           color: $primary-color;
@@ -36,7 +43,8 @@
       }
 
       .box-answer {
-        margin-top: 20px;
+        width: 70%;
+        margin-top: 15px;
 
         .list-answer {
           padding-left: 0;
@@ -391,5 +399,62 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+.question-wrap {
+  width: 100%;
+
+  .row {
+    width: 100%;
+  }
+
+  .tick {
+    font-weight: 500;
+    color: rgb(59, 59, 59);
+    margin-right: 5px;
+  }
+
+  &.question-multiple {
+    .ant-checkbox-wrapper {
+      margin-left: 0;
+    }
+    .ant-checkbox {
+      display: inline-block;
+    }
+  }
+}
+.input-show-text {
+  padding: 5px 20px;
+  margin: 0 5px;
+  background: #0000001a;
+}
+.synonym-list {
+  padding-left: 0;
+  margin-bottom: 0;
+  li {
+    list-style-type: none;
+  }
+}
+.note-type-question {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  margin-top: 10px;
+}
+
+.wrap-form-question {
+  .tick {
+    font-weight: 600;
+  }
+  .input-answer {
+    width: 80%;
+    margin-left: 10px;
+    display: inline-block;
+  }
+  label {
+    margin-bottom: 15px;
+    margin-right: 0;
   }
 }

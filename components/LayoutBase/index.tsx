@@ -55,7 +55,8 @@ const LayoutBase = ({ children }) => {
       ) : (
         <Layout>{children}</Layout>
       )}
-      {/* {session && <Layout>{children}</Layout>} */}
+
+      {/* <Layout>{children}</Layout> */}
     </>
   );
 };
