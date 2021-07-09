@@ -1,16 +1,19 @@
 type IApiResult<T = any> = {
   createAcc: T;
   message: string;
+  totalRow: number;
 };
 
 type IApiResultData<T = any> = {
   data: T;
   message: string;
+  totalRow: number;
 };
 
 type IApiResultAcc<T = any> = {
   acc: T;
   message: string;
+  totalRow: number;
 };
 
 type IBaseApi<T> = {

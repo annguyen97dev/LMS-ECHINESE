@@ -23,9 +23,9 @@ import { RotateCcw } from "react-feather";
 
 const CenterForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading } = props;
+
   const { showNoti } = useWrap();
-  const [dataArea, setDataArea] = useState<IArea[]>();
+  const [dataArea, setDataArea] = useState<IArea[]>(null);
   const {
     reset,
     register,
@@ -38,12 +38,18 @@ const CenterForm = React.memo((props: any) => {
 
   const [dataDistrict, setDataDistrict] = useState<IDistrict[]>([]);
 
+  const [loadingSelect, setLoadingSelect] = useState(false);
+  const [dataDetail, setDataDetail] = useState<IBranch>();
+
+  const { rowData, branchId, isLoading, _onSubmit, getBranchDetail } = props;
+  const [form] = Form.useForm();
+
   //GET DATA AREA
   const getAllArea = () => {
     (async () => {
       try {
-        const res = await areaApi.getAll();
-        res.status == 200 && setDataArea(res.data.createAcc);
+        const res = await areaApi.getAll(true);
+        res.status == 200 && setDataArea(res.data.data);
       } catch (err) {
         showNoti("danger", err);
       }
@@ -51,73 +57,84 @@ const CenterForm = React.memo((props: any) => {
   };
 
   // Get DATA DISTRICT
-  const getAllDistrict = (AreaID: number) => {
+  const getDistrictByArea = (AreaID: number) => {
+    setLoadingSelect(true);
+
+    setDataDistrict([]);
     (async () => {
       try {
-        const res = await districtApi.getAll(AreaID);
-        res.status == 200 && setDataDistrict(res.data.createAcc);
+        const res = await districtApi.getByArea(AreaID);
+        res.status == 200 && setDataDistrict(res.data.data);
       } catch (err) {
         showNoti("danger", err.message);
+      } finally {
+        setLoadingSelect(false);
       }
     })();
   };
 
   // SUBMI FORM
-  const onSubmit = handleSubmit((data: any) => {
-    let res = props._onSubmit(data);
+  const onSubmit = handleSubmit((data: any, e) => {
+    let res = _onSubmit(data);
 
     res.then(function (rs: any) {
-      rs
-        ? rs.status == 200 && setIsModalVisible(false)
-        : showNoti("danger", "Server lỗi");
+      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
+      reset({
+        defaultValues: {
+          BranchCode: "",
+        },
+      });
     });
   });
 
-  useEffect(() => {
-    if (props.rowData) {
-      Object.keys(props.rowData).forEach(function (key) {
-        setValue(key, props.rowData[key]);
-      });
-
-      // setValue("BranchCode", props.rowData.BranchCode);
-      // setValue("BranchName", props.rowData.BranchName);
-      // setValue("Phone", props.rowData.Phone);
-      // setValue("Address", props.rowData.Address);
-      // setValue("AreaID", props.rowData.AreaID);
-      // setValue("DistrictID", props.rowData.DistrictID);
-    }
-  }, [props.rowData]);
-
-  // FUNCTION SELECT
+  // ON CHANGE SELECT
   const onChangeSelect = (name) => (value) => {
-    name == "AreaID" && getAllDistrict(value);
-    getAllDistrict(value);
+    console.log("Name ", name);
+
+    name == "AreaID" &&
+      (form.setFieldsValue({ DistrictID: "" }), getDistrictByArea(value));
+
     setValue(name, value);
   };
 
+  // Action khi mở modal sẽ run api area, và check coi tồn tại branchID hay ko
   useEffect(() => {
-    isModalVisible && getAllArea();
+    if (isModalVisible) {
+      getAllArea();
+      if (branchId) {
+        let res = getBranchDetail(branchId);
+
+        res.then(function (rs: any) {
+          rs && rs.status == 200 && setDataDetail(rs.data.data);
+        });
+      }
+    }
   }, [isModalVisible]);
 
+  // Sau khi lấy dc data chi tiết thì setValue cho nó
   useEffect(() => {
-    setValue("Enable", true);
-  }, []);
+    if (dataDetail) {
+      getDistrictByArea(dataDetail.AreaID);
+      Object.keys(dataDetail).forEach(function (key) {
+        setValue(key, dataDetail[key]);
+      });
+    }
+  }, [dataDetail]);
 
   return (
     <>
-      {props.showIcon && (
+      {branchId ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
-            setIsModalVisible(true), props.getBranchDetail(props.branchId);
+            setIsModalVisible(true);
           }}
         >
           <Tooltip title="Cập nhật">
             <RotateCcw />
           </Tooltip>
         </button>
-      )}
-      {props.showAdd && (
+      ) : (
         <button
           className="btn btn-warning add-new"
           onClick={() => {
@@ -135,10 +152,10 @@ const CenterForm = React.memo((props: any) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical">
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Mã trung tâm">
+                <Form.Item name="BranchCode" label="Mã trung tâm">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -150,8 +167,9 @@ const CenterForm = React.memo((props: any) => {
                       {...register("BranchCode")}
                       placeholder=""
                       className="style-input"
-                      defaultValue={props.rowData?.BranchCode}
+                      defaultValue={rowData?.BranchCode}
                       onChange={(e) => setValue("BranchCode", e.target.value)}
+                      allowClear={true}
                     />
                   )}
                 </Form.Item>
@@ -159,7 +177,7 @@ const CenterForm = React.memo((props: any) => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Tên trung tâm">
+                <Form.Item name="BranchName" label="Tên trung tâm">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -171,8 +189,9 @@ const CenterForm = React.memo((props: any) => {
                       {...register("BranchName")}
                       placeholder=""
                       className="style-input"
-                      defaultValue={props.rowData?.BranchName}
+                      defaultValue={rowData?.BranchName}
                       onChange={(e) => setValue("BranchName", e.target.value)}
+                      allowClear={true}
                     />
                   )}
                 </Form.Item>
@@ -180,7 +199,7 @@ const CenterForm = React.memo((props: any) => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Số điện thoại">
+                <Form.Item name="Phone" label="Số điện thoại">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -192,8 +211,9 @@ const CenterForm = React.memo((props: any) => {
                       {...register("Phone")}
                       placeholder=""
                       className="style-input"
-                      defaultValue={props.rowData?.Phone}
+                      defaultValue={rowData?.Phone}
                       onChange={(e) => setValue("Phone", e.target.value)}
+                      allowClear={true}
                     />
                   )}
                 </Form.Item>
@@ -201,7 +221,7 @@ const CenterForm = React.memo((props: any) => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Địa chỉ">
+                <Form.Item name="Address" label="Địa chỉ">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -213,16 +233,17 @@ const CenterForm = React.memo((props: any) => {
                       {...register("Address")}
                       placeholder=""
                       className="style-input"
-                      defaultValue={props.rowData?.Address}
+                      defaultValue={rowData?.Address}
                       onChange={(e) => setValue("Address", e.target.value)}
+                      allowClear={true}
                     />
                   )}
                 </Form.Item>
               </div>
             </div>
             <div className="row">
-              <div className="col-12">
-                <Form.Item label="Vùng">
+              <div className="col-md-6 col-12">
+                <Form.Item name="AreaID" label="Vùng">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -234,10 +255,9 @@ const CenterForm = React.memo((props: any) => {
                       style={{ width: "100%" }}
                       className="style-input"
                       showSearch
-                      placeholder="Select..."
                       optionFilterProp="children"
                       onChange={onChangeSelect("AreaID")}
-                      defaultValue={props.rowData?.AreaID}
+                      defaultValue={rowData?.AreaID}
                     >
                       {dataArea?.map((item) => (
                         <Option value={item.AreaID}>{item.AreaName}</Option>
@@ -246,11 +266,9 @@ const CenterForm = React.memo((props: any) => {
                   )}
                 </Form.Item>
               </div>
-            </div>
 
-            <div className="row">
-              <div className="col-12">
-                <Form.Item label="Quận">
+              <div className="col-md-6 col-12">
+                <Form.Item name="DistrictID" label="Quận">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -259,37 +277,34 @@ const CenterForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Select
+                      loading={loadingSelect}
                       style={{ width: "100%" }}
                       className="style-input"
                       showSearch
-                      placeholder="Select..."
                       optionFilterProp="children"
                       onChange={onChangeSelect("DistrictID")}
+                      defaultValue={rowData?.DistrictID}
                     >
                       {dataDistrict?.length > 0 ? (
                         dataDistrict?.map((item) => (
                           <Option value={item.ID}>{item.DistrictName}</Option>
                         ))
                       ) : (
-                        <Option value={5}>Không có data</Option>
+                        <Option value={5}>...</Option>
                       )}
                     </Select>
                   )}
                 </Form.Item>
               </div>
             </div>
+
             <div className="col-12">
-              <Button
-                className="w-100"
-                type="primary"
-                size="large"
-                onClick={handleSubmit(onSubmit)}
-              >
-                LƯU
+              <button type="submit" className="btn btn-primary w-100">
+                Lưu
                 {isLoading.type == "ADD_DATA" && isLoading.status && (
                   <Spin className="loading-base" />
                 )}
-              </Button>
+              </button>
             </div>
           </Form>
         </div>

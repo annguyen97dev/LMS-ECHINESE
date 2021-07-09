@@ -16,7 +16,7 @@ function getUrl(config) {
 export const authHeader_X = async () => {
   const session = await getSession();
   if (session && session.accessToken) {
-    return { Token: session.accessToken };
+    return { token: session.accessToken };
   } else {
     return {};
   }
