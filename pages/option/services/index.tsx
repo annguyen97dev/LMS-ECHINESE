@@ -10,7 +10,6 @@ import { Tooltip, Switch } from "antd";
 import ServiceForm from "~/components/Global/Option/ServiceForm";
 import LayoutBase from "~/components/LayoutBase";
 import { useWrap } from "~/context/wrap";
-import DecideModal from "~/components/Elements/DecideModal";
 const ServiceList = () => {
   const [dataService, setDataService] = useState<IService[]>([]);
   const { showNoti } = useWrap();
@@ -36,7 +35,7 @@ const ServiceList = () => {
     (async () => {
       try {
         let res = await serviceApi.getAll();
-        res.status == 200 && setDataService(res.data.createAcc);
+        res.status == 200 && setDataService(res.data.data);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -56,7 +55,7 @@ const ServiceList = () => {
     (async () => {
       try {
         let res = await serviceApi.getWitdhID(ServiceID);
-        res.status == 200 && setRowData(res.data.createAcc); 
+        res.status == 200 && setRowData(res.data.data); 
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -108,29 +107,18 @@ const ServiceList = () => {
   }
 
   // DELETE COURSE
-  const changeStatus = (checked: boolean, idCourse: number) => {
-    setDataHidden({
-      ListCourseId: idCourse,
-      Enable: checked,
-    });
+  const changeStatus = async (checked: boolean, idRow: number) => {
+    console.log("Checked: ", checked);
+    console.log("Branch ID: ", idRow);
 
-    !isOpen.isOpen && checked
-      ? setIsOpen({ isOpen: true, status: "hide" })
-      : setIsOpen({ isOpen: true, status: "show" });
-  };
-
-  const statusShow = async () => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
+
     try {
-      let res = await serviceApi.patch(dataHidden);
-      res.status == 200 && getDataService(),
-        showNoti("success", res.data.message),
-        isOpen.status == "hide"
-          ? setIsOpen({ isOpen: false, status: "hide" })
-          : setIsOpen({ isOpen: false, status: "show" });
+      let res = await serviceApi.changeStatus(idRow);
+      res.status == 200 && getDataService();
     } catch (error) {
       showNoti("danger", error.Message);
     } finally {
@@ -166,7 +154,7 @@ const ServiceList = () => {
             unCheckedChildren="Hide"
             checked={Enable}
             size="default"
-            onChange={(checked) => changeStatus(checked, record.ListCourseID)}
+            onChange={(checked) => changeStatus(checked, record.ID)}
           />
         </>
       ),
@@ -195,21 +183,6 @@ const ServiceList = () => {
 
   return (
     <>
-      <DecideModal
-        content={`Bạn có chắc muốn ${
-          isOpen.status == "hide" ? "hiện" : "ẩn"
-        } không?`}
-        addClass="color-red"
-        isOpen={isOpen.isOpen}
-        isCancel={() =>
-          setIsOpen({
-            ...isOpen,
-            isOpen: false,
-          })
-        }
-        isOk={() => statusShow()}
-      />
-
       <PowerTable
         loading={isLoading}
         addClass="basic-header"

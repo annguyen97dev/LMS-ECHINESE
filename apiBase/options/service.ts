@@ -2,16 +2,16 @@ import { instance } from "~/apiBase/instance";
 
 class ServiceApi {
     getAll = () =>
-        instance.get<IApiResult<IService[]>>("/api/Services/GetAll");
+        instance.get<IApiResultData<IService[]>>("/api/Services/GetAll");
     getWitdhID = (ServiceId: number) =>
-        instance.get<IApiResult<IService[]>>("/api/Services/GetServices", {
+        instance.get<IApiResultData<IService[]>>("/api/Services/GetByID", {
             params: {
                 id: ServiceId
             }
         });
-    post = (data: IService) => instance.post("/api/Services/InsertServices", data, {}); 
-    put = (data: IService) => instance.put("/api/Services/UpdateServices", data, {}); 
-    patch = (data: any) => instance.patch("/api/Services/UpdateHiddenService", data);
+    post = (data: IService) => instance.post("/api/Services/Insert", data, {}); 
+    put = (data: IService) => instance.put("/api/Services/Update", data, {}); 
+    changeStatus = (id: number) => instance.delete(`/api/Services/Hide/${id}`);
 }
 
 export const serviceApi = new ServiceApi();
