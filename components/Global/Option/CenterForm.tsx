@@ -90,10 +90,8 @@ const CenterForm = React.memo((props: any) => {
   // ON CHANGE SELECT
   const onChangeSelect = (name) => (value) => {
     console.log("Name ", name);
-
     name == "AreaID" &&
       (form.setFieldsValue({ DistrictID: "" }), getDistrictByArea(value));
-
     setValue(name, value);
   };
 
@@ -155,7 +153,7 @@ const CenterForm = React.memo((props: any) => {
           <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="BranchCode" label="Mã trung tâm">
+                <Form.Item name="JobName" label="Tên nghề nghiệp">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -164,39 +162,18 @@ const CenterForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Input
-                      {...register("BranchCode")}
+                      {...register("JobName")}
                       placeholder=""
                       className="style-input"
-                      defaultValue={rowData?.BranchCode}
-                      onChange={(e) => setValue("BranchCode", e.target.value)}
+                      // defaultValue={rowData?.JobName}
+                      onChange={(e) => setValue("JobName", e.target.value)}
                       allowClear={true}
                     />
                   )}
                 </Form.Item>
               </div>
             </div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Item name="BranchName" label="Tên trung tâm">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("BranchName")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={rowData?.BranchName}
-                      onChange={(e) => setValue("BranchName", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
-                </Form.Item>
-              </div>
-            </div>
+
             <div className="row">
               <div className="col-12">
                 <Form.Item name="Phone" label="Số điện thoại">
