@@ -1,7 +1,7 @@
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Button, Form, Input, Modal, Tooltip} from 'antd';
 import moment from 'moment';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {RotateCcw} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
@@ -9,7 +9,13 @@ import DateField from '~/components/FormControl/DateField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
 
 const DayOffForm = (props) => {
-	const {isUpdate, handleCreateDayOff} = props;
+	const {
+		handleCreateDayOff,
+		isUpdate,
+		handleUpdateDayOff,
+		updateObj,
+		idxUpdateOjb,
+	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -18,6 +24,7 @@ const DayOffForm = (props) => {
 		DayOff: yup.string().required('Bạn không được để trống'),
 		DayOffName: yup.string().required('Bạn không được để trống'),
 	});
+
 	const defaultValuesInit = {
 		DayOff: moment().format('YYYY-MM-DD'),
 		DayOffName: '',
@@ -27,12 +34,29 @@ const DayOffForm = (props) => {
 		resolver: yupResolver(schema),
 	});
 
-	const checkHandleCreateDayOff = (data) => {
-		if (!handleCreateDayOff) return;
-		handleCreateDayOff(data);
+	useEffect(() => {
+		if (isUpdate && updateObj && idxUpdateOjb >= 0) {
+			Object.entries(updateObj).forEach((arr) => form.setValue(arr[0], arr[1]));
+		}
+	}, [updateObj, idxUpdateOjb]);
+
+	const dayOffSwitchFunc = (data) => {
+		switch (isUpdate) {
+			case true:
+				if (!handleUpdateDayOff) return;
+				handleUpdateDayOff(data, idxUpdateOjb, updateObj);
+				break;
+			case false:
+				if (!handleCreateDayOff) return;
+				handleCreateDayOff(data);
+				form.reset({...defaultValuesInit});
+				break;
+			default:
+				break;
+		}
 		closeModal();
-		form.reset({...defaultValuesInit});
 	};
+
 	return (
 		<>
 			{isUpdate ? (
@@ -47,7 +71,7 @@ const DayOffForm = (props) => {
 				</button>
 			)}
 			<Modal
-				title="Create Day Off"
+				title={isUpdate ? 'Update Day Off' : 'Create Day Off'}
 				visible={isModalVisible}
 				onOk={closeModal}
 				onCancel={closeModal}
@@ -56,7 +80,7 @@ const DayOffForm = (props) => {
 				<div className="container-fluid">
 					<Form
 						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleCreateDayOff)}
+						onFinish={form.handleSubmit(dayOffSwitchFunc)}
 					>
 						<div className="row">
 							<div className="col-12">
@@ -76,7 +100,7 @@ const DayOffForm = (props) => {
 						<div className="row ">
 							<div className="col-12">
 								<button type="submit" className="btn btn-primary w-100">
-									Create
+									{isUpdate ? 'Update' : 'Create'}
 								</button>
 							</div>
 						</div>
