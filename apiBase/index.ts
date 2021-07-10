@@ -6,6 +6,7 @@ export { classApi } from "./options/class";
 export { roomApi } from "./options/room";
 export { studyTimeApi } from "./options/study-time";
 export { curriculumApi } from "./options/curriculum";
+export { jobApi } from "./options/job";
 // export const addDataDistrict = async (data) => {
 //   let result;
 //   try {
