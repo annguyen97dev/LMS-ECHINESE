@@ -37,7 +37,7 @@ const StaffSalary = () => {
 		try {
 		  let res = await staffSalaryApi.getAll(10, indexPage);
 		  res.status == 200 && setDataStaffSalary(res.data.data);
-		  setTotalPage(res.data.totalRow);
+		  setTotalPage(res.data.TotalRow);
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
