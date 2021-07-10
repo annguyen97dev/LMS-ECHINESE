@@ -1,29 +1,47 @@
 import { instance } from "~/apiBase/instance";
 
+const getParams = (todoApi) => {
+  let params = null;
+  let action = todoApi.action;
+
+  switch (action) {
+    case "getAll":
+      params = {
+        pageSize: 10,
+        pageIndex: todoApi.pageIndex,
+      };
+      break;
+    case "BranchCode":
+      params = {
+        branchCode: todoApi.value,
+      };
+      break;
+    case "BranchName":
+      params = {
+        branchName: todoApi.value,
+      };
+      break;
+    case "sortField":
+      params = {
+        sort: todoApi.sort,
+      };
+      break;
+    case "sortType":
+      params = {
+        sortType: todoApi.sortType,
+      };
+    default:
+      break;
+  }
+
+  return params;
+};
+
 class BranchApi {
   // Lấy tất cả data có phân trang
-  getAll = (pageSize: number, pageIndex: number) =>
+  getAll = (todoApi: object) =>
     instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAll", {
-      params: {
-        pageSize: pageSize,
-        pageIndex: pageIndex,
-      },
-    });
-
-  // Search branch code
-  searchBranchCode = (code: number) =>
-    instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAll", {
-      params: {
-        branchCode: code,
-      },
-    });
-
-  // Search branch code
-  searchBranchName = (name: string) =>
-    instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAll", {
-      params: {
-        branchName: name,
-      },
+      params: getParams(todoApi),
     });
 
   // Lấy chi tiết data theo ID

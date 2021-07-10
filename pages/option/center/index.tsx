@@ -31,49 +31,46 @@ const Center = () => {
   const { showNoti } = useWrap();
   const [rowData, setRowData] = useState<IBranch>();
   const [totalPage, setTotalPage] = useState(null);
-
-  console.log("Data center: ", center);
+  const dataOption = [
+    {
+      value: 0,
+      text: "Mã trung tâm",
+    },
+    {
+      value: 1,
+      text: "Tên trung tâm",
+    },
+    {
+      value: 2,
+      text: "Tăng dần",
+    },
+    {
+      value: 3,
+      text: "Giảm dần",
+    },
+  ];
 
   const FilterColumn = (dataIndex) => {
     const [isVisible, setIsVisible] = useState(false);
     const [valueSearch, setValueSearch] = useState<any>(null);
-
+    const inputRef = useRef<any>(null);
     const getValueSearch = (e) => {
       setValueSearch(e.target.value);
     };
 
-    const SearchBranchCode = async () => {
+    const searchAPI = async (dataIndex) => {
       setIsLoading({
         type: "GET_ALL",
         status: true,
       });
+
+      let todoApi = {
+        action: dataIndex,
+        value: valueSearch,
+      };
+
       try {
-        let res = await branchApi.searchBranchCode(valueSearch);
-
-        if (res.status == 200) {
-          res.data.data.length > 0
-            ? (setCenter(res.data.data), setValueSearch(null))
-            : showNoti("danger", "Không tìm thấy");
-        }
-
-        setTotalPage(res.data.totalRow);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "GET_ALL",
-          status: false,
-        });
-      }
-    };
-
-    const SearchBranchName = async () => {
-      setIsLoading({
-        type: "GET_ALL",
-        status: true,
-      });
-      try {
-        let res = await branchApi.searchBranchName(valueSearch);
+        let res = await branchApi.getAll(todoApi);
 
         if (res.status == 200) {
           res.data.data.length > 0
@@ -96,10 +93,10 @@ const Center = () => {
     const handleSearch = () => {
       switch (dataIndex) {
         case "BranchCode":
-          SearchBranchCode();
+          searchAPI(dataIndex);
           break;
         case "BranchName":
-          SearchBranchName();
+          searchAPI(dataIndex);
           break;
         default:
           break;
@@ -113,10 +110,19 @@ const Center = () => {
       setIsVisible(false);
     };
 
+    useEffect(() => {
+      if (isVisible) {
+        setTimeout(() => {
+          inputRef.current.select();
+        }, 100);
+      }
+    }, [isVisible]);
+
     const getColumnSearchProps = (dataIndex) => ({
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Input
+            ref={inputRef}
             value={valueSearch}
             placeholder={`Search ${dataIndex}`}
             onPressEnter={() => handleSearch()}
@@ -124,9 +130,6 @@ const Center = () => {
             style={{ marginBottom: 8, display: "block" }}
           />
           <Space>
-            <Button onClick={handleReset} size="small" style={{ width: 90 }}>
-              Reset
-            </Button>
             <Button
               type="primary"
               onClick={() => handleSearch()}
@@ -135,6 +138,9 @@ const Center = () => {
               style={{ width: 90 }}
             >
               Search
+            </Button>
+            <Button onClick={handleReset} size="small" style={{ width: 90 }}>
+              Reset
             </Button>
           </Space>
         </div>
@@ -146,29 +152,34 @@ const Center = () => {
         visible ? setIsVisible(true) : setIsVisible(false);
       },
     });
+
     return getColumnSearchProps(dataIndex);
   };
 
   // -------------- GET DATA CENTER ----------------
-  const getDataCenter = () => {
+  const getDataCenter = async () => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
-    (async () => {
-      try {
-        let res = await branchApi.getAll(10, indexPage);
-        res.status == 200 && setCenter(res.data.data),
-          setTotalPage(res.data.totalRow);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "GET_ALL",
-          status: false,
-        });
-      }
-    })();
+
+    let todoApi = {
+      action: "getAll",
+      pageIndex: indexPage,
+    };
+
+    try {
+      let res = await branchApi.getAll(todoApi);
+      res.status == 200 && setCenter(res.data.data),
+        setTotalPage(res.data.totalRow);
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
   };
 
   // ----------- GET BRANCH DETAIL ---------------
@@ -268,6 +279,48 @@ const Center = () => {
     getDataCenter();
   };
 
+  const handleSort = async (value) => {
+    value = value + 1;
+    let todoApi = null;
+
+    if (value > 2) {
+      if (value == 3) {
+        todoApi = {
+          action: "sortType",
+          sortType: true,
+        };
+      } else {
+        todoApi = {
+          action: "sortType",
+          sortType: false,
+        };
+      }
+    } else {
+      todoApi = {
+        action: "sortField",
+        sort: value,
+      };
+    }
+
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
+    try {
+      let res = await branchApi.getAll(todoApi);
+
+      res.status && setCenter(res.data.data);
+      setTotalPage(res.data.totalRow);
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
+  };
+
   // ============== USE EFFECT ===================
   useEffect(() => {
     getDataCenter();
@@ -359,7 +412,10 @@ const Center = () => {
         columns={columns}
         Extra={
           <div className="extra-table">
-            <SortBox />
+            <SortBox
+              handleSort={(value) => handleSort(value)}
+              dataOption={dataOption}
+            />
           </div>
         }
       />
