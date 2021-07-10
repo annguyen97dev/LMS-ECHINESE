@@ -1,10 +1,32 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, Button, Divider, Tooltip, Select } from "antd";
+import { Modal, Form, Input, Tooltip, Select, Spin } from "antd";
 import { RotateCcw } from "react-feather";
-const JobForm = (props) => {
-  const { Option } = Select;
+import { useForm } from "react-hook-form";
 
+const JobForm = (props) => {
+  const {
+    reset,
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { isSubmitting, errors, isSubmitted },
+  } = useForm();
+  const { Option } = Select;
+  const { rowData, jobId, isLoading, _onSubmit, getJobDetail } = props;
+  const [dataDetail, setDataDetail] = useState<IJob>();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
+  const [loadingSelect, setLoadingSelect] = useState(false);
+
+  const onSubmit = handleSubmit((data: any, e) => {
+    let res = _onSubmit(data);
+
+    res.then(function (rs: any) {
+      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
+    });
+  });
+
   return (
     <>
       {props.showIcon && (
@@ -38,7 +60,7 @@ const JobForm = (props) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical">
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
                 <Form.Item label="Job Name">
@@ -47,17 +69,12 @@ const JobForm = (props) => {
               </div>
             </div>
             <div className="row ">
-              <div className="col-12">
-                {props.showAdd == true ? (
-                  <Button className="w-100" type="primary" size="large">
-                    Create
-                  </Button>
-                ) : (
-                  <Button className="w-100" type="primary" size="large">
-                    Update
-                  </Button>
-                )}
-              </div>
+              <button type="submit" className="btn btn-primary w-100">
+                Lưu
+                {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+                  <Spin className="loading-base" />
+                )} */}
+              </button>
             </div>
           </Form>
         </div>

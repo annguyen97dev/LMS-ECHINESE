@@ -19,6 +19,7 @@ const Notification = () => {
       </div>
     );
   };
+  
   const columns = [
     { title: "Date", dataIndex: "expires", ...FilterDateColumn("expires") },
     {
