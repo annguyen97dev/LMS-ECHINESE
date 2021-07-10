@@ -6,6 +6,7 @@ type IApiResult<T = any> = {
 type IApiResultData<T = any> = {
   data: T;
   message: string;
+  totalRow: number;
 };
 
 type IApiResultAcc<T = any> = {
@@ -19,5 +20,4 @@ type IBaseApi<T> = {
   CreatedBy: string;
   ModifiedOn: string;
   ModifiedBy: string;
-  totalRow: number;
 } & T;

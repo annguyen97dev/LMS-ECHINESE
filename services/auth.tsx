@@ -17,7 +17,6 @@ export const login = async (params) => {
       headers: formData.getHeaders(),
     });
 
-    console.log("RESssssssss: ", res);
     return res;
   } catch (error) {
     console.log("login error", error);
