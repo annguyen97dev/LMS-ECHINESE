@@ -35,13 +35,13 @@ const DateField = ({
 							placeholder={placeholder}
 							disabled={disabled}
 							allowClear={false}
-							format="DD-MM-YYYY"
+							format="DD/MM/YYYY"
 							value={moment(field.value)}
 							onChange={field.onChange}
 						/>
 					);
 				}}
-			/>{' '}
+			/>
 			{hasError && <span style={{color: 'red'}}>{errors[name]?.message}</span>}
 		</Form.Item>
 	);

@@ -23,6 +23,7 @@ function TextAreaField({
 						{...field}
 						rows={rows}
 						className="style-input"
+						allowClear={true}
 						placeholder={placeholder}
 						disabled={disabled}
 					/>
