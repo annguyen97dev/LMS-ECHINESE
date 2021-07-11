@@ -8,15 +8,15 @@ import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import SortBox from "~/components/Elements/SortBox";
 import LayoutBase from "~/components/LayoutBase";
-import { courseApi } from "~/apiBase";
+import { gradeApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import { Trash2 } from "react-feather";
 import DecideModal from "~/components/Elements/DecideModal";
 
-let indexPage = 1;
+let pageIndex = 1;
 
 const Grade = () => {
-  const [dataCourse, setDataCourse] = useState<ICourse[]>([]);
+  const [dataCourse, setDataCourse] = useState<IGrade[]>([]);
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -27,30 +27,34 @@ const Grade = () => {
     status: null,
   });
   const [dataHidden, setDataHidden] = useState({
-    ListCourseID: null,
+    GradeID: null,
     Enable: null,
   });
-  const [rowData, setRowData] = useState<ICourse[]>();
+  const [rowData, setRowData] = useState<IGrade[]>();
 
   // GET DATA COURSE
-  const getDataCourse = () => {
+  const getDataCourse = async () => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
-    (async () => {
-      try {
-        let res = await courseApi.getAll(indexPage);
-        res.status == 200 && setDataCourse(res.data.acc);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "GET_ALL",
-          status: false,
-        });
-      }
-    })();
+
+    let todoApi = {
+      action: "getAll",
+      pageIndex: pageIndex,
+    };
+
+    try {
+      let res = await gradeApi.getAll(todoApi);
+      res.status == 200 && setDataCourse(res.data.data);
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
   };
 
   // GET DATA CORUSE WITH ID
@@ -61,7 +65,7 @@ const Grade = () => {
     });
     (async () => {
       try {
-        let res = await courseApi.getWithID(CourseID);
+        let res = await gradeApi.getWithID(CourseID);
         res.status == 200 && setRowData(res.data.createAcc);
       } catch (error) {
         showNoti("danger", error.message);
@@ -74,24 +78,6 @@ const Grade = () => {
     })();
   };
 
-  // EDIT ROW DATA
-  const editRowData = (dataEdit: any, mes: string) => {
-    let space = indexPage * 10;
-    let limit = space < dataCourse.length ? space : dataCourse.length;
-    let dataClone = [...dataCourse];
-
-    for (let i = space - 10; i <= limit; i++) {
-      if (dataClone[i].ListCourseID == dataEdit.ListCourseID) {
-        dataClone[i].ListCourseCode = dataEdit.ListCourseCode;
-        dataClone[i].ListCourseName = dataEdit.ListCourseName;
-        dataClone[i].Description = dataEdit.Description;
-        break;
-      }
-    }
-    setDataCourse(dataClone);
-    showNoti("success", mes);
-  };
-
   // _ADD DATA
   const _onSubmit = async (data: any) => {
     setIsLoading({
@@ -99,12 +85,14 @@ const Grade = () => {
       status: true,
     });
 
+    console.log("DATA SUBMIT: ", data);
+
     let res = null;
 
-    if (data.ListCourseID) {
+    if (data.GradeID) {
       try {
-        res = await courseApi.put(data);
-        res?.status == 200 && editRowData(data, res.data.message);
+        res = await gradeApi.put(data);
+        // res?.status == 200 && editRowData(data, res.data.message);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -115,7 +103,7 @@ const Grade = () => {
       }
     } else {
       try {
-        res = await courseApi.post(data);
+        res = await gradeApi.addData(data);
         res?.status == 200 && afterPost();
       } catch (error) {
         showNoti("danger", error.message);
@@ -133,7 +121,7 @@ const Grade = () => {
   // DELETE COURSE
   const changeStatus = (checked: boolean, idCourse: number) => {
     setDataHidden({
-      ListCourseID: idCourse,
+      GradeID: idCourse,
       Enable: checked,
     });
 
@@ -149,58 +137,47 @@ const Grade = () => {
     // addDataSuccess(), setIsModalVisible(false);
   };
 
-  // UPDATE ROW
-  const updateAtRow = (mes: string) => {
-    let dataClone = [...dataCourse];
-    dataClone.forEach((item, index) => {
-      if (item.ListCourseID == dataHidden.ListCourseID) {
-        console.log("run it");
-        item.Enable = dataHidden.Enable;
-        return false;
-      }
-      return true;
-    });
-
-    setDataCourse(dataClone);
-    showNoti("success", mes);
-  };
-
   // console.log("Data Course: ", dataCourse);
   // console.log("Data hidden: ", dataHidden);
 
-  const statusShow = async () => {
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
-    });
-    try {
-      let res = await courseApi.patch(dataHidden);
-      res.status == 200 && updateAtRow(res.data.message);
-      isOpen.status == "hide"
-        ? setIsOpen({ isOpen: false, status: "hide" })
-        : setIsOpen({ isOpen: false, status: "show" });
-    } catch (error) {
-      showNoti("danger", error.Message);
-    } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
-    }
-  };
+  // const statusShow = async () => {
+  //   setIsLoading({
+  //     type: "GET_ALL",
+  //     status: true,
+  //   });
+  //   try {
+  //     let res = await gradeApi.patch(dataHidden);
+  //     res.status == 200 && updateAtRow(res.data.message);
+  //     isOpen.status == "hide"
+  //       ? setIsOpen({ isOpen: false, status: "hide" })
+  //       : setIsOpen({ isOpen: false, status: "show" });
+  //   } catch (error) {
+  //     showNoti("danger", error.Message);
+  //   } finally {
+  //     setIsLoading({
+  //       type: "GET_ALL",
+  //       status: false,
+  //     });
+  //   }
+  // };
 
   // GET PAGE_NUMBER
   const getPagination = (pageNumber: number) => {
     console.log("Page number: ", pageNumber);
-    indexPage = pageNumber;
-    console.log("Index page = ", indexPage);
+    pageIndex = pageNumber;
+    console.log("Index page = ", pageIndex);
   };
 
   const columns = [
     {
-      title: "Grade",
-      dataIndex: "ListCourseName",
-      ...FilterColumn("ListCourseName"),
+      title: "Mã khối",
+      dataIndex: "GradeCode",
+      ...FilterColumn("GradeCode"),
+    },
+    {
+      title: "Tên khối",
+      dataIndex: "GradeName",
+      ...FilterColumn("GradeName"),
     },
     {
       title: "Description",
@@ -222,7 +199,7 @@ const Grade = () => {
             unCheckedChildren="Ẩn"
             checked={Enable}
             size="default"
-            onChange={(checked) => changeStatus(checked, record.ListCourseID)}
+            onChange={(checked) => changeStatus(checked, record.GradeID)}
           />
         </>
       ),
@@ -232,8 +209,7 @@ const Grade = () => {
         <>
           <Tooltip title="Cập nhật trung tâm">
             <GradeForm
-              showIcon={true}
-              CourseID={record.ListCourseID}
+              gradeID={record.GradeID}
               getDataCourseWithID={(CourseID: number) =>
                 getDataCourseWithID(CourseID)
               }
@@ -257,7 +233,7 @@ const Grade = () => {
 
   return (
     <>
-      <DecideModal
+      {/* <DecideModal
         content={`Bạn có chắc muốn ${
           isOpen.status == "hide" ? "hiện" : "ẩn"
         } không?`}
@@ -270,7 +246,7 @@ const Grade = () => {
           })
         }
         isOk={() => statusShow()}
-      />
+      /> */}
       <PowerTable
         getPagination={(pageNumber: number) => getPagination(pageNumber)}
         loading={isLoading}

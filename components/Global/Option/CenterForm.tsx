@@ -79,11 +79,6 @@ const CenterForm = React.memo((props: any) => {
 
     res.then(function (rs: any) {
       rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
-      reset({
-        defaultValues: {
-          BranchCode: "",
-        },
-      });
     });
   });
 
@@ -153,7 +148,7 @@ const CenterForm = React.memo((props: any) => {
           <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="JobName" label="Tên nghề nghiệp">
+                <Form.Item name="BrandCode" label="Mã trung tâm">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -162,11 +157,10 @@ const CenterForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Input
-                      {...register("JobName")}
                       placeholder=""
                       className="style-input"
-                      // defaultValue={rowData?.JobName}
-                      onChange={(e) => setValue("JobName", e.target.value)}
+                      defaultValue={rowData?.BranchCode}
+                      onChange={(e) => setValue("BranchCode", e.target.value)}
                       allowClear={true}
                     />
                   )}
@@ -176,7 +170,7 @@ const CenterForm = React.memo((props: any) => {
 
             <div className="row">
               <div className="col-12">
-                <Form.Item name="Phone" label="Số điện thoại">
+                <Form.Item name="BranchName" label="Tên trung tâm">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -185,7 +179,28 @@ const CenterForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Input
-                      {...register("Phone")}
+                      placeholder=""
+                      className="style-input"
+                      defaultValue={rowData?.BranchName}
+                      onChange={(e) => setValue("BranchName", e.target.value)}
+                      allowClear={true}
+                    />
+                  )}
+                </Form.Item>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <Form.Item name="Phone" label="Phone">
+                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
+                    <Skeleton
+                      active
+                      paragraph={{ rows: 0 }}
+                      title={{ width: "100%" }}
+                    />
+                  ) : (
+                    <Input
                       placeholder=""
                       className="style-input"
                       defaultValue={rowData?.Phone}
@@ -196,6 +211,7 @@ const CenterForm = React.memo((props: any) => {
                 </Form.Item>
               </div>
             </div>
+
             <div className="row">
               <div className="col-12">
                 <Form.Item name="Address" label="Địa chỉ">
@@ -207,7 +223,6 @@ const CenterForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Input
-                      {...register("Address")}
                       placeholder=""
                       className="style-input"
                       defaultValue={rowData?.Address}
