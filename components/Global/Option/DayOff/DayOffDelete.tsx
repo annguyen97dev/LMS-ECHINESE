@@ -1,17 +1,17 @@
 import {Tooltip} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
+import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {AlertTriangle, X} from 'react-feather';
 
 const DayOffDelete = (props) => {
-	const {handleDeleteDayOff, deleteObj, index} = props;
+	const {handleDeleteDayOff, deleteIDObj, index} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const checkHandleDeleteDayOff = () => {
 		if (!handleDeleteDayOff) return;
-		if (!deleteObj?.ID || index < 0) return;
-		console.log(deleteObj, index);
-		handleDeleteDayOff(deleteObj.ID, index);
+		if (!deleteIDObj || index < 0) return;
+		handleDeleteDayOff(deleteIDObj, index);
 		setIsModalVisible(false);
 	};
 	return (
@@ -37,5 +37,12 @@ const DayOffDelete = (props) => {
 		</>
 	);
 };
-
+DayOffDelete.propTypes = {
+	handleDeleteDayOff: PropTypes.func,
+	deleteIDObj: PropTypes.number.isRequired,
+	index: PropTypes.number.isRequired,
+};
+DayOffDelete.defaultProps = {
+	handleDeleteDayOff: null,
+};
 export default DayOffDelete;

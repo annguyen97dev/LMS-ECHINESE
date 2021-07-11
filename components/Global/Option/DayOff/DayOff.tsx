@@ -1,14 +1,12 @@
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import dayOffApi from '~/apiBase/options/day-off';
 import SortBox from '~/components/Elements/SortBox';
 import DayOffForm from '~/components/Global/Option/DayOff/DayOffForm';
-import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
-import FilterColumn from '~/components/Tables/FilterColumn';
-import FilterDateColumn from '~/components/Tables/FilterDateColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 import DayOffDelete from './DayOffDelete';
+import DayOffSearch from './DayOffSearch';
 
 const DayOff = () => {
 	const [dayOffList, setDayOffList] = useState<IDayOff[]>([]);
@@ -18,17 +16,35 @@ const DayOff = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
-	const [filter, setFilter] = useState({
+
+	// FILTER
+	const initFilterKey = {
 		pageIndex: 1,
 		pageSize: 10,
 		sort: '',
 		seacrhDay: '',
 		fromDate: '',
 		toDate: '',
-		searchCreateby: '',
-		seacrhNote: '',
-		sealectall: '',
-	});
+	};
+	const [filter, setFilter] = useState(initFilterKey);
+	const sortOptionList = [
+		{
+			value: 1,
+			text: 'Ngày tăng dần',
+		},
+		{
+			value: 2,
+			text: 'Ngày giảm dần',
+		},
+		{
+			value: 3,
+			text: 'Tên tăng dần',
+		},
+		{
+			value: 4,
+			text: 'Tên giảm dần',
+		},
+	];
 	// GET DATA IN FIRST TIME
 	const fetchDayOffList = async () => {
 		setIsLoading({
@@ -48,27 +64,50 @@ const DayOff = () => {
 			});
 		}
 	};
+
 	useEffect(() => {
 		fetchDayOffList();
 	}, [filter]);
 
-	const getPagination = (pageNumber: number) => {
+	// PAGINATION
+	const getPagination = (pageIndex: number) => {
 		const newFilter = {
 			...filter,
-			pageIndex: pageNumber,
+			pageIndex,
 		};
 		setFilter(newFilter);
 	};
-
+	// SORT
+	const onSort = (value: string) => {
+		setFilter({
+			...filter,
+			sort: value,
+		});
+	};
+	// SEARCH
+	const onSearchDayOff = (date: any) => {
+		const newFilter = {
+			...filter,
+			seacrhDay: moment(date.toDate()).format('YYYY/MM/DD'),
+		};
+		setFilter(newFilter);
+	};
+	const onResetSearchDayOff = () => {
+		setFilter(initFilterKey);
+		fetchDayOffList();
+	};
 	// CREATE
 	const onCreateDayOff = async (data: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
-
 		try {
-			const res = await dayOffApi.add({...data, Enable: true});
+			const res = await dayOffApi.add({
+				...data,
+				DayOff: moment(data.DayOff).format('YYYY/MM/DD'),
+				Enable: true,
+			});
 			const {data: newData, message} = res.data;
 			if (res.status === 200) {
 				const newDayOffList = [newData, ...dayOffList];
@@ -86,7 +125,6 @@ const DayOff = () => {
 		}
 	};
 	// UPDATE
-
 	const onUpdateDayOff = async (newObj: any, idx: number, oldObj: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
@@ -96,6 +134,7 @@ const DayOff = () => {
 			const newDayOff = {
 				...oldObj,
 				...newObj,
+				DayOff: moment(newObj.DayOff).format('YYYY/MM/DD'),
 			};
 			const res = await dayOffApi.update(newDayOff);
 			if (res.status === 200) {
@@ -114,7 +153,6 @@ const DayOff = () => {
 			});
 		}
 	};
-
 	// DELETE
 	const onDeleteDayOff = async (id: number, idx: number) => {
 		setIsLoading({
@@ -140,27 +178,27 @@ const DayOff = () => {
 			});
 		}
 	};
-
+	// COLUMN FOR TABLE
 	const columns = [
 		{
-			title: 'Day off',
+			title: 'Ngày nghỉ',
 			dataIndex: 'DayOff',
-			...FilterDateColumn('DayOff'),
-			render: (date) => moment(date).format('DD-MM-YYYY'),
+			...DayOffSearch('DayOff', onSearchDayOff, onResetSearchDayOff, 'date'),
+			render: (date) => moment(date).format('DD/MM/YYYY'),
 		},
 		{
-			title: 'Note',
+			title: 'Ghi chú',
 			dataIndex: 'DayOffName',
-			...FilterColumn('DayOffName'),
+			// ...FilterColumn('DayOffName'),
 		},
 		{
-			title: 'Modified Date',
+			title: 'Ngày khởi tạo',
 			dataIndex: 'CreatedOn',
-			...FilterDateColumn('CreatedOn'),
-			render: (date) => moment(date).format('DD-MM-YYYY'),
+			// ...FilterDateColumn('CreatedOn'),
+			render: (date) => moment(date).format('DD/MM/YYYY'),
 		},
 		{
-			title: 'Modified By',
+			title: 'Được tạo bởi',
 			dataIndex: 'CreatedBy',
 
 			// ...FilterDateColumn("expires"),
@@ -170,19 +208,20 @@ const DayOff = () => {
 				<>
 					<DayOffDelete
 						handleDeleteDayOff={onDeleteDayOff}
-						deleteObj={value}
+						deleteIDObj={value.ID}
 						index={idx}
 					/>
 					<DayOffForm
 						isUpdate={true}
 						updateObj={value}
-						idxUpdateOjb={idx}
+						idxUpdateObj={idx}
 						handleUpdateDayOff={onUpdateDayOff}
 					/>
 				</>
 			),
 		},
 	];
+	// RETURN
 	return (
 		<PowerTable
 			totalPage={totalPage && totalPage}
@@ -198,12 +237,11 @@ const DayOff = () => {
 			Extra={
 				<div className="extra-table">
 					{/* <FilterDayOffTable /> */}
-					<SortBox />
+					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}
 		/>
 	);
 };
 
-DayOff.layout = LayoutBase;
 export default DayOff;
