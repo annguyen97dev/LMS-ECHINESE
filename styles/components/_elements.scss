@@ -1574,3 +1574,12 @@ hr {
     cursor: pointer;
   }
 }
+
+.ant-form {
+  .ant-skeleton-title {
+    margin: 0 !important;
+  }
+  .ant-skeleton-paragraph {
+    display: none;
+  }
+}

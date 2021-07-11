@@ -6,6 +6,7 @@ type IApiResult<T = any> = {
 type IApiResultData<T = any> = {
   data: T;
   message: string;
+  totalRow: number;
 };
 
 type IApiResultAcc<T = any> = {

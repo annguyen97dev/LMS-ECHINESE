@@ -2,50 +2,37 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Modal, Form, Input, Spin, Tooltip, Skeleton } from "antd";
 import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
-import { courseApi } from "~/apiBase";
+import { gradeApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 
 const GradeForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading } = props;
+  const { isLoading, gradeID, _onSubmit } = props;
 
   const {
     register,
     handleSubmit,
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
-  } = useForm<ICourse>();
+  } = useForm<IGrade>();
   const { showNoti } = useWrap();
 
   const onSubmit = handleSubmit((data: any) => {
-    let res = props._onSubmit(data);
+    let res = _onSubmit(data);
 
     res.then(function (rs: any) {
       rs && rs.status == 200 && setIsModalVisible(false);
-      // : showNoti("danger", "Server lỗi");
     });
   });
 
   useEffect(() => {
     if (props.rowData) {
-      // setValue("object", {
-      //   ListCourseID: props.rowData.ListCourseID,
-      //   ListCourseName: props.rowData.ListCourseName,
-      //   ListCourseCode: props.rowData.ListCourseCode,
-      //   Description: props.rowData.Description,
-      //   Enable: props.rowData.Enable,
-      // });
-      setValue("ListCourseID", props.rowData.ListCourseID);
-      setValue("ListCourseName", props.rowData.ListCourseName);
-      setValue("ListCourseCode", props.rowData.ListCourseCode);
-      setValue("Description", props.rowData.Description);
-      setValue("Enable", props.rowData.Enable);
     }
   }, [props.rowData]);
 
   return (
     <>
-      {props.showIcon && (
+      {gradeID ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
@@ -56,8 +43,7 @@ const GradeForm = React.memo((props: any) => {
             <RotateCcw />
           </Tooltip>
         </button>
-      )}
-      {props.showAdd && (
+      ) : (
         <button
           className="btn btn-warning add-new"
           onClick={() => {
@@ -79,7 +65,7 @@ const GradeForm = React.memo((props: any) => {
           <Form layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Code khóa">
+                <Form.Item name="GradeCode" label="Code khóa">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -88,13 +74,11 @@ const GradeForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Input
-                      {...register("ListCourseCode")}
+                      {...register("GradeCode")}
                       placeholder=""
                       className="style-input"
                       defaultValue={props.rowData?.ListCourseCode}
-                      onChange={(e) =>
-                        setValue("ListCourseCode", e.target.value)
-                      }
+                      onChange={(e) => setValue("GradeCode", e.target.value)}
                     />
                   )}
                 </Form.Item>
@@ -102,7 +86,7 @@ const GradeForm = React.memo((props: any) => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Tên khóa">
+                <Form.Item name="GradeName" label="Tên khóa">
                   {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
                     <Skeleton
                       active
@@ -111,13 +95,10 @@ const GradeForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Input
-                      {...register("ListCourseName")}
                       placeholder=""
                       className="style-input"
                       defaultValue={props.rowData?.ListCourseName}
-                      onChange={(e) =>
-                        setValue("ListCourseName", e.target.value)
-                      }
+                      onChange={(e) => setValue("GradeName", e.target.value)}
                     />
                   )}
                 </Form.Item>
@@ -134,7 +115,6 @@ const GradeForm = React.memo((props: any) => {
                     />
                   ) : (
                     <Input
-                      {...register("Description")}
                       placeholder=""
                       className="style-input"
                       defaultValue={props.rowData?.Description}
@@ -144,19 +124,6 @@ const GradeForm = React.memo((props: any) => {
                 </Form.Item>
               </div>
             </div>
-            {/* <div className="row">
-              <div className="col-12">
-                <Form.Item>
-                  <Radio.Group
-                    onChange={onChange_Status("Enable")}
-                    value={status}
-                  >
-                    <Radio value={1}>Hiện</Radio>
-                    <Radio value={2}>Ẩn</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </div>
-            </div> */}
             <div className="row ">
               <div className="col-12">
                 <button type="submit" className="btn btn-primary w-100">
