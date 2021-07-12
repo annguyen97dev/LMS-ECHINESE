@@ -1,42 +1,5 @@
 import { instance } from "~/apiBase/instance";
 
-const getParams = (todoApi) => {
-  let params = {};
-  let action = todoApi.action;
-
-  console.log("PARAMS in api 111: ", params);
-
-  switch (action) {
-    case "getAll":
-      params = { ...todoApi.params };
-      break;
-    case "BranchCode":
-      params = {
-        branchCode: todoApi.value,
-      };
-      break;
-    case "BranchName":
-      params = {
-        branchName: todoApi.value,
-      };
-      break;
-    case "sortField":
-      params = {
-        sort: todoApi.sort,
-      };
-      break;
-    case "sortType":
-      params = {
-        sortType: todoApi.sortType,
-      };
-    default:
-      break;
-  }
-
-  console.log("PARAMS in api: ", params);
-  return params;
-};
-
 class BranchApi {
   // Lấy tất cả data có phân trang
   getAll = (todoApi: object) =>
