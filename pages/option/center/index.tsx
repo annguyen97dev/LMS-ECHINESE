@@ -4,7 +4,7 @@ import randomColor from "randomcolor";
 import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { Info, RotateCcw } from "react-feather";
 import SortBox from "~/components/Elements/SortBox";
-// import FilterColumn from "~/components/Tables/FilterColumn";
+
 import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import Link from "next/link";
 import LayoutBase from "~/components/LayoutBase";
@@ -15,6 +15,7 @@ import { FormOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { data } from "~/lib/option/dataOption2";
 import { boolean } from "yup";
+import FilterColumn from "~/components/Tables/FilterColumn";
 
 let pageIndex = 1;
 
@@ -78,89 +79,89 @@ const Center = () => {
     },
   ];
 
-  const FilterColumn = (dataIndex) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [valueSearch, setValueSearch] = useState<any>(null);
-    const inputRef = useRef<any>(null);
-    const getValueSearch = (e) => {
-      setValueSearch(e.target.value);
-    };
+  // const FilterColumn = (dataIndex) => {
+  //   const [isVisible, setIsVisible] = useState(false);
+  //   const [valueSearch, setValueSearch] = useState<any>(null);
+  //   const inputRef = useRef<any>(null);
+  //   const getValueSearch = (e) => {
+  //     setValueSearch(e.target.value);
+  //   };
 
-    // HANDLE SEARCH
-    const handleSearch = () => {
-      switch (dataIndex) {
-        case "BranchCode":
-          setTodoApi({
-            ...todoApi,
-            branchName: "",
-            branchCode: valueSearch,
-          });
-          break;
-        case "BranchName":
-          setTodoApi({
-            ...todoApi,
-            branchCode: "",
-            branchName: valueSearch,
-          });
-          break;
-        default:
-          break;
-      }
-      setValueSearch("");
-      setIsVisible(false);
-    };
+  //   // HANDLE SEARCH
+  //   const handleSearch = () => {
+  //     switch (dataIndex) {
+  //       case "BranchCode":
+  //         setTodoApi({
+  //           ...todoApi,
+  //           branchName: "",
+  //           branchCode: valueSearch,
+  //         });
+  //         break;
+  //       case "BranchName":
+  //         setTodoApi({
+  //           ...todoApi,
+  //           branchCode: "",
+  //           branchName: valueSearch,
+  //         });
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //     setValueSearch("");
+  //     setIsVisible(false);
+  //   };
 
-    // HANDLE RESET
-    const handleReset = () => {
-      setTodoApi(listTodoApi);
-      setIsVisible(false);
-    };
+  //   // HANDLE RESET
+  //   const handleReset = () => {
+  //     setTodoApi(listTodoApi);
+  //     setIsVisible(false);
+  //   };
 
-    useEffect(() => {
-      if (isVisible) {
-        setTimeout(() => {
-          inputRef.current.select();
-        }, 100);
-      }
-    }, [isVisible]);
+  //   useEffect(() => {
+  //     if (isVisible) {
+  //       setTimeout(() => {
+  //         inputRef.current.select();
+  //       }, 100);
+  //     }
+  //   }, [isVisible]);
 
-    const getColumnSearchProps = (dataIndex) => ({
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input
-            ref={inputRef}
-            value={valueSearch}
-            placeholder={`Search ${dataIndex}`}
-            onPressEnter={() => handleSearch()}
-            onChange={getValueSearch}
-            style={{ marginBottom: 8, display: "block" }}
-          />
-          <Space>
-            <Button
-              type="primary"
-              onClick={() => handleSearch()}
-              icon={<SearchOutlined />}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Search
-            </Button>
-            <Button onClick={handleReset} size="small" style={{ width: 90 }}>
-              Reset
-            </Button>
-          </Space>
-        </div>
-      ),
-      filterIcon: (filtered) => <SearchOutlined />,
+  //   const getColumnSearchProps = (dataIndex) => ({
+  //     filterDropdown: () => (
+  //       <div style={{ padding: 8 }}>
+  //         <Input
+  //           ref={inputRef}
+  //           value={valueSearch}
+  //           placeholder={`Search ${dataIndex}`}
+  //           onPressEnter={() => handleSearch()}
+  //           onChange={getValueSearch}
+  //           style={{ marginBottom: 8, display: "block" }}
+  //         />
+  //         <Space>
+  //           <Button
+  //             type="primary"
+  //             onClick={() => handleSearch()}
+  //             icon={<SearchOutlined />}
+  //             size="small"
+  //             style={{ width: 90 }}
+  //           >
+  //             Search
+  //           </Button>
+  //           <Button onClick={handleReset} size="small" style={{ width: 90 }}>
+  //             Reset
+  //           </Button>
+  //         </Space>
+  //       </div>
+  //     ),
+  //     filterIcon: (filtered) => <SearchOutlined />,
 
-      filterDropdownVisible: isVisible,
-      onFilterDropdownVisibleChange: (visible) => {
-        visible ? setIsVisible(true) : setIsVisible(false);
-      },
-    });
+  //     filterDropdownVisible: isVisible,
+  //     onFilterDropdownVisibleChange: (visible) => {
+  //       visible ? setIsVisible(true) : setIsVisible(false);
+  //     },
+  //   });
 
-    return getColumnSearchProps(dataIndex);
-  };
+  //   return getColumnSearchProps(dataIndex);
+  // };
 
   // -------------- GET DATA CENTER ----------------
   const getDataCenter = async () => {
@@ -274,6 +275,33 @@ const Center = () => {
     setTodoApi(newTodoApi);
   };
 
+  const onSearch = (data) => {
+    console.log("DAta search: ", data);
+    // switch (dataIndex) {
+    //         case "BranchCode":
+    //           setTodoApi({
+    //             ...todoApi,
+    //             branchName: "",
+    //             branchCode: valueSearch,
+    //           });
+    //           break;
+    //         case "BranchName":
+    //           setTodoApi({
+    //             ...todoApi,
+    //             branchCode: "",
+    //             branchName: valueSearch,
+    //           });
+    //           break;
+    //         default:
+    //           break;
+    //       }
+  };
+
+  // HANDLE RESET
+  const handleReset = () => {
+    setTodoApi(listTodoApi);
+  };
+
   // ============== USE EFFECT - FETCH DATA ===================
   useEffect(() => {
     getDataCenter();
@@ -283,13 +311,14 @@ const Center = () => {
     {
       title: "Mã trung tâm",
       dataIndex: "BranchCode",
-      ...FilterColumn("BranchCode"),
+      // ...FilterColumn("BranchCode"),
+      ...FilterColumn("BranchCode", onSearch, handleReset, "text"),
     },
 
     {
       title: "Tên trung tâm",
       dataIndex: "BranchName",
-      ...FilterColumn("BranchName"),
+      // ...FilterColumn("BranchName"),
     },
     { title: "Địa chỉ", dataIndex: "Address" },
     {
