@@ -384,7 +384,7 @@ const Center = () => {
                 console.log("REs khuc nay: ", res);
                 return res;
               }}
-              rowData={rowData}
+              rowData={data}
               isLoading={isLoading}
               _onSubmit={(data: any) => _onSubmit(data)}
             />

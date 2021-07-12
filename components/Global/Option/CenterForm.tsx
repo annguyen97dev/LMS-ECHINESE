@@ -149,21 +149,13 @@ const CenterForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item name="BrandCode" label="Mã trung tâm">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={rowData?.BranchCode}
-                      onChange={(e) => setValue("BranchCode", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    defaultValue={rowData?.BranchCode}
+                    onChange={(e) => setValue("BranchCode", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -171,21 +163,13 @@ const CenterForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item name="BranchName" label="Tên trung tâm">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={rowData?.BranchName}
-                      onChange={(e) => setValue("BranchName", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    defaultValue={rowData?.BranchName}
+                    onChange={(e) => setValue("BranchName", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -193,21 +177,13 @@ const CenterForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item name="Phone" label="Phone">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={rowData?.Phone}
-                      onChange={(e) => setValue("Phone", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    defaultValue={rowData?.Phone}
+                    onChange={(e) => setValue("Phone", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
@@ -215,77 +191,53 @@ const CenterForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item name="Address" label="Địa chỉ">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={rowData?.Address}
-                      onChange={(e) => setValue("Address", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    defaultValue={rowData?.Address}
+                    onChange={(e) => setValue("Address", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-md-6 col-12">
                 <Form.Item name="AreaID" label="Vùng">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Select
-                      style={{ width: "100%" }}
-                      className="style-input"
-                      showSearch
-                      optionFilterProp="children"
-                      onChange={onChangeSelect("AreaID")}
-                      defaultValue={rowData?.AreaID}
-                    >
-                      {dataArea?.map((item) => (
-                        <Option value={item.AreaID}>{item.AreaName}</Option>
-                      ))}
-                    </Select>
-                  )}
+                  <Select
+                    style={{ width: "100%" }}
+                    className="style-input"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={onChangeSelect("AreaID")}
+                    defaultValue={rowData?.AreaID}
+                  >
+                    {dataArea?.map((item) => (
+                      <Option value={item.AreaID}>{item.AreaName}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </div>
 
               <div className="col-md-6 col-12">
                 <Form.Item name="DistrictID" label="Quận">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Select
-                      loading={loadingSelect}
-                      style={{ width: "100%" }}
-                      className="style-input"
-                      showSearch
-                      optionFilterProp="children"
-                      onChange={onChangeSelect("DistrictID")}
-                      defaultValue={rowData?.DistrictID}
-                    >
-                      {dataDistrict?.length > 0 ? (
-                        dataDistrict?.map((item) => (
-                          <Option value={item.ID}>{item.DistrictName}</Option>
-                        ))
-                      ) : (
-                        <Option value={5}>...</Option>
-                      )}
-                    </Select>
-                  )}
+                  <Select
+                    loading={loadingSelect}
+                    style={{ width: "100%" }}
+                    className="style-input"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={onChangeSelect("DistrictID")}
+                    defaultValue={rowData?.DistrictID}
+                  >
+                    {dataDistrict?.length > 0 ? (
+                      dataDistrict?.map((item) => (
+                        <Option value={item.ID}>{item.DistrictName}</Option>
+                      ))
+                    ) : (
+                      <Option value={5}>...</Option>
+                    )}
+                  </Select>
                 </Form.Item>
               </div>
             </div>
