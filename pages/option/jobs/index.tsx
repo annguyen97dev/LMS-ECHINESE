@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import PowerTable from "~/components/PowerTable";
-import { data } from "../../../lib/option/dataOption2";
 import JobForm from "~/components/Global/Option/JobForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import SortBox from "~/components/Elements/SortBox";
 import LayoutBase from "~/components/LayoutBase";
 import { useWrap } from "~/context/wrap";
 import { jobApi } from "~/apiBase";
+import moment from "moment";
 
 const JobsList = () => {
   const columns = [
@@ -19,11 +19,13 @@ const JobsList = () => {
     {
       title: "Modified Date",
       dataIndex: "ModifiedOn",
+      render: (date) => moment(date).format("DD/MM/YYYY"),
     },
+
     {
-      render: () => (
+      render: (data) => (
         <>
-          <JobForm showIcon={true} />
+          <JobForm showIcon={true} jobId={data.JobID} />
         </>
       ),
     },
@@ -31,23 +33,18 @@ const JobsList = () => {
 
   const [job, setJob] = useState<IJob[]>([]);
   const [isLoading, setIsLoading] = useState({
-    type: "",
-    status: false,
+    type: "GET_ALL",
+    status: true,
   });
 
   const { showNoti } = useWrap();
-  const [rowData, setRowData] = useState<IJob>();
   const [totalPage, setTotalPage] = useState(null);
   let indexPage = 1;
 
   const getDataJob = () => {
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
-    });
     (async () => {
       try {
-        let res = await jobApi.getAll(10, indexPage);
+        let res = await jobApi.getAll(20, indexPage);
         res.status == 200 && setJob(res.data.data),
           setTotalPage(res.data.totalRow);
       } catch (error) {
@@ -70,59 +67,19 @@ const JobsList = () => {
     getDataJob();
   };
 
-  const _onSubmit = async (data: any) => {
-    setIsLoading({
-      type: "ADD_DATA",
-      status: true,
-    });
-    let res = null;
-    if (data.ID) {
-      try {
-        res = await jobApi.update(data);
-        res?.status == 200 && afterPost(res.data.message);
-      } catch (error) {
-        console.log("error: ", error);
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "ADD_DATA",
-          status: false,
-        });
-      }
-    } else {
-      try {
-        res = await jobApi.add(data);
-        res?.status == 200 && afterPost(res.data.message);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "ADD_DATA",
-          status: false,
-        });
-      }
-    }
-
-    return res;
-  };
-
-  const afterPost = (mes) => {
-    showNoti("success", mes);
-    getDataJob();
-  };
-
   return (
     <PowerTable
+      loading={isLoading}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
-      loading={isLoading}
       addClass="basic-header"
       TitlePage="Jobs list"
       TitleCard={
         <JobForm
           showAdd={true}
-          isLoading={isLoading}
-          _onSubmit={(data: any) => _onSubmit(data)}
+          reloadData={() => {
+            getDataJob();
+          }}
         />
       }
       dataSource={job}

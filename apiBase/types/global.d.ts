@@ -1,4 +1,5 @@
-type IFormBaseProps = {
+declare type IFormBaseProps = {
   visible: boolean;
   onCancel?: any;
+  reloadData?: Function;
 };

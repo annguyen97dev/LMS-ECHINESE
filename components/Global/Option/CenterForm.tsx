@@ -42,6 +42,11 @@ const CenterForm = React.memo((props: any) => {
   const [dataDetail, setDataDetail] = useState<IBranch>();
 
   const { rowData, branchId, isLoading, _onSubmit, getBranchDetail } = props;
+
+  useEffect(() => {
+    console.log("afjkalfjlakfjlafjklawjiowuoiajklawfjklawj",branchId);
+  }, []);
+
   const [form] = Form.useForm();
 
   //GET DATA AREA

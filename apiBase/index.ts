@@ -8,6 +8,7 @@ export { studyTimeApi } from "./options/study-time";
 export { curriculumApi } from "./options/curriculum";
 export { serviceApi } from "./options/service";
 export { staffSalaryApi } from "./options/staff-salary";
+export { jobApi } from "./options/job";
 // export const addDataDistrict = async (data) => {
 //   let result;
 //   try {

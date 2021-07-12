@@ -1,35 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Tooltip, Select, Spin } from "antd";
 import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
+import { useWrap } from "~/context/wrap";
+import { jobApi } from "~/apiBase";
 
-const JobForm = (props) => {
-  const {
-    reset,
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    formState: { isSubmitting, errors, isSubmitted },
-  } = useForm();
+const JobForm = React.memo((props: any) => {
+  const { jobId, reloadData } = props;
+  const { reset, setValue } = useForm();
   const { Option } = Select;
-  const { rowData, jobId, isLoading, _onSubmit, getJobDetail } = props;
-  const [dataDetail, setDataDetail] = useState<IJob>();
+  const [jobDetail, setJobDetail] = useState<IJob>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [loadingSelect, setLoadingSelect] = useState(false);
+  const { showNoti } = useWrap();
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = handleSubmit((data: any, e) => {
-    let res = _onSubmit(data);
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    if (jobId) {
+      try {
+        let res = await jobApi.update({ ...data, Enable: true, JobID: jobId });
+        showNoti("success", res?.data.message);
+      } catch (error) {
+        showNoti("danger", error.message);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+        setIsModalVisible(false);
+        //@ts-ignore
+        reloadData();
+      }
+    } else {
+      try {
+        let res = await jobApi.add({ ...data, Enable: true });
+        showNoti("success", res?.data.message);
+        setLoading(false);
+        setIsModalVisible(false);
+        reloadData();
+        reset();
+      } catch (error) {
+        showNoti("danger", error.message);
+      }
+    }
+  };
 
-    res.then(function (rs: any) {
-      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
-    });
-  });
+  useEffect(() => {
+    async function getJobDetail() {
+      if (jobId) {
+        try {
+          let _job = await jobApi.getDetail(jobId);
+          // @ts-ignore
+          setJobDetail(_job.data.data);
+        } catch (err) {
+          showNoti("danger", err.message);
+        }
+      }
+    }
+    getJobDetail();
+  }, [jobId]);
 
   return (
     <>
-      {props.showIcon && (
+      {jobId ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
@@ -40,8 +72,7 @@ const JobForm = (props) => {
             <RotateCcw />
           </Tooltip>
         </button>
-      )}
-      {props.showAdd && (
+      ) : (
         <button
           className="btn btn-warning add-new"
           onClick={() => {
@@ -52,9 +83,8 @@ const JobForm = (props) => {
         </button>
       )}
 
-      {/*  */}
       <Modal
-        title={<>{props.showAdd ? "Create Job" : "Update Job"}</>}
+        title={<>{props.showAdd ? "Thêm mới" : "Cập nhật"}</>}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -63,17 +93,21 @@ const JobForm = (props) => {
           <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Job Name">
-                  <Input className="style-input" />
+                <Form.Item name="JobName" label="Nghề nghiệp">
+                  <Input
+                    placeholder="Giáo viên"
+                    className="style-input"
+                    defaultValue={jobDetail?.JobName}
+                    onChange={(e) => setValue("JobName", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
-            <div className="row ">
+            <div className="row">
               <button type="submit" className="btn btn-primary w-100">
                 Lưu
-                {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
-                  <Spin className="loading-base" />
-                )} */}
+                {loading == true && <Spin className="loading-base" />}
               </button>
             </div>
           </Form>
@@ -81,6 +115,6 @@ const JobForm = (props) => {
       </Modal>
     </>
   );
-};
+});
 
 export default JobForm;

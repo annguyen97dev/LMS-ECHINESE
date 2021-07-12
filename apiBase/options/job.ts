@@ -9,9 +9,11 @@ class JobApi {
       },
     });
 
+  getDetail = (id: number) =>
+    instance.get<IApiResult<IJob>>(`/api/Job/GetByID/${id}`);
+
   add = (data: IJob) => instance.post("/api/Job/Insert", data);
 
-  // Cập nhật data
   update = (data: IJob) => instance.put("/api/Job/Update", data, {});
 }
 
