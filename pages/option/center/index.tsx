@@ -14,8 +14,9 @@ import { useWrap } from "~/context/wrap";
 import { FormOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { data } from "~/lib/option/dataOption2";
+import { boolean } from "yup";
 
-let indexPage = 1;
+let pageIndex = 1;
 
 const Center = () => {
   const [center, setCenter] = useState<IBranch[]>([]);
@@ -23,7 +24,6 @@ const Center = () => {
     type: "",
     status: false,
   });
-
   const [isOpen, setIsOpen] = useState({
     isOpen: false,
     status: null,
@@ -31,22 +31,50 @@ const Center = () => {
   const { showNoti } = useWrap();
   const [rowData, setRowData] = useState<IBranch>();
   const [totalPage, setTotalPage] = useState(null);
+
+  const listTodoApi = {
+    pageSize: 10,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    branchCode: null,
+    branchName: null,
+  };
+
+  const [todoApi, setTodoApi] = useState(listTodoApi);
+
   const dataOption = [
     {
-      value: 0,
-      text: "Mã trung tâm",
-    },
-    {
+      dataSort: {
+        sort: 1,
+        sortType: false,
+      },
       value: 1,
-      text: "Tên trung tâm",
+      text: "Mã giảm dần",
     },
     {
+      dataSort: {
+        sort: 1,
+        sortType: true,
+      },
       value: 2,
-      text: "Tăng dần",
+      text: "Mã tăng dần",
     },
     {
+      dataSort: {
+        sort: 2,
+        sortType: false,
+      },
       value: 3,
-      text: "Giảm dần",
+      text: "Tên giảm dần",
+    },
+    {
+      dataSort: {
+        sort: 2,
+        sortType: true,
+      },
+      value: 4,
+      text: "Tên tăng dần ",
     },
   ];
 
@@ -58,55 +86,33 @@ const Center = () => {
       setValueSearch(e.target.value);
     };
 
-    const searchAPI = async (dataIndex) => {
-      setIsLoading({
-        type: "GET_ALL",
-        status: true,
-      });
-
-      let todoApi = {
-        action: dataIndex,
-        value: valueSearch,
-      };
-
-      try {
-        let res = await branchApi.getAll(todoApi);
-
-        if (res.status == 200) {
-          res.data.data.length > 0
-            ? (setCenter(res.data.data), setValueSearch(null))
-            : showNoti("danger", "Không tìm thấy");
-        }
-
-        setTotalPage(res.data.totalRow);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "GET_ALL",
-          status: false,
-        });
-      }
-    };
-
     // HANDLE SEARCH
     const handleSearch = () => {
       switch (dataIndex) {
         case "BranchCode":
-          searchAPI(dataIndex);
+          setTodoApi({
+            ...todoApi,
+            branchName: "",
+            branchCode: valueSearch,
+          });
           break;
         case "BranchName":
-          searchAPI(dataIndex);
+          setTodoApi({
+            ...todoApi,
+            branchCode: "",
+            branchName: valueSearch,
+          });
           break;
         default:
           break;
       }
+      setValueSearch("");
       setIsVisible(false);
     };
 
     // HANDLE RESET
     const handleReset = () => {
-      getDataCenter();
+      setTodoApi(listTodoApi);
       setIsVisible(false);
     };
 
@@ -163,15 +169,13 @@ const Center = () => {
       status: true,
     });
 
-    let todoApi = {
-      action: "getAll",
-      pageIndex: indexPage,
-    };
-
     try {
       let res = await branchApi.getAll(todoApi);
-      res.status == 200 && setCenter(res.data.data),
-        setTotalPage(res.data.totalRow);
+      res.status == 200 && setCenter(res.data.data);
+      if (res.data.data.length < 1) {
+        showNoti("danger", "Không tìm thấy");
+      }
+      setTotalPage(res.data.totalRow);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -182,33 +186,10 @@ const Center = () => {
     }
   };
 
-  // ----------- GET BRANCH DETAIL ---------------
-  const getBranchDetail = async (branchId: number) => {
-    setIsLoading({
-      type: "GET_WITH_ID",
-      status: true,
-    });
-    let res = null;
-
-    try {
-      res = await branchApi.getByID(branchId);
-      res.status == 200 && setRowData(res.data.data);
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "GET_WITH_ID",
-        status: false,
-      });
-    }
-
-    return res;
-  };
-
   // ---------------- AFTER SUBMIT -----------------
   const afterPost = (mes) => {
     showNoti("success", mes);
-    getDataCenter();
+    setTodoApi(listTodoApi);
   };
 
   // ----------------- ON SUBMIT --------------------
@@ -252,9 +233,6 @@ const Center = () => {
 
   // TURN OF
   const changeStatus = async (checked: boolean, idRow: number) => {
-    console.log("Checked: ", checked);
-    console.log("Branch ID: ", idRow);
-
     setIsLoading({
       type: "GET_ALL",
       status: true,
@@ -262,7 +240,8 @@ const Center = () => {
 
     try {
       let res = await branchApi.changeStatus(idRow);
-      res.status == 200 && getDataCenter();
+      res.status == 200 && setTodoApi(listTodoApi),
+        showNoti("success", res.data.message);
     } catch (error) {
       showNoti("danger", error.Message);
     } finally {
@@ -275,56 +254,30 @@ const Center = () => {
 
   // GET PAGE_NUMBER
   const getPagination = (pageNumber: number) => {
-    indexPage = pageNumber;
-    getDataCenter();
-  };
+    pageIndex = pageNumber;
 
-  const handleSort = async (value) => {
-    value = value + 1;
-    let todoApi = null;
-
-    if (value > 2) {
-      if (value == 3) {
-        todoApi = {
-          action: "sortType",
-          sortType: true,
-        };
-      } else {
-        todoApi = {
-          action: "sortType",
-          sortType: false,
-        };
-      }
-    } else {
-      todoApi = {
-        action: "sortField",
-        sort: value,
-      };
-    }
-
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
+    setTodoApi({
+      ...todoApi,
+      pageIndex: pageIndex,
     });
-    try {
-      let res = await branchApi.getAll(todoApi);
-
-      res.status && setCenter(res.data.data);
-      setTotalPage(res.data.totalRow);
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
-    }
   };
 
-  // ============== USE EFFECT ===================
+  const handleSort = async (option) => {
+    console.log("Show option: ", option);
+
+    let newTodoApi = {
+      ...listTodoApi,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    };
+
+    setTodoApi(newTodoApi);
+  };
+
+  // ============== USE EFFECT - FETCH DATA ===================
   useEffect(() => {
     getDataCenter();
-  }, []);
+  }, [todoApi]);
 
   const columns = [
     {
@@ -378,12 +331,6 @@ const Center = () => {
           <Tooltip title="Cập nhật trung tâm">
             <CenterForm
               branchId={data.ID}
-              getBranchDetail={(branchId: number) => {
-                let res = getBranchDetail(branchId);
-
-                console.log("REs khuc nay: ", res);
-                return res;
-              }}
               rowData={data}
               isLoading={isLoading}
               _onSubmit={(data: any) => _onSubmit(data)}
