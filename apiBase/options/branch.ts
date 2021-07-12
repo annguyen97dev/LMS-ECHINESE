@@ -1,15 +1,14 @@
 import { instance } from "~/apiBase/instance";
 
 const getParams = (todoApi) => {
-  let params = null;
+  let params = {};
   let action = todoApi.action;
+
+  console.log("PARAMS in api 111: ", params);
 
   switch (action) {
     case "getAll":
-      params = {
-        pageSize: 10,
-        pageIndex: todoApi.pageIndex,
-      };
+      params = { ...todoApi.params };
       break;
     case "BranchCode":
       params = {
@@ -34,6 +33,7 @@ const getParams = (todoApi) => {
       break;
   }
 
+  console.log("PARAMS in api: ", params);
   return params;
 };
 
@@ -41,7 +41,8 @@ class BranchApi {
   // Lấy tất cả data có phân trang
   getAll = (todoApi: object) =>
     instance.get<IApiResultData<IBranch[]>>("/api/Branch/GetAll", {
-      params: getParams(todoApi),
+      // params: getParams(todoApi),
+      params: todoApi,
     });
 
   // Lấy chi tiết data theo ID

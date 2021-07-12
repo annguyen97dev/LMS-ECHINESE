@@ -4,7 +4,7 @@ import randomColor from "randomcolor";
 import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { Info, RotateCcw } from "react-feather";
 import SortBox from "~/components/Elements/SortBox";
-// import FilterColumn from "~/components/Tables/FilterColumn";
+
 import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import Link from "next/link";
 import LayoutBase from "~/components/LayoutBase";
@@ -14,8 +14,10 @@ import { useWrap } from "~/context/wrap";
 import { FormOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { data } from "~/lib/option/dataOption2";
+import { boolean } from "yup";
+import FilterColumn from "~/components/Tables/FilterColumn";
 
-let indexPage = 1;
+let pageIndex = 1;
 
 const Center = () => {
   const [center, setCenter] = useState<IBranch[]>([]);
@@ -23,7 +25,6 @@ const Center = () => {
     type: "",
     status: false,
   });
-
   const [isOpen, setIsOpen] = useState({
     isOpen: false,
     status: null,
@@ -31,130 +32,136 @@ const Center = () => {
   const { showNoti } = useWrap();
   const [rowData, setRowData] = useState<IBranch>();
   const [totalPage, setTotalPage] = useState(null);
+
+  const listTodoApi = {
+    pageSize: 10,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    branchCode: null,
+    branchName: null,
+  };
+
+  const [todoApi, setTodoApi] = useState(listTodoApi);
+
   const dataOption = [
     {
-      value: 0,
-      text: "Mã trung tâm",
-    },
-    {
+      dataSort: {
+        sort: 1,
+        sortType: false,
+      },
       value: 1,
-      text: "Tên trung tâm",
+      text: "Mã giảm dần",
     },
     {
+      dataSort: {
+        sort: 1,
+        sortType: true,
+      },
       value: 2,
-      text: "Tăng dần",
+      text: "Mã tăng dần",
     },
     {
+      dataSort: {
+        sort: 2,
+        sortType: false,
+      },
       value: 3,
-      text: "Giảm dần",
+      text: "Tên giảm dần",
+    },
+    {
+      dataSort: {
+        sort: 2,
+        sortType: true,
+      },
+      value: 4,
+      text: "Tên tăng dần ",
     },
   ];
 
-  const FilterColumn = (dataIndex) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [valueSearch, setValueSearch] = useState<any>(null);
-    const inputRef = useRef<any>(null);
-    const getValueSearch = (e) => {
-      setValueSearch(e.target.value);
-    };
+  // const FilterColumn = (dataIndex) => {
+  //   const [isVisible, setIsVisible] = useState(false);
+  //   const [valueSearch, setValueSearch] = useState<any>(null);
+  //   const inputRef = useRef<any>(null);
+  //   const getValueSearch = (e) => {
+  //     setValueSearch(e.target.value);
+  //   };
 
-    const searchAPI = async (dataIndex) => {
-      setIsLoading({
-        type: "GET_ALL",
-        status: true,
-      });
+  //   // HANDLE SEARCH
+  //   const handleSearch = () => {
+  //     switch (dataIndex) {
+  //       case "BranchCode":
+  //         setTodoApi({
+  //           ...todoApi,
+  //           branchName: "",
+  //           branchCode: valueSearch,
+  //         });
+  //         break;
+  //       case "BranchName":
+  //         setTodoApi({
+  //           ...todoApi,
+  //           branchCode: "",
+  //           branchName: valueSearch,
+  //         });
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //     setValueSearch("");
+  //     setIsVisible(false);
+  //   };
 
-      let todoApi = {
-        action: dataIndex,
-        value: valueSearch,
-      };
+  //   // HANDLE RESET
+  //   const handleReset = () => {
+  //     setTodoApi(listTodoApi);
+  //     setIsVisible(false);
+  //   };
 
-      try {
-        let res = await branchApi.getAll(todoApi);
+  //   useEffect(() => {
+  //     if (isVisible) {
+  //       setTimeout(() => {
+  //         inputRef.current.select();
+  //       }, 100);
+  //     }
+  //   }, [isVisible]);
 
-        if (res.status == 200) {
-          res.data.data.length > 0
-            ? (setCenter(res.data.data), setValueSearch(null))
-            : showNoti("danger", "Không tìm thấy");
-        }
+  //   const getColumnSearchProps = (dataIndex) => ({
+  //     filterDropdown: () => (
+  //       <div style={{ padding: 8 }}>
+  //         <Input
+  //           ref={inputRef}
+  //           value={valueSearch}
+  //           placeholder={`Search ${dataIndex}`}
+  //           onPressEnter={() => handleSearch()}
+  //           onChange={getValueSearch}
+  //           style={{ marginBottom: 8, display: "block" }}
+  //         />
+  //         <Space>
+  //           <Button
+  //             type="primary"
+  //             onClick={() => handleSearch()}
+  //             icon={<SearchOutlined />}
+  //             size="small"
+  //             style={{ width: 90 }}
+  //           >
+  //             Search
+  //           </Button>
+  //           <Button onClick={handleReset} size="small" style={{ width: 90 }}>
+  //             Reset
+  //           </Button>
+  //         </Space>
+  //       </div>
+  //     ),
+  //     filterIcon: (filtered) => <SearchOutlined />,
 
-        setTotalPage(res.data.totalRow);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "GET_ALL",
-          status: false,
-        });
-      }
-    };
+  //     filterDropdownVisible: isVisible,
+  //     onFilterDropdownVisibleChange: (visible) => {
+  //       visible ? setIsVisible(true) : setIsVisible(false);
+  //     },
+  //   });
 
-    // HANDLE SEARCH
-    const handleSearch = () => {
-      switch (dataIndex) {
-        case "BranchCode":
-          searchAPI(dataIndex);
-          break;
-        case "BranchName":
-          searchAPI(dataIndex);
-          break;
-        default:
-          break;
-      }
-      setIsVisible(false);
-    };
-
-    // HANDLE RESET
-    const handleReset = () => {
-      getDataCenter();
-      setIsVisible(false);
-    };
-
-    useEffect(() => {
-      if (isVisible) {
-        setTimeout(() => {
-          inputRef.current.select();
-        }, 100);
-      }
-    }, [isVisible]);
-
-    const getColumnSearchProps = (dataIndex) => ({
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input
-            ref={inputRef}
-            value={valueSearch}
-            placeholder={`Search ${dataIndex}`}
-            onPressEnter={() => handleSearch()}
-            onChange={getValueSearch}
-            style={{ marginBottom: 8, display: "block" }}
-          />
-          <Space>
-            <Button
-              type="primary"
-              onClick={() => handleSearch()}
-              icon={<SearchOutlined />}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Search
-            </Button>
-            <Button onClick={handleReset} size="small" style={{ width: 90 }}>
-              Reset
-            </Button>
-          </Space>
-        </div>
-      ),
-      filterIcon: (filtered) => <SearchOutlined />,
-
-      filterDropdownVisible: isVisible,
-      onFilterDropdownVisibleChange: (visible) => {
-        visible ? setIsVisible(true) : setIsVisible(false);
-      },
-    });
-
-    return getColumnSearchProps(dataIndex);
-  };
+  //   return getColumnSearchProps(dataIndex);
+  // };
 
   // -------------- GET DATA CENTER ----------------
   const getDataCenter = async () => {
@@ -163,15 +170,13 @@ const Center = () => {
       status: true,
     });
 
-    let todoApi = {
-      action: "getAll",
-      pageIndex: indexPage,
-    };
-
     try {
       let res = await branchApi.getAll(todoApi);
-      res.status == 200 && setCenter(res.data.data),
-        setTotalPage(res.data.totalRow);
+      res.status == 200 && setCenter(res.data.data);
+      if (res.data.data.length < 1) {
+        showNoti("danger", "Không tìm thấy");
+      }
+      setTotalPage(res.data.totalRow);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -182,33 +187,10 @@ const Center = () => {
     }
   };
 
-  // ----------- GET BRANCH DETAIL ---------------
-  const getBranchDetail = async (branchId: number) => {
-    setIsLoading({
-      type: "GET_WITH_ID",
-      status: true,
-    });
-    let res = null;
-
-    try {
-      res = await branchApi.getByID(branchId);
-      res.status == 200 && setRowData(res.data.data);
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "GET_WITH_ID",
-        status: false,
-      });
-    }
-
-    return res;
-  };
-
   // ---------------- AFTER SUBMIT -----------------
   const afterPost = (mes) => {
     showNoti("success", mes);
-    getDataCenter();
+    setTodoApi(listTodoApi);
   };
 
   // ----------------- ON SUBMIT --------------------
@@ -252,9 +234,6 @@ const Center = () => {
 
   // TURN OF
   const changeStatus = async (checked: boolean, idRow: number) => {
-    console.log("Checked: ", checked);
-    console.log("Branch ID: ", idRow);
-
     setIsLoading({
       type: "GET_ALL",
       status: true,
@@ -262,7 +241,8 @@ const Center = () => {
 
     try {
       let res = await branchApi.changeStatus(idRow);
-      res.status == 200 && getDataCenter();
+      res.status == 200 && setTodoApi(listTodoApi),
+        showNoti("success", res.data.message);
     } catch (error) {
       showNoti("danger", error.Message);
     } finally {
@@ -275,68 +255,70 @@ const Center = () => {
 
   // GET PAGE_NUMBER
   const getPagination = (pageNumber: number) => {
-    indexPage = pageNumber;
-    getDataCenter();
-  };
+    pageIndex = pageNumber;
 
-  const handleSort = async (value) => {
-    value = value + 1;
-    let todoApi = null;
-
-    if (value > 2) {
-      if (value == 3) {
-        todoApi = {
-          action: "sortType",
-          sortType: true,
-        };
-      } else {
-        todoApi = {
-          action: "sortType",
-          sortType: false,
-        };
-      }
-    } else {
-      todoApi = {
-        action: "sortField",
-        sort: value,
-      };
-    }
-
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
+    setTodoApi({
+      ...todoApi,
+      pageIndex: pageIndex,
     });
-    try {
-      let res = await branchApi.getAll(todoApi);
-
-      res.status && setCenter(res.data.data);
-      setTotalPage(res.data.totalRow);
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
-    }
   };
 
-  // ============== USE EFFECT ===================
+  const handleSort = async (option) => {
+    console.log("Show option: ", option);
+
+    let newTodoApi = {
+      ...listTodoApi,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    };
+
+    setTodoApi(newTodoApi);
+  };
+
+  const onSearch = (data) => {
+    console.log("DAta search: ", data);
+    // switch (dataIndex) {
+    //         case "BranchCode":
+    //           setTodoApi({
+    //             ...todoApi,
+    //             branchName: "",
+    //             branchCode: valueSearch,
+    //           });
+    //           break;
+    //         case "BranchName":
+    //           setTodoApi({
+    //             ...todoApi,
+    //             branchCode: "",
+    //             branchName: valueSearch,
+    //           });
+    //           break;
+    //         default:
+    //           break;
+    //       }
+  };
+
+  // HANDLE RESET
+  const handleReset = () => {
+    setTodoApi(listTodoApi);
+  };
+
+  // ============== USE EFFECT - FETCH DATA ===================
   useEffect(() => {
     getDataCenter();
-  }, []);
+  }, [todoApi]);
 
   const columns = [
     {
       title: "Mã trung tâm",
       dataIndex: "BranchCode",
-      ...FilterColumn("BranchCode"),
+      // ...FilterColumn("BranchCode"),
+      ...FilterColumn("BranchCode", onSearch, handleReset, "text"),
     },
 
     {
       title: "Tên trung tâm",
       dataIndex: "BranchName",
-      ...FilterColumn("BranchName"),
+      // ...FilterColumn("BranchName"),
     },
     { title: "Địa chỉ", dataIndex: "Address" },
     {
@@ -378,12 +360,6 @@ const Center = () => {
           <Tooltip title="Cập nhật trung tâm">
             <CenterForm
               branchId={data.ID}
-              getBranchDetail={(branchId: number) => {
-                let res = getBranchDetail(branchId);
-
-                console.log("REs khuc nay: ", res);
-                return res;
-              }}
               rowData={data}
               isLoading={isLoading}
               _onSubmit={(data: any) => _onSubmit(data)}
