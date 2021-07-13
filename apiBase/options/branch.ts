@@ -24,7 +24,7 @@ class BranchApi {
   add = (data: IBranch) => instance.post("/api/Branch/Insert", data);
 
   // Cập nhật data
-  update = (data: IBranch) => instance.put("/api/Branch/Update", data, {});
+  update = (data: any) => instance.put("/api/Branch/Update", data, {});
 }
 
 export const branchApi = new BranchApi();

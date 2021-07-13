@@ -85,7 +85,6 @@ const CenterForm = React.memo((props: any) => {
 
   // ON CHANGE SELECT
   const onChangeSelect = (name) => (value) => {
-    console.log("Name ", name);
     name == "AreaID" &&
       (form.setFieldsValue({ DistrictID: "" }), getDistrictByArea(value));
     setValue(name, value);
@@ -99,11 +98,6 @@ const CenterForm = React.memo((props: any) => {
       console.log("DATA row: ", rowData);
 
       if (branchId) {
-        // let res = getBranchDetail(branchId);
-
-        // res.then(function (rs: any) {
-        //   rs && rs.status == 200 && setDataDetail(rs.data.data);
-        // });
         Object.keys(rowData).forEach(function (key) {
           setValue(key, rowData[key]);
         });
@@ -112,16 +106,6 @@ const CenterForm = React.memo((props: any) => {
       }
     }
   }, [isModalVisible]);
-
-  // Sau khi lấy dc data chi tiết thì setValue cho nó
-  // useEffect(() => {
-  //   if (dataDetail) {
-  //     getDistrictByArea(dataDetail.AreaID);
-  //     Object.keys(dataDetail).forEach(function (key) {
-  //       setValue(key, dataDetail[key]);
-  //     });
-  //   }
-  // }, [dataDetail]);
 
   return (
     <>
