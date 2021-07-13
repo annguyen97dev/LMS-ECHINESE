@@ -23,5 +23,4 @@ type IBaseApi<T> = {
   CreatedBy: string;
   ModifiedOn: string;
   ModifiedBy: string;
-  totalRow: number;
 } & T;

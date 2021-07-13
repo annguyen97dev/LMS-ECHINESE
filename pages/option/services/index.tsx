@@ -55,7 +55,7 @@ const ServiceList = () => {
     (async () => {
       try {
         let res = await serviceApi.getWitdhID(ServiceID);
-        res.status == 200 && setRowData(res.data.data); 
+        res.status == 200 && setRowData(res.data.data);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -76,7 +76,7 @@ const ServiceList = () => {
 
     let res = null;
 
-    if(data.ID) {
+    if (data.ID) {
       console.log(data);
       try {
         res = await serviceApi.put(data);
@@ -104,7 +104,7 @@ const ServiceList = () => {
     }
 
     return res;
-  }
+  };
 
   // DELETE COURSE
   const changeStatus = async (checked: boolean, idRow: number) => {
@@ -136,9 +136,17 @@ const ServiceList = () => {
   };
 
   const columns = [
-    { title: "Service", dataIndex: "ServiceName", ...FilterColumn("ServiceName") },
+    {
+      title: "Service",
+      dataIndex: "ServiceName",
+      ...FilterColumn("ServiceName"),
+    },
     { title: "DescribeService", dataIndex: "DescribeService" },
-    { title: "Modified By", dataIndex: "ModifiedBy", ...FilterColumn("ModifiedBy") },
+    {
+      title: "Modified By",
+      dataIndex: "ModifiedBy",
+      ...FilterColumn("ModifiedBy"),
+    },
     {
       title: "Modified Date",
       dataIndex: "ModifiedOn",
@@ -162,16 +170,16 @@ const ServiceList = () => {
     {
       render: (record) => (
         <>
-          <ServiceForm 
+          <ServiceForm
             ServiceID={record.ID}
             getDataServiceWithID={(ServiceID: number) => {
-              getDataServiceWithID(ServiceID)
+              getDataServiceWithID(ServiceID);
             }}
             rowData={rowData}
             isLoading={isLoading}
-            showIcon={true} 
+            showIcon={true}
             _onSubmit={(data: any) => _onSubmit(data)}
-            />
+          />
         </>
       ),
     },
@@ -188,12 +196,13 @@ const ServiceList = () => {
         addClass="basic-header"
         TitlePage="Services List"
         TitleCard={
-          <ServiceForm 
-          showAdd={true}
-          addDataSuccess={() => getDataService()}
-          isLoading={isLoading}
-          _onSubmit={(data: any) => _onSubmit(data)}
-          />}
+          <ServiceForm
+            showAdd={true}
+            addDataSuccess={() => getDataService()}
+            isLoading={isLoading}
+            _onSubmit={(data: any) => _onSubmit(data)}
+          />
+        }
         dataSource={dataService}
         columns={columns}
         Extra={
@@ -204,7 +213,6 @@ const ServiceList = () => {
         }
       />
     </>
-
   );
 };
 ServiceList.layout = LayoutBase;

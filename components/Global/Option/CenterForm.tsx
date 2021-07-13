@@ -39,9 +39,10 @@ const CenterForm = React.memo((props: any) => {
   const [dataDistrict, setDataDistrict] = useState<IDistrict[]>([]);
 
   const [loadingSelect, setLoadingSelect] = useState(false);
+
   const [dataDetail, setDataDetail] = useState<IBranch>();
 
-  const { rowData, branchId, isLoading, _onSubmit, getBranchDetail } = props;
+  const { rowData, branchId, isLoading, _onSubmit } = props;
   const [form] = Form.useForm();
 
   //GET DATA AREA
@@ -79,11 +80,6 @@ const CenterForm = React.memo((props: any) => {
 
     res.then(function (rs: any) {
       rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
-      reset({
-        defaultValues: {
-          BranchCode: "",
-        },
-      });
     });
   });
 
@@ -99,25 +95,33 @@ const CenterForm = React.memo((props: any) => {
   useEffect(() => {
     if (isModalVisible) {
       getAllArea();
-      if (branchId) {
-        let res = getBranchDetail(branchId);
 
-        res.then(function (rs: any) {
-          rs && rs.status == 200 && setDataDetail(rs.data.data);
+      console.log("DATA row: ", rowData);
+
+      if (branchId) {
+        // let res = getBranchDetail(branchId);
+
+        // res.then(function (rs: any) {
+        //   rs && rs.status == 200 && setDataDetail(rs.data.data);
+        // });
+        Object.keys(rowData).forEach(function (key) {
+          setValue(key, rowData[key]);
         });
+        form.setFieldsValue(rowData);
+        rowData.AreaID && getDistrictByArea(rowData.AreaID);
       }
     }
   }, [isModalVisible]);
 
   // Sau khi lấy dc data chi tiết thì setValue cho nó
-  useEffect(() => {
-    if (dataDetail) {
-      getDistrictByArea(dataDetail.AreaID);
-      Object.keys(dataDetail).forEach(function (key) {
-        setValue(key, dataDetail[key]);
-      });
-    }
-  }, [dataDetail]);
+  // useEffect(() => {
+  //   if (dataDetail) {
+  //     getDistrictByArea(dataDetail.AreaID);
+  //     Object.keys(dataDetail).forEach(function (key) {
+  //       setValue(key, dataDetail[key]);
+  //     });
+  //   }
+  // }, [dataDetail]);
 
   return (
     <>
@@ -153,129 +157,133 @@ const CenterForm = React.memo((props: any) => {
           <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="JobName" label="Tên nghề nghiệp">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("JobName")}
-                      placeholder=""
-                      className="style-input"
-                      // defaultValue={rowData?.JobName}
-                      onChange={(e) => setValue("JobName", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
+                <Form.Item
+                  name="BranchCode"
+                  label="Mã trung tâm"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("BranchCode", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
 
             <div className="row">
               <div className="col-12">
-                <Form.Item name="Phone" label="Số điện thoại">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("Phone")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={rowData?.Phone}
-                      onChange={(e) => setValue("Phone", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
+                <Form.Item
+                  name="BranchName"
+                  label="Tên trung tâm"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("BranchName", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
+
             <div className="row">
               <div className="col-12">
-                <Form.Item name="Address" label="Địa chỉ">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("Address")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={rowData?.Address}
-                      onChange={(e) => setValue("Address", e.target.value)}
-                      allowClear={true}
-                    />
-                  )}
+                <Form.Item
+                  name="Phone"
+                  label="Phone"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("Phone", e.target.value)}
+                    allowClear={true}
+                  />
+                </Form.Item>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <Form.Item
+                  name="Address"
+                  label="Địa chỉ"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("Address", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-md-6 col-12">
-                <Form.Item name="AreaID" label="Vùng">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Select
-                      style={{ width: "100%" }}
-                      className="style-input"
-                      showSearch
-                      optionFilterProp="children"
-                      onChange={onChangeSelect("AreaID")}
-                      defaultValue={rowData?.AreaID}
-                    >
-                      {dataArea?.map((item) => (
-                        <Option value={item.AreaID}>{item.AreaName}</Option>
-                      ))}
-                    </Select>
-                  )}
+                <Form.Item
+                  name="AreaID"
+                  label="Vùng"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Select
+                    style={{ width: "100%" }}
+                    className="style-input"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={onChangeSelect("AreaID")}
+                    defaultValue={rowData?.AreaID}
+                  >
+                    {dataArea?.map((item) => (
+                      <Option value={item.AreaID}>{item.AreaName}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </div>
 
               <div className="col-md-6 col-12">
-                <Form.Item name="DistrictID" label="Quận">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Select
-                      loading={loadingSelect}
-                      style={{ width: "100%" }}
-                      className="style-input"
-                      showSearch
-                      optionFilterProp="children"
-                      onChange={onChangeSelect("DistrictID")}
-                      defaultValue={rowData?.DistrictID}
-                    >
-                      {dataDistrict?.length > 0 ? (
-                        dataDistrict?.map((item) => (
-                          <Option value={item.ID}>{item.DistrictName}</Option>
-                        ))
-                      ) : (
-                        <Option value={5}>...</Option>
-                      )}
-                    </Select>
-                  )}
+                <Form.Item
+                  name="DistrictID"
+                  label="Quận"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Select
+                    loading={loadingSelect}
+                    style={{ width: "100%" }}
+                    className="style-input"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={onChangeSelect("DistrictID")}
+                    defaultValue={rowData?.DistrictID}
+                  >
+                    {dataDistrict?.length > 0 ? (
+                      dataDistrict?.map((item) => (
+                        <Option value={item.ID}>{item.DistrictName}</Option>
+                      ))
+                    ) : (
+                      <Option value={5}>...</Option>
+                    )}
+                  </Select>
                 </Form.Item>
               </div>
             </div>
 
-            <div className="col-12">
+            <div className="col-12 mt-3">
               <button type="submit" className="btn btn-primary w-100">
                 Lưu
                 {isLoading.type == "ADD_DATA" && isLoading.status && (

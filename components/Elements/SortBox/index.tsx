@@ -4,8 +4,9 @@ const SortBox = (props: any) => {
   const { Option } = Select;
   const { dataOption, handleSort } = props;
 
-  function handleChange(value) {
-    handleSort(value);
+  function handleChange(value, option) {
+    if (!handleSort) return;
+    handleSort(option);
   }
 
   return (
@@ -20,8 +21,10 @@ const SortBox = (props: any) => {
       >
         {/* <Option value="sort-title">-- Sort by --</Option> */}
         {dataOption?.length > 0 &&
-          dataOption.map((option: any) => (
-            <Option value={option.value}>{option.text}</Option>
+          dataOption.map((option: any, index) => (
+            <Option title={option.dataSort} value={option.value} key={index}>
+              {option.text}
+            </Option>
           ))}
       </Select>
     </>

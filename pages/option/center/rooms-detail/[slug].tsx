@@ -13,6 +13,8 @@ import router from "next/router";
 import { roomApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 
+let pageIndex = 1;
+
 const Center = () => {
   const [roomForm, setRoomForm] = useState(false);
   const columns = [
@@ -54,6 +56,8 @@ const Center = () => {
   const { showNoti } = useWrap();
   const [rowData, setRowData] = useState<IRoom[]>();
 
+  console.log("Room data: ", roomData);
+
   const _onSubmit = async (data: any) => {
     setIsLoading({
       type: "ADD_DATA",
@@ -87,14 +91,17 @@ const Center = () => {
       status: true,
     });
     (async () => {
+      let todoApi = {
+        action: "getAll",
+        pageIndex: pageIndex,
+      };
+
       try {
-        let res = await roomApi.getRoomInBranch(
-          parseInt(router.query.slug as string)
-        );
+        let res = await roomApi.getByID(router.query.slug);
         // @ts-ignore
-        res.status == 200 && setRoomData(res.data.createAcc);
+        res.status == 200 && setRoomData(res.data.data);
       } catch (error) {
-        // showNoti("danger", error.message);
+        showNoti("danger", error.message);
       } finally {
         setIsLoading({
           type: "GET_ALL",

@@ -37,21 +37,22 @@ const getParams = (todoApi) => {
   return params;
 };
 
-class RoomApi {
-  // Lấy tất cả
+class GradeApi {
   getAll = (todoApi: object) =>
-    instance.get<IApiResultData<IRoom[]>>("/api/Room/GetAll", {
+    instance.get<IApiResultData<IGrade[]>>("/api/Grade/GetAll", {
       params: getParams(todoApi),
     });
 
-  // LÂY THEO ID
-  getByID = (id: any) =>
-    instance.get<IApiResultData<IRoom[]>>(`/api/Room/GetById/${id}`);
+  getWithID = (CourseID: number) =>
+    instance.get<IApiResult<IGrade[]>>("/api/Course/GetCourse", {
+      params: {
+        id: CourseID,
+      },
+    });
 
-  getRoomInBranch = (branchId: number) =>
-    instance.get<IApiResult<IRoom>>(`/api/Room/GetRoom?id=${branchId}`);
-
-  post = (data: IRoom) => instance.post("/api/Room/InsertRoom", data);
+  addData = (data: IGrade) => instance.post("/api/Grade/Insert", data, {});
+  put = (data: IGrade) => instance.put("/api/Course/UpdateCourse", data, {});
+  patch = (data: any) => instance.patch("/api/Course/UpdateHiddenCourse", data);
 }
 
-export const roomApi = new RoomApi();
+export const gradeApi = new GradeApi();

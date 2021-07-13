@@ -1574,3 +1574,17 @@ hr {
     cursor: pointer;
   }
 }
+
+.ant-form {
+  .ant-skeleton-title {
+    margin: 0 !important;
+  }
+  .ant-skeleton-paragraph {
+    display: none;
+  }
+}
+
+.ant-form-item-label
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  display: none;
+}

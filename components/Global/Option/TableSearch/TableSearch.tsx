@@ -3,7 +3,7 @@ import { Button, DatePicker, Input, Space } from "antd";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 
-const FilterColumn = (dataIndex, handleSearch, handleReset, type = "text") => {
+const TableSearch = (dataIndex, handleSearch, handleReset, type = "text") => {
   const [isVisible, setIsVisible] = useState(false);
   const [valueSearch, setValueSearch] = useState<any>(null);
   const { RangePicker } = DatePicker;
@@ -16,7 +16,7 @@ const FilterColumn = (dataIndex, handleSearch, handleReset, type = "text") => {
   const checkHandleSearch = (value) => {
     if (!handleSearch) return;
     if (!valueSearch) return;
-    handleSearch(value, dataIndex);
+    handleSearch(value);
     getValueSearch(null);
     setIsVisible(false);
   };
@@ -113,4 +113,4 @@ const FilterColumn = (dataIndex, handleSearch, handleReset, type = "text") => {
   return getColumnSearchProps(dataIndex);
 };
 
-export default FilterColumn;
+export default TableSearch;
