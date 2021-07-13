@@ -20,6 +20,7 @@ import FilterColumn from "~/components/Tables/FilterColumn";
 let pageIndex = 1;
 
 let listField = {
+  pageIndex: 1,
   branchCode: "",
   branchName: "",
 };
