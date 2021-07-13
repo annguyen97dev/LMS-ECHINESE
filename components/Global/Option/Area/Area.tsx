@@ -1,15 +1,19 @@
+import zhCN from 'date-fns/esm/locale/zh-CN/index.js';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
+import {areaApi} from '~/apiBase';
 import dayOffApi from '~/apiBase/options/day-off';
 import SortBox from '~/components/Elements/SortBox';
 import DayOffForm from '~/components/Global/Option/DayOff/DayOffForm';
 import PowerTable from '~/components/PowerTable';
 import {useWrap} from '~/context/wrap';
+import FilterDayOffTable from '../FilterTable/FilterDayOffTable';
 import TableSearch from '../TableSearch/TableSearch';
-import DayOffDelete from './DayOffDelete';
+import AreaDelete from './AreaDelete';
+import AreaForm from './AreaForm';
 
-const DayOff = () => {
-	const [dayOffList, setDayOffList] = useState<IDayOff[]>([]);
+const Area = () => {
+	const [areaList, setAreaList] = useState<IArea[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
@@ -20,51 +24,34 @@ const DayOff = () => {
 	// FILTER
 	const clearSearchFilter = {
 		sort: 0,
-		DayOff: '',
-		DayOffName: '',
-		fromDate: '',
-		toDate: '',
-		searchCreateby: '',
+		searchAreaName: '',
 	};
 	const [filter, setFilter] = useState({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: 0,
-		DayOff: '',
-		DayOffName: '',
-		fromDate: '',
-		toDate: '',
-		searchCreateby: '',
+		searchAreaName: '',
 	});
 	const sortOptionList = [
 		{
 			value: 1,
-			text: 'Ngày tăng dần',
-		},
-		{
-			value: 2,
-			text: 'Ngày giảm dần',
-		},
-		{
-			value: 3,
 			text: 'Tên tăng dần',
 		},
 		{
-			value: 4,
+			value: 2,
 			text: 'Tên giảm dần',
 		},
 	];
 	// GET DATA IN FIRST TIME
-	const fetchDayOffList = async () => {
+	const fetchAreaList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			let res = await dayOffApi.getAll(filter);
-
+			let res = await areaApi.getAll(filter);
 			if (res.status === 200) {
-				setDayOffList(res.data.data);
+				setAreaList(res.data.data);
 				setTotalPage(res.data.totalRow);
 				res.data.data.length > 0
 					? showNoti('success', res.data.message)
@@ -81,10 +68,11 @@ const DayOff = () => {
 	};
 
 	useEffect(() => {
-		fetchDayOffList();
+		fetchAreaList();
 	}, [filter]);
 	// PAGINATION
 	const getPagination = (pageIndex: number) => {
+		console.log(pageIndex);
 		const newFilter = {
 			...filter,
 			pageIndex,
@@ -100,51 +88,35 @@ const DayOff = () => {
 		});
 	};
 	// SEARCH
-	const onSearchDayOff = (date: any) => {
+	const onSearchAreaName = (name: string) => {
 		const newFilter = {
 			...filter,
-			DayOff: moment(date.toDate()).format('YYYY/MM/DD'),
+			searchAreaName: name,
 		};
 		setFilter(newFilter);
 	};
-	const onSearchDayOffName = (note: string) => {
-		const newFilter = {
-			...filter,
-			DayOffName: note,
-		};
-		setFilter(newFilter);
-	};
-	const onSearchDayOffCreatedOn = (date: Array<any>) => {
-		const newFilter = {
-			...filter,
-			fromDate: moment(date[0].toDate()).format('YYYY/MM/DD'),
-			toDate: moment(date[1].toDate()).format('YYYY/MM/DD'),
-		};
-		setFilter(newFilter);
-	};
-	const onResetSearchDayOff = () => {
+	const onResetSearch = () => {
 		setFilter({
 			...filter,
 			...clearSearchFilter,
 		});
 	};
 	// CREATE
-	const onCreateDayOff = async (data: any) => {
+	const onCreateArea = async (data: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			const res = await dayOffApi.add({
+			const res = await areaApi.add({
 				...data,
-				DayOff: moment(data.DayOff).format('YYYY/MM/DD'),
 				Enable: true,
 			});
 			const {data: newData, message} = res.data;
 			if (res.status === 200) {
-				const newDayOffList = [newData, ...dayOffList];
-				setDayOffList(newDayOffList);
-				fetchDayOffList();
+				const newAreaList = [newData, ...areaList];
+				setAreaList(newAreaList);
+				fetchAreaList();
 				showNoti('success', message);
 			}
 		} catch (error) {
@@ -157,23 +129,22 @@ const DayOff = () => {
 		}
 	};
 	// UPDATE
-	const onUpdateDayOff = async (newObj: any, idx: number, oldObj: any) => {
+	const onUpdateArea = async (newObj: any, idx: number, oldObj: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			const newDayOff = {
+			const newArea = {
 				...oldObj,
 				...newObj,
-				DayOff: moment(newObj.DayOff).format('YYYY/MM/DD'),
 			};
-			const res = await dayOffApi.update(newDayOff);
+			const res = await areaApi.update(newArea);
 			if (res.status === 200) {
 				const {message} = res.data;
-				const newDayOffList = [...dayOffList];
-				newDayOffList.splice(idx, 1, newDayOff);
-				setDayOffList(newDayOffList);
+				const newAreaList = [...areaList];
+				newAreaList.splice(idx, 1, newArea);
+				setAreaList(newAreaList);
 				showNoti('success', message);
 			}
 		} catch (error) {
@@ -186,19 +157,19 @@ const DayOff = () => {
 		}
 	};
 	// DELETE
-	const onDeleteDayOff = async (id: number, idx: number) => {
+	const onDeleteArea = async (id: number, idx: number) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			const res = await dayOffApi.delete(id);
+			const res = await areaApi.delete(id);
 			if (res.status === 200) {
 				const {message} = res.data;
-				const newDayOffList = [...dayOffList];
-				newDayOffList.splice(idx, 1);
-				setDayOffList(newDayOffList);
-				fetchDayOffList();
+				const newAreaList = [...areaList];
+				newAreaList.splice(idx, 1);
+				setAreaList(newAreaList);
+				fetchAreaList();
 				showNoti('success', message);
 			}
 		} catch (error) {
@@ -213,49 +184,37 @@ const DayOff = () => {
 	// COLUMN FOR TABLE
 	const columns = [
 		{
-			title: 'Ngày nghỉ',
-			dataIndex: 'DayOff',
-			...TableSearch('DayOff', onSearchDayOff, onResetSearchDayOff, 'date'),
-			render: (date) => moment(date).format('DD/MM/YYYY'),
+			title: 'Mã tỉnh/thành phố',
+			dataIndex: 'AreaID',
 		},
 		{
-			title: 'Ghi chú',
-			dataIndex: 'DayOffName',
-			...TableSearch(
-				'DayOffName',
-				onSearchDayOffName,
-				onResetSearchDayOff,
-				'text'
-			),
+			title: 'Tên tỉnh/thành phố',
+			dataIndex: 'AreaName',
+			...TableSearch('AreaName', onSearchAreaName, onResetSearch, 'text'),
 		},
 		{
 			title: 'Ngày khởi tạo',
-			dataIndex: 'CreatedOn',
-			...TableSearch(
-				'CreatedOn',
-				onSearchDayOffCreatedOn,
-				onResetSearchDayOff,
-				'date-range'
-			),
+			dataIndex: 'ModifiedOn',
 			render: (date) => moment(date).format('DD/MM/YYYY'),
 		},
 		{
 			title: 'Được tạo bởi',
-			dataIndex: 'CreatedBy',
+			dataIndex: 'ModifiedBy',
 		},
+
 		{
 			render: (value, _, idx) => (
 				<>
-					<DayOffDelete
-						handleDeleteDayOff={onDeleteDayOff}
-						deleteIDObj={value.ID}
+					<AreaDelete
+						handleDeleteArea={onDeleteArea}
+						deleteIDObj={value.AreaID}
 						index={idx}
 					/>
-					<DayOffForm
+					<AreaForm
 						isUpdate={true}
 						updateObj={value}
 						idxUpdateObj={idx}
-						handleUpdateDayOff={onUpdateDayOff}
+						handleUpdateArea={onUpdateArea}
 					/>
 				</>
 			),
@@ -268,15 +227,12 @@ const DayOff = () => {
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			loading={isLoading}
 			addClass="basic-header"
-			TitlePage="Day Off"
-			TitleCard={
-				<DayOffForm isUpdate={false} handleCreateDayOff={onCreateDayOff} />
-			}
-			dataSource={dayOffList}
+			TitlePage="Provincial List"
+			TitleCard={<AreaForm isUpdate={false} handleCreateArea={onCreateArea} />}
+			dataSource={areaList}
 			columns={columns}
 			Extra={
 				<div className="extra-table">
-					{/* <FilterDayOffTable /> */}
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}
@@ -284,4 +240,4 @@ const DayOff = () => {
 	);
 };
 
-export default DayOff;
+export default Area;

@@ -39,14 +39,19 @@ const CenterForm = React.memo((props: any) => {
   const [dataDistrict, setDataDistrict] = useState<IDistrict[]>([]);
 
   const [loadingSelect, setLoadingSelect] = useState(false);
+
   const [dataDetail, setDataDetail] = useState<IBranch>();
 
+<<<<<<< HEAD
   const { rowData, branchId, isLoading, _onSubmit, getBranchDetail } = props;
 
   useEffect(() => {
     console.log("afjkalfjlakfjlafjklawjiowuoiajklawfjklawj",branchId);
   }, []);
 
+=======
+  const { rowData, branchId, isLoading, _onSubmit } = props;
+>>>>>>> ead69771e0721ad30d3a2dbf0405c77d9da73903
   const [form] = Form.useForm();
 
   //GET DATA AREA
@@ -99,25 +104,33 @@ const CenterForm = React.memo((props: any) => {
   useEffect(() => {
     if (isModalVisible) {
       getAllArea();
-      if (branchId) {
-        let res = getBranchDetail(branchId);
 
-        res.then(function (rs: any) {
-          rs && rs.status == 200 && setDataDetail(rs.data.data);
+      console.log("DATA row: ", rowData);
+
+      if (branchId) {
+        // let res = getBranchDetail(branchId);
+
+        // res.then(function (rs: any) {
+        //   rs && rs.status == 200 && setDataDetail(rs.data.data);
+        // });
+        Object.keys(rowData).forEach(function (key) {
+          setValue(key, rowData[key]);
         });
+        form.setFieldsValue(rowData);
+        rowData.AreaID && getDistrictByArea(rowData.AreaID);
       }
     }
   }, [isModalVisible]);
 
   // Sau khi lấy dc data chi tiết thì setValue cho nó
-  useEffect(() => {
-    if (dataDetail) {
-      getDistrictByArea(dataDetail.AreaID);
-      Object.keys(dataDetail).forEach(function (key) {
-        setValue(key, dataDetail[key]);
-      });
-    }
-  }, [dataDetail]);
+  // useEffect(() => {
+  //   if (dataDetail) {
+  //     getDistrictByArea(dataDetail.AreaID);
+  //     Object.keys(dataDetail).forEach(function (key) {
+  //       setValue(key, dataDetail[key]);
+  //     });
+  //   }
+  // }, [dataDetail]);
 
   return (
     <>
@@ -153,11 +166,16 @@ const CenterForm = React.memo((props: any) => {
           <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="BrandCode" label="Mã trung tâm">
+                <Form.Item
+                  name="BranchCode"
+                  label="Mã trung tâm"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Input
                     placeholder=""
                     className="style-input"
-                    defaultValue={rowData?.BranchCode}
                     onChange={(e) => setValue("BranchCode", e.target.value)}
                     allowClear={true}
                   />
@@ -167,11 +185,16 @@ const CenterForm = React.memo((props: any) => {
 
             <div className="row">
               <div className="col-12">
-                <Form.Item name="BranchName" label="Tên trung tâm">
+                <Form.Item
+                  name="BranchName"
+                  label="Tên trung tâm"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Input
                     placeholder=""
                     className="style-input"
-                    defaultValue={rowData?.BranchName}
                     onChange={(e) => setValue("BranchName", e.target.value)}
                     allowClear={true}
                   />
@@ -181,11 +204,16 @@ const CenterForm = React.memo((props: any) => {
 
             <div className="row">
               <div className="col-12">
-                <Form.Item name="Phone" label="Phone">
+                <Form.Item
+                  name="Phone"
+                  label="Phone"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Input
                     placeholder=""
                     className="style-input"
-                    defaultValue={rowData?.Phone}
                     onChange={(e) => setValue("Phone", e.target.value)}
                     allowClear={true}
                   />
@@ -195,11 +223,16 @@ const CenterForm = React.memo((props: any) => {
 
             <div className="row">
               <div className="col-12">
-                <Form.Item name="Address" label="Địa chỉ">
+                <Form.Item
+                  name="Address"
+                  label="Địa chỉ"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Input
                     placeholder=""
                     className="style-input"
-                    defaultValue={rowData?.Address}
                     onChange={(e) => setValue("Address", e.target.value)}
                     allowClear={true}
                   />
@@ -208,7 +241,13 @@ const CenterForm = React.memo((props: any) => {
             </div>
             <div className="row">
               <div className="col-md-6 col-12">
-                <Form.Item name="AreaID" label="Vùng">
+                <Form.Item
+                  name="AreaID"
+                  label="Vùng"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Select
                     style={{ width: "100%" }}
                     className="style-input"
@@ -225,7 +264,13 @@ const CenterForm = React.memo((props: any) => {
               </div>
 
               <div className="col-md-6 col-12">
-                <Form.Item name="DistrictID" label="Quận">
+                <Form.Item
+                  name="DistrictID"
+                  label="Quận"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Select
                     loading={loadingSelect}
                     style={{ width: "100%" }}
@@ -247,7 +292,7 @@ const CenterForm = React.memo((props: any) => {
               </div>
             </div>
 
-            <div className="col-12">
+            <div className="col-12 mt-3">
               <button type="submit" className="btn btn-primary w-100">
                 Lưu
                 {isLoading.type == "ADD_DATA" && isLoading.status && (

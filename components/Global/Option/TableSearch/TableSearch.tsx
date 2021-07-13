@@ -1,7 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Input, Space } from "antd";
 import moment from "moment";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const TableSearch = (dataIndex, handleSearch, handleReset, type = "text") => {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,17 +13,18 @@ const TableSearch = (dataIndex, handleSearch, handleReset, type = "text") => {
     setValueSearch(value);
   };
 
-  const checkHandleSearch = (...rest) => {
+  const checkHandleSearch = (value) => {
     if (!handleSearch) return;
     if (!valueSearch) return;
+    handleSearch(value);
+    getValueSearch(null);
     setIsVisible(false);
-    handleSearch(...rest);
   };
 
   const checkHandleReset = () => {
-    if (!valueSearch) return;
+    if (!handleReset) return;
     handleReset();
-    setValueSearch("");
+    getValueSearch(null);
     setIsVisible(false);
   };
 
@@ -36,8 +37,8 @@ const TableSearch = (dataIndex, handleSearch, handleReset, type = "text") => {
             ref={inputRef}
             value={valueSearch}
             placeholder={`Search ${dataIndex}`}
-            onPressEnter={(value) => checkHandleSearch(value)}
-            onChange={(value) => getValueSearch(value)}
+            onPressEnter={(e) => checkHandleSearch(valueSearch)}
+            onChange={(e) => getValueSearch(e.target.value)}
             style={{ marginBottom: 8, display: "block" }}
           />
         );
@@ -46,6 +47,7 @@ const TableSearch = (dataIndex, handleSearch, handleReset, type = "text") => {
         fControl = (
           <DatePicker
             style={{ marginBottom: 8, display: "block" }}
+            autoFocus={true}
             format="DD/MM/YYYY"
             onChange={(date, dateString) => getValueSearch(date)}
           />
@@ -56,6 +58,7 @@ const TableSearch = (dataIndex, handleSearch, handleReset, type = "text") => {
           <div style={{ marginBottom: 8, display: "block" }}>
             <RangePicker
               format="DD/MM/YYYY"
+              autoFocus={true}
               ranges={{
                 Today: [moment(), moment()],
                 "This Month": [
@@ -73,14 +76,13 @@ const TableSearch = (dataIndex, handleSearch, handleReset, type = "text") => {
     }
     return fControl;
   };
-  // useEffect(() => {
-  // 	console.log(isVisible);
-  // 	if (isVisible) {
-  // 		setTimeout(() => {
-  // inputRef.current.select();
-  // 		}, 100);
-  // 	}
-  // }, [isVisible]);
+  useEffect(() => {
+    if (isVisible) {
+      setTimeout(() => {
+        inputRef.current?.select?.();
+      }, 100);
+    }
+  }, [isVisible]);
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: () => (
       <div style={{ padding: 8 }}>

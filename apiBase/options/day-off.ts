@@ -3,6 +3,7 @@ import { instance } from "../instance";
 const dayOffApi = {
   // Lấy tất cả data có phân trang
   getAll(params) {
+    console.log("prarams: ", params);
     const url = "/api/DayOff/GetAll";
     return instance.get<IApiResultData<IDayOff[]>>(url, {
       params,
