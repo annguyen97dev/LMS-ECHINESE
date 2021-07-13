@@ -8,7 +8,6 @@ import { jobApi } from "~/apiBase";
 const JobForm = React.memo((props: any) => {
   const { jobId, reloadData } = props;
   const { reset, setValue } = useForm();
-  const { Option } = Select;
   const [jobDetail, setJobDetail] = useState<IJob>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -20,28 +19,28 @@ const JobForm = React.memo((props: any) => {
     if (jobId) {
       try {
         let res = await jobApi.update({ ...data, Enable: true, JobID: jobId });
-        showNoti("success", res?.data.message);
+        afterSubmit(res?.data.message);
       } catch (error) {
         showNoti("danger", error.message);
         setLoading(false);
-      } finally {
-        setLoading(false);
-        setIsModalVisible(false);
-        //@ts-ignore
-        reloadData();
       }
     } else {
       try {
         let res = await jobApi.add({ ...data, Enable: true });
-        showNoti("success", res?.data.message);
-        setLoading(false);
-        setIsModalVisible(false);
-        reloadData();
+        afterSubmit(res?.data.message);
         reset();
       } catch (error) {
         showNoti("danger", error.message);
+        setLoading(false);
       }
     }
+  };
+
+  const afterSubmit = (mes) => {
+    showNoti("success", mes);
+    setLoading(false);
+    setIsModalVisible(false);
+    reloadData();
   };
 
   useEffect(() => {
@@ -57,7 +56,7 @@ const JobForm = React.memo((props: any) => {
       }
     }
     getJobDetail();
-  }, [jobId]);
+  }, []);
 
   return (
     <>
@@ -84,7 +83,7 @@ const JobForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title={<>{props.showAdd ? "Thêm mới" : "Cập nhật"}</>}
+        title={<>{jobId ? "Thêm mới" : "Cập nhật"}</>}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -93,7 +92,13 @@ const JobForm = React.memo((props: any) => {
           <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="JobName" label="Nghề nghiệp">
+                <Form.Item
+                  name="JobName"
+                  label="Nghề nghiệp"
+                  rules={[
+                    { required: true, message: "Vui lòng điền đủ thông tin!" },
+                  ]}
+                >
                   <Input
                     placeholder="Giáo viên"
                     className="style-input"

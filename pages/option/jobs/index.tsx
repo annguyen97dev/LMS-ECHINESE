@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PowerTable from "~/components/PowerTable";
 import JobForm from "~/components/Global/Option/JobForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
@@ -13,7 +13,7 @@ const JobsList = () => {
     {
       title: "Nghề nghiệp",
       dataIndex: "JobName",
-      ...FilterColumn("JobName"),
+      // ...FilterColumn("JobName"),
     },
     { title: "Modified By", dataIndex: "ModifiedBy" },
     {
@@ -25,7 +25,12 @@ const JobsList = () => {
     {
       render: (data) => (
         <>
-          <JobForm showIcon={true} jobId={data.JobID} />
+          <JobForm
+            jobId={data.JobID}
+            reloadData={() => {
+              getDataJob();
+            }}
+          />
         </>
       ),
     },
@@ -44,7 +49,7 @@ const JobsList = () => {
   const getDataJob = () => {
     (async () => {
       try {
-        let res = await jobApi.getAll(20, indexPage);
+        let res = await jobApi.getAll(10, indexPage);
         res.status == 200 && setJob(res.data.data),
           setTotalPage(res.data.totalRow);
       } catch (error) {
@@ -76,7 +81,6 @@ const JobsList = () => {
       TitlePage="Jobs list"
       TitleCard={
         <JobForm
-          showAdd={true}
           reloadData={() => {
             getDataJob();
           }}
