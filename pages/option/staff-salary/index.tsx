@@ -8,65 +8,86 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import {data} from '../../../lib/option/dataOption2';
 import { useWrap } from "~/context/wrap";
 import { staffSalaryApi } from "~/apiBase";
+import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
+import { Item } from "devextreme-react/file-manager";
 const StaffSalary = () => {
-	const [dataStaffSalary, setDataStaffSalary] = useState([]);
+	const [dataStaffSalary, setDataStaffSalary] = useState<IStaffSalary[]>([]);
+	const [dataStaff, setDataStaff] = useState([]);
 	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 	  type: "",
 	  status: false,
 	});
-	const [isOpen, setIsOpen] = useState({
-	  isOpen: false,
-	  status: null,
-	});
-	const [dataHidden, setDataHidden] = useState({
-	  ListCourseId: null,
-	  Enable: null,
-	});
-	const [rowData, setRowData] = useState();
 	const [totalPage, setTotalPage] = useState(null);
 
 	let indexPage = 1;
-  
+
+	// const getDataStaffSalary = () => {
+	//   setIsLoading({
+	// 	type: "GET_ALL",
+	// 	status: true,
+	//   });
+	//   (async () => {
+	// 	try {
+	// 	  let res = await staffSalaryApi.getAll(10, indexPage);
+	// 	  res.status == 200 && setDataStaffSalary(res.data.data);
+	// 	  setTotalPage(res.data.totalRow);
+	// 	} catch (error) {
+	// 	  showNoti("danger", error.message);
+	// 	} finally {
+	// 	  setIsLoading({
+	// 		type: "GET_ALL",
+	// 		status: false,
+	// 	  });
+	// 	}
+	//   })();
+	// };
 	const getDataStaffSalary = () => {
-	  setIsLoading({
-		type: "GET_ALL",
-		status: true,
-	  });
-	  (async () => {
-		try {
-		  let res = await staffSalaryApi.getAll(10, indexPage);
-		  res.status == 200 && setDataStaffSalary(res.data.data);
-		  setTotalPage(res.data.TotalRow);
-		} catch (error) {
-		  showNoti("danger", error.message);
-		} finally {
-		  setIsLoading({
-			type: "GET_ALL",
-			status: false,
-		  });
-		}
-	  })();
+		setIsLoading({
+		  type: "GET_ALL",
+		  status: true,
+		});
+		(async () => {
+		  try {
+			let res = await staffSalaryApi.getAll(10, indexPage);
+			res.status == 200 && getNewDataStaffSalary(res.data.data);
+		  } catch (error) {
+			showNoti("danger", error.message);
+		  } finally {
+			setIsLoading({
+			  type: "GET_ALL",
+			  status: false,
+			});
+		  }
+		})();
 	};
-  
-	const getDataStaffSalaryWidthID = (UserID: number) => {
-	  setIsLoading({
-		type: "GET_WITH_ID",
-		status: true,
-	  });
-	  (async () => {
-		try {
-		  let res = await staffSalaryApi.getByID(UserID);
-		  res.status == 200 && setRowData(res.data.data); 
-		} catch (error) {
-		  showNoti("danger", error.message);
-		} finally {
-		  setIsLoading({
-			type: "GET_WITH_ID",
-			status: false,
-		  });
-		}
-	  })();
+
+	const getNewDataStaffSalary = (data: any) => {
+		data.forEach(item => {
+			item.Salary = new Intl.NumberFormat('ja-JP').format(item.Salary);
+		});
+
+		setDataStaffSalary(data);
+	}
+
+	const getDataStaff = () => {
+		setIsLoading({
+		  type: "GET_ALL",
+		  status: true,
+		});
+		(async () => {
+		  try {
+			let res = await staffSalaryApi.getAllStaff();
+			res.status == 200 && setDataStaff(res.data.data);
+		  } catch (error) {
+			showNoti("danger", error.message);
+		  } finally {
+			setIsLoading({
+			  type: "GET_ALL",
+			  status: false,
+			});
+		  }
+		})();
 	};
   
 	// ADD Data
@@ -78,7 +99,7 @@ const StaffSalary = () => {
   
 	  let res = null;
   
-	  if(data.ID) {
+	  if(data.SalaryID) {
 		console.log(data);
 		try {
 		  res = await staffSalaryApi.update(data);
@@ -108,33 +129,9 @@ const StaffSalary = () => {
 	  return res;
 	}
   
-	// DELETE COURSE
-	// const changeStatus = async (checked: boolean, idRow: number) => {
-	//   console.log("Checked: ", checked);
-	//   console.log("Branch ID: ", idRow);
-  
-	//   setIsLoading({
-	// 	type: "GET_ALL",
-	// 	status: true,
-	//   });
-  
-	//   try {
-	// 	let res = await serviceApi.changeStatus(idRow);
-	// 	res.status == 200 && getDataService();
-	//   } catch (error) {
-	// 	showNoti("danger", error.Message);
-	//   } finally {
-	// 	setIsLoading({
-	// 	  type: "GET_ALL",
-	// 	  status: false,
-	// 	});
-	//   }
-	// };
-  
 	const afterPost = (value) => {
 	  showNoti("success", `${value} thành công`);
 	  getDataStaffSalary();
-	  // addDataSuccess(), setIsModalVisible(false);
 	};
 
 	const getPagination = (pageNumber: number) => {
@@ -154,7 +151,7 @@ const StaffSalary = () => {
 			dataIndex: 'Email',
 			// ...FilterColumn("email")
 		},
-		{title: 'Role', dataIndex: 'Role', ...FilterColumn('Role')},
+		{title: 'Role', dataIndex: 'RoleName', ...FilterColumn('RoleName')},
 		{title: 'Salary', dataIndex: 'Salary'},
 		{
 			title: 'Type Salary',
@@ -172,10 +169,10 @@ const StaffSalary = () => {
 			],
 			onFilter: (value, record) => record.StyleName.indexOf(value) === 0,
 		},
-		{title: 'Modified By', dataIndex: 'ModifiedBy', ...FilterColumn('ModifiedBy')},
+		{title: 'Created By', dataIndex: 'CreatedBy', ...FilterColumn('CreatedBy')},
 		{
-			title: 'Modified Date',
-			dataIndex: 'ModifiedDate',
+			title: 'Created Date',
+			dataIndex: 'CreatedOn',
 			// ...FilterDateColumn('modDate'),
 		},
 		{
@@ -183,12 +180,12 @@ const StaffSalary = () => {
 				<>
 					<StaffSalaryForm 
 						showIcon={true}
-						UserID ={record.ID}
-						rowData={rowData}
+						// UserID ={record.ID}
+						rowData={record}
 						isLoading={isLoading}
-						getDataStaffSalaryWidthID={(UserID: number) => {
-							getDataStaffSalaryWidthID(UserID);
-						}}
+						// getDataStaffSalaryWidthID={(UserID: number) => {
+						// 	getDataStaffSalaryWidthID(UserID);
+						// }}
 						_onSubmit={(data: any) => _onSubmit(data)}
 						/>
 				</>
@@ -198,6 +195,7 @@ const StaffSalary = () => {
 
 	useEffect(() => {
 		getDataStaffSalary();
+		getDataStaff();
 	}, [])
 
 	return (
@@ -213,7 +211,8 @@ const StaffSalary = () => {
 						showAdd={true}
 						isLoading={isLoading} 
 						_onSubmit={(data: any) => _onSubmit(data)}
-						/>}
+						dataStaff={dataStaff}
+					/>}
 				dataSource={dataStaffSalary}
 				columns={columns}
 				Extra={

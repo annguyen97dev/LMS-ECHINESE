@@ -4,37 +4,18 @@ import {RotateCcw} from 'react-feather';
 import { staffSalaryApi } from '~/apiBase';
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
+import Cleave from 'cleave.js/react';
 const StaffSalaryForm = (props) => {
 	const {Option} = Select;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
-	const [dataStaff, setDataStaff] = useState([]);
 	const [isLoading, setIsLoading] = useState({
 		type: "",
 		status: false,
 	  });
 	const { showNoti } = useWrap();
 	
-	const getDataStaff = () => {
-		setIsLoading({
-		  type: "GET_ALL",
-		  status: true,
-		});
-		(async () => {
-		  try {
-			let res = await staffSalaryApi.getAllStaff();
-			res.status == 200 && setDataStaff(res.data.data);
-		  } catch (error) {
-			showNoti("danger", error.message);
-		  } finally {
-			setIsLoading({
-			  type: "GET_ALL",
-			  status: false,
-			});
-		  }
-		})();
-	};
 
 	const {
 		register,
@@ -56,7 +37,6 @@ const StaffSalaryForm = (props) => {
 	});
 
 	useEffect(() => {
-		getDataStaff();
 		if (props.rowData) {
 			Object.keys(props.rowData).forEach(function (key) {
 				setValue(key, props.rowData[key]);
@@ -72,7 +52,7 @@ const StaffSalaryForm = (props) => {
 					<button
 						className="btn btn-icon edit"
 						onClick={() => {
-							setIsModalVisible(true); props.getDataStaffSalaryWidthID(props.UserID);
+							setIsModalVisible(true);
 						}}
 					>
 						<RotateCcw />
@@ -109,7 +89,7 @@ const StaffSalaryForm = (props) => {
 											className="style-input" 
 											defaultValue="Chọn nhân viên"
 											onChange={(value) => setValue("UserInformationID", value)}>
-											{dataStaff && dataStaff.map(row => (
+											{props.dataStaff && props.dataStaff .map(row => (
 												<Option key={row.UserInformationID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
 											))
 											}
@@ -129,26 +109,16 @@ const StaffSalaryForm = (props) => {
 						<div className="row">
 							<div className="col-12">
 								<Form.Item label="Salary">
-									{props.isLoading.type == "GET_WITH_ID" &&
-										props.isLoading.status ? (
-											<Skeleton
-											active
-											paragraph={{ rows: 0 }}
-											title={{ width: "100%" }}
-										/>
-										) : (
-											<Select 
-												className="style-input" 
-												defaultValue={props.rowData?.StyleName || "Type Salary"}
-												onChange={(value) => setValue("Style", value)}>
-												<Option value="1">Tính lương theo tháng</Option>
-												<Option value="2">Tính lương theo giờ</Option>
-												<Option value="disabled" disabled>
-													Disabled
-												</Option>
-											</Select>
-										)}
-
+									<Select 
+										className="style-input" 
+										defaultValue={props.rowData?.StyleName || "Type Salary"}
+										onChange={(value) => setValue("Style", value)}>
+										<Option value="1">Tính lương theo tháng</Option>
+										<Option value="2">Tính lương theo giờ</Option>
+										<Option value="disabled" disabled>
+											Disabled
+										</Option>
+									</Select>
 								</Form.Item>
 							</div>
 						</div>
@@ -157,20 +127,12 @@ const StaffSalaryForm = (props) => {
 						<div className="row">
 							<div className="col-12">
 								<Form.Item label="Salary Const">
-									{props.isLoading.type == "GET_WITH_ID" &&
-										props.isLoading.status ? (
-											<Skeleton
-											active
-											paragraph={{ rows: 0 }}
-											title={{ width: "100%" }}
-										/>
-										) : (
-											<Input
-											className="style-input"
-											defaultValue={props.rowData?.Salaryconst}
-											onChange={(e) => setValue("Salaryconst", e.target.value)}
-										/>
-									)}
+									<Cleave
+										className='ant-input'
+										placeholder={props.rowData?.Salary}
+										options={{numeral: true, numeralThousandsGroupStyle: 'thousand'}}
+										onChange={(e) => setValue("Salary", parseFloat(e.target.value.replace(/,/g, '')))}
+									/>
 								</Form.Item>
 							</div>
 						</div>
