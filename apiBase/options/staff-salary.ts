@@ -2,12 +2,9 @@ import { instance } from "~/apiBase/instance";
 
 class StaffSalary {
     // Lấy tất cả data có phân trang
-    getAll = (pageSize: number, pageIndex: number) =>
+    getAll = (todoApi: object) =>
     instance.get<IApiResultData<IStaffSalary[]>>("/api/Salary/GetAll", {
-        params: {
-            pageSize: pageSize,
-            pageIndex: pageIndex,
-        },
+        params: todoApi,
     });
 
     // Lấy tất cả nhân viên 

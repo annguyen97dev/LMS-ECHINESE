@@ -1588,3 +1588,7 @@ hr {
   > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
   display: none;
 }
+
+.ant-input-number .ant-input-number-handler-wrap {
+  display: none;
+}

@@ -20,28 +20,23 @@ const StaffSalary = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 
-	let indexPage = 1;
+	let pageIndex = 1;
 
-	// const getDataStaffSalary = () => {
-	//   setIsLoading({
-	// 	type: "GET_ALL",
-	// 	status: true,
-	//   });
-	//   (async () => {
-	// 	try {
-	// 	  let res = await staffSalaryApi.getAll(10, indexPage);
-	// 	  res.status == 200 && setDataStaffSalary(res.data.data);
-	// 	  setTotalPage(res.data.totalRow);
-	// 	} catch (error) {
-	// 	  showNoti("danger", error.message);
-	// 	} finally {
-	// 	  setIsLoading({
-	// 		type: "GET_ALL",
-	// 		status: false,
-	// 	  });
-	// 	}
-	//   })();
-	// };
+	let listField = {
+		FullName: "",
+	};
+
+	const listTodoApi = {
+		pageSize: 10,
+		pageIndex: pageIndex,
+		sort: null,
+		sortType: null,
+		// branchCode: null,
+		// branchName: null,
+	};
+	
+	const [todoApi, setTodoApi] = useState(listTodoApi);
+
 	const getDataStaffSalary = () => {
 		setIsLoading({
 		  type: "GET_ALL",
@@ -49,7 +44,7 @@ const StaffSalary = () => {
 		});
 		(async () => {
 		  try {
-			let res = await staffSalaryApi.getAll(10, indexPage);
+			let res = await staffSalaryApi.getAll(todoApi);
 			res.status == 200 && getNewDataStaffSalary(res.data.data);
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -135,23 +130,50 @@ const StaffSalary = () => {
 	};
 
 	const getPagination = (pageNumber: number) => {
-		indexPage = pageNumber;
+		pageIndex = pageNumber;
 		getDataStaffSalary();
 	};
 
+	const compareField = (valueSearch, dataIndex) => {
+		let newList = null;
+		Object.keys(listField).forEach(function (key) {
+			console.log("key: ", key);
+			if (key != dataIndex) {
+			listField[key] = "";
+			} else {
+			listField[key] = valueSearch;
+			}
+		});
+		newList = listField;
+		return newList;
+	};
+	
+	const onSearch = (valueSearch, dataIndex) => {
+		let clearKey = compareField(valueSearch, dataIndex);
+
+		setTodoApi({
+			...todoApi,
+			...clearKey,
+		});
+	};
+
+	// HANDLE RESET
+	const handleReset = () => {
+		setTodoApi(listTodoApi);
+	};
+
 	const columns = [
-		{title: 'Full name', dataIndex: 'FullName', ...FilterColumn('FullName')},
+		{title: 'Full name', dataIndex: 'FullName', ...FilterColumn('FullName', onSearch, handleReset, "text")},
 		{
 			title: 'Username',
 			dataIndex: 'UserName',
-			...FilterColumn('UserName'),
 		},
 		{
 			title: 'Email',
 			dataIndex: 'Email',
 			// ...FilterColumn("email")
 		},
-		{title: 'Role', dataIndex: 'RoleName', ...FilterColumn('RoleName')},
+		{title: 'Role', dataIndex: 'RoleName',},
 		{title: 'Salary', dataIndex: 'Salary'},
 		{
 			title: 'Type Salary',
@@ -169,7 +191,7 @@ const StaffSalary = () => {
 			],
 			onFilter: (value, record) => record.StyleName.indexOf(value) === 0,
 		},
-		{title: 'Created By', dataIndex: 'CreatedBy', ...FilterColumn('CreatedBy')},
+		{title: 'Created By', dataIndex: 'CreatedBy',},
 		{
 			title: 'Created Date',
 			dataIndex: 'CreatedOn',
@@ -196,7 +218,7 @@ const StaffSalary = () => {
 	useEffect(() => {
 		getDataStaffSalary();
 		getDataStaff();
-	}, [])
+	}, [todoApi])
 
 	return (
 		<Fragment>
