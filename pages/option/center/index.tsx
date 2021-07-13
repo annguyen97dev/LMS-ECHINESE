@@ -19,6 +19,11 @@ import FilterColumn from "~/components/Tables/FilterColumn";
 
 let pageIndex = 1;
 
+let listField = {
+  branchCode: "",
+  branchName: "",
+};
+
 const Center = () => {
   const [center, setCenter] = useState<IBranch[]>([]);
   const [isLoading, setIsLoading] = useState({
@@ -275,26 +280,27 @@ const Center = () => {
     setTodoApi(newTodoApi);
   };
 
-  const onSearch = (data) => {
-    console.log("DAta search: ", data);
-    // switch (dataIndex) {
-    //         case "BranchCode":
-    //           setTodoApi({
-    //             ...todoApi,
-    //             branchName: "",
-    //             branchCode: valueSearch,
-    //           });
-    //           break;
-    //         case "BranchName":
-    //           setTodoApi({
-    //             ...todoApi,
-    //             branchCode: "",
-    //             branchName: valueSearch,
-    //           });
-    //           break;
-    //         default:
-    //           break;
-    //       }
+  const compareField = (valueSearch, dataIndex) => {
+    let newList = null;
+    Object.keys(listField).forEach(function (key) {
+      console.log("key: ", key);
+      if (key != dataIndex) {
+        listField[key] = "";
+      } else {
+        listField[key] = valueSearch;
+      }
+    });
+    newList = listField;
+    return newList;
+  };
+
+  const onSearch = (valueSearch, dataIndex) => {
+    let clearKey = compareField(valueSearch, dataIndex);
+
+    setTodoApi({
+      ...todoApi,
+      ...clearKey,
+    });
   };
 
   // HANDLE RESET
@@ -312,19 +318,18 @@ const Center = () => {
       title: "Mã trung tâm",
       dataIndex: "BranchCode",
       // ...FilterColumn("BranchCode"),
-      ...FilterColumn("BranchCode", onSearch, handleReset, "text"),
+      ...FilterColumn("branchCode", onSearch, handleReset, "text"),
     },
 
     {
       title: "Tên trung tâm",
       dataIndex: "BranchName",
-      // ...FilterColumn("BranchName"),
+      ...FilterColumn("branchName", onSearch, handleReset, "text"),
     },
     { title: "Địa chỉ", dataIndex: "Address" },
     {
       title: "Số điện thoại",
       dataIndex: "Phone",
-      // ...FilterColumn("BranchName"),
     },
     {
       title: "Trạng thái",
