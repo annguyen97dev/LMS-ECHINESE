@@ -22,7 +22,7 @@ const SortBox = (props: any) => {
         {/* <Option value="sort-title">-- Sort by --</Option> */}
         {dataOption?.length > 0 &&
           dataOption.map((option: any, index) => (
-            <Option title={option.dataSort} value={option.value} key={index}>
+            <Option title={option.dataSort} value={index} key={index}>
               {option.text}
             </Option>
           ))}
