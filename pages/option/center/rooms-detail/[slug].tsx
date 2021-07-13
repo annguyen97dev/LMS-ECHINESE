@@ -15,20 +15,37 @@ import { useWrap } from "~/context/wrap";
 
 let pageIndex = 1;
 
+const listField = {
+  pageSize: 10,
+  pageIndex: pageIndex,
+  sort: null,
+  sortType: null,
+  roomCode: null,
+  roomName: null,
+  BranchID: null,
+};
+
 const Center = () => {
-  const [roomForm, setRoomForm] = useState(false);
   const columns = [
-    { title: "Mã phòng", dataIndex: "RoomCode", ...FilterColumn("RoomCode") },
-    { title: "Tên phòng", dataIndex: "RoomName", ...FilterColumn("RoomName") },
+    {
+      title: "Mã phòng",
+      dataIndex: "RoomCode",
+      // ...FilterColumn("RoomCode")
+    },
+    {
+      title: "Tên phòng",
+      dataIndex: "RoomName",
+      //  ...FilterColumn("RoomName")
+    },
     {
       title: "Người cập nhật",
       dataIndex: "ModifiedBy",
-      ...FilterColumn("ModifiedBy"),
+      // ...FilterColumn("ModifiedBy"),
     },
     {
       title: "Ngày cập nhật",
       dataIndex: "ModifiedOn",
-      ...FilterDateColumn("ModifiedOn"),
+      // ...FilterDateColumn("ModifiedOn"),
     },
     {
       render: () => (
@@ -47,7 +64,8 @@ const Center = () => {
       ),
     },
   ];
-
+  const [todoApi, setToDoApi] = useState(listField);
+  const [roomForm, setRoomForm] = useState(false);
   const [roomData, setRoomData] = useState<IRoom[]>([]);
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -58,27 +76,27 @@ const Center = () => {
 
   console.log("Room data: ", roomData);
 
-  const _onSubmit = async (data: any) => {
-    setIsLoading({
-      type: "ADD_DATA",
-      status: true,
-    });
+  // const _onSubmit = async (data: any) => {
+  //   setIsLoading({
+  //     type: "ADD_DATA",
+  //     status: true,
+  //   });
 
-    try {
-      const res = await roomApi.post({
-        ...data,
-        BranchID: parseInt(router.query.slug as string),
-      });
-      res?.status == 200 && afterPost();
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "ADD_DATA",
-        status: false,
-      });
-    }
-  };
+  //   try {
+  //     const res = await roomApi.post({
+  //       ...data,
+  //       BranchID: parseInt(router.query.slug as string),
+  //     });
+  //     res?.status == 200 && afterPost();
+  //   } catch (error) {
+  //     showNoti("danger", error.message);
+  //   } finally {
+  //     setIsLoading({
+  //       type: "ADD_DATA",
+  //       status: false,
+  //     });
+  //   }
+  // };
 
   const afterPost = () => {
     showNoti("success", "Thêm thành công");
@@ -97,7 +115,7 @@ const Center = () => {
       };
 
       try {
-        let res = await roomApi.getByID(router.query.slug);
+        let res = await roomApi.getById(router.query.slug);
         // @ts-ignore
         res.status == 200 && setRoomData(res.data.data);
       } catch (error) {
@@ -126,7 +144,7 @@ const Center = () => {
             showAdd={true}
             addDataSuccess={() => getDataRoom()}
             isLoading={isLoading}
-            _onSubmit={(data: any) => _onSubmit(data)}
+            // _onSubmit={(data: any) => _onSubmit(data)}
           />
         }
         dataSource={roomData}

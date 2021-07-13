@@ -19,7 +19,7 @@ import FilterColumn from "~/components/Tables/FilterColumn";
 
 let pageIndex = 1;
 
-let listField = {
+let listFieldSearch = {
   pageIndex: 1,
   branchCode: "",
   branchName: "",
@@ -204,15 +204,15 @@ const Center = () => {
   // -------------- CHECK FIELD ---------------------
   const checkField = (valueSearch, dataIndex) => {
     let newList = null;
-    Object.keys(listField).forEach(function (key) {
+    Object.keys(listFieldSearch).forEach(function (key) {
       console.log("key: ", key);
       if (key != dataIndex) {
-        listField[key] = "";
+        listFieldSearch[key] = "";
       } else {
-        listField[key] = valueSearch;
+        listFieldSearch[key] = valueSearch;
       }
     });
-    newList = listField;
+    newList = listFieldSearch;
     return newList;
   };
 
