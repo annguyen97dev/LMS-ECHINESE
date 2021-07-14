@@ -1,5 +1,5 @@
 import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Tooltip} from 'antd';
+import {Form, Modal, Spin, Tooltip} from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
@@ -15,19 +15,19 @@ const DayOffForm = (props) => {
 		isUpdate,
 		handleUpdateDayOff,
 		updateObj,
-		idxUpdateObj,
+		isLoading,
 	} = props;
+
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
-
 	const schema = yup.object().shape({
 		DayOff: yup.string().nullable().required('Bạn không được để trống'),
 		DayOffName: yup.string().required('Bạn không được để trống'),
 	});
 
 	const defaultValuesInit = {
-		DayOff: moment().toString(),
+		DayOff: moment().format('YYYY/MM/DD'),
 		DayOffName: '',
 	};
 	const form = useForm({
@@ -36,26 +36,33 @@ const DayOffForm = (props) => {
 	});
 
 	useEffect(() => {
-		if (isUpdate && updateObj && idxUpdateObj >= 0) {
+		if (isUpdate && updateObj) {
 			Object.entries(updateObj).forEach((arr) => form.setValue(arr[0], arr[1]));
 		}
-	}, [updateObj, idxUpdateObj]);
+	}, [updateObj]);
 
 	const dayOffSwitchFunc = (data) => {
 		switch (isUpdate) {
 			case true:
 				if (!handleUpdateDayOff) return;
-				handleUpdateDayOff(data, idxUpdateObj, updateObj);
+				handleUpdateDayOff(data).then((res) => {
+					if (res && res.status === 200) {
+						closeModal();
+					}
+				});
 				break;
 			case false:
 				if (!handleCreateDayOff) return;
-				handleCreateDayOff(data);
-				form.reset({...defaultValuesInit});
+				handleCreateDayOff(data).then((res) => {
+					if (res && res.status === 200) {
+						closeModal();
+						form.reset({...defaultValuesInit});
+					}
+				});
 				break;
 			default:
 				break;
 		}
-		closeModal();
 	};
 
 	return (
@@ -74,7 +81,6 @@ const DayOffForm = (props) => {
 			<Modal
 				title={isUpdate ? 'Update Day Off' : 'Create Day Off'}
 				visible={isModalVisible}
-				onOk={closeModal}
 				onCancel={closeModal}
 				footer={null}
 			>
@@ -102,6 +108,9 @@ const DayOffForm = (props) => {
 							<div className="col-12">
 								<button type="submit" className="btn btn-primary w-100">
 									{isUpdate ? 'Update' : 'Create'}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && (
+										<Spin className="loading-base" />
+									)}
 								</button>
 							</div>
 						</div>
@@ -116,13 +125,16 @@ DayOffForm.propTypes = {
 	isUpdate: PropTypes.bool,
 	handleUpdateDayOff: PropTypes.func,
 	updateObj: PropTypes.shape({}),
-	idxUpdateObj: PropTypes.number,
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
 };
 DayOffForm.defaultProps = {
 	handleCreateDayOff: null,
 	isUpdate: false,
 	handleUpdateDayOff: null,
 	updateObj: {},
-	idxUpdateObj: -1,
+	isLoading: {type: '', status: false},
 };
 export default DayOffForm;

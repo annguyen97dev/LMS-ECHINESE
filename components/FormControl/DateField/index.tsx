@@ -2,22 +2,10 @@ import {DatePicker, Form} from 'antd';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {Controller} from 'react-hook-form';
+import PropTypes from 'prop-types';
 
-// interface InputTextField {
-// 	form: Object;
-// 	name: String;
-// 	label?: String;
-// 	optionList?: Array[Object];
-// 	placeholder?: String;
-// 	disabled?: Boolean;
-// }
-const DateField = ({
-	form,
-	name,
-	label = '',
-	placeholder = '',
-	disabled = false,
-}) => {
+const DateField = (props) => {
+	const {form, name, label, placeholder, disabled} = props;
 	const {errors} = form.formState;
 	const hasError = errors[name];
 
@@ -27,6 +15,7 @@ const DateField = ({
 				name={name}
 				control={form.control}
 				render={({field}) => {
+					const checkValue = field.value ? moment(field.value) : undefined;
 					return (
 						<DatePicker
 							{...field}
@@ -34,10 +23,10 @@ const DateField = ({
 							style={{width: '100%'}}
 							placeholder={placeholder}
 							disabled={disabled}
-							allowClear={false}
+							allowClear={true}
 							format="DD/MM/YYYY"
-							value={moment(field.value)}
-							onChange={field.onChange}
+							value={checkValue}
+							onChange={(date) => field.onChange(date?.format('YYYY/MM/DD'))}
 						/>
 					);
 				}}
@@ -45,6 +34,19 @@ const DateField = ({
 			{hasError && <span style={{color: 'red'}}>{errors[name]?.message}</span>}
 		</Form.Item>
 	);
+};
+
+DateField.propTypes = {
+	form: PropTypes.object.isRequired,
+	name: PropTypes.string.isRequired,
+	label: PropTypes.string,
+	placeholder: PropTypes.string,
+	disabled: PropTypes.bool,
+};
+DateField.defaultProps = {
+	label: '',
+	placeholder: '',
+	disabled: false,
 };
 
 export default DateField;
