@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber } from 'antd';
 import {RotateCcw} from 'react-feather';
-import { staffSalaryApi } from '~/apiBase';
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 
@@ -107,7 +106,7 @@ const StaffSalaryForm = (props) => {
 									</Form.Item>
 								) : (
 									<Form.Item label="Note">
-										<Input placeholder="Note" className="style-input" />
+										<Input placeholder="Note" className="style-input" allowClear={true}/>
 									</Form.Item>
 								)}
 							</div>

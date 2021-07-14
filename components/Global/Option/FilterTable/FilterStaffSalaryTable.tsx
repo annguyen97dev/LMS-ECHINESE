@@ -1,7 +1,15 @@
 import {DatePicker, Form, Popover, Select} from 'antd';
 import React, {useState} from 'react';
 import {Filter} from 'react-feather';
-const FilterStaffSalaryTable = () => {
+import { Roles } from "~/lib/roles/listRoles";
+import { useForm } from "react-hook-form";
+import moment from 'moment';
+
+const dateFormat = 'YYYY/MM/DD';
+
+const { RangePicker } = DatePicker; 
+
+const FilterStaffSalaryTable = (props:any) => {
 	const {Option} = Select;
 	function handleChange(value) {
 		console.log(`selected ${value}`);
@@ -17,36 +25,54 @@ const FilterStaffSalaryTable = () => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
 
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		formState: { isSubmitting, errors, isSubmitted },
+	} = useForm();
+
+	const onSubmit = handleSubmit((data: any) => {
+		// console.log(data);
+		props._onFilter(data);
+	});
+
 	const content = (
 		<div className={`wrap-filter small`}>
-			<Form layout="vertical">
+			<Form layout="vertical" onFinish={onSubmit}>
 				<div className="row">
-					<div className="col-md-6">
+					<div className="col-md-12">
 						<Form.Item label="Role">
 							<Select
 								className="style-input"
-								defaultValue="TVV"
-								onChange={handleChange}
+								placeholder="Chọn role"
+								onChange={(value) => setValue("RoleID", value)}
 							>
-								<Option value="jack">TVV</Option>
-								<Option value="lucy">TVV</Option>
+								{Roles.map((item) => (
+									<Option key={item.id} value={item.id}>{item.RoleName}</Option>
+								))}
+
 								<Option value="disabled" disabled>
 									Disabled
 								</Option>
 							</Select>
 						</Form.Item>
 					</div>
-					<div className="col-md-6">
+					<div className="col-md-12">
 						<Form.Item label="Modified Date">
-							<DatePicker className="style-input" onChange={onChange} />
+							<RangePicker
+								format={dateFormat}
+								className="style-input"
+								onChange={(value, dateStrings) => {setValue("fromDate", dateStrings[0]); setValue("toDate", dateStrings[1])}}
+							/>
 						</Form.Item>
 					</div>
 					<div className="col-md-12">
 						<Form.Item className="mb-0">
-							<button className="btn btn-primary" style={{marginRight: '10px'}}>
+							<button className="btn btn-primary" style={{marginRight: '10px'}} onClick={onSubmit}>
 								Tìm kiếm
 							</button>
-							<button className="btn btn-success">Export</button>
+							{/* <button className="btn btn-success">Export</button> */}
 						</Form.Item>
 					</div>
 				</div>

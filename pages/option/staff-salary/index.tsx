@@ -9,10 +9,10 @@ import {data} from '../../../lib/option/dataOption2';
 import { useWrap } from "~/context/wrap";
 import { staffSalaryApi, userInformationApi } from "~/apiBase";
 import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
-import { Item } from "devextreme-react/file-manager";
 import { AlertTriangle, X } from "react-feather";
 import Modal from "antd/lib/modal/Modal";
-import { boolean, number } from "yup";
+import moment from "moment";
+
 const StaffSalary = () => {
 	const [dataStaffSalary, setDataStaffSalary] = useState<IStaffSalary[]>([]);
 	const [dataStaff, setDataStaff] = useState([]);
@@ -61,6 +61,9 @@ const StaffSalary = () => {
 		pageIndex: pageIndex,
 		sort: null,
 		sortType: null,
+		RoleID: null,
+		fromDate: null,
+		toDate: null,
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
@@ -217,6 +220,20 @@ const StaffSalary = () => {
 		setTodoApi(newTodoApi);
 	};
 
+	// HANDLE FILTER
+	const _onFilter = ( data ) => {
+		console.log('Show value: ', data);
+
+		let newTodoApi = {
+			...listTodoApi,
+			RoleID: data.RoleID,
+			fromDate: data.fromDate,
+			toDate: data.toDate
+		};
+
+		setTodoApi(newTodoApi);
+	}
+
 	// COLUMNS TABLE
 	const columns = [
 		{title: 'Full name', dataIndex: 'FullName', ...FilterColumn('FullName', onSearch, handleReset, "text")},
@@ -229,7 +246,10 @@ const StaffSalary = () => {
 			dataIndex: 'Email',
 			// ...FilterColumn("email")
 		},
-		{title: 'Role', dataIndex: 'RoleName',},
+		{
+			title: 'Role', 
+			dataIndex: 'RoleName',
+		},
 		{title: 'Salary', dataIndex: 'Salary'},
 		{
 			title: 'Type Salary',
@@ -251,6 +271,7 @@ const StaffSalary = () => {
 		{
 			title: 'Created Date',
 			dataIndex: 'CreatedOn',
+			render: (date) => moment(date).format("DD/MM/YYYY"),
 			// ...FilterDateColumn('modDate'),
 		},
 		{
@@ -313,7 +334,9 @@ const StaffSalary = () => {
 				columns={columns}
 				Extra={
 					<div className="extra-table">
-						{/* <FilterStaffSalaryTable /> */}
+						<FilterStaffSalaryTable 
+							_onFilter={(value: any) => _onFilter(value)}	
+						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}
 							dataOption={dataOption}
