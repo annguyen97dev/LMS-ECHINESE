@@ -6,9 +6,8 @@ import { useWrap } from "~/context/wrap";
 import { jobApi } from "~/apiBase";
 
 const JobForm = React.memo((props: any) => {
-  const { jobId, reloadData } = props;
+  const { jobId, reloadData, jobDetail } = props;
   const { reset, setValue } = useForm();
-  const [jobDetail, setJobDetail] = useState<IJob>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
@@ -44,19 +43,10 @@ const JobForm = React.memo((props: any) => {
   };
 
   useEffect(() => {
-    async function getJobDetail() {
-      if (jobId) {
-        try {
-          let _job = await jobApi.getDetail(jobId);
-          // @ts-ignore
-          setJobDetail(_job.data.data);
-        } catch (err) {
-          showNoti("danger", err.message);
-        }
-      }
+    if (jobDetail) {
+      form.setFieldsValue(jobDetail);
     }
-    getJobDetail();
-  }, []);
+  }, [isModalVisible]);
 
   return (
     <>
@@ -102,7 +92,6 @@ const JobForm = React.memo((props: any) => {
                   <Input
                     placeholder="Giáo viên"
                     className="style-input"
-                    defaultValue={jobDetail?.JobName}
                     onChange={(e) => setValue("JobName", e.target.value)}
                     allowClear={true}
                   />

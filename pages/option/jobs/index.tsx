@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import PowerTable from "~/components/PowerTable";
-import JobForm from "~/components/Global/Option/JobForm";
-import FilterColumn from "~/components/Tables/FilterColumn";
+import JobForm from "~/components/Global/Option/Job/JobForm";
 import SortBox from "~/components/Elements/SortBox";
 import LayoutBase from "~/components/LayoutBase";
 import { useWrap } from "~/context/wrap";
 import { jobApi } from "~/apiBase";
 import moment from "moment";
+import JobDelete from "~/components/Global/Option/Job/JobDelete";
 
 const JobsList = () => {
   const columns = [
@@ -26,6 +26,13 @@ const JobsList = () => {
       render: (data) => (
         <>
           <JobForm
+            jobDetail={data}
+            jobId={data.JobID}
+            reloadData={() => {
+              getDataJob();
+            }}
+          />
+          <JobDelete
             jobId={data.JobID}
             reloadData={() => {
               getDataJob();
