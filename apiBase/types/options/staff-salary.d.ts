@@ -1,8 +1,13 @@
 type IStaffSalary = IBaseApi<{
-    SalaryID: number;
-    SalaryMonth: string;
-    SalaryHour: string;
-    UserInformationID: string;
-    CountHour: number;
-    Enable: boolean
+  SalaryID: number,
+  UserInformationID: number,
+  FullName: string,
+  UserName: string,
+  Email: string,
+  Role: string,
+  Salary: number,
+  Style: number,
+  StyleName: string,
+  ModifiedBy: string,
+  ModifiedDat: string
   }>;

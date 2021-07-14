@@ -1,40 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton} from 'antd';
+import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber } from 'antd';
 import {RotateCcw} from 'react-feather';
 import { staffSalaryApi } from '~/apiBase';
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
+
 const StaffSalaryForm = (props) => {
 	const {Option} = Select;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [form] = Form.useForm();
 
-	const [dataStaff, setDataStaff] = useState([]);
 	const [isLoading, setIsLoading] = useState({
 		type: "",
 		status: false,
 	  });
 	const { showNoti } = useWrap();
 	
-	const getDataStaff = () => {
-		setIsLoading({
-		  type: "GET_ALL",
-		  status: true,
-		});
-		(async () => {
-		  try {
-			let res = await staffSalaryApi.getAllStaff();
-			res.status == 200 && setDataStaff(res.data.data);
-		  } catch (error) {
-			showNoti("danger", error.message);
-		  } finally {
-			setIsLoading({
-			  type: "GET_ALL",
-			  status: false,
-			});
-		  }
-		})();
-	};
 
 	const {
 		register,
@@ -45,25 +27,25 @@ const StaffSalaryForm = (props) => {
 	  // const { showNoti } = useWrap();
 	
 	const onSubmit = handleSubmit((data: any) => {
-		let res = props._onSubmit(data);
+		if(typeof data.Salary  == "string") {
+			data.Salary = Number(data.Salary.replace(/\$\s?|(,*)/g, ''));
+		}
 
+		let res = props._onSubmit(data);
 		res.then(function (rs: any) {
-			console.log("Res in form: ", rs);
-			rs
-			? res.status == 200 && setIsModalVisible(false)
-			: showNoti("danger", "Server lỗi")
+			rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
 		});
 	});
 
 	useEffect(() => {
-		getDataStaff();
-		if (props.rowData) {
-			Object.keys(props.rowData).forEach(function (key) {
-				setValue(key, props.rowData[key]);
-			});
-			// console.log(props.rowData?.Salaryconst);
+		if(isModalVisible) {
+			if (props.rowData) {
+				Object.keys(props.rowData).forEach(function (key) {
+					setValue(key, props.rowData[key]);
+				});
+			}
 		}
-	}, [props.rowData]);
+	}, [isModalVisible]);
 
 	return (
 		<>
@@ -72,7 +54,7 @@ const StaffSalaryForm = (props) => {
 					<button
 						className="btn btn-icon edit"
 						onClick={() => {
-							setIsModalVisible(true); props.getDataStaffSalaryWidthID(props.UserID);
+							setIsModalVisible(true);
 						}}
 					>
 						<RotateCcw />
@@ -104,12 +86,17 @@ const StaffSalaryForm = (props) => {
 						<div className="row">
 							<div className="col-12">
 								{props.showAdd ? (
-									<Form.Item label="Staff">
+									<Form.Item 
+										label="Staff"
+										rules={[
+											{ required: true, message: "Bạn không được để trống" },
+										]}
+										>
 										<Select 
 											className="style-input" 
 											defaultValue="Chọn nhân viên"
 											onChange={(value) => setValue("UserInformationID", value)}>
-											{dataStaff && dataStaff.map(row => (
+											{props.dataStaff && props.dataStaff .map(row => (
 												<Option key={row.UserInformationID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
 											))
 											}
@@ -128,27 +115,22 @@ const StaffSalaryForm = (props) => {
 						{/*  */}
 						<div className="row">
 							<div className="col-12">
-								<Form.Item label="Salary">
-									{props.isLoading.type == "GET_WITH_ID" &&
-										props.isLoading.status ? (
-											<Skeleton
-											active
-											paragraph={{ rows: 0 }}
-											title={{ width: "100%" }}
-										/>
-										) : (
-											<Select 
-												className="style-input" 
-												defaultValue={props.rowData?.StyleName || "Type Salary"}
-												onChange={(value) => setValue("Style", value)}>
-												<Option value="1">Tính lương theo tháng</Option>
-												<Option value="2">Tính lương theo giờ</Option>
-												<Option value="disabled" disabled>
-													Disabled
-												</Option>
-											</Select>
-										)}
-
+								<Form.Item 
+									label="Salary"
+									rules={[
+										{ required: true, message: "Bạn không được để trống" },
+									]}
+									>
+									<Select 
+										className="style-input" 
+										defaultValue={props.rowData?.StyleName || "Type Salary"}
+										onChange={(value) => setValue("Style", value)}>
+										<Option value="1">Tính lương theo tháng</Option>
+										<Option value="2">Tính lương theo giờ</Option>
+										<Option value="disabled" disabled>
+											Disabled
+										</Option>
+									</Select>
 								</Form.Item>
 							</div>
 						</div>
@@ -156,21 +138,19 @@ const StaffSalaryForm = (props) => {
 						{/*  */}
 						<div className="row">
 							<div className="col-12">
-								<Form.Item label="Salary Const">
-									{props.isLoading.type == "GET_WITH_ID" &&
-										props.isLoading.status ? (
-											<Skeleton
-											active
-											paragraph={{ rows: 0 }}
-											title={{ width: "100%" }}
-										/>
-										) : (
-											<Input
-											className="style-input"
-											defaultValue={props.rowData?.Salaryconst}
-											onChange={(e) => setValue("Salaryconst", e.target.value)}
-										/>
-									)}
+								<Form.Item 
+									label="Salary Const"
+									rules={[
+										{ required: true, message: "Bạn không được để trống" },
+									]}
+									>
+									<InputNumber
+										className='ant-input style-input w-100'
+										defaultValue={props.rowData?.Salary}
+										formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+										parser={value => value.replace(/\$\s?|(,*)/g, '')}
+										onChange={value => setValue("Salary", value)}
+									/>
 								</Form.Item>
 							</div>
 						</div>
