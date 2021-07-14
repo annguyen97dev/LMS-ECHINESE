@@ -3,23 +3,8 @@ import PropTypes from 'prop-types';
 import {Form, Select} from 'antd';
 import {Controller} from 'react-hook-form';
 
-// interface SelectField {
-// 	form: Object;
-// 	name: String;
-// 	label?: String;
-// 	optionList?: Array[Object];
-// 	placeholder?: String;
-// 	disabled?: Boolean;
-// }
-
-const SelectField = ({
-	form,
-	name,
-	label = '',
-	optionList = [],
-	placeholder = '',
-	disabled = false,
-}) => {
+const SelectField = (props) => {
+	const {form, name, label, optionList, placeholder, disabled} = props;
 	const {Option} = Select;
 	const {errors} = form.formState;
 	const hasError = errors[name];
@@ -43,9 +28,10 @@ const SelectField = ({
 								option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 							);
 						}}
+						defaultValue={optionList[0].value}
 					>
-						{optionList.map((o) => (
-							<Option key={o.id} value={o.value}>
+						{optionList.map((o, idx) => (
+							<Option key={idx} value={o.value}>
 								{o.title}
 							</Option>
 						))}
@@ -57,4 +43,22 @@ const SelectField = ({
 	);
 };
 
+SelectField.propTypes = {
+	form: PropTypes.object.isRequired,
+	name: PropTypes.string.isRequired,
+	optionList: PropTypes.arrayOf(
+		PropTypes.shape({
+			title: PropTypes.string.isRequired,
+			value: PropTypes.string.isRequired,
+		})
+	).isRequired,
+	label: PropTypes.string,
+	placeholder: PropTypes.string,
+	disabled: PropTypes.bool,
+};
+SelectField.defaultProps = {
+	label: '',
+	placeholder: '',
+	disabled: false,
+};
 export default SelectField;
