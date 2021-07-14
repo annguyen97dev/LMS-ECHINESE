@@ -6,9 +6,7 @@ import { Tooltip } from "antd";
 import RoomForm from "~/components/Global/Option/RoomForm";
 import { RotateCcw } from "react-feather";
 import SortBox from "~/components/Elements/SortBox";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import router from "next/router";
 import { roomApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
@@ -22,6 +20,37 @@ let listFieldSearch = {
   pageIndex: 1,
 };
 
+const dataOption = [
+  {
+    dataSort: {
+      sort: 1,
+      sortType: false,
+    },
+    text: "Mã giảm dần",
+  },
+  {
+    dataSort: {
+      sort: 1,
+      sortType: true,
+    },
+    text: "Mã tăng dần",
+  },
+  {
+    dataSort: {
+      sort: 2,
+      sortType: false,
+    },
+    text: "Tên giảm dần",
+  },
+  {
+    dataSort: {
+      sort: 2,
+      sortType: true,
+    },
+    text: "Tên tăng dần ",
+  },
+];
+
 const Center = () => {
   const listTodoApi = {
     pageSize: 10,
@@ -32,41 +61,7 @@ const Center = () => {
     roomName: null,
     BranchID: parseInt(router.query.slug as string),
   };
-  const columns = [
-    {
-      title: "Mã phòng",
-      dataIndex: "RoomCode",
-      // ...FilterColumn("RoomCode")
-    },
-    {
-      title: "Tên phòng",
-      dataIndex: "RoomName",
-      //  ...FilterColumn("RoomName")
-    },
-    {
-      title: "Người cập nhật",
-      dataIndex: "ModifiedBy",
-      // ...FilterColumn("ModifiedBy"),
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "ModifiedOn",
-      // ...FilterDateColumn("ModifiedOn"),
-    },
-    {
-      render: (data) => (
-        <>
-          <RoomForm
-            roomID={data.RoomID}
-            rowData={data}
-            isLoading={isLoading}
-            _onSubmit={(data: any) => _onSubmit(data)}
-          />
-          <DeleteItem onDelete={() => onDelete(data.RoomID)} />
-        </>
-      ),
-    },
-  ];
+
   const [todoApi, setTodoApi] = useState(listTodoApi);
   const [roomData, setRoomData] = useState<IRoom[]>([]);
   const [isLoading, setIsLoading] = useState({
@@ -178,10 +173,87 @@ const Center = () => {
     });
   };
 
+  // -------------- CHECK FIELD ---------------------
+  const checkField = (valueSearch, dataIndex) => {
+    let newList = null;
+    Object.keys(listFieldSearch).forEach(function (key) {
+      console.log("key: ", key);
+      if (key != dataIndex) {
+        listFieldSearch[key] = "";
+      } else {
+        listFieldSearch[key] = valueSearch;
+      }
+    });
+    newList = listFieldSearch;
+    return newList;
+  };
+
+  // ------------ ON SEARCH -----------------------
+  const onSearch = (valueSearch, dataIndex) => {
+    let clearKey = checkField(valueSearch, dataIndex);
+
+    setTodoApi({
+      ...todoApi,
+      ...clearKey,
+    });
+  };
+
+  // --------------- HANDLE SORT ----------------------
+  const handleSort = async (option) => {
+    let newTodoApi = {
+      ...listTodoApi,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    };
+
+    setTodoApi(newTodoApi);
+  };
+
+  // HANDLE RESET
+  const handleReset = () => {
+    setTodoApi(listTodoApi);
+  };
+
   // Fetch Data
   useEffect(() => {
     getDataRoom();
   }, [todoApi]);
+
+  const columns = [
+    {
+      title: "Mã phòng",
+      dataIndex: "RoomCode",
+      ...FilterColumn("roomCode", onSearch, handleReset, "text"),
+    },
+    {
+      title: "Tên phòng",
+      dataIndex: "RoomName",
+      ...FilterColumn("roomName", onSearch, handleReset, "text"),
+    },
+    {
+      title: "Người cập nhật",
+      dataIndex: "ModifiedBy",
+      // ...FilterColumn("ModifiedBy"),
+    },
+    {
+      title: "Ngày cập nhật",
+      dataIndex: "ModifiedOn",
+      // ...FilterDateColumn("ModifiedOn"),
+    },
+    {
+      render: (data) => (
+        <>
+          <RoomForm
+            roomID={data.RoomID}
+            rowData={data}
+            isLoading={isLoading}
+            _onSubmit={(data: any) => _onSubmit(data)}
+          />
+          <DeleteItem onDelete={() => onDelete(data.RoomID)} />
+        </>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -189,7 +261,7 @@ const Center = () => {
         totalPage={totalPage && totalPage}
         getPagination={(pageNumber: number) => getPagination(pageNumber)}
         loading={isLoading}
-        addClass="basic-heade table-medium"
+        addClass="basic-header table-medium"
         TitlePage="Danh sách phòng"
         TitleCard={
           <RoomForm
@@ -202,9 +274,10 @@ const Center = () => {
         dataSource={roomData}
         columns={columns}
         Extra={
-          <div className="extra-table">
-            <SortBox />
-          </div>
+          <SortBox
+            handleSort={(value) => handleSort(value)}
+            dataOption={dataOption}
+          />
         }
       />
     </>

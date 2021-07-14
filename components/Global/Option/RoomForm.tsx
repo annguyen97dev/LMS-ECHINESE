@@ -32,7 +32,8 @@ const RoomForm = React.memo((props: any) => {
   const [dataCenter, setDataCenter] = useState<IBranch[]>();
   const [disableCenter, setDisableCenter] = useState(false);
   const { isLoading, _onSubmit, roomID, rowData } = props;
-
+  const [centerID, setCenterID] = useState(null);
+  const [loadingSelect, setLoadingSelect] = useState(false);
   // const [branchID, setBranchID] = useState<number>(null);
 
   // HANDLE SUBMIT
@@ -46,6 +47,8 @@ const RoomForm = React.memo((props: any) => {
 
   // GET DATA CENTER
   const getDataCenter = async () => {
+    setLoadingSelect(true);
+
     try {
       let res = await branchApi.getAll({
         pageIndex: 1,
@@ -55,6 +58,7 @@ const RoomForm = React.memo((props: any) => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
+      setLoadingSelect(false);
     }
   };
 
@@ -72,6 +76,10 @@ const RoomForm = React.memo((props: any) => {
       if (branchID) {
         setValue("BranchID", branchID);
         setDisableCenter(true);
+        form.setFieldsValue({
+          ...rowData,
+          BranchID: branchID,
+        });
       }
 
       if (roomID) {
@@ -115,12 +123,7 @@ const RoomForm = React.memo((props: any) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form
-            form={form}
-            onFinish={onFinish}
-            layout="vertical"
-            initialValues={!roomID ? { BranchID: branchID } : rowData}
-          >
+          <Form form={form} onFinish={onFinish} layout="vertical">
             <div className="row">
               <div className="col-12">
                 <Form.Item
@@ -131,6 +134,7 @@ const RoomForm = React.memo((props: any) => {
                   ]}
                 >
                   <Select
+                    loading={loadingSelect}
                     disabled={disableCenter}
                     style={{ width: "100%" }}
                     className="style-input"
@@ -153,6 +157,7 @@ const RoomForm = React.memo((props: any) => {
                     placeholder=""
                     className="style-input"
                     onChange={(e) => setValue("RoomCode", e.target.value)}
+                    allowClear={true}
                   />
                 </Form.Item>
               </div>
@@ -164,6 +169,7 @@ const RoomForm = React.memo((props: any) => {
                     placeholder=""
                     className="style-input"
                     onChange={(e) => setValue("RoomName", e.target.value)}
+                    allowClear={true}
                   />
                 </Form.Item>
               </div>
