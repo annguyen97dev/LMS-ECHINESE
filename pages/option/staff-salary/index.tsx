@@ -30,21 +30,41 @@ const StaffSalary = () => {
 
 	let pageIndex = 1;
 
+	// SORT
+	const dataOption = [
+		{
+			dataSort: {
+				sort: 2,
+				sortType: false,
+			},
+			value: 3,
+			text: 'Tên giảm dần',
+		},
+		{
+			dataSort: {
+				sort: 2,
+				sortType: true,
+			},
+			value: 4,
+			text: 'Tên tăng dần ',
+		},
+	];
+
+	// PARAMS SEARCH
 	let listField = {
 		FullName: "",
 	};
 
+	// PARAMS API GETALL
 	const listTodoApi = {
 		pageSize: 10,
 		pageIndex: pageIndex,
 		sort: null,
 		sortType: null,
-		// branchCode: null,
-		// branchName: null,
 	};
-	
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
+	// GET DATA STAFFSALARY
 	const getDataStaffSalary = () => {
 		setIsLoading({
 		  type: "GET_ALL",
@@ -65,6 +85,7 @@ const StaffSalary = () => {
 		})();
 	};
 
+	// DATA STAFFSALARY AFTER FORMAT
 	const getNewDataStaffSalary = (data: any) => {
 		data.forEach(item => {
 			item.Salary = new Intl.NumberFormat('ja-JP').format(item.Salary);
@@ -73,6 +94,7 @@ const StaffSalary = () => {
 		setDataStaffSalary(data);
 	}
 
+	// GET DATA USERINFORMATION
 	const getDataStaff = () => {
 		setIsLoading({
 		  type: "GET_ALL",
@@ -93,7 +115,7 @@ const StaffSalary = () => {
 		})();
 	};
   
-	// ADD Data
+	// ADD DATA
 	const _onSubmit = async (data: any) => {
 	  setIsLoading({
 		type: "ADD_DATA",
@@ -137,11 +159,13 @@ const StaffSalary = () => {
 	  getDataStaffSalary();
 	};
 
+	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
 		getDataStaffSalary();
 	};
 
+	// ON SEARCH
 	const compareField = (valueSearch, dataIndex) => {
 		let newList = null;
 		Object.keys(listField).forEach(function (key) {
@@ -165,6 +189,7 @@ const StaffSalary = () => {
 		});
 	};
 
+	// DELETE
 	const handleDelele = () => {
 		if(dataDelete) {
 			let res = _onSubmit(dataDelete);
@@ -179,6 +204,20 @@ const StaffSalary = () => {
 		setTodoApi(listTodoApi);
 	};
 
+	// HANDLE SORT
+	const handleSort = async (option) => {
+		console.log('Show option: ', option);
+
+		let newTodoApi = {
+			...listTodoApi,
+			sort: option.title.sort,
+			sortType: option.title.sortType,
+		};
+
+		setTodoApi(newTodoApi);
+	};
+
+	// COLUMNS TABLE
 	const columns = [
 		{title: 'Full name', dataIndex: 'FullName', ...FilterColumn('FullName', onSearch, handleReset, "text")},
 		// {
@@ -274,8 +313,11 @@ const StaffSalary = () => {
 				columns={columns}
 				Extra={
 					<div className="extra-table">
-						<FilterStaffSalaryTable />
-						<SortBox />
+						{/* <FilterStaffSalaryTable /> */}
+						<SortBox 
+							handleSort={(value) => handleSort(value)}
+							dataOption={dataOption}
+						/>
 					</div>
 				}
 			/>

@@ -1,7 +1,7 @@
 import { instance } from "~/apiBase/instance";
 
 class UserInformation {
-    // Lấy tất cả data có phân trang
+    // Lấy tất cả data
     getAll = () =>
     instance.get<IApiResultData<IUserinformation[]>>("/api/UserInformation");
 
