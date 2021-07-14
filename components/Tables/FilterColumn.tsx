@@ -16,7 +16,29 @@ const FilterColumn = (dataIndex, handleSearch, handleReset, type = "text") => {
   const checkHandleSearch = (value) => {
     if (!handleSearch) return;
     if (!valueSearch) return;
-    handleSearch(value, dataIndex);
+
+    switch (type) {
+      case "text":
+        handleSearch(value, dataIndex);
+        break;
+      case "date":
+        value = moment(valueSearch.toDate()).format("YYYY/MM/DD");
+        handleSearch(value, dataIndex);
+        break;
+      case "date-range":
+        let fromDate = moment(valueSearch[0].toDate()).format("YYYY/MM/DD");
+        let toDate = moment(valueSearch[1].toDate()).format("YYYY/MM/DD");
+        let listRange = {
+          fromDate: fromDate,
+          toDate: toDate,
+        };
+        console.log("List Range: ", listRange);
+        handleSearch(listRange, dataIndex);
+        break;
+      default:
+        break;
+    }
+
     getValueSearch(null);
     setIsVisible(false);
   };

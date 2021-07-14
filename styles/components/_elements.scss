@@ -1588,3 +1588,12 @@ hr {
   > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
   display: none;
 }
+
+.text-confirm {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(53, 53, 53);
+}
+.ant-input-number .ant-input-number-handler-wrap {
+  display: none;
+}

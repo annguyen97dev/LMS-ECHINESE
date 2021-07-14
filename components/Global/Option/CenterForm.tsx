@@ -85,13 +85,11 @@ const CenterForm = React.memo((props: any) => {
 
   // ON CHANGE SELECT
   const onChangeSelect = (name) => (value) => {
-    console.log("Name ", name);
     name == "AreaID" &&
       (form.setFieldsValue({ DistrictID: "" }), getDistrictByArea(value));
     setValue(name, value);
   };
 
-  // Action khi mở modal sẽ run api area, và check coi tồn tại branchID hay ko
   useEffect(() => {
     if (isModalVisible) {
       getAllArea();
@@ -99,29 +97,17 @@ const CenterForm = React.memo((props: any) => {
       console.log("DATA row: ", rowData);
 
       if (branchId) {
-        // let res = getBranchDetail(branchId);
-
-        // res.then(function (rs: any) {
-        //   rs && rs.status == 200 && setDataDetail(rs.data.data);
-        // });
+        // Cập nhật giá trị khi show form update
         Object.keys(rowData).forEach(function (key) {
           setValue(key, rowData[key]);
         });
         form.setFieldsValue(rowData);
+
+        // load disctrict api
         rowData.AreaID && getDistrictByArea(rowData.AreaID);
       }
     }
   }, [isModalVisible]);
-
-  // Sau khi lấy dc data chi tiết thì setValue cho nó
-  // useEffect(() => {
-  //   if (dataDetail) {
-  //     getDistrictByArea(dataDetail.AreaID);
-  //     Object.keys(dataDetail).forEach(function (key) {
-  //       setValue(key, dataDetail[key]);
-  //     });
-  //   }
-  // }, [dataDetail]);
 
   return (
     <>

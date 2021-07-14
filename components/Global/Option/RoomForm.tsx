@@ -1,13 +1,21 @@
-import React, { useState } from "react";
-import { Modal, Form, Input, Button, Divider, Tooltip, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Form,
+  Input,
+  Button,
+  Divider,
+  Tooltip,
+  Spin,
+  Select,
+} from "antd";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
 import { RotateCcw } from "react-feather";
+import { branchApi } from "~/apiBase";
+import router from "next/router";
 
 const RoomForm = React.memo((props: any) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading } = props;
-  const { showNoti } = useWrap();
   const {
     reset,
     register,
@@ -15,31 +23,81 @@ const RoomForm = React.memo((props: any) => {
     control,
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
-  } = useForm<IRoom>();
+  } = useForm();
+  const branchID = parseInt(router.query.slug as string);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { showNoti } = useWrap();
+  const [form] = Form.useForm();
+  const { Option } = Select;
+  const [dataCenter, setDataCenter] = useState<IBranch[]>();
+  const [disableCenter, setDisableCenter] = useState(false);
+  const { isLoading, _onSubmit, roomID, rowData } = props;
 
-  const onSubmit = handleSubmit((data: any) => {
-    let res = props._onSubmit(data);
+  // const [branchID, setBranchID] = useState<number>(null);
+
+  // HANDLE SUBMIT
+  const onFinish = handleSubmit((data: any) => {
+    let res = _onSubmit(data);
     res.then(function (rs: any) {
-      rs
-        ? rs.status == 200 && setIsModalVisible(false)
-        : showNoti("danger", "Server lỗi");
+      console.log("result is: ", rs);
+      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
     });
   });
+
+  // GET DATA CENTER
+  const getDataCenter = async () => {
+    try {
+      let res = await branchApi.getAll({
+        pageIndex: 1,
+        pageSize: Number.MAX_SAFE_INTEGER,
+      });
+      res.status == 200 && setDataCenter(res.data.data);
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+    }
+  };
+
+  // ON CHANGE SELECT
+  const onChangeSelect = (name) => (value) => {
+    setValue(name, value);
+  };
+
+  console.log("branchID: ", branchID);
+
+  useEffect(() => {
+    if (isModalVisible) {
+      getDataCenter();
+
+      if (branchID) {
+        setValue("BranchID", branchID);
+        setDisableCenter(true);
+      }
+
+      if (roomID) {
+        // Cập nhật giá trị khi show form update
+        Object.keys(rowData).forEach(function (key) {
+          setValue(key, rowData[key]);
+        });
+        form.setFieldsValue(rowData);
+      }
+    }
+  }, [isModalVisible]);
+
   return (
     <>
-      {props.showIcon && (
+      {roomID ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
-            setIsModalVisible(true), props.getBranchDetail(props.branchId);
+            setIsModalVisible(true);
           }}
         >
           <Tooltip title="Cập nhật">
             <RotateCcw />
           </Tooltip>
         </button>
-      )}
-      {props.showAdd && (
+      ) : (
         <button
           className="btn btn-warning add-new"
           onClick={() => {
@@ -49,6 +107,7 @@ const RoomForm = React.memo((props: any) => {
           Thêm mới
         </button>
       )}
+
       <Modal
         title="Tạo phòng trong trung tâm"
         visible={isModalVisible}
@@ -56,42 +115,67 @@ const RoomForm = React.memo((props: any) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical">
+          <Form
+            form={form}
+            onFinish={onFinish}
+            layout="vertical"
+            initialValues={!roomID ? { BranchID: branchID } : rowData}
+          >
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Mã phòng">
+                <Form.Item
+                  name="BranchID"
+                  label="Trung tâm"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Select
+                    disabled={disableCenter}
+                    style={{ width: "100%" }}
+                    className="style-input"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={onChangeSelect("BranchID")}
+                    // defaultValue={branchID ? branchID : ""}
+                  >
+                    {dataCenter?.map((item, index) => (
+                      <Option key={index} value={item.ID}>
+                        {item.BranchName}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </div>
+              <div className="col-12">
+                <Form.Item name="RoomCode" label="Mã phòng">
                   <Input
                     placeholder=""
                     className="style-input"
-                    {...register("RoomCode")}
+                    onChange={(e) => setValue("RoomCode", e.target.value)}
                   />
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Tên phòng">
+                <Form.Item name="RoomName" label="Tên phòng">
                   <Input
                     placeholder=""
                     className="style-input"
-                    {...register("RoomName")}
+                    onChange={(e) => setValue("RoomName", e.target.value)}
                   />
                 </Form.Item>
               </div>
             </div>
             <div className="row ">
-              <div className="col-12">
-                <Button
-                  className="w-100"
-                  type="primary"
-                  size="large"
-                  onClick={handleSubmit(onSubmit)}
-                >
-                  LƯU
+              <div className="col-12 mt-3">
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
                   {isLoading.type == "ADD_DATA" && isLoading.status && (
                     <Spin className="loading-base" />
                   )}
-                </Button>
+                </button>
               </div>
             </div>
           </Form>

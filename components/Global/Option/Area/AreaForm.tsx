@@ -1,23 +1,15 @@
 import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Tooltip} from 'antd';
-import moment from 'moment';
+import {Form, Modal, Spin, Tooltip} from 'antd';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import {RotateCcw} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
-import TextAreaField from '~/components/FormControl/TextAreaField';
 
 const AreaForm = (props) => {
-	const {
-		handleCreateArea,
-		isUpdate,
-		handleUpdateArea,
-		updateObj,
-		idxUpdateObj,
-	} = props;
+	const {handleCreateArea, isUpdate, handleUpdateArea, updateObj, isLoading} =
+		props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -35,26 +27,33 @@ const AreaForm = (props) => {
 	});
 
 	useEffect(() => {
-		if (isUpdate && updateObj && idxUpdateObj >= 0) {
+		if (isUpdate && updateObj) {
 			form.setValue('AreaName', updateObj.AreaName);
 		}
-	}, [updateObj, idxUpdateObj]);
+	}, [updateObj]);
 
 	const areaSwitchFunc = (data) => {
 		switch (isUpdate) {
 			case true:
 				if (!handleUpdateArea) return;
-				handleUpdateArea(data, idxUpdateObj, updateObj);
+				handleUpdateArea(data, updateObj).then((res) => {
+					if (res && res.status === 200) {
+						closeModal();
+					}
+				});
 				break;
 			case false:
 				if (!handleCreateArea) return;
-				handleCreateArea(data);
-				form.reset({...defaultValuesInit});
+				handleCreateArea(data).then((res) => {
+					if (res && res.status === 200) {
+						closeModal();
+						form.reset({...defaultValuesInit});
+					}
+				});
 				break;
 			default:
 				break;
 		}
-		closeModal();
 	};
 
 	return (
@@ -73,7 +72,6 @@ const AreaForm = (props) => {
 			<Modal
 				title={isUpdate ? 'Update Provincial' : 'Create Provincial'}
 				visible={isModalVisible}
-				onOk={closeModal}
 				onCancel={closeModal}
 				footer={null}
 			>
@@ -92,6 +90,9 @@ const AreaForm = (props) => {
 							<div className="col-12">
 								<button type="submit" className="btn btn-primary w-100">
 									{isUpdate ? 'Update' : 'Create'}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && (
+										<Spin className="loading-base" />
+									)}
 								</button>
 							</div>
 						</div>
@@ -106,13 +107,16 @@ AreaForm.propTypes = {
 	isUpdate: PropTypes.bool,
 	handleUpdateArea: PropTypes.func,
 	updateObj: PropTypes.shape({}),
-	idxUpdateObj: PropTypes.number,
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
 };
 AreaForm.defaultProps = {
 	handleCreateArea: null,
 	isUpdate: false,
 	handleUpdateArea: null,
 	updateObj: {},
-	idxUpdateObj: -1,
+	isLoading: {type: '', status: false},
 };
 export default AreaForm;
