@@ -1,29 +1,24 @@
-import { instance } from "../instance";
+import {instance} from '../instance';
 
+const url = '/api/DayOff/';
 const dayOffApi = {
-  // Lấy tất cả data có phân trang
-  getAll(params) {
-    console.log("prarams: ", params);
-    const url = "/api/DayOff/GetAll";
-    return instance.get<IApiResultData<IDayOff[]>>(url, {
-      params,
-    });
-  },
-  // Thêm mới data
-  add(data: IDayOff) {
-    const url = "/api/DayOff/insert";
-    return instance.post(url, data);
-  },
-
-  // Cập nhật data
-  update(data: IDayOff) {
-    const url = `api/DayOff/update`;
-    return instance.put(url, data);
-  },
-  // Xóa data
-  delete(id: number) {
-    const url = `/api/DayOff/Hide/${id}`;
-    return instance.put(url);
-  },
+	// Lấy tất cả data
+	getAll(params) {
+		return instance.get<IApiResultData<IDayOff[]>>(url, {
+			params,
+		});
+	},
+	// Thêm mới data
+	add(data: IDayOff) {
+		return instance.post(url, data);
+	},
+	// Cập nhật data
+	update(data: IDayOff) {
+		return instance.put(url, data);
+	},
+	// Xóa data
+	delete(data: IDayOff) {
+		return instance.put(url, data);
+	},
 };
 export default dayOffApi;
