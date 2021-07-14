@@ -7,13 +7,24 @@ import { useWrap } from "~/context/wrap";
 import { jobApi } from "~/apiBase";
 import moment from "moment";
 import JobDelete from "~/components/Global/Option/Job/JobDelete";
+import FilterColumn from "~/components/Tables/FilterColumn";
 
 const JobsList = () => {
+  const onSearch = (data) => {
+    setJobParams({
+      ...listJobParams,
+      JobName: data,
+    });
+  };
+
+  const handleReset = () => {
+    setJobParams(listJobParams);
+  };
   const columns = [
     {
       title: "Nghề nghiệp",
       dataIndex: "JobName",
-      // ...FilterColumn("JobName"),
+      ...FilterColumn("JobName", onSearch, handleReset, "text"),
     },
     { title: "Modified By", dataIndex: "ModifiedBy" },
     {
@@ -43,22 +54,78 @@ const JobsList = () => {
     },
   ];
 
+  let pageIndex = 1;
+  const sortOption = [
+    {
+      dataSort: {
+        sort: null,
+        sortType: null,
+      },
+      value: 1,
+      text: "Mới cập nhật",
+    },
+    {
+      dataSort: {
+        sort: null,
+        sortType: true,
+      },
+      value: 2,
+      text: "Từ dưới lên",
+    },
+    {
+      dataSort: {
+        sort: 1,
+        sortType: null,
+      },
+      value: 3,
+      text: "A-z",
+    },
+    {
+      dataSort: {
+        sort: 2,
+        sortType: null,
+      },
+      value: 4,
+      text: "Z-a",
+    },
+  ];
+
+  const handleSort = async (option) => {
+    setJobParams({
+      ...jobParams,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    });
+  };
+
   const [job, setJob] = useState<IJob[]>([]);
   const [isLoading, setIsLoading] = useState({
     type: "GET_ALL",
-    status: true,
+    status: false,
   });
 
   const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
-  let indexPage = 1;
+
+  const listJobParams = {
+    pageSize: 10,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    JobName: "",
+  };
+  const [jobParams, setJobParams] = useState(listJobParams);
 
   const getDataJob = () => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
     (async () => {
       try {
-        let res = await jobApi.getAll(10, indexPage);
-        res.status == 200 && setJob(res.data.data),
-          setTotalPage(res.data.totalRow);
+        let res = await jobApi.getAll(jobParams);
+        res.status == 200 && setJob(res.data.data);
+        setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -72,11 +139,14 @@ const JobsList = () => {
 
   useEffect(() => {
     getDataJob();
-  }, []);
+  }, [jobParams]);
 
   const getPagination = (pageNumber: number) => {
-    indexPage = pageNumber;
-    getDataJob();
+    pageIndex = pageNumber;
+    setJobParams({
+      ...jobParams,
+      pageIndex: pageIndex,
+    });
   };
 
   return (
@@ -97,7 +167,10 @@ const JobsList = () => {
       columns={columns}
       Extra={
         <div className="extra-table">
-          <SortBox />
+          <SortBox
+            dataOption={sortOption}
+            handleSort={(value) => handleSort(value)}
+          />
         </div>
       }
     />

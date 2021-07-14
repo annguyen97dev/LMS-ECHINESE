@@ -1,12 +1,9 @@
 import { instance } from "~/apiBase/instance";
 
 class JobApi {
-  getAll = (pageSize: number, pageIndex: number) =>
+  getAll = (jobParams: any) =>
     instance.get<IApiResultData<IJob[]>>("/api/Job", {
-      params: {
-        pageSize: pageSize,
-        pageIndex: pageIndex,
-      },
+      params: jobParams,
     });
 
   getDetail = (id: number) => instance.get<IApiResult<IJob>>(`/api/Job/${id}`);
