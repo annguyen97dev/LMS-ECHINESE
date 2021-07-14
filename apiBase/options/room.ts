@@ -1,7 +1,5 @@
 import { instance } from "~/apiBase/instance";
 
-customElements;
-
 class RoomApi {
   // Lấy tất cả
   getAll = (todoApi: object) =>

@@ -90,7 +90,6 @@ const CenterForm = React.memo((props: any) => {
     setValue(name, value);
   };
 
-  // Action khi mở modal sẽ run api area, và check coi tồn tại branchID hay ko
   useEffect(() => {
     if (isModalVisible) {
       getAllArea();
@@ -98,10 +97,13 @@ const CenterForm = React.memo((props: any) => {
       console.log("DATA row: ", rowData);
 
       if (branchId) {
+        // Cập nhật giá trị khi show form update
         Object.keys(rowData).forEach(function (key) {
           setValue(key, rowData[key]);
         });
         form.setFieldsValue(rowData);
+
+        // load disctrict api
         rowData.AreaID && getDistrictByArea(rowData.AreaID);
       }
     }

@@ -12,20 +12,26 @@ import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import router from "next/router";
 import { roomApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import DeleteItem from "~/components/Tables/DeleteItem";
 
 let pageIndex = 1;
 
-const listField = {
-  pageSize: 10,
-  pageIndex: pageIndex,
-  sort: null,
-  sortType: null,
-  roomCode: null,
-  roomName: null,
-  BranchID: null,
+let listFieldSearch = {
+  roomCode: "",
+  roomName: "",
+  pageIndex: 1,
 };
 
 const Center = () => {
+  const listTodoApi = {
+    pageSize: 10,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    roomCode: null,
+    roomName: null,
+    BranchID: parseInt(router.query.slug as string),
+  };
   const columns = [
     {
       title: "Mã phòng",
@@ -48,103 +54,149 @@ const Center = () => {
       // ...FilterDateColumn("ModifiedOn"),
     },
     {
-      render: () => (
+      render: (data) => (
         <>
-          {/* <Tooltip title="Cập nhật phòng">
-            <RoomForm
-              showIcon={true}
-              // branchId={data.ID}
-              // getBranchDetail={(branchId: number) => getBranchDetail(branchId)}
-              // rowData={rowData}
-              isLoading={isLoading}
-              _onSubmit={(data: any) => _onSubmit(data)}
-            />
-          </Tooltip> */}
+          <RoomForm
+            roomID={data.RoomID}
+            rowData={data}
+            isLoading={isLoading}
+            _onSubmit={(data: any) => _onSubmit(data)}
+          />
+          <DeleteItem onDelete={() => onDelete(data.RoomID)} />
         </>
       ),
     },
   ];
-  const [todoApi, setToDoApi] = useState(listField);
-  const [roomForm, setRoomForm] = useState(false);
+  const [todoApi, setTodoApi] = useState(listTodoApi);
   const [roomData, setRoomData] = useState<IRoom[]>([]);
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
   const { showNoti } = useWrap();
-  const [rowData, setRowData] = useState<IRoom[]>();
+  const [totalPage, setTotalPage] = useState(null);
 
-  console.log("Room data: ", roomData);
-
-  // const _onSubmit = async (data: any) => {
-  //   setIsLoading({
-  //     type: "ADD_DATA",
-  //     status: true,
-  //   });
-
-  //   try {
-  //     const res = await roomApi.post({
-  //       ...data,
-  //       BranchID: parseInt(router.query.slug as string),
-  //     });
-  //     res?.status == 200 && afterPost();
-  //   } catch (error) {
-  //     showNoti("danger", error.message);
-  //   } finally {
-  //     setIsLoading({
-  //       type: "ADD_DATA",
-  //       status: false,
-  //     });
-  //   }
-  // };
-
-  const afterPost = () => {
-    showNoti("success", "Thêm thành công");
-    getDataRoom();
-  };
-
-  const getDataRoom = () => {
+  const _onSubmit = async (data: any) => {
     setIsLoading({
-      type: "GET_ALL",
+      type: "ADD_DATA",
       status: true,
     });
-    (async () => {
-      let todoApi = {
-        action: "getAll",
-        pageIndex: pageIndex,
-      };
 
+    console.log("DATA SUBMIT: ", data);
+
+    let res = null;
+
+    if (data.RoomID) {
       try {
-        let res = await roomApi.getById(router.query.slug);
-        // @ts-ignore
-        res.status == 200 && setRoomData(res.data.data);
+        res = await roomApi.update(data);
+        res?.status == 200 && showNoti("success", res.data.message),
+          setTodoApi({ ...todoApi });
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
         setIsLoading({
-          type: "GET_ALL",
+          type: "ADD_DATA",
           status: false,
         });
       }
-    })();
+    } else {
+      try {
+        res = await roomApi.add(data);
+        res?.status == 200 && showNoti("success", res.data.message),
+          setTodoApi({ ...listTodoApi });
+      } catch (error) {
+        showNoti("danger", error.message);
+      } finally {
+        setIsLoading({
+          type: "ADD_DATA",
+          status: false,
+        });
+      }
+    }
+
+    return res;
   };
 
+  // AFTER SUBMIT
+  const afterPost = (mes) => {
+    showNoti("success", mes);
+    setTodoApi(listTodoApi);
+  };
+
+  // DELETE ITEM
+  const onDelete = async (id: number) => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
+
+    try {
+      let res = await roomApi.update({ RoomID: id, Enable: false });
+      res?.status == 200 && showNoti("success", res.data.message),
+        setTodoApi({ ...listTodoApi });
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
+  };
+
+  // GET DATA ROOM
+  const getDataRoom = async () => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
+
+    try {
+      let res = await roomApi.getAll(todoApi);
+      // @ts-ignore
+      res.status == 200 &&
+        (setRoomData(res.data.data), setTotalPage(res.data.totalRow));
+
+      res.data.data.length < 1 && showNoti("danger", "Không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
+  };
+
+  // -------------- GET PAGE_NUMBER -----------------
+  const getPagination = (pageNumber: number) => {
+    pageIndex = pageNumber;
+
+    setTodoApi({
+      ...todoApi,
+      pageIndex: pageIndex,
+    });
+  };
+
+  // Fetch Data
   useEffect(() => {
     getDataRoom();
-  }, []);
+  }, [todoApi]);
 
   return (
     <>
       <PowerTable
+        totalPage={totalPage && totalPage}
+        getPagination={(pageNumber: number) => getPagination(pageNumber)}
         loading={isLoading}
-        addClass="basic-header"
+        addClass="basic-heade table-medium"
         TitlePage="Danh sách phòng"
         TitleCard={
           <RoomForm
             showAdd={true}
             addDataSuccess={() => getDataRoom()}
             isLoading={isLoading}
-            // _onSubmit={(data: any) => _onSubmit(data)}
+            _onSubmit={(data: any) => _onSubmit(data)}
           />
         }
         dataSource={roomData}
