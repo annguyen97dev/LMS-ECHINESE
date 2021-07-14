@@ -7,7 +7,7 @@ import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {data} from '../../../lib/option/dataOption2';
 import { useWrap } from "~/context/wrap";
-import { staffSalaryApi } from "~/apiBase";
+import { staffSalaryApi, userInformationApi } from "~/apiBase";
 import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { Item } from "devextreme-react/file-manager";
 import { AlertTriangle, X } from "react-feather";
@@ -80,7 +80,7 @@ const StaffSalary = () => {
 		});
 		(async () => {
 		  try {
-			let res = await staffSalaryApi.getAllStaff();
+			let res = await userInformationApi.getAll();
 			res.status == 200 && setDataStaff(res.data.data);
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -181,10 +181,10 @@ const StaffSalary = () => {
 
 	const columns = [
 		{title: 'Full name', dataIndex: 'FullName', ...FilterColumn('FullName', onSearch, handleReset, "text")},
-		{
-			title: 'Username',
-			dataIndex: 'UserName',
-		},
+		// {
+		// 	title: 'Username',
+		// 	dataIndex: 'UserName',
+		// },
 		{
 			title: 'Email',
 			dataIndex: 'Email',
