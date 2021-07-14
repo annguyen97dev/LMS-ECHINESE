@@ -47,6 +47,7 @@ const FilterStaffSalaryTable = (props:any) => {
 								className="style-input"
 								placeholder="Chọn role"
 								onChange={(value) => setValue("RoleID", value)}
+								allowClear={true}
 							>
 								{Roles.map((item) => (
 									<Option key={item.id} value={item.id}>{item.RoleName}</Option>
@@ -63,6 +64,7 @@ const FilterStaffSalaryTable = (props:any) => {
 							<RangePicker
 								format={dateFormat}
 								className="style-input"
+								allowClear={true}
 								onChange={(value, dateStrings) => {setValue("fromDate", dateStrings[0]); setValue("toDate", dateStrings[1])}}
 							/>
 						</Form.Item>

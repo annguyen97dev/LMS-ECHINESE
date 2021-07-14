@@ -45,6 +45,7 @@ const FilterSupplierTable = (props:any) => {
 						<Form.Item>
 							<RangePicker
 								format={dateFormat}
+								allowClear={true}
 								className="style-input"
 								onChange={(value, dateStrings) => {setValue("fromDate", dateStrings[0]); setValue("toDate", dateStrings[1])}}
 							/>

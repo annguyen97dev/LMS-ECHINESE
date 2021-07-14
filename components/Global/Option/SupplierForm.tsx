@@ -148,6 +148,7 @@ const SupplierForm = (props) => {
                     <Select 
 											className="style-input" 
 											defaultValue={props.rowData?.PersonInChargeName || "Chọn nhân viên quản lí"}
+                      allowClear={true}
 											onChange={(value) => setValue("PersonInChargeID", value)}>
                         {props.dataStaffManage && props.dataStaffManage.map(row => (
                           <Option key={row.UserInformationID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
@@ -183,6 +184,7 @@ const SupplierForm = (props) => {
                     placeholder=""
                     rows={2} 
                     defaultValue={props.rowData?.Introduce}
+                    allowClear={true}
                     onChange={(e) => setValue("Introduce", e.target.value)}  
                   />
                 </Form.Item>

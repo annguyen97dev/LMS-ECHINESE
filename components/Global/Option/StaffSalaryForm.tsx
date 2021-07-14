@@ -94,6 +94,7 @@ const StaffSalaryForm = (props) => {
 										<Select 
 											className="style-input" 
 											defaultValue="Chọn nhân viên"
+											allowClear={true}
 											onChange={(value) => setValue("UserInformationID", value)}>
 											{props.dataStaff && props.dataStaff .map(row => (
 												<Option key={row.UserInformationID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
@@ -123,6 +124,7 @@ const StaffSalaryForm = (props) => {
 									<Select 
 										className="style-input" 
 										defaultValue={props.rowData?.StyleName || "Type Salary"}
+										allowClear={true}
 										onChange={(value) => setValue("Style", value)}>
 										<Option value="1">Tính lương theo tháng</Option>
 										<Option value="2">Tính lương theo giờ</Option>
