@@ -9,6 +9,7 @@ const StaffSalaryForm = (props) => {
 	const {Option} = Select;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [form] = Form.useForm();
 
 	const [isLoading, setIsLoading] = useState({
 		type: "",
@@ -26,29 +27,25 @@ const StaffSalaryForm = (props) => {
 	  // const { showNoti } = useWrap();
 	
 	const onSubmit = handleSubmit((data: any) => {
-
 		if(typeof data.Salary  == "string") {
 			data.Salary = Number(data.Salary.replace(/\$\s?|(,*)/g, ''));
 		}
 
 		let res = props._onSubmit(data);
-
 		res.then(function (rs: any) {
-			console.log("Res in form: ", rs);
-			rs
-			? res.status == 200 && setIsModalVisible(false)
-			: showNoti("danger", "Server lỗi")
+			rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
 		});
 	});
 
 	useEffect(() => {
-		if (props.rowData) {
-			Object.keys(props.rowData).forEach(function (key) {
-				setValue(key, props.rowData[key]);
-			});
-			// console.log(props.rowData?.Salaryconst);
+		if(isModalVisible) {
+			if (props.rowData) {
+				Object.keys(props.rowData).forEach(function (key) {
+					setValue(key, props.rowData[key]);
+				});
+			}
 		}
-	}, [props.rowData]);
+	}, [isModalVisible]);
 
 	return (
 		<>

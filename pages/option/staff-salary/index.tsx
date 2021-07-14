@@ -10,10 +10,18 @@ import { useWrap } from "~/context/wrap";
 import { staffSalaryApi } from "~/apiBase";
 import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { Item } from "devextreme-react/file-manager";
+import { AlertTriangle, X } from "react-feather";
+import Modal from "antd/lib/modal/Modal";
+import { boolean, number } from "yup";
 const StaffSalary = () => {
 	const [dataStaffSalary, setDataStaffSalary] = useState<IStaffSalary[]>([]);
 	const [dataStaff, setDataStaff] = useState([]);
+	const [dataDelete, setDataDelete]  = useState({
+		SalaryID: null,
+		Enable: null,
+	});
 	const { showNoti } = useWrap();
+	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState({
 	  type: "",
 	  status: false,
@@ -157,6 +165,15 @@ const StaffSalary = () => {
 		});
 	};
 
+	const handleDelele = () => {
+		if(dataDelete) {
+			let res = _onSubmit(dataDelete);
+			res.then(function (rs: any) {
+				rs && rs.status == 200 && setIsModalVisible(false);
+			});
+		}
+	}
+
 	// HANDLE RESET
 	const handleReset = () => {
 		setTodoApi(listTodoApi);
@@ -202,14 +219,24 @@ const StaffSalary = () => {
 				<>
 					<StaffSalaryForm 
 						showIcon={true}
-						// UserID ={record.ID}
 						rowData={record}
 						isLoading={isLoading}
-						// getDataStaffSalaryWidthID={(UserID: number) => {
-						// 	getDataStaffSalaryWidthID(UserID);
-						// }}
 						_onSubmit={(data: any) => _onSubmit(data)}
-						/>
+					/>
+					<Tooltip title="Xóa">
+						<button
+							className="btn btn-icon delete"
+							onClick={() => {
+								setIsModalVisible(true);
+								setDataDelete({
+									SalaryID: record.SalaryID,
+									Enable: false,
+								});
+							}}
+						>
+							<X />
+						</button>
+					</Tooltip>
 				</>
 			),
 		},
@@ -222,6 +249,14 @@ const StaffSalary = () => {
 
 	return (
 		<Fragment>
+			<Modal
+				title={<AlertTriangle color="red" />}
+				visible={isModalVisible}
+				onOk={() => handleDelele()}
+				onCancel={() => setIsModalVisible(false)}
+			>
+				<span className="text-confirm">Bạn có chắc chắn muốn xóa không ?</span>
+			</Modal>
 			<PowerTable
 				loading={isLoading}
 				totalPage={totalPage && totalPage}

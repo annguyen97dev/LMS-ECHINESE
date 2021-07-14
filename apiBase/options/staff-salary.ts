@@ -3,7 +3,7 @@ import { instance } from "~/apiBase/instance";
 class StaffSalary {
     // Lấy tất cả data có phân trang
     getAll = (todoApi: object) =>
-    instance.get<IApiResultData<IStaffSalary[]>>("/api/Salary/GetAll", {
+    instance.get<IApiResultData<IStaffSalary[]>>("/api/Salary", {
         params: todoApi,
     });
 
@@ -36,10 +36,10 @@ class StaffSalary {
     instance.get<IApiResultData<IStaffSalary[]>>(`/api/Salary/GetByID/${id}`);
 
     // Thêm mới data
-    add = (data) => instance.post("/api/Salary/Insert", data);
+    add = (data) => instance.post("/api/Salary", data);
 
     // Cập nhật data
-    update = (data) => instance.put("/api/Salary/Update", data, {});
+    update = (data) => instance.put("/api/Salary", data, {});
 }
 
 export const staffSalaryApi = new StaffSalary();
