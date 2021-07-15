@@ -348,13 +348,13 @@ const Center = () => {
       title: "Mã trung tâm",
       dataIndex: "BranchCode",
       // ...FilterColumn("BranchCode"),
-      ...FilterColumn("BranchCode", onSearch, handleReset, "text"),
+      ...FilterColumn("branchCode", onSearch, handleReset, "text"),
     },
 
     {
       title: "Tên trung tâm",
       dataIndex: "BranchName",
-      // ...FilterColumn("BranchName"),
+      ...FilterColumn("branchName", onSearch, handleReset, "text"),
     },
     { title: "Địa chỉ", dataIndex: "Address" },
     {
