@@ -1,14 +1,15 @@
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Form, Popover, Spin} from 'antd';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {Filter} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import SelectField from '~/components/FormControl/SelectField';
+import DateField from '~/components/FormControl/DateField';
 
 const DayOffFilterForm = (props) => {
-	const {dataOption, isLoading, handleFilterDayOff} = props;
+	const {handleFilterDayOff} = props;
 
 	const [showFilter, showFilterSet] = useState(false);
 
@@ -16,11 +17,25 @@ const DayOffFilterForm = (props) => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
 	const schema = yup.object().shape({
-		createdBy: yup.string(),
+		fromDate: yup
+			.date()
+			.max(
+				yup.ref('toDate'),
+				({max}) => `Ngày bắt đầu cần trước ${moment(max).format('DD-MM-YYYY')}`
+			)
+			.required('Bạn không được bỏ trống'),
+		toDate: yup
+			.date()
+			.min(
+				yup.ref('fromDate'),
+				({min}) => `Ngày kết thúc cần sau ${moment(min).format('DD-MM-YYYY')}`
+			)
+			.required('Bạn không được bỏ trống'),
 	});
 
 	const defaultValuesInit = {
-		createdBy: '',
+		fromDate: moment().format('YYYY/MM/DD'),
+		toDate: moment().add(1, 'months').format('YYYY/MM/DD'),
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
@@ -39,12 +54,10 @@ const DayOffFilterForm = (props) => {
 			>
 				<div className="row">
 					<div className="col-md-12">
-						<SelectField
-							form={form}
-							name="createdBy"
-							label="Modified By"
-							optionList={dataOption}
-						/>
+						<DateField form={form} name="fromDate" label="Từ ngày" />
+					</div>
+					<div className="col-md-12">
+						<DateField form={form} name="toDate" label="Đến ngày" />
 					</div>
 					<div className="col-md-12">
 						<button
@@ -53,9 +66,9 @@ const DayOffFilterForm = (props) => {
 							style={{marginRight: '10px'}}
 						>
 							Tìm kiếm
-							{isLoading.type === 'FILTER_CREATED' && isLoading.status && (
+							{/* {isLoading.type === 'FILTER_CREATED' && isLoading.status && (
 								<Spin className="loading-base" />
-							)}
+							)} */}
 						</button>
 					</div>
 				</div>
@@ -83,21 +96,9 @@ const DayOffFilterForm = (props) => {
 	);
 };
 DayOffFilterForm.propTypes = {
-	dataOption: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: PropTypes.string.isRequired,
-			value: PropTypes.string.isRequired,
-		})
-	).isRequired,
-	isLoading: PropTypes.shape({
-		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
-	}),
 	handleFilterDayOff: PropTypes.func,
 };
 DayOffFilterForm.defaultProps = {
-	dataOption: [],
-	isLoading: {type: '', status: false},
 	handleFilterDayOff: null,
 };
 export default DayOffFilterForm;

@@ -1,35 +1,35 @@
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Form, Modal, Spin, Tooltip} from 'antd';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import {RotateCcw} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import DateField from '~/components/FormControl/DateField';
-import TextAreaField from '~/components/FormControl/TextAreaField';
+import InputTextField from '~/components/FormControl/InputTextField';
+import SelectField from '~/components/FormControl/SelectField';
 
-const DayOffForm = (props) => {
+const DistrictForm = (props) => {
 	const {
-		handleCreateDayOff,
+		handleCreateDistrict,
+		optionAreaList,
 		isUpdate,
-		handleUpdateDayOff,
+		handleUpdateDistrict,
 		updateObj,
 		isLoading,
 		indexUpdateObj,
 	} = props;
-
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
+
 	const schema = yup.object().shape({
-		DayOff: yup.string().nullable().required('Bạn không được để trống'),
-		DayOffName: yup.string().required('Bạn không được để trống'),
+		AreaID: yup.number().required('Bạn không được để trống'),
+		DistrictName: yup.string().required('Bạn không được để trống'),
 	});
 
 	const defaultValuesInit = {
-		DayOff: moment().format('YYYY/MM/DD'),
-		DayOffName: '',
+		AreaID: '',
+		DistrictName: '',
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
@@ -42,19 +42,19 @@ const DayOffForm = (props) => {
 		}
 	}, [updateObj]);
 
-	const dayOffSwitchFunc = (data) => {
+	const districtSwitchFunc = (data) => {
 		switch (isUpdate) {
 			case true:
-				if (!handleUpdateDayOff) return;
-				handleUpdateDayOff(data, indexUpdateObj).then((res) => {
+				if (!handleUpdateDistrict) return;
+				handleUpdateDistrict(data, indexUpdateObj).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
 					}
 				});
 				break;
 			case false:
-				if (!handleCreateDayOff) return;
-				handleCreateDayOff(data).then((res) => {
+				if (!handleCreateDistrict) return;
+				handleCreateDistrict(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
 						form.reset({...defaultValuesInit});
@@ -80,7 +80,7 @@ const DayOffForm = (props) => {
 				</button>
 			)}
 			<Modal
-				title={isUpdate ? 'Update Day Off' : 'Create Day Off'}
+				title={isUpdate ? 'Update District' : 'Create District'}
 				visible={isModalVisible}
 				onCancel={closeModal}
 				footer={null}
@@ -88,20 +88,24 @@ const DayOffForm = (props) => {
 				<div className="container-fluid">
 					<Form
 						layout="vertical"
-						onFinish={form.handleSubmit(dayOffSwitchFunc)}
+						onFinish={form.handleSubmit(districtSwitchFunc)}
 					>
 						<div className="row">
 							<div className="col-12">
-								<DateField form={form} name="DayOff" label="Day off" />
+								<SelectField
+									form={form}
+									name="AreaID"
+									label="Tên tỉnh/thành phố"
+									optionList={optionAreaList}
+								/>
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-12">
-								<TextAreaField
+								<InputTextField
 									form={form}
-									name="DayOffName"
-									label="Note"
-									rows={2}
+									name="DistrictName"
+									label="Tên quận"
 								/>
 							</div>
 						</div>
@@ -121,23 +125,32 @@ const DayOffForm = (props) => {
 		</>
 	);
 };
-DayOffForm.propTypes = {
-	handleCreateDayOff: PropTypes.func,
+DistrictForm.propTypes = {
 	isUpdate: PropTypes.bool,
-	handleUpdateDayOff: PropTypes.func,
-	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
+	optionAreaList: PropTypes.arrayOf(
+		PropTypes.shape({
+			title: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+				.isRequired,
+			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+				.isRequired,
+		})
+	),
+	updateObj: PropTypes.shape({}),
 	indexUpdateObj: PropTypes.number,
+	handleUpdateDistrict: PropTypes.func,
+	handleCreateDistrict: PropTypes.func,
 };
-DayOffForm.defaultProps = {
-	handleCreateDayOff: null,
+DistrictForm.defaultProps = {
 	isUpdate: false,
-	handleUpdateDayOff: null,
-	updateObj: {},
 	isLoading: {type: '', status: false},
+	optionAreaList: [],
+	updateObj: {},
 	indexUpdateObj: -1,
+	handleUpdateDistrict: null,
+	handleCreateDistrict: null,
 };
-export default DayOffForm;
+export default DistrictForm;

@@ -1,15 +1,15 @@
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import {areaApi} from '~/apiBase';
+import {areaApi, districtApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import AreaDelete from './AreaDelete';
-import AreaForm from './AreaForm';
+import DistrictDelete from './DistrictDelete';
+import DistrictForm from './DistrictForm';
 
-const Area = () => {
-	const [areaList, setAreaList] = useState<IArea[]>([]);
+const District = () => {
+	const [districtList, setDistrictList] = useState<IDistrict[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
@@ -17,6 +17,7 @@ const Area = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
 	const [currentPage, setCurrentPage] = useState(1);
+	const [areaList, setAreaList] = useState([]);
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -24,6 +25,7 @@ const Area = () => {
 		sort: -1,
 		sortType: false,
 		AreaName: '',
+		DistrictName: '',
 	};
 	const [filter, setFilter] = useState(listFieldInit);
 	// SORT OPTION
@@ -34,7 +36,7 @@ const Area = () => {
 				sortType: true,
 			},
 			value: 1,
-			text: 'Tên tăng dần',
+			text: 'Tỉnh/tp tăng dần',
 		},
 		{
 			dataSort: {
@@ -42,7 +44,23 @@ const Area = () => {
 				sortType: false,
 			},
 			value: 2,
-			text: 'Tên giảm dần',
+			text: 'Tỉnh/tp giảm dần',
+		},
+		{
+			dataSort: {
+				sort: 1,
+				sortType: true,
+			},
+			value: 3,
+			text: 'Quận tăng dần',
+		},
+		{
+			dataSort: {
+				sort: 1,
+				sortType: false,
+			},
+			value: 4,
+			text: 'Quận giảm dần',
 		},
 	];
 	// PAGINATION
@@ -75,16 +93,16 @@ const Area = () => {
 		});
 	};
 	// GET DATA IN FIRST TIME
-	const fetchAreaList = async () => {
+	const fetchDistrictList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			let res = await areaApi.getAll(filter);
+			let res = await districtApi.getAll(filter);
 			if (res.status === 200) {
 				if (res.data.totalRow && res.data.data.length) {
-					setAreaList(res.data.data);
+					setDistrictList(res.data.data);
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
@@ -103,20 +121,47 @@ const Area = () => {
 			});
 		}
 	};
-
+	useEffect(() => {
+		fetchDistrictList();
+	}, [filter]);
+	const fetchAreaList = async () => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true,
+		});
+		try {
+			let res = await areaApi.getAll({
+				selectall: true,
+			});
+			if (res.status === 200) {
+				const newAreaList = res.data.data.map((x) => ({
+					title: x.AreaName,
+					value: x.AreaID,
+				}));
+				setAreaList(newAreaList);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: false,
+			});
+		}
+	};
 	useEffect(() => {
 		fetchAreaList();
-	}, [filter]);
+	}, []);
 
 	// CREATE
-	const onCreateArea = async (data: any) => {
+	const onCreateDistrict = async (data: any) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true,
 		});
 		let res;
 		try {
-			res = await areaApi.add({
+			res = await districtApi.add({
 				...data,
 				Enable: true,
 			});
@@ -133,18 +178,18 @@ const Area = () => {
 		return res;
 	};
 	// UPDATE
-	const onUpdateArea = async (newObj: any, idx: number) => {
+	const onUpdateDistrict = async (newObj: any, idx: number) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true,
 		});
 		let res;
 		try {
-			res = await areaApi.update(newObj);
+			res = await districtApi.update(newObj);
 			if (res.status === 200) {
-				const newAreaList = [...areaList];
-				newAreaList.splice(idx, 1, newObj);
-				setAreaList(newAreaList);
+				const newDistrictList = [...districtList];
+				newDistrictList.splice(idx, 1, newObj);
+				setDistrictList(newDistrictList);
 				showNoti('success', res.data.message);
 			}
 		} catch (error) {
@@ -158,19 +203,19 @@ const Area = () => {
 		return res;
 	};
 	// DELETE
-	const onDeleteArea = async (idx: number) => {
+	const onDeleteDistrict = async (idx: number) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			const delObj = areaList[idx];
-			const res = await areaApi.delete({
+			const delObj = districtList[idx];
+			const res = await districtApi.delete({
 				...delObj,
 				Enable: false,
 			});
 			res.status === 200 && showNoti('success', res.data.message);
-			if (areaList.length === 1) {
+			if (districtList.length === 1) {
 				filter.pageIndex === 1
 					? setFilter({...listFieldInit})
 					: setFilter({
@@ -179,7 +224,7 @@ const Area = () => {
 					  });
 				return;
 			}
-			fetchAreaList();
+			fetchDistrictList();
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -192,13 +237,14 @@ const Area = () => {
 	// COLUMN FOR TABLE
 	const columns = [
 		{
-			title: 'Mã tỉnh/thành phố',
-			dataIndex: 'AreaID',
-		},
-		{
 			title: 'Tên tỉnh/thành phố',
 			dataIndex: 'AreaName',
 			...FilterColumn('AreaName', onSearch, onResetSearch, 'text'),
+		},
+		{
+			title: 'Tên quận',
+			dataIndex: 'DistrictName',
+			...FilterColumn('DistrictName', onSearch, onResetSearch, 'text'),
 		},
 		{
 			title: 'Ngày khởi tạo',
@@ -209,21 +255,24 @@ const Area = () => {
 			title: 'Được tạo bởi',
 			dataIndex: 'ModifiedBy',
 		},
+
 		{
 			render: (value, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
-					<AreaForm
+					<DistrictForm
+						optionAreaList={areaList}
 						isLoading={isLoading}
 						isUpdate={true}
 						updateObj={value}
 						indexUpdateObj={idx}
-						handleUpdateArea={onUpdateArea}
+						handleUpdateDistrict={onUpdateDistrict}
 					/>
-					<AreaDelete handleDeleteArea={onDeleteArea} index={idx} />
+					<DistrictDelete handleDeleteDistrict={onDeleteDistrict} index={idx} />
 				</div>
 			),
 		},
 	];
+
 	// RETURN
 	return (
 		<PowerTable
@@ -232,15 +281,16 @@ const Area = () => {
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			loading={isLoading}
 			addClass="basic-header"
-			TitlePage="Provincial List"
+			TitlePage="District List"
 			TitleCard={
-				<AreaForm
+				<DistrictForm
+					optionAreaList={areaList}
 					isLoading={isLoading}
 					isUpdate={false}
-					handleCreateArea={onCreateArea}
+					handleCreateDistrict={onCreateDistrict}
 				/>
 			}
-			dataSource={areaList}
+			dataSource={districtList}
 			columns={columns}
 			Extra={
 				<div className="extra-table">
@@ -251,4 +301,4 @@ const Area = () => {
 	);
 };
 
-export default Area;
+export default District;
