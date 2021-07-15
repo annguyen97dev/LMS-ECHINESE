@@ -9,9 +9,9 @@ class DistrictApi {
     });
 
   getByArea = (areaID: number) =>
-    instance.get<IApiResultData<IDistrict[]>>("/api/District/GetByAreaID", {
+    instance.get<IApiResultData<IDistrict[]>>("/api/District", {
       params: {
-        id: areaID,
+        AreaID: areaID,
       },
     });
 

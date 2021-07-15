@@ -24,3 +24,7 @@ type IBaseApi<T> = {
   ModifiedOn: string;
   ModifiedBy: string;
 } & T;
+
+type IApiResultDetail<T = any> = {
+  data: T;
+};
