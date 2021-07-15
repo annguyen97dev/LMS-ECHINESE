@@ -15,10 +15,12 @@ class DistrictApi {
 	delete(data: IDistrict) {
 		return instance.put(url, data);
 	}
+
+	//   post = (data: IBranch) => instance.post("/api/Branch/InsertBranch", data);
 	getByArea = (areaID: number) =>
-		instance.get<IApiResultData<IDistrict[]>>('/api/District/GetByAreaID', {
+		instance.get<IApiResultData<IDistrict[]>>('/api/District', {
 			params: {
-				id: areaID,
+				AreaID: areaID,
 			},
 		});
 

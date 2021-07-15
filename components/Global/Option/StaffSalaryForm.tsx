@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber } from 'antd';
 import {RotateCcw} from 'react-feather';
-import { staffSalaryApi } from '~/apiBase';
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 
@@ -95,6 +94,7 @@ const StaffSalaryForm = (props) => {
 										<Select 
 											className="style-input" 
 											defaultValue="Chọn nhân viên"
+											allowClear={true}
 											onChange={(value) => setValue("UserInformationID", value)}>
 											{props.dataStaff && props.dataStaff .map(row => (
 												<Option key={row.UserInformationID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
@@ -107,7 +107,7 @@ const StaffSalaryForm = (props) => {
 									</Form.Item>
 								) : (
 									<Form.Item label="Note">
-										<Input placeholder="Note" className="style-input" />
+										<Input placeholder="Note" className="style-input" allowClear={true}/>
 									</Form.Item>
 								)}
 							</div>
@@ -124,6 +124,7 @@ const StaffSalaryForm = (props) => {
 									<Select 
 										className="style-input" 
 										defaultValue={props.rowData?.StyleName || "Type Salary"}
+										allowClear={true}
 										onChange={(value) => setValue("Style", value)}>
 										<Option value="1">Tính lương theo tháng</Option>
 										<Option value="2">Tính lương theo giờ</Option>

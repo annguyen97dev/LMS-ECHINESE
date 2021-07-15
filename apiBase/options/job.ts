@@ -1,18 +1,16 @@
 import { instance } from "~/apiBase/instance";
 
 class JobApi {
-  getAll = (pageSize: number, pageIndex: number) =>
-    instance.get<IApiResultData<IJob[]>>("/api/Job/GetAll", {
-      params: {
-        pageSize: pageSize,
-        pageIndex: pageIndex,
-      },
+  getAll = (jobParams: any) =>
+    instance.get<IApiResultData<IJob[]>>("/api/Job", {
+      params: jobParams,
     });
 
-  add = (data: IJob) => instance.post("/api/Job/Insert", data);
+  getDetail = (id: number) => instance.get<IApiResult<IJob>>(`/api/Job/${id}`);
 
-  // Cập nhật data
-  update = (data: IJob) => instance.put("/api/Job/Update", data, {});
+  add = (data: IJob) => instance.post("/api/Job", data);
+
+  update = (data: IJob) => instance.put("/api/Job", data, {});
 }
 
 export const jobApi = new JobApi();
