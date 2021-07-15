@@ -42,14 +42,17 @@ const CenterForm = React.memo((props: any) => {
 
   const [dataDetail, setDataDetail] = useState<IBranch>();
 
-  const { rowData, branchId, isLoading, _onSubmit } = props;
+  const { rowData, branchId, isLoading, _onSubmit, getIndex } = props;
   const [form] = Form.useForm();
 
   //GET DATA AREA
   const getAllArea = () => {
     (async () => {
       try {
-        const res = await areaApi.getAll(true);
+        const res = await areaApi.getAll({
+          pageIndex: 1,
+          pageSize: Number.MAX_SAFE_INTEGER,
+        });
         res.status == 200 && setDataArea(res.data.data);
       } catch (err) {
         showNoti("danger", err);
@@ -79,7 +82,7 @@ const CenterForm = React.memo((props: any) => {
     let res = _onSubmit(data);
 
     res.then(function (rs: any) {
-      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
+      rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
     });
   });
 
@@ -97,11 +100,16 @@ const CenterForm = React.memo((props: any) => {
       console.log("DATA row: ", rowData);
 
       if (branchId) {
+        getIndex();
         // Cập nhật giá trị khi show form update
         Object.keys(rowData).forEach(function (key) {
           setValue(key, rowData[key]);
         });
-        form.setFieldsValue(rowData);
+        form.setFieldsValue({
+          ...rowData,
+          AreaID: rowData.AreaID,
+          DistrictID: rowData.DistrictID,
+        });
 
         // load disctrict api
         rowData.AreaID && getDistrictByArea(rowData.AreaID);
@@ -231,10 +239,11 @@ const CenterForm = React.memo((props: any) => {
                     showSearch
                     optionFilterProp="children"
                     onChange={onChangeSelect("AreaID")}
-                    defaultValue={rowData?.AreaID}
                   >
-                    {dataArea?.map((item) => (
-                      <Option value={item.AreaID}>{item.AreaName}</Option>
+                    {dataArea?.map((item, index) => (
+                      <Option key={index} value={item.AreaID}>
+                        {item.AreaName}
+                      </Option>
                     ))}
                   </Select>
                 </Form.Item>
@@ -255,11 +264,12 @@ const CenterForm = React.memo((props: any) => {
                     showSearch
                     optionFilterProp="children"
                     onChange={onChangeSelect("DistrictID")}
-                    defaultValue={rowData?.DistrictID}
                   >
                     {dataDistrict?.length > 0 ? (
-                      dataDistrict?.map((item) => (
-                        <Option value={item.ID}>{item.DistrictName}</Option>
+                      dataDistrict?.map((item, index) => (
+                        <Option key={index} value={item.ID}>
+                          {item.DistrictName}
+                        </Option>
                       ))
                     ) : (
                       <Option value={5}>...</Option>

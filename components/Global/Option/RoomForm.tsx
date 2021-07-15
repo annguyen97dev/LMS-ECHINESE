@@ -32,7 +32,7 @@ const RoomForm = React.memo((props: any) => {
   const [dataCenter, setDataCenter] = useState<IBranch[]>();
   const [disableCenter, setDisableCenter] = useState(false);
   const { isLoading, _onSubmit, roomID, rowData } = props;
-  const [centerID, setCenterID] = useState(null);
+
   const [loadingSelect, setLoadingSelect] = useState(false);
   // const [branchID, setBranchID] = useState<number>(null);
 
@@ -41,7 +41,7 @@ const RoomForm = React.memo((props: any) => {
     let res = _onSubmit(data);
     res.then(function (rs: any) {
       console.log("result is: ", rs);
-      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
+      rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
     });
   });
 
@@ -66,8 +66,6 @@ const RoomForm = React.memo((props: any) => {
   const onChangeSelect = (name) => (value) => {
     setValue(name, value);
   };
-
-  console.log("branchID: ", branchID);
 
   useEffect(() => {
     if (isModalVisible) {
@@ -117,7 +115,7 @@ const RoomForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title="Tạo phòng trong trung tâm"
+        title={`${roomID ? "Sửa" : "Tạo"} phòng trong trung tâm`}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
