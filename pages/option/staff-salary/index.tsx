@@ -76,7 +76,9 @@ const StaffSalary = () => {
 		(async () => {
 		  try {
 			let res = await staffSalaryApi.getAll(todoApi);
-			res.status == 200 && setDataTable(res.data.data);
+			res.status == 200 
+			? setDataTable(res.data.data)
+			: res.status == 204 && showNoti("danger", "Không tìm thấy");
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
