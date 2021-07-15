@@ -16,7 +16,7 @@ import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
 
 const Purpose = () => {
-	const [dataPurpose, setDataPurpose] = useState<IPurpose[]>([]);
+	const [dataTable, setDataTable] = useState<IPurpose[]>([]);
 	const [dataDelete, setDataDelete]  = useState({
 		PurposesID: null,
 		Enable: null,
@@ -67,7 +67,7 @@ const Purpose = () => {
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
 	// GET DATA STAFFSALARY
-	const getDataPurpose = () => {
+	const getDataTable = () => {
 		setIsLoading({
 		  type: "GET_ALL",
 		  status: true,
@@ -75,7 +75,7 @@ const Purpose = () => {
 		(async () => {
 		  try {
 			let res = await puroseApi.getAll(todoApi);
-			res.status == 200 && setDataPurpose(res.data.data);
+			res.status == 200 && setDataTable(res.data.data);
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -128,13 +128,13 @@ const Purpose = () => {
   
 	const afterPost = (value) => {
 	  showNoti("success", `${value} thành công`);
-	  getDataPurpose();
+	  getDataTable();
 	};
 
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		getDataPurpose();
+		getDataTable();
 	};
 
 	// ON SEARCH
@@ -237,7 +237,7 @@ const Purpose = () => {
 	];
 
 	useEffect(() => {
-		getDataPurpose();
+		getDataTable();
 	}, [todoApi])
 
 
@@ -263,7 +263,7 @@ const Purpose = () => {
 						isLoading={isLoading} 
 						_onSubmit={(data: any) => _onSubmit(data)}
 					/>}
-				dataSource={dataPurpose}
+				dataSource={dataTable}
 				columns={columns}
 				Extra={
 					<div className="extra-table">

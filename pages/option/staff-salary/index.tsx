@@ -14,7 +14,7 @@ import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
 
 const StaffSalary = () => {
-	const [dataStaffSalary, setDataStaffSalary] = useState<IStaffSalary[]>([]);
+	const [dataTable, setDataTable] = useState<IStaffSalary[]>([]);
 	const [dataStaff, setDataStaff] = useState([]);
 	const [dataDelete, setDataDelete]  = useState({
 		SalaryID: null,
@@ -68,7 +68,7 @@ const StaffSalary = () => {
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
 	// GET DATA STAFFSALARY
-	const getDataStaffSalary = () => {
+	const getDataTable = () => {
 		setIsLoading({
 		  type: "GET_ALL",
 		  status: true,
@@ -76,7 +76,7 @@ const StaffSalary = () => {
 		(async () => {
 		  try {
 			let res = await staffSalaryApi.getAll(todoApi);
-			res.status == 200 && getNewDataStaffSalary(res.data.data);
+			res.status == 200 && setDataTable(res.data.data);
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -87,15 +87,6 @@ const StaffSalary = () => {
 		  }
 		})();
 	};
-
-	// DATA STAFFSALARY AFTER FORMAT
-	const getNewDataStaffSalary = (data: any) => {
-		data.forEach(item => {
-			item.Salary = new Intl.NumberFormat('ja-JP').format(item.Salary);
-		});
-
-		setDataStaffSalary(data);
-	}
 
 	// GET DATA USERINFORMATION
 	const getDataStaff = () => {
@@ -159,13 +150,13 @@ const StaffSalary = () => {
   
 	const afterPost = (value) => {
 	  showNoti("success", `${value} thành công`);
-	  getDataStaffSalary();
+	  getDataTable();
 	};
 
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		getDataStaffSalary();
+		getDataTable();
 	};
 
 	// ON SEARCH
@@ -221,7 +212,7 @@ const StaffSalary = () => {
 	};
 
 	// HANDLE FILTER
-	const _onFilter = ( data ) => {
+	const _onFilterTable = ( data ) => {
 		console.log('Show value: ', data);
 
 		let newTodoApi = {
@@ -250,7 +241,11 @@ const StaffSalary = () => {
 			title: 'Role', 
 			dataIndex: 'RoleName',
 		},
-		{title: 'Salary', dataIndex: 'Salary'},
+		{
+			title: 'Salary', 
+			dataIndex: 'Salary',
+			render: (salary) =>  Intl.NumberFormat('ja-JP').format(salary)
+		},
 		{
 			title: 'Type Salary',
 			dataIndex: 'StyleName',
@@ -303,7 +298,7 @@ const StaffSalary = () => {
 	];
 
 	useEffect(() => {
-		getDataStaffSalary();
+		getDataTable();
 		getDataStaff();
 	}, [todoApi])
 
@@ -330,12 +325,12 @@ const StaffSalary = () => {
 						_onSubmit={(data: any) => _onSubmit(data)}
 						dataStaff={dataStaff}
 					/>}
-				dataSource={dataStaffSalary}
+				dataSource={dataTable}
 				columns={columns}
 				Extra={
 					<div className="extra-table">
 						<FilterStaffSalaryTable 
-							_onFilter={(value: any) => _onFilter(value)}	
+							_onFilter={(value: any) => _onFilterTable(value)}	
 						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}

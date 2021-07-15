@@ -18,7 +18,7 @@ import moment from "moment";
 
 
 const SupplierList = () => {
-	const [dataSupplier, setDataSupplier] = useState<ISupplier[]>([]);
+	const [dataTable, setDataTable] = useState<ISupplier[]>([]);
 	const [dataStaffManage, setDataStaffManage] = useState([]);
 	const [dataDelete, setDataDelete]  = useState({
 		ID: null,
@@ -92,7 +92,7 @@ const SupplierList = () => {
 	};
 
 	// GET DATA
-	const getDataSupplier = () => {
+	const getDataTable = () => {
 		setIsLoading({
 		  type: "GET_ALL",
 		  status: true,
@@ -100,7 +100,7 @@ const SupplierList = () => {
 		(async () => {
 		  try {
 			let res = await supplierApi.getAll(todoApi);
-			res.status == 200 && setDataSupplier(res.data.data);
+			res.status == 200 && setDataTable(res.data.data);
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -154,13 +154,13 @@ const SupplierList = () => {
   
 	const afterPost = (value) => {
 	  showNoti("success", `${value} thành công`);
-	  getDataSupplier();
+	  getDataTable();
 	};
 
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		getDataSupplier();
+		getDataTable();
 	};
 
 	// ON SEARCH
@@ -217,7 +217,7 @@ const SupplierList = () => {
 	};
 
 	// HANDLE FILTER
-	const _onFilter = ( data ) => {
+	const _onFilterTable = ( data ) => {
 		console.log('Show value: ', data);
 
 		let newTodoApi = {
@@ -276,7 +276,7 @@ const SupplierList = () => {
 	];
 
 	useEffect(() => {
-		getDataSupplier();
+		getDataTable();
 		getDataStaffManage();
 	}, [todoApi])
 
@@ -303,12 +303,12 @@ const SupplierList = () => {
 						_onSubmit={(data: any) => _onSubmit(data)}
 						dataStaffManage={dataStaffManage}
 					/>}
-				dataSource={dataSupplier}
+				dataSource={dataTable}
 				columns={columns}
 				Extra={
 					<div className="extra-table">
 						<FilterSupplierTable 
-							_onFilter={(value: any) => _onFilter(value)}
+							_onFilter={(value: any) => _onFilterTable(value)}
 						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}
