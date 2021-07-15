@@ -1,4 +1,4 @@
 type IJob = IBaseApi<{
-  ID: number;
+  JobID: number;
   JobName: string;
 }>;

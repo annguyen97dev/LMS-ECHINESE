@@ -1,44 +1,120 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PowerTable from "~/components/PowerTable";
-import { data } from "../../../lib/option/dataOption2";
-import JobForm from "~/components/Global/Option/JobForm";
-import FilterColumn from "~/components/Tables/FilterColumn";
+import JobForm from "~/components/Global/Option/Job/JobForm";
 import SortBox from "~/components/Elements/SortBox";
 import LayoutBase from "~/components/LayoutBase";
 import { useWrap } from "~/context/wrap";
 import { jobApi } from "~/apiBase";
+import moment from "moment";
+import JobDelete from "~/components/Global/Option/Job/JobDelete";
+import FilterColumn from "~/components/Tables/FilterColumn";
 
 const JobsList = () => {
+  const onSearch = (data) => {
+    setJobParams({
+      ...listJobParams,
+      JobName: data,
+    });
+  };
+
+  const handleReset = () => {
+    setJobParams(listJobParams);
+  };
   const columns = [
     {
       title: "Nghề nghiệp",
       dataIndex: "JobName",
-      ...FilterColumn("JobName"),
+      ...FilterColumn("JobName", onSearch, handleReset, "text"),
     },
     { title: "Modified By", dataIndex: "ModifiedBy" },
     {
       title: "Modified Date",
       dataIndex: "ModifiedOn",
+      render: (date) => moment(date).format("DD/MM/YYYY"),
     },
+
     {
-      render: () => (
+      render: (data) => (
         <>
-          <JobForm showIcon={true} />
+          <JobForm
+            jobDetail={data}
+            jobId={data.JobID}
+            reloadData={() => {
+              getDataJob();
+            }}
+          />
+          <JobDelete
+            jobId={data.JobID}
+            reloadData={() => {
+              getDataJob();
+            }}
+          />
         </>
       ),
     },
   ];
 
+  let pageIndex = 1;
+  const sortOption = [
+    {
+      dataSort: {
+        sort: null,
+        sortType: null,
+      },
+      value: 1,
+      text: "Mới cập nhật",
+    },
+    {
+      dataSort: {
+        sort: null,
+        sortType: true,
+      },
+      value: 2,
+      text: "Từ dưới lên",
+    },
+    {
+      dataSort: {
+        sort: 1,
+        sortType: null,
+      },
+      value: 3,
+      text: "A-z",
+    },
+    {
+      dataSort: {
+        sort: 2,
+        sortType: null,
+      },
+      value: 4,
+      text: "Z-a",
+    },
+  ];
+
+  const handleSort = async (option) => {
+    setJobParams({
+      ...jobParams,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    });
+  };
+
   const [job, setJob] = useState<IJob[]>([]);
   const [isLoading, setIsLoading] = useState({
-    type: "",
+    type: "GET_ALL",
     status: false,
   });
 
   const { showNoti } = useWrap();
-  const [rowData, setRowData] = useState<IJob>();
   const [totalPage, setTotalPage] = useState(null);
-  let indexPage = 1;
+
+  const listJobParams = {
+    pageSize: 10,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    JobName: "",
+  };
+  const [jobParams, setJobParams] = useState(listJobParams);
 
   const getDataJob = () => {
     setIsLoading({
@@ -47,9 +123,9 @@ const JobsList = () => {
     });
     (async () => {
       try {
-        let res = await jobApi.getAll(10, indexPage);
-        res.status == 200 && setJob(res.data.data),
-          setTotalPage(res.data.totalRow);
+        let res = await jobApi.getAll(jobParams);
+        res.status == 200 && setJob(res.data.data);
+        setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -63,73 +139,38 @@ const JobsList = () => {
 
   useEffect(() => {
     getDataJob();
-  }, []);
+  }, [jobParams]);
 
   const getPagination = (pageNumber: number) => {
-    indexPage = pageNumber;
-    getDataJob();
-  };
-
-  const _onSubmit = async (data: any) => {
-    setIsLoading({
-      type: "ADD_DATA",
-      status: true,
+    pageIndex = pageNumber;
+    setJobParams({
+      ...jobParams,
+      pageIndex: pageIndex,
     });
-    let res = null;
-    if (data.ID) {
-      try {
-        res = await jobApi.update(data);
-        res?.status == 200 && afterPost(res.data.message);
-      } catch (error) {
-        console.log("error: ", error);
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "ADD_DATA",
-          status: false,
-        });
-      }
-    } else {
-      try {
-        res = await jobApi.add(data);
-        res?.status == 200 && afterPost(res.data.message);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "ADD_DATA",
-          status: false,
-        });
-      }
-    }
-
-    return res;
-  };
-
-  const afterPost = (mes) => {
-    showNoti("success", mes);
-    getDataJob();
   };
 
   return (
     <PowerTable
+      loading={isLoading}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
-      loading={isLoading}
       addClass="basic-header"
       TitlePage="Jobs list"
       TitleCard={
         <JobForm
-          showAdd={true}
-          isLoading={isLoading}
-          _onSubmit={(data: any) => _onSubmit(data)}
+          reloadData={() => {
+            getDataJob();
+          }}
         />
       }
       dataSource={job}
       columns={columns}
       Extra={
         <div className="extra-table">
-          <SortBox />
+          <SortBox
+            dataOption={sortOption}
+            handleSort={(value) => handleSort(value)}
+          />
         </div>
       }
     />
