@@ -164,7 +164,7 @@ const Center = () => {
     return res;
   };
 
-  // ----------------- TURN OF ------------------------
+  // ----------------- TURN ON/OF ------------------------
   const changeStatus = async (checked: boolean, idRow: number) => {
     setIsLoading({
       type: "GET_ALL",
