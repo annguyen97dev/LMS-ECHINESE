@@ -8,6 +8,7 @@ export { studyTimeApi } from "./options/study-time";
 export { curriculumApi } from "./options/curriculum";
 export { serviceApi } from "./options/service";
 export { staffSalaryApi } from "./options/staff-salary";
+<<<<<<< HEAD
 export { jobApi } from "./options/job";
 // export const addDataDistrict = async (data) => {
 //   let result;
@@ -27,3 +28,8 @@ export { jobApi } from "./options/job";
 //   }
 //   return result;
 // };
+=======
+export { userInformationApi } from "./options/userinformation";
+export { puroseApi } from "./options/purose";
+export { supplierApi } from "./options/supplier";
+>>>>>>> tufe
