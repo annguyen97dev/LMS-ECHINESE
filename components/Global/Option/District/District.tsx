@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {areaApi, districtApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
@@ -16,7 +16,6 @@ const District = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
-	const [currentPage, setCurrentPage] = useState(1);
 	const [areaList, setAreaList] = useState([]);
 	// FILTER
 	const listFieldInit = {
@@ -27,7 +26,13 @@ const District = () => {
 		AreaName: '',
 		DistrictName: '',
 	};
-	const [filter, setFilter] = useState(listFieldInit);
+	let refValue = useRef({
+		pageIndex: 1,
+		pageSize: 10,
+		sort: -1,
+		sortType: false,
+	});
+	const [filters, setFilters] = useState(listFieldInit);
 	// SORT OPTION
 	const sortOptionList = [
 		{
@@ -64,31 +69,42 @@ const District = () => {
 		},
 	];
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
-		setFilter({
-			...filter,
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		refValue.current = {
+			...refValue.current,
+			pageSize,
 			pageIndex,
+		};
+		setFilters({
+			...filters,
+			...refValue.current,
 		});
-		setCurrentPage(pageIndex);
 	};
 	// SORT
 	const onSort = (option) => {
-		setFilter({
-			...listFieldInit,
+		refValue.current = {
+			...refValue.current,
 			sort: option.title.sort,
 			sortType: option.title.sortType,
+		};
+		setFilters({
+			...listFieldInit,
+			...refValue.current,
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
-		setFilter({
+		setFilters({
 			...listFieldInit,
+			pageSize: refValue.current.pageSize,
 		});
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
-		setFilter({
+		setFilters({
 			...listFieldInit,
+			...refValue.current,
+			pageIndex: 1,
 			[dataIndex]: valueSearch,
 		});
 	};
@@ -99,16 +115,16 @@ const District = () => {
 			status: true,
 		});
 		try {
-			let res = await districtApi.getAll(filter);
+			let res = await districtApi.getAll(filters);
 			if (res.status === 200) {
 				if (res.data.totalRow && res.data.data.length) {
 					setDistrictList(res.data.data);
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				setFilter({
+				setFilters({
 					...listFieldInit,
-					pageIndex: currentPage,
+					...refValue.current,
 				});
 				showNoti('danger', 'Không tìm thấy');
 			}
@@ -123,7 +139,7 @@ const District = () => {
 	};
 	useEffect(() => {
 		fetchDistrictList();
-	}, [filter]);
+	}, [filters]);
 	const fetchAreaList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
@@ -216,11 +232,16 @@ const District = () => {
 			});
 			res.status === 200 && showNoti('success', res.data.message);
 			if (districtList.length === 1) {
-				filter.pageIndex === 1
-					? setFilter({...listFieldInit})
-					: setFilter({
-							...filter,
-							pageIndex: filter.pageIndex - 1,
+				filters.pageIndex === 1
+					? setFilters({
+							...listFieldInit,
+							...refValue.current,
+							pageIndex: 1,
+					  })
+					: setFilters({
+							...filters,
+							...refValue.current,
+							pageIndex: filters.pageIndex - 1,
 					  });
 				return;
 			}
@@ -272,13 +293,12 @@ const District = () => {
 			),
 		},
 	];
-
 	// RETURN
 	return (
 		<PowerTable
-			currentPage={filter.pageIndex}
+			currentPage={filters.pageIndex}
 			totalPage={totalPage}
-			getPagination={(pageNumber: number) => getPagination(pageNumber)}
+			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
 			TitlePage="District List"

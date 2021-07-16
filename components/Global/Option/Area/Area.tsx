@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {areaApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
@@ -16,7 +16,7 @@ const Area = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
-	const [currentPage, setCurrentPage] = useState(1);
+
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -25,7 +25,13 @@ const Area = () => {
 		sortType: false,
 		AreaName: '',
 	};
-	const [filter, setFilter] = useState(listFieldInit);
+	let refValue = useRef({
+		pageIndex: 1,
+		pageSize: 10,
+		sort: -1,
+		sortType: false,
+	});
+	const [filters, setFilters] = useState(listFieldInit);
 	// SORT OPTION
 	const sortOptionList = [
 		{
@@ -46,31 +52,42 @@ const Area = () => {
 		},
 	];
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
-		setFilter({
-			...filter,
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		refValue.current = {
+			...refValue.current,
+			pageSize,
 			pageIndex,
+		};
+		setFilters({
+			...filters,
+			...refValue.current,
 		});
-		setCurrentPage(pageIndex);
 	};
 	// SORT
 	const onSort = (option) => {
-		setFilter({
-			...listFieldInit,
+		refValue.current = {
+			...refValue.current,
 			sort: option.title.sort,
 			sortType: option.title.sortType,
+		};
+		setFilters({
+			...listFieldInit,
+			...refValue.current,
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
-		setFilter({
+		setFilters({
 			...listFieldInit,
+			pageSize: refValue.current.pageSize,
 		});
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
-		setFilter({
+		setFilters({
 			...listFieldInit,
+			...refValue.current,
+			pageIndex: 1,
 			[dataIndex]: valueSearch,
 		});
 	};
@@ -81,16 +98,16 @@ const Area = () => {
 			status: true,
 		});
 		try {
-			let res = await areaApi.getAll(filter);
+			let res = await areaApi.getAll(filters);
 			if (res.status === 200) {
 				if (res.data.totalRow && res.data.data.length) {
 					setAreaList(res.data.data);
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				setFilter({
+				setFilters({
 					...listFieldInit,
-					pageIndex: currentPage,
+					...refValue.current,
 				});
 				showNoti('danger', 'Không tìm thấy');
 			}
@@ -106,7 +123,7 @@ const Area = () => {
 
 	useEffect(() => {
 		fetchAreaList();
-	}, [filter]);
+	}, [filters]);
 
 	// CREATE
 	const onCreateArea = async (data: any) => {
@@ -171,11 +188,16 @@ const Area = () => {
 			});
 			res.status === 200 && showNoti('success', res.data.message);
 			if (areaList.length === 1) {
-				filter.pageIndex === 1
-					? setFilter({...listFieldInit})
-					: setFilter({
-							...filter,
-							pageIndex: filter.pageIndex - 1,
+				filters.pageIndex === 1
+					? setFilters({
+							...listFieldInit,
+							...refValue.current,
+							pageIndex: 1,
+					  })
+					: setFilters({
+							...filters,
+							...refValue.current,
+							pageIndex: filters.pageIndex - 1,
 					  });
 				return;
 			}
@@ -227,9 +249,9 @@ const Area = () => {
 	// RETURN
 	return (
 		<PowerTable
-			currentPage={filter.pageIndex}
+			currentPage={filters.pageIndex}
 			totalPage={totalPage}
-			getPagination={(pageNumber: number) => getPagination(pageNumber)}
+			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
 			TitlePage="Provincial List"

@@ -23,12 +23,10 @@ const SelectField = (props) => {
 						{...field}
 						className="style-input"
 						showSearch
-						allowClear={true}
 						style={{width: '100%'}}
 						placeholder={placeholder}
 						optionFilterProp="children"
 						disabled={disabled}
-						defaultValue={optionList[0]?.value}
 					>
 						{optionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>

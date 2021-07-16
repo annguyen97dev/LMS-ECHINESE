@@ -59,7 +59,7 @@ const DayOffFilterForm = (props) => {
 					<div className="col-md-12">
 						<DateField form={form} name="toDate" label="Đến ngày" />
 					</div>
-					<div className="col-md-12">
+					<div className="col-md-12 mt-3">
 						<button
 							type="submit"
 							className="btn btn-primary"

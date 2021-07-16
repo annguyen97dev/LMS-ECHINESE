@@ -23,7 +23,7 @@ const DayOffForm = (props) => {
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 	const schema = yup.object().shape({
-		DayOff: yup.string().nullable().required('Bạn không được để trống'),
+		DayOff: yup.string().required('Bạn không được để trống'),
 		DayOffName: yup.string().required('Bạn không được để trống'),
 	});
 

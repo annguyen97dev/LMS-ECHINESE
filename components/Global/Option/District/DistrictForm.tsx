@@ -23,7 +23,7 @@ const DistrictForm = (props) => {
 	const closeModal = () => setIsModalVisible(false);
 
 	const schema = yup.object().shape({
-		AreaID: yup.number().required('Bạn không được để trống'),
+		AreaID: yup.string().required('Bạn không được để trống'),
 		DistrictName: yup.string().required('Bạn không được để trống'),
 	});
 
