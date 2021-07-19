@@ -1,12 +1,50 @@
-import React, { useState } from "react";
-import { Modal, Form, Input, Button, Divider, Tooltip, Select } from "antd";
+import React, { useState, useEffect } from "react";
+import { Modal, Form, Input, Spin, Tooltip, Select } from "antd";
+import { useForm } from "react-hook-form";
+import { gradeApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
 import { RotateCcw } from "react-feather";
+
 const StudyTimeForm = (props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { Option } = Select;
+
+  const { isLoading, rowID, _onSubmit, getIndex, index, rowData } = props;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting, errors, isSubmitted },
+  } = useForm();
+  const { showNoti } = useWrap();
+  const [form] = Form.useForm();
+
+  // SUBMI FORM
+  const onSubmit = handleSubmit((data: any, e) => {
+    console.log("DATA submit: ", data);
+    let res = _onSubmit(data);
+
+    res.then(function (rs: any) {
+      rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
+    });
+  });
+
+  useEffect(() => {
+    if (isModalVisible) {
+      if (rowID) {
+        getIndex();
+        // Cập nhật giá trị khi show form update
+        Object.keys(rowData).forEach(function (key) {
+          setValue(key, rowData[key]);
+        });
+        form.setFieldsValue(rowData);
+      }
+    }
+  }, [isModalVisible]);
+
   return (
     <>
-      {props.showIcon && (
+      {rowID ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
@@ -17,8 +55,7 @@ const StudyTimeForm = (props) => {
             <RotateCcw />
           </Tooltip>
         </button>
-      )}
-      {props.showAdd && (
+      ) : (
         <button
           className="btn btn-warning add-new"
           onClick={() => {
@@ -37,41 +74,69 @@ const StudyTimeForm = (props) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical">
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Study Time">
-                  <Input placeholder="" className="style-input" />
+                <Form.Item
+                  name="Name"
+                  label="Ca học"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    allowClear={true}
+                    onChange={(e) => setValue("Name", e.target.value)}
+                  />
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Lesson">
-                  <Select defaultValue="lucy" className="w-100 style-input">
-                    <Option value="lucy">Lucy</Option>
-                  </Select>
+                <Form.Item
+                  name="Time"
+                  label="Thời gian"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("Time", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Start">
-                  <Select
-                    defaultValue="lucy"
-                    className="w-100 style-input"
-                    allowClear
-                  >
-                    <Option value="lucy">Lucy</Option>
-                  </Select>
+                <Form.Item
+                  name="TimeStart"
+                  label="Thời gian bắt đầu"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("TimeStart", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
             <div className="row ">
               <div className="col-12">
-                <Button className="w-100" type="primary" size="large">
+                <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                </Button>
+                  {isLoading.type == "ADD_DATA" && isLoading.status && (
+                    <Spin className="loading-base" />
+                  )}
+                </button>
               </div>
             </div>
           </Form>
