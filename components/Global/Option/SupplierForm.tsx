@@ -95,7 +95,7 @@ const SupplierForm = (props) => {
               </div>
               <div className="col-6">
                 <Form.Item 
-                  label="Taxcode"
+                  label="Tax Code"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
                   ]}>

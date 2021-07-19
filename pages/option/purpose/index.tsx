@@ -28,6 +28,7 @@ const Purpose = () => {
 	  status: false,
 	});
 	const [totalPage, setTotalPage] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	let pageIndex = 1;
 
@@ -63,6 +64,7 @@ const Purpose = () => {
 		pageIndex: pageIndex,
 		sort: null,
 		sortType: null,
+		PurposesName: null,
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
@@ -75,9 +77,18 @@ const Purpose = () => {
 		(async () => {
 		  try {
 			let res = await puroseApi.getAll(todoApi);
-			res.status == 200 
-			? setDataTable(res.data.data)
-			: res.status == 204 && showNoti("danger", "Không tìm thấy");
+			res.status == 200 && setDataTable(res.data.data);
+			if (res.status == 204) {
+				// Trường họp search CỐ ĐỊNH 1 phần tử và XÓA thì data trả về = trỗng nhưng trong table vẫn còn 1 phần tử thì reset table
+				if(dataTable.length == 1) {
+					handleReset();
+				} else {
+					showNoti("danger", "Không có dữ liệu");
+				}
+			  	setCurrentPage(pageIndex);
+			} else {
+			  setTotalPage(res.data.totalRow);
+			}
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -102,7 +113,7 @@ const Purpose = () => {
 		console.log(data);
 		try {
 		  res = await puroseApi.update(data);
-		  res?.status == 200 && afterPost("Sửa");
+		  res?.status == 200 && afterPost("Cập nhật");
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -136,7 +147,11 @@ const Purpose = () => {
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		getDataTable();
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		  pageIndex: pageIndex,
+		});
 	};
 
 	// ON SEARCH
@@ -155,13 +170,13 @@ const Purpose = () => {
 	};
 	
 	const onSearch = (valueSearch, dataIndex) => {
+		console.log(dataTable);
 		let clearKey = compareField(valueSearch, dataIndex);
 
 		setTodoApi({
 			...todoApi,
 			...clearKey,
 		});
-
 	};
 
 	// DELETE
@@ -169,7 +184,7 @@ const Purpose = () => {
 		if(dataDelete) {
 			let res = _onSubmit(dataDelete);
 			res.then(function (rs: any) {
-				rs && rs.status == 200 && setIsModalVisible(false);
+			 	rs && rs.status == 200 && setIsModalVisible(false);
 			});
 		}
 	}
@@ -197,7 +212,8 @@ const Purpose = () => {
 		{
 			title: 'Purposes Name', 
 			dataIndex: 'PurposesName', 
-			...FilterColumn('PurposesName', onSearch, handleReset, "text")
+			...FilterColumn('PurposesName', onSearch, handleReset, "text"),
+			render: (text) => { return <p className="font-weight-black">{text}</p> }
 		},
 		{
 			title: 'Modified By', 
@@ -255,6 +271,7 @@ const Purpose = () => {
 			</Modal>
 			<PowerTable
 				loading={isLoading}
+				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				addClass="basic-header"
