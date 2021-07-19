@@ -7,36 +7,45 @@ import { useWrap } from "~/context/wrap";
 
 const GradeForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading, gradeID, _onSubmit } = props;
-
+  const { isLoading, rowID, _onSubmit, getIndex, index, rowData } = props;
   const {
     register,
     handleSubmit,
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
-  } = useForm<IGrade>();
+  } = useForm();
   const { showNoti } = useWrap();
+  const [form] = Form.useForm();
 
-  const onSubmit = handleSubmit((data: any) => {
+  // SUBMI FORM
+  const onSubmit = handleSubmit((data: any, e) => {
     let res = _onSubmit(data);
 
     res.then(function (rs: any) {
-      rs && rs.status == 200 && setIsModalVisible(false);
+      rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
     });
   });
 
   useEffect(() => {
-    if (props.rowData) {
+    if (isModalVisible) {
+      if (rowID) {
+        getIndex();
+        // Cập nhật giá trị khi show form update
+        Object.keys(rowData).forEach(function (key) {
+          setValue(key, rowData[key]);
+        });
+        form.setFieldsValue(rowData);
+      }
     }
-  }, [props.rowData]);
+  }, [isModalVisible]);
 
   return (
     <>
-      {gradeID ? (
+      {rowID ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
-            setIsModalVisible(true), props.getDataCourseWithID(props.CourseID);
+            setIsModalVisible(true);
           }}
         >
           <Tooltip title="Cập nhật">
@@ -62,65 +71,62 @@ const GradeForm = React.memo((props: any) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical" onFinish={onSubmit}>
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="GradeCode" label="Code khóa">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("GradeCode")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={props.rowData?.ListCourseCode}
-                      onChange={(e) => setValue("GradeCode", e.target.value)}
-                    />
-                  )}
+                <Form.Item
+                  name="GradeCode"
+                  label="Code khóa"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    {...register("GradeCode")}
+                    placeholder=""
+                    className="style-input"
+                    defaultValue={props.rowData?.ListCourseCode}
+                    onChange={(e) => setValue("GradeCode", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="GradeName" label="Tên khóa">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={props.rowData?.ListCourseName}
-                      onChange={(e) => setValue("GradeName", e.target.value)}
-                    />
-                  )}
+                <Form.Item
+                  name="GradeName"
+                  label="Tên khóa"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    defaultValue={props.rowData?.ListCourseName}
+                    onChange={(e) => setValue("GradeName", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Mô Tả">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={props.rowData?.Description}
-                      onChange={(e) => setValue("Description", e.target.value)}
-                    />
-                  )}
+                <Form.Item
+                  name="Description"
+                  label="Mô Tả"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    defaultValue={props.rowData?.Description}
+                    onChange={(e) => setValue("Description", e.target.value)}
+                    allowClear={true}
+                  />
                 </Form.Item>
               </div>
             </div>

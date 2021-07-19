@@ -2,7 +2,7 @@ export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { districtApi } from "./options/district";
 export { gradeApi } from "./options/grade";
-export { classApi } from "./options/class";
+export { programApi } from "./options/program";
 export { roomApi } from "./options/room";
 export { studyTimeApi } from "./options/study-time";
 export { curriculumApi } from "./options/curriculum";

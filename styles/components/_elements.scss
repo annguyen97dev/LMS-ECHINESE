@@ -236,19 +236,19 @@
 .light.btn-secondary {
   background-color: #edf1f8;
   border-color: #edf1f8;
-  color: #24365c;
+  color: $primary-color;
 
   &:hover {
     color: #fff;
-    background-color: #1378ab;
-    border-color: #1378ab;
+    background-color: $primary-color;
+    border-color: $primary-color;
   }
 
   &:focus {
     box-shadow: none;
     color: #fff;
-    background-color: #1378ab;
-    border-color: #1378ab;
+    background-color: $primary-color;
+    border-color: $primary-color;
   }
 }
 
@@ -431,6 +431,10 @@ textarea.form-control {
   height: auto;
 }
 
+textarea.ant-input {
+  font-size: 14px;
+  border-radius: 0.375rem !important;
+}
 .style-input {
   .ant-select-selection-item-remove {
     user-select: none;
@@ -440,6 +444,16 @@ textarea.form-control {
     font-size: 14px;
     border-radius: 0.375rem !important;
     height: 36px !important;
+    padding: 0 11px 0px 0px;
+
+    input {
+      padding: 0 10px;
+      border: none;
+      outline: none;
+      border-radius: 0.375rem !important;
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
   }
 
   .ant-select-selector,
@@ -1556,7 +1570,7 @@ hr {
 }
 
 .modal-medium {
-  width: 50% !important;
+  width: 70% !important;
 
   @include max-media(800px) {
     width: 100% !important;
@@ -1601,4 +1615,26 @@ hr {
 }
 .ant-input-number .ant-input-number-handler-wrap {
   display: none;
+}
+
+.input-number {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    margin: 0;
+  }
+}
+
+.table-study-time {
+  .ant-table-thead {
+    tr {
+      th:nth-child(2) {
+        width: 20%;
+      }
+      th:nth-child(3) {
+        width: 10%;
+      }
+    }
+  }
 }
