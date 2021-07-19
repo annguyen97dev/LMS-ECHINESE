@@ -9,7 +9,12 @@ const TextAreaField = (props) => {
 	const {errors} = form.formState;
 	const hasError = errors[name];
 	return (
-		<Form.Item label={label}>
+		<Form.Item
+			label={label}
+			className={`${
+				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
+			}`}
+		>
 			<Controller
 				name={name}
 				control={form.control}
@@ -24,7 +29,11 @@ const TextAreaField = (props) => {
 					/>
 				)}
 			/>
-			{hasError && <span style={{color: 'red'}}>{errors[name]?.message}</span>}
+			{hasError && (
+				<div className="ant-form-item-explain ant-form-item-explain-error">
+					<div role="alert">{errors[name]?.message}</div>
+				</div>
+			)}
 		</Form.Item>
 	);
 };

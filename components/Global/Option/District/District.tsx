@@ -1,32 +1,30 @@
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
-import dayOffApi from '~/apiBase/options/day-off';
+import {areaApi, districtApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
-import DayOffForm from '~/components/Global/Option/DayOff/DayOffForm';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import DayOffDelete from './DayOffDelete';
-import DayOffFilterForm from './DayOffFilterForm';
+import DistrictDelete from './DistrictDelete';
+import DistrictForm from './DistrictForm';
 
-const DayOff = () => {
-	const [dayOffList, setDayOffList] = useState<IDayOff[]>([]);
+const District = () => {
+	const [districtList, setDistrictList] = useState<IDistrict[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
+	const [areaList, setAreaList] = useState([]);
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
 		sortType: false,
-		DayOff: '',
-		DayOffName: '',
-		fromDate: '',
-		toDate: '',
+		AreaName: '',
+		DistrictName: '',
 	};
 	let refValue = useRef({
 		pageIndex: 1,
@@ -43,7 +41,7 @@ const DayOff = () => {
 				sortType: true,
 			},
 			value: 1,
-			text: 'Ngày tăng dần',
+			text: 'Tỉnh/tp tăng dần',
 		},
 		{
 			dataSort: {
@@ -51,7 +49,7 @@ const DayOff = () => {
 				sortType: false,
 			},
 			value: 2,
-			text: 'Ngày giảm dần',
+			text: 'Tỉnh/tp giảm dần',
 		},
 		{
 			dataSort: {
@@ -59,7 +57,7 @@ const DayOff = () => {
 				sortType: true,
 			},
 			value: 3,
-			text: 'Tên tăng dần',
+			text: 'Quận tăng dần',
 		},
 		{
 			dataSort: {
@@ -67,19 +65,9 @@ const DayOff = () => {
 				sortType: false,
 			},
 			value: 4,
-			text: 'Tên giảm dần',
+			text: 'Quận giảm dần',
 		},
 	];
-	// FILTER
-	const onFilterDayOff = (obj) => {
-		setFilters({
-			...listFieldInit,
-			...refValue.current,
-			pageIndex: 1,
-			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
-			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
-		});
-	};
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
 		refValue.current = {
@@ -120,19 +108,17 @@ const DayOff = () => {
 			[dataIndex]: valueSearch,
 		});
 	};
-
 	// GET DATA IN FIRST TIME
-	const fetchDayOffList = async () => {
+	const fetchDistrictList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			let res = await dayOffApi.getAll(filters);
-
+			let res = await districtApi.getAll(filters);
 			if (res.status === 200) {
 				if (res.data.totalRow && res.data.data.length) {
-					setDayOffList(res.data.data);
+					setDistrictList(res.data.data);
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
@@ -151,25 +137,52 @@ const DayOff = () => {
 			});
 		}
 	};
-
 	useEffect(() => {
-		fetchDayOffList();
+		fetchDistrictList();
 	}, [filters]);
+	const fetchAreaList = async () => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true,
+		});
+		try {
+			let res = await areaApi.getAll({
+				selectall: true,
+			});
+			if (res.status === 200) {
+				const newAreaList = res.data.data.map((x) => ({
+					title: x.AreaName,
+					value: x.AreaID,
+				}));
+				setAreaList(newAreaList);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: false,
+			});
+		}
+	};
+	useEffect(() => {
+		fetchAreaList();
+	}, []);
 
 	// CREATE
-	const onCreateDayOff = async (data: any) => {
+	const onCreateDistrict = async (data: any) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true,
 		});
 		let res;
 		try {
-			res = await dayOffApi.add({
+			res = await districtApi.add({
 				...data,
 				Enable: true,
 			});
 			res.status === 200 && showNoti('success', res.data.message);
-			onResetSearch(); // <== khi tạo xong r reset search để trở về trang đầu tiên
+			onResetSearch(); // <== khi tạo xong r trở về trang đầu tiên
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -181,18 +194,18 @@ const DayOff = () => {
 		return res;
 	};
 	// UPDATE
-	const onUpdateDayOff = async (newObj: any, idx: number) => {
+	const onUpdateDistrict = async (newObj: any, idx: number) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true,
 		});
 		let res;
 		try {
-			res = await dayOffApi.update(newObj);
+			res = await districtApi.update(newObj);
 			if (res.status === 200) {
-				const newDayOffList = [...dayOffList];
-				newDayOffList.splice(idx, 1, newObj);
-				setDayOffList(newDayOffList);
+				const newDistrictList = [...districtList];
+				newDistrictList.splice(idx, 1, newObj);
+				setDistrictList(newDistrictList);
 				showNoti('success', res.data.message);
 			}
 		} catch (error) {
@@ -202,23 +215,23 @@ const DayOff = () => {
 				type: 'ADD_DATA',
 				status: false,
 			});
-			return res;
 		}
+		return res;
 	};
 	// DELETE
-	const onDeleteDayOff = async (idx: number) => {
+	const onDeleteDistrict = async (idx: number) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
-			const delObj = dayOffList[idx];
-			const res = await dayOffApi.delete({
+			const delObj = districtList[idx];
+			const res = await districtApi.delete({
 				...delObj,
 				Enable: false,
 			});
 			res.status === 200 && showNoti('success', res.data.message);
-			if (dayOffList.length === 1) {
+			if (districtList.length === 1) {
 				filters.pageIndex === 1
 					? setFilters({
 							...listFieldInit,
@@ -232,7 +245,7 @@ const DayOff = () => {
 					  });
 				return;
 			}
-			fetchDayOffList();
+			fetchDistrictList();
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -245,37 +258,37 @@ const DayOff = () => {
 	// COLUMN FOR TABLE
 	const columns = [
 		{
-			title: 'Ngày nghỉ',
-			dataIndex: 'DayOff',
-			...FilterColumn('DayOff', onSearch, onResetSearch, 'date'),
-			render: (date) => moment(date).format('DD/MM/YYYY'),
+			title: 'Tên tỉnh/thành phố',
+			dataIndex: 'AreaName',
+			...FilterColumn('AreaName', onSearch, onResetSearch, 'text'),
 		},
 		{
-			title: 'Ghi chú',
-			dataIndex: 'DayOffName',
-			...FilterColumn('DayOffName', onSearch, onResetSearch, 'text'),
+			title: 'Tên quận',
+			dataIndex: 'DistrictName',
+			...FilterColumn('DistrictName', onSearch, onResetSearch, 'text'),
 		},
 		{
 			title: 'Ngày khởi tạo',
-			dataIndex: 'CreatedOn',
+			dataIndex: 'ModifiedOn',
 			render: (date) => moment(date).format('DD/MM/YYYY'),
 		},
 		{
 			title: 'Được tạo bởi',
-			dataIndex: 'CreatedBy',
+			dataIndex: 'ModifiedBy',
 		},
+
 		{
 			render: (value, _, idx) => (
-				// VÌ KHI CLICK VÀO THẰNG TALBE THÌ TRIGGER LUÔN CẢ FUNCTION CỦA CÁC THẰNG BÊN TRONG
 				<div onClick={(e) => e.stopPropagation()}>
-					<DayOffForm
+					<DistrictForm
+						optionAreaList={areaList}
 						isLoading={isLoading}
 						isUpdate={true}
 						updateObj={value}
 						indexUpdateObj={idx}
-						handleUpdateDayOff={onUpdateDayOff}
+						handleUpdateDistrict={onUpdateDistrict}
 					/>
-					<DayOffDelete handleDeleteDayOff={onDeleteDayOff} index={idx} />
+					<DistrictDelete handleDeleteDistrict={onDeleteDistrict} index={idx} />
 				</div>
 			),
 		},
@@ -288,19 +301,19 @@ const DayOff = () => {
 			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
-			TitlePage="Day Off"
+			TitlePage="District List"
 			TitleCard={
-				<DayOffForm
+				<DistrictForm
+					optionAreaList={areaList}
 					isLoading={isLoading}
 					isUpdate={false}
-					handleCreateDayOff={onCreateDayOff}
+					handleCreateDistrict={onCreateDistrict}
 				/>
 			}
-			dataSource={dayOffList}
+			dataSource={districtList}
 			columns={columns}
 			Extra={
 				<div className="extra-table">
-					<DayOffFilterForm handleFilterDayOff={onFilterDayOff} />
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}
@@ -308,4 +321,4 @@ const DayOff = () => {
 	);
 };
 
-export default DayOff;
+export default District;

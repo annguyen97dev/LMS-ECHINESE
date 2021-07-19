@@ -9,7 +9,12 @@ const SelectField = (props) => {
 	const {errors} = form.formState;
 	const hasError = errors[name];
 	return (
-		<Form.Item label={label}>
+		<Form.Item
+			label={label}
+			className={`${
+				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
+			}`}
+		>
 			<Controller
 				name={name}
 				control={form.control}
@@ -17,18 +22,11 @@ const SelectField = (props) => {
 					<Select
 						{...field}
 						className="style-input"
-						size="large"
 						showSearch
 						style={{width: '100%'}}
 						placeholder={placeholder}
 						optionFilterProp="children"
 						disabled={disabled}
-						filterOption={(input, option) => {
-							return (
-								option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-							);
-						}}
-						defaultValue={optionList[0].value}
 					>
 						{optionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>
@@ -38,7 +36,11 @@ const SelectField = (props) => {
 					</Select>
 				)}
 			/>
-			{hasError && <span style={{color: 'red'}}>{errors[name]?.message}</span>}
+			{hasError && (
+				<div className="ant-form-item-explain ant-form-item-explain-error">
+					<div role="alert">{errors[name]?.message}</div>
+				</div>
+			)}
 		</Form.Item>
 	);
 };
@@ -48,15 +50,18 @@ SelectField.propTypes = {
 	name: PropTypes.string.isRequired,
 	optionList: PropTypes.arrayOf(
 		PropTypes.shape({
-			title: PropTypes.string.isRequired,
-			value: PropTypes.string.isRequired,
+			title: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+				.isRequired,
+			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+				.isRequired,
 		})
-	).isRequired,
+	),
 	label: PropTypes.string,
 	placeholder: PropTypes.string,
 	disabled: PropTypes.bool,
 };
 SelectField.defaultProps = {
+	optionList: [],
 	label: '',
 	placeholder: '',
 	disabled: false,

@@ -8,8 +8,14 @@ import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 
 const AreaForm = (props) => {
-	const {handleCreateArea, isUpdate, handleUpdateArea, updateObj, isLoading} =
-		props;
+	const {
+		handleCreateArea,
+		isUpdate,
+		handleUpdateArea,
+		updateObj,
+		isLoading,
+		indexUpdateObj,
+	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -28,7 +34,7 @@ const AreaForm = (props) => {
 
 	useEffect(() => {
 		if (isUpdate && updateObj) {
-			form.setValue('AreaName', updateObj.AreaName);
+			form.reset(updateObj);
 		}
 	}, [updateObj]);
 
@@ -36,7 +42,7 @@ const AreaForm = (props) => {
 		switch (isUpdate) {
 			case true:
 				if (!handleUpdateArea) return;
-				handleUpdateArea(data, updateObj).then((res) => {
+				handleUpdateArea(data, indexUpdateObj).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
 					}
@@ -86,7 +92,7 @@ const AreaForm = (props) => {
 								/>
 							</div>
 						</div>
-						<div className="row ">
+						<div className="row mt-3">
 							<div className="col-12">
 								<button type="submit" className="btn btn-primary w-100">
 									{isUpdate ? 'Update' : 'Create'}
@@ -111,6 +117,7 @@ AreaForm.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
+	indexUpdateObj: PropTypes.number,
 };
 AreaForm.defaultProps = {
 	handleCreateArea: null,
@@ -118,5 +125,6 @@ AreaForm.defaultProps = {
 	handleUpdateArea: null,
 	updateObj: {},
 	isLoading: {type: '', status: false},
+	indexUpdateObj: -1,
 };
 export default AreaForm;

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {areaApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
@@ -21,29 +21,76 @@ const Area = () => {
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
-		sort: 0,
+		sort: -1,
 		sortType: false,
 		AreaName: '',
 	};
-	const [filter, setFilter] = useState(listFieldInit);
+	let refValue = useRef({
+		pageIndex: 1,
+		pageSize: 10,
+		sort: -1,
+		sortType: false,
+	});
+	const [filters, setFilters] = useState(listFieldInit);
+	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
-				sort: 1,
-				sortType: false,
+				sort: 0,
+				sortType: true,
 			},
 			value: 1,
 			text: 'Tên tăng dần',
 		},
 		{
 			dataSort: {
-				sort: 1,
-				sortType: true,
+				sort: 0,
+				sortType: false,
 			},
 			value: 2,
 			text: 'Tên giảm dần',
 		},
 	];
+	// PAGINATION
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		refValue.current = {
+			...refValue.current,
+			pageSize,
+			pageIndex,
+		};
+		setFilters({
+			...filters,
+			...refValue.current,
+		});
+	};
+	// SORT
+	const onSort = (option) => {
+		refValue.current = {
+			...refValue.current,
+			sort: option.title.sort,
+			sortType: option.title.sortType,
+		};
+		setFilters({
+			...listFieldInit,
+			...refValue.current,
+		});
+	};
+	// RESET SEARCH
+	const onResetSearch = () => {
+		setFilters({
+			...listFieldInit,
+			pageSize: refValue.current.pageSize,
+		});
+	};
+	// ACTION SEARCH
+	const onSearch = (valueSearch, dataIndex) => {
+		setFilters({
+			...listFieldInit,
+			...refValue.current,
+			pageIndex: 1,
+			[dataIndex]: valueSearch,
+		});
+	};
 	// GET DATA IN FIRST TIME
 	const fetchAreaList = async () => {
 		setIsLoading({
@@ -51,13 +98,18 @@ const Area = () => {
 			status: true,
 		});
 		try {
-			let res = await areaApi.getAll(filter);
+			let res = await areaApi.getAll(filters);
 			if (res.status === 200) {
-				setAreaList(res.data.data);
-				setTotalPage(res.data.totalRow);
-				res.data.data.length > 0
-					? showNoti('success', res.data.message)
-					: showNoti('danger', 'Không tìm thấy');
+				if (res.data.totalRow && res.data.data.length) {
+					setAreaList(res.data.data);
+					setTotalPage(res.data.totalRow);
+				}
+			} else if (res.status === 204) {
+				setFilters({
+					...listFieldInit,
+					...refValue.current,
+				});
+				showNoti('danger', 'Không tìm thấy');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -71,49 +123,8 @@ const Area = () => {
 
 	useEffect(() => {
 		fetchAreaList();
-	}, [filter]);
-	// PAGINATION
-	const getPagination = (pageIndex: number) => {
-		const newFilter = {
-			...filter,
-			pageIndex,
-		};
-		setFilter(newFilter);
-	};
-	// SORT
-	const onSort = (option) => {
-		setFilter({
-			...listFieldInit,
-			sort: option.title.sort,
-			sortType: option.title.sortType,
-		});
-	};
-	// CHECK KEY AND VALUE IN LIST FIELD
-	const checkField = (valueSearch, dataIndex) => {
-		Object.keys(listFieldInit).forEach(function (key) {
-			if (key !== dataIndex) {
-				listFieldInit[key] = listFieldInit[key];
-			} else {
-				listFieldInit[key] = valueSearch;
-			}
-		});
+	}, [filters]);
 
-		return listFieldInit;
-	};
-	// ACTION SEARCH
-	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
-
-		setFilter({
-			...filter,
-			...clearKey,
-		});
-	};
-	const onResetSearch = () => {
-		setFilter({
-			...listFieldInit,
-		});
-	};
 	// CREATE
 	const onCreateArea = async (data: any) => {
 		setIsLoading({
@@ -126,7 +137,8 @@ const Area = () => {
 				...data,
 				Enable: true,
 			});
-			fetchAreaList();
+			res.status === 200 && showNoti('success', res.data.message);
+			onResetSearch(); // <== khi tạo xong r trở về trang đầu tiên
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -138,19 +150,20 @@ const Area = () => {
 		return res;
 	};
 	// UPDATE
-	const onUpdateArea = async (newObj: any, oldObj: any) => {
+	const onUpdateArea = async (newObj: any, idx: number) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true,
 		});
 		let res;
 		try {
-			const newArea = {
-				...oldObj,
-				...newObj,
-			};
-			res = await areaApi.update(newArea);
-			fetchAreaList();
+			res = await areaApi.update(newObj);
+			if (res.status === 200) {
+				const newAreaList = [...areaList];
+				newAreaList.splice(idx, 1, newObj);
+				setAreaList(newAreaList);
+				showNoti('success', res.data.message);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -162,19 +175,30 @@ const Area = () => {
 		return res;
 	};
 	// DELETE
-	const onDeleteArea = async (id: number, idx: number) => {
+	const onDeleteArea = async (idx: number) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
 			const delObj = areaList[idx];
-			await areaApi.delete({
+			const res = await areaApi.delete({
 				...delObj,
 				Enable: false,
 			});
+			res.status === 200 && showNoti('success', res.data.message);
 			if (areaList.length === 1) {
-				onResetSearch();
+				filters.pageIndex === 1
+					? setFilters({
+							...listFieldInit,
+							...refValue.current,
+							pageIndex: 1,
+					  })
+					: setFilters({
+							...filters,
+							...refValue.current,
+							pageIndex: filters.pageIndex - 1,
+					  });
 				return;
 			}
 			fetchAreaList();
@@ -209,27 +233,25 @@ const Area = () => {
 		},
 		{
 			render: (value, _, idx) => (
-				<>
+				<div onClick={(e) => e.stopPropagation()}>
 					<AreaForm
 						isLoading={isLoading}
 						isUpdate={true}
 						updateObj={value}
+						indexUpdateObj={idx}
 						handleUpdateArea={onUpdateArea}
 					/>
-					<AreaDelete
-						handleDeleteArea={onDeleteArea}
-						deleteIDObj={value.AreaID}
-						index={idx}
-					/>
-				</>
+					<AreaDelete handleDeleteArea={onDeleteArea} index={idx} />
+				</div>
 			),
 		},
 	];
 	// RETURN
 	return (
 		<PowerTable
-			totalPage={totalPage && totalPage}
-			getPagination={(pageNumber: number) => getPagination(pageNumber)}
+			currentPage={filters.pageIndex}
+			totalPage={totalPage}
+			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
 			TitlePage="Provincial List"

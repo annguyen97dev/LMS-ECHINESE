@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {AlertTriangle, X} from 'react-feather';
 
-const DayOffDelete = (props) => {
-	const {handleDeleteDayOff, index} = props;
+const DistrictDelete = (props) => {
+	const {handleDeleteDistrict, index} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
-	const checkHandleDeleteDayOff = () => {
-		if (!handleDeleteDayOff) return;
+	const checkHandleDeleteArea = () => {
+		if (!handleDeleteDistrict) return;
 		if (index < 0) return;
-		handleDeleteDayOff(index);
+		handleDeleteDistrict(index);
 		setIsModalVisible(false);
 	};
 	return (
@@ -29,19 +29,19 @@ const DayOffDelete = (props) => {
 			<Modal
 				title={<AlertTriangle color="red" />}
 				visible={isModalVisible}
-				onOk={() => checkHandleDeleteDayOff()}
+				onOk={() => checkHandleDeleteArea()}
 				onCancel={() => setIsModalVisible(false)}
 			>
-				<p className="text-confirm">Bạn có chắc muốn xóa ngày nghỉ này?</p>
+				<p className="text-confirm">Bạn có chắc muốn xóa quận này?</p>
 			</Modal>
 		</>
 	);
 };
-DayOffDelete.propTypes = {
-	handleDeleteDayOff: PropTypes.func,
+DistrictDelete.propTypes = {
+	handleDeleteDistrict: PropTypes.func,
 	index: PropTypes.number.isRequired,
 };
-DayOffDelete.defaultProps = {
-	handleDeleteDayOff: null,
+DistrictDelete.defaultProps = {
+	handleDeleteDistrict: null,
 };
-export default DayOffDelete;
+export default DistrictDelete;

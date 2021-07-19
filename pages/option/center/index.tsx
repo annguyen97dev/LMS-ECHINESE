@@ -58,7 +58,6 @@ const Center = () => {
         sort: 1,
         sortType: false,
       },
-      value: 1,
       text: "Mã giảm dần",
     },
     {
@@ -66,7 +65,6 @@ const Center = () => {
         sort: 1,
         sortType: true,
       },
-      value: 2,
       text: "Mã tăng dần",
     },
     {
@@ -74,7 +72,6 @@ const Center = () => {
         sort: 2,
         sortType: false,
       },
-      value: 3,
       text: "Tên giảm dần",
     },
     {
@@ -82,94 +79,9 @@ const Center = () => {
         sort: 2,
         sortType: true,
       },
-      value: 4,
       text: "Tên tăng dần ",
     },
   ];
-
-  // const FilterColumn = (dataIndex) => {
-  //   const [isVisible, setIsVisible] = useState(false);
-  //   const [valueSearch, setValueSearch] = useState<any>(null);
-  //   const inputRef = useRef<any>(null);
-  //   const getValueSearch = (e) => {
-  //     setValueSearch(e.target.value);
-  //   };
-
-  //   // HANDLE SEARCH
-  //   const handleSearch = () => {
-  //     switch (dataIndex) {
-  //       case "BranchCode":
-  //         setTodoApi({
-  //           ...todoApi,
-  //           branchName: "",
-  //           branchCode: valueSearch,
-  //         });
-  //         break;
-  //       case "BranchName":
-  //         setTodoApi({
-  //           ...todoApi,
-  //           branchCode: "",
-  //           branchName: valueSearch,
-  //         });
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     setValueSearch("");
-  //     setIsVisible(false);
-  //   };
-
-  //   // HANDLE RESET
-  //   const handleReset = () => {
-  //     setTodoApi(listTodoApi);
-  //     setIsVisible(false);
-  //   };
-
-  //   useEffect(() => {
-  //     if (isVisible) {
-  //       setTimeout(() => {
-  //         inputRef.current.select();
-  //       }, 100);
-  //     }
-  //   }, [isVisible]);
-
-  //   const getColumnSearchProps = (dataIndex) => ({
-  //     filterDropdown: () => (
-  //       <div style={{ padding: 8 }}>
-  //         <Input
-  //           ref={inputRef}
-  //           value={valueSearch}
-  //           placeholder={`Search ${dataIndex}`}
-  //           onPressEnter={() => handleSearch()}
-  //           onChange={getValueSearch}
-  //           style={{ marginBottom: 8, display: "block" }}
-  //         />
-  //         <Space>
-  //           <Button
-  //             type="primary"
-  //             onClick={() => handleSearch()}
-  //             icon={<SearchOutlined />}
-  //             size="small"
-  //             style={{ width: 90 }}
-  //           >
-  //             Search
-  //           </Button>
-  //           <Button onClick={handleReset} size="small" style={{ width: 90 }}>
-  //             Reset
-  //           </Button>
-  //         </Space>
-  //       </div>
-  //     ),
-  //     filterIcon: (filtered) => <SearchOutlined />,
-
-  //     filterDropdownVisible: isVisible,
-  //     onFilterDropdownVisibleChange: (visible) => {
-  //       visible ? setIsVisible(true) : setIsVisible(false);
-  //     },
-  //   });
-
-  //   return getColumnSearchProps(dataIndex);
-  // };
 
   // -------------- GET DATA CENTER ----------------
   const getDataCenter = async () => {
@@ -252,15 +164,20 @@ const Center = () => {
     return res;
   };
 
-  // ----------------- TURN ON/OF ------------------------
+  // ----------------- TURN OF ------------------------
   const changeStatus = async (checked: boolean, idRow: number) => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
 
+    let dataChange = {
+      ID: idRow,
+      Enable: checked,
+    };
+
     try {
-      let res = await branchApi.changeStatus(idRow);
+      let res = await branchApi.update(dataChange);
       res.status == 200 && setTodoApi(listTodoApi),
         showNoti("success", res.data.message);
     } catch (error) {
@@ -273,7 +190,7 @@ const Center = () => {
     }
   };
 
-  // GET PAGE_NUMBER
+  // -------------- GET PAGE_NUMBER -----------------
   const getPagination = (pageNumber: number) => {
     pageIndex = pageNumber;
     setCurrentPage(pageNumber);
@@ -284,6 +201,7 @@ const Center = () => {
     });
   };
 
+  // --------------- HANDLE SORT ----------------------
   const handleSort = async (option) => {
     let newTodoApi = {
       ...listTodoApi,
@@ -348,19 +266,18 @@ const Center = () => {
       title: "Mã trung tâm",
       dataIndex: "BranchCode",
       // ...FilterColumn("BranchCode"),
-      ...FilterColumn("BranchCode", onSearch, handleReset, "text"),
+      ...FilterColumn("branchCode", onSearch, handleReset, "text"),
     },
 
     {
       title: "Tên trung tâm",
       dataIndex: "BranchName",
-      // ...FilterColumn("BranchName"),
+      ...FilterColumn("branchName", onSearch, handleReset, "text"),
     },
     { title: "Địa chỉ", dataIndex: "Address" },
     {
       title: "Số điện thoại",
       dataIndex: "Phone",
-      // ...FilterColumn("BranchName"),
     },
     {
       title: "Trạng thái",
