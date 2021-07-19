@@ -1,32 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Tooltip, Select, Spin } from "antd";
 import { RotateCcw } from "react-feather";
-import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
-import { jobApi } from "~/apiBase";
+import { Roles } from "~/lib/roles/listRoles";
+import { useForm } from "react-hook-form";
+import { feedbackApi } from "~/apiBase/options/feedback";
 
-const JobForm = React.memo((props: any) => {
-  const { jobId, reloadData, jobDetail, currentPage } = props;
-  const { setValue } = useForm();
+const FeedbackForm = React.memo((props: any) => {
+  const { Option } = Select;
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { feedbackId, reloadData, feedbackDetail, currentPage } = props;
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
+  const { setValue } = useForm();
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    if (jobId) {
+    if (feedbackId) {
       try {
-        let res = await jobApi.update({ ...data, Enable: true, JobID: jobId });
-        afterSubmit(res?.data.message);
+        let res = await feedbackApi.update({
+          ...data,
+          Enable: true,
+          ID: feedbackId,
+        });
         reloadData(currentPage);
+        afterSubmit(res?.data.message);
       } catch (error) {
         showNoti("danger", error.message);
         setLoading(false);
       }
     } else {
       try {
-        let res = await jobApi.add({ ...data, Enable: true });
+        let res = await feedbackApi.add({ ...data, Enable: true });
         afterSubmit(res?.data.message);
         reloadData(1);
         form.resetFields();
@@ -44,14 +50,14 @@ const JobForm = React.memo((props: any) => {
   };
 
   useEffect(() => {
-    if (jobDetail) {
-      form.setFieldsValue(jobDetail);
+    if (feedbackDetail) {
+      form.setFieldsValue(feedbackDetail);
     }
   }, [isModalVisible]);
 
   return (
     <>
-      {jobId ? (
+      {feedbackId ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
@@ -74,7 +80,9 @@ const JobForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title={<>{jobId ? "Thêm mới" : "Cập nhật"}</>}
+        title={
+          <>{feedbackId ? "Cập nhật loại phản hồi" : "Tạo loại phản hồi"}</>
+        }
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -84,26 +92,51 @@ const JobForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item
-                  name="JobName"
-                  label="Nghề nghiệp"
+                  name="Role"
+                  label="Role"
+                  rules={[
+                    { required: true, message: "Vui lòng điền đủ thông tin!" },
+                  ]}
+                >
+                  <Select
+                    className="w-100 style-input"
+                    placeholder="Chọn role người tạo ..."
+                  >
+                    {Roles.map((row) => (
+                      <Option key={row.id} value={row.id}>
+                        {row.RoleName}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </div>
+            </div>
+            {/*  */}
+            <div className="row">
+              <div className="col-12">
+                <Form.Item
+                  name="Name"
+                  label="Loại phản hồi"
                   rules={[
                     { required: true, message: "Vui lòng điền đủ thông tin!" },
                   ]}
                 >
                   <Input
-                    placeholder="Giáo viên"
+                    placeholder="Nhập vào loại phản hồi..."
                     className="style-input"
-                    onChange={(e) => setValue("JobName", e.target.value)}
+                    onChange={(e) => setValue("Name", e.target.value)}
                     allowClear={true}
                   />
                 </Form.Item>
               </div>
             </div>
-            <div className="row">
-              <button type="submit" className="btn btn-primary w-100">
-                Lưu
-                {loading == true && <Spin className="loading-base" />}
-              </button>
+            <div className="row ">
+              <div className="col-12">
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {loading == true && <Spin className="loading-base" />}
+                </button>
+              </div>
             </div>
           </Form>
         </div>
@@ -112,4 +145,4 @@ const JobForm = React.memo((props: any) => {
   );
 });
 
-export default JobForm;
+export default FeedbackForm;
