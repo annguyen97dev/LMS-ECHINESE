@@ -18,7 +18,7 @@ import moment from "moment";
 
 
 const SupplierList = () => {
-	const [dataSupplier, setDataSupplier] = useState<ISupplier[]>([]);
+	const [dataTable, setDataTable] = useState<ISupplier[]>([]);
 	const [dataStaffManage, setDataStaffManage] = useState([]);
 	const [dataDelete, setDataDelete]  = useState({
 		ID: null,
@@ -31,6 +31,7 @@ const SupplierList = () => {
 	  status: false,
 	});
 	const [totalPage, setTotalPage] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	let pageIndex = 1;
 
@@ -57,6 +58,7 @@ const SupplierList = () => {
 	// PARAMS SEARCH
 	let listField = {
 		SupplierName: "",
+		PersonInChargeName: "",
 	};
 
 	// PARAMS API GETALL
@@ -67,6 +69,8 @@ const SupplierList = () => {
 		sortType: null,
 		fromDate: null,
 		toDate: null,
+		SupplierName: null,
+		PersonInChargeName: null,
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
@@ -92,7 +96,7 @@ const SupplierList = () => {
 	};
 
 	// GET DATA
-	const getDataSupplier = () => {
+	const getDataTable = () => {
 		setIsLoading({
 		  type: "GET_ALL",
 		  status: true,
@@ -100,7 +104,19 @@ const SupplierList = () => {
 		(async () => {
 		  try {
 			let res = await supplierApi.getAll(todoApi);
-			res.status == 200 && setDataSupplier(res.data.data);
+			res.status == 200 && setDataTable(res.data.data);
+			if (res.status == 204) {
+				// Trường họp search CỐ ĐỊNH 1 phần tử và XÓA thì data trả về = trỗng nhưng trong table vẫn còn 1 phần tử thì reset table
+				if(dataTable.length == 1) {
+					handleReset();
+				} else {
+					showNoti("danger", "Không có dữ liệu");
+				}
+			  	setCurrentPage(pageIndex);
+			} else {
+			  setTotalPage(res.data.totalRow);
+			}
+			setTotalPage(res.data.totalRow);
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -125,7 +141,7 @@ const SupplierList = () => {
 		console.log(data);
 		try {
 		  res = await supplierApi.update(data);
-		  res?.status == 200 && afterPost("Sửa");
+		  res?.status == 200 && afterPost("Cập nhật");
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -154,13 +170,17 @@ const SupplierList = () => {
   
 	const afterPost = (value) => {
 	  showNoti("success", `${value} thành công`);
-	  getDataSupplier();
+	  getDataTable();
 	};
 
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		getDataSupplier();
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		  pageIndex: pageIndex,
+		});
 	};
 
 	// ON SEARCH
@@ -217,7 +237,7 @@ const SupplierList = () => {
 	};
 
 	// HANDLE FILTER
-	const _onFilter = ( data ) => {
+	const _onFilterTable = ( data ) => {
 		console.log('Show value: ', data);
 
 		let newTodoApi = {
@@ -229,12 +249,29 @@ const SupplierList = () => {
 		setTodoApi(newTodoApi);
 	}
 
-
 	const columns = [
 		{
 			title: 'Supplier', 
 			dataIndex: 'SupplierName', 
-			...FilterColumn('SupplierName', onSearch, handleReset, "text")},
+			...FilterColumn('SupplierName', onSearch, handleReset, "text"),
+			render: (text) => { return <p className="font-weight-black">{text}</p> }
+		},
+		{
+			title: 'Address', 
+			dataIndex: 'Address', 
+			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
+		},
+		{
+			title: 'Tax Code', 
+			dataIndex: 'Taxcode', 
+			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
+		},
+		{
+			title: 'Person In Charge', 
+			dataIndex: 'PersonInChargeName', 
+			...FilterColumn('PersonInChargeName', onSearch, handleReset, "text"),
+			render: (text) => { return <p className="font-weight-blue">{text}</p> }
+		},
 		{
 			title: 'Modified By', 
 			dataIndex: 'ModifiedBy', 
@@ -276,7 +313,7 @@ const SupplierList = () => {
 	];
 
 	useEffect(() => {
-		getDataSupplier();
+		getDataTable();
 		getDataStaffManage();
 	}, [todoApi])
 
@@ -292,6 +329,7 @@ const SupplierList = () => {
 			</Modal>
 			<PowerTable
 				loading={isLoading}
+				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				addClass="basic-header"
@@ -303,12 +341,12 @@ const SupplierList = () => {
 						_onSubmit={(data: any) => _onSubmit(data)}
 						dataStaffManage={dataStaffManage}
 					/>}
-				dataSource={dataSupplier}
+				dataSource={dataTable}
 				columns={columns}
 				Extra={
 					<div className="extra-table">
 						<FilterSupplierTable 
-							_onFilter={(value: any) => _onFilter(value)}
+							_onFilter={(value: any) => _onFilterTable(value)}
 						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}
