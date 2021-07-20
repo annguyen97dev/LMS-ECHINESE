@@ -206,25 +206,70 @@ const Discount = () => {
 		setTodoApi(newTodoApi);
 	};
 
+	// HANDLE FILTER
+	const _onFilterTable = ( data ) => {
+		console.log('Show value: ', data);
+
+		let newTodoApi = {
+			...listTodoApi,
+			fromDate: data.fromDate,
+			toDate: data.toDate
+		};
+
+		setTodoApi(newTodoApi);
+	}
+
 	const columns = [
 		{
-			title: 'Code',
+			title: 'Mã khuyến mãi',
 			dataIndex: 'DiscountCode',
 			// ...FilterColumn('code'),
 			render: (code) => <span className="tag green">{code}</span>,
 		},
-		{title: 'Discount', dataIndex: 'Discount'},
-		{title: 'Percent', dataIndex: 'percent'},
-		{title: 'Status', dataIndex: 'StatusName'},
-		{title: 'Quantity', dataIndex: 'Quantity'},
-		{title: 'Quantity Left', dataIndex: 'QuantityLeft'},
-		{title: 'Note', dataIndex: 'Note'},
-		{title: 'Dead Line', dataIndex: 'DeadLine'},
 		{
-			render: (record) => (
+			title: 'Khuyến mãi', 
+			dataIndex: 'Discount',
+			render: (text, record) => {
+				if(record.DiscountType == 2) {
+					return <p className="font-weight-blue">{text}%</p>
+				} else {
+					return <p className="font-weight-blue">{Intl.NumberFormat('ja-JP').format(text)}</p>
+				}
+			}
+		
+		},
+		{
+			title: 'Trạng thái', 
+			dataIndex: 'StatusName',
+			filters: [
+				{
+					text: "Đã kích hoạt",
+					value: "Đã kích hoạt"
+				},
+				{
+					text: "Chưa kích hoạt",
+					value: "Chưa kích hoạt"
+				},
+				{
+					text: "Hết hạn",
+					value: "Hết hạn"
+				},
+			],
+			onFilter: (value, record) => record.StatusName.indexOf(value) === 0,
+		},
+		{title: 'Số lượng', dataIndex: 'Quantity'},
+		{title: 'Số lượng còn lại', dataIndex: 'QuantityLeft'},
+		{title: 'Ghi chú', dataIndex: 'Note'},
+		{
+			title: 'Thời hạn', 
+			dataIndex: 'DeadLine',
+			render: (date) => moment(date).format("DD/MM/YYYY"),
+		},
+		{
+			render: (record, text, index) => (
 				<>
 					<DiscountForm 
-						showIcon={true} 
+						showIcon={true}
 						rowData={record}
 						isLoading={isLoading}
 						_onSubmit={(data: any) => _onSubmit(data)}	
@@ -270,6 +315,7 @@ const Discount = () => {
 					loading={isLoading}
 					currentPage={currentPage}
 					totalPage={totalPage && totalPage}
+					getPagination={(pageNumber: number) => getPagination(pageNumber)}
 					addClass="basic-header"
 					TitleCard={
 						<DiscountForm 
@@ -281,8 +327,13 @@ const Discount = () => {
 					columns={columns}
 					Extra={
 						<div className="extra-table">
-							<FilterDiscountTable />
-							<SortBox />
+							<FilterDiscountTable 
+								_onFilter={(value: any) => _onFilterTable(value)}
+							/>
+							<SortBox 
+								handleSort={(value) => handleSort(value)}
+								dataOption={dataOption}
+							/>
 						</div>
 					}
 				/>

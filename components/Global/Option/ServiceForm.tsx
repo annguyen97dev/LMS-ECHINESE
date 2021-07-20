@@ -33,14 +33,13 @@ const ServiceForm = (props) => {
   // const { showNoti } = useWrap();
 
   const onSubmit = handleSubmit((data: any) => {
+    console.log("Data submit: ", data);
 
     let res = props._onSubmit(data);
 
     res.then(function (rs: any) {
       console.log("Res in form: ", rs);
-      rs
-        ? res.status == 200 && setIsModalVisible(false)
-        : showNoti("danger", "Server lỗi")
+      rs && rs.status == 200 && setIsModalVisible(false);
     });
   });
 
@@ -81,7 +80,7 @@ const ServiceForm = (props) => {
 
       {/*  */}
       <Modal
-        title={<>{props.showAdd ? "Create Service" : "Update Service"}</>}
+        title={<>{props.showAdd ? "Thêm Dịch Vụ" : "Cập Nhật Dịch Vụ"}</>}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -90,11 +89,15 @@ const ServiceForm = (props) => {
           <Form layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Service Name">
+                <Form.Item 
+                  label="Dịch vụ"
+                  name="ServiceName"
+                  rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                  initialValue={props.rowData?.ServiceName}
+                  >
                     <Input 
                     placeholder=""
                     className="style-input"
-                    defaultValue={props.rowData?.ServiceName}
                     onChange={(e) => setValue("ServiceName", e.target.value)} 
                   />
                 </Form.Item>
@@ -103,11 +106,14 @@ const ServiceForm = (props) => {
             {/*  */}
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Description">
+                <Form.Item 
+                  label="Thông tin dịch vụ"
+                  name="DescribeService"
+                  initialValue={props.rowData?.DescribeService}
+                >
                     <TextArea
                       placeholder=""
                       rows={2} 
-                      defaultValue={props.rowData?.DescribeService}
                       onChange={(e) => setValue("DescribeService", e.target.value)}  
                     />
                 </Form.Item>
@@ -116,13 +122,16 @@ const ServiceForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item 
-                  label="Supplier Services"
+                  label="NCC Dịch vụ"
+                  name="SupplierServicesName"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.SupplierServicesName}  
+                >
                     <Select 
 											className="style-input" 
-											defaultValue={props.rowData?.SupplierServicesName || "Chọn nhà cung cấp"}
+											// defaultValue={props.rowData?.SupplierServicesName || "Chọn nhà cung cấp"}
                       allowClear={true}
 											onChange={(value) => setValue("SupplierServicesID", value)}>
                         {props.dataSupplier && props.dataSupplier.map(row => (
@@ -139,13 +148,16 @@ const ServiceForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item 
-                  label="Person In Charge"
+                  label="Nhân viên quản lí"
+                  name="Person In Charge"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.PersonInChargeOfServicesName}
+                >
                     <Select 
 											className="style-input" 
-											defaultValue={props.rowData?.PersonInChargeOfServicesName || "Chọn nhân viên quản lí"}
+											// defaultValue={props.rowData?.PersonInChargeOfServicesName || "Chọn nhân viên quản lí"}
                       allowClear={true}
 											onChange={(value) => setValue("PersonInChargeOfServicesID", value)}>
                         {props.dataStaff && props.dataStaff.map(row => (
@@ -162,13 +174,16 @@ const ServiceForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item 
-                  label="Services Status"
+                  label="Trạng thái"
+                  name="Services Status"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.StatusName}
+                  >
                     <Select 
 											className="style-input" 
-											defaultValue={props.rowData?.StatusName || "Trạng thái dịch vụ"}
+											// defaultValue={props.rowData?.StatusName || "Trạng thái dịch vụ"}
                       allowClear={true}
 											onChange={(value) => setValue("Status", value)}>
                         {status.map(row => (
@@ -184,15 +199,12 @@ const ServiceForm = (props) => {
             </div>
             <div className="row ">
               <div className="col-12">
-                {props.showAdd == true ? (
-                  <Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-                    Create
-                  </Button>
-                ) : (
-                  <Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-                    Update
-                  </Button>
-                )}
+              <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+                    <Spin className="loading-base" />
+                  )} */}
+                </button>
               </div>
             </div>
           </Form>

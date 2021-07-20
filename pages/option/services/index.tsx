@@ -272,18 +272,18 @@ const ServiceList = () => {
 
   const columns = [
     {
-      title: "Service",
+      title: "Dịch vụ",
       dataIndex: "ServiceName",
       ...FilterColumn("ServiceName", onSearch, handleReset, "text"),
       render: (text) => { return <p className="font-weight-black">{text}</p> }
     },
-    { title: "DescribeService", dataIndex: "DescribeService" },
+    { title: "Thông tin dịch vụ", dataIndex: "DescribeService" },
     { 
-      title: "Supplier Service", 
+      title: "NCC Dịch vụ", 
       dataIndex: "SupplierServicesName" 
     },
     { 
-      title: "Status", 
+      title: "Trạng thái", 
       dataIndex: "StatusName",
       render: (text) => { return <p className="font-weight-blue">{text}</p> },
       filters: [
@@ -303,12 +303,12 @@ const ServiceList = () => {
 			onFilter: (value, record) => record.StatusName.indexOf(value) === 0, 
     },
     {
-      title: "Modified By",
+      title: "Thay đổi bởi",
       dataIndex: "ModifiedBy",
       // ...FilterColumn("ModifiedBy"),
     },
     {
-      title: "Modified Date",
+      title: "Thay đổi Lúc",
       dataIndex: "ModifiedOn",
       render: (date) => moment(date).format("DD/MM/YYYY"),
       // ...FilterDateColumn("ModifiedOn"),

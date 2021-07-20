@@ -68,7 +68,7 @@ const PurposeForm = (props) => {
 
       {/*  */}
       <Modal
-        title={<>{props.showAdd ? "Create Purposes" : "Update Purposes"}</>}
+        title={<>{props.showAdd ? "Thêm Mục Đích Học" : "Cập Nhật Mục Đích Học"}</>}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -79,15 +79,16 @@ const PurposeForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item 
-                  label="Purpose"
+                  label="Mục đích học"
+                  name="Purpose"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
                   ]}
+                  initialValue={props.rowData?.PurposesName}
                 >
                   <Input 
                     className="style-input"
                     allowClear={true}
-                    defaultValue={props.rowData?.PurposesName}
                     onChange={(e) => setValue("PurposesName", e.target.value)}
                   />
                 </Form.Item>
@@ -95,15 +96,12 @@ const PurposeForm = (props) => {
             </div>
             <div className="row ">
               <div className="col-12">
-                {props.showAdd == true ? (
-                  <Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-                    Create
-                  </Button>
-                ) : (
-                  <Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-                    Update
-                  </Button>
-                )}
+              <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+                    <Spin className="loading-base" />
+                  )} */}
+                </button>
               </div>
             </div>
           </Form>

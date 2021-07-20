@@ -251,34 +251,34 @@ const SupplierList = () => {
 
 	const columns = [
 		{
-			title: 'Supplier', 
+			title: 'Nhà cung cấp (NCC)', 
 			dataIndex: 'SupplierName', 
 			...FilterColumn('SupplierName', onSearch, handleReset, "text"),
 			render: (text) => { return <p className="font-weight-black">{text}</p> }
 		},
 		{
-			title: 'Address', 
+			title: 'Địa chỉ', 
 			dataIndex: 'Address', 
 			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
 		},
 		{
-			title: 'Tax Code', 
+			title: 'Mã số thuế', 
 			dataIndex: 'Taxcode', 
 			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
 		},
 		{
-			title: 'Person In Charge', 
+			title: 'Nhân viên quản lí', 
 			dataIndex: 'PersonInChargeName', 
 			...FilterColumn('PersonInChargeName', onSearch, handleReset, "text"),
 			render: (text) => { return <p className="font-weight-blue">{text}</p> }
 		},
 		{
-			title: 'Modified By', 
+			title: 'Thay đổi bởi', 
 			dataIndex: 'ModifiedBy', 
 			// ...FilterColumn('ModifiedBy', onSearch, handleReset, "text")},
 		},
 		{
-			title: 'Modified Date',
+			title: 'Thay đổi lúc',
 			dataIndex: 'ModifiedOn',
 			render: (date) => moment(date).format("DD/MM/YYYY"),
 			// ...FilterDateColumn("modDate"),

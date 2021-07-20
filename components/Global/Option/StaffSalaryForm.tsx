@@ -74,7 +74,7 @@ const StaffSalaryForm = (props) => {
 			{/*  */}
 			<Modal
 				title={
-					<>{props.showAdd ? 'Create Staff Salary' : 'Update Staff Salary'}</>
+					<>{props.showAdd ? 'Thêm Lương Nhân Viên' : 'Cập Nhật Lương Nhân Viên'}</>
 				}
 				visible={isModalVisible}
 				onCancel={() => setIsModalVisible(false)}
@@ -86,14 +86,15 @@ const StaffSalaryForm = (props) => {
 							<div className="col-12">
 								{props.showAdd ? (
 									<Form.Item 
-										label="Staff"
+										label="Nhân viên"
+										name="Staff"
 										rules={[
 											{ required: true, message: "Bạn không được để trống" },
 										]}
 										>
 										<Select 
 											className="style-input" 
-											defaultValue="Chọn nhân viên"
+											placeholder="Chọn nhân viên"
 											allowClear={true}
 											onChange={(value) => setValue("UserInformationID", value)}>
 											{props.dataStaff && props.dataStaff .map(row => (
@@ -106,7 +107,7 @@ const StaffSalaryForm = (props) => {
 										</Select>
 									</Form.Item>
 								) : (
-									<Form.Item label="Note">
+									<Form.Item label="Ghi chú" name="Note">
 										<Input placeholder="Note" className="style-input" allowClear={true}/>
 									</Form.Item>
 								)}
@@ -116,14 +117,16 @@ const StaffSalaryForm = (props) => {
 						<div className="row">
 							<div className="col-12">
 								<Form.Item 
-									label="Salary"
+									label="Loại"
+									name="Salary Type"
 									rules={[
 										{ required: true, message: "Bạn không được để trống" },
 									]}
+									initialValue={props.rowData?.StyleName}
 									>
 									<Select 
-										className="style-input" 
-										defaultValue={props.rowData?.StyleName || "Type Salary"}
+										className="style-input"
+										placeholder="Salary Type" 
 										allowClear={true}
 										onChange={(value) => setValue("Style", value)}>
 										<Option value="1">Tính lương theo tháng</Option>
@@ -140,14 +143,15 @@ const StaffSalaryForm = (props) => {
 						<div className="row">
 							<div className="col-12">
 								<Form.Item 
-									label="Salary Const"
+									label="Mức Lương"
+									name="Salary Const"
 									rules={[
 										{ required: true, message: "Bạn không được để trống" },
 									]}
+									initialValue={props.rowData?.Salary}
 									>
 									<InputNumber
 										className='ant-input style-input w-100'
-										defaultValue={props.rowData?.Salary}
 										formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 										parser={value => value.replace(/\$\s?|(,*)/g, '')}
 										onChange={value => setValue("Salary", value)}
@@ -158,15 +162,12 @@ const StaffSalaryForm = (props) => {
 						{/*  */}
 						<div className="row ">
 							<div className="col-12">
-								{props.showAdd == true ? (
-									<Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-										Create
-									</Button>
-								) : (
-									<Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-										Update
-									</Button>
-								)}
+								<button type="submit" className="btn btn-primary w-100">
+								Lưu
+								{/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+									<Spin className="loading-base" />
+								)} */}
+								</button>
 							</div>
 						</div>
 					</Form>
