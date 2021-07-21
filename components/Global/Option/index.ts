@@ -5,7 +5,7 @@ export * from "./DiscountForm";
 export * from "./ExamForm";
 export * from "./Feedback/FeedBackForm";
 export * from "./GradeForm";
-export * from "./IdiomForm";
+export * from "./IdiomsForm";
 export * from "./InfoForm";
 export * from "./NotificationForm";
 export * from "./PostForm";

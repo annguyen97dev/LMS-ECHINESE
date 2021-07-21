@@ -27,7 +27,11 @@ const FeedBackList = () => {
     {
       title: "Role",
       dataIndex: "Role",
-      render: (Role) => Roles.find((r) => r.id == Role)?.RoleName,
+      render: (Role) => (
+        <div style={{ width: "150px" }}>
+          {Roles.find((r) => r.id == Role)?.RoleName}
+        </div>
+      ),
     },
     {
       title: "Loại phản hồi",
