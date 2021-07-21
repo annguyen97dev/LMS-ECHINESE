@@ -82,7 +82,6 @@ const Discount = () => {
 			let res = await discountApi.getAll(todoApi);
 			if (res.status == 204) {
 				showNoti("danger", "Không có dữ liệu");
-				handleReset();
 			}
 			if(res.status == 200){
 				setDataTable(res.data.data);
@@ -128,7 +127,6 @@ const Discount = () => {
 		try {
 		  res = await discountApi.add(data);
 		  res?.status == 200 && afterPost("Thêm");
-		  handleReset();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -188,13 +186,34 @@ const Discount = () => {
 	};
 
 	// DELETE
-	const handleDelele = () => {
+	const handleDelele = async () => {
 		if(dataDelete) {
-			setIsModalVisible(false)
-			let res = _onSubmit(dataDelete);
-			res.then(function (rs: any) {
-			 	rs && rs.status == 200;
-			});
+			setIsModalVisible(false);
+			let res = null;
+			try {
+				res = await discountApi.update(dataDelete);
+				res.status === 200 && showNoti('success', "Xóa thành công");
+				if (dataTable.length === 1) {
+					listTodoApi.pageIndex === 1
+						? setTodoApi({
+								...listTodoApi,
+								pageIndex: 1,
+						})
+						: setTodoApi({
+								...listTodoApi,
+								pageIndex: listTodoApi.pageIndex - 1,
+						});
+					return;
+				}
+			  getDataTable();
+			} catch (error) {
+				showNoti("danger", error.message);
+			} finally {
+				setIsLoading({
+					type: "DELETE_DATA",
+					status: false,
+				});
+			}
 		}
 	}
 

@@ -8,10 +8,10 @@ class SourceInfomation {
     });
 
     // Thêm mới data
-    add = (data) => instance.post("/api/SourceInformation", data);
+    add = ( data: ISourceInfomation ) => instance.post("/api/SourceInformation", data);
 
     // Cập nhật data
-    update = (data) => instance.put("/api/SourceInformation", data, {});
+    update = ( data: any ) => instance.put("/api/SourceInformation", data, {});
 }
 
 export const sourceInfomationApi = new SourceInfomation();
