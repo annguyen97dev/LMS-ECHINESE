@@ -1,8 +1,10 @@
 type ICurriculum = IBaseApi<{
+  key: number;
   ID: number;
-  ListClassID: number;
-  CurriculumsName: string;
-  StyleLensson: number;
-  TotalLesson: number;
-  Enable: true;
+  CurriculumName: string;
+  Lesson: number;
+  TimeOfLesson: number;
+  ProGramID: number;
+  ProgramName: string;
+  Enable: boolean;
 }>;

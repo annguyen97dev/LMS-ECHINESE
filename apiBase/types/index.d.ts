@@ -9,6 +9,7 @@ type IApiResultData<T = any> = {
   data: T;
   message: string;
   totalRow: number;
+  listLevel: Array;
 };
 
 type IApiResultAcc<T = any> = {

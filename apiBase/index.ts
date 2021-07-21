@@ -1,3 +1,4 @@
+import { subjectApi } from "./options/subject";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { districtApi } from "./options/district";
@@ -15,3 +16,5 @@ export { supplierApi } from "./options/supplier";
 export { discountApi } from "./options/discount";
 export { sourceInfomationApi } from "./options/source-infomation";
 import { idiomsApi } from "./options/idioms";
+export { subjectApi } from "./options/subject";
+export { curriculumDetailApi } from "./options/curriculum-detail";

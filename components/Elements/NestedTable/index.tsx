@@ -3,7 +3,7 @@ import { Table, Card } from "antd";
 import TitlePage from "~/components/TitlePage";
 import { useWrap } from "~/context/wrap";
 
-const ExpandTable = (props) => {
+const NestedTable = React.memo((props: any) => {
   const { getTitlePage } = useWrap();
   const [state, setState] = useState({ selectedRowKeys: [] });
   const [dataSource, setDataSource] = useState([]);
@@ -31,12 +31,6 @@ const ExpandTable = (props) => {
     }
   };
 
-  const onExpand = (expand, record) => {
-    if (typeof props.handleExpand != "undefined") {
-      props.handleExpand(record);
-    }
-  };
-
   const rowSelection = {
     selectedRowKeys: state.selectedRowKeys,
     onChange: onSelectedRowKeysChange,
@@ -59,41 +53,29 @@ const ExpandTable = (props) => {
 
   return (
     <>
-      {/* <TitlePage title={props.TitlePage} /> */}
-      <div className="wrap-table table-expand">
-        <Card
-          className={`cardRadius ${props.addClass && props.addClass} ${
-            props.Size ? props.Size : ""
-          }`}
-          title={props.Extra}
-          extra={props.TitleCard}
-        >
-          {props.children}
-          <Table
-            loading={props.loading?.type == "GET_ALL" && props.loading?.status}
-            bordered={props.haveBorder ? props.haveBorder : false}
-            scroll={props.noScroll ? { x: "max-content" } : { x: 600 }}
-            columns={props.columns}
-            dataSource={dataSource}
-            size="middle"
-            pagination={{
-              total: props.totalPage && props.totalPage,
-              onChange: (pageNumber) => changePagination(pageNumber),
-              current: props.currentPage && props.currentPage,
-            }}
-            rowSelection={rowSelection}
-            onRow={(record) => ({
-              onClick: () => {
-                selectRow(record);
-              },
-            })}
-            expandable={props.expandable}
-            onExpand={onExpand}
-          />
-        </Card>
+      <div className="wrap-table">
+        <Table
+          loading={props.loading?.type == "GET_ALL" && props.loading?.status}
+          bordered={props.haveBorder ? props.haveBorder : false}
+          scroll={props.noScroll ? { x: "max-content" } : { x: 600 }}
+          columns={props.columns}
+          dataSource={dataSource}
+          size="middle"
+          pagination={{
+            total: props.totalPage && props.totalPage,
+            onChange: (pageNumber) => changePagination(pageNumber),
+            current: props.currentPage && props.currentPage,
+          }}
+          rowSelection={rowSelection}
+          onRow={(record) => ({
+            onClick: () => {
+              selectRow(record);
+            },
+          })}
+        />
       </div>
     </>
   );
-};
+});
 
-export default ExpandTable;
+export default NestedTable;

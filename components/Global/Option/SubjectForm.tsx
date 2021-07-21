@@ -1,15 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import {
-  Modal,
-  Form,
-  Input,
-  Button,
-  message,
-  Spin,
-  Select,
-  Tooltip,
-  Skeleton,
-} from "antd";
+import { Modal, Form, Input, Spin, Select, Tooltip, Checkbox } from "antd";
 import { FormProvider, useForm } from "react-hook-form";
 import { branchApi, areaApi, districtApi } from "~/apiBase";
 
@@ -17,7 +7,7 @@ import { useWrap } from "~/context/wrap";
 import router from "next/router";
 import { RotateCcw } from "react-feather";
 
-const CurriculumForm = React.memo((props: any) => {
+const SubjectForm = React.memo((props: any) => {
   const programID = parseInt(router.query.slug as string);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { Option } = Select;
@@ -115,7 +105,7 @@ const CurriculumForm = React.memo((props: any) => {
                     className="style-input"
                     showSearch
                     optionFilterProp="children"
-                    onChange={onChangeSelect("ProGramID")}
+                    onChange={onChangeSelect("BranchID")}
                   >
                     {dataProgram?.map((item, index) => (
                       <Option key={index} value={item.ID}>
@@ -129,8 +119,8 @@ const CurriculumForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item
-                  label="Tên giáo trình"
-                  name="CurriculumName"
+                  label="Tên môn học"
+                  name="SubjectName"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
                   ]}
@@ -138,7 +128,7 @@ const CurriculumForm = React.memo((props: any) => {
                   <Input
                     placeholder=""
                     className="style-input"
-                    onChange={(e) => setValue("CurriculumName", e.target.value)}
+                    onChange={(e) => setValue("SubjectName", e.target.value)}
                   />
                 </Form.Item>
               </div>
@@ -146,35 +136,12 @@ const CurriculumForm = React.memo((props: any) => {
 
             <div className="row">
               <div className="col-12">
-                <Form.Item
-                  label="Số buổi học"
-                  name="Lesson"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                >
-                  <Input
-                    placeholder=""
-                    className="style-input"
-                    onChange={(e) => setValue("Lesson", e.target.value)}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Item
-                  label="Thời gian buổi học"
-                  name="TimeOfLesson"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                >
-                  <Input
-                    placeholder=""
-                    className="style-input"
-                    onChange={(e) => setValue("TimeOfLesson", e.target.value)}
-                  />
+                <Form.Item>
+                  <Checkbox
+                    onChange={(e) => setValue("Additional", e.target.checked)}
+                  >
+                    <p style={{ fontWeight: 500 }}> Bổ sung</p>
+                  </Checkbox>
                 </Form.Item>
               </div>
             </div>
@@ -196,4 +163,4 @@ const CurriculumForm = React.memo((props: any) => {
   );
 });
 
-export default CurriculumForm;
+export default SubjectForm;

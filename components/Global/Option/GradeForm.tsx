@@ -82,7 +82,6 @@ const GradeForm = React.memo((props: any) => {
                   ]}
                 >
                   <Input
-                    {...register("GradeCode")}
                     placeholder=""
                     className="style-input"
                     defaultValue={props.rowData?.ListCourseCode}

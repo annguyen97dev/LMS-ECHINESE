@@ -17,8 +17,7 @@ import { useWrap } from "~/context/wrap";
 import router from "next/router";
 import { RotateCcw } from "react-feather";
 
-const CurriculumForm = React.memo((props: any) => {
-  const programID = parseInt(router.query.slug as string);
+const CurriculumDetailForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { Option } = Select;
   const [form] = Form.useForm();
@@ -31,7 +30,7 @@ const CurriculumForm = React.memo((props: any) => {
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
-  const { isLoading, rowID, _onSubmit, getIndex, index, rowData, dataProgram } =
+  const { isLoading, rowID, _onSubmit, getIndex, index, rowData, dataSubject } =
     props;
 
   // SUBMI FORM
@@ -48,15 +47,6 @@ const CurriculumForm = React.memo((props: any) => {
 
   useEffect(() => {
     if (isModalVisible) {
-      if (programID) {
-        setValue("ProGramID", programID);
-
-        form.setFieldsValue({
-          ...rowData,
-          ProGramID: programID,
-        });
-      }
-
       if (rowID) {
         getIndex();
         // Cập nhật giá trị khi show form update
@@ -104,7 +94,7 @@ const CurriculumForm = React.memo((props: any) => {
               <div className="col-12">
                 <Form.Item
                   label="Chương trình"
-                  name="ProGramID"
+                  name="SubjectID"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
                   ]}
@@ -115,66 +105,14 @@ const CurriculumForm = React.memo((props: any) => {
                     className="style-input"
                     showSearch
                     optionFilterProp="children"
-                    onChange={onChangeSelect("ProGramID")}
+                    onChange={onChangeSelect("SubjectID")}
                   >
-                    {dataProgram?.map((item, index) => (
+                    {dataSubject?.map((item, index) => (
                       <Option key={index} value={item.ID}>
-                        {item.ProgramName}
+                        {item.SubjectName}
                       </Option>
                     ))}
                   </Select>
-                </Form.Item>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Item
-                  label="Tên giáo trình"
-                  name="CurriculumName"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                >
-                  <Input
-                    placeholder=""
-                    className="style-input"
-                    onChange={(e) => setValue("CurriculumName", e.target.value)}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-12">
-                <Form.Item
-                  label="Số buổi học"
-                  name="Lesson"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                >
-                  <Input
-                    placeholder=""
-                    className="style-input"
-                    onChange={(e) => setValue("Lesson", e.target.value)}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Item
-                  label="Thời gian buổi học"
-                  name="TimeOfLesson"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                >
-                  <Input
-                    placeholder=""
-                    className="style-input"
-                    onChange={(e) => setValue("TimeOfLesson", e.target.value)}
-                  />
                 </Form.Item>
               </div>
             </div>
@@ -196,4 +134,4 @@ const CurriculumForm = React.memo((props: any) => {
   );
 });
 
-export default CurriculumForm;
+export default CurriculumDetailForm;
