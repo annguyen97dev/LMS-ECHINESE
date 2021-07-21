@@ -77,17 +77,16 @@ const StaffSalary = () => {
 		(async () => {
 		  try {
 			let res = await staffSalaryApi.getAll(todoApi);
-			res.status == 200 && setDataTable(res.data.data);
 			if (res.status == 204) {
-				// Trường họp search CỐ ĐỊNH 1 phần tử và XÓA thì data trả về = trỗng nhưng trong table vẫn còn 1 phần tử thì reset table
-				if(dataTable.length == 1) {
+				showNoti("danger", "Không có dữ liệu");
+				handleReset();
+			}
+			if(res.status == 200){
+				setDataTable(res.data.data);
+				if(res.data.data.length < 1) {
 					handleReset();
-				} else {
-					showNoti("danger", "Không có dữ liệu");
 				}
-			  	setCurrentPage(pageIndex);
-			} else {
-			  setTotalPage(res.data.totalRow);
+				setTotalPage(res.data.totalRow);
 			}
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -134,7 +133,7 @@ const StaffSalary = () => {
 		console.log(data);
 		try {
 		  res = await staffSalaryApi.update(data);
-		  res?.status == 200 && afterPost("Cập nhật");
+		  res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -162,7 +161,11 @@ const StaffSalary = () => {
   
 	const afterPost = (value) => {
 	  showNoti("success", `${value} thành công`);
-	  getDataTable();
+	  setTodoApi({
+		...listTodoApi,
+		pageIndex: 1,
+	  });
+	  setCurrentPage(1);
 	};
 
 	// PAGINATION
@@ -196,6 +199,7 @@ const StaffSalary = () => {
 
 		setTodoApi({
 			...todoApi,
+			pageIndex: 1,
 			...clearKey,
 		});
 	};
@@ -203,16 +207,21 @@ const StaffSalary = () => {
 	// DELETE
 	const handleDelele = () => {
 		if(dataDelete) {
+			setIsModalVisible(false);
 			let res = _onSubmit(dataDelete);
 			res.then(function (rs: any) {
-				rs && rs.status == 200 && setIsModalVisible(false);
+				rs && rs.status == 200;
 			});
 		}
 	}
 
 	// HANDLE RESET
 	const handleReset = () => {
-		setTodoApi(listTodoApi);
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// HANDLE SORT
@@ -225,6 +234,7 @@ const StaffSalary = () => {
 			sortType: option.title.sortType,
 		};
 
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	};
 
@@ -234,11 +244,12 @@ const StaffSalary = () => {
 
 		let newTodoApi = {
 			...listTodoApi,
+			pageIndex: 1,
 			RoleID: data.RoleID,
 			fromDate: data.fromDate,
 			toDate: data.toDate
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	}
 
@@ -271,18 +282,6 @@ const StaffSalary = () => {
 		{
 			title: 'Loại',
 			dataIndex: 'StyleName',
-			// ...FilterColumn('StyleName'),
-			filters: [
-				{
-					text: "Tính lương theo tháng",
-					value: "Tính lương theo tháng"
-				},
-				{
-					text: "Tính lương theo giờ",
-					value: "Tính lương theo giờ"
-				}
-			],
-			onFilter: (value, record) => record.StyleName.indexOf(value) === 0,
 		},
 		{title: 'Thêm bởi', dataIndex: 'CreatedBy',},
 		{
@@ -353,7 +352,8 @@ const StaffSalary = () => {
 				Extra={
 					<div className="extra-table">
 						<FilterStaffSalaryTable 
-							_onFilter={(value: any) => _onFilterTable(value)}	
+							_onFilter={(value: any) => _onFilterTable(value)}
+							_handleReset={() => handleReset()}	
 						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}

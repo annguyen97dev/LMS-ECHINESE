@@ -56,6 +56,8 @@ const Discount = () => {
 
 	// PARAMS SEARCH
 	let listField = {
+		DiscountCode: "",
+		Status: "",
 	};
 
 	// PARAMS API GETALL
@@ -64,6 +66,8 @@ const Discount = () => {
 		pageIndex: pageIndex,
 		sort: null,
 		sortType: null,
+		DiscountCode: null,
+		Status: null,
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
@@ -76,17 +80,16 @@ const Discount = () => {
 		(async () => {
 		  try {
 			let res = await discountApi.getAll(todoApi);
-			res.status == 200 && setDataTable(res.data.data);
 			if (res.status == 204) {
-				// Trường họp search CỐ ĐỊNH 1 phần tử và XÓA thì data trả về = trỗng nhưng trong table vẫn còn 1 phần tử thì reset table
-				if(dataTable.length == 1) {
+				showNoti("danger", "Không có dữ liệu");
+				handleReset();
+			}
+			if(res.status == 200){
+				setDataTable(res.data.data);
+				if(res.data.data.length < 1) {
 					handleReset();
-				} else {
-					showNoti("danger", "Không có dữ liệu");
 				}
-			  	setCurrentPage(pageIndex);
-			} else {
-			  setTotalPage(res.data.totalRow);
+				setTotalPage(res.data.totalRow);
 			}
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -112,7 +115,7 @@ const Discount = () => {
 		console.log(data);
 		try {
 		  res = await discountApi.update(data);
-		  res?.status == 200 && afterPost("Cập nhật");
+		  res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -125,6 +128,7 @@ const Discount = () => {
 		try {
 		  res = await discountApi.add(data);
 		  res?.status == 200 && afterPost("Thêm");
+		  handleReset();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -139,8 +143,12 @@ const Discount = () => {
 	}
   
 	const afterPost = (value) => {
-	  showNoti("success", `${value} thành công`);
-	  getDataTable();
+		showNoti("success", `${value} thành công`);
+		setTodoApi({
+		  ...listTodoApi,
+		  pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// PAGINATION
@@ -174,6 +182,7 @@ const Discount = () => {
 
 		setTodoApi({
 			...todoApi,
+			pageIndex: 1,
 			...clearKey,
 		});
 	};
@@ -181,16 +190,21 @@ const Discount = () => {
 	// DELETE
 	const handleDelele = () => {
 		if(dataDelete) {
+			setIsModalVisible(false)
 			let res = _onSubmit(dataDelete);
 			res.then(function (rs: any) {
-			 	rs && rs.status == 200 && setIsModalVisible(false);
+			 	rs && rs.status == 200;
 			});
 		}
 	}
 
 	// HANDLE RESET
 	const handleReset = () => {
-		setTodoApi(listTodoApi);
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// HANDLE SORT
@@ -202,7 +216,7 @@ const Discount = () => {
 			sort: option.title.sort,
 			sortType: option.title.sortType,
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	};
 
@@ -213,9 +227,10 @@ const Discount = () => {
 		let newTodoApi = {
 			...listTodoApi,
 			fromDate: data.fromDate,
-			toDate: data.toDate
+			toDate: data.toDate,
+			Status: data.Status,
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	}
 
@@ -223,7 +238,7 @@ const Discount = () => {
 		{
 			title: 'Mã khuyến mãi',
 			dataIndex: 'DiscountCode',
-			// ...FilterColumn('code'),
+			...FilterColumn('DiscountCode', onSearch, handleReset, 'text'),
 			render: (code) => <span className="tag green">{code}</span>,
 		},
 		{
@@ -241,21 +256,6 @@ const Discount = () => {
 		{
 			title: 'Trạng thái', 
 			dataIndex: 'StatusName',
-			filters: [
-				{
-					text: "Đã kích hoạt",
-					value: "Đã kích hoạt"
-				},
-				{
-					text: "Chưa kích hoạt",
-					value: "Chưa kích hoạt"
-				},
-				{
-					text: "Hết hạn",
-					value: "Hết hạn"
-				},
-			],
-			onFilter: (value, record) => record.StatusName.indexOf(value) === 0,
 		},
 		{title: 'Số lượng', dataIndex: 'Quantity'},
 		{title: 'Số lượng còn lại', dataIndex: 'QuantityLeft'},
