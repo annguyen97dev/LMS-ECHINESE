@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Modal, Form, Input, Button, Switch, Tooltip, Select, DatePicker, InputNumber } from "antd";
+import { Modal, Form, Input, Button, Switch, Tooltip, Select, DatePicker, InputNumber, Spin } from "antd";
 import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
@@ -55,7 +55,7 @@ const DiscountForm = (props) => {
 
     let res = props._onSubmit(data);
     res.then(function (rs: any) {
-      rs && rs.status == 200 && setIsModalVisible(false);
+      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
     });
   });
 
@@ -115,7 +115,7 @@ const DiscountForm = (props) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical" onFinish={onSubmit}>
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             {props.showAdd ? (
               <div className="row">
                 <div className="col-9">
@@ -182,11 +182,21 @@ const DiscountForm = (props) => {
                     rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
                     initialValue={props.rowData?.Discount}
                     >
-                    <Input 
-                      placeholder="" 
-                      className="style-input"
-                      onChange={(e) => setValue("Discount", e.target.value)}
-                      />
+                    {props.rowData.DiscountType == 1 ? (
+                        <InputNumber 
+                          className="ant-input style-input w-100"
+                          formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                          parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                          onChange={value => setValue("Discount",value)}
+                        />
+                      ) : (
+                        <Input 
+                          placeholder="" 
+                          className="style-input"
+                          onChange={(e) => setValue("Discount", e.target.value)}
+                        />
+                      )
+                    }
                   </Form.Item>
                 </div>
               </div>
@@ -280,9 +290,9 @@ const DiscountForm = (props) => {
               <div className="col-12">
                 <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+                  {props.isLoading.type == "ADD_DATA" && props.isLoading.status && (
                     <Spin className="loading-base" />
-                  )} */}
+                  )}
                 </button>
               </div>
             </div>

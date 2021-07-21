@@ -9,6 +9,7 @@ import {
   Select,
   Skeleton,
   InputNumber,
+  Spin,
 } from "antd";
 import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
@@ -20,10 +21,6 @@ const StaffSalaryForm = (props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
 
-  const [isLoading, setIsLoading] = useState({
-    type: "",
-    status: false,
-  });
   const { showNoti } = useWrap();
 
   const {
@@ -41,7 +38,7 @@ const StaffSalaryForm = (props) => {
 
     let res = props._onSubmit(data);
     res.then(function (rs: any) {
-      rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
+      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
     });
   });
 
@@ -94,7 +91,7 @@ const StaffSalaryForm = (props) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical" onFinish={onSubmit}>
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
                 {props.showAdd ? (
@@ -190,9 +187,8 @@ const StaffSalaryForm = (props) => {
               <div className="col-12">
                 <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
-									<Spin className="loading-base" />
-								)} */}
+                  {props.isLoading.type == "ADD_DATA" &&
+                    props.isLoading.status && <Spin className="loading-base" />}
                 </button>
               </div>
             </div>

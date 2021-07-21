@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton } from "antd";
+import { Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, Spin } from "antd";
 import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
@@ -9,6 +9,7 @@ const ServiceForm = (props) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { showNoti } = useWrap();
+  const [form] = Form.useForm();
   const status = [
     {
       id: 1,
@@ -39,7 +40,7 @@ const ServiceForm = (props) => {
 
     res.then(function (rs: any) {
       console.log("Res in form: ", rs);
-      rs && rs.status == 200 && setIsModalVisible(false);
+      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
     });
   });
 
@@ -86,7 +87,7 @@ const ServiceForm = (props) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical" onFinish={onSubmit}>
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             <div className="row">
               <div className="col-12">
                 <Form.Item 
@@ -201,9 +202,9 @@ const ServiceForm = (props) => {
               <div className="col-12">
               <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+                  {props.isLoading.type == "ADD_DATA" && props.isLoading.status && (
                     <Spin className="loading-base" />
-                  )} */}
+                  )}
                 </button>
               </div>
             </div>

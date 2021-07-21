@@ -1,5 +1,5 @@
 import {DatePicker, Form, Popover, Select} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Filter} from 'react-feather';
 import { Roles } from "~/lib/roles/listRoles";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,8 @@ const { RangePicker } = DatePicker;
 
 const FilterStaffSalaryTable = (props:any) => {
 	const {Option} = Select;
+	const [form] = Form.useForm();
+	// const [isModalVisible, setIsModalVisible] = useState(false);
 	function handleChange(value) {
 		console.log(`selected ${value}`);
 	}
@@ -33,8 +35,8 @@ const FilterStaffSalaryTable = (props:any) => {
 	} = useForm();
 
 	const onSubmit = handleSubmit((data: any) => {
-		// console.log(data);
 		props._onFilter(data);
+		showFilterSet(false);
 	});
 
 	const content = (
@@ -42,7 +44,7 @@ const FilterStaffSalaryTable = (props:any) => {
 			<Form layout="vertical" onFinish={onSubmit}>
 				<div className="row">
 					<div className="col-md-12">
-						<Form.Item label="Role">
+						<Form.Item label="Role" name="Role">
 							<Select
 								className="style-input"
 								placeholder="Chọn role"
@@ -60,7 +62,7 @@ const FilterStaffSalaryTable = (props:any) => {
 						</Form.Item>
 					</div>
 					<div className="col-md-12">
-						<Form.Item label="Modified Date">
+						<Form.Item label="Modified Date" name="Modified Date">
 							<RangePicker
 								format={dateFormat}
 								className="style-input"
@@ -86,12 +88,13 @@ const FilterStaffSalaryTable = (props:any) => {
 		<>
 			<div className="wrap-filter-parent">
 				<Popover
+					visible={showFilter}
 					placement="bottomRight"
 					content={content}
 					trigger="click"
 					overlayClassName="filter-popover"
 				>
-					<button className="btn btn-secondary light btn-filter">
+					<button className="btn btn-secondary light btn-filter" onClick={funcShowFilter}>
 						<Filter />
 					</button>
 				</Popover>

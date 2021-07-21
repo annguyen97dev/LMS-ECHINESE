@@ -77,17 +77,16 @@ const CustomerSupplier = () => {
 		(async () => {
 		  try {
 			let res = await sourceInfomationApi.getAll(todoApi);
-			res.status == 200 && setDataTable(res.data.data);
 			if (res.status == 204) {
-				// Trường họp search CỐ ĐỊNH 1 phần tử và XÓA thì data trả về = trỗng nhưng trong table vẫn còn 1 phần tử thì reset table
-				if(dataTable.length == 1) {
+				showNoti("danger", "Không có dữ liệu");
+				handleReset();
+			}
+			if(res.status == 200){
+				setDataTable(res.data.data);
+				if(res.data.data.length < 1) {
 					handleReset();
-				} else {
-					showNoti("danger", "Không có dữ liệu");
 				}
-			  	setCurrentPage(pageIndex);
-			} else {
-			  setTotalPage(res.data.totalRow);
+				setTotalPage(res.data.totalRow);
 			}
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -113,7 +112,7 @@ const CustomerSupplier = () => {
 		  console.log(data);
 		  try {
 			res = await sourceInfomationApi.update(data);
-			res?.status == 200 && afterPost("Cập nhật");
+			res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -139,10 +138,14 @@ const CustomerSupplier = () => {
 		return res;
 	  }
 	
-	  const afterPost = (value) => {
+	const afterPost = (value) => {
 		showNoti("success", `${value} thành công`);
-		getDataTable();
-	  };
+		setTodoApi({
+		  ...listTodoApi,
+		  pageIndex: 1,
+		});
+		setCurrentPage(1);
+	};
 
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
@@ -175,39 +178,45 @@ const CustomerSupplier = () => {
 
 		setTodoApi({
 			...todoApi,
+			pageIndex: 1,
 			...clearKey,
 		});
 	};
 
 	// HANDLE RESET
 	const handleReset = () => {
-		setTodoApi(listTodoApi);
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// HIDE OR ENABLE
 	const changeStatus = async (checked: boolean, idRow: number) => {
-	setIsLoading({
-		type: "GET_ALL",
-		status: true,
-	});
-
-	let dataChange = {
-		SourceInformationID: idRow,
-		Enable: checked,
-	};
-
-	try {
-		let res = await sourceInfomationApi.update(dataChange);
-		res.status == 200 && setTodoApi(listTodoApi),
-		showNoti("success", res.data.message);
-	} catch (error) {
-		showNoti("danger", error.Message);
-	} finally {
 		setIsLoading({
-		type: "GET_ALL",
-		status: false,
+			type: "GET_ALL",
+			status: true,
 		});
-	}
+
+		let dataChange = {
+			SourceInformationID: idRow,
+			Enable: checked,
+		};
+
+		_onSubmit(dataChange);
+		// try {
+		// 	let res = await sourceInfomationApi.update(dataChange);
+		// 	res.status == 200 && setTodoApi(listTodoApi),
+		// 	showNoti("success", res.data.message), getDataTable();
+		// } catch (error) {
+		// 	showNoti("danger", error.Message);
+		// } finally {
+		// 	setIsLoading({
+		// 	type: "GET_ALL",
+		// 	status: false,
+		// 	});
+		// }
 	};
 
 	// HANDLE SORT
@@ -219,7 +228,7 @@ const CustomerSupplier = () => {
 			sort: option.title.sort,
 			sortType: option.title.sortType,
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	};
 

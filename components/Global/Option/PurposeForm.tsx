@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber } from 'antd';
+import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber, Spin } from 'antd';
 import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
@@ -74,7 +74,7 @@ const PurposeForm = (props) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical" onFinish={onSubmit}>
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             {/*  */}
             <div className="row">
               <div className="col-12">
@@ -98,9 +98,9 @@ const PurposeForm = (props) => {
               <div className="col-12">
               <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+                  {props.isLoading.type == "ADD_DATA" && props.isLoading.status && (
                     <Spin className="loading-base" />
-                  )} */}
+                  )}
                 </button>
               </div>
             </div>
