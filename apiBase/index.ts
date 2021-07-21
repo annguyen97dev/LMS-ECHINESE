@@ -13,3 +13,5 @@ export { jobApi } from "./options/job";
 export { userInformationApi } from "./options/userinformation";
 export { puroseApi } from "./options/purose";
 export { supplierApi } from "./options/supplier";
+export { discountApi } from "./options/discount";
+export { sourceInfomationApi } from "./options/source-infomation";

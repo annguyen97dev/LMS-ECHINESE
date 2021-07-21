@@ -210,20 +210,20 @@ const Purpose = () => {
 	// COLUMNS TABLE
 	const columns = [
 		{
-			title: 'Purposes Name', 
+			title: 'Mục đích học', 
 			dataIndex: 'PurposesName', 
 			...FilterColumn('PurposesName', onSearch, handleReset, "text"),
 			render: (text) => { return <p className="font-weight-black">{text}</p> }
 		},
 		{
-			title: 'Modified By', 
+			title: 'Thay đổi Bởi', 
 			dataIndex: 'ModifiedBy', 
 			// ...FilterColumn('ModifiedBy', onSearch, handleReset, "text")
 		},
 		{
-			title: 'Modified On',
+			title: 'Thay đổi Lúc',
 			dataIndex: 'ModifiedOn',
-			render: (date) => moment(date).format("DD/MM/YYYY"),
+			render: (date) => { return <p className="font-weight-blue">{moment(date).format("DD/MM/YYYY")}</p> }
 			// ...FilterDateColumn("expires"),
 		},
 		{

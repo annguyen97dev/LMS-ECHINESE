@@ -245,7 +245,7 @@ const StaffSalary = () => {
 	// COLUMNS TABLE
 	const columns = [
 		{
-			title: 'Full name', 
+			title: 'Họ và tên', 
 			dataIndex: 'FullName', 
 			...FilterColumn('FullName', onSearch, handleReset, "text"),
 			render: (text) => { return <p className="font-weight-black">{text}</p> }
@@ -264,12 +264,12 @@ const StaffSalary = () => {
 			dataIndex: 'RoleName',
 		},
 		{
-			title: 'Salary', 
+			title: 'Mức lương', 
 			dataIndex: 'Salary',
 			render: (salary) =>  { return <p className="font-weight-blue">{Intl.NumberFormat('ja-JP').format(salary)}</p> }
 		},
 		{
-			title: 'Type Salary',
+			title: 'Loại',
 			dataIndex: 'StyleName',
 			// ...FilterColumn('StyleName'),
 			filters: [
@@ -284,9 +284,9 @@ const StaffSalary = () => {
 			],
 			onFilter: (value, record) => record.StyleName.indexOf(value) === 0,
 		},
-		{title: 'Created By', dataIndex: 'CreatedBy',},
+		{title: 'Thêm bởi', dataIndex: 'CreatedBy',},
 		{
-			title: 'Created Date',
+			title: 'Thêm lúc',
 			dataIndex: 'CreatedOn',
 			render: (date) => moment(date).format("DD/MM/YYYY"),
 			// ...FilterDateColumn('modDate'),

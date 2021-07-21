@@ -478,7 +478,7 @@ const MenuDefault = ({
           }}
         >
           {dataMenu?.map((menu, indexMenu) => (
-            <>
+            <div key={indexMenu}>
               <Menu
                 key={indexMenu}
                 onOpenChange={onOpenChange}
@@ -520,7 +520,7 @@ const MenuDefault = ({
                   )}
                 </Menu.ItemGroup>
               </Menu>
-            </>
+            </div>
           ))}
         </div>
       </div>
