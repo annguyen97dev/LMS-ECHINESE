@@ -3,13 +3,9 @@ import React, { useState } from "react";
 import { Filter } from "react-feather";
 import { Roles } from "~/lib/roles/listRoles";
 import { useForm } from "react-hook-form";
-import moment from "moment";
-
-const dateFormat = "YYYY/MM/DD";
-
-const { RangePicker } = DatePicker;
 
 const FilterFeedbackTable = (props: any) => {
+  const [showFilter, setShowFilter] = useState(false);
   const { Option } = Select;
 
   const {
@@ -20,6 +16,7 @@ const FilterFeedbackTable = (props: any) => {
 
   const onSubmit = handleSubmit((data: any) => {
     props._onFilter(data);
+    setShowFilter(false);
   });
 
   const content = (
@@ -66,12 +63,18 @@ const FilterFeedbackTable = (props: any) => {
     <>
       <div className="wrap-filter-parent">
         <Popover
+          visible={showFilter}
           placement="bottomRight"
           content={content}
           trigger="click"
           overlayClassName="filter-popover"
         >
-          <button className="btn btn-secondary light btn-filter">
+          <button
+            className="btn btn-secondary light btn-filter"
+            onClick={() => {
+              showFilter ? setShowFilter(false) : setShowFilter(true);
+            }}
+          >
             <Filter />
           </button>
         </Popover>

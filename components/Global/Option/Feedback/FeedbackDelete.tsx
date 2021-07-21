@@ -12,14 +12,14 @@ const FeedbackDelete = React.memo((props: any) => {
 
   const onHandleDelete = async () => {
     try {
+      setIsModalVisible(false);
       // @ts-ignore
       let res = await feedbackApi.update({ ID: feedbackId, Enable: false });
       showNoti("success", res.data?.message);
       reloadData();
-      setIsModalVisible(false);
     } catch (error) {
-      showNoti("danger", error.message);
       setIsModalVisible(false);
+      showNoti("danger", error.message);
     }
   };
 

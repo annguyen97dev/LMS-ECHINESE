@@ -12,14 +12,14 @@ const JobDelete = React.memo((props: any) => {
 
   const onHandleDelete = async () => {
     try {
+      setIsModalVisible(false);
       // @ts-ignore
       let res = await jobApi.update({ JobID: jobId, Enable: false });
       showNoti("success", res.data?.message);
       reloadData(currentPage);
-      setIsModalVisible(false);
     } catch (error) {
-      showNoti("danger", error.message);
       setIsModalVisible(false);
+      showNoti("danger", error.message);
     }
   };
 

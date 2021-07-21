@@ -102,10 +102,12 @@ const IdiomsForm = React.memo((props: any) => {
               </div>
             </div>
             <div className="row">
-              <button type="submit" className="btn btn-primary w-100">
-                Lưu
-                {loading == true && <Spin className="loading-base" />}
-              </button>
+              <div className="col-12">
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {loading == true && <Spin className="loading-base" />}
+                </button>
+              </div>
             </div>
           </Form>
         </div>
