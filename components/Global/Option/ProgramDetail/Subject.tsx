@@ -1,31 +1,16 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState } from "react";
 import PowerTable from "~/components/PowerTable";
-import { data } from "../../../lib/option/dataOption";
-import { Tooltip, Switch } from "antd";
-import GradeForm from "~/components/Global/Option/GradeForm";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import SortBox from "~/components/Elements/SortBox";
-import LayoutBase from "~/components/LayoutBase";
-import { gradeApi } from "~/apiBase";
+import { useRouter } from "next/router";
 import { useWrap } from "~/context/wrap";
-import { Trash2 } from "react-feather";
-import moment from "moment";
+import { subjectApi, programApi } from "~/apiBase";
+import CurriculumForm from "~/components/Global/Option/CurriculumForm";
+import SubjectForm from "../SubjectForm";
+import { CheckCircle } from "react-feather";
 
 let pageIndex = 1;
 
 let listFieldSearch = {
   pageIndex: 1,
-  GradeCode: null,
-  GradeName: null,
-};
-
-const listTodoApi = {
-  pageSize: 10,
-  pageIndex: pageIndex,
-  sort: null,
-  sortType: null,
-  GradeCode: null,
-  GradeName: null,
 };
 
 const dataOption = [
@@ -45,9 +30,20 @@ const dataOption = [
   },
 ];
 
-const Grade = () => {
+const Subject = () => {
+  const router = useRouter();
+  const programID = parseInt(router.query.slug as string);
+
+  const listTodoApi = {
+    pageSize: 10,
+    pageIndex: pageIndex,
+    ProgramID: programID ? programID : null,
+  };
+
+  const [dataProgram, setDataProgram] = useState<IProgram[]>([]);
+
   // ------ BASE USESTATE TABLE -------
-  const [dataSource, setDataSource] = useState<IGrade[]>([]);
+  const [dataSource, setDataSource] = useState<ISubject[]>([]);
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -66,11 +62,18 @@ const Grade = () => {
     });
 
     try {
-      let res = await gradeApi.getAll(todoApi);
-      res.status == 200 &&
-        (setDataSource(res.data.data),
-        setTotalPage(res.data.totalRow),
-        showNoti("success", "Thành công"));
+      let res = await subjectApi.getAll(todoApi);
+
+      if (res.status == 200) {
+        if (res.data.data.length > 0) {
+          setDataSource(res.data.data);
+          setTotalPage(res.data.totalRow);
+          showNoti("success", "Thành công");
+        } else {
+          showNoti("danger", "Không có dữ liệu");
+        }
+      }
+
       res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
@@ -79,6 +82,19 @@ const Grade = () => {
         type: "GET_ALL",
         status: false,
       });
+    }
+  };
+
+  // GET DATA PROGRAM
+  const getDataProgram = async () => {
+    try {
+      let res = await programApi.getAll(todoApi);
+      res.status == 200 && setDataProgram(res.data.data);
+
+      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
     }
   };
 
@@ -103,7 +119,7 @@ const Grade = () => {
 
     if (dataSubmit.ID) {
       try {
-        res = await gradeApi.update(dataSubmit);
+        res = await subjectApi.update(dataSubmit);
 
         if (res.status == 200) {
           let newDataSource = [...dataSource];
@@ -122,7 +138,7 @@ const Grade = () => {
       }
     } else {
       try {
-        res = await gradeApi.add(dataSubmit);
+        res = await subjectApi.add(dataSubmit);
         res?.status == 200 && afterPost(res.data.message);
       } catch (error) {
         showNoti("danger", error.message);
@@ -150,7 +166,7 @@ const Grade = () => {
     };
 
     try {
-      let res = await gradeApi.update(dataChange);
+      let res = await subjectApi.update(dataChange);
       res.status == 200 && setTodoApi({ ...todoApi });
     } catch (error) {
       showNoti("danger", error.Message);
@@ -233,71 +249,54 @@ const Grade = () => {
     getDataSource();
   }, [todoApi]);
 
+  useEffect(() => {
+    getDataProgram();
+  }, []);
+
   const columns = [
     {
-      title: "Mã khối",
-      dataIndex: "GradeCode",
-      ...FilterColumn("GradeCode", onSearch, handleReset, "text"),
+      title: "Môn học",
+      dataIndex: "SubjectName",
+      key: "subjectname",
+      width: "20%",
+      className: "col-long",
     },
     {
-      title: "Tên khối",
-      dataIndex: "GradeName",
-      ...FilterColumn("GradeName", onSearch, handleReset, "text"),
-    },
-    {
-      title: "Description",
-      dataIndex: "Description",
+      title: "Bổ sung",
+      dataIndex: "Additional",
+      key: "additional",
+      render: (text, data, index) => (
+        <>{text == true && <CheckCircle className="icon-additional" />}</>
+      ),
     },
 
     {
-      title: "Create on",
-      dataIndex: "CreatedOn",
-      render: (date: any) => moment(date).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "Enable",
-      render: (Enable, record) => (
-        <>
-          <Switch
-            checkedChildren="Hiện"
-            unCheckedChildren="Ẩn"
-            checked={Enable}
-            size="default"
-            onChange={(checked) => changeStatus(checked, record.ID)}
-          />
-        </>
-      ),
-    },
-    {
       render: (text, data, index) => (
         <>
-          <Tooltip title="Cập nhật trung tâm">
-            <GradeForm
-              getIndex={() => setIndexRow(index)}
-              index={index}
-              rowData={data}
-              rowID={data.ID}
-              isLoading={isLoading}
-              _onSubmit={(data: any) => _onSubmit(data)}
-            />
-          </Tooltip>
+          <SubjectForm
+            getIndex={() => setIndexRow(index)}
+            index={index}
+            rowData={data}
+            rowID={data.ID}
+            isLoading={isLoading}
+            _onSubmit={(data: any) => _onSubmit(data)}
+          />
         </>
       ),
     },
   ];
 
   return (
-    <>
+    <div>
       <PowerTable
         currentPage={currentPage}
         totalPage={totalPage && totalPage}
         getPagination={(pageNumber: number) => getPagination(pageNumber)}
+        addClass="table-fix-column"
         loading={isLoading}
-        addClass="basic-header"
-        TitlePage="Danh sách khối học"
         TitleCard={
-          <GradeForm
+          <SubjectForm
+            dataProgram={dataProgram}
             isLoading={isLoading}
             _onSubmit={(data: any) => _onSubmit(data)}
           />
@@ -305,16 +304,14 @@ const Grade = () => {
         dataSource={dataSource}
         columns={columns}
         Extra={
-          <div className="extra-table">
-            <SortBox
-              handleSort={(value) => handleSort(value)}
-              dataOption={dataOption}
-            />
-          </div>
+          // <div className="extra-table">
+          //   <SearchBox />
+          // </div>
+          "Môn học"
         }
       />
-    </>
+    </div>
   );
 };
-Grade.layout = LayoutBase;
-export default Grade;
+
+export default Subject;

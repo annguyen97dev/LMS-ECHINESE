@@ -5,13 +5,14 @@ import moment from "moment";
 import { useWrap } from "~/context/wrap";
 
 const FilterProgram = (props) => {
-  const { handleFilter } = props;
+  const { handleFilter, dataLevel, handleReset } = props;
   const { showNoti } = useWrap();
   const { RangePicker } = DatePicker;
   const dateFormat = "YYYY/MM/DD";
 
   const [listFilter, setListFilter] = useState({
-    Type: "",
+    Type: null,
+    Level: null,
     fromDate: "",
     toDate: "",
   });
@@ -61,16 +62,47 @@ const FilterProgram = (props) => {
     setVisible(visible);
   };
 
+  const onReset = () => {
+    handleReset();
+    setVisible(false);
+  };
+
   const content = (
     <div className={`wrap-filter small`}>
       <Form layout="vertical" onFinish={onSubmit}>
         <div className="row">
           <div className="col-12">
+            <Form.Item label="Level">
+              <Select
+                placeholder="Chọn level.."
+                className="style-input"
+                onChange={(value) =>
+                  setListFilter({
+                    ...listFilter,
+                    Level: value,
+                  })
+                }
+              >
+                {dataLevel.map((item, index) => (
+                  <Option key={index} value={item}>
+                    {item}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+
+          <div className="col-12">
             <Form.Item label="Loại">
               <Select
                 placeholder="Chọn loại.."
                 className="style-input"
-                onChange={(value) => getValueFilter(value, "select")}
+                onChange={(value) =>
+                  setListFilter({
+                    ...listFilter,
+                    Type: value,
+                  })
+                }
               >
                 <Option value="1">Zoom</Option>
                 <Option value="2">Offline</Option>
@@ -96,7 +128,14 @@ const FilterProgram = (props) => {
               >
                 Tìm kiếm
               </button>
-              {/* <button className="btn btn-success">Export</button> */}
+              <button
+                type="button"
+                className="light btn btn-secondary"
+                style={{ marginRight: "10px" }}
+                onClick={onReset}
+              >
+                Reset
+              </button>
             </Form.Item>
           </div>
         </div>

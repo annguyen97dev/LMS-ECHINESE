@@ -6,8 +6,8 @@ class GradeApi {
       params: todoApi,
     });
 
-  getWithID = (CourseID: number) =>
-    instance.get<IApiResult<IGrade[]>>(`/api/Grade/${CourseID}`);
+  getWithID = (ID: number) =>
+    instance.get<IApiResult<IGrade[]>>(`/api/Grade/${ID}`);
 
   add = (data: IGrade) => instance.post("/api/Grade", data, {});
 

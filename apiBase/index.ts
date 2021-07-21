@@ -1,3 +1,4 @@
+import { subjectApi } from "./options/subject";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { districtApi } from "./options/district";
@@ -13,3 +14,5 @@ export { jobApi } from "./options/job";
 export { userInformationApi } from "./options/userinformation";
 export { puroseApi } from "./options/purose";
 export { supplierApi } from "./options/supplier";
+export { subjectApi } from "./options/subject";
+export { curriculumDetailApi } from "./options/curriculum-detail";

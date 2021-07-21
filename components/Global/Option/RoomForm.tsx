@@ -29,12 +29,11 @@ const RoomForm = React.memo((props: any) => {
   const { showNoti } = useWrap();
   const [form] = Form.useForm();
   const { Option } = Select;
-  // const [dataCenter, setDataCenter] = useState<IBranch[]>();
+
   const [disableCenter, setDisableCenter] = useState(false);
   const { isLoading, _onSubmit, roomID, rowData, getIndex, dataCenter } = props;
 
   const [loadingSelect, setLoadingSelect] = useState(false);
-  // const [branchID, setBranchID] = useState<number>(null);
 
   // HANDLE SUBMIT
   const onFinish = handleSubmit((data: any) => {
@@ -44,23 +43,6 @@ const RoomForm = React.memo((props: any) => {
       rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
     });
   });
-
-  // GET DATA CENTER
-  // const getDataCenter = async () => {
-  //   setLoadingSelect(true);
-
-  //   try {
-  //     let res = await branchApi.getAll({
-  //       pageIndex: 1,
-  //       pageSize: Number.MAX_SAFE_INTEGER,
-  //     });
-  //     res.status == 200 && setDataCenter(res.data.data);
-  //   } catch (error) {
-  //     showNoti("danger", error.message);
-  //   } finally {
-  //     setLoadingSelect(false);
-  //   }
-  // };
 
   // ON CHANGE SELECT
   const onChangeSelect = (name) => (value) => {
@@ -149,7 +131,13 @@ const RoomForm = React.memo((props: any) => {
                 </Form.Item>
               </div>
               <div className="col-12">
-                <Form.Item name="RoomCode" label="Mã phòng">
+                <Form.Item
+                  name="RoomCode"
+                  label="Mã phòng"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Input
                     placeholder=""
                     className="style-input"
@@ -161,7 +149,13 @@ const RoomForm = React.memo((props: any) => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item name="RoomName" label="Tên phòng">
+                <Form.Item
+                  name="RoomName"
+                  label="Tên phòng"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
                   <Input
                     placeholder=""
                     className="style-input"

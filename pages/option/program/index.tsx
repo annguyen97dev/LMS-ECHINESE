@@ -31,6 +31,7 @@ const listTodoApi = {
   ProgramCode: null,
   ProgramName: null,
   Type: null,
+  Level: null,
   fromDate: null,
   toDate: null,
 };
@@ -68,6 +69,7 @@ const dataOption = [
 
 const Programs = () => {
   const [dataGrade, setDataGrade] = useState<IGrade[]>([]);
+  const [dataLevel, setDataLevel] = useState([]);
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<IProgram[]>([]);
@@ -91,7 +93,9 @@ const Programs = () => {
     try {
       let res = await programApi.getAll(todoApi);
       res.status == 200 &&
-        (setDataSource(res.data.data), setTotalPage(res.data.totalRow));
+        (setDataSource(res.data.data),
+        setTotalPage(res.data.totalRow),
+        setDataLevel(res.data.listLevel));
 
       res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
@@ -186,15 +190,6 @@ const Programs = () => {
 
     return res;
   };
-
-  // ============== USE EFFECT - FETCH DATA ===================
-  useEffect(() => {
-    getDataSource();
-  }, [todoApi]);
-
-  useEffect(() => {
-    getDataGrade();
-  }, []);
 
   // ----------------- TURN OF ------------------------
   const changeStatus = async (checked: boolean, idRow: number) => {
@@ -297,6 +292,15 @@ const Programs = () => {
     });
   };
 
+  // ============== USE EFFECT - FETCH DATA ===================
+  useEffect(() => {
+    getDataSource();
+  }, [todoApi]);
+
+  useEffect(() => {
+    getDataGrade();
+  }, []);
+
   // ---------------- COLUMN --------------------
   const columns = [
     {
@@ -314,6 +318,10 @@ const Programs = () => {
       render: (text) => {
         return <p className="font-weight-blue">{text}</p>;
       },
+    },
+    {
+      title: "Level",
+      dataIndex: "Level",
     },
     {
       title: "Học phí",
@@ -367,7 +375,7 @@ const Programs = () => {
           <Link
             href={{
               pathname: "/option/program/program-detail/[slug]",
-              query: { slug: data.ListClassName },
+              query: { slug: data.ID },
             }}
           >
             <Tooltip title="Chi tiết chương trình">
@@ -412,7 +420,11 @@ const Programs = () => {
         columns={columns}
         Extra={
           <div className="extra-table">
-            <FilterProgram handleFilter={(value: any) => handleFilter(value)} />
+            <FilterProgram
+              handleReset={handleReset}
+              dataLevel={dataLevel}
+              handleFilter={(value: any) => handleFilter(value)}
+            />
             <SortBox
               handleSort={(value) => handleSort(value)}
               dataOption={dataOption}
