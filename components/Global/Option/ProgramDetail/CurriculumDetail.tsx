@@ -26,6 +26,11 @@ const CurriculumDetail = (props) => {
     // pageIndex: pageIndex,
     CurriculumID: curriculumID ? curriculumID : null,
   };
+  const [saveValue, setSaveValue] = useState([]);
+  const [loadingSelect, setLoadingSelect] = useState({
+    id: null,
+    status: false,
+  });
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<ICurriculumDetail[]>([]);
@@ -80,9 +85,18 @@ const CurriculumDetail = (props) => {
     setCurrentPage(1);
   };
 
-  const updateSubject = async (value, data) => {
+  const updateSubject = async (value, data, index) => {
     let cloneData = { ...data };
     cloneData.SubjectID = value;
+
+    // let cloneArr = [...saveValue];
+    // cloneArr.push(data);
+    // setSaveValue(cloneArr);
+
+    setLoadingSelect({
+      id: data.ID,
+      status: true,
+    });
 
     try {
       let res = await curriculumDetailApi.update({
@@ -92,7 +106,7 @@ const CurriculumDetail = (props) => {
 
       if (res.status == 200) {
         let newDataSource = [...dataSource];
-        newDataSource.splice(indexRow, 1, cloneData);
+        newDataSource.splice(index, 1, cloneData);
         setDataSource(newDataSource);
         showNoti("success", res.data.message);
       }
@@ -100,11 +114,26 @@ const CurriculumDetail = (props) => {
       console.log("error: ", error);
       showNoti("danger", error.message);
     } finally {
-      setIsLoading({
-        type: "ADD_DATA",
+      setLoadingSelect({
+        id: data.ID,
         status: false,
       });
     }
+  };
+
+  const returnValue = (ID: any) => {
+    let value = null;
+    dataSource.every((item, index) => {
+      if (item.ID == ID) {
+        value = item.SubjectID;
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    console.log("Value is: ", value);
+    return value;
   };
 
   // -------------- GET PAGE_NUMBER -----------------
@@ -128,16 +157,21 @@ const CurriculumDetail = (props) => {
       title: "Môn học",
       dataIndex: "SubjectName",
       key: "subjectname",
-      className: "col-long",
+      className: "text-center",
       render: (text, data, index) => (
         <Select
-          style={{ width: "100%" }}
+          loading={data.ID == loadingSelect.id && loadingSelect.status}
+          value={returnValue(data.ID)}
+          style={{ width: "60%", margin: "auto" }}
           className="style-input"
           showSearch
           optionFilterProp="children"
           defaultValue={data.SubjectID}
-          onChange={(value) => updateSubject(value, data)}
+          onChange={(value) => updateSubject(value, data, index)}
         >
+          <Option key="none" value={0}>
+            Trống
+          </Option>
           {dataSubject?.map((item, index) => (
             <Option key={index} value={item.ID}>
               {item.SubjectName}
@@ -150,7 +184,7 @@ const CurriculumDetail = (props) => {
       title: "Số buổi học",
       dataIndex: "LessonNumber",
       key: "lessonnumber",
-      className: "col-short",
+      className: "col-short text-center",
     },
   ];
 
