@@ -2,20 +2,20 @@ import { Tooltip } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import React, { useState } from "react";
 import { AlertTriangle, X } from "react-feather";
-import { jobApi } from "~/apiBase";
+import { feedbackApi } from "~/apiBase/options/feedback";
 import { useWrap } from "~/context/wrap";
 
-const JobDelete = React.memo((props: any) => {
+const FeedbackDelete = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { jobId, reloadData, currentPage } = props;
+  const { feedbackId, reloadData } = props;
   const { showNoti } = useWrap();
 
   const onHandleDelete = async () => {
     try {
       // @ts-ignore
-      let res = await jobApi.update({ JobID: jobId, Enable: false });
+      let res = await feedbackApi.update({ ID: feedbackId, Enable: false });
       showNoti("success", res.data?.message);
-      reloadData(currentPage);
+      reloadData();
       setIsModalVisible(false);
     } catch (error) {
       showNoti("danger", error.message);
@@ -41,10 +41,10 @@ const JobDelete = React.memo((props: any) => {
         onOk={onHandleDelete}
         onCancel={() => setIsModalVisible(false)}
       >
-        <p className="text-confirm">Bạn có muốn xóa nghề nghiệp này?</p>
+        <p className="text-confirm">Bạn có muốn xóa phản hồi này?</p>
       </Modal>
     </>
   );
 });
 
-export default JobDelete;
+export default FeedbackDelete;

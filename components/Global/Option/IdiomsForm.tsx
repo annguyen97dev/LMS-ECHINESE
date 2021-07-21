@@ -3,10 +3,10 @@ import { Modal, Form, Input, Tooltip, Select, Spin } from "antd";
 import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
-import { jobApi } from "~/apiBase";
+import { idiomsApi } from "~/apiBase/options/idioms";
 
-const JobForm = React.memo((props: any) => {
-  const { jobId, reloadData, jobDetail, currentPage } = props;
+const IdiomsForm = React.memo((props: any) => {
+  const { idiomsId, reloadData, idiomsDetail, currentPage } = props;
   const { setValue } = useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -15,9 +15,12 @@ const JobForm = React.memo((props: any) => {
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    if (jobId) {
+    if (idiomsId) {
       try {
-        let res = await jobApi.update({ ...data, Enable: true, JobID: jobId });
+        let res = await idiomsApi.update({
+          ...data,
+          ID: idiomsId,
+        });
         afterSubmit(res?.data.message);
         reloadData(currentPage);
       } catch (error) {
@@ -26,7 +29,7 @@ const JobForm = React.memo((props: any) => {
       }
     } else {
       try {
-        let res = await jobApi.add({ ...data, Enable: true });
+        let res = await idiomsApi.add({ ...data, Enable: true });
         afterSubmit(res?.data.message);
         reloadData(1);
         form.resetFields();
@@ -44,14 +47,14 @@ const JobForm = React.memo((props: any) => {
   };
 
   useEffect(() => {
-    if (jobDetail) {
-      form.setFieldsValue(jobDetail);
+    if (idiomsDetail) {
+      form.setFieldsValue(idiomsDetail);
     }
   }, [isModalVisible]);
 
   return (
     <>
-      {jobId ? (
+      {idiomsId ? (
         <button
           className="btn btn-icon edit"
           onClick={() => {
@@ -74,7 +77,7 @@ const JobForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title={<>{jobId ? "Thêm mới" : "Cập nhật"}</>}
+        title={<>{idiomsId ? "Thêm mới" : "Cập nhật"}</>}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -84,16 +87,15 @@ const JobForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item
-                  name="JobName"
-                  label="Nghề nghiệp"
+                  name="Idioms"
+                  label="Câu thành ngữ"
                   rules={[
                     { required: true, message: "Vui lòng điền đủ thông tin!" },
                   ]}
                 >
                   <Input
-                    placeholder="Giáo viên"
                     className="style-input"
-                    onChange={(e) => setValue("JobName", e.target.value)}
+                    onChange={(e) => setValue("Idioms", e.target.value)}
                     allowClear={true}
                   />
                 </Form.Item>
@@ -112,4 +114,4 @@ const JobForm = React.memo((props: any) => {
   );
 });
 
-export default JobForm;
+export default IdiomsForm;
