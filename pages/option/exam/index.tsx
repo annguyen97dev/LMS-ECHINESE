@@ -2,10 +2,14 @@ import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { examServiceApi } from "~/apiBase/options/examServices";
 import { feedbackApi } from "~/apiBase/options/feedback";
-import ExamForm from "~/components/Global/Option/ExamForm";
+import SortBox from "~/components/Elements/SortBox";
+import ExamServicesDelete from "~/components/Global/Option/ExamServices/ExamServicesDelete";
+import ExamServicesForm from "~/components/Global/Option/ExamServices/ExamServicesForm";
+import ExamForm from "~/components/Global/Option/ExamServices/ExamServicesForm";
 import FeedbackDelete from "~/components/Global/Option/Feedback/FeedbackDelete";
 import FeedBackForm from "~/components/Global/Option/Feedback/FeedBackForm";
 import FilterFeedbackTable from "~/components/Global/Option/FilterTable/FilterFeedbackTable";
+import FilterRegisterCourseTable from "~/components/Global/Option/FilterTable/FilterRegisterCourseTable";
 import LayoutBase from "~/components/LayoutBase";
 import PowerTable from "~/components/PowerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
@@ -16,7 +20,7 @@ const ExamServices = () => {
     setCurrentPage(1);
     setParams({
       ...listParamsDefault,
-      // search: data,
+      ServicesName: data,
     });
   };
 
@@ -26,13 +30,13 @@ const ExamServices = () => {
   };
   const columns = [
     {
-      title: "Nguồn dịch vụ",
+      title: "Nhà cung cấp",
       dataIndex: "SupplierServicesName",
     },
     {
-      title: "Đợt thi",
+      title: "Dịch vụ",
       dataIndex: "ServicesName",
-      // ...FilterColumn("Name", onSearch, handleReset, "text"),
+      ...FilterColumn("ServicesName", onSearch, handleReset, "text"),
     },
     {
       title: "Hình thức",
@@ -50,42 +54,45 @@ const ExamServices = () => {
       dataIndex: "DayOfExam",
       render: (date) => moment(date).format("DD/MM/YYYY"),
     },
-    { title: "Thời gian thi", dataIndex: "TimeExam" },
+    {
+      title: "Thời gian thi",
+      dataIndex: "TimeExam",
+      render: (value) => moment(value).format("LT"),
+    },
     { title: "Số thí sinh", dataIndex: "Amount" },
     {
       title: "Giá bài thi",
       dataIndex: "Price",
       render: (price) => (
-        <span>{Intl.NumberFormat("ja-JP").format(price)}</span>
+        <span>{Intl.NumberFormat("en-US").format(price)}</span>
       ),
     },
     {
       title: "Trả trước",
       dataIndex: "InitialPrice",
       render: (price) => (
-        <span>{Intl.NumberFormat("ja-JP").format(price)}</span>
+        <span>{Intl.NumberFormat("en-US").format(price)}</span>
       ),
     },
     {
       render: (data) => (
         <>
-          {/* <FeedBackForm
-            feedbackDetail={data}
-            feedbackId={data.ID}
+          <ExamServicesForm
+            examServicesDetail={data}
+            examServicesId={data.ID}
             reloadData={(firstPage) => {
               getDataExamServices(firstPage);
             }}
             currentPage={currentPage}
           />
 
-          <FeedbackDelete
-            feedbackId={data.ID}
+          <ExamServicesDelete
+            examServicesId={data.ID}
             reloadData={(firstPage) => {
               getDataExamServices(firstPage);
             }}
             currentPage={currentPage}
-          /> */}
-          <ExamForm showIcon={true} />
+          />
         </>
       ),
     },
@@ -102,6 +109,30 @@ const ExamServices = () => {
     ExamOfServiceStyle: null,
     SupplierServicesID: null,
     ServicesName: null,
+  };
+
+  const sortOption = [
+    {
+      dataSort: {
+        sortType: null,
+      },
+      value: 1,
+      text: "Mới cập nhật",
+    },
+    {
+      dataSort: {
+        sortType: true,
+      },
+      value: 2,
+      text: "Từ dưới lên",
+    },
+  ];
+
+  const handleSort = async (option) => {
+    setParams({
+      ...listParamsDefault,
+      sortType: option.title.sortType,
+    });
   };
 
   const [params, setParams] = useState(listParamsDefault);
@@ -150,9 +181,16 @@ const ExamServices = () => {
     getDataExamServices(currentPage);
   }, [params]);
 
-  // const _onFilterTable = (data) => {
-  //   setParams({ ...listParamsDefault, Role: data.RoleID });
-  // };
+  const _onFilterTable = (data) => {
+    setCurrentPage(1);
+    setParams({
+      ...listParamsDefault,
+      SupplierServicesID: data.SupplierServicesID,
+      fromDate: data.fromDate,
+      toDate: data.toDate,
+      ExamOfServiceStyle: data.ExamOfServiceStyle,
+    });
+  };
 
   return (
     <PowerTable
@@ -163,23 +201,28 @@ const ExamServices = () => {
       addClass="basic-header"
       TitlePage="Đợt thi"
       TitleCard={
-        // <FeedBackForm
-        //   reloadData={(firstPage) => {
-        //     setCurrentPage(1);
-        //     getDataExamServices(firstPage);
-        //   }}
-        // />
-        <ExamForm showAdd={true} />
+        <ExamServicesForm
+          reloadData={(firstPage) => {
+            setCurrentPage(1);
+            getDataExamServices(firstPage);
+          }}
+        />
       }
       dataSource={examServices}
       columns={columns}
-      // Extra={
-      //   <div className="extra-table">
-      //     <FilterFeedbackTable
-      //       _onFilter={(value: any) => _onFilterTable(value)}
-      //     />
-      //   </div>
-      // }
+      Extra={
+        <div className="extra-table">
+          <FilterRegisterCourseTable
+            _onFilter={(value: any) => _onFilterTable(value)}
+            reloadData={() => handleReset()}
+          />
+
+          <SortBox
+            dataOption={sortOption}
+            handleSort={(value) => handleSort(value)}
+          />
+        </div>
+      }
     />
   );
 };

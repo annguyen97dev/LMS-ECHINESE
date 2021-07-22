@@ -2,7 +2,7 @@ export * from "./CenterForm";
 export * from "./CustomerSupplierForm";
 export * from "./DayOff/DayOffForm";
 export * from "./DiscountForm";
-export * from "./ExamForm";
+export * from "./ExamServices/ExamServicesForm";
 export * from "./Feedback/FeedBackForm";
 export * from "./GradeForm";
 export * from "./IdiomsForm";
