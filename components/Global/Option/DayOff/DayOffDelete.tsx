@@ -5,13 +5,13 @@ import React, {useState} from 'react';
 import {AlertTriangle, X} from 'react-feather';
 
 const DayOffDelete = (props) => {
-	const {handleDeleteDayOff, deleteIDObj, index} = props;
+	const {handleDeleteDayOff, index} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const checkHandleDeleteDayOff = () => {
 		if (!handleDeleteDayOff) return;
-		if (!deleteIDObj || index < 0) return;
-		handleDeleteDayOff(deleteIDObj, index);
+		if (index < 0) return;
+		handleDeleteDayOff(index);
 		setIsModalVisible(false);
 	};
 	return (
@@ -32,14 +32,13 @@ const DayOffDelete = (props) => {
 				onOk={() => checkHandleDeleteDayOff()}
 				onCancel={() => setIsModalVisible(false)}
 			>
-				Bạn có chắc muốn xóa ngày nghỉ này?
+				<p className="text-confirm">Bạn có chắc muốn xóa ngày nghỉ này?</p>
 			</Modal>
 		</>
 	);
 };
 DayOffDelete.propTypes = {
 	handleDeleteDayOff: PropTypes.func,
-	deleteIDObj: PropTypes.number.isRequired,
 	index: PropTypes.number.isRequired,
 };
 DayOffDelete.defaultProps = {

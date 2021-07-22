@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import dayOffApi from '~/apiBase/options/day-off';
 import SortBox from '~/components/Elements/SortBox';
 import DayOffForm from '~/components/Global/Option/DayOff/DayOffForm';
@@ -17,43 +17,45 @@ const DayOff = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
-
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
-		sort: 0,
+		sort: -1,
 		sortType: false,
 		DayOff: '',
 		DayOffName: '',
 		fromDate: '',
 		toDate: '',
-		searchCreateby: '',
 	};
-	const [filter, setFilter] = useState(listFieldInit);
-	// FILTER OPTION
-	const [filterOptionList, setFilterOptionList] = useState([]);
+	let refValue = useRef({
+		pageIndex: 1,
+		pageSize: 10,
+		sort: -1,
+		sortType: false,
+	});
+	const [filters, setFilters] = useState(listFieldInit);
 	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
-				sort: 1,
-				sortType: false,
+				sort: 0,
+				sortType: true,
 			},
 			value: 1,
 			text: 'Ngày tăng dần',
 		},
 		{
 			dataSort: {
-				sort: 1,
-				sortType: true,
+				sort: 0,
+				sortType: false,
 			},
 			value: 2,
 			text: 'Ngày giảm dần',
 		},
 		{
 			dataSort: {
-				sort: 2,
+				sort: 1,
 				sortType: true,
 			},
 			value: 3,
@@ -61,7 +63,7 @@ const DayOff = () => {
 		},
 		{
 			dataSort: {
-				sort: 2,
+				sort: 1,
 				sortType: false,
 			},
 			value: 4,
@@ -69,87 +71,53 @@ const DayOff = () => {
 		},
 	];
 	// FILTER
-	const fetchCreated = async () => {
-		try {
-			let res = await dayOffApi.getAll({
-				selectAll: true,
-			});
-			if (res.status === 200) {
-				const data = res.data.data;
-				const createdList = data.map((x) => ({
-					title: x.CreatedBy,
-					value: x.CreatedBy,
-				}));
-				const clearCreatedList = createdList.reduce((arr, obj) => {
-					if (!arr.some((arrInObj) => arrInObj.value === obj.value)) {
-						arr.push(obj);
-					}
-					return arr;
-				}, []);
-				setFilterOptionList([
-					{title: 'Tất cả', value: ''},
-					...clearCreatedList,
-				]);
-			}
-		} catch (error) {
-			showNoti('danger', error.message);
-		}
-	};
-	const onFilterDayOff = (value) => {
-		// setIsLoading({
-		// 	type: 'FILTER_CREATED',
-		// 	status: true,
-		// });
-		setFilter({
+	const onFilterDayOff = (obj) => {
+		setFilters({
 			...listFieldInit,
-			searchCreateby: value.createdBy,
+			...refValue.current,
+			pageIndex: 1,
+			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
+			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
 		});
 	};
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
-		const newFilter = {
-			...filter,
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		refValue.current = {
+			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
-		setFilter(newFilter);
+		setFilters({
+			...filters,
+			...refValue.current,
+		});
 	};
 	// SORT
 	const onSort = (option) => {
-		setFilter({
-			...listFieldInit,
+		refValue.current = {
+			...refValue.current,
 			sort: option.title.sort,
 			sortType: option.title.sortType,
+		};
+		setFilters({
+			...listFieldInit,
+			...refValue.current,
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
-		setFilter({
+		setFilters({
 			...listFieldInit,
+			pageSize: refValue.current.pageSize,
 		});
-	};
-	// CHECK KEY AND VALUE IN LIST FIELD
-	const checkField = (valueSearch, dataIndex) => {
-		Object.keys(listFieldInit).forEach(function (key) {
-			if (key !== dataIndex) {
-				listFieldInit[key] = listFieldInit[key];
-			} else {
-				listFieldInit[key] = valueSearch;
-			}
-			if (dataIndex == 'CreatedOn') {
-				listFieldInit.fromDate = valueSearch.fromDate;
-				listFieldInit.toDate = valueSearch.toDate;
-			}
-		});
-
-		return listFieldInit;
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
-
-		setFilter({
-			...filter,
-			...clearKey,
+		setFilters({
+			...listFieldInit,
+			...refValue.current,
+			pageIndex: 1,
+			[dataIndex]: valueSearch,
 		});
 	};
 
@@ -160,14 +128,19 @@ const DayOff = () => {
 			status: true,
 		});
 		try {
-			let res = await dayOffApi.getAll(filter);
+			let res = await dayOffApi.getAll(filters);
 
 			if (res.status === 200) {
-				setDayOffList(res.data.data);
-				setTotalPage(res.data.totalRow);
-				res.data.data.length > 0
-					? showNoti('success', res.data.message)
-					: showNoti('danger', 'Không tìm thấy');
+				if (res.data.totalRow && res.data.data.length) {
+					setDayOffList(res.data.data);
+					setTotalPage(res.data.totalRow);
+				}
+			} else if (res.status === 204) {
+				setFilters({
+					...listFieldInit,
+					...refValue.current,
+				});
+				showNoti('danger', 'Không tìm thấy');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -177,12 +150,11 @@ const DayOff = () => {
 				status: false,
 			});
 		}
-		fetchCreated();
 	};
 
 	useEffect(() => {
 		fetchDayOffList();
-	}, [filter]);
+	}, [filters]);
 
 	// CREATE
 	const onCreateDayOff = async (data: any) => {
@@ -196,8 +168,8 @@ const DayOff = () => {
 				...data,
 				Enable: true,
 			});
-			fetchDayOffList();
-			// onResetSearch <== nên thử khi tạo xong r reset search để trở về trang
+			res.status === 200 && showNoti('success', res.data.message);
+			onResetSearch(); // <== khi tạo xong r reset search để trở về trang đầu tiên
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -209,7 +181,7 @@ const DayOff = () => {
 		return res;
 	};
 	// UPDATE
-	const onUpdateDayOff = async (newObj: any) => {
+	const onUpdateDayOff = async (newObj: any, idx: number) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true,
@@ -217,7 +189,12 @@ const DayOff = () => {
 		let res;
 		try {
 			res = await dayOffApi.update(newObj);
-			fetchDayOffList();
+			if (res.status === 200) {
+				const newDayOffList = [...dayOffList];
+				newDayOffList.splice(idx, 1, newObj);
+				setDayOffList(newDayOffList);
+				showNoti('success', res.data.message);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -229,19 +206,30 @@ const DayOff = () => {
 		}
 	};
 	// DELETE
-	const onDeleteDayOff = async (id: number, idx: number) => {
+	const onDeleteDayOff = async (idx: number) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
 		});
 		try {
 			const delObj = dayOffList[idx];
-			await dayOffApi.delete({
+			const res = await dayOffApi.delete({
 				...delObj,
 				Enable: false,
 			});
+			res.status === 200 && showNoti('success', res.data.message);
 			if (dayOffList.length === 1) {
-				onResetSearch();
+				filters.pageIndex === 1
+					? setFilters({
+							...listFieldInit,
+							...refValue.current,
+							pageIndex: 1,
+					  })
+					: setFilters({
+							...filters,
+							...refValue.current,
+							pageIndex: filters.pageIndex - 1,
+					  });
 				return;
 			}
 			fetchDayOffList();
@@ -270,7 +258,6 @@ const DayOff = () => {
 		{
 			title: 'Ngày khởi tạo',
 			dataIndex: 'CreatedOn',
-			//   ...FilterColumn("CreatedOn", onSearch, onResetSearch, "date-range"),
 			render: (date) => moment(date).format('DD/MM/YYYY'),
 		},
 		{
@@ -279,27 +266,26 @@ const DayOff = () => {
 		},
 		{
 			render: (value, _, idx) => (
-				<>
+				// VÌ KHI CLICK VÀO THẰNG TALBE THÌ TRIGGER LUÔN CẢ FUNCTION CỦA CÁC THẰNG BÊN TRONG
+				<div onClick={(e) => e.stopPropagation()}>
 					<DayOffForm
 						isLoading={isLoading}
 						isUpdate={true}
 						updateObj={value}
+						indexUpdateObj={idx}
 						handleUpdateDayOff={onUpdateDayOff}
 					/>
-					<DayOffDelete
-						handleDeleteDayOff={onDeleteDayOff}
-						deleteIDObj={value.ID}
-						index={idx}
-					/>
-				</>
+					<DayOffDelete handleDeleteDayOff={onDeleteDayOff} index={idx} />
+				</div>
 			),
 		},
 	];
 	// RETURN
 	return (
 		<PowerTable
-			totalPage={totalPage && totalPage}
-			getPagination={(pageNumber: number) => getPagination(pageNumber)}
+			currentPage={filters.pageIndex}
+			totalPage={totalPage}
+			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
 			TitlePage="Day Off"
@@ -314,11 +300,7 @@ const DayOff = () => {
 			columns={columns}
 			Extra={
 				<div className="extra-table">
-					<DayOffFilterForm
-						dataOption={filterOptionList}
-						isLoading={isLoading}
-						handleFilterDayOff={onFilterDayOff}
-					/>
+					<DayOffFilterForm handleFilterDayOff={onFilterDayOff} />
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

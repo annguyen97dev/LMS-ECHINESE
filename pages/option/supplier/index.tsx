@@ -18,7 +18,7 @@ import moment from "moment";
 
 
 const SupplierList = () => {
-	const [dataSupplier, setDataSupplier] = useState<ISupplier[]>([]);
+	const [dataTable, setDataTable] = useState<ISupplier[]>([]);
 	const [dataStaffManage, setDataStaffManage] = useState([]);
 	const [dataDelete, setDataDelete]  = useState({
 		ID: null,
@@ -31,6 +31,7 @@ const SupplierList = () => {
 	  status: false,
 	});
 	const [totalPage, setTotalPage] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	let pageIndex = 1;
 
@@ -57,6 +58,7 @@ const SupplierList = () => {
 	// PARAMS SEARCH
 	let listField = {
 		SupplierName: "",
+		PersonInChargeName: "",
 	};
 
 	// PARAMS API GETALL
@@ -67,6 +69,8 @@ const SupplierList = () => {
 		sortType: null,
 		fromDate: null,
 		toDate: null,
+		SupplierName: null,
+		PersonInChargeName: null,
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
@@ -92,7 +96,7 @@ const SupplierList = () => {
 	};
 
 	// GET DATA
-	const getDataSupplier = () => {
+	const getDataTable = () => {
 		setIsLoading({
 		  type: "GET_ALL",
 		  status: true,
@@ -100,7 +104,17 @@ const SupplierList = () => {
 		(async () => {
 		  try {
 			let res = await supplierApi.getAll(todoApi);
-			res.status == 200 && setDataSupplier(res.data.data);
+			if (res.status == 204) {
+				showNoti("danger", "Không có dữ liệu");
+				handleReset();
+			}
+			if(res.status == 200){
+				setDataTable(res.data.data);
+				if(res.data.data.length < 1) {
+					handleReset();
+				}
+				setTotalPage(res.data.totalRow);
+			}
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -125,7 +139,7 @@ const SupplierList = () => {
 		console.log(data);
 		try {
 		  res = await supplierApi.update(data);
-		  res?.status == 200 && afterPost("Sửa");
+		  res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -139,6 +153,7 @@ const SupplierList = () => {
 			console.log("data: ", data);
 		  res = await supplierApi.add(data);
 		  res?.status == 200 && afterPost("Thêm");
+		  handleReset();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -153,14 +168,22 @@ const SupplierList = () => {
 	}
   
 	const afterPost = (value) => {
-	  showNoti("success", `${value} thành công`);
-	  getDataSupplier();
+		showNoti("success", `${value} thành công`);
+		setTodoApi({
+		  ...listTodoApi,
+		  pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		getDataSupplier();
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		  pageIndex: pageIndex,
+		});
 	};
 
 	// ON SEARCH
@@ -183,6 +206,7 @@ const SupplierList = () => {
 
 		setTodoApi({
 			...todoApi,
+			pageIndex: 1,
 			...clearKey,
 		});
 
@@ -191,16 +215,21 @@ const SupplierList = () => {
 	// DELETE
 	const handleDelele = () => {
 		if(dataDelete) {
+			setIsModalVisible(false)
 			let res = _onSubmit(dataDelete);
 			res.then(function (rs: any) {
-				rs && rs.status == 200 && setIsModalVisible(false);
+				rs && rs.status == 200;
 			});
 		}
 	}
 
 	// HANDLE RESET
 	const handleReset = () => {
-		setTodoApi(listTodoApi);
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// HANDLE SORT
@@ -212,12 +241,12 @@ const SupplierList = () => {
 			sort: option.title.sort,
 			sortType: option.title.sortType,
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	};
 
 	// HANDLE FILTER
-	const _onFilter = ( data ) => {
+	const _onFilterTable = ( data ) => {
 		console.log('Show value: ', data);
 
 		let newTodoApi = {
@@ -225,23 +254,40 @@ const SupplierList = () => {
 			fromDate: data.fromDate,
 			toDate: data.toDate
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	}
 
-
 	const columns = [
 		{
-			title: 'Supplier', 
+			title: 'Nhà cung cấp (NCC)', 
 			dataIndex: 'SupplierName', 
-			...FilterColumn('SupplierName', onSearch, handleReset, "text")},
+			...FilterColumn('SupplierName', onSearch, handleReset, "text"),
+			render: (text) => { return <p className="font-weight-black">{text}</p> }
+		},
 		{
-			title: 'Modified By', 
+			title: 'Địa chỉ', 
+			dataIndex: 'Address', 
+			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
+		},
+		{
+			title: 'Mã số thuế', 
+			dataIndex: 'Taxcode', 
+			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
+		},
+		{
+			title: 'Nhân viên quản lí', 
+			dataIndex: 'PersonInChargeName', 
+			...FilterColumn('PersonInChargeName', onSearch, handleReset, "text"),
+			render: (text) => { return <p className="font-weight-blue">{text}</p> }
+		},
+		{
+			title: 'Thay đổi bởi', 
 			dataIndex: 'ModifiedBy', 
 			// ...FilterColumn('ModifiedBy', onSearch, handleReset, "text")},
 		},
 		{
-			title: 'Modified Date',
+			title: 'Thay đổi lúc',
 			dataIndex: 'ModifiedOn',
 			render: (date) => moment(date).format("DD/MM/YYYY"),
 			// ...FilterDateColumn("modDate"),
@@ -276,7 +322,7 @@ const SupplierList = () => {
 	];
 
 	useEffect(() => {
-		getDataSupplier();
+		getDataTable();
 		getDataStaffManage();
 	}, [todoApi])
 
@@ -292,6 +338,7 @@ const SupplierList = () => {
 			</Modal>
 			<PowerTable
 				loading={isLoading}
+				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				addClass="basic-header"
@@ -303,12 +350,12 @@ const SupplierList = () => {
 						_onSubmit={(data: any) => _onSubmit(data)}
 						dataStaffManage={dataStaffManage}
 					/>}
-				dataSource={dataSupplier}
+				dataSource={dataTable}
 				columns={columns}
 				Extra={
 					<div className="extra-table">
 						<FilterSupplierTable 
-							_onFilter={(value: any) => _onFilter(value)}
+							_onFilter={(value: any) => _onFilterTable(value)}
 						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}

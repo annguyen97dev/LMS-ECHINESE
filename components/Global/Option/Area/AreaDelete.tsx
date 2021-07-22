@@ -5,13 +5,13 @@ import React, {useState} from 'react';
 import {AlertTriangle, X} from 'react-feather';
 
 const AreaDelete = (props) => {
-	const {handleDeleteArea, deleteIDObj, index} = props;
+	const {handleDeleteArea, index} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const checkHandleDeleteArea = () => {
 		if (!handleDeleteArea) return;
-		if (!deleteIDObj || index < 0) return;
-		handleDeleteArea(deleteIDObj, index);
+		if (index < 0) return;
+		handleDeleteArea(index);
 		setIsModalVisible(false);
 	};
 	return (
@@ -32,14 +32,13 @@ const AreaDelete = (props) => {
 				onOk={() => checkHandleDeleteArea()}
 				onCancel={() => setIsModalVisible(false)}
 			>
-				Bạn có chắc muốn xóa tỉnh/thành phố này?
+				<p className="text-confirm">Bạn có chắc muốn xóa tỉnh/thành phố này?</p>
 			</Modal>
 		</>
 	);
 };
 AreaDelete.propTypes = {
 	handleDeleteArea: PropTypes.func,
-	deleteIDObj: PropTypes.number.isRequired,
 	index: PropTypes.number.isRequired,
 };
 AreaDelete.defaultProps = {

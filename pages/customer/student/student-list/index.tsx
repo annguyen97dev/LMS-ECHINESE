@@ -109,7 +109,10 @@ const StudentData = () => {
     });
 
     try {
-      let res = await branchApi.getAll(todoApi);
+      let res = await branchApi.getAll({
+        pageSize: Number.MAX_SAFE_INTEGER,
+        pageIndex: 1,
+      });
 
       res.status == 200 &&
         (setDataCenter(res.data.data),
@@ -259,7 +262,7 @@ const StudentData = () => {
       loading={isLoading}
       addClass="basic-header"
       TitlePage="DANH SÁCH HỌC VIÊN"
-      // TitleCard={<StudentForm dataCenter={dataCenter} />}
+      TitleCard={<StudentForm dataCenter={dataCenter} />}
       expandable={{ expandedRowRender }}
       dataSource={dataSource}
       columns={columns}

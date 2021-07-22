@@ -10,10 +10,12 @@ export { curriculumApi } from "./options/curriculum";
 export { serviceApi } from "./options/service";
 export { staffSalaryApi } from "./options/staff-salary";
 export { jobApi } from "./options/job";
-
 export { userInformationApi } from "./options/userinformation";
 export { puroseApi } from "./options/purose";
 export { supplierApi } from "./options/supplier";
+export { discountApi } from "./options/discount";
+export { sourceInfomationApi } from "./options/source-infomation";
+import { idiomsApi } from "./options/idioms";
 export { subjectApi } from "./options/subject";
 export { curriculumDetailApi } from "./options/curriculum-detail";
 export { studentApi } from "./customer/student/student-list";

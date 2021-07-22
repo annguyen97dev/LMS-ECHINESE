@@ -16,13 +16,14 @@ const DayOffForm = (props) => {
 		handleUpdateDayOff,
 		updateObj,
 		isLoading,
+		indexUpdateObj,
 	} = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 	const schema = yup.object().shape({
-		DayOff: yup.string().nullable().required('Bạn không được để trống'),
+		DayOff: yup.string().required('Bạn không được để trống'),
 		DayOffName: yup.string().required('Bạn không được để trống'),
 	});
 
@@ -37,7 +38,7 @@ const DayOffForm = (props) => {
 
 	useEffect(() => {
 		if (isUpdate && updateObj) {
-			Object.entries(updateObj).forEach((arr) => form.setValue(arr[0], arr[1]));
+			form.reset(updateObj);
 		}
 	}, [updateObj]);
 
@@ -45,7 +46,7 @@ const DayOffForm = (props) => {
 		switch (isUpdate) {
 			case true:
 				if (!handleUpdateDayOff) return;
-				handleUpdateDayOff(data).then((res) => {
+				handleUpdateDayOff(data, indexUpdateObj).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
 					}
@@ -104,7 +105,7 @@ const DayOffForm = (props) => {
 								/>
 							</div>
 						</div>
-						<div className="row ">
+						<div className="row mt-3">
 							<div className="col-12">
 								<button type="submit" className="btn btn-primary w-100">
 									{isUpdate ? 'Update' : 'Create'}
@@ -129,6 +130,7 @@ DayOffForm.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
+	indexUpdateObj: PropTypes.number,
 };
 DayOffForm.defaultProps = {
 	handleCreateDayOff: null,
@@ -136,5 +138,6 @@ DayOffForm.defaultProps = {
 	handleUpdateDayOff: null,
 	updateObj: {},
 	isLoading: {type: '', status: false},
+	indexUpdateObj: -1,
 };
 export default DayOffForm;

@@ -9,22 +9,29 @@ const InputTextField = (props) => {
   const { errors } = form.formState;
   const hasError = errors[name];
   return (
-    <Form.Item label={label}>
+    <Form.Item
+      label={label}
+      className={`${
+        hasError ? "ant-form-item-with-help ant-form-item-has-error" : ""
+      }`}
+    >
       <Controller
         name={name}
         control={form.control}
         render={({ field }) => (
           <Input
             {...field}
-            size="large"
             className="style-input"
+            allowClear={true}
             placeholder={placeholder}
             disabled={disabled}
           />
         )}
       />
       {hasError && (
-        <span style={{ color: "red" }}>{errors[name]?.message}</span>
+        <div className="ant-form-item-explain ant-form-item-explain-error">
+          <div role="alert">{errors[name]?.message}</div>
+        </div>
       )}
     </Form.Item>
   );

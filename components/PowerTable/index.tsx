@@ -24,6 +24,7 @@ const PowerTable = React.memo((props: any) => {
   };
 
   const changePagination = (pageNumber) => {
+    // console.log(pageNumber);
     if (typeof props.getPagination != "undefined") {
       props.getPagination(pageNumber);
     } else {

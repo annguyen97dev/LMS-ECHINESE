@@ -1,9 +1,14 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useState } from "react";
 import { Card, Form, Select, Input, Divider, Button, Upload } from "antd";
 import TitlePage from "~/components/TitlePage";
 import LayoutBase from "~/components/LayoutBase";
 import ImgCrop from "antd-img-crop";
 import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import InputTextField from "~/components/FormControl/InputTextField";
+
+let returnSchema = {};
 
 const StudentAppointmentCreate = () => {
   // const layout = {
@@ -12,37 +17,76 @@ const StudentAppointmentCreate = () => {
   // };
   const [fileList, setFileList] = useState([]);
   const { TextArea } = Input;
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { isSubmitting, errors, isSubmitted },
-  } = useForm();
-  const [form] = Form.useForm();
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   setValue,
+  //   formState: { isSubmitting, errors, isSubmitted },
+  // } = useForm();
+  // const [form] = Form.useForm();
 
-  // SUBMI FORM
-  const onSubmit = handleSubmit((data: any, e) => {
-    console.log("DATA SUBMIT: ", data);
+  const defaultValuesInit = {
+    FullNameUnicode: null,
+    Email: null,
+    Mobile: null,
+    AreaID: null, //int id Tỉnh/TP
+    DistrictID: null, //int id Quận/Huyện
+    WardID: null, //int id Phường/Xã
+    HouseNumber: null, //Nhập số nhà tên đường
+    Address: null, //bỏ trống - chỉ nhập khi khách hàng có địa chỉ không cụ thể
+    Avatar: null, //Lưu link file hình
+    DOB: null, //ngày sinh
+    Gender: null, //int 0-Nữ 1-Nam 2-Khác
+    CMND: null, //int số CMND
+    CMNDDate: null, //Ngày làm
+    CMNDRegister: null, //Nơi làm CMND
+    Extension: null, //giới thiệu thêm
+    Branch: null, //string : id của trung tâm - LƯU Ý NẾU TỪ 2 TRUNG TÂM TRỞ LÊN THÌ NHẬP(ID,ID,ID)
+    AcademicPurposesID: null, // int id mục đích học
+    JobID: null, //int mã công việc
+    SourceInformationID: null, //int id nguồn
+    ParentsOf: null, //int id phụ huynh
+  };
+
+  (function returnSchemaFunc() {
+    returnSchema = { ...defaultValuesInit };
+    Object.keys(returnSchema).forEach(function (key) {
+      returnSchema[key] = yup.string().required("Bạn không được để trống");
+    });
+
+    console.log("clone: ", returnSchema);
+  })();
+
+  const schema = yup.object().shape(returnSchema);
+
+  const form = useForm({
+    defaultValues: defaultValuesInit,
+    resolver: yupResolver(schema),
   });
 
-  const onChange_avatar = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
+  // SUBMI FORM
+  const onSubmit = (data: any) => {
+    console.log("DATA SUBMIT: ", data);
   };
 
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
-    }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow.document.write(image.outerHTML);
-  };
+  // const onChange_avatar = ({ fileList: newFileList }) => {
+  //   setFileList(newFileList);
+  // };
+
+  // const onPreview = async (file) => {
+  //   let src = file.url;
+  //   if (!src) {
+  //     src = await new Promise((resolve) => {
+  //       const reader = new FileReader();
+  //       reader.readAsDataURL(file.originFileObj);
+  //       reader.onload = () => resolve(reader.result);
+  //     });
+  //   }
+  //   const image = new Image();
+  //   image.src = src;
+  //   const imgWindow = window.open(src);
+  //   imgWindow.document.write(image.outerHTML);
+  // };
 
   const { Option } = Select;
   return (
@@ -55,11 +99,11 @@ const StudentAppointmentCreate = () => {
       <div className="col-12 d-flex justify-content-center">
         <Card title="Phiếu thông tin cá nhân" className="w-70 w-100-mobile">
           <div className="wrap-form">
-            <Form form={form} layout="vertical" onFinish={onSubmit}>
+            <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
               {/*  */}
 
               {/** ==== Thông tin cơ bản  ====*/}
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-12">
                   <ImgCrop rotate>
                     <Upload
@@ -73,7 +117,7 @@ const StudentAppointmentCreate = () => {
                     </Upload>
                   </ImgCrop>
                 </div>
-              </div>
+              </div> */}
               <div className="row">
                 <div className="col-12">
                   <Divider orientation="center">Thông tin cơ bản</Divider>
@@ -81,20 +125,21 @@ const StudentAppointmentCreate = () => {
               </div>
               <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Email">
+                  {/* <Form.Item label="Email" name="Email">
                     <Input className="style-input" placeholder="" />
-                  </Form.Item>
+                  </Form.Item> */}
+                  <InputTextField form={form} name="Email" label="Email" />
                 </div>
 
-                <div className="col-md-6 col-12">
+                {/* <div className="col-md-6 col-12">
                   <Form.Item name="FullNameUniCode" label="Họ và tên">
                     <Input className="style-input" placeholder="" />
                   </Form.Item>
-                </div>
+                </div> */}
               </div>
               {/*  */}
               {/*  */}
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-md-6 col-12">
                   <Form.Item label="Số điện thoại" name="Mobile">
                     <Input className="style-input" placeholder="" />
@@ -124,11 +169,11 @@ const StudentAppointmentCreate = () => {
                     <Input className="style-input" placeholder="" type="date" />
                   </Form.Item>
                 </div>
-              </div>
+              </div> */}
               {/*  */}
               {/*  */}
               {/** ==== Địa chỉ  ====*/}
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-12">
                   <Divider orientation="center">Địa chỉ</Divider>
                 </div>
@@ -148,12 +193,12 @@ const StudentAppointmentCreate = () => {
                     </Select>
                   </Form.Item>
                 </div>
-              </div>
+              </div> */}
               {/*  */}
               {/*  */}
               {/*  */}
 
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-md-6 col-12">
                   <Form.Item label="Phường/Xã" name="WardID">
                     <Select className="w-100 style-input">
@@ -182,11 +227,11 @@ const StudentAppointmentCreate = () => {
                     </Select>
                   </Form.Item>
                 </div>
-              </div>
+              </div> */}
 
               {/*  */}
               {/** ==== Khác  ====*/}
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-12">
                   <Divider orientation="center">Khác</Divider>
                 </div>
@@ -206,9 +251,9 @@ const StudentAppointmentCreate = () => {
                     </Select>
                   </Form.Item>
                 </div>
-              </div>
+              </div> */}
 
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-md-6 col-12">
                   <Form.Item label="Phụ huynh" name="ParentsOf">
                     <Input className="style-input" placeholder="" />
@@ -221,29 +266,30 @@ const StudentAppointmentCreate = () => {
                     </Select>
                   </Form.Item>
                 </div>
-              </div>
+              </div> */}
 
               {/*  */}
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-12">
                   <Form.Item label="Giới thiệu thêm" name="Extension">
                     <TextArea />
                   </Form.Item>
                 </div>
-              </div>
-            </Form>
-          </div>
-          <div className="row">
-            <div className="col-12 d-flex justify-content-end">
-              <div style={{ paddingRight: 5 }}>
-                <button type="submit" className="btn btn-primary w-100">
-                  Lưu
-                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+              </div> */}
+
+              <div className="row">
+                <div className="col-12 d-flex justify-content-end">
+                  <div style={{ paddingRight: 5 }}>
+                    <button type="submit" className="btn btn-primary w-100">
+                      Lưu
+                      {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
                     <Spin className="loading-base" />
                   )} */}
-                </button>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            </Form>
           </div>
         </Card>
       </div>

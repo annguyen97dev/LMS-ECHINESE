@@ -16,7 +16,7 @@ import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
 
 const Purpose = () => {
-	const [dataPurpose, setDataPurpose] = useState<IPurpose[]>([]);
+	const [dataTable, setDataTable] = useState<IPurpose[]>([]);
 	const [dataDelete, setDataDelete]  = useState({
 		PurposesID: null,
 		Enable: null,
@@ -28,6 +28,7 @@ const Purpose = () => {
 	  status: false,
 	});
 	const [totalPage, setTotalPage] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	let pageIndex = 1;
 
@@ -63,11 +64,12 @@ const Purpose = () => {
 		pageIndex: pageIndex,
 		sort: null,
 		sortType: null,
+		PurposesName: null,
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
 	// GET DATA STAFFSALARY
-	const getDataPurpose = () => {
+	const getDataTable = () => {
 		setIsLoading({
 		  type: "GET_ALL",
 		  status: true,
@@ -75,7 +77,17 @@ const Purpose = () => {
 		(async () => {
 		  try {
 			let res = await puroseApi.getAll(todoApi);
-			res.status == 200 && setDataPurpose(res.data.data);
+			if (res.status == 204) {
+				showNoti("danger", "Không có dữ liệu");
+				handleReset();
+			}
+			if(res.status == 200){
+				setDataTable(res.data.data);
+				if(res.data.data.length < 1) {
+					handleReset();
+				}
+				setTotalPage(res.data.totalRow);
+			}
 		  } catch (error) {
 			showNoti("danger", error.message);
 		  } finally {
@@ -100,7 +112,7 @@ const Purpose = () => {
 		console.log(data);
 		try {
 		  res = await puroseApi.update(data);
-		  res?.status == 200 && afterPost("Sửa");
+		  res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -127,14 +139,22 @@ const Purpose = () => {
 	}
   
 	const afterPost = (value) => {
-	  showNoti("success", `${value} thành công`);
-	  getDataPurpose();
+		showNoti("success", `${value} thành công`);
+		setTodoApi({
+		  ...listTodoApi,
+		  pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// PAGINATION
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		getDataPurpose();
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		  pageIndex: pageIndex,
+		});
 	};
 
 	// ON SEARCH
@@ -153,28 +173,33 @@ const Purpose = () => {
 	};
 	
 	const onSearch = (valueSearch, dataIndex) => {
+		console.log(dataTable);
 		let clearKey = compareField(valueSearch, dataIndex);
 
 		setTodoApi({
 			...todoApi,
 			...clearKey,
 		});
-
 	};
 
 	// DELETE
 	const handleDelele = () => {
 		if(dataDelete) {
+			setIsModalVisible(false);
 			let res = _onSubmit(dataDelete);
 			res.then(function (rs: any) {
-				rs && rs.status == 200 && setIsModalVisible(false);
+			 	rs && rs.status == 200;
 			});
 		}
 	}
 
 	// HANDLE RESET
 	const handleReset = () => {
-		setTodoApi(listTodoApi);
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// HANDLE SORT
@@ -186,26 +211,27 @@ const Purpose = () => {
 			sort: option.title.sort,
 			sortType: option.title.sortType,
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	};
 
 	// COLUMNS TABLE
 	const columns = [
 		{
-			title: 'Purposes Name', 
+			title: 'Mục đích học', 
 			dataIndex: 'PurposesName', 
-			...FilterColumn('PurposesName', onSearch, handleReset, "text")
+			...FilterColumn('PurposesName', onSearch, handleReset, "text"),
+			render: (text) => { return <p className="font-weight-black">{text}</p> }
 		},
 		{
-			title: 'Modified By', 
+			title: 'Thay đổi Bởi', 
 			dataIndex: 'ModifiedBy', 
 			// ...FilterColumn('ModifiedBy', onSearch, handleReset, "text")
 		},
 		{
-			title: 'Modified On',
+			title: 'Thay đổi Lúc',
 			dataIndex: 'ModifiedOn',
-			render: (date) => moment(date).format("DD/MM/YYYY"),
+			render: (date) => { return <p className="font-weight-blue">{moment(date).format("DD/MM/YYYY")}</p> }
 			// ...FilterDateColumn("expires"),
 		},
 		{
@@ -237,7 +263,7 @@ const Purpose = () => {
 	];
 
 	useEffect(() => {
-		getDataPurpose();
+		getDataTable();
 	}, [todoApi])
 
 
@@ -253,6 +279,7 @@ const Purpose = () => {
 			</Modal>
 			<PowerTable
 				loading={isLoading}
+				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				addClass="basic-header"
@@ -263,7 +290,7 @@ const Purpose = () => {
 						isLoading={isLoading} 
 						_onSubmit={(data: any) => _onSubmit(data)}
 					/>}
-				dataSource={dataPurpose}
+				dataSource={dataTable}
 				columns={columns}
 				Extra={
 					<div className="extra-table">
