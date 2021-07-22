@@ -138,7 +138,7 @@ const CenterForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title="Tạo trung tâm"
+        title={branchId ? "Sửa trung tâm" : "Thêm trung tâm"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}

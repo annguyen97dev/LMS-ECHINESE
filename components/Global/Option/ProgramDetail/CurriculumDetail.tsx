@@ -194,7 +194,7 @@ const CurriculumDetail = (props) => {
         currentPage={currentPage}
         totalPage={totalPage && totalPage}
         getPagination={(pageNumber: number) => getPagination(pageNumber)}
-        addClass="table-fix-column modal-medium"
+        addClass="table-curriculum-detail"
         loading={isLoading}
         dataSource={dataSource}
         columns={columns}

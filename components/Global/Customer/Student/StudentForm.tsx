@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Modal, Form, Input, Spin, Tooltip, Skeleton } from "antd";
+import { Modal, Form, Input, Spin, Tooltip, Skeleton, Select } from "antd";
 import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import { gradeApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 
-const GradeForm = React.memo((props: any) => {
+const StudentForm = React.memo((props: any) => {
+  const { Option } = Select;
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading, rowID, _onSubmit, getIndex, index, rowData } = props;
+  const { isLoading, rowID, _onSubmit, getIndex, dataCenter, rowData } = props;
   const {
     register,
     handleSubmit,
@@ -19,12 +20,21 @@ const GradeForm = React.memo((props: any) => {
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
-    let res = _onSubmit(data);
+    console.log("DATA SUBMIT: ", data);
+    // let res = _onSubmit(data);
 
-    res.then(function (rs: any) {
-      rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
-    });
+    // res.then(function (rs: any) {
+    //   rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
+    // });
   });
+
+  // ON CHANGE SELECT
+  const onChangeSelect = (name) => (value) => {
+    if (name == "Branch") {
+      value = value.toString();
+    }
+    setValue(name, value);
+  };
 
   useEffect(() => {
     if (isModalVisible) {
@@ -65,7 +75,7 @@ const GradeForm = React.memo((props: any) => {
 
       {/*  */}
       <Modal
-        title={rowID ? "Sửa khối học" : "Thêm khối học"}
+        title={rowID ? "Sửa học viên" : "Thêm học viên"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -75,18 +85,27 @@ const GradeForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item
-                  name="GradeCode"
-                  label="Code khóa"
+                  name="Branch"
+                  label="Trung tâm"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
                   ]}
                 >
-                  <Input
-                    placeholder=""
+                  <Select
+                    mode="multiple"
+                    allowClear
+                    style={{ width: "100%" }}
                     className="style-input"
-                    onChange={(e) => setValue("GradeCode", e.target.value)}
-                    allowClear={true}
-                  />
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={onChangeSelect("Branch")}
+                  >
+                    {dataCenter?.map((item, index) => (
+                      <Option key={index} value={item.ID}>
+                        {item.BranchName}
+                      </Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </div>
             </div>
@@ -130,9 +149,9 @@ const GradeForm = React.memo((props: any) => {
               <div className="col-12">
                 <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                  {isLoading.type == "ADD_DATA" && isLoading.status && (
-                    <Spin className="loading-base" />
-                  )}
+                  {isLoading &&
+                    isLoading.type == "ADD_DATA" &&
+                    isLoading.status && <Spin className="loading-base" />}
                 </button>
               </div>
             </div>
@@ -143,4 +162,4 @@ const GradeForm = React.memo((props: any) => {
   );
 });
 
-export default GradeForm;
+export default StudentForm;

@@ -1090,17 +1090,17 @@ hr {
       }
     }
 
-    tr.ant-table-row:last-child {
-      td {
-        &:nth-child(2) {
-          border-bottom-left-radius: 0.575rem !important;
-        }
+    // tr.ant-table-row:last-child {
+    //   td {
+    //     &:nth-child(2) {
+    //       border-bottom-left-radius: 0.575rem !important;
+    //     }
 
-        &:last-child {
-          border-bottom-right-radius: 0.575rem !important;
-        }
-      }
-    }
+    //     &:last-child {
+    //       border-bottom-right-radius: 0.575rem !important;
+    //     }
+    //   }
+    // }
 
     tr.ant-table-row:focus {
       td {
@@ -1144,29 +1144,29 @@ hr {
           &:nth-child(1) {
             border-top-left-radius: 0.575rem !important;
           }
-          &:nth-child(2) {
-            border-top-left-radius: 0 !important;
-          }
+          // &:nth-child(2) {
+          //   border-top-left-radius: 0 !important;
+          // }
           &:last-child {
             border-top-right-radius: 0.575rem !important;
           }
         }
       }
     }
-    tr.ant-table-row:last-child {
-      td {
-        &:nth-child(1) {
-          border-bottom-left-radius: 0.575rem !important;
-        }
-        &:nth-child(2) {
-          border-bottom-left-radius: 0 !important;
-        }
+    // tr.ant-table-row:last-child {
+    //   td {
+    //     &:nth-child(1) {
+    //       border-bottom-left-radius: 0.575rem !important;
+    //     }
+    //     &:nth-child(2) {
+    //       border-bottom-left-radius: 0 !important;
+    //     }
 
-        &:last-child {
-          border-bottom-right-radius: 0.575rem !important;
-        }
-      }
-    }
+    //     &:last-child {
+    //       border-bottom-right-radius: 0.575rem !important;
+    //     }
+    //   }
+    // }
   }
 }
 
@@ -1680,4 +1680,16 @@ hr {
 .icon-additional {
   color: #067fa4;
   width: 20px;
+}
+
+// .table-curriculum-detail {
+//   table {
+//     .ant-table-thead tr th:nth-child(2) {
+//       border-top-left-radius: 0.575rem !important;
+//     }
+//   }
+// }
+
+.w-70 {
+  width: 70%;
 }

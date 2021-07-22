@@ -618,13 +618,13 @@ export const dataMenu = [
             Text: "Khối học",
             Icon: "",
           },
-          {
-            ItemType: "single",
-            Key: "/option/class",
-            Route: "/option/class",
-            Text: "Lớp học",
-            Icon: "",
-          },
+          // {
+          //   ItemType: "single",
+          //   Key: "/option/class",
+          //   Route: "/option/class",
+          //   Text: "Lớp học",
+          //   Icon: "",
+          // },
           {
             ItemType: "single",
             Key: "/option/study-time",

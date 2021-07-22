@@ -95,7 +95,7 @@ const ProgramForm = React.memo((props: any) => {
 
       {/*  */}
       <Modal
-        title={`${!props.showAdd ? "Sửa" : "Tạo"} lớp học`}
+        title={`${programID ? "Sửa" : "Tạo"} lớp học`}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}

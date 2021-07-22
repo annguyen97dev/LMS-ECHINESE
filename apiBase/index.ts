@@ -16,3 +16,4 @@ export { puroseApi } from "./options/purose";
 export { supplierApi } from "./options/supplier";
 export { subjectApi } from "./options/subject";
 export { curriculumDetailApi } from "./options/curriculum-detail";
+export { studentApi } from "./customer/student/student-list";
