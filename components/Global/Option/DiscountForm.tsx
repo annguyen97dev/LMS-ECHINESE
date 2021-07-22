@@ -27,6 +27,16 @@ const DiscountForm = (props) => {
       id: 3,
       text: "Hết hạn",
     },
+  ];
+  const packages = [
+    {
+      id: 1,
+      text: "Gói lẻ"
+    },
+    {
+      id: 2,
+      text: "Gói combo"
+    }
   ]
   
   const currentDay = new Date();
@@ -251,7 +261,7 @@ const DiscountForm = (props) => {
             </div>
             {/*  */}
             <div className="row">
-              <div className="col-12">
+              <div className="col-6">
                 <Form.Item 
                   label="Trạng thái"
                   name="Status"
@@ -271,6 +281,50 @@ const DiscountForm = (props) => {
                         </Option>
 										</Select>
                 </Form.Item>
+              </div>
+              <div className="col-6">
+              {props.showAdd ? (
+                  <Form.Item 
+                    label="Gói"
+                    name="Packages"
+                    rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                    >
+                    <Select 
+                      className="style-input" 
+                      allowClear={true}
+                      onChange={(value) => setValue("Style", value)}>
+                        {packages.map(row => (
+                          <Option key={row.id} value={row.id}>{row.text}</Option>
+                        ))
+                        }
+                        <Option value="disabled" disabled>
+                          Disabled
+                        </Option>
+                    </Select>
+                  </Form.Item>
+              ) : (
+                <Form.Item 
+                  label="Gói"
+                  name="Packages"
+                  rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+
+                  initialValue={props.rowData?.Style == 2 ? "Gói combo" : "Gói lẻ"}
+                  >
+                  <Select 
+                    className="style-input" 
+                    allowClear={true}
+                    onChange={(value) => setValue("Style", value)}>
+                      {packages.map(row => (
+                        <Option key={row.id} value={row.id}>{row.text}</Option>
+                      ))
+                      }
+                      <Option value="disabled" disabled>
+                        Disabled
+                      </Option>
+                  </Select>
+                </Form.Item>
+              )}
+
               </div>
             </div>
             <div className="row">

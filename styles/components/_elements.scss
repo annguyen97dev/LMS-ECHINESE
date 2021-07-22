@@ -472,6 +472,19 @@ textarea.form-control {
     margin-bottom: 0;
   }
 }
+
+.style-input.multiple-select {
+  .ant-select-selector,
+  &.ant-input,
+  .ant-picker-input input,
+  &.ant-picker,
+  .ant-picker {
+    font-size: 14px;
+    border-radius: 0.375rem !important;
+    height: auto !important;
+  }
+}
+
 .ant-form-item-label {
   font-weight: 500;
 }

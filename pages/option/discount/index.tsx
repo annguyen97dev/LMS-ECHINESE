@@ -273,6 +273,17 @@ const Discount = () => {
 		
 		},
 		{
+			title: 'Gói', 
+			dataIndex: 'Style',
+			render: (text, record) => {
+				if(record.Style == 2) {
+					return <span>Gói combo</span>
+				} else {
+					return <span>Gới lẻ</span>
+				}
+			}
+		},
+		{
 			title: 'Trạng thái', 
 			dataIndex: 'StatusName',
 		},

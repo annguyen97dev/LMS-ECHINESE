@@ -15,3 +15,4 @@ export { puroseApi } from "./options/purose";
 export { supplierApi } from "./options/supplier";
 export { discountApi } from "./options/discount";
 export { sourceInfomationApi } from "./options/source-infomation";
+export { notificationApi } from "./options/notification";

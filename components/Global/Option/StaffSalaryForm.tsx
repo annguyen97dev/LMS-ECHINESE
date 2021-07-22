@@ -93,7 +93,7 @@ const StaffSalaryForm = (props) => {
 											placeholder="Chọn nhân viên"
 											allowClear={true}
 											onChange={(value) => setValue("UserInformationID", value)}>
-											{props.dataStaff && props.dataStaff .map(row => (
+											{props.dataStaff && props.dataStaff.map(row => (
 												<Option key={row.UserInformationID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
 											))
 											}
