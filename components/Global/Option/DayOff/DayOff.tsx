@@ -82,6 +82,7 @@ const DayOff = () => {
 	};
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
 			pageSize,
@@ -265,6 +266,7 @@ const DayOff = () => {
 			dataIndex: 'CreatedBy',
 		},
 		{
+			align: 'center',
 			render: (value, _, idx) => (
 				// VÌ KHI CLICK VÀO THẰNG TALBE THÌ TRIGGER LUÔN CẢ FUNCTION CỦA CÁC THẰNG BÊN TRONG
 				<div onClick={(e) => e.stopPropagation()}>

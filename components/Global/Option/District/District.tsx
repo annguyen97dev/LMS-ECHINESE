@@ -70,6 +70,7 @@ const District = () => {
 	];
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
 			pageSize,
@@ -204,7 +205,10 @@ const District = () => {
 			res = await districtApi.update(newObj);
 			if (res.status === 200) {
 				const newDistrictList = [...districtList];
-				newDistrictList.splice(idx, 1, newObj);
+				newDistrictList.splice(idx, 1, {
+					...newObj,
+					AreaName: areaList.find((a) => a.value === newObj.AreaID).title,
+				});
 				setDistrictList(newDistrictList);
 				showNoti('success', res.data.message);
 			}
@@ -278,6 +282,7 @@ const District = () => {
 		},
 
 		{
+			align: 'center',
 			render: (value, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
 					<DistrictForm
