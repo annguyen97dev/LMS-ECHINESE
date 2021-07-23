@@ -4,49 +4,74 @@ import { data } from "../../../lib/option/dataOption";
 import { Tooltip, Switch } from "antd";
 import GradeForm from "~/components/Global/Option/GradeForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
-import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import SortBox from "~/components/Elements/SortBox";
 import LayoutBase from "~/components/LayoutBase";
 import { gradeApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import { Trash2 } from "react-feather";
-import DecideModal from "~/components/Elements/DecideModal";
+import moment from "moment";
 
 let pageIndex = 1;
 
+let listFieldSearch = {
+  pageIndex: 1,
+  GradeCode: null,
+  GradeName: null,
+};
+
+const listTodoApi = {
+  pageSize: 10,
+  pageIndex: pageIndex,
+  sort: null,
+  sortType: null,
+  GradeCode: null,
+  GradeName: null,
+};
+
+const dataOption = [
+  {
+    dataSort: {
+      sort: 0,
+      sortType: false,
+    },
+    text: "Tên giảm dần",
+  },
+  {
+    dataSort: {
+      sort: 0,
+      sortType: true,
+    },
+    text: "Tên tăng dần ",
+  },
+];
+
 const Grade = () => {
-  const [dataCourse, setDataCourse] = useState<IGrade[]>([]);
+  // ------ BASE USESTATE TABLE -------
+  const [dataSource, setDataSource] = useState<IGrade[]>([]);
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
-  const [isOpen, setIsOpen] = useState({
-    isOpen: false,
-    status: null,
-  });
-  const [dataHidden, setDataHidden] = useState({
-    GradeID: null,
-    Enable: null,
-  });
-  const [rowData, setRowData] = useState<IGrade[]>();
+  const [totalPage, setTotalPage] = useState(null);
+  const [indexRow, setIndexRow] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todoApi, setTodoApi] = useState(listTodoApi);
 
-  // GET DATA COURSE
-  const getDataCourse = async () => {
+  // GET DATA SOURCE
+  const getDataSource = async () => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
 
-    let todoApi = {
-      action: "getAll",
-      pageIndex: pageIndex,
-    };
-
     try {
       let res = await gradeApi.getAll(todoApi);
-      res.status == 200 && setDataCourse(res.data.data);
+      res.status == 200 &&
+        (setDataSource(res.data.data),
+        setTotalPage(res.data.totalRow),
+        showNoti("success", "Thành công"));
+      res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -57,43 +82,37 @@ const Grade = () => {
     }
   };
 
-  // GET DATA CORUSE WITH ID
-  const getDataCourseWithID = (CourseID: number) => {
-    setIsLoading({
-      type: "GET_WITH_ID",
-      status: true,
+  // ---------------- AFTER SUBMIT -----------------
+  const afterPost = (mes) => {
+    showNoti("success", mes);
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
     });
-    (async () => {
-      try {
-        let res = await gradeApi.getWithID(CourseID);
-        res.status == 200 && setRowData(res.data.createAcc);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "GET_WITH_ID",
-          status: false,
-        });
-      }
-    })();
+    setCurrentPage(1);
   };
 
-  // _ADD DATA
-  const _onSubmit = async (data: any) => {
+  // ----------------- ON SUBMIT --------------------
+  const _onSubmit = async (dataSubmit: any) => {
     setIsLoading({
       type: "ADD_DATA",
       status: true,
     });
 
-    console.log("DATA SUBMIT: ", data);
-
     let res = null;
 
-    if (data.GradeID) {
+    if (dataSubmit.ID) {
       try {
-        res = await gradeApi.put(data);
-        // res?.status == 200 && editRowData(data, res.data.message);
+        res = await gradeApi.update(dataSubmit);
+
+        if (res.status == 200) {
+          let newDataSource = [...dataSource];
+          newDataSource.splice(indexRow, 1, dataSubmit);
+          setDataSource(newDataSource);
+          showNoti("success", res.data.message);
+        }
       } catch (error) {
+        console.log("error: ", error);
         showNoti("danger", error.message);
       } finally {
         setIsLoading({
@@ -103,8 +122,8 @@ const Grade = () => {
       }
     } else {
       try {
-        res = await gradeApi.addData(data);
-        res?.status == 200 && afterPost();
+        res = await gradeApi.add(dataSubmit);
+        res?.status == 200 && afterPost(res.data.message);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -118,66 +137,112 @@ const Grade = () => {
     return res;
   };
 
-  // DELETE COURSE
-  const changeStatus = (checked: boolean, idCourse: number) => {
-    setDataHidden({
-      GradeID: idCourse,
-      Enable: checked,
+  // ----------------- TURN OF ------------------------
+  const changeStatus = async (checked: boolean, idRow: number) => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
     });
 
-    !isOpen.isOpen && checked
-      ? setIsOpen({ isOpen: true, status: "hide" })
-      : setIsOpen({ isOpen: true, status: "show" });
+    let dataChange = {
+      ID: idRow,
+      Enable: checked,
+    };
+
+    try {
+      let res = await gradeApi.update(dataChange);
+      res.status == 200 && setTodoApi({ ...todoApi });
+    } catch (error) {
+      showNoti("danger", error.Message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
   };
 
-  // AFTER POST SUCCESS
-  const afterPost = () => {
-    showNoti("success", "Thêm thành công");
-    getDataCourse();
-    // addDataSuccess(), setIsModalVisible(false);
+  // -------------- CHECK FIELD ---------------------
+  const checkField = (valueSearch, dataIndex) => {
+    let newList = { ...listFieldSearch };
+    Object.keys(newList).forEach(function (key) {
+      console.log("key: ", key);
+      if (key != dataIndex) {
+        if (key != "pageIndex") {
+          newList[key] = null;
+        }
+      } else {
+        newList[key] = valueSearch;
+      }
+    });
+
+    return newList;
   };
 
-  // console.log("Data Course: ", dataCourse);
-  // console.log("Data hidden: ", dataHidden);
+  // --------------- HANDLE SORT ----------------------
+  const handleSort = async (option) => {
+    let newTodoApi = {
+      ...listTodoApi,
+      pageIndex: 1,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    };
+    setCurrentPage(1), setTodoApi(newTodoApi);
+  };
 
-  // const statusShow = async () => {
-  //   setIsLoading({
-  //     type: "GET_ALL",
-  //     status: true,
-  //   });
-  //   try {
-  //     let res = await gradeApi.patch(dataHidden);
-  //     res.status == 200 && updateAtRow(res.data.message);
-  //     isOpen.status == "hide"
-  //       ? setIsOpen({ isOpen: false, status: "hide" })
-  //       : setIsOpen({ isOpen: false, status: "show" });
-  //   } catch (error) {
-  //     showNoti("danger", error.Message);
-  //   } finally {
-  //     setIsLoading({
-  //       type: "GET_ALL",
-  //       status: false,
-  //     });
-  //   }
-  // };
+  // ------------ ON SEARCH -----------------------
+  const onSearch = (valueSearch, dataIndex) => {
+    let clearKey = checkField(valueSearch, dataIndex);
 
-  // GET PAGE_NUMBER
+    setTodoApi({
+      ...todoApi,
+      ...clearKey,
+    });
+  };
+
+  // HANDLE RESET
+  const resetListFieldSearch = () => {
+    Object.keys(listFieldSearch).forEach(function (key) {
+      if (key != "pageIndex") {
+        listFieldSearch[key] = null;
+      }
+    });
+  };
+
+  const handleReset = () => {
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
+    });
+    setCurrentPage(1), resetListFieldSearch();
+  };
+
+  // -------------- GET PAGE_NUMBER -----------------
   const getPagination = (pageNumber: number) => {
-    console.log("Page number: ", pageNumber);
     pageIndex = pageNumber;
-    console.log("Index page = ", pageIndex);
+    setCurrentPage(pageNumber);
+    setTodoApi({
+      ...todoApi,
+      ...listFieldSearch,
+      pageIndex: pageIndex,
+    });
   };
+
+  // ============== USE EFFECT - FETCH DATA ===================
+  useEffect(() => {
+    getDataSource();
+  }, [todoApi]);
 
   const columns = [
     {
       title: "Mã khối",
       dataIndex: "GradeCode",
-      ...FilterColumn("GradeCode"),
+      ...FilterColumn("GradeCode", onSearch, handleReset, "text"),
     },
     {
       title: "Tên khối",
       dataIndex: "GradeName",
-      ...FilterColumn("GradeName"),
+      ...FilterColumn("GradeName", onSearch, handleReset, "text"),
     },
     {
       title: "Description",
@@ -187,10 +252,10 @@ const Grade = () => {
     {
       title: "Create on",
       dataIndex: "CreatedOn",
-      ...FilterDateColumn("CreatedOn"),
+      render: (date: any) => moment(date).format("DD/MM/YYYY"),
     },
     {
-      title: "Hidden",
+      title: "Trạng thái",
       dataIndex: "Enable",
       render: (Enable, record) => (
         <>
@@ -199,21 +264,20 @@ const Grade = () => {
             unCheckedChildren="Ẩn"
             checked={Enable}
             size="default"
-            onChange={(checked) => changeStatus(checked, record.GradeID)}
+            onChange={(checked) => changeStatus(checked, record.ID)}
           />
         </>
       ),
     },
     {
-      render: (record) => (
+      render: (text, data, index) => (
         <>
           <Tooltip title="Cập nhật trung tâm">
             <GradeForm
-              gradeID={record.GradeID}
-              getDataCourseWithID={(CourseID: number) =>
-                getDataCourseWithID(CourseID)
-              }
-              rowData={rowData}
+              getIndex={() => setIndexRow(index)}
+              index={index}
+              rowData={data}
+              rowID={data.ID}
               isLoading={isLoading}
               _onSubmit={(data: any) => _onSubmit(data)}
             />
@@ -223,49 +287,29 @@ const Grade = () => {
     },
   ];
 
-  useEffect(() => {
-    getDataCourse();
-  }, []);
-
-  // useEffect(() => {
-  //   dataSuccess && getDataCourse();
-  // }, [dataSuccess]);
-
   return (
     <>
-      {/* <DecideModal
-        content={`Bạn có chắc muốn ${
-          isOpen.status == "hide" ? "hiện" : "ẩn"
-        } không?`}
-        addClass="color-red"
-        isOpen={isOpen.isOpen}
-        isCancel={() =>
-          setIsOpen({
-            ...isOpen,
-            isOpen: false,
-          })
-        }
-        isOk={() => statusShow()}
-      /> */}
       <PowerTable
+        currentPage={currentPage}
+        totalPage={totalPage && totalPage}
         getPagination={(pageNumber: number) => getPagination(pageNumber)}
         loading={isLoading}
         addClass="basic-header"
         TitlePage="Danh sách khối học"
         TitleCard={
           <GradeForm
-            showAdd={true}
-            addDataSuccess={() => getDataCourse()}
             isLoading={isLoading}
             _onSubmit={(data: any) => _onSubmit(data)}
           />
         }
-        dataSource={dataCourse}
+        dataSource={dataSource}
         columns={columns}
         Extra={
           <div className="extra-table">
-            {/* <FilterTable /> */}
-            <SortBox />
+            <SortBox
+              handleSort={(value) => handleSort(value)}
+              dataOption={dataOption}
+            />
           </div>
         }
       />

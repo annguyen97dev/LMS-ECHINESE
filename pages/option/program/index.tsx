@@ -1,153 +1,381 @@
 import React, { FC, Fragment, useEffect, useState } from "react";
 import PowerTable from "~/components/PowerTable";
 import randomColor from "randomcolor";
-import { Tag, Tooltip, message } from "antd";
+import { Tag, Tooltip, Switch } from "antd";
 import { Info, RotateCcw } from "react-feather";
 import SortBox from "~/components/Elements/SortBox";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import Link from "next/link";
 import LayoutBase from "~/components/LayoutBase";
-import { classApi, branchApi, courseApi, roomApi } from "~/apiBase";
-
-import is from "date-fns/esm/locale/is/index.js";
+import { programApi, gradeApi } from "~/apiBase";
+import moment from "moment";
 import { useWrap } from "~/context/wrap";
-import ClassForm from "~/components/Global/Option/ClassModal";
 import ClassModal from "~/components/Global/Option/ClassModal";
+import ProgramForm from "~/components/Global/Option/ProgramForm";
+import FilterProgram from "~/components/Global/Option/FilterTable/FilterProgram";
+
+let pageIndex = 1;
+
+let listFieldSearch = {
+  pageIndex: 1,
+  ProgramCode: null,
+  ProgramName: null,
+};
+
+const listTodoApi = {
+  pageSize: 10,
+  pageIndex: pageIndex,
+  sort: null,
+  sortType: null,
+  ProgramCode: null,
+  ProgramName: null,
+  Type: null,
+  Level: null,
+  fromDate: null,
+  toDate: null,
+};
+
+const dataOption = [
+  {
+    dataSort: {
+      sort: 0,
+      sortType: false,
+    },
+    text: "Tên Z - A",
+  },
+  {
+    dataSort: {
+      sort: 0,
+      sortType: true,
+    },
+    text: "Tên A - Z ",
+  },
+  {
+    dataSort: {
+      sort: 2,
+      sortType: false,
+    },
+    text: "Học phí Z - A ",
+  },
+  {
+    dataSort: {
+      sort: 2,
+      sortType: true,
+    },
+    text: "Học phí A - Z ",
+  },
+];
 
 const Programs = () => {
-  const [center, setCenter] = useState<IBranch[]>([]);
-  const [dataCourse, setDataCourse] = useState<ICourse[]>([]);
-  const [dataSource, setDataSource] = useState<IClass[]>([]);
-  const [dataRoom, setDataRoom] = useState([]);
-  const [ClassForm, setClassForm] = useState(false);
+  const [dataGrade, setDataGrade] = useState<IGrade[]>([]);
+  const [dataLevel, setDataLevel] = useState([]);
+
+  // ------ BASE USESTATE TABLE -------
+  const [dataSource, setDataSource] = useState<IProgram[]>([]);
+  const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
+  const [totalPage, setTotalPage] = useState(null);
+  const [indexRow, setIndexRow] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todoApi, setTodoApi] = useState(listTodoApi);
 
-  const { showNoti } = useWrap();
-  //get data Class
-
-  const getAllData = (page: number) => {
+  // GET DATA SOURCE
+  const getDataSource = async () => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
 
-    (async () => {
-      try {
-        const res = await classApi.getAll(page);
+    try {
+      let res = await programApi.getAll(todoApi);
+      res.status == 200 &&
+        (setDataSource(res.data.data),
+        setTotalPage(res.data.totalRow),
+        setDataLevel(res.data.listLevel));
 
-        res.status == 200 && setDataSource(res.data.data);
+      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
+  };
+
+  // GET DATA CENTER
+  const getDataGrade = async () => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
+
+    try {
+      let res = await gradeApi.getAll({
+        pageIndex: 1,
+        pageSize: Number.MAX_SAFE_INTEGER,
+      });
+      res.status == 200 &&
+        (setDataGrade(res.data.data),
+        setTotalPage(res.data.totalRow),
+        showNoti("success", "Thành công"));
+      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
+  };
+
+  // ---------------- AFTER SUBMIT -----------------
+  const afterPost = (mes) => {
+    showNoti("success", mes);
+
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
+    });
+    setCurrentPage(1);
+  };
+
+  // ----------------- ON SUBMIT --------------------
+  const _onSubmit = async (dataSubmit: any) => {
+    setIsLoading({
+      type: "ADD_DATA",
+      status: true,
+    });
+
+    let res = null;
+
+    if (dataSubmit.ID) {
+      try {
+        res = await programApi.update(dataSubmit);
+
+        if (res.status == 200) {
+          let newDataSource = [...dataSource];
+          newDataSource.splice(indexRow, 1, dataSubmit);
+          setDataSource(newDataSource);
+          showNoti("success", res.data.message);
+        }
+      } catch (error) {
+        console.log("error: ", error);
+        showNoti("danger", error.message);
+      } finally {
+        setIsLoading({
+          type: "ADD_DATA",
+          status: false,
+        });
+      }
+    } else {
+      try {
+        res = await programApi.add(dataSubmit);
+        res?.status == 200 && afterPost(res.data.message);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
         setIsLoading({
-          type: "GET_ALL",
+          type: "ADD_DATA",
           status: false,
         });
       }
-    })();
+    }
+
+    return res;
   };
 
-  // GET ALL BRANCH
-  const getAllBranch = () => {
-    (async () => {
-      try {
-        const res = await branchApi.getAll();
+  // ----------------- TURN OF ------------------------
+  const changeStatus = async (checked: boolean, idRow: number) => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
 
-        res.status == 200 && setCenter(res.data.createAcc);
-      } catch (error) {
-        showNoti("danger", error.message);
+    let dataChange = {
+      ID: idRow,
+      Enable: checked,
+    };
+
+    try {
+      let res = await programApi.update(dataChange);
+      res.status == 200 && setTodoApi({ ...todoApi });
+    } catch (error) {
+      showNoti("danger", error.Message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
+    }
+  };
+
+  // -------------- HANDLE FILTER -------------------
+  const handleFilter = (value) => {
+    console.log("Value in here: ", value);
+    setTodoApi({
+      ...listTodoApi,
+      ...value,
+    });
+  };
+
+  // -------------- CHECK FIELD ---------------------
+  const checkField = (valueSearch, dataIndex) => {
+    let newList = { ...listFieldSearch };
+    Object.keys(newList).forEach(function (key) {
+      console.log("key: ", key);
+      if (key != dataIndex) {
+        if (key != "pageIndex") {
+          newList[key] = null;
+        }
+      } else {
+        newList[key] = valueSearch;
       }
-    })();
+    });
+
+    return newList;
   };
 
-  // GET ROOM
-  const getRoom = (id: number) => {
-    (async () => {
-      try {
-        const res = await roomApi.getWithID(id);
-        res.status == 200 && setDataRoom(res.data.createAcc);
-      } catch (error) {
-        showNoti("danger", error.message);
+  // --------------- HANDLE SORT ----------------------
+  const handleSort = async (option) => {
+    let newTodoApi = {
+      ...listTodoApi,
+      pageIndex: 1,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    };
+    setCurrentPage(1), setTodoApi(newTodoApi);
+  };
+
+  // ------------ ON SEARCH -----------------------
+  const onSearch = (valueSearch, dataIndex) => {
+    let clearKey = checkField(valueSearch, dataIndex);
+
+    setTodoApi({
+      ...listTodoApi,
+      ...clearKey,
+    });
+  };
+
+  // HANDLE RESET
+  const resetListFieldSearch = () => {
+    Object.keys(listFieldSearch).forEach(function (key) {
+      if (key != "pageIndex") {
+        listFieldSearch[key] = null;
       }
-    })();
+    });
   };
 
-  // GET DATA COURSE
-  const getAllCourse = () => {
-    (async () => {
-      try {
-        let res = await courseApi.getAll();
-        res.status == 200 && setDataCourse(res.data.acc);
-      } catch (error) {
-        showNoti("danger", error.message);
-      }
-    })();
+  const handleReset = () => {
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
+    });
+    setCurrentPage(1), resetListFieldSearch();
   };
 
-  // SHOW MODAL AND GET ALL BRANCH
-  const startShowModal = () => {
-    getAllBranch();
-    getAllCourse();
+  // -------------- GET PAGE_NUMBER -----------------
+  const getPagination = (pageNumber: number) => {
+    pageIndex = pageNumber;
+    setCurrentPage(pageNumber);
+
+    setTodoApi({
+      ...todoApi,
+      ...listFieldSearch,
+      pageIndex: pageIndex,
+    });
   };
+
+  // ============== USE EFFECT - FETCH DATA ===================
+  useEffect(() => {
+    getDataSource();
+  }, [todoApi]);
 
   useEffect(() => {
-    getAllData(1);
+    getDataGrade();
   }, []);
 
+  // ---------------- COLUMN --------------------
   const columns = [
     {
       title: "Khóa học",
-      dataIndex: "ListCourseName",
-      ...FilterColumn("ListCourseName"),
-      render: (ListCourseName) => {
-        return <p className="font-weight-black">{ListCourseName}</p>;
+      dataIndex: "GradeName",
+
+      render: (text) => {
+        return <p className="font-weight-black">{text}</p>;
       },
     },
     {
       title: "Tên lớp",
-      dataIndex: "ListClassName",
-      ...FilterColumn("ListClassName"),
-      render: (ListClassName) => {
-        return <p className="font-weight-blue">{ListClassName}</p>;
+      dataIndex: "ProgramName",
+      ...FilterColumn("ProgramName", onSearch, handleReset, "text"),
+      render: (text) => {
+        return <p className="font-weight-blue">{text}</p>;
       },
+    },
+    {
+      title: "Level",
+      dataIndex: "Level",
     },
     {
       title: "Học phí",
       dataIndex: "Price",
-      ...FilterColumn("Price"),
+
       render: (Price) => {
-        return <p className="font-weight-black">{Price}</p>;
+        return (
+          <p className="font-weight-black">
+            {new Intl.NumberFormat().format(Price)}
+          </p>
+        );
+      },
+    },
+    {
+      title: "Loại",
+      dataIndex: "Type",
+      // ...FilterColumn("Price"),
+      render: (Type) => {
+        return Type == 1 ? "Zoom" : "Offline";
       },
     },
     {
       title: "Trạng thái",
-      dataIndex: "Type",
-      ...FilterColumn("Type"),
-      render: (Type) => <span className="tag green">{Type}</span>,
+      dataIndex: "Enable",
+      render: (Enable, record) => (
+        <>
+          <Switch
+            checkedChildren="Hiện"
+            unCheckedChildren="Ẩn"
+            checked={Enable}
+            size="default"
+            onChange={(checked) => changeStatus(checked, record.ID)}
+          />
+        </>
+      ),
     },
 
     {
       title: "ModifiedBy",
       dataIndex: "ModifiedBy",
-      ...FilterColumn("ModifiedBy"),
     },
     {
       title: "ModifiedOn",
       dataIndex: "ModifiedOn",
-      ...FilterColumn("ModifiedOn"),
+      render: (date: any) => moment(date).format("DD/MM/YYYY"),
     },
 
     {
-      render: (value, record) => (
+      render: (value, data, index) => (
         <>
           <Link
             href={{
               pathname: "/option/program/program-detail/[slug]",
-              query: { slug: record.ListClassName },
+              query: { slug: data.ID },
             }}
           >
             <Tooltip title="Chi tiết chương trình">
@@ -157,14 +385,15 @@ const Programs = () => {
             </Tooltip>
           </Link>
 
-          <Tooltip title="Cập nhật lớp học">
-            <button
-              className="btn btn-icon edit"
-              onClick={() => setClassForm(true)}
-            >
-              <RotateCcw />
-            </button>
-          </Tooltip>
+          <ProgramForm
+            getIndex={() => setIndexRow(index)}
+            _onSubmit={(data: any) => _onSubmit(data)}
+            programID={data.ID}
+            rowData={data}
+            dataGrade={dataGrade}
+            showAdd={true}
+            isLoading={isLoading}
+          />
         </>
       ),
     },
@@ -173,26 +402,33 @@ const Programs = () => {
   return (
     <Fragment>
       <PowerTable
+        currentPage={currentPage}
+        totalPage={totalPage && totalPage}
+        getPagination={(pageNumber: number) => getPagination(pageNumber)}
         loading={isLoading}
         addClass="basic-header"
         TitlePage="Danh sách chương trình"
         TitleCard={
-          <ClassModal
-            getRoom={(id: number) => getRoom(id)}
-            dataRoom={dataRoom}
-            dataCourse={dataCourse}
-            dataBranch={center}
+          <ProgramForm
+            _onSubmit={(data: any) => _onSubmit(data)}
+            dataGrade={dataGrade}
             showAdd={true}
             isLoading={isLoading}
-            startShowModal={startShowModal}
           />
         }
         dataSource={dataSource}
         columns={columns}
         Extra={
           <div className="extra-table">
-            <FilterTable />
-            <SortBox />
+            <FilterProgram
+              handleReset={handleReset}
+              dataLevel={dataLevel}
+              handleFilter={(value: any) => handleFilter(value)}
+            />
+            <SortBox
+              handleSort={(value) => handleSort(value)}
+              dataOption={dataOption}
+            />
           </div>
         }
       />

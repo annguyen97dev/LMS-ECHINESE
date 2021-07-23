@@ -77,17 +77,16 @@ const Purpose = () => {
 		(async () => {
 		  try {
 			let res = await puroseApi.getAll(todoApi);
-			res.status == 200 && setDataTable(res.data.data);
 			if (res.status == 204) {
-				// Trường họp search CỐ ĐỊNH 1 phần tử và XÓA thì data trả về = trỗng nhưng trong table vẫn còn 1 phần tử thì reset table
-				if(dataTable.length == 1) {
+				showNoti("danger", "Không có dữ liệu");
+				handleReset();
+			}
+			if(res.status == 200){
+				setDataTable(res.data.data);
+				if(res.data.data.length < 1) {
 					handleReset();
-				} else {
-					showNoti("danger", "Không có dữ liệu");
 				}
-			  	setCurrentPage(pageIndex);
-			} else {
-			  setTotalPage(res.data.totalRow);
+				setTotalPage(res.data.totalRow);
 			}
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -113,7 +112,7 @@ const Purpose = () => {
 		console.log(data);
 		try {
 		  res = await puroseApi.update(data);
-		  res?.status == 200 && afterPost("Cập nhật");
+		  res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -140,8 +139,12 @@ const Purpose = () => {
 	}
   
 	const afterPost = (value) => {
-	  showNoti("success", `${value} thành công`);
-	  getDataTable();
+		showNoti("success", `${value} thành công`);
+		setTodoApi({
+		  ...listTodoApi,
+		  pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// PAGINATION
@@ -182,16 +185,21 @@ const Purpose = () => {
 	// DELETE
 	const handleDelele = () => {
 		if(dataDelete) {
+			setIsModalVisible(false);
 			let res = _onSubmit(dataDelete);
 			res.then(function (rs: any) {
-			 	rs && rs.status == 200 && setIsModalVisible(false);
+			 	rs && rs.status == 200;
 			});
 		}
 	}
 
 	// HANDLE RESET
 	const handleReset = () => {
-		setTodoApi(listTodoApi);
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1);
 	};
 
 	// HANDLE SORT
@@ -203,27 +211,27 @@ const Purpose = () => {
 			sort: option.title.sort,
 			sortType: option.title.sortType,
 		};
-
+		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	};
 
 	// COLUMNS TABLE
 	const columns = [
 		{
-			title: 'Purposes Name', 
+			title: 'Mục đích học', 
 			dataIndex: 'PurposesName', 
 			...FilterColumn('PurposesName', onSearch, handleReset, "text"),
 			render: (text) => { return <p className="font-weight-black">{text}</p> }
 		},
 		{
-			title: 'Modified By', 
+			title: 'Thay đổi Bởi', 
 			dataIndex: 'ModifiedBy', 
 			// ...FilterColumn('ModifiedBy', onSearch, handleReset, "text")
 		},
 		{
-			title: 'Modified On',
+			title: 'Thay đổi Lúc',
 			dataIndex: 'ModifiedOn',
-			render: (date) => moment(date).format("DD/MM/YYYY"),
+			render: (date) => { return <p className="font-weight-blue">{moment(date).format("DD/MM/YYYY")}</p> }
 			// ...FilterDateColumn("expires"),
 		},
 		{

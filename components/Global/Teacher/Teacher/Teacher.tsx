@@ -1,11 +1,10 @@
 import moment from 'moment';
-import React, { useEffect, useRef, useState } from 'react';
-import { areaApi, branchApi } from '~/apiBase';
-import teacherApi from '~/apiBase/teacher/teacher';
+import React, {useEffect, useRef, useState} from 'react';
+import {areaApi, branchApi, teacherApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import { useWrap } from '~/context/wrap';
+import {useWrap} from '~/context/wrap';
 import TeacherDelete from './TeacherDelete';
 import TeacherFilterForm from './TeacherFilterForm';
 import TeacherForm from './TeacherForm';

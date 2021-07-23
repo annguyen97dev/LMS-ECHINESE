@@ -1,7 +1,7 @@
 import {instance} from '~/apiBase/instance';
 
 const url = '/api/Teacher/';
-const teacherApi = {
+export const teacherApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<ITeacher[]>>(url, {
@@ -33,4 +33,3 @@ const teacherApi = {
 		return instance.put(url, data);
 	},
 };
-export default teacherApi;

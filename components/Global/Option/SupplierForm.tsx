@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber } from 'antd';
+import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber, Spin } from 'antd';
 import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
@@ -76,33 +76,37 @@ const SupplierForm = (props) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical" onFinish={onSubmit}>
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
             {/*  */}
             <div className="row">
               <div className="col-6">
                 <Form.Item 
-                  label="Supplier Name" 
+                  label="Nhà cung cấp (NCC)"
+                  name="Supplier Name" 
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.SupplierName}
+                  >
                   <Input 
                     className="style-input"
                     allowClear={true}
-                    defaultValue={props.rowData?.SupplierName}
                     onChange={(e) => setValue("SupplierName", e.target.value)} 
                     />
                 </Form.Item>
               </div>
               <div className="col-6">
                 <Form.Item 
-                  label="Tax Code"
+                  label="Mã số thuế"
+                  name="Tax Code"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.Taxcode}
+                  >
                   <Input 
                     className="style-input"
                     allowClear={true}
-                    defaultValue={props.rowData?.Taxcode}
                     onChange={(e) => setValue("Taxcode", e.target.value)} 
                     />
                 </Form.Item>
@@ -111,28 +115,32 @@ const SupplierForm = (props) => {
             <div className="row">
               <div className="col-6">
                 <Form.Item 
-                  label="Represent"
+                  label="Người đại diện NCC"
+                  name="Represent"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.Represent}
+                  >
                   <Input 
                     className="style-input"
                     allowClear={true}
-                    defaultValue={props.rowData?.Represent}
                     onChange={(e) => setValue("Represent", e.target.value)} 
                     />
                 </Form.Item>
               </div>
               <div className="col-6">
                 <Form.Item 
-                  label="Number Of Represent"
+                  label="Số điện thoại"
+                  name="Number Of Represent"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.NumberOfRepresent}
+                  >
                   <Input 
                     className="style-input"
                     allowClear={true}
-                    defaultValue={props.rowData?.NumberOfRepresent}
                     onChange={(e) => setValue("NumberOfRepresent", e.target.value)} 
                     />
                 </Form.Item>
@@ -141,13 +149,16 @@ const SupplierForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item 
-                  label="Person In Charge"
+                  label="Nhân viên quản lí"
+                  name="Person In Charge"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+									initialValue={props.rowData?.PersonInChargeName}
+                  
+                  >
                     <Select 
 											className="style-input" 
-											defaultValue={props.rowData?.PersonInChargeName || "Chọn nhân viên quản lí"}
                       allowClear={true}
 											onChange={(value) => setValue("PersonInChargeID", value)}>
                         {props.dataStaffManage && props.dataStaffManage.map(row => (
@@ -164,14 +175,16 @@ const SupplierForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item 
-                  label="Address"
+                  label="Địa chỉ"
+                  name="Address"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
-                  ]}>
+                  ]}
+                  initialValue={props.rowData?.Address}
+                  >
                   <Input 
                     className="style-input"
                     allowClear={true}
-                    defaultValue={props.rowData?.Address}
                     onChange={(e) => setValue("Address", e.target.value)} 
                     />
                 </Form.Item>
@@ -179,11 +192,14 @@ const SupplierForm = (props) => {
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Introduce">
+                <Form.Item 
+                  label="Giới thiệu ngắn" 
+                  name="Introduce"
+                  initialValue={props.rowData?.Introduce}
+                >
                   <TextArea
                     placeholder=""
                     rows={2} 
-                    defaultValue={props.rowData?.Introduce}
                     allowClear={true}
                     onChange={(e) => setValue("Introduce", e.target.value)}  
                   />
@@ -192,15 +208,12 @@ const SupplierForm = (props) => {
             </div>
             <div className="row ">
               <div className="col-12">
-                {props.showAdd == true ? (
-                  <Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-                    Create
-                  </Button>
-                ) : (
-                  <Button className="w-100" type="primary" size="large" onClick={onSubmit}>
-                    Update
-                  </Button>
-                )}
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {props.isLoading.type == "ADD_DATA" && props.isLoading.status && (
+                    <Spin className="loading-base" />
+                  )}
+                </button>
               </div>
             </div>
           </Form>

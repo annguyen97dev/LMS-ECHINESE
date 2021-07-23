@@ -7,7 +7,7 @@ import { useWrap } from "~/context/wrap";
 
 const JobDelete = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { jobId, reloadData } = props;
+  const { jobId, reloadData, currentPage } = props;
   const { showNoti } = useWrap();
 
   const onHandleDelete = async () => {
@@ -15,7 +15,7 @@ const JobDelete = React.memo((props: any) => {
       // @ts-ignore
       let res = await jobApi.update({ JobID: jobId, Enable: false });
       showNoti("success", res.data?.message);
-      reloadData();
+      reloadData(currentPage);
       setIsModalVisible(false);
     } catch (error) {
       showNoti("danger", error.message);

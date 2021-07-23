@@ -1,17 +1,17 @@
 import { instance } from "~/apiBase/instance";
 
 class ServiceApi {
-    getAll = () =>
-        instance.get<IApiResultData<IService[]>>("/api/Services/GetAll");
-    getWitdhID = (ServiceId: number) =>
-        instance.get<IApiResultData<IService[]>>("/api/Services/GetByID", {
-            params: {
-                id: ServiceId
-            }
+    // Lấy tất cả data
+    getAll = (todoApi: object) =>
+        instance.get<IApiResultData<IService[]>>("/api/Services", {
+            params: todoApi,
         });
-    post = (data: IService) => instance.post("/api/Services/Insert", data, {}); 
-    put = (data: IService) => instance.put("/api/Services/Update", data, {}); 
-    changeStatus = (id: number) => instance.delete(`/api/Services/Hide/${id}`);
+    
+    // Thêm mới data
+    add = (data: IService) => instance.post("/api/Services", data, {});
+
+    // Cập nhật data 
+    update = (data: IService) => instance.put("/api/Services", data, {}); 
 }
 
 export const serviceApi = new ServiceApi();

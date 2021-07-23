@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
-import dayOffApi from '~/apiBase/options/day-off';
+import {dayOffApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import DayOffForm from '~/components/Global/Option/DayOff/DayOffForm';
 import PowerTable from '~/components/PowerTable';

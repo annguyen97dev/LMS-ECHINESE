@@ -35,6 +35,7 @@ const FilterSupplierTable = (props:any) => {
 	const onSubmit = handleSubmit((data: any) => {
 		// console.log(data);
 		props._onFilter(data);
+		showFilterSet(false);
 	});
 
 	const content = (
@@ -68,12 +69,13 @@ const FilterSupplierTable = (props:any) => {
 		<>
 			<div className="wrap-filter-parent">
 				<Popover
+					visible={showFilter}
 					placement="bottomRight"
 					content={content}
 					trigger="click"
 					overlayClassName="filter-popover"
 				>
-					<button className="btn btn-secondary light btn-filter">
+					<button className="btn btn-secondary light btn-filter" onClick={funcShowFilter}>
 						<Filter />
 					</button>
 				</Popover>
