@@ -8,8 +8,8 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 
-const DayOffFilterForm = (props) => {
-	const {handleFilterDayOff} = props;
+const TeacherFilterForm = (props) => {
+	const {handleFilterTeacherJobDate} = props;
 
 	const [showFilter, showFilterSet] = useState(false);
 
@@ -41,20 +41,20 @@ const DayOffFilterForm = (props) => {
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema),
 	});
-	const checkHandleFilterDayOff = (createdBy) => {
-		if (!handleFilterDayOff) return;
-		handleFilterDayOff(createdBy);
+	const checkHandleFilterTeacherJobDate = (createdBy) => {
+		if (!handleFilterTeacherJobDate) return;
+		handleFilterTeacherJobDate(createdBy);
 		funcShowFilter();
 	};
 	const content = (
 		<div className={`wrap-filter small`}>
 			<Form
 				layout="vertical"
-				onFinish={form.handleSubmit(checkHandleFilterDayOff)}
+				onFinish={form.handleSubmit(checkHandleFilterTeacherJobDate)}
 			>
 				<div className="row">
 					<div className="col-md-12">
-						<DateField form={form} name="fromDate" label="Ngày khởi tạo từ" />
+						<DateField form={form} name="fromDate" label="Ngày nhận việc từ" />
 					</div>
 					<div className="col-md-12">
 						<DateField form={form} name="toDate" label="Đến ngày" />
@@ -95,10 +95,10 @@ const DayOffFilterForm = (props) => {
 		</>
 	);
 };
-DayOffFilterForm.propTypes = {
-	handleFilterDayOff: PropTypes.func,
+TeacherFilterForm.propTypes = {
+	handleFilterTeacherJobDate: PropTypes.func,
 };
-DayOffFilterForm.defaultProps = {
-	handleFilterDayOff: null,
+TeacherFilterForm.defaultProps = {
+	handleFilterTeacherJobDate: null,
 };
-export default DayOffFilterForm;
+export default TeacherFilterForm;
