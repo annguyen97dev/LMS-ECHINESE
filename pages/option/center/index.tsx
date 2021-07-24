@@ -69,10 +69,6 @@ const Center = () => {
     type: "",
     status: false,
   });
-  const [isOpen, setIsOpen] = useState({
-    isOpen: false,
-    status: null,
-  });
   const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
   const [indexRow, setIndexRow] = useState(null);

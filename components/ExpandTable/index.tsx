@@ -72,7 +72,7 @@ const ExpandTable = (props) => {
           <Table
             loading={props.loading?.type == "GET_ALL" && props.loading?.status}
             bordered={props.haveBorder ? props.haveBorder : false}
-            scroll={props.noScroll ? { x: "max-content" } : { x: 600 }}
+            scroll={props.noScroll ? { x: "max-content" } : { x: 500 }}
             columns={props.columns}
             dataSource={dataSource}
             size="middle"

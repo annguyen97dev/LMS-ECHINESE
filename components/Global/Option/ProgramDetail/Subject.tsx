@@ -260,11 +260,13 @@ const Subject = () => {
       key: "subjectname",
       width: "20%",
       className: "col-long",
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
       title: "Bổ sung",
       dataIndex: "Additional",
       key: "additional",
+      className: "text-center",
       render: (text, data, index) => (
         <>{text == true && <CheckCircle className="icon-additional" />}</>
       ),

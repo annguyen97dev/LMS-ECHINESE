@@ -116,7 +116,7 @@ const Curriculum = () => {
       if (res.status == 200) {
         if (res.data.data.length > 0) {
           setDataSubject(res.data.data);
-          setTotalPage(res.data.totalRow);
+
           showNoti("success", "Thành công");
         } else {
           showNoti("danger", "Không có dữ liệu môn học");
@@ -246,10 +246,20 @@ const Curriculum = () => {
       title: "Giáo trình",
       dataIndex: "CurriculumName",
       key: "curriculumname",
-      className: "col-long",
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
-    { title: "Thời gian học", dataIndex: "TimeOfLesson", key: "timeoflesson" },
-    { title: "Số buổi học", dataIndex: "Lesson", key: "lesson" },
+    {
+      title: "Thời gian học",
+      dataIndex: "TimeOfLesson",
+      key: "timeoflesson",
+      className: "text-center",
+    },
+    {
+      title: "Số buổi học",
+      dataIndex: "Lesson",
+      key: "lesson",
+      className: "text-center",
+    },
 
     {
       key: "action",

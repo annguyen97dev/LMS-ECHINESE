@@ -65,7 +65,7 @@ const GradeForm = React.memo((props: any) => {
 
       {/*  */}
       <Modal
-        title={`${!props.showAdd ? "Sửa" : "Tạo"} khối học`}
+        title={rowID ? "Sửa khối học" : "Thêm khối học"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -84,7 +84,6 @@ const GradeForm = React.memo((props: any) => {
                   <Input
                     placeholder=""
                     className="style-input"
-                    defaultValue={props.rowData?.ListCourseCode}
                     onChange={(e) => setValue("GradeCode", e.target.value)}
                     allowClear={true}
                   />
@@ -103,7 +102,6 @@ const GradeForm = React.memo((props: any) => {
                   <Input
                     placeholder=""
                     className="style-input"
-                    defaultValue={props.rowData?.ListCourseName}
                     onChange={(e) => setValue("GradeName", e.target.value)}
                     allowClear={true}
                   />
@@ -122,7 +120,6 @@ const GradeForm = React.memo((props: any) => {
                   <Input
                     placeholder=""
                     className="style-input"
-                    defaultValue={props.rowData?.Description}
                     onChange={(e) => setValue("Description", e.target.value)}
                     allowClear={true}
                   />
