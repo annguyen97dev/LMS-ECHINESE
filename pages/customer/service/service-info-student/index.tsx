@@ -346,7 +346,7 @@ const StudentAppointmentCreate = () => {
                     name="AreaID"
                     label="Tỉnh/TP"
                     optionList={listData.Area}
-                    getValue={(value) => handleChange_Area(value)}
+                    // getValue={(value) => handleChange_Area(value)}
                   />
                 </div>
                 <div className="col-md-6 col-12">

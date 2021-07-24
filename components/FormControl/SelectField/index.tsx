@@ -4,17 +4,10 @@ import { Form, Select } from "antd";
 import { Controller } from "react-hook-form";
 
 const SelectField = (props) => {
-  const { form, name, label, optionList, placeholder, disabled, getValue } =
-    props;
+  const { form, name, label, optionList, placeholder, disabled } = props;
   const { Option } = Select;
   const { errors } = form.formState;
   const hasError = errors[name];
-
-  const handleChange = (value) => {
-    if (typeof getValue != "undefined") {
-      getValue(value);
-    }
-  };
 
   return (
     <Form.Item
@@ -35,7 +28,6 @@ const SelectField = (props) => {
             placeholder={placeholder}
             optionFilterProp="children"
             disabled={disabled}
-            // onChange={handleChange}
           >
             {optionList.map((o, idx) => (
               <Option key={idx} value={o.value}>
@@ -68,7 +60,6 @@ SelectField.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   disabled: PropTypes.bool,
-  getValue: PropTypes.func,
 };
 SelectField.defaultProps = {
   optionList: [],
