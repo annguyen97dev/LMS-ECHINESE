@@ -1,3 +1,4 @@
+import { wardApi } from "./options/ward";
 import { subjectApi } from "./options/subject";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
@@ -19,3 +20,4 @@ import { idiomsApi } from "./options/idioms";
 export { subjectApi } from "./options/subject";
 export { curriculumDetailApi } from "./options/curriculum-detail";
 export { studentApi } from "./customer/student/student-list";
+export { wardApi } from "./options/ward";

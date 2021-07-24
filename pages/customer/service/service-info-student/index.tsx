@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Form, Select, Input, Divider, Button, Upload } from "antd";
 import TitlePage from "~/components/TitlePage";
 import LayoutBase from "~/components/LayoutBase";
@@ -7,27 +7,166 @@ import ImgCrop from "antd-img-crop";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
+import DateField from "~/components/FormControl/DateField";
+import SelectField from "~/components/FormControl/SelectField";
+import TextAreaField from "~/components/FormControl/TextAreaField";
+import {
+  areaApi,
+  districtApi,
+  wardApi,
+  jobApi,
+  puroseApi,
+  branchApi,
+  sourceInfomationApi,
+} from "~/apiBase";
+import { useWrap } from "~/context/wrap";
 
 let returnSchema = {};
+let schema = null;
+
+interface listData {
+  Area: Array<Object>;
+  District: Array<Object>;
+  Ward: Array<Object>;
+  Job: Array<Object>;
+  Branch: Array<Object>;
+  Purposes: Array<Object>;
+  SourceInformation: Array<Object>;
+}
+
+const listApi = [
+  {
+    api: areaApi,
+    text: "Tỉnh/Tp",
+    name: "Area",
+  },
+
+  {
+    api: jobApi,
+    text: "Công việc",
+    name: "Job",
+  },
+  {
+    api: puroseApi,
+    text: "Mục đích học",
+    name: "Purposes",
+  },
+  {
+    api: branchApi,
+    text: "Trung tâm",
+    name: "Branch",
+  },
+  {
+    api: sourceInfomationApi,
+    text: "Nguồn khách hàng",
+    name: "SourceInformation",
+  },
+
+  // areaApi,
+  // districtApi,
+  // wardApi,
+  // jobApi,
+  // purposeApi,
+  // branchApi,
+  // sourceInfomationApi,
+];
 
 const StudentAppointmentCreate = () => {
-  // const layout = {
-  //   labelCol: { span: 4 },
-  //   wrapperCol: { span: 20 },
-  // };
+  const { Option } = Select;
+  const { showNoti } = useWrap();
   const [fileList, setFileList] = useState([]);
   const { TextArea } = Input;
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   setValue,
-  //   formState: { isSubmitting, errors, isSubmitted },
-  // } = useForm();
-  // const [form] = Form.useForm();
+  const [listData, setListData] = useState<listData>({
+    Area: [],
+    District: [],
+    Ward: [],
+    Job: [],
+    Branch: [],
+    Purposes: [],
+    SourceInformation: [],
+  });
+
+  console.log("DATA list: ", listData);
+
+  // ------------- ADD data to list --------------
+
+  const makeNewData = (data, name) => {
+    let newData = null;
+    switch (name) {
+      case "Area":
+        newData = data.map((item) => ({
+          title: item.AreaName,
+          value: item.AreaID,
+        }));
+        break;
+      case "Branch":
+        newData = data.map((item) => ({
+          title: item.BranchName,
+          value: item.ID,
+        }));
+        break;
+      case "Job":
+        newData = data.map((item) => ({
+          title: item.JobName,
+          value: item.JobID,
+        }));
+        break;
+      case "Purposes":
+        newData = data.map((item) => ({
+          title: item.PurposesName,
+          value: item.PurposesID,
+        }));
+        break;
+      case "SourceInformation":
+        newData = data.map((item) => ({
+          title: item.SourceInformationName,
+          value: item.SourceInformationID,
+        }));
+        break;
+      default:
+        break;
+    }
+
+    return newData;
+  };
+
+  const getDataTolist = (data: any, name: any) => {
+    let newData = makeNewData(data, name);
+
+    Object.keys(listData).forEach(function (key) {
+      if (key == name) {
+        listData[key] = newData;
+      }
+    });
+    setListData({ ...listData });
+  };
+
+  // ----------- GET DATA SOURCE ---------------
+  const getDataSource = () => {
+    listApi.forEach((item, index) => {
+      (async () => {
+        try {
+          let res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+          res.status == 200 && getDataTolist(res.data.data, item.name);
+
+          res.status == 204 &&
+            showNoti("danger", item.text + " Không có dữ liệu");
+        } catch (error) {
+          showNoti("danger", error.message);
+        } finally {
+        }
+      })();
+    });
+  };
+
+  // ----- HANDLE CHANGE - AREA ----------
+  const handleChange_Area = (value) => {
+    console.log("Value is: ", value);
+  };
 
   const defaultValuesInit = {
     FullNameUnicode: null,
-    Email: null,
+    Email: "",
     Mobile: null,
     AreaID: null, //int id Tỉnh/TP
     DistrictID: null, //int id Quận/Huyện
@@ -51,44 +190,69 @@ const StudentAppointmentCreate = () => {
   (function returnSchemaFunc() {
     returnSchema = { ...defaultValuesInit };
     Object.keys(returnSchema).forEach(function (key) {
-      returnSchema[key] = yup.string().required("Bạn không được để trống");
+      switch (key) {
+        case "Email":
+          returnSchema[key] = yup
+            .string()
+            .email("Email nhập sai cú pháp")
+            .required("Bạn không được để trống");
+          break;
+        case "Mobile":
+          returnSchema[key] = yup
+            .number()
+            .typeError("SDT phải là số")
+            .required("Bạn không được để trống");
+          break;
+        case "CMND":
+          returnSchema[key] = yup
+            .number()
+            .typeError("CMND phải là số")
+            .required("Bạn không được để trống");
+          break;
+        default:
+          // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          break;
+      }
     });
 
-    console.log("clone: ", returnSchema);
+    schema = yup.object().shape(returnSchema);
   })();
-
-  const schema = yup.object().shape(returnSchema);
 
   const form = useForm({
     defaultValues: defaultValuesInit,
     resolver: yupResolver(schema),
   });
 
-  // SUBMI FORM
+  // ----------- SUBMI FORM ------------
   const onSubmit = (data: any) => {
     console.log("DATA SUBMIT: ", data);
   };
 
-  // const onChange_avatar = ({ fileList: newFileList }) => {
-  //   setFileList(newFileList);
-  // };
+  // ------------ AVATAR --------------
+  const onChange_avatar = ({ fileList: newFileList }) => {
+    console.log("FILe IMAGE: ", newFileList);
+    setFileList(newFileList);
+  };
 
-  // const onPreview = async (file) => {
-  //   let src = file.url;
-  //   if (!src) {
-  //     src = await new Promise((resolve) => {
-  //       const reader = new FileReader();
-  //       reader.readAsDataURL(file.originFileObj);
-  //       reader.onload = () => resolve(reader.result);
-  //     });
-  //   }
-  //   const image = new Image();
-  //   image.src = src;
-  //   const imgWindow = window.open(src);
-  //   imgWindow.document.write(image.outerHTML);
-  // };
+  const onPreview = async (file) => {
+    let src = file.url;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow.document.write(image.outerHTML);
+  };
 
-  const { Option } = Select;
+  useEffect(() => {
+    getDataSource();
+  }, []);
+
   return (
     <div>
       <div className="row">
@@ -103,21 +267,21 @@ const StudentAppointmentCreate = () => {
               {/*  */}
 
               {/** ==== Thông tin cơ bản  ====*/}
-              {/* <div className="row">
+              <div className="row">
                 <div className="col-12">
                   <ImgCrop rotate>
                     <Upload
-                      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                      // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                       listType="picture-card"
                       fileList={fileList}
                       onChange={onChange_avatar}
                       onPreview={onPreview}
                     >
-                      {fileList.length < 5 && "+ Upload"}
+                      {fileList.length < 1 && "+ Upload"}
                     </Upload>
                   </ImgCrop>
                 </div>
-              </div> */}
+              </div>
               <div className="row">
                 <div className="col-12">
                   <Divider orientation="center">Thông tin cơ bản</Divider>
@@ -125,157 +289,168 @@ const StudentAppointmentCreate = () => {
               </div>
               <div className="row">
                 <div className="col-md-6 col-12">
-                  {/* <Form.Item label="Email" name="Email">
-                    <Input className="style-input" placeholder="" />
-                  </Form.Item> */}
                   <InputTextField form={form} name="Email" label="Email" />
                 </div>
 
-                {/* <div className="col-md-6 col-12">
-                  <Form.Item name="FullNameUniCode" label="Họ và tên">
-                    <Input className="style-input" placeholder="" />
-                  </Form.Item>
-                </div> */}
+                <div className="col-md-6 col-12">
+                  <InputTextField
+                    form={form}
+                    name="FullNameUnicode"
+                    label="Họ và tên"
+                  />
+                </div>
               </div>
               {/*  */}
               {/*  */}
-              {/* <div className="row">
+              <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Số điện thoại" name="Mobile">
-                    <Input className="style-input" placeholder="" />
-                  </Form.Item>
+                  <InputTextField
+                    form={form}
+                    name="Mobile"
+                    label="Số điện thoại"
+                  />
                 </div>
+
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Ngày sinh" name="DOB">
-                    <Input className="style-input" placeholder="" type="date" />
-                  </Form.Item>
+                  <DateField form={form} name="DOB" label="Ngày sinh" />
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-4 col-12">
-                  <Form.Item label="Số CMND" name="CMND">
-                    <Input className="style-input" placeholder="" />
-                  </Form.Item>
+                  <InputTextField form={form} name="CMND" label="số CMND" />
                 </div>
                 <div className="col-md-4 col-12">
-                  <Form.Item label="Nơi cấp CMND" name="CMNDRegister">
-                    <Select className="w-100 style-input">
-                      <Option value="Yiminghe">yiminghe</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="CMNDRegister"
+                    label="Nơi cấp CMND"
+                    optionList={listData.Area}
+                  />
                 </div>
                 <div className="col-md-4 col-12">
-                  <Form.Item label="Ngày cấp" name="CMNDDate">
-                    <Input className="style-input" placeholder="" type="date" />
-                  </Form.Item>
+                  <DateField form={form} name="CMNDDate" label="Ngày cấp" />
                 </div>
-              </div> */}
+              </div>
               {/*  */}
               {/*  */}
               {/** ==== Địa chỉ  ====*/}
-              {/* <div className="row">
+              <div className="row">
                 <div className="col-12">
                   <Divider orientation="center">Địa chỉ</Divider>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Tỉnh/TP" name="AreaID">
-                    <Select className="w-100 style-input">
-                      <Option value="jack">Jack</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="AreaID"
+                    label="Tỉnh/TP"
+                    optionList={listData.Area}
+                    getValue={(value) => handleChange_Area(value)}
+                  />
                 </div>
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Quận/Huyện" name="DistrictID">
-                    <Select className="w-100 style-input">
-                      <Option value="jack">Jack</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="DistrictID"
+                    label="Quận/Huyện"
+                    optionList={[]}
+                  />
                 </div>
-              </div> */}
+              </div>
               {/*  */}
               {/*  */}
               {/*  */}
 
-              {/* <div className="row">
+              <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Phường/Xã" name="WardID">
-                    <Select className="w-100 style-input">
-                      <Option value="Yiminghe">yiminghe</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="WardID"
+                    label="Phường/Xã"
+                    optionList={[]}
+                  />
                 </div>
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Địa chỉ" name="Address">
-                    <Select className="w-100 style-input">
-                      <Option value="Yiminghe">yiminghe</Option>
-                    </Select>
-                  </Form.Item>
+                  <InputTextField
+                    form={form}
+                    name="Address"
+                    label="Mô tả thêm"
+                  />
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Số nhà/tên đường" name="HouseNumber">
-                    <Input className="style-input" placeholder="" />
-                  </Form.Item>
+                  <InputTextField
+                    form={form}
+                    name="HouseNumber"
+                    label="Số nhà/tên đường"
+                  />
                 </div>
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Công việc" name="JobID">
-                    <Select className="w-100 style-input">
-                      <Option value="Yiminghe">yiminghe</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="JobID"
+                    label="công việc"
+                    optionList={listData.Job}
+                  />
                 </div>
-              </div> */}
+              </div>
 
               {/*  */}
               {/** ==== Khác  ====*/}
-              {/* <div className="row">
+              <div className="row">
                 <div className="col-12">
                   <Divider orientation="center">Khác</Divider>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Tên trung tâm" name="Branch">
-                    <Select className="w-100 style-input">
-                      <Option value="Yiminghe">yiminghe</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="Branch"
+                    label="Tên trung tâm"
+                    optionList={listData.Branch}
+                  />
                 </div>
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Mục đích học" name="AcademicPurposesID">
-                    <Select className="w-100 style-input">
-                      <Option value="Yiminghe">yiminghe</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="AcademicPurposesID"
+                    label="Mục đích học"
+                    optionList={listData.Purposes}
+                  />
                 </div>
-              </div> */}
+              </div>
 
-              {/* <div className="row">
+              <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Phụ huynh" name="ParentsOf">
-                    <Input className="style-input" placeholder="" />
-                  </Form.Item>
+                  <InputTextField
+                    form={form}
+                    name="ParentsOf"
+                    label="Phụ huynh"
+                  />
                 </div>
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Nguồn khách" name="SourceInformationID">
-                    <Select className="w-100 style-input">
-                      <Option value="jack">Jack</Option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="SourceInformationID"
+                    label="Nguồn khách"
+                    optionList={listData.SourceInformation}
+                  />
                 </div>
-              </div> */}
+              </div>
 
               {/*  */}
-              {/* <div className="row">
+              <div className="row">
                 <div className="col-12">
-                  <Form.Item label="Giới thiệu thêm" name="Extension">
-                    <TextArea />
-                  </Form.Item>
+                  <TextAreaField
+                    name="Extension"
+                    label="Giới thiệu thêm"
+                    form={form}
+                  />
                 </div>
-              </div> */}
+              </div>
 
               <div className="row">
                 <div className="col-12 d-flex justify-content-end">

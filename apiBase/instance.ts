@@ -70,7 +70,7 @@ const checkResponse = (error) => {
   switch (error.response.status) {
     case 401:
       // showNoti("danger", "Vui lòng đăng nhập lại");
-      alert("Vui lòng đăng nhập lại");
+      // alert("Vui lòng đăng nhập lại");
       signIn();
       break;
     case 403:
