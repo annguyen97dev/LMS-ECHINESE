@@ -19,3 +19,6 @@ export {subjectApi} from './options/subject';
 export {supplierApi} from './options/supplier';
 export {userInformationApi} from './options/userinformation';
 export {teacherApi} from './teacher/teacher';
+export {lessonApi} from './course/lesson';
+export {studyDayApi} from './course/study-day';
+export {checkStudyTimeApi} from './course/check-study-time';

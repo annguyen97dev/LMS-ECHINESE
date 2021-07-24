@@ -1607,6 +1607,10 @@ hr {
 	width: 100% !important;
 }
 
+.modal-full {
+	width: 100% !important;
+}
+
 .modal-medium {
 	width: 70% !important;
 
@@ -1653,6 +1657,42 @@ hr {
 }
 .ant-input-number .ant-input-number-handler-wrap {
 	display: none;
+}
+
+.input-number {
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		-moz-appearance: textfield;
+		margin: 0;
+	}
+}
+
+.table-study-time {
+	.ant-table-thead {
+		tr {
+			th:nth-child(2) {
+				width: 20%;
+			}
+			th:nth-child(3) {
+				width: 10%;
+			}
+		}
+	}
+}
+.hide {
+	display: none;
+}
+
+.col-long {
+	width: 40%;
+}
+.col-short {
+	width: 20%;
+}
+.icon-additional {
+	color: #067fa4;
+	width: 20px;
 }
 
 .input-number {
