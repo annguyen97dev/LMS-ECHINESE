@@ -1,9 +1,9 @@
-import ProfileBase from "~/components/Profile";
+import React from 'react';
+import TeacherDetail from '~/components/Global/Teacher/Teacher/TeacherDetail';
+import LayoutBase from '~/components/LayoutBase';
 
-import LayoutBase from "~/components/LayoutBase";
+const TeacherDetailPage = () => <TeacherDetail />;
 
-const TeacherProfile = () => {
-  return <ProfileBase />;
-};
-TeacherProfile.layout = LayoutBase;
-export default TeacherProfile;
+TeacherDetailPage.layout = LayoutBase;
+
+export default TeacherDetailPage;

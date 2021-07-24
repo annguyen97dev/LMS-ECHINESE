@@ -1,7 +1,7 @@
 import {instance} from '../instance';
 
 const url = '/api/Contract/';
-const contractApi = {
+export const contractApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<IContract[]>>(url, {
@@ -21,4 +21,3 @@ const contractApi = {
 		return instance.put(url, data);
 	},
 };
-export default contractApi;

@@ -1,7 +1,7 @@
 import {instance} from '../instance';
 
 const url = '/api/DayOff/';
-const dayOffApi = {
+export const dayOffApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<IDayOff[]>>(url, {
@@ -21,4 +21,3 @@ const dayOffApi = {
 		return instance.put(url, data);
 	},
 };
-export default dayOffApi;
