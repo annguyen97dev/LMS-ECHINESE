@@ -572,6 +572,9 @@ textarea.form-control {
 .wrap-notification {
   &.middle {
     width: 300px;
+    @include max-media(400px) {
+      width: 250px;
+    }
   }
 }
 .wrap-filter {
@@ -1091,7 +1094,7 @@ hr {
       padding-left: 15px !important;
       transition: 0.3s;
       p {
-        margin: 5px;
+        margin: 0;
       }
       .content-notification {
         @include line-clamp(1);

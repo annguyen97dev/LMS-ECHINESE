@@ -22,11 +22,11 @@ const Notification = () => {
     const [dataTable, setDataTable] = useState([]);
     const [dataSeen, setDataSeen] = useState({
         ID: null,
-
     })
     const [contentRow, setContentRow] = useState({
         content: null,
         title: null,
+        status: null,
     })
     const { showNoti } = useWrap();
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -115,10 +115,26 @@ const Notification = () => {
 
     const columns = [
         { 
+            title: () => (<Checkbox value={0} onChange={onChange}><span className="color-white">Xem tất cả</span></Checkbox>), 
+            dataIndex: "Status",
+            // render: (record) => (
+            //     record.Status == 0
+            //     ? ( <Checkbox value={record.ID} onChange={onChange}><span className="font-weight-black">Xem</span></Checkbox>) 
+            //     : (<Checkbox checked><span className="font-weight-black">Xem</span></Checkbox>)
+            // ),
+            render: (text, record) => 
+                <div>{text == 0 
+                    ? (<Checkbox className="uncheck" value={record.ID} onChange={onChange}>
+                        <span className="font-weight-black">Xem</span></Checkbox>) 
+                    : (<Checkbox checked>
+                        <span className="font-weight-black">Xem</span></Checkbox>)}
+                </div>
+        },
+        { 
             title: "Tên thông báo", 
             dataIndex: "NotificationTitle", 
             // ...FilterColumn("center")
-            render: (text) =>  <p className="font-weight-black">{text}</p>
+            render: (text) =>  <span className="font-weight-black">{text}</span>
         },
         { 
             title: "Nội dung thông báo", 
@@ -129,7 +145,7 @@ const Notification = () => {
         { 
             title: "Thời gian", 
             dataIndex: "CreatedOn",
-            render: (date) => <p className="font-weight-blue">{moment(date).format("DD/MM/YYYY")}</p>,  
+            render: (date) => <span className="font-weight-blue">{moment(date).format("DD/MM/YYYY")}</span>,  
         },
         {
             render: (record) => (
@@ -143,25 +159,16 @@ const Notification = () => {
                             });
                             setContentRow({
                                 content: record.NotificationContent,
-                                title: record.NotificationTitle
+                                title: record.NotificationTitle,
+                                status: record.Status,
                             });
                         }}
                     >
-                        <Eye />
+                        <AlertCircle color="#32c6a4" />
                     </button>
                 </Tooltip>
             )
-        },
-        { 
-            title: () => (<Checkbox value={0} onChange={onChange}><span className="color-white">Xem tất cả</span></Checkbox>), 
-            dataIndex: "Status",
-            // render: (record) => (
-            //     record.Status == 0
-            //     ? ( <Checkbox value={record.ID} onChange={onChange}><span className="font-weight-black">Xem</span></Checkbox>) 
-            //     : (<Checkbox checked><span className="font-weight-black">Xem</span></Checkbox>)
-            // ),
-            render: (text, record) => <p>{text == 0 ? (<Checkbox className="uncheck" value={record.ID} onChange={onChange}><span className="font-weight-black">Xem</span></Checkbox>) : (<Checkbox checked><span className="font-weight-black">Xem</span></Checkbox>)}</p>
-        },
+        }
     ];
 
     useEffect(() => {
@@ -173,8 +180,22 @@ const Notification = () => {
             <Modal
 				title={<AlertCircle color="#32c6a4" />}
 				visible={isModalVisible}
-				onOk={() => _onSubmit(dataSeen)}
-				onCancel={() => {setIsModalVisible(false); _onSubmit(dataSeen)}}
+				onOk={
+                    () => {
+                        setIsModalVisible(false);
+                        if(contentRow.status == 0) {
+                            _onSubmit(dataSeen)
+                        } 
+                    }
+                    }
+				onCancel={
+                    () => {
+                        setIsModalVisible(false);
+                        if(contentRow.status == 0) {
+                            _onSubmit(dataSeen)
+                        } 
+                       }
+                    }
 			>
 				<div className="content-notification">
                     <p className="font-weight-black fz-18 mb-15">{contentRow.title}</p>
