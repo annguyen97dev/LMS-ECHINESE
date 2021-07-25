@@ -1,5 +1,7 @@
 type INotification = IBaseApi<{
     NotificationID: number,
+    AllRole: boolean,
+    AllBranch: boolean
     NotificationTitle: string,
     NotificationContent: string,
     CourseID: number,

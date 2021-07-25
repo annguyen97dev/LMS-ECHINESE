@@ -31,7 +31,6 @@ const NotificationForm = (props) => {
 	
 	const onSubmit = handleSubmit((data: any) => {
     data.IsSendMail = sendMail;
-    data.NotificationContent = ReactHtmlParser(data.NotificationContent)[0].props.children[0];
 
     console.log("Data submit: ", data);
 
@@ -119,6 +118,14 @@ const NotificationForm = (props) => {
                     onChange={(value) => setValue("BranchID", value.toString())}
                     allowClear={true}
                   >
+                    <Option
+                          value={0}
+                          label="Tất cả"
+                    >
+                      <div className="demo-option-label-item">
+                        Tất cả
+                      </div>
+                    </Option>
                     {props.dataBranch && props.dataBranch.map((item) => (
                         <Option
                           value={item.ID}
@@ -130,14 +137,6 @@ const NotificationForm = (props) => {
                           </div>
                         </Option>
                     ))}
-                        <Option
-                          value={0}
-                          label="Tất cả"
-                        >
-                          <div className="demo-option-label-item">
-                            Tất cả
-                          </div>
-                        </Option>
                   </Select>
                 </Form.Item>
               </div>
@@ -158,6 +157,14 @@ const NotificationForm = (props) => {
                     onChange={(value) => setValue("RoleID", value.toString())}
                     allowClear={true}
                   >
+                    <Option
+                      value={0}
+                      label="Tất cả"
+                    >
+                      <div className="demo-option-label-item">
+                        Tất cả
+                      </div>
+                    </Option>
                     {Roles.map(item => (
                         <Option
                           key={item.id}
@@ -169,14 +176,6 @@ const NotificationForm = (props) => {
                           </div>
                         </Option>
                     ))}
-                        <Option
-                          value={0}
-                          label="Tất cả"
-                        >
-                          <div className="demo-option-label-item">
-                            Tất cả
-                          </div>
-                        </Option>
                   </Select>
                 </Form.Item>
               </div>

@@ -17,7 +17,7 @@ import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
 
 const Notification = () => {
-  const [dataTable, setDataTable] = useState([]);
+  	const [dataTable, setDataTable] = useState([]);
 	const [dataBranch, setDataBranch] = useState([]);
 	const [dataDelete, setDataDelete]  = useState({
 		SalaryID: null,
@@ -106,6 +106,8 @@ const Notification = () => {
             NotificationTitle: row.NotificationTitle,
             RoleID: row.RoleID,
             RoleName: row.RoleName,
+			AllRole: row.AllRole,
+			AllBranch: row.AllBranch
         }))
         setDataTable(results);
       }
@@ -218,20 +220,32 @@ const Notification = () => {
       title: "Role",
       dataIndex: "RoleName",
       // ...FilterColumn("teacher"),
-      render: (role) => {
-        if(role){
-          let arr = role.split(",");
-          return arr.map((item, i) => (<span key={i} className="tag yellow">{item}</span>))
-        }
+      render: (role, record, index) => {
+		if(record.AllRole) {
+			return <span className="tag yellow">Tất cả</span>
+		} else if(role) {
+			let arr = role.split(",");
+			return (
+				<div className="list-tag">
+					{arr.map((item, i) => (<span key={i} className="tag yellow">{item}</span>))}
+				</div>
+			)
+		}
       },
     },
     { 
       title: "Center", 
       dataIndex: "BranchName",
-      render: (BranchName) => {
-        if(BranchName){
+      render: (BranchName, record, index) => {
+		if(record.AllBranch) {
+			return <span className="tag green">Tất cả</span>
+		} else if(BranchName){
           let arr = BranchName.split(",");
-          return arr.map((item, i) => (<span key={i} className="tag green">{item}</span>))
+          return (
+			  <div className="list-tag">
+				  {arr.map((item, i) => (<span key={i} className="tag green">{item}</span>))}
+			  </div>
+		  )
         }
       },
       // ...FilterColumn("center") 

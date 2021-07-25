@@ -33,9 +33,9 @@ const ExpandTable = (props) => {
   };
 
   const rowSelection = {
-    selectedRowKeys: state.selectedRowKeys,
-    onChange: onSelectedRowKeysChange,
-    hideSelectAll: true,
+      selectedRowKeys: state.selectedRowKeys,
+      onChange: onSelectedRowKeysChange,
+      hideSelectAll: true,
   };
 
   const { Search } = Input;
@@ -57,7 +57,7 @@ const ExpandTable = (props) => {
   return (
     <>
       {/* <TitlePage title={props.TitlePage} /> */}
-      <div className="wrap-table table-expand">
+      <div className={props.checkBox ? "wrap-table table-expand have-checkbox" : "wrap-table table-expand"}>
         <Card
           className={`cardRadius ${props.addClass && props.addClass}`}
           title={props.Extra}
