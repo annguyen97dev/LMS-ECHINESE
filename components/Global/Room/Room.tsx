@@ -155,7 +155,7 @@ const Room = () => {
     try {
       let res = await branchApi.getAll({
         pageIndex: 1,
-        pageSize: Number.MAX_SAFE_INTEGER,
+        pageSize: 9999,
       });
       res.status == 200 && setDataCenter(res.data.data);
     } catch (error) {

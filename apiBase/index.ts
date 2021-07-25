@@ -1,3 +1,5 @@
+import { wardApi } from "./options/ward";
+import { subjectApi } from "./options/subject";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { contractApi } from "./options/contract";
@@ -16,6 +18,8 @@ export { sourceInfomationApi } from "./options/source-infomation";
 export { staffSalaryApi } from "./options/staff-salary";
 export { studyTimeApi } from "./options/study-time";
 export { subjectApi } from "./options/subject";
+export { studentApi } from "./customer/student/student-list";
+export { wardApi } from "./options/ward";
 export { supplierApi } from "./options/supplier";
 export { userInformationApi } from "./options/userinformation";
 export { teacherApi } from "./teacher/teacher";
