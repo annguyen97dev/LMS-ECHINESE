@@ -56,13 +56,13 @@ const Notifiaction = () => {
                             {item.Status == 0 ? (
                                 <List.Item.Meta
                                     avatar={<NotificationTwoTone />}
-                                    title={<a href="https://ant.design">{item.NotificationTitle}</a>}
+                                    title={<Link href="/notification"><a>{item.NotificationTitle}</a></Link>}
                                     description={ReactHtmlParser(item.NotificationContent)}
                                 />
                             ) : (
                                 <List.Item.Meta
                                     avatar={<NotificationOutlined />}
-                                    title={<a href="https://ant.design">{item.NotificationTitle}</a>}
+                                    title={<Link href="/notification"><a>{item.NotificationTitle}</a></Link>}
                                     description={ReactHtmlParser(item.NotificationContent)}
                                 />
                             )}
