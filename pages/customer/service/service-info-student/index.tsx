@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import { Card, Form, Select, Input, Divider, Button, Upload } from "antd";
+import { Card, Form, Select, Input, Divider, Button, Upload, Spin } from "antd";
 import TitlePage from "~/components/TitlePage";
 import LayoutBase from "~/components/LayoutBase";
 import ImgCrop from "antd-img-crop";
@@ -11,6 +11,7 @@ import DateField from "~/components/FormControl/DateField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
 import {
+  studentApi,
   areaApi,
   districtApi,
   wardApi,
@@ -26,13 +27,28 @@ let schema = null;
 
 interface listData {
   Area: Array<Object>;
-  District: Array<Object>;
-  Ward: Array<Object>;
+  DistrictID: Array<Object>;
+  WardID: Array<Object>;
   Job: Array<Object>;
   Branch: Array<Object>;
   Purposes: Array<Object>;
   SourceInformation: Array<Object>;
 }
+
+const optionGender = [
+  {
+    value: 0,
+    title: "Nữ",
+  },
+  {
+    value: 1,
+    title: "Nam",
+  },
+  {
+    value: 0,
+    title: "Khác",
+  },
+];
 
 const listApi = [
   {
@@ -61,14 +77,6 @@ const listApi = [
     text: "Nguồn khách hàng",
     name: "SourceInformation",
   },
-
-  // areaApi,
-  // districtApi,
-  // wardApi,
-  // jobApi,
-  // purposeApi,
-  // branchApi,
-  // sourceInfomationApi,
 ];
 
 const StudentAppointmentCreate = () => {
@@ -76,10 +84,14 @@ const StudentAppointmentCreate = () => {
   const { showNoti } = useWrap();
   const [fileList, setFileList] = useState([]);
   const { TextArea } = Input;
+  const [isLoading, setIsLoading] = useState({
+    type: "",
+    status: false,
+  });
   const [listData, setListData] = useState<listData>({
     Area: [],
-    District: [],
-    Ward: [],
+    DistrictID: [],
+    WardID: [],
     Job: [],
     Branch: [],
     Purposes: [],
@@ -97,6 +109,18 @@ const StudentAppointmentCreate = () => {
         newData = data.map((item) => ({
           title: item.AreaName,
           value: item.AreaID,
+        }));
+        break;
+      case "DistrictID":
+        newData = data.map((item) => ({
+          title: item.DistrictName,
+          value: item.ID,
+        }));
+        break;
+      case "WardID":
+        newData = data.map((item) => ({
+          title: item.WardName,
+          value: item.ID,
         }));
         break;
       case "Branch":
@@ -142,11 +166,12 @@ const StudentAppointmentCreate = () => {
   };
 
   // ----------- GET DATA SOURCE ---------------
-  const getDataSource = () => {
-    listApi.forEach((item, index) => {
+  const getDataSource = (arrApi) => {
+    arrApi.forEach((item, index) => {
       (async () => {
         try {
           let res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+
           res.status == 200 && getDataTolist(res.data.data, item.name);
 
           res.status == 204 &&
@@ -159,11 +184,43 @@ const StudentAppointmentCreate = () => {
     });
   };
 
-  // ----- HANDLE CHANGE - AREA ----------
-  const handleChange_Area = (value) => {
-    console.log("Value is: ", value);
+  //  ----- GET DATA DISTRICT -------
+  const getDataWithID = async (ID, name) => {
+    let res = null;
+    try {
+      switch (name) {
+        case "DistrictID":
+          res = await districtApi.getAll({
+            AreaID: ID,
+          });
+          break;
+        case "WardID":
+          res = await wardApi.getAll({
+            DistrictID: ID,
+          });
+          break;
+        default:
+          break;
+      }
+
+      res.status == 200 && getDataTolist(res.data.data, name);
+
+      res.status == 204 && showNoti("danger", name + " không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+    }
   };
 
+  // ----- HANDLE CHANGE - AREA ----------
+  const handleChange_select = (value, name) => {
+    console.log("Value is: ", value);
+
+    form.setValue(name, undefined);
+    getDataWithID(value, name);
+  };
+
+  // -----  DEFAULT VALUE INIT -------------
   const defaultValuesInit = {
     FullNameUnicode: null,
     Email: "",
@@ -224,8 +281,25 @@ const StudentAppointmentCreate = () => {
   });
 
   // ----------- SUBMI FORM ------------
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log("DATA SUBMIT: ", data);
+    setIsLoading({
+      type: "ADD_DATA",
+      status: true,
+    });
+    try {
+      let res = await studentApi.add(data);
+      res?.status == 200 &&
+        (showNoti("success", "Tạo học viên thành công"),
+        form.reset(defaultValuesInit));
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "ADD_DATA",
+        status: false,
+      });
+    }
   };
 
   // ------------ AVATAR --------------
@@ -250,7 +324,7 @@ const StudentAppointmentCreate = () => {
   };
 
   useEffect(() => {
-    getDataSource();
+    getDataSource(listApi);
   }, []);
 
   return (
@@ -317,7 +391,7 @@ const StudentAppointmentCreate = () => {
               </div>
               <div className="row">
                 <div className="col-md-4 col-12">
-                  <InputTextField form={form} name="CMND" label="số CMND" />
+                  <InputTextField form={form} name="CMND" label="Số CMND" />
                 </div>
                 <div className="col-md-4 col-12">
                   <SelectField
@@ -329,6 +403,24 @@ const StudentAppointmentCreate = () => {
                 </div>
                 <div className="col-md-4 col-12">
                   <DateField form={form} name="CMNDDate" label="Ngày cấp" />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-12">
+                  <SelectField
+                    form={form}
+                    name="Gender"
+                    label="Giới tính"
+                    optionList={optionGender}
+                  />
+                </div>
+                <div className="col-md-6 col-12">
+                  <SelectField
+                    form={form}
+                    name="JobID"
+                    label="công việc"
+                    optionList={listData.Job}
+                  />
                 </div>
               </div>
               {/*  */}
@@ -346,7 +438,9 @@ const StudentAppointmentCreate = () => {
                     name="AreaID"
                     label="Tỉnh/TP"
                     optionList={listData.Area}
-                    // getValue={(value) => handleChange_Area(value)}
+                    onChangeSelect={
+                      (value) => handleChange_select(value, "DistrictID") // Select Area to load District
+                    }
                   />
                 </div>
                 <div className="col-md-6 col-12">
@@ -354,7 +448,10 @@ const StudentAppointmentCreate = () => {
                     form={form}
                     name="DistrictID"
                     label="Quận/Huyện"
-                    optionList={[]}
+                    optionList={listData.DistrictID}
+                    onChangeSelect={
+                      (value) => handleChange_select(value, "WardID") // Select District to load Ward
+                    }
                   />
                 </div>
               </div>
@@ -368,7 +465,7 @@ const StudentAppointmentCreate = () => {
                     form={form}
                     name="WardID"
                     label="Phường/Xã"
-                    optionList={[]}
+                    optionList={listData.WardID}
                   />
                 </div>
                 <div className="col-md-6 col-12">
@@ -385,14 +482,6 @@ const StudentAppointmentCreate = () => {
                     form={form}
                     name="HouseNumber"
                     label="Số nhà/tên đường"
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="JobID"
-                    label="công việc"
-                    optionList={listData.Job}
                   />
                 </div>
               </div>
@@ -457,9 +546,9 @@ const StudentAppointmentCreate = () => {
                   <div style={{ paddingRight: 5 }}>
                     <button type="submit" className="btn btn-primary w-100">
                       Lưu
-                      {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
-                    <Spin className="loading-base" />
-                  )} */}
+                      {isLoading.type == "ADD_DATA" && isLoading.status && (
+                        <Spin className="loading-base" />
+                      )}
                     </button>
                   </div>
                 </div>
