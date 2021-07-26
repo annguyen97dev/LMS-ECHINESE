@@ -6,7 +6,7 @@ import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 import ReactHtmlParser from 'react-html-parser';
 
-const NotificationForm = (props) => {
+const NotificationForm = React.memo((props:any) => {
   const { Option } = Select;
 
 
@@ -199,6 +199,6 @@ const NotificationForm = (props) => {
       </Modal>
     </>
   );
-};
+});
 
 export default NotificationForm;
