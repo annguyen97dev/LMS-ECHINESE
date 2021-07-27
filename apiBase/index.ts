@@ -22,3 +22,5 @@ export {teacherApi} from './teacher/teacher';
 export {lessonApi} from './course/lesson';
 export {studyDayApi} from './course/study-day';
 export {checkStudyTimeApi} from './course/check-study-time';
+export {checkRoomApi} from './course/check-room';
+export {checkTeacherApi} from './course/check-teacher';

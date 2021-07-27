@@ -49,10 +49,13 @@ const CreateCourseForm = (props) => {
 			.number()
 			.nullable()
 			.required('Bạn không được để trống'),
-		RoomID: yup.number().nullable().required('Bạn không được để trống'),
+		RoomID: yup
+			.array()
+			.min(1, 'Bạn phải chọn ít nhất 1 phòng học')
+			.required('Bạn không được để trống'),
 		StudyTimeID: yup
 			.array()
-			.min(1, 'Bạn phải chọn ít nhất 1 trung tâm')
+			.min(1, 'Bạn phải chọn ít nhất 1 ca học')
 			.required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
@@ -62,12 +65,12 @@ const CreateCourseForm = (props) => {
 			.array()
 			.min(1, 'Bạn phải chọn ít nhất 1 ngày trong tuần')
 			.required('Bạn không được để trống'),
-		CourseName: yup.string().required('Bạn không được để trống'),
+		CourseName: yup.string(),
 	});
 	const defaultValuesInit = {
 		BranchID: null,
 		UserInformationID: null,
-		RoomID: null,
+		RoomID: undefined,
 		StudyTimeID: undefined,
 		GradeID: null,
 		ProgramID: null,
@@ -183,6 +186,7 @@ const CreateCourseForm = (props) => {
 									name="RoomID"
 									label="Phòng học"
 									placeholder="Chọn phòng học"
+									mode="multiple"
 									isLoading={isLoading.type === 'BranchID' && isLoading.status}
 									optionList={optionFetchByBranch.roomList}
 								/>

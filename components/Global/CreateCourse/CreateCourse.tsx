@@ -1,11 +1,10 @@
 import {Card} from 'antd';
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
-import {Calendar, momentLocalizer} from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {
 	branchApi,
-	checkStudyTimeApi,
+	checkRoomApi,
+	checkTeacherApi,
 	curriculumApi,
 	gradeApi,
 	lessonApi,
@@ -19,10 +18,10 @@ import CreateCourseForm from '~/components/Global/CreateCourse/CreateCourseForm/
 import SaveCreateCourse from '~/components/Global/CreateCourse/SaveCreateCourse';
 import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
-import events from '../../../lib/create-course/events';
+import CreateCourseCalendar from './Calendar/CreateCourseCalendar';
 import Schedule from './Schedule/Schedule';
+import ScheduleItem from './Schedule/ScheduleItem';
 import ScheduleList from './Schedule/ScheduleList';
-const localizer = momentLocalizer(moment);
 
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
@@ -86,9 +85,38 @@ const CreateCourse = (props) => {
 	});
 	const [curriculumList, setCurriculumList] = useState([]);
 	const stoneStudyTimeList = useRef(studyTimeList);
-	// SCHEDULE STATE
-	const [scheduleList, setScheduleList] = useState({}); //Lesson
-	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]); //StudyDay
+	//Lesson
+	const [scheduleList, setScheduleList] = useState({
+		schedule: [],
+		endDate: '',
+	});
+	const [optionForSchedule, setOptionForSchedule] = useState({
+		optionRoomList: [],
+		optionTeacherList: [],
+		optionStudyTimeList: [],
+	});
+	//StudyDay
+	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
+	const [dateSelected, setDateSelected] = useState({
+		dateString: '',
+	});
+	// SAVE
+	const stoneDataToSave = useRef({
+		BranchID: 0,
+		RoomID: '',
+		CurriculumID: 0,
+		ProgramID: 0,
+	});
+	const [saveCourseInfo, setSaveCourseInfo] = useState({
+		CourseName: '',
+		BranchID: 0,
+		GradeID: 0,
+		ProgramID: 0,
+		CurriculumID: 0,
+		StartDay: '',
+		Schedule: [],
+	});
+
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
@@ -212,7 +240,6 @@ const CreateCourse = (props) => {
 	// CURRICULUM
 	const checkStudyTime = async (value) => {
 		if (!value.length) {
-			console.log(stoneStudyTimeList.current);
 			setStudyTimeList(stoneStudyTimeList.current);
 			return;
 		}
@@ -223,13 +250,17 @@ const CreateCourse = (props) => {
 			).option;
 			const newStudyTimeList = studyTimeList.filter((s) => s.option === time);
 			setStudyTimeList(newStudyTimeList);
+			setOptionForSchedule({
+				...optionForSchedule,
+				optionStudyTimeList: newStudyTimeList,
+			});
 		}
 		// const res = await checkStudyTimeApi.check({
 		// Before: prevStudyTime.current,
 		// After: value.join(','),
 		// });
 	};
-	// GET ENOUGH 2 VALUE TO GET CURRICULUM
+	// GET ENOUGH 2 VALUE TO GET CURRICULUM - NEED PROGRAM ID - STUDY TIME ID
 	const getValueBeforeFetchCurriculum = async (key: string, value: number) => {
 		setDataToFetchCurriculum((prevState) => ({
 			...prevState,
@@ -279,11 +310,17 @@ const CreateCourse = (props) => {
 			status: true,
 		});
 		try {
+			stoneDataToSave.current = {
+				...stoneDataToSave.current,
+				RoomID: object.RoomID.join(','),
+				BranchID: object.BranchID,
+				CurriculumID: object.CurriculumID,
+			};
 			const lessonParams = {
 				CurriculumnID: object.CurriculumID,
 				StartDate: object.StartDay,
 				StudyTimeID: object.StudyTimeID.join(','),
-				RoomID: object.RoomID,
+				RoomID: object.RoomID.join(','),
 				BranchID: object.BranchID,
 				DaySelected: object.DaySelected.join(','),
 			};
@@ -291,6 +328,7 @@ const CreateCourse = (props) => {
 				StudyTimeID: object.StudyTimeID.join(','),
 				StartDate: object.StartDay,
 				DaySelected: object.DaySelected.join(','),
+				RoomID: object.RoomID.join(','),
 			};
 			const arrRes = await Promise.all([
 				lessonApi.getAll(lessonParams),
@@ -304,9 +342,12 @@ const CreateCourse = (props) => {
 						});
 					studyDayList.status === 200 &&
 						setCalendarList(studyDayList.data.data);
-					return (
-						lessonList.status === 200 && studyDayList.status === 200 && true
-					);
+
+					if (lessonList.status === 200 && studyDayList.status === 200) {
+						checkStudyTime('');
+						showNoti('success', 'Thành công');
+						return true;
+					}
 				})
 				.catch((error) => {
 					error.status === 400 && showNoti('danger', 'Không tìm thấy lịch');
@@ -323,6 +364,152 @@ const CreateCourse = (props) => {
 		}
 	};
 	// -----------SCHEDULE-----------
+	const getInfoAvailableSchedule = (obj) => {
+		console.log({obj, saveCourseInfo});
+		// setSaveCourseInfo(obj)
+	};
+	const fetchInfoAvailableSchedule = async (obj) => {
+		setIsLoading({
+			type: 'CHECK_SCHEDULE',
+			status: true,
+		});
+		const {
+			RoomID: RoomIdOfSchedule,
+			RoomName,
+			TeacherID,
+			TeacherName,
+			StudyTimeID,
+			StudyTimeName,
+			SubjectID,
+		} = obj;
+		const Date = moment(obj.Date).format('YYYY/MM/DD');
+		const {BranchID, RoomID} = stoneDataToSave.current;
+		const checkTeacherParams = {
+			BranchID,
+			SubjectID,
+			StudyTimeID,
+			Date,
+		};
+		const checkRoomParams = {
+			BranchID,
+			Rooms: RoomID,
+			StudyTimeID,
+			Date,
+		};
+		try {
+			await Promise.all([
+				checkTeacherApi.getAll(checkTeacherParams),
+				checkRoomApi.getAll(checkRoomParams),
+			])
+				.then(([teacherList, roomList]) => {
+					if (teacherList.status === 200) {
+						const fmTeacher = teacherList.data.data.map((t) => ({
+							value: t['id'],
+							title: t['name'],
+						}));
+						setOptionForSchedule({
+							...optionForSchedule,
+							optionTeacherList: fmTeacher,
+						});
+					}
+					if (teacherList.status === 204) {
+						setOptionForSchedule({
+							...optionForSchedule,
+							optionTeacherList: [
+								{
+									title: TeacherName,
+									value: TeacherID,
+								},
+							],
+						});
+					}
+					if (roomList.status === 200) {
+						const fmRoom = roomList.data.data.map((t) => ({
+							value: t['id'],
+							title: t['name'],
+						}));
+						setOptionForSchedule({
+							...optionForSchedule,
+							optionRoomList: fmRoom,
+						});
+					}
+					if (roomList.status === 204) {
+						setOptionForSchedule({
+							...optionForSchedule,
+							optionRoomList: [
+								{
+									title: RoomName,
+									value: RoomIdOfSchedule,
+								},
+							],
+						});
+					}
+					if (teacherList.status === 200 && roomList.status === 200) {
+						showNoti('success', 'Thành công');
+						return true;
+					}
+				})
+				.catch((err) => console.log('FetchDataByBranch - PromiseAll:', err));
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'CHECK_SCHEDULE',
+				status: false,
+			});
+		}
+	};
+	useEffect(() => {}, []);
+	// -----------CALENDAR-----------
+	const calendarDateFormat = (calendarArr) => {
+		const {schedule} = scheduleList;
+
+		// const scheduleDateArr = schedule.map((s) => s.date);
+
+		// const clearDuplicateSchedule = scheduleDateArr.filter(
+		// 	(d, idx) => scheduleDateArr.indexOf(d) === idx
+		// );
+		const scheduleHadDate = schedule.reduce((newObj, s) => {
+			newObj[s.date] ? newObj[s.date].push(s) : (newObj[s.date] = [s]);
+			return newObj;
+		}, {});
+		// console.log(scheduleHadDate);
+		// const newCalendarArr = calendarArr.filter(
+		// 	(c) => clearDuplicateSchedule.includes(c.Day.slice(0, 10)) === false
+		// );
+
+		const rs = calendarArr.map((c, idx) => {
+			let isValid = true;
+			let limit = c.Limit;
+			let scheduleList = [];
+			let title = `Số buổi trống: ${limit}`;
+			const calendarHadSchedule = scheduleHadDate[c.Day.slice(0, 10)]?.length;
+			if (calendarHadSchedule) {
+				limit = c.Limit - calendarHadSchedule;
+				scheduleList = scheduleHadDate[c.Day.slice(0, 10)];
+				title = 'Click để xem chi tiết';
+			}
+			if (!limit) {
+				isValid = false;
+			}
+			// if (c.Day === dateSelected.dayString) {
+			// 	limit = dateSelected.dayLimit - dateSelected.scheduleList.length;
+			// }
+			return {
+				id: idx + 1,
+				title: title,
+				start: moment(c.Day).toDate(),
+				end: moment(c.Day).toDate(),
+				resource: {
+					dateString: c.Day,
+					valid: isValid,
+					limit: c.Limit,
+					scheduleList,
+				},
+			};
+		});
+		return rs;
+	};
 	// calendar obj demo
 	// {
 	// 	id: 1,
@@ -339,14 +526,58 @@ const CreateCourse = (props) => {
 	// 		classTT: 'classTT-1',
 	// 	},
 	// },
+	// OBJ FROM API
+	// {
+	// "Day": "2021-07-26T00:00:00",
+	// "Limit": 2
+	// }
+	const onSelectDate = async (vl) => {
+		setDateSelected({
+			dateString: vl.resource.dateString,
+		});
+	};
+	// useEffect(() => {
+	// 	console.log(dateSelected);
+	// }, [dateSelected]);
+	const onSelectSchedule = (vl) => {
+		if (!dateSelected.dateString) {
+			showNoti('danger', 'Bạn cần chọn ngày');
+			return false;
+		}
+		console.log(vl);
+		//
+		// const newScheduleList = [...dateSelected.scheduleList];
+		// const isScheduleAlready = newScheduleList.findIndex((s) => s.ID === vl.ID);
+		// //
+		// if (isScheduleAlready >= 0) {
+		// 	newScheduleList.splice(isScheduleAlready, 1);
+		// } else {
+		// 	newScheduleList.push(vl);
+		// }
+		// //
+		// if (newScheduleList.length > dateSelected.dayLimit) {
+		// 	showNoti('danger', `Không được chọn quá ${dateSelected.dayLimit} ca`);
+		// 	return false;
+		// }
+		// //
+		// const newDaySelected = {
+		// 	...dateSelected,
+		// 	scheduleList: newScheduleList,
+		// };
+		// setDateSelected(newDaySelected);
+		// return true;
+	};
+	// -----------SAVE COURSE-----------
+	const saveCourse = () => {
+		console.log(123);
+	};
 	return (
-		<div>
+		<div className="create-course">
 			<TitlePage title="Tạo khóa học" />
-
 			<div className="row">
 				<div className="col-md-8 col-12">
 					<Card
-						title="Xếp lịch học"
+						title="Sắp xếp lịch học"
 						extra={
 							<div className="btn-page-course">
 								<CreateCourseForm
@@ -373,20 +604,30 @@ const CreateCourse = (props) => {
 						}
 					>
 						<div className="wrap-calendar">
-							<Calendar
-								localizer={localizer}
-								events={events}
-								// events={calendarList}
-								startAccessor="start"
-								endAccessor="end"
-								style={{height: 500}}
+							<CreateCourseCalendar
+								eventList={calendarDateFormat(calendarList)}
+								handleSelectDate={onSelectDate}
+								dateSelected={dateSelected}
 							/>
 						</div>
 					</Card>
 				</div>
 				<div className="col-md-4 col-12">
 					<Schedule>
-						<ScheduleList scheduleList={scheduleList['schedule']} />
+						<ScheduleList>
+							{scheduleList['schedule'].map((s, idx) => (
+								<ScheduleItem
+									isLoading={isLoading}
+									key={idx}
+									scheduleObj={s}
+									handleSelectSchedule={onSelectSchedule}
+									handleGetInfoAvailableSchedule={getInfoAvailableSchedule}
+									handleFetchInfoAvailableSchedule={fetchInfoAvailableSchedule}
+									//
+									optionForScheduleList={optionForSchedule}
+								/>
+							))}
+						</ScheduleList>
 					</Schedule>
 				</div>
 			</div>
