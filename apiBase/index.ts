@@ -1,5 +1,4 @@
-import { wardApi } from "./options/ward";
-import { subjectApi } from "./options/subject";
+import { staffApi } from "./staff-manage/staff";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { contractApi } from "./options/contract";
@@ -26,3 +25,5 @@ export { teacherApi } from "./teacher/teacher";
 export { lessonApi } from "./course/lesson";
 export { studyDayApi } from "./course/study-day";
 export { checkStudyTimeApi } from "./course/check-study-time";
+export { parentsApi } from "./customer/parents/parents";
+export { staffApi } from "./staff-manage/staff";

@@ -116,10 +116,11 @@ const ProfileBase = (props) => {
   const { showNoti } = useWrap();
 
   // --- GET DATA USER
-  let dataUser = null;
-  if (props.dataUser) {
-    dataUser = props.dataUser;
-  }
+  // let dataUser = null;
+  // if (props.dataUser) {
+  //   dataUser = props.dataUser;
+  // }
+  const { dataUser } = props;
   console.log("dataUSer: ", dataUser);
   // Get path and slug
   const router = useRouter();
@@ -162,13 +163,14 @@ const ProfileBase = (props) => {
                 <Avatar
                   size={64}
                   src={
-                    <img
-                      src={
-                        dataUser?.Avatar !== null
-                          ? dataUser.Avatar
-                          : "/images/user.png"
-                      }
-                    />
+                    // <img
+                    //   src={
+                    //     dataUser?.Avatar !== null
+                    //       ? dataUser.Avatar
+                    //       : "/images/user.png"
+                    //   }
+                    // />
+                    <img src={"/images/user.png"} />
                   }
                 />
                 {path === "teacher-detail" && (
@@ -188,31 +190,41 @@ const ProfileBase = (props) => {
               <div className="col-2">
                 <UserOutlined />
               </div>
-              <div className="col-10  d-flex ">{dataUser?.FullNameUnicode}</div>
+              <div className="col-10  d-flex ">
+                {dataUser?.FullNameUnicode && dataUser?.FullNameUnicode}
+              </div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <DeploymentUnitOutlined />
               </div>
-              <div className="col-10  d-flex ">{dataUser?.RoleName}</div>
+              <div className="col-10  d-flex ">
+                {dataUser?.RoleName && dataUser?.RoleName}
+              </div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <WhatsAppOutlined />
               </div>
-              <div className="col-10  d-flex ">{dataUser?.Mobile}</div>
+              <div className="col-10  d-flex ">
+                {dataUser?.Mobile && dataUser?.Mobile}
+              </div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <MailOutlined />
               </div>
-              <div className="col-10  d-flex ">{dataUser?.Email}</div>
+              <div className="col-10  d-flex ">
+                {dataUser?.Email && dataUser?.Email}
+              </div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <AimOutlined />
               </div>
-              <div className="col-10  d-flex ">{dataUser?.Address}</div>
+              <div className="col-10  d-flex ">
+                {dataUser?.Address && dataUser?.Address}
+              </div>
             </div>
           </Card>
           {/* {

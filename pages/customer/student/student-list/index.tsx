@@ -13,6 +13,7 @@ import LayoutBase from "~/components/LayoutBase";
 import { studentApi, branchApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import StudentForm from "~/components/Global/Customer/Student/StudentForm";
+// import StudentForm from "~/components/Global/Customer/Student/StudentForm";
 
 let pageIndex = 1;
 
@@ -52,18 +53,9 @@ const dataOption = [
   },
 ];
 
-const expandedRowRender = () => {
-  return (
-    <>
-      <Card title="Thông tin cá nhân">
-        <InfoCusCard />
-      </Card>
-    </>
-  );
-};
-
 const StudentData = () => {
   const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
+  const [dataRow, setDataRow] = useState([]);
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<IStudent[]>([]);
@@ -148,6 +140,19 @@ const StudentData = () => {
   useEffect(() => {
     getDataCenter();
   }, []);
+
+  // EXPAND ROW
+  console.log("Data row This: ", dataRow);
+  const expandedRowRender = () => {
+    return (
+      <>
+        {/* <Card title="Thông tin cá nhân">
+          <InfoCusCard />
+        </Card> */}
+        <StudentForm dataRow={dataRow} />
+      </>
+    );
+  };
 
   // Columns
   const columns = [
@@ -256,13 +261,14 @@ const StudentData = () => {
 
   return (
     <ExpandTable
+      handleExpand={(data) => setDataRow(data)}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       loading={isLoading}
       addClass="basic-header"
       TitlePage="DANH SÁCH HỌC VIÊN"
-      TitleCard={<StudentForm dataCenter={dataCenter} />}
+      // TitleCard={<StudentForm dataCenter={dataCenter} />}
       expandable={{ expandedRowRender }}
       dataSource={dataSource}
       columns={columns}
