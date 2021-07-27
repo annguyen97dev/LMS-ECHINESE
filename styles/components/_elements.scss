@@ -1735,48 +1735,6 @@ hr {
 .hide {
   display: none;
 }
-<<<<<<< HEAD
-.color-white {
-  color: white;
-}
-.list-notification {
-  height: 364px;
-  overflow: auto;
-  padding-right: 4px;
-  &::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: white;
-  }
-
-  &::-webkit-scrollbar {
-    border: none;
-    width: 4px;
-    background-color: #f5f5f5;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: rgba($color: #dd4667, $alpha: 0.5);
-  }
-  .new {
-    .ant-list-item-meta-title {
-      font-weight: bold;
-    }
-    .ant-list-item-meta-description {
-      color: rgba(0, 0, 0, 0.85);
-      @include line-clamp(2);
-      p {
-        margin: 0;
-      }
-    }
-  }
-  .old {
-    .ant-list-item-meta-title {
-      font-weight: bold;
-      a {
-        color: rgba(0, 0, 0, 0.45);
-=======
-
 .col-long {
   width: 40%;
 }
@@ -1805,12 +1763,10 @@ hr {
       }
       th:nth-child(3) {
         width: 10%;
->>>>>>> master
       }
     }
   }
 }
-<<<<<<< HEAD
 .content_notification {
   .content_notification--link {
     text-align: center;
@@ -1845,31 +1801,37 @@ hr {
   .tag {
     margin: 2px;
   }
-=======
-.hide {
-  display: none;
 }
+.list-notification {
+  height: 350px;
+  overflow: auto;
+  padding-right: 10px;
 
-.col-long {
-  width: 40%;
-}
-.col-short {
-  width: 20%;
-}
-.icon-additional {
-  color: #067fa4;
-  width: 20px;
-}
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: white;
+  }
 
-// .table-curriculum-detail {
-//   table {
-//     .ant-table-thead tr th:nth-child(2) {
-//       border-top-left-radius: 0.575rem !important;
-//     }
-//   }
-// }
+  &::-webkit-scrollbar {
+    border: none;
+    width: 4px;
+    background-color: #f5f5f5;
+  }
 
-.w-70 {
-  width: 70%;
->>>>>>> master
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #dd4667;
+  }
+  .old {
+    .ant-list-item-meta-title {
+      a {
+        color: rgba(0, 0, 0, 0.45);
+      }
+    }
+  }
+  .ant-list-item-meta-description {
+    p {
+      margin-bottom: 0;
+    }
+  }
 }

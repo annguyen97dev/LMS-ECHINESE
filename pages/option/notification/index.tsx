@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { data } from "../../../lib/option/dataOption2";
 import NotificationForm from "~/components/Global/Option/NotificationForm";
 import ExpandTable from "~/components/ExpandTable";
+import PowerTable from "~/components/PowerTable";
 import { CheckCircle } from "react-feather";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
@@ -263,7 +264,7 @@ const Notification = () => {
   ];
 
   return (
-    <ExpandTable
+    <PowerTable
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
