@@ -14,7 +14,6 @@ import {
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import TitlePage from "~/components/TitlePage";
 import LayoutBase from "~/components/LayoutBase";
-import ImgCrop from "antd-img-crop";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
@@ -31,6 +30,7 @@ import {
   branchApi,
   sourceInfomationApi,
   parentsApi,
+  staffApi,
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 
@@ -46,6 +46,7 @@ interface listData {
   Purposes: Array<Object>;
   SourceInformation: Array<Object>;
   Parent: Array<Object>;
+  Counselors: Array<Object>;
 }
 
 const optionGender = [
@@ -95,6 +96,11 @@ const listApi = [
     text: "Nguồn khách hàng",
     name: "SourceInformation",
   },
+  {
+    api: staffApi,
+    text: "Nguồn khách hàng",
+    name: "SourceInformation",
+  },
 ];
 
 const StudentForm = (props) => {
@@ -119,6 +125,7 @@ const StudentForm = (props) => {
     Purposes: [],
     SourceInformation: [],
     Parent: [],
+    Counselors: [],
   });
 
   console.log("DATA list: ", listData);
