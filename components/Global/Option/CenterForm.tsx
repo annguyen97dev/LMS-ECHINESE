@@ -25,7 +25,7 @@ const CenterForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { showNoti } = useWrap();
-  const [dataArea, setDataArea] = useState<IArea[]>(null);
+  // const [dataArea, setDataArea] = useState<IArea[]>(null);
   const {
     reset,
     register,
@@ -35,30 +35,26 @@ const CenterForm = React.memo((props: any) => {
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
   const { Option } = Select;
-
+  const { rowData, branchId, isLoading, _onSubmit, getIndex, dataArea } = props;
+  const [form] = Form.useForm();
+  // ------------ /
   const [dataDistrict, setDataDistrict] = useState<IDistrict[]>([]);
-
   const [loadingSelect, setLoadingSelect] = useState(false);
 
-  const [dataDetail, setDataDetail] = useState<IBranch>();
-
-  const { rowData, branchId, isLoading, _onSubmit, getIndex } = props;
-  const [form] = Form.useForm();
-
-  //GET DATA AREA
-  const getAllArea = () => {
-    (async () => {
-      try {
-        const res = await areaApi.getAll({
-          pageIndex: 1,
-          pageSize: Number.MAX_SAFE_INTEGER,
-        });
-        res.status == 200 && setDataArea(res.data.data);
-      } catch (err) {
-        showNoti("danger", err);
-      }
-    })();
-  };
+  // //GET DATA AREA
+  // const getAllArea = () => {
+  //   (async () => {
+  //     try {
+  //       const res = await areaApi.getAll({
+  //         pageIndex: 1,
+  //         pageSize: Number.MAX_SAFE_INTEGER,
+  //       });
+  //       res.status == 200 && setDataArea(res.data.data);
+  //     } catch (err) {
+  //       showNoti("danger", err);
+  //     }
+  //   })();
+  // };
 
   // Get DATA DISTRICT
   const getDistrictByArea = (AreaID: number) => {
@@ -95,7 +91,7 @@ const CenterForm = React.memo((props: any) => {
 
   useEffect(() => {
     if (isModalVisible) {
-      getAllArea();
+      // getAllArea();
 
       console.log("DATA row: ", rowData);
 
@@ -142,7 +138,7 @@ const CenterForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title="Tạo trung tâm"
+        title={branchId ? "Sửa trung tâm" : "Thêm trung tâm"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}

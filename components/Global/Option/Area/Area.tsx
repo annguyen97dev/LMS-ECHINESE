@@ -53,6 +53,7 @@ const Area = () => {
 	];
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
 			pageSize,
@@ -232,6 +233,7 @@ const Area = () => {
 			dataIndex: 'ModifiedBy',
 		},
 		{
+			align: 'center',
 			render: (value, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
 					<AreaForm

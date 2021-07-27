@@ -1,24 +1,17 @@
-import { instance } from "~/apiBase/instance";
+import {instance} from '~/apiBase/instance';
 
 class StudyTimeApi {
-  getAll = (page: number) =>
-    instance.get<IApiResultData<IStudyTime[]>>(
-      "/api/ClassDetail/GetAllClassDetail",
-      {
-        params: {
-          page: page,
-        },
-      }
-    );
-  //   getWithID = (CourseID: number) =>
-  //     instance.get<IApiResult<ICourse[]>>("/api/Course/GetCourse", {
-  //       params: {
-  //         id: CourseID,
-  //       },
-  //     });
-  //   post = (data: ICourse) => instance.post("/api/Class/InsertClass", data, {});
-  //   put = (data: ICourse) => instance.put("/api/Course/UpdateCourse", data, {});
-  //   patch = (data: any) => instance.patch("/api/Course/UpdateHiddenCourse", data);
+  getAll = (todoApi: object) =>
+    instance.get<IApiResultData<IStudyTime[]>>("/api/StudyTime", {
+      params: todoApi,
+    });
+
+  getWithID = (ID: number) =>
+    instance.get<IApiResult<IStudyTime[]>>(`/api/StudyTime/${ID}`);
+
+  add = (data: IStudyTime) => instance.post("/api/StudyTime", data, {});
+
+  update = (data: any) => instance.put("/api/StudyTime", data, {});
 }
 
 export const studyTimeApi = new StudyTimeApi();

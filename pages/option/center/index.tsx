@@ -8,7 +8,7 @@ import SortBox from "~/components/Elements/SortBox";
 import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import Link from "next/link";
 import LayoutBase from "~/components/LayoutBase";
-import { branchApi } from "~/apiBase";
+import { branchApi, areaApi } from "~/apiBase";
 import CenterForm from "~/components/Global/Option/CenterForm";
 import { useWrap } from "~/context/wrap";
 import { FormOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
@@ -23,65 +23,58 @@ let listFieldSearch = {
   branchName: null,
 };
 
+const listTodoApi = {
+  pageSize: 10,
+  pageIndex: pageIndex,
+  sort: null,
+  sortType: null,
+  branchCode: null,
+  branchName: null,
+};
+
+const dataOption = [
+  {
+    dataSort: {
+      sort: 1,
+      sortType: false,
+    },
+    text: "Mã giảm dần",
+  },
+  {
+    dataSort: {
+      sort: 1,
+      sortType: true,
+    },
+    text: "Mã tăng dần",
+  },
+  {
+    dataSort: {
+      sort: 2,
+      sortType: false,
+    },
+    text: "Tên giảm dần",
+  },
+  {
+    dataSort: {
+      sort: 2,
+      sortType: true,
+    },
+    text: "Tên tăng dần ",
+  },
+];
+
 const Center = () => {
   const [center, setCenter] = useState<IBranch[]>([]);
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
-  const [isOpen, setIsOpen] = useState({
-    isOpen: false,
-    status: null,
-  });
   const { showNoti } = useWrap();
-  const [rowData, setRowData] = useState<IBranch>();
   const [totalPage, setTotalPage] = useState(null);
   const [indexRow, setIndexRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const listTodoApi = {
-    pageSize: 10,
-    pageIndex: pageIndex,
-    sort: null,
-    sortType: null,
-    branchCode: null,
-    branchName: null,
-  };
-
   const [todoApi, setTodoApi] = useState(listTodoApi);
-
-  console.log("List field search: ", listFieldSearch);
-
-  const dataOption = [
-    {
-      dataSort: {
-        sort: 1,
-        sortType: false,
-      },
-      text: "Mã giảm dần",
-    },
-    {
-      dataSort: {
-        sort: 1,
-        sortType: true,
-      },
-      text: "Mã tăng dần",
-    },
-    {
-      dataSort: {
-        sort: 2,
-        sortType: false,
-      },
-      text: "Tên giảm dần",
-    },
-    {
-      dataSort: {
-        sort: 2,
-        sortType: true,
-      },
-      text: "Tên tăng dần ",
-    },
-  ];
+  const [dataArea, setDataArea] = useState<IArea[]>(null);
 
   // -------------- GET DATA CENTER ----------------
   const getDataCenter = async () => {
@@ -92,13 +85,11 @@ const Center = () => {
 
     try {
       let res = await branchApi.getAll(todoApi);
-      res.status == 200 && setCenter(res.data.data);
-      if (res.data.data.length < 1) {
-        showNoti("danger", "Không có dữ liệu");
-        setCurrentPage(pageIndex);
-      } else {
-        setTotalPage(res.data.totalRow);
-      }
+      res.status == 200 &&
+        (setCenter(res.data.data),
+        setTotalPage(res.data.totalRow),
+        showNoti("success", "Thành công"));
+      res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -107,6 +98,21 @@ const Center = () => {
         status: false,
       });
     }
+  };
+
+  //GET DATA AREA
+  const getAllArea = () => {
+    (async () => {
+      try {
+        const res = await areaApi.getAll({
+          pageIndex: 1,
+          pageSize: Number.MAX_SAFE_INTEGER,
+        });
+        res.status == 200 && setDataArea(res.data.data);
+      } catch (err) {
+        showNoti("danger", err);
+      }
+    })();
   };
 
   // ---------------- AFTER SUBMIT -----------------
@@ -133,9 +139,9 @@ const Center = () => {
         res = await branchApi.update(dataSubmit);
 
         if (res.status == 200) {
-          let newDataCenter = [...center];
-          newDataCenter.splice(indexRow, 1, dataSubmit);
-          setCenter(newDataCenter);
+          let newDataSource = [...center];
+          newDataSource.splice(indexRow, 1, dataSubmit);
+          setCenter(newDataSource);
           showNoti("success", res.data.message);
         }
       } catch (error) {
@@ -178,8 +184,7 @@ const Center = () => {
 
     try {
       let res = await branchApi.update(dataChange);
-      res.status == 200 && setTodoApi(listTodoApi),
-        showNoti("success", res.data.message);
+      res.status == 200 && setTodoApi({ ...todoApi });
     } catch (error) {
       showNoti("danger", error.Message);
     } finally {
@@ -205,11 +210,11 @@ const Center = () => {
   const handleSort = async (option) => {
     let newTodoApi = {
       ...listTodoApi,
+      pageIndex: 1,
       sort: option.title.sort,
       sortType: option.title.sortType,
     };
-
-    setTodoApi(newTodoApi);
+    setCurrentPage(1), setTodoApi(newTodoApi);
   };
 
   // -------------- CHECK FIELD ---------------------
@@ -253,13 +258,17 @@ const Center = () => {
       ...listTodoApi,
       pageIndex: 1,
     });
-    resetListFieldSearch();
+    setCurrentPage(1), resetListFieldSearch();
   };
 
   // ============== USE EFFECT - FETCH DATA ===================
   useEffect(() => {
     getDataCenter();
   }, [todoApi]);
+
+  useEffect(() => {
+    getAllArea();
+  }, []);
 
   const columns = [
     {
@@ -312,6 +321,7 @@ const Center = () => {
 
           <Tooltip title="Cập nhật trung tâm">
             <CenterForm
+              dataArea={dataArea}
               getIndex={() => setIndexRow(index)}
               index={index}
               branchId={data.ID}
@@ -336,6 +346,7 @@ const Center = () => {
         TitlePage="Danh sách trung tâm"
         TitleCard={
           <CenterForm
+            dataArea={dataArea}
             isLoading={isLoading}
             _onSubmit={(data: any) => _onSubmit(data)}
           />

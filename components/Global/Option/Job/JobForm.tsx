@@ -6,8 +6,8 @@ import { useWrap } from "~/context/wrap";
 import { jobApi } from "~/apiBase";
 
 const JobForm = React.memo((props: any) => {
-  const { jobId, reloadData, jobDetail } = props;
-  const { reset, setValue } = useForm();
+  const { jobId, reloadData, jobDetail, currentPage } = props;
+  const { setValue } = useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
@@ -19,6 +19,7 @@ const JobForm = React.memo((props: any) => {
       try {
         let res = await jobApi.update({ ...data, Enable: true, JobID: jobId });
         afterSubmit(res?.data.message);
+        reloadData(currentPage);
       } catch (error) {
         showNoti("danger", error.message);
         setLoading(false);
@@ -27,7 +28,8 @@ const JobForm = React.memo((props: any) => {
       try {
         let res = await jobApi.add({ ...data, Enable: true });
         afterSubmit(res?.data.message);
-        reset();
+        reloadData(1);
+        form.resetFields();
       } catch (error) {
         showNoti("danger", error.message);
         setLoading(false);
@@ -39,7 +41,6 @@ const JobForm = React.memo((props: any) => {
     showNoti("success", mes);
     setLoading(false);
     setIsModalVisible(false);
-    reloadData();
   };
 
   useEffect(() => {
@@ -99,10 +100,12 @@ const JobForm = React.memo((props: any) => {
               </div>
             </div>
             <div className="row">
-              <button type="submit" className="btn btn-primary w-100">
-                Lưu
-                {loading == true && <Spin className="loading-base" />}
-              </button>
+              <div className="col-12">
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {loading == true && <Spin className="loading-base" />}
+                </button>
+              </div>
             </div>
           </Form>
         </div>

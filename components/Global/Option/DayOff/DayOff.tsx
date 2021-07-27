@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
-import dayOffApi from '~/apiBase/options/day-off';
+import {dayOffApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import DayOffForm from '~/components/Global/Option/DayOff/DayOffForm';
 import PowerTable from '~/components/PowerTable';
@@ -82,6 +82,7 @@ const DayOff = () => {
 	};
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
 			pageSize,
@@ -265,6 +266,7 @@ const DayOff = () => {
 			dataIndex: 'CreatedBy',
 		},
 		{
+			align: 'center',
 			render: (value, _, idx) => (
 				// VÌ KHI CLICK VÀO THẰNG TALBE THÌ TRIGGER LUÔN CẢ FUNCTION CỦA CÁC THẰNG BÊN TRONG
 				<div onClick={(e) => e.stopPropagation()}>

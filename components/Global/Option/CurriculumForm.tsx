@@ -14,19 +14,14 @@ import { FormProvider, useForm } from "react-hook-form";
 import { branchApi, areaApi, districtApi } from "~/apiBase";
 
 import { useWrap } from "~/context/wrap";
-import SelectFilterBox from "~/components/Elements/SelectFilterBox";
+import router from "next/router";
 import { RotateCcw } from "react-feather";
 
-// type CurriculumFormProps = IFormBaseProps & {
-//   Id?: number;
-// };
-
 const CurriculumForm = React.memo((props: any) => {
+  const programID = parseInt(router.query.slug as string);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const { isLoading } = props;
-
-  console.log("is loading: ", isLoading);
+  const { Option } = Select;
+  const [form] = Form.useForm();
   const { showNoti } = useWrap();
   const {
     reset,
@@ -36,57 +31,57 @@ const CurriculumForm = React.memo((props: any) => {
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
-  const { Option } = Select;
+  const { isLoading, rowID, _onSubmit, getIndex, index, rowData, dataProgram } =
+    props;
 
-  const [dataDistrict, setDataDistrict] = useState<IDistrict[]>([]);
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any) => {
-    let res = props._onSubmit(data);
+    let res = _onSubmit(data);
 
     res.then(function (rs: any) {
-      rs
-        ? rs.status == 200 && setIsModalVisible(false)
-        : showNoti("danger", "Server lỗi");
+      rs && rs.status == 200 && (setIsModalVisible(false), form.resetFields());
     });
   });
-
-  useEffect(() => {
-    if (props.rowData) {
-      Object.keys(props.rowData).forEach(function (key) {
-        setValue(key, props.rowData[key]);
-      });
-
-      // setValue("BranchCode", props.rowData.BranchCode);
-      // setValue("BranchName", props.rowData.BranchName);
-      // setValue("Phone", props.rowData.Phone);
-      // setValue("Address", props.rowData.Address);
-      // setValue("AreaID", props.rowData.AreaID);
-      // setValue("DistrictID", props.rowData.DistrictID);
-    }
-  }, [props.rowData]);
 
   // FUNCTION SELECT
   const onChangeSelect = (name) => (value) => {};
 
-  // useEffect(() => {
-  //   setValue("Enable", true);
-  // }, []);
+  useEffect(() => {
+    if (isModalVisible) {
+      if (programID) {
+        setValue("ProGramID", programID);
+
+        form.setFieldsValue({
+          ...rowData,
+          ProGramID: programID,
+        });
+      }
+
+      if (rowID) {
+        getIndex();
+        // Cập nhật giá trị khi show form update
+        Object.keys(rowData).forEach(function (key) {
+          setValue(key, rowData[key]);
+        });
+        form.setFieldsValue(rowData);
+      }
+    }
+  }, [isModalVisible]);
 
   return (
     <>
-      {props.showIcon && (
+      {rowID ? (
         <button
           className="btn btn-icon edit"
-          // onClick={() => {
-          //   setIsModalVisible(true), props.getBranchDetail(props.branchId);
-          // }}
+          onClick={() => {
+            setIsModalVisible(true);
+          }}
         >
           <Tooltip title="Cập nhật">
             <RotateCcw />
           </Tooltip>
         </button>
-      )}
-      {props.showAdd && (
+      ) : (
         <button
           className="btn btn-warning add-new"
           onClick={() => {
@@ -104,161 +99,95 @@ const CurriculumForm = React.memo((props: any) => {
         footer={null}
       >
         <div className="container-fluid">
-          <Form layout="vertical">
+          <Form form={form} onFinish={onSubmit} layout="vertical">
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Mã trung tâm">
-                  {isLoading.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("BranchCode")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={props.rowData?.BranchCode}
-                      onChange={(e) => setValue("BranchCode", e.target.value)}
-                    />
-                  )}
+                <Form.Item
+                  label="Chương trình"
+                  name="ProGramID"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Select
+                    disabled={true}
+                    style={{ width: "100%" }}
+                    className="style-input"
+                    showSearch
+                    optionFilterProp="children"
+                    onChange={onChangeSelect("ProGramID")}
+                  >
+                    {dataProgram?.map((item, index) => (
+                      <Option key={index} value={item.ID}>
+                        {item.ProgramName}
+                      </Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Tên trung tâm">
-                  {isLoading?.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("BranchName")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={props.rowData?.BranchName}
-                      onChange={(e) => setValue("BranchName", e.target.value)}
-                    />
-                  )}
+                <Form.Item
+                  label="Tên giáo trình"
+                  name="CurriculumName"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("CurriculumName", e.target.value)}
+                  />
                 </Form.Item>
               </div>
             </div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Item label="Số điện thoại">
-                  {isLoading?.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("Phone")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={props.rowData?.Phone}
-                      onChange={(e) => setValue("Phone", e.target.value)}
-                    />
-                  )}
-                </Form.Item>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-12">
-                <Form.Item label="Địa chỉ">
-                  {isLoading?.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Input
-                      {...register("Address")}
-                      placeholder=""
-                      className="style-input"
-                      defaultValue={props.rowData?.Address}
-                      onChange={(e) => setValue("Address", e.target.value)}
-                    />
-                  )}
-                </Form.Item>
-              </div>
-            </div>
-            {/* <div className="row">
-              <div className="col-12">
-                <Form.Item label="Vùng">
-                  {isLoading?.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Select
-                      style={{ width: "100%" }}
-                      className="style-input"
-                      showSearch
-                      placeholder="Select..."
-                      optionFilterProp="children"
-                      onChange={onChangeSelect("AreaID")}
-                      defaultValue={props.rowData?.AreaID}
-                    >
-                      {dataArea?.map((item) => (
-                        <Option value={item.AreaID}>{item.AreaName}</Option>
-                      ))}
-                    </Select>
-                  )}
-                </Form.Item>
-              </div>
-            </div> */}
 
             <div className="row">
               <div className="col-12">
-                <Form.Item label="Quận">
-                  {isLoading?.type == "GET_WITH_ID" && isLoading.status ? (
-                    <Skeleton
-                      active
-                      paragraph={{ rows: 0 }}
-                      title={{ width: "100%" }}
-                    />
-                  ) : (
-                    <Select
-                      style={{ width: "100%" }}
-                      className="style-input"
-                      showSearch
-                      placeholder="Select..."
-                      optionFilterProp="children"
-                      onChange={onChangeSelect("DistrictID")}
-                    >
-                      {dataDistrict?.length > 0 ? (
-                        dataDistrict?.map((item) => (
-                          <Option value={item.ID}>{item.DistrictName}</Option>
-                        ))
-                      ) : (
-                        <Option value={5}>Không có data</Option>
-                      )}
-                    </Select>
-                  )}
+                <Form.Item
+                  label="Số buổi học"
+                  name="Lesson"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("Lesson", e.target.value)}
+                  />
                 </Form.Item>
               </div>
             </div>
-            <div className="col-12">
-              <Button
-                className="w-100"
-                type="primary"
-                size="large"
-                onClick={handleSubmit(onSubmit)}
-              >
-                LƯU
-                {isLoading.type == "ADD_DATA" && isLoading.status && (
-                  <Spin className="loading-base" />
-                )}
-              </Button>
+            <div className="row">
+              <div className="col-12">
+                <Form.Item
+                  label="Thời gian buổi học"
+                  name="TimeOfLesson"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                >
+                  <Input
+                    placeholder=""
+                    className="style-input"
+                    onChange={(e) => setValue("TimeOfLesson", e.target.value)}
+                  />
+                </Form.Item>
+              </div>
+            </div>
+
+            <div className="row ">
+              <div className="col-12 mt-3">
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {isLoading.type == "ADD_DATA" && isLoading.status && (
+                    <Spin className="loading-base" />
+                  )}
+                </button>
+              </div>
             </div>
           </Form>
         </div>

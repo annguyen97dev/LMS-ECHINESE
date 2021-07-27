@@ -8,7 +8,7 @@ import { RotateCcw } from "react-feather";
 import SortBox from "~/components/Elements/SortBox";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import router from "next/router";
-import { roomApi } from "~/apiBase";
+import { roomApi, branchApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import DeleteItem from "~/components/Tables/DeleteItem";
 import moment from "moment";
@@ -62,7 +62,7 @@ const Room = () => {
     roomName: null,
     BranchID: parseInt(router.query.slug as string),
   };
-
+  const [dataCenter, setDataCenter] = useState<IBranch[]>();
   const [todoApi, setTodoApi] = useState(listTodoApi);
   const [roomData, setRoomData] = useState<IRoom[]>([]);
   const [isLoading, setIsLoading] = useState({
@@ -71,6 +71,8 @@ const Room = () => {
   });
   const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
+  const [indexRow, setIndexRow] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const _onSubmit = async (dataSubmit: any) => {
     setIsLoading({
@@ -78,25 +80,18 @@ const Room = () => {
       status: true,
     });
 
-    const compareKey = () => {
-      let newListTodoApi = listTodoApi;
-      Object.keys(newListTodoApi).forEach(function (keyTodoApi) {
-        Object.keys(dataSubmit).forEach(function (keyDataSubmit) {
-          if (keyTodoApi.toUpperCase() == keyDataSubmit.toUpperCase()) {
-            newListTodoApi[keyTodoApi] = dataSubmit[keyDataSubmit];
-          }
-        });
-      });
-      return newListTodoApi;
-    };
-
     let res = null;
 
     if (dataSubmit.RoomID) {
       try {
         res = await roomApi.update(dataSubmit);
-        res?.status == 200 && showNoti("success", res.data.message),
-          setTodoApi(compareKey);
+
+        if (res.status == 200) {
+          let newDataSource = [...roomData];
+          newDataSource.splice(indexRow, 1, dataSubmit);
+          setRoomData(newDataSource);
+          showNoti("success", res.data.message);
+        }
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -108,8 +103,7 @@ const Room = () => {
     } else {
       try {
         res = await roomApi.add(dataSubmit);
-        res?.status == 200 && showNoti("success", res.data.message),
-          setTodoApi({ ...listTodoApi });
+        res?.status == 200 && afterPost(res.data.message);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -126,7 +120,11 @@ const Room = () => {
   // AFTER SUBMIT
   const afterPost = (mes) => {
     showNoti("success", mes);
-    setTodoApi(listTodoApi);
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
+    });
+    setCurrentPage(1);
   };
 
   // DELETE ITEM
@@ -139,7 +137,7 @@ const Room = () => {
     try {
       let res = await roomApi.update({ RoomID: id, Enable: false });
       res?.status == 200 && showNoti("success", res.data.message),
-        setTodoApi({ ...listTodoApi });
+        setTodoApi({ ...todoApi });
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -147,6 +145,23 @@ const Room = () => {
         type: "GET_ALL",
         status: false,
       });
+    }
+  };
+
+  // GET DATA CENTER
+  const getDataCenter = async () => {
+    // setLoadingSelect(true);
+
+    try {
+      let res = await branchApi.getAll({
+        pageIndex: 1,
+        pageSize: 9999,
+      });
+      res.status == 200 && setDataCenter(res.data.data);
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      // setLoadingSelect(false);
     }
   };
 
@@ -159,11 +174,11 @@ const Room = () => {
 
     try {
       let res = await roomApi.getAll(todoApi);
-      // @ts-ignore
       res.status == 200 &&
-        (setRoomData(res.data.data), setTotalPage(res.data.totalRow));
-
-      res.data.data.length < 1 && showNoti("danger", "Không có dữ liệu");
+        (setRoomData(res.data.data),
+        setTotalPage(res.data.totalRow),
+        showNoti("success", "Thành công"));
+      res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -177,25 +192,28 @@ const Room = () => {
   // -------------- GET PAGE_NUMBER -----------------
   const getPagination = (pageNumber: number) => {
     pageIndex = pageNumber;
-
+    setCurrentPage(pageNumber);
     setTodoApi({
       ...todoApi,
+      ...listFieldSearch,
       pageIndex: pageIndex,
     });
   };
 
   // -------------- CHECK FIELD ---------------------
   const checkField = (valueSearch, dataIndex) => {
-    let newList = null;
-    Object.keys(listFieldSearch).forEach(function (key) {
+    let newList = { ...listFieldSearch };
+    Object.keys(newList).forEach(function (key) {
       console.log("key: ", key);
       if (key != dataIndex) {
-        listFieldSearch[key] = "";
+        if (key != "pageIndex") {
+          newList[key] = null;
+        }
       } else {
-        listFieldSearch[key] = valueSearch;
+        newList[key] = valueSearch;
       }
     });
-    newList = listFieldSearch;
+
     return newList;
   };
 
@@ -213,22 +231,38 @@ const Room = () => {
   const handleSort = async (option) => {
     let newTodoApi = {
       ...listTodoApi,
+      pageIndex: 1,
       sort: option.title.sort,
       sortType: option.title.sortType,
     };
-
-    setTodoApi(newTodoApi);
+    setCurrentPage(1), setTodoApi(newTodoApi);
   };
 
   // HANDLE RESET
+  const resetListFieldSearch = () => {
+    Object.keys(listFieldSearch).forEach(function (key) {
+      if (key != "pageIndex") {
+        listFieldSearch[key] = null;
+      }
+    });
+  };
+
   const handleReset = () => {
-    setTodoApi(listTodoApi);
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
+    });
+    setCurrentPage(1), resetListFieldSearch();
   };
 
   // Fetch Data
   useEffect(() => {
     getDataRoom();
   }, [todoApi]);
+
+  useEffect(() => {
+    getDataCenter();
+  }, []);
 
   const columns = [
     {
@@ -243,8 +277,7 @@ const Room = () => {
     },
     {
       title: "Người cập nhật",
-      dataIndex: "ModifiedBy",
-      render: (date) => moment(date).format("DD/MM/YYYY"),
+      dataIndex: "CreatedBy",
     },
     {
       title: "Ngày cập nhật",
@@ -252,9 +285,11 @@ const Room = () => {
       render: (date) => moment(date).format("DD/MM/YYYY"),
     },
     {
-      render: (data) => (
+      render: (text, data, index) => (
         <>
           <RoomForm
+            dataCenter={dataCenter}
+            getIndex={() => setIndexRow(index)}
             roomID={data.RoomID}
             rowData={data}
             isLoading={isLoading}
@@ -269,6 +304,7 @@ const Room = () => {
   return (
     <>
       <PowerTable
+        currentPage={currentPage}
         totalPage={totalPage && totalPage}
         getPagination={(pageNumber: number) => getPagination(pageNumber)}
         loading={isLoading}
@@ -276,6 +312,7 @@ const Room = () => {
         TitlePage="Danh sách phòng"
         TitleCard={
           <RoomForm
+            dataCenter={dataCenter}
             showAdd={true}
             addDataSuccess={() => getDataRoom()}
             isLoading={isLoading}

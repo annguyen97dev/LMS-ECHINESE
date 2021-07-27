@@ -11,15 +11,19 @@ import FilterColumn from "~/components/Tables/FilterColumn";
 
 const JobsList = () => {
   const onSearch = (data) => {
+    setCurrentPage(1);
     setJobParams({
       ...listJobParams,
+      pageSize: null,
       JobName: data,
     });
   };
 
   const handleReset = () => {
+    setCurrentPage(1);
     setJobParams(listJobParams);
   };
+
   const columns = [
     {
       title: "Nghề nghiệp",
@@ -39,26 +43,26 @@ const JobsList = () => {
           <JobForm
             jobDetail={data}
             jobId={data.JobID}
-            reloadData={() => {
-              getDataJob();
+            reloadData={(firstPage) => {
+              getDataJob(firstPage);
             }}
+            currentPage={currentPage}
           />
           <JobDelete
             jobId={data.JobID}
-            reloadData={() => {
-              getDataJob();
+            reloadData={(firstPage) => {
+              getDataJob(firstPage);
             }}
+            currentPage={currentPage}
           />
         </>
       ),
     },
   ];
 
-  let pageIndex = 1;
   const sortOption = [
     {
       dataSort: {
-        sort: null,
         sortType: null,
       },
       value: 1,
@@ -66,34 +70,16 @@ const JobsList = () => {
     },
     {
       dataSort: {
-        sort: null,
         sortType: true,
       },
       value: 2,
       text: "Từ dưới lên",
     },
-    {
-      dataSort: {
-        sort: 1,
-        sortType: null,
-      },
-      value: 3,
-      text: "A-z",
-    },
-    {
-      dataSort: {
-        sort: 2,
-        sortType: null,
-      },
-      value: 4,
-      text: "Z-a",
-    },
   ];
 
   const handleSort = async (option) => {
     setJobParams({
-      ...jobParams,
-      sort: option.title.sort,
+      ...listJobParams,
       sortType: option.title.sortType,
     });
   };
@@ -106,26 +92,32 @@ const JobsList = () => {
 
   const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const listJobParams = {
     pageSize: 10,
-    pageIndex: pageIndex,
+    pageIndex: currentPage,
     sort: null,
     sortType: null,
     JobName: "",
   };
+
   const [jobParams, setJobParams] = useState(listJobParams);
 
-  const getDataJob = () => {
+  const getDataJob = (page: any) => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
     (async () => {
       try {
-        let res = await jobApi.getAll(jobParams);
+        let res = await jobApi.getAll({ ...jobParams, pageIndex: page });
         res.status == 200 && setJob(res.data.data);
-        setTotalPage(res.data.totalRow);
+        if (res.status == 204) {
+          showNoti("danger", "Không tìm thấy dữ liệu!");
+          setCurrentPage(1);
+          setJobParams(listJobParams);
+        } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -138,19 +130,20 @@ const JobsList = () => {
   };
 
   useEffect(() => {
-    getDataJob();
+    getDataJob(currentPage);
   }, [jobParams]);
 
   const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
+    setCurrentPage(pageNumber);
     setJobParams({
       ...jobParams,
-      pageIndex: pageIndex,
+      pageIndex: currentPage,
     });
   };
 
   return (
     <PowerTable
+      currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -158,8 +151,9 @@ const JobsList = () => {
       TitlePage="Jobs list"
       TitleCard={
         <JobForm
-          reloadData={() => {
-            getDataJob();
+          reloadData={(firstPage) => {
+            setCurrentPage(1);
+            getDataJob(firstPage);
           }}
         />
       }

@@ -78,6 +78,13 @@ export const dataMenu = [
         Route: "/course/course-buy",
         Text: "Danh sách khóa học - mua bán",
       },
+      {
+        TypeItem: "single",
+        Key: "/course/register-course",
+        Icon: '<span class="anticon"><img src="/images/icons/shopping-bag.svg"></span>',
+        Route: "/course/register-course",
+        Text: "Đăng ký khóa học",
+      },
 
       {
         ItemType: "sub-menu",
@@ -618,13 +625,13 @@ export const dataMenu = [
             Text: "Khối học",
             Icon: "",
           },
-          {
-            ItemType: "single",
-            Key: "/option/class",
-            Route: "/option/class",
-            Text: "Lớp học",
-            Icon: "",
-          },
+          // {
+          //   ItemType: "single",
+          //   Key: "/option/class",
+          //   Route: "/option/class",
+          //   Text: "Lớp học",
+          //   Icon: "",
+          // },
           {
             ItemType: "single",
             Key: "/option/study-time",
