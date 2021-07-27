@@ -16,3 +16,4 @@ export { supplierApi } from "./options/supplier";
 export { discountApi } from "./options/discount";
 export { sourceInfomationApi } from "./options/source-infomation";
 export { notificationApi } from "./options/notification";
+export { rulesApi } from "./options/rules";

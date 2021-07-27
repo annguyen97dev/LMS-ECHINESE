@@ -376,8 +376,8 @@ const ServiceList = () => {
       <PowerTable
         loading={isLoading}
         currentPage={currentPage}
-				totalPage={totalPage && totalPage}
-				getPagination={(pageNumber: number) => getPagination(pageNumber)}
+		totalPage={totalPage && totalPage}
+		getPagination={(pageNumber: number) => getPagination(pageNumber)}
         addClass="basic-header"
         TitlePage="Services List"
         TitleCard={
