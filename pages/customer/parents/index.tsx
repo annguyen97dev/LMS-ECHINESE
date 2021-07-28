@@ -1,12 +1,13 @@
+import { Tooltip } from "antd";
 import moment from "moment";
+import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
+import { Info } from "react-feather";
 import { areaApi, branchApi, parentsApi } from "~/apiBase";
-import { examServiceApi } from "~/apiBase/options/examServices";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
-import ExamServicesDelete from "~/components/Global/Option/ExamServices/ExamServicesDelete";
-import ExamServicesForm from "~/components/Global/Option/ExamServices/ExamServicesForm";
-import FilterRegisterCourseTable from "~/components/Global/Option/FilterTable/FilterRegisterCourseTable";
+import ParentsDelete from "~/components/Global/Customer/ParentsList/ParentsDelete";
+import ParentsForm from "~/components/Global/Customer/ParentsList/ParentsForm";
 import LayoutBase from "~/components/LayoutBase";
 import PowerTable from "~/components/PowerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
@@ -30,7 +31,7 @@ const ParentsList = () => {
       title: "Tên phụ huynh",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
-      render: (text) => <p className="font-weight-black">{text}</p>,
+      render: (text) => <p className="font-weight-blue">{text}</p>,
     },
     {
       title: "Giới tính",
@@ -51,7 +52,7 @@ const ParentsList = () => {
       render: (Branch) => (
         <>
           {Branch.map((item) => (
-            <a href="/" className="font-weight-blue d-block">
+            <a href="/" className="font-weight-black d-block">
               {item.BranchName}
             </a>
           ))}
@@ -88,28 +89,41 @@ const ParentsList = () => {
       ),
     },
 
-    // {
-    //   render: (data) => (
-    //     <>
-    //       <ExamServicesForm
-    //         examServicesDetail={data}
-    //         examServicesId={data.ID}
-    //         reloadData={(firstPage) => {
-    //           getDataExamServices(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
+    {
+      render: (data) => (
+        <Fragment>
+          <ParentsForm
+            parentsDetail={data}
+            parentsID={data.UserInformationID}
+            reloadData={(firstPage) => {
+              getDataParents(firstPage);
+            }}
+            currentPage={currentPage}
+          />
 
-    //       <ExamServicesDelete
-    //         examServicesId={data.ID}
-    //         reloadData={(firstPage) => {
-    //           getDataExamServices(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
-    //     </>
-    //   ),
-    // },
+          <Link
+            href={{
+              pathname: "/customer/parents/detail/[slug]",
+              query: { slug: `${data.UserInformationID}` },
+            }}
+          >
+            <Tooltip title="Xem học viên liên kết">
+              <button className="btn btn-icon">
+                <Info />
+              </button>
+            </Tooltip>
+          </Link>
+
+          <ParentsDelete
+            parentsID={data.UserInformationID}
+            reloadData={(firstPage) => {
+              getDataParents(firstPage);
+            }}
+            currentPage={currentPage}
+          />
+        </Fragment>
+      ),
+    },
   ];
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -322,14 +336,14 @@ const ParentsList = () => {
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       addClass="basic-header"
       TitlePage="DANH SÁCH PHỤ HUYNH"
-      // TitleCard={
-      //   <ExamServicesForm
-      //     reloadData={(firstPage) => {
-      //       setCurrentPage(1);
-      //       getDataExamServices(firstPage);
-      //     }}
-      //   />
-      // }
+      TitleCard={
+        <ParentsForm
+          reloadData={(firstPage) => {
+            setCurrentPage(1);
+            getDataParents(firstPage);
+          }}
+        />
+      }
       dataSource={parents}
       columns={columns}
       Extra={
