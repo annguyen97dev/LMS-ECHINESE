@@ -374,7 +374,7 @@ const StaffSalary = () => {
 					<div className="extra-table">
 						<FilterStaffSalaryTable 
 							_onFilter={(value: any) => _onFilterTable(value)}
-							_handleReset={() => handleReset()}	
+							_onHandleReset={handleReset}	
 						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}

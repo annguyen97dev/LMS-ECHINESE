@@ -376,6 +376,7 @@ const SupplierList = () => {
 					<div className="extra-table">
 						<FilterSupplierTable 
 							_onFilter={(value: any) => _onFilterTable(value)}
+							_onHandleReset={handleReset}
 						/>
 						<SortBox 
 							handleSort={(value) => handleSort(value)}

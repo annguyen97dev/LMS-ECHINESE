@@ -125,9 +125,9 @@ const Notification = () => {
             render: (text, record) => 
                 <div>{text == 0 
                     ? (<Checkbox className="uncheck" value={record.ID} onChange={onChange}>
-                        <span className="font-weight-black">Xem</span></Checkbox>) 
+                        <span>Xem</span></Checkbox>) 
                     : (<Checkbox checked>
-                        <span className="font-weight-black">Xem</span></Checkbox>)}
+                        <span>Xem</span></Checkbox>)}
                 </div>
         },
         { 

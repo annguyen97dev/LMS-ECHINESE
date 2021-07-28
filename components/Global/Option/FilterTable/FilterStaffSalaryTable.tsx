@@ -39,9 +39,15 @@ const FilterStaffSalaryTable = (props:any) => {
 		showFilterSet(false);
 	});
 
+	const handleReset = () => {
+		form.resetFields();
+		props._onHandleReset();
+		showFilterSet(false);
+	}
+
 	const content = (
 		<div className={`wrap-filter small`}>
-			<Form layout="vertical" onFinish={onSubmit}>
+			<Form form={form} layout="vertical" onFinish={onSubmit}>
 				<div className="row">
 					<div className="col-md-12">
 						<Form.Item label="Role" name="Role">
@@ -73,10 +79,10 @@ const FilterStaffSalaryTable = (props:any) => {
 					</div>
 					<div className="col-md-12">
 						<Form.Item className="mb-0">
-							<button className="btn btn-primary" style={{marginRight: '10px'}} onClick={onSubmit}>
+							<button className="btn btn-primary" style={{marginRight: '10px'}} type="submit">
 								Tìm kiếm
 							</button>
-							{/* <button className="btn btn-success">Export</button> */}
+							<span className="btn btn-light" onClick={handleReset}>Reset</span>
 						</Form.Item>
 					</div>
 				</div>
