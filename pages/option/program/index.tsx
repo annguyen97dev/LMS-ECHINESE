@@ -121,9 +121,7 @@ const Programs = () => {
         pageSize: Number.MAX_SAFE_INTEGER,
       });
       res.status == 200 &&
-        (setDataGrade(res.data.data),
-        setTotalPage(res.data.totalRow),
-        showNoti("success", "Thành công"));
+        (setDataGrade(res.data.data), showNoti("success", "Thành công"));
       res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);

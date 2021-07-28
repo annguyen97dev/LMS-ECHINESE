@@ -43,6 +43,7 @@ export default function Header({
   let dataUser = null;
   if (session !== undefined) {
     dataUser = session?.user;
+    console.log("data user: ", dataUser);
   }
 
   const content_search = (

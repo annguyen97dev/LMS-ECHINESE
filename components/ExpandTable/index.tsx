@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Table, Card, Button, Input } from "antd";
 import TitlePage from "../Elements/TitlePage";
+=======
+import { Table, Card } from "antd";
+import TitlePage from "~/components/TitlePage";
+>>>>>>> master
 =======
 import { Table, Card } from "antd";
 import TitlePage from "~/components/TitlePage";
@@ -15,6 +20,7 @@ const ExpandTable = (props) => {
 
   const selectRow = (record) => {
     const selectedRowKeys = [];
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     if (selectedRowKeys.indexOf(record.key) >= 0) {
@@ -43,6 +49,8 @@ const ExpandTable = (props) => {
       onChange: onSelectedRowKeysChange,
       hideSelectAll: true,
   };
+=======
+>>>>>>> master
 =======
 >>>>>>> master
 
@@ -109,7 +117,13 @@ const ExpandTable = (props) => {
   return (
     <>
       {/* <TitlePage title={props.TitlePage} /> */}
-      <div className={props.checkBox ? "wrap-table table-expand have-checkbox" : "wrap-table table-expand"}>
+      <div
+        className={
+          props.checkBox
+            ? "wrap-table table-expand have-checkbox"
+            : "wrap-table table-expand"
+        }
+      >
         <Card
           className={`cardRadius ${props.addClass && props.addClass} ${
             props.Size ? props.Size : ""
@@ -119,6 +133,7 @@ const ExpandTable = (props) => {
         >
           {props.children}
           <Table
+<<<<<<< HEAD
 <<<<<<< HEAD
               loading={
                 props.loading?.type == "GET_ALL" && props.loading?.status
@@ -141,6 +156,8 @@ const ExpandTable = (props) => {
                 },
               })}
 =======
+=======
+>>>>>>> master
             loading={props.loading?.type == "GET_ALL" && props.loading?.status}
             bordered={props.haveBorder ? props.haveBorder : false}
             scroll={props.noScroll ? { x: "max-content" } : { x: 500 }}
@@ -160,6 +177,9 @@ const ExpandTable = (props) => {
             })}
             expandable={props.expandable}
             onExpand={onExpand}
+<<<<<<< HEAD
+>>>>>>> master
+=======
 >>>>>>> master
           />
         </Card>

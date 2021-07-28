@@ -21,31 +21,36 @@ export default function AppointmentServiceTest() {
     {
       title: "Học viên",
       dataIndex: "nameStudent",
-      ...FilterColumn("nameStudent"),
+      // ...FilterColumn("nameStudent"),
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
-    { title: "Nguồn", dataIndex: "source", ...FilterColumn("source") },
+    {
+      title: "Nguồn",
+      dataIndex: "source",
+      //  ...FilterColumn("source")
+    },
     {
       title: "Trung tâm",
       dataIndex: "center",
-      ...FilterColumn("center"),
+      // ...FilterColumn("center"),
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
       title: "Người hẹn",
       dataIndex: "apmConsultant",
-      ...FilterColumn("apmConsultant"),
+      // ...FilterColumn("apmConsultant"),
     },
     {
       title: "Ngày hẹn",
       dataIndex: "apmDate",
-      ...FilterDateColumn("apmDate"),
+      // ...FilterDateColumn("apmDate"),
+
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
       title: "Giờ hẹn",
       dataIndex: "apmTime",
-      ...FilterColumn("apmTime"),
+      // ...FilterColumn("apmTime"),
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
@@ -114,7 +119,7 @@ export default function AppointmentServiceTest() {
     <ExpandTable
       addClass="basic-header"
       TitlePage="Danh sách khách hẹn test"
-      TitleCard={<StudyTimeForm showAdd={true} />}
+      // TitleCard={<StudyTimeForm showAdd={true} />}
       dataSource={dataService}
       columns={columns}
       expandable={{ expandedRowRender }}
