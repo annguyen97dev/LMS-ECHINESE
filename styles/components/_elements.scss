@@ -1735,7 +1735,6 @@ hr {
 .hide {
   display: none;
 }
-<<<<<<< HEAD
 
 .col-long {
   width: 40%;
@@ -1765,7 +1764,10 @@ hr {
       }
       th:nth-child(3) {
         width: 10%;
-=======
+      }
+    }
+  }
+}
 .color-white {
   color: white;
 }
@@ -1805,12 +1807,10 @@ hr {
       font-weight: bold;
       a {
         color: rgba(0, 0, 0, 0.45);
->>>>>>> tufe
       }
     }
   }
 }
-<<<<<<< HEAD
 .hide {
   display: none;
 }
@@ -1860,7 +1860,8 @@ hr {
   }
   &.loading {
     background: #ffffffb8;
-=======
+  }
+}
 .content_notification {
   .content_notification--link {
     text-align: center;
@@ -1894,6 +1895,5 @@ hr {
 .list-tag {
   .tag {
     margin: 2px;
->>>>>>> tufe
   }
 }
