@@ -34,6 +34,7 @@ import {
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import { data } from "~/lib/option/dataOption2";
+import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 
 let returnSchema = {};
 let schema = null;
@@ -267,7 +268,7 @@ const StudentForm = (props) => {
   const handleChange_select = (value, name) => {
     console.log("Value is: ", value);
 
-    form.setValue(name, undefined);
+    form.setValue(name, null);
     getDataWithID(value, name);
   };
 
@@ -336,7 +337,7 @@ const StudentForm = (props) => {
     if (data.Branch !== null) {
       data.Branch = data.Branch.toString();
     }
-    console.log("DATA SUBMIT: ", data);
+    console.log("DATA SUBMIT after: ", data);
     setIsLoading({
       type: "ADD_DATA",
       status: true,
@@ -418,7 +419,7 @@ const StudentForm = (props) => {
       getDataWithID(dataRow.DistrictID, "WardID");
       setImageUrl(dataRow.Avatar);
     } else {
-      form.setValue("Branch", undefined);
+      form.setValue("Branch", null);
     }
   }, []);
 
@@ -433,13 +434,11 @@ const StudentForm = (props) => {
               {/** ==== Thông tin cơ bản  ====*/}
               <div className="row">
                 <div className="col-12">
-                  <Upload
+                  {/* <Upload
                     name="avatar"
                     listType="picture-card"
                     className="avatar-uploader"
                     showUploadList={false}
-                    // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                    // beforeUpload={beforeUpload}
                     onChange={handleChange_img}
                   >
                     <img
@@ -454,7 +453,10 @@ const StudentForm = (props) => {
                     />
 
                     <UploadButton imageUrl={imageUrl} />
-                  </Upload>
+                  </Upload> */}
+                  <AvatarBase
+                    getValue={(value) => form.setValue("Avatar", value)}
+                  />
                 </div>
               </div>
               <div className="row">
