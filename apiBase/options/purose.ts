@@ -8,10 +8,10 @@ class Purose {
     });
 
     // Thêm mới data
-    add = (data) => instance.post("/api/Purposes", data);
+    add = ( data: IPurpose ) => instance.post("/api/Purposes", data);
 
     // Cập nhật data
-    update = (data) => instance.put("/api/Purposes", data, {});
+    update = ( data: any ) => instance.put("/api/Purposes", data, {});
 }
 
 export const puroseApi = new Purose();

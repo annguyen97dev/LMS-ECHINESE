@@ -8,10 +8,10 @@ class Supplier {
     });
 
     // Thêm mới data
-    add = (data) => instance.post("/api/SupplierServices", data);
+    add = ( data: ISupplier ) => instance.post("/api/SupplierServices", data);
 
     // Cập nhật data
-    update = (data) => instance.put("/api/SupplierServices", data, {});
+    update = ( data: any ) => instance.put("/api/SupplierServices", data, {});
 }
 
 export const supplierApi = new Supplier();

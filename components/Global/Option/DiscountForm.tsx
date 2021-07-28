@@ -27,6 +27,16 @@ const DiscountForm = (props) => {
       id: 3,
       text: "Hết hạn",
     },
+  ];
+  const packages = [
+    {
+      id: 1,
+      text: "Gói lẻ"
+    },
+    {
+      id: 2,
+      text: "Gói combo"
+    }
   ]
   
   const currentDay = new Date();
@@ -47,10 +57,12 @@ const DiscountForm = (props) => {
   const onSubmit = handleSubmit((data: any) => {
     console.log("Data submit", data);
 
-    if(percent) {
-      data.DiscountType = 2
-    } else {
-      data.DiscountType = 1
+    if(!props.rowData) {
+      if(percent) {
+        data.DiscountType = 2
+      } else {
+        data.DiscountType = 1
+      }
     }
 
     let res = props._onSubmit(data);
@@ -72,6 +84,7 @@ const DiscountForm = (props) => {
         setValue("Note", props.rowData.Note);
         setValue("DeadLine", props.rowData.DeadLine);
         setValue("Quantity", props.rowData.Quantity);
+        setValue("Style", props.rowData.Style);
       }
     }
   }, [isModalVisible]);
@@ -120,18 +133,33 @@ const DiscountForm = (props) => {
               <div className="row">
                 <div className="col-9">
                   {percent ? (
+                    <>
                     <Form.Item 
-                      label="Khuyến mãi"
+                      label="Khuyến mãi %"
                       name="Discount"
                       rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
                       >
-                      <Input 
-                        placeholder="25%" 
-                        className="style-input" 
-                        allowClear={true}
-                        onChange={(e) => setValue("Discount", e.target.value)} 
+                      <InputNumber 
+                        className="ant-input style-input w-100" 
+                        // allowClear={true}
+                        min={0}
+                        max={100}
+                        onChange={(value) => setValue("Discount", value)} 
                         />
                     </Form.Item>
+                    <Form.Item 
+                      label="Khuyến mãi tối đa"
+                      name="MaxDiscount"
+                      rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                      >
+                      <InputNumber
+                        className='ant-input style-input w-100'
+                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                        onChange={value => setValue("MaxDiscountPrice", value)}
+                      />
+                    </Form.Item>
+                    </>
                   ) : (
                     <Form.Item 
                       label="Khuyến mãi"
@@ -161,44 +189,87 @@ const DiscountForm = (props) => {
               </div>
             ) : (
               <div className="row">
-                <div className="col-6">
-                  <Form.Item 
-                    label="Mã khuyến mãi"
-                    name="DiscountCode"
-                    rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
-                    initialValue={props.rowData?.DiscountCode}
+                {props.rowData.DiscountType == 1 ? (
+                  <>
+                  <div className="col-6">
+                    <Form.Item 
+                      label="Mã khuyến mãi"
+                      name="DiscountCode"
+                      rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                      initialValue={props.rowData?.DiscountCode}
+                      >
+                      <Input 
+                        placeholder="" 
+                        className="style-input" 
+                        readOnly={true}
+                        />
+                    </Form.Item>
+                  </div>
+                  <div className="col-6">
+                    <Form.Item 
+                      label="Khuyến mãi"
+                      name="Discount"
+                      rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                      initialValue={props.rowData?.Discount}
+                      >
+
+                          <InputNumber 
+                            className="ant-input style-input w-100"
+                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                            onChange={value => setValue("Discount",value)}
+                          />
+                    </Form.Item>
+                  </div>
+                  </>
+                  ) : (
+                    <>
+                    <div className="col-12">
+                      <Form.Item 
+                        label="Mã khuyến mãi"
+                        name="DiscountCode"
+                        rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                        initialValue={props.rowData?.DiscountCode}
+                        >
+                        <Input 
+                          placeholder="" 
+                          className="style-input" 
+                          readOnly={true}
+                          />
+                      </Form.Item>
+                    </div>
+                    <div className="col-6">
+                    <Form.Item 
+                      label="Khuyến mãi %"
+                      name="Discount"
+                      rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                      initialValue={props.rowData?.Discount}
                     >
-                    <Input 
-                      placeholder="" 
-                      className="style-input" 
-                      readOnly={true}
+                      <Input 
+                        placeholder="" 
+                        className="style-input"
+                        onChange={(e) => setValue("Discount", e.target.value)}
                       />
-                  </Form.Item>
-                </div>
-                <div className="col-6">
-                  <Form.Item 
-                    label="Khuyến mãi"
-                    name="Discount"
-                    rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
-                    initialValue={props.rowData?.Discount}
+                    </Form.Item>
+                    </div>
+                    <div className="col-6">
+                    <Form.Item 
+                      label="Khuyến mãi tối đa"
+                      name="MaxDicount"
+                      rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                      initialValue={props.rowData?.MaxDiscountPrice}
                     >
-                    {props.rowData.DiscountType == 1 ? (
                         <InputNumber 
                           className="ant-input style-input w-100"
                           formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                           parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                          onChange={value => setValue("Discount",value)}
+                          onChange={value => setValue("MaxDiscountPrice",value)}
                         />
-                      ) : (
-                        <Input 
-                          placeholder="" 
-                          className="style-input"
-                          onChange={(e) => setValue("Discount", e.target.value)}
-                        />
-                      )
-                    }
-                  </Form.Item>
-                </div>
+                    </Form.Item>
+                    </div>
+                    </>
+                  )
+                  }
               </div>
             )}
 
@@ -251,7 +322,7 @@ const DiscountForm = (props) => {
             </div>
             {/*  */}
             <div className="row">
-              <div className="col-12">
+              <div className="col-6">
                 <Form.Item 
                   label="Trạng thái"
                   name="Status"
@@ -271,6 +342,49 @@ const DiscountForm = (props) => {
                         </Option>
 										</Select>
                 </Form.Item>
+              </div>
+              <div className="col-6">
+              {props.showAdd ? (
+                  <Form.Item 
+                    label="Gói"
+                    name="Packages"
+                    rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                    >
+                    <Select 
+                      className="style-input" 
+                      allowClear={true}
+                      onChange={(value) => setValue("Style", value)}>
+                        {packages.map(row => (
+                          <Option key={row.id} value={row.id}>{row.text}</Option>
+                        ))
+                        }
+                        <Option value="disabled" disabled>
+                          Disabled
+                        </Option>
+                    </Select>
+                  </Form.Item>
+              ) : (
+                <Form.Item 
+                  label="Gói"
+                  name="Packages"
+                  rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+                  initialValue={props.rowData?.Style}
+                  >
+                  <Select 
+                    className="style-input" 
+                    allowClear={true}
+                    onChange={(value) => setValue("Style", value)}>
+                      {packages.map(row => (
+                        <Option key={row.id} value={row.id}>{row.text}</Option>
+                      ))
+                      }
+                      <Option value="disabled" disabled>
+                        Disabled
+                      </Option>
+                  </Select>
+                </Form.Item>
+              )}
+
               </div>
             </div>
             <div className="row">

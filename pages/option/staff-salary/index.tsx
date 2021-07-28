@@ -63,6 +63,7 @@ const StaffSalary = () => {
 		sort: null,
 		sortType: null,
 		RoleID: null,
+		FullName: null,
 		fromDate: null,
 		toDate: null,
 	};
@@ -77,9 +78,8 @@ const StaffSalary = () => {
 		(async () => {
 		  try {
 			let res = await staffSalaryApi.getAll(todoApi);
-			if (res.status == 204) {
+			if(res.status == 204) {
 				showNoti("danger", "Không có dữ liệu");
-				handleReset();
 			}
 			if(res.status == 200){
 				setDataTable(res.data.data);
@@ -132,8 +132,8 @@ const StaffSalary = () => {
 	  if(data.SalaryID) {
 		console.log(data);
 		try {
-		  res = await staffSalaryApi.update(data);
-		  res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
+		  	res = await staffSalaryApi.update(data);
+		  	res.status === 200 && showNoti('success', "Cập nhật thành công"), getDataTable();
 		} catch (error) {
 		  showNoti("danger", error.message);
 		} finally {
@@ -205,13 +205,34 @@ const StaffSalary = () => {
 	};
 
 	// DELETE
-	const handleDelele = () => {
+	const handleDelele = async () => {
 		if(dataDelete) {
 			setIsModalVisible(false);
-			let res = _onSubmit(dataDelete);
-			res.then(function (rs: any) {
-				rs && rs.status == 200;
-			});
+			let res = null;
+			try {
+				res = await staffSalaryApi.update(dataDelete);
+				res.status === 200 && showNoti('success', "Xóa thành công");
+				if (dataTable.length === 1) {
+					listTodoApi.pageIndex === 1
+						? setTodoApi({
+								...listTodoApi,
+								pageIndex: 1,
+						})
+						: setTodoApi({
+								...listTodoApi,
+								pageIndex: listTodoApi.pageIndex - 1,
+						});
+					return;
+				}
+			  getDataTable();
+			} catch (error) {
+				showNoti("danger", error.message);
+			} finally {
+				setIsLoading({
+					type: "DELETE_DATA",
+					status: false,
+				});
+			}
 		}
 	}
 

@@ -27,3 +27,5 @@ export { studyDayApi } from "./course/study-day";
 export { checkStudyTimeApi } from "./course/check-study-time";
 export { parentsApi } from "./customer/parents/parents";
 export { staffApi } from "./staff-manage/staff";
+export { notificationApi } from "./options/notification";
+export { rulesApi } from "./options/rules";

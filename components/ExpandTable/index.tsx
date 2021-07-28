@@ -57,10 +57,30 @@ const ExpandTable = (props) => {
     }
   }, [props.dataSource]);
 
+  useEffect(() => {
+    if (props.TitlePage) {
+      getTitlePage(props.TitlePage);
+    }
+    if (props.dataSource && props.dataSource.length > 0) {
+      let dataClone = [...props.dataSource];
+      dataClone.forEach((item, index) => {
+        item.key = index.toString();
+      });
+
+      setDataSource(dataClone);
+    }
+  }, [props.dataSource]);
+
   return (
     <>
       {/* <TitlePage title={props.TitlePage} /> */}
-      <div className="wrap-table table-expand">
+      <div
+        className={
+          props.checkBox
+            ? "wrap-table table-expand have-checkbox"
+            : "wrap-table table-expand"
+        }
+      >
         <Card
           className={`cardRadius ${props.addClass && props.addClass} ${
             props.Size ? props.Size : ""
