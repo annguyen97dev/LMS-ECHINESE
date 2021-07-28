@@ -1743,3 +1743,28 @@ hr {
 .w-70 {
   width: 70%;
 }
+.ant-upload {
+  position: relative;
+}
+.bg-upload {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  &.have-img {
+    .anticon-plus {
+      opacity: 0;
+    }
+    &:hover {
+      background: #ffffffb8;
+      .anticon-plus {
+        opacity: 1;
+      }
+    }
+  }
+  &.loading {
+    background: #ffffffb8;
+  }
+}

@@ -33,6 +33,7 @@ import {
   staffApi,
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import { data } from "~/lib/option/dataOption2";
 
 let returnSchema = {};
 let schema = null;
@@ -99,34 +100,25 @@ const listApi = [
   {
     api: staffApi,
     text: "Nguồn khách hàng",
-    name: "SourceInformation",
+    name: "Counselors",
   },
 ];
 
 const StudentForm = (props) => {
-  const { dataRow } = props;
+  const { dataRow, listDataForm } = props;
   console.log("Data Row: ", dataRow);
-  const { Option } = Select;
   const { showNoti } = useWrap();
-  const [fileList, setFileList] = useState(null);
-  const { TextArea } = Input;
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
   const [imageUrl, setImageUrl] = useState();
   const [loadingImage, setLoadingImage] = useState(false);
-  const [listData, setListData] = useState<listData>({
-    Area: [],
-    DistrictID: [],
-    WardID: [],
-    Job: [],
-    Branch: [],
-    Purposes: [],
-    SourceInformation: [],
-    Parent: [],
-    Counselors: [],
+  const [loadingSelect, setLoadingSelect] = useState({
+    status: false,
+    name: "",
   });
+  const [listData, setListData] = useState<listData>(listDataForm);
 
   console.log("DATA list: ", listData);
 
@@ -183,6 +175,12 @@ const StudentForm = (props) => {
           value: item.SourceInformationID,
         }));
         break;
+      case "Counselors":
+        newData = data.map((item) => ({
+          title: item.FullNameUnicode,
+          value: item.UserInformationID,
+        }));
+        break;
       default:
         break;
     }
@@ -202,27 +200,40 @@ const StudentForm = (props) => {
   };
 
   // ----------- GET DATA SOURCE ---------------
-  const getDataSource = (arrApi) => {
-    arrApi.forEach((item, index) => {
-      (async () => {
-        try {
-          let res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+  // const getDataSource = (arrApi) => {
+  //   arrApi.forEach((item, index) => {
+  //     (async () => {
+  //       let res = null;
+  //       try {
+  //         if (item.name == "Counselors") {
+  //           res = await item.api.getAll({
+  //             pageIndex: 1,
+  //             pageSize: 99999,
+  //             RoleID: 6,
+  //           });
+  //         } else {
+  //           res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+  //         }
 
-          res.status == 200 && getDataTolist(res.data.data, item.name);
+  //         res.status == 200 && getDataTolist(res.data.data, item.name);
 
-          res.status == 204 &&
-            showNoti("danger", item.text + " Không có dữ liệu");
-        } catch (error) {
-          showNoti("danger", error.message);
-        } finally {
-        }
-      })();
-    });
-  };
+  //         res.status == 204 &&
+  //           showNoti("danger", item.text + " Không có dữ liệu");
+  //       } catch (error) {
+  //         showNoti("danger", error.message);
+  //       } finally {
+  //       }
+  //     })();
+  //   });
+  // };
 
   //  ----- GET DATA DISTRICT -------
   const getDataWithID = async (ID, name) => {
     let res = null;
+    setLoadingSelect({
+      status: true,
+      name: name,
+    });
     try {
       switch (name) {
         case "DistrictID":
@@ -245,6 +256,10 @@ const StudentForm = (props) => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
+      setLoadingSelect({
+        status: false,
+        name: name,
+      });
     }
   };
 
@@ -252,9 +267,7 @@ const StudentForm = (props) => {
   const handleChange_select = (value, name) => {
     console.log("Value is: ", value);
 
-    if (!dataRow) {
-      form.setValue(name, undefined);
-    }
+    form.setValue(name, undefined);
     getDataWithID(value, name);
   };
 
@@ -320,15 +333,29 @@ const StudentForm = (props) => {
 
   // ----------- SUBMI FORM ------------
   const onSubmit = async (data: any) => {
+    if (data.Branch !== null) {
+      data.Branch = data.Branch.toString();
+    }
     console.log("DATA SUBMIT: ", data);
     setIsLoading({
       type: "ADD_DATA",
       status: true,
     });
+    let res = null;
     try {
-      let res = await studentApi.add(data);
+      if (data.UserInformationID) {
+        res = await studentApi.update(data);
+      } else {
+        res = await studentApi.add(data);
+      }
+
       res?.status == 200 &&
-        (showNoti("success", "Tạo học viên thành công"),
+        (showNoti(
+          "success",
+          data.UserInformationID
+            ? "Cập nhật học viên thành công"
+            : "Tạo học viên thành công"
+        ),
         form.reset(defaultValuesInit),
         setImageUrl(null));
     } catch (error) {
@@ -342,12 +369,20 @@ const StudentForm = (props) => {
   };
 
   // ------------ AVATAR --------------
-  const uploadButton = (
-    <div>
-      {loadingImage ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
+  const UploadButton = (props) => {
+    const { imageUrl } = props;
+    return (
+      <>
+        <div
+          className={`bg-upload ${imageUrl && "have-img"} ${
+            loadingImage && "loading"
+          }`}
+        >
+          {loadingImage ? <LoadingOutlined /> : <PlusOutlined />}
+        </div>
+      </>
+    );
+  };
 
   const handleChange_img = async (info: any) => {
     console.log("Info file: ", info.file.originFileObj);
@@ -370,13 +405,20 @@ const StudentForm = (props) => {
   };
 
   useEffect(() => {
-    getDataSource(listApi);
+    // getDataSource(listApi);
 
     if (dataRow) {
+      let arrBranch = [];
+      dataRow.Branch.forEach((item, index) => {
+        arrBranch.push(item.ID);
+      });
+      dataRow.Branch = arrBranch;
       form.reset(dataRow);
-      handleChange_select(dataRow.AreaID, "DistrictID");
-      handleChange_select(dataRow.DistrictID, "WardID");
+      getDataWithID(dataRow.AreaID, "DistrictID");
+      getDataWithID(dataRow.DistrictID, "WardID");
       setImageUrl(dataRow.Avatar);
+    } else {
+      form.setValue("Branch", undefined);
     }
   }, []);
 
@@ -391,7 +433,6 @@ const StudentForm = (props) => {
               {/** ==== Thông tin cơ bản  ====*/}
               <div className="row">
                 <div className="col-12">
-                  {/* <input type="file" onChange={testFile} /> */}
                   <Upload
                     name="avatar"
                     listType="picture-card"
@@ -401,19 +442,18 @@ const StudentForm = (props) => {
                     // beforeUpload={beforeUpload}
                     onChange={handleChange_img}
                   >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    ) : (
-                      uploadButton
-                    )}
+                    <img
+                      src={imageUrl}
+                      alt="avatar"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: imageUrl ? "block" : "none",
+                      }}
+                    />
+
+                    <UploadButton imageUrl={imageUrl} />
                   </Upload>
                 </div>
               </div>
@@ -505,6 +545,9 @@ const StudentForm = (props) => {
                 </div>
                 <div className="col-md-6 col-12">
                   <SelectField
+                    isLoading={
+                      loadingSelect.name == "DistrictID" && loadingSelect.status
+                    }
                     form={form}
                     name="DistrictID"
                     label="Quận/Huyện"
@@ -522,6 +565,9 @@ const StudentForm = (props) => {
               <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
+                    isLoading={
+                      loadingSelect.name == "WardID" && loadingSelect.status
+                    }
                     form={form}
                     name="WardID"
                     label="Phường/Xã"
@@ -556,6 +602,7 @@ const StudentForm = (props) => {
               <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
+                    mode="multiple"
                     form={form}
                     name="Branch"
                     label="Tên trung tâm"
@@ -605,7 +652,7 @@ const StudentForm = (props) => {
                     form={form}
                     name="CounselorsID"
                     label="Tư vấn viên"
-                    // optionList={listData.SourceInformation}
+                    optionList={listData.Counselors}
                   />
                 </div>
               </div>
