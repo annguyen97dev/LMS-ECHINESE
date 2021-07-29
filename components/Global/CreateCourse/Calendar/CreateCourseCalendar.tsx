@@ -1,4 +1,3 @@
-import {Popconfirm} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -14,116 +13,63 @@ const localizer = momentLocalizer(moment);
 const CreateCourseCalendar = (props) => {
 	const {
 		eventList,
-		handleRemoveCourse,
 		handleSelectDate,
-		handleSelectSlot,
 		dateSelected,
+		//
+		isLoading,
+		//
+		handleChangeValueSchedule,
+		handleFetchInfoAvailableSchedule,
+		handleChangeStatusSchedule,
+		//
+		optionForScheduleList,
 	} = props;
+	const [isVisible, setIsVisible] = useState(false);
 	const {dateString} = dateSelected;
 	const {showNoti} = useWrap();
+	const [dataModal, setDataModal] = useState({
+		dateFm: '',
+		limit: 0,
+		scheduleInDay: 0,
+		scheduleList: [],
+	});
+	const [optionStudyTime, setOptionStudyTime] = useState([]);
+	const openModal = () => setIsVisible(true);
+	const closeModal = () => setIsVisible(false);
+	const {dateFm, limit, scheduleInDay, scheduleList} = dataModal;
+	useEffect(() => {
+		setOptionStudyTime(optionForScheduleList.optionStudyTimeList);
+	}, [optionForScheduleList]);
 
 	const styleEvent = ({event}) => {
-		const [isVisible, setIsVisible] = useState(false);
 		const {dateString, limit, scheduleList, valid} = event.resource;
 		const scheduleInDay = scheduleList.length;
 		const dateFm = moment(dateString).format('DD/MM/YYYY');
-		const openModal = () => {
-			console.log(123);
-			setIsVisible(true);
-		};
-		const closeModal = () => setIsVisible(false);
-		// console.log(isVisible);
-		useEffect(() => {
-			console.log(isVisible);
-		}, [isVisible]);
 		return (
 			<>
 				<div
 					onClick={(e) => {
 						e.stopPropagation();
-						// alert(isVisible);
-						// handleSelectDate(event, valid).then((res) => {
-						// 	// console.log(res);
-						// 	// openModal();
-						// 	// setIsVisible(res);
-						// 	console.log(res);
-						// });
-						setIsVisible(true);
-
+						setDataModal({
+							dateFm,
+							limit,
+							scheduleInDay,
+							scheduleList,
+						});
+						openModal();
 						if (valid) {
 							handleSelectDate(event);
 							showNoti(
 								'success',
 								`Ngày ${dateFm}- hãy chọn ${limit - scheduleInDay} ca`
 							);
-						} else {
-							showNoti('danger', 'Số ca đạt giới hạn');
 						}
-						// openModal();
-						// if (event.resource.valid) {
-						// showNoti(
-						// 	'success',
-						// 	`Ngày ${moment(event.resource.dateString.slice(0, 10)).format(
-						// 		'DD/MM/YYYY'
-						// 	)}- chọn tối đa ${event.resource.limit} ca`
-						// );
-						// handleSelectEvent(event);
-						// } else {
-						// showNoti('danger', 'Không còn ca trống trong ngày');
-						// }
 					}}
 				>
 					<strong>Số ca trống: {limit - scheduleInDay}</strong>
 					<br />
 					<strong>Số ca đã xếp: {scheduleInDay}</strong>
-
-					{/* {event.resource.scheduleList && event.resource.scheduleList.map((s) => <div>{s.eventName}</div>)} */}
 				</div>
-				<Modal
-					title={`Chi tiết ngày ${dateFm}`}
-					visible={isVisible}
-					footer={null}
-					onCancel={closeModal}
-				>
-					<div>
-						<p style={{marginBottom: '5px'}}>
-							<strong>Thông tin cơ bản: </strong>
-						</p>
-						<div className="row">
-							<div className="col-12 col-md-4">
-								<p>
-									Tổng số ca: <strong>{limit}</strong>
-								</p>
-							</div>
-							<div className="col-12 col-md-4">
-								<p>
-									Số ca đã sắp xếp: <strong>{scheduleInDay}</strong>
-								</p>
-							</div>
-							<div className="col-12 col-md-4">
-								<p>
-									Số ca còn lại: <strong>{limit - scheduleInDay}</strong>
-								</p>
-							</div>
-						</div>
-						<div>
-							<p style={{marginBottom: '5px'}}>
-								<strong>Chi tiết các buổi học trong ngày: </strong>
-							</p>
-							<div className="wrap-card-info-course">
-								<div className="info-course">
-									{
-										<ScheduleList>
-											{scheduleList.map((s, idx) => (
-												<ScheduleItem key={idx} scheduleObj={s} />
-											))}
-										</ScheduleList>
-									}
-								</div>
-							</div>
-						</div>
-					</div>
-				</Modal>
 			</>
 		);
 	};
@@ -140,6 +86,22 @@ const CreateCourseCalendar = (props) => {
 		}
 	};
 
+	useEffect(() => {
+		handleFetchInfoAvailableSchedule(scheduleList);
+	}, [scheduleList]);
+
+	const checkHandleChangeStatusSchedule = (sch, type) => {
+		const newScheduleList = [...dataModal.scheduleList];
+		const idx = newScheduleList.findIndex((s) => s.ID === sch.ID);
+		newScheduleList.splice(idx, 1);
+		setDataModal((prevState) => ({
+			...prevState,
+			scheduleInDay: newScheduleList.length,
+			scheduleList: newScheduleList,
+		}));
+		handleChangeStatusSchedule(sch, type);
+	};
+
 	return (
 		<>
 			<Calendar
@@ -151,18 +113,76 @@ const CreateCourseCalendar = (props) => {
 				style={{height: 600}}
 				popup={true}
 				showMultiDayTimes={true}
-				// min={new Date()}
-				// defaultView="week"
-				// onSelectEvent={handleSelectEvent}
-				// onSelectSlot={handleSelectSlot}
-				// dayPropGetter={customDayPropGetter}
 				eventPropGetter={customEventPropGetter}
 				components={{event: styleEvent}}
 			/>
+			<Modal
+				title={`Chi tiết ngày ${dateFm}`}
+				visible={isVisible}
+				footer={null}
+				onCancel={closeModal}
+			>
+				<div>
+					<p style={{marginBottom: '5px'}}>
+						<strong>Thông tin cơ bản: </strong>
+					</p>
+					<div className="row">
+						<div className="col-12 col-md-4">
+							<p>
+								Tổng số ca: <strong>{limit}</strong>
+							</p>
+						</div>
+						<div className="col-12 col-md-4">
+							<p>
+								Số ca đã sắp xếp: <strong>{scheduleInDay}</strong>
+							</p>
+						</div>
+						<div className="col-12 col-md-4">
+							<p>
+								Số ca còn lại: <strong>{limit - scheduleInDay}</strong>
+							</p>
+						</div>
+					</div>
+					<div>
+						<p style={{marginBottom: '5px'}}>
+							<strong>Chi tiết các ca trong ngày: </strong>
+						</p>
+						<div className="wrap-card-info-course">
+							<div className="info-course">
+								{
+									<ScheduleList
+										panelActiveListInModal={scheduleList.map((_, idx) => idx)}
+									>
+										{scheduleList.map((s, idx) => (
+											<ScheduleItem
+												key={idx}
+												isUpdate={true}
+												scheduleObj={s}
+												isLoading={isLoading}
+												handleChangeValueSchedule={handleChangeValueSchedule}
+												handleChangeStatusSchedule={
+													checkHandleChangeStatusSchedule
+												}
+												optionForScheduleList={optionForScheduleList.list[idx]}
+												optionStudyTime={optionStudyTime}
+											/>
+										))}
+									</ScheduleList>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</Modal>
 		</>
 	);
 };
-
+const optionPropTypes = PropTypes.arrayOf(
+	PropTypes.shape({
+		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	})
+);
 CreateCourseCalendar.propTypes = {
 	evenList: PropTypes.arrayOf(
 		PropTypes.shape({
@@ -183,21 +203,38 @@ CreateCourseCalendar.propTypes = {
 			),
 		})
 	),
-	// handleRemoveCourse: PropTypes.func.isRequired,
 	handleSelectDate: PropTypes.func.isRequired,
-	// handleSelectSlot: PropTypes.func.isRequired,
-	//
 	dateSelected: PropTypes.shape({
-		// scheduleList: PropTypes.array.isRequired,
 		dateString: PropTypes.string.isRequired,
 	}),
+	//
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
+	handleChangeValueSchedule: PropTypes.func.isRequired,
+	handleFetchInfoAvailableSchedule: PropTypes.func.isRequired,
+	handleChangeStatusSchedule: PropTypes.func.isRequired,
+	optionForScheduleList: PropTypes.shape({
+		list: PropTypes.arrayOf(
+			PropTypes.shape({
+				optionRoomList: optionPropTypes,
+				optionTeacherList: optionPropTypes,
+			})
+		),
+		optionStudyTimeList: optionPropTypes,
+	}).isRequired,
 };
 CreateCourseCalendar.defaultProps = {
 	eventList: [],
-	//
 	dateSelected: {
-		// scheduleList: [],
 		dateString: '',
+	},
+	isLoading: {type: '', status: false},
+	//
+	optionForScheduleList: {
+		list: [{optionRoomList: [], optionTeacherList: []}],
+		optionStudyTimeList: [],
 	},
 };
 export default CreateCourseCalendar;

@@ -1,7 +1,8 @@
 import {Collapse} from 'antd';
 import React, {cloneElement, useState} from 'react';
-
+import PropTypes from 'prop-types';
 const ScheduleList = (props) => {
+	const {panelActiveListInModal} = props;
 	const [panelActiveList, setPanelActiveList] = useState<number[]>([]);
 
 	const onActiveSchedule = (id: number) => {
@@ -16,7 +17,11 @@ const ScheduleList = (props) => {
 	};
 
 	return (
-		<Collapse activeKey={panelActiveList}>
+		<Collapse
+			activeKey={
+				panelActiveList.length ? panelActiveList : panelActiveListInModal
+			}
+		>
 			{props.children.map((c, idx) => {
 				return cloneElement(c, {
 					handleActiveSchedule: () => onActiveSchedule(idx),
@@ -25,7 +30,5 @@ const ScheduleList = (props) => {
 		</Collapse>
 	);
 };
-
-ScheduleList.propTypes = {};
 
 export default ScheduleList;

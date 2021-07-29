@@ -1,23 +1,43 @@
+import {yupResolver} from '@hookform/resolvers/yup';
 import {Collapse} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
+import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
 const {Panel} = Collapse;
 
+//   scheduleObj = {
+//     "ID": 1,
+//     "eventName": "26/07 - Hữu Minh Teacher 10 [20:00-21:00]-[Phòng 2]",
+//     "Color": "orange",
+//     "Tiet": {
+//         "CurriculumsDetailID": 140,
+//         "CurriculumsDetailName": "1: Sinh"
+//     },
+//     "date": "2021-07-26",
+//     "TeacherID": 1060,
+//     "TeacherName": "Hữu Minh Teacher 10[20:00-21:00]",
+//     "CaID": 5,
+//     "CaName": "Ca: 20:00 - 21:00",
+//     "RoomID": 32,
+//     "RoomName": "Phòng: Phòng 2"
+// }
 const ScheduleItem = (props) => {
 	const {
-		handleActiveSchedule,
-		handleSelectSchedule,
-		handleGetInfoAvailableSchedule,
-		handleFetchInfoAvailableSchedule,
+		handleChangeStatusSchedule,
+		handleChangeValueSchedule,
+		//
 		scheduleObj,
 		isLoading,
+		isUpdate,
 		//
 		optionForScheduleList,
+		optionStudyTime,
 	} = props;
 	const {
+		ID,
 		eventName,
 		Tiet,
 		RoomName,
@@ -28,88 +48,55 @@ const ScheduleItem = (props) => {
 		TeacherName,
 		date,
 	} = scheduleObj;
-	const [isChecked, setIsChecked] = useState(false);
-	const [valueToFetchAvailableSchedule, setValueToFetchAvailableSchedule] =
-		useState({
-			RoomID,
-			RoomName,
-			TeacherID,
-			TeacherName,
-			StudyTimeID: CaID,
-			StudyTimeName: CaName,
-			Date: date,
-			SubjectID: Tiet.CurriculumsDetailID,
-		});
-	const checkHandleActiveSchedule = () => {
-		if (!handleActiveSchedule) return;
-		handleActiveSchedule();
-	};
-	const checkHandleSelectSchedule = (vl) => {
-		if (!handleSelectSchedule) return;
-		return handleSelectSchedule(vl);
-	};
-
-	const findValueChanged = (options, vl) => {
-		return options.find((o) => o.value === vl).title;
-	};
-	const checkHandleGetInfoAvailableSchedule = (key: string, vl: any) => {
-		if (!handleGetInfoAvailableSchedule) return;
-		const {optionRoomList, optionStudyTimeList, optionTeacherList} =
-			optionForScheduleList;
-		let key2, vl2;
-		if (key === 'RoomID') {
-			key2 = 'RoomName';
-			vl2 = findValueChanged(optionRoomList, vl);
-		}
-		if (key === 'StudyTimeID') {
-			key2 = 'StudyTimeName';
-			vl2 = findValueChanged(optionStudyTimeList, vl);
-		}
-		if (key === 'TeacherID') {
-			key2 = 'TeacherName';
-			vl2 = findValueChanged(optionTeacherList, vl);
-		}
-		setValueToFetchAvailableSchedule({
-			...valueToFetchAvailableSchedule,
-			[key]: vl,
-			[key2]: vl2,
-		});
-	};
-	// useEffect(() => {
-	// 	handleGetInfoAvailableSchedule(valueToFetchAvailableSchedule);
-	// }, [valueToFetchAvailableSchedule]);
-
-	const checkHandleFetchInfoAvailableSchedule = () => {
-		if (!handleFetchInfoAvailableSchedule) return;
-		return handleFetchInfoAvailableSchedule(valueToFetchAvailableSchedule);
-	};
 
 	const defaultValuesInit = {
-		RoomID: RoomID,
-		TeacherID: TeacherID,
+		RoomID,
+		TeacherID,
 		StudyTimeID: CaID,
 	};
-	const form = useForm({
-		defaultValues: defaultValuesInit,
+	const schema = yup.object().shape({
+		// RoomID: yup.number().when('StudyTimeID', (StudyTimeID, schema) => {
+		// 	console.log(StudyTimeID > 0);
+		// 	return StudyTimeID > 0
+		// 		? true
+		// 		: schema.min(1, 'Bạn cần chọn ca').required();
+		// }),
+		// TeacherID: yup.number().when('StudyTimeID', (StudyTimeID, schema) => {
+		// 	console.log(StudyTimeID > 0);
+		// 	return StudyTimeID > 0
+		// 		? true
+		// 		: schema.min(1, 'Bạn cần chọn ca').required();
+		// }),
+		StudyTimeID: yup.number().required('Bạn không được để trống'),
+		TeacherID: yup.number().required('Bạn không được để trống'),
+		RoomID: yup.number().required('Bạn không được để trống'),
 	});
 
-	useEffect(() => {}, []);
-	//   scheduleObj = {
-	//     "ID": 1,
-	//     "eventName": "26/07 - Hữu Minh Teacher 10 [20:00-21:00]-[Phòng 2]",
-	//     "Color": "orange",
-	//     "Tiet": {
-	//         "CurriculumsDetailID": 140,
-	//         "CurriculumsDetailName": "1: Sinh"
-	//     },
-	//     "date": "2021-07-26",
-	//     "TeacherID": 1060,
-	//     "TeacherName": "Hữu Minh Teacher 10[20:00-21:00]",
-	//     "CaID": 5,
-	//     "CaName": "Ca: 20:00 - 21:00",
-	//     "RoomID": 32,
-	//     "RoomName": "Phòng: Phòng 2"
-	// }
+	const form = useForm({
+		defaultValues: defaultValuesInit,
+		resolver: yupResolver(schema),
+		mode: 'onChange',
+	});
+	// const
+	useEffect(() => {
+		console.log(scheduleObj);
+		form.setValue('StudyTimeID', scheduleObj.CaID);
+		form.setValue('RoomID', scheduleObj.RoomID);
+		form.setValue('TeacherID', scheduleObj.TeacherID);
+	}, [scheduleObj]);
+
+	const checkHandleChangeStatusSchedule = (vl, type) => {
+		if (!handleChangeStatusSchedule) return;
+		handleChangeStatusSchedule(vl, type);
+	};
+	const checkHandleChangeValueSchedule = (uid, key, vl) => {
+		if (!handleChangeValueSchedule) return;
+		handleChangeValueSchedule(uid, key, vl);
+	};
+	const setSiblingsFieldToDefault = () => {
+		form.setValue('RoomID', 0);
+		form.setValue('TeacherID', 0);
+	};
 	return (
 		<Panel
 			{...props}
@@ -117,16 +104,17 @@ const ScheduleItem = (props) => {
 				<div className="info-course-item">
 					<Checkbox
 						onChange={() => {
-							if (checkHandleSelectSchedule(scheduleObj)) {
-								checkHandleActiveSchedule();
-								setIsChecked(!isChecked);
-								// if (!isChecked) {
-								// 	checkHandleFetchInfoAvailableSchedule();
-								// 	handleGetInfoAvailableSchedule(valueToFetchAvailableSchedule);
-								// }
+							if (isUpdate) {
+								// remove schedule to unavailable list
+								// add schedule to available list
+								checkHandleChangeStatusSchedule(scheduleObj, 2);
+							} else {
+								// remove schedule to available list
+								// add schedule to unavailable list
+								checkHandleChangeStatusSchedule(scheduleObj, 1);
 							}
 						}}
-						checked={isChecked}
+						checked={isUpdate}
 					/>
 					<p className="title">{eventName}</p>
 					<ul className="info-course-list">
@@ -147,7 +135,7 @@ const ScheduleItem = (props) => {
 							placeholder="Chọn phòng"
 							optionList={optionForScheduleList.optionRoomList}
 							onChangeSelect={(value) => {
-								checkHandleGetInfoAvailableSchedule('RoomID', value);
+								checkHandleChangeValueSchedule(ID, 'RoomID', value);
 							}}
 						/>
 					</div>
@@ -155,13 +143,11 @@ const ScheduleItem = (props) => {
 						<SelectField
 							form={form}
 							name="StudyTimeID"
-							isLoading={
-								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
-							}
 							placeholder="Chọn ca"
-							optionList={optionForScheduleList.optionStudyTimeList}
+							optionList={optionStudyTime}
 							onChangeSelect={(value) => {
-								checkHandleGetInfoAvailableSchedule('StudyTimeID', value);
+								setSiblingsFieldToDefault();
+								checkHandleChangeValueSchedule(ID, 'CaID', value);
 							}}
 						/>
 					</div>
@@ -175,7 +161,7 @@ const ScheduleItem = (props) => {
 							placeholder="Chọn giáo viên"
 							optionList={optionForScheduleList.optionTeacherList}
 							onChangeSelect={(value) => {
-								checkHandleGetInfoAvailableSchedule('TeacherID', value);
+								checkHandleChangeValueSchedule(ID, 'TeacherID', value);
 							}}
 						/>
 					</div>
@@ -191,11 +177,11 @@ const optionPropTypes = PropTypes.arrayOf(
 	})
 );
 ScheduleItem.propTypes = {
-	handleActiveSchedule: PropTypes.func, //form ScheduleList
-	handleSelectSchedule: PropTypes.func,
-	handleGetInfoAvailableSchedule: PropTypes.func,
-	handleFetchInfoAvailableSchedule: PropTypes.func,
+	handleChangeValueSchedule: PropTypes.func,
+	handleChangeStatusSchedule: PropTypes.func,
+	//
 	scheduleObj: PropTypes.shape({}),
+	isUpdate: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
@@ -204,21 +190,21 @@ ScheduleItem.propTypes = {
 	optionForScheduleList: PropTypes.shape({
 		optionRoomList: optionPropTypes,
 		optionTeacherList: optionPropTypes,
-		optionStudyTimeList: optionPropTypes,
 	}),
+	optionStudyTime: optionPropTypes,
 };
 ScheduleItem.defaultProps = {
-	handleActiveSchedule: null,
-	handleSelectSchedule: null,
-	handleGetInfoAvailableSchedule: null,
-	handleFetchInfoAvailableSchedule: null,
+	handleChangeValueSchedule: null,
+	handleChangeStatusSchedule: null,
+	//
 	scheduleObj: {},
+	isUpdate: false,
 	isLoading: {type: '', status: false},
 	//
 	optionForScheduleList: {
 		optionRoomList: [],
 		optionTeacherList: [],
-		optionStudyTimeList: [],
 	},
+	optionStudyTime: [],
 };
 export default ScheduleItem;
