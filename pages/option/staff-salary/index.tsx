@@ -177,7 +177,7 @@ const StaffSalary = () => {
 		//   ...listFieldSearch,
 		  pageIndex: pageIndex,
 		});
-	  };
+	};
 
 	// ON SEARCH
 	const compareField = (valueSearch, dataIndex) => {

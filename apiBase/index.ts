@@ -20,11 +20,6 @@ export { subjectApi } from "./options/subject";
 export { studentApi } from "./customer/student/student-list";
 export { wardApi } from "./options/ward";
 export { supplierApi } from "./options/supplier";
-<<<<<<< HEAD
-export { notificationApi } from "./options/notification";
-export { rulesApi } from "./options/rules";
-export { userInformationApi } from "./options/userinformation";
-=======
 export { userInformationApi } from "./options/userinformation";
 export { teacherApi } from "./teacher/teacher";
 export { lessonApi } from "./course/lesson";
@@ -34,4 +29,3 @@ export { parentsApi } from "./customer/parents/parents";
 export { staffApi } from "./staff-manage/staff";
 export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
->>>>>>> master
