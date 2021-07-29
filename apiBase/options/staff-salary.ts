@@ -8,10 +8,10 @@ class StaffSalary {
     });
 
     // Thêm mới data
-    add = (data) => instance.post("/api/Salary", data);
+    add = ( data: IStaffSalary ) => instance.post("/api/Salary", data);
 
     // Cập nhật data
-    update = (data) => instance.put("/api/Salary", data, {});
+    update = ( data: any ) => instance.put("/api/Salary", data, {});
 }
 
 export const staffSalaryApi = new StaffSalary();

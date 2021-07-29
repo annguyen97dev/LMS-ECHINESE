@@ -9,6 +9,13 @@
     @content;
   }
 }
+@mixin line-clamp($line) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: $line;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
 /* IE 10+ */
 @mixin ie {
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {

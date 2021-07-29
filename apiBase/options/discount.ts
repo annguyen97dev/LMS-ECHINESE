@@ -8,10 +8,10 @@ class DiscountApi {
         });
     
     // Thêm mới data
-    add = (data: IDiscount) => instance.post("/api/Discount", data, {});
+    add = ( data: IDiscount ) => instance.post("/api/Discount", data, {});
 
     // Cập nhật data 
-    update = (data: IDiscount) => instance.put("/api/Discount", data, {}); 
+    update = ( data: any ) => instance.put("/api/Discount", data, {}); 
 }
 
 export const discountApi = new DiscountApi();

@@ -20,6 +20,7 @@ import {
 import { User } from "react-feather";
 import TitlePage from "../Elements/TitlePage";
 import TitlePageHeader from "../Elements/TitlePageHeader";
+import Notifiaction from "./notification";
 
 const { Search } = Input;
 
@@ -51,6 +52,7 @@ export default function Header({
       <SearchOutlined />
     </div>
   );
+
   function onChange(value) {
     console.log(`selected ${value}`);
   }
@@ -211,12 +213,15 @@ export default function Header({
                 <Option value="center-3">Mona Media</Option>
               </Select>
             </li>
-            <li className="search">
+            {/* <li className="search">
               <Popover content={content_search} trigger="click">
                 <a className="search-icon">
                   <SearchOutlined />
                 </a>
               </Popover>
+            </li> */}
+            <li className="notification">
+              <Notifiaction />
             </li>
             <li className="user">
               <Popover

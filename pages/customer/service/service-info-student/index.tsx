@@ -1,26 +1,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Form,
-  Select,
-  Input,
-  Divider,
-  Button,
-  Upload,
-  Spin,
-  message,
-} from "antd";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+
 import TitlePage from "~/components/TitlePage";
 import LayoutBase from "~/components/LayoutBase";
-import ImgCrop from "antd-img-crop";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import InputTextField from "~/components/FormControl/InputTextField";
-import DateField from "~/components/FormControl/DateField";
-import SelectField from "~/components/FormControl/SelectField";
-import TextAreaField from "~/components/FormControl/TextAreaField";
 import {
   studentApi,
   areaApi,
@@ -31,11 +13,200 @@ import {
   branchApi,
   sourceInfomationApi,
   parentsApi,
+  staffApi,
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import StudentForm from "~/components/Global/Customer/Student/StudentForm";
 
+// -- FOR DIFFERENT VIEW --
+interface listDataForm {
+  Area: Array<Object>;
+  DistrictID: Array<Object>;
+  WardID: Array<Object>;
+  Job: Array<Object>;
+  Branch: Array<Object>;
+  Purposes: Array<Object>;
+  SourceInformation: Array<Object>;
+  Parent: Array<Object>;
+  Counselors: Array<Object>;
+}
+
+const optionGender = [
+  {
+    value: 0,
+    title: "Nữ",
+  },
+  {
+    value: 1,
+    title: "Nam",
+  },
+  {
+    value: 0,
+    title: "Khác",
+  },
+];
+
+const listApi = [
+  {
+    api: areaApi,
+    text: "Tỉnh/Tp",
+    name: "Area",
+  },
+
+  {
+    api: jobApi,
+    text: "Công việc",
+    name: "Job",
+  },
+  {
+    api: puroseApi,
+    text: "Mục đích học",
+    name: "Purposes",
+  },
+  {
+    api: branchApi,
+    text: "Trung tâm",
+    name: "Branch",
+  },
+  {
+    api: parentsApi,
+    text: "Phụ huynh",
+    name: "Parent",
+  },
+  {
+    api: sourceInfomationApi,
+    text: "Nguồn khách hàng",
+    name: "SourceInformation",
+  },
+  {
+    api: staffApi,
+    text: "Nguồn khách hàng",
+    name: "Counselors",
+  },
+];
+
 const StudentAppointmentCreate = () => {
+  const [listDataForm, setListDataForm] = useState<listDataForm>({
+    Area: [],
+    DistrictID: [],
+    WardID: [],
+    Job: [],
+    Branch: [],
+    Purposes: [],
+    SourceInformation: [],
+    Parent: [],
+    Counselors: [],
+  });
+  const { showNoti } = useWrap();
+  // FOR STUDENT FORM
+  // ------------- ADD data to list --------------
+
+  const makeNewData = (data, name) => {
+    let newData = null;
+    switch (name) {
+      case "Area":
+        newData = data.map((item) => ({
+          title: item.AreaName,
+          value: item.AreaID,
+        }));
+        break;
+      case "DistrictID":
+        newData = data.map((item) => ({
+          title: item.DistrictName,
+          value: item.ID,
+        }));
+        break;
+      case "WardID":
+        newData = data.map((item) => ({
+          title: item.WardName,
+          value: item.ID,
+        }));
+        break;
+      case "Branch":
+        newData = data.map((item) => ({
+          title: item.BranchName,
+          value: item.ID,
+        }));
+        break;
+      case "Job":
+        newData = data.map((item) => ({
+          title: item.JobName,
+          value: item.JobID,
+        }));
+        break;
+      case "Purposes":
+        newData = data.map((item) => ({
+          title: item.PurposesName,
+          value: item.PurposesID,
+        }));
+        break;
+      case "Parent":
+        newData = data.map((item) => ({
+          title: item.FullNameUnicode,
+          value: item.UserInformationID,
+        }));
+        break;
+      case "SourceInformation":
+        newData = data.map((item) => ({
+          title: item.SourceInformationName,
+          value: item.SourceInformationID,
+        }));
+        break;
+      case "Counselors":
+        newData = data.map((item) => ({
+          title: item.FullNameUnicode,
+          value: item.UserInformationID,
+        }));
+        break;
+      default:
+        break;
+    }
+
+    return newData;
+  };
+
+  const getDataTolist = (data: any, name: any) => {
+    let newData = makeNewData(data, name);
+
+    Object.keys(listDataForm).forEach(function (key) {
+      if (key == name) {
+        listDataForm[key] = newData;
+      }
+    });
+    setListDataForm({ ...listDataForm });
+  };
+
+  // ----------- GET DATA SOURCE ---------------
+  const getDataStudentForm = (arrApi) => {
+    arrApi.forEach((item, index) => {
+      (async () => {
+        let res = null;
+        try {
+          if (item.name == "Counselors") {
+            res = await item.api.getAll({
+              pageIndex: 1,
+              pageSize: 99999,
+              RoleID: 6,
+            });
+          } else {
+            res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+          }
+
+          res.status == 200 && getDataTolist(res.data.data, item.name);
+
+          res.status == 204 &&
+            showNoti("danger", item.text + " Không có dữ liệu");
+        } catch (error) {
+          showNoti("danger", error.message);
+        } finally {
+        }
+      })();
+    });
+  };
+
+  useEffect(() => {
+    getDataStudentForm(listApi);
+  }, []);
   return (
     <div>
       <div className="row">
@@ -43,7 +214,7 @@ const StudentAppointmentCreate = () => {
           <TitlePage title="Lịch hẹn" />
         </div>
       </div>
-      <StudentForm />
+      <StudentForm listDataForm={listDataForm} />
     </div>
   );
 };

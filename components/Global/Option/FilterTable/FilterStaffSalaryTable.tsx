@@ -93,6 +93,7 @@ const FilterStaffSalaryTable = (props:any) => {
 					content={content}
 					trigger="click"
 					overlayClassName="filter-popover"
+					onVisibleChange={funcShowFilter}
 				>
 					<button className="btn btn-secondary light btn-filter" onClick={funcShowFilter}>
 						<Filter />

@@ -11,7 +11,7 @@ class ServiceApi {
     add = (data: IService) => instance.post("/api/Services", data, {});
 
     // Cập nhật data 
-    update = (data: IService) => instance.put("/api/Services", data, {}); 
+    update = ( data: any ) => instance.put("/api/Services", data, {}); 
 }
 
 export const serviceApi = new ServiceApi();

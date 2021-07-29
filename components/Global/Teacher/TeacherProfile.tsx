@@ -106,7 +106,7 @@ const SelectRemark = () => {
   );
 };
 
-const ProfileBase = (props) => {
+const TeacherProfile = (props) => {
   const {
     register,
     handleSubmit,
@@ -122,13 +122,6 @@ const ProfileBase = (props) => {
   // }
   const { dataUser } = props;
   console.log("dataUSer: ", dataUser);
-  // Get path and slug
-  const router = useRouter();
-  const slug = router.query.slug;
-  let path: string = router.pathname;
-  let pathString: string[] = path.split("/");
-  path = pathString[pathString.length - 2];
-  // --------------- //
 
   const [fileList, setFileList] = useState([]);
 
@@ -156,78 +149,6 @@ const ProfileBase = (props) => {
   return (
     <>
       <div className="row">
-        {/* <div className="col-md-3 col-12">
-          <Card className="info-profile-left">
-            <div className="row">
-              <div className="col-12 d-flex align-items-center justify-content-center flex-wrap">
-                <Avatar
-                  size={64}
-                  src={
-                    // <img
-                    //   src={
-                    //     dataUser?.Avatar !== null
-                    //       ? dataUser.Avatar
-                    //       : "/images/user.png"
-                    //   }
-                    // />
-                    <img src={"/images/user.png"} />
-                  }
-                />
-                {path === "teacher-detail" && (
-                  <Rate
-                    disabled
-                    value={4}
-                    style={{
-                      width: "100%",
-                      textAlign: "center",
-                      marginTop: "10px",
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-            <div className="row pt-3">
-              <div className="col-2">
-                <UserOutlined />
-              </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.FullNameUnicode && dataUser?.FullNameUnicode}
-              </div>
-            </div>
-            <div className="row pt-4">
-              <div className="col-2">
-                <DeploymentUnitOutlined />
-              </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.RoleName && dataUser?.RoleName}
-              </div>
-            </div>
-            <div className="row pt-4">
-              <div className="col-2">
-                <WhatsAppOutlined />
-              </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.Mobile && dataUser?.Mobile}
-              </div>
-            </div>
-            <div className="row pt-4">
-              <div className="col-2">
-                <MailOutlined />
-              </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.Email && dataUser?.Email}
-              </div>
-            </div>
-            <div className="row pt-4">
-              <div className="col-2">
-                <AimOutlined />
-              </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.Address && dataUser?.Address}
-              </div>
-            </div>
-          </Card>
-        </div> */}
         <div className="col-md-8 col-12">
           <Card className="space-top-card">
             <Form layout="vertical">
@@ -350,49 +271,45 @@ const ProfileBase = (props) => {
             </Form>
           </Card>
 
-          {path === "teacher-detail" && (
-            <>
-              <div className="wrap-table table-overflow-x mt-2">
-                <Card title="Thông tin các lớp học">
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                </Card>
-              </div>
-            </>
-          )}
+          <div className="wrap-table table-overflow-x mt-2">
+            <Card title="Thông tin các lớp học">
+              <Table
+                pagination={false}
+                className="mt-4"
+                dataSource={dataSource}
+                columns={columns}
+                scroll={{ x: 1500 }}
+              />
+              <Table
+                pagination={false}
+                className="mt-4"
+                dataSource={dataSource}
+                columns={columns}
+                scroll={{ x: 1500 }}
+              />
+              <Table
+                pagination={false}
+                className="mt-4"
+                dataSource={dataSource}
+                columns={columns}
+                scroll={{ x: 1500 }}
+              />
+              <Table
+                pagination={false}
+                className="mt-4"
+                dataSource={dataSource}
+                columns={columns}
+                scroll={{ x: 1500 }}
+              />
+              <Table
+                pagination={false}
+                className="mt-4"
+                dataSource={dataSource}
+                columns={columns}
+                scroll={{ x: 1500 }}
+              />
+            </Card>
+          </div>
         </div>
       </div>
 
@@ -401,4 +318,4 @@ const ProfileBase = (props) => {
   );
 };
 
-export default ProfileBase;
+export default TeacherProfile;
