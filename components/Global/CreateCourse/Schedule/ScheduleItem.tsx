@@ -1,34 +1,124 @@
-import {Collapse, Select} from 'antd';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {Collapse} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, {useEffect} from 'react';
+import {useForm} from 'react-hook-form';
+import * as yup from 'yup';
+import SelectField from '~/components/FormControl/SelectField';
+const {Panel} = Collapse;
+
+//   scheduleObj = {
+//     "ID": 1,
+//     "eventName": "26/07 - Hữu Minh Teacher 10 [20:00-21:00]-[Phòng 2]",
+//     "Color": "orange",
+//     "Tiet": {
+//         "CurriculumsDetailID": 140,
+//         "CurriculumsDetailName": "1: Sinh"
+//     },
+//     "date": "2021-07-26",
+//     "TeacherID": 1060,
+//     "TeacherName": "Hữu Minh Teacher 10[20:00-21:00]",
+//     "CaID": 5,
+//     "CaName": "Ca: 20:00 - 21:00",
+//     "RoomID": 32,
+//     "RoomName": "Phòng: Phòng 2"
+// }
 const ScheduleItem = (props) => {
-	const {handleActiveSchedule, idxToActive} = props;
-	const {Panel} = Collapse;
-	const {Option} = Select;
-	const onSearch = (val) => {
-		console.log('search:', val);
+	const {
+		handleChangeStatusSchedule,
+		handleChangeValueSchedule,
+		//
+		scheduleObj,
+		isLoading,
+		isUpdate,
+		//
+		optionForScheduleList,
+		optionStudyTime,
+	} = props;
+	const {
+		ID,
+		eventName,
+		Tiet,
+		RoomName,
+		RoomID,
+		CaID,
+		CaName,
+		TeacherID,
+		TeacherName,
+		date,
+	} = scheduleObj;
+
+	const defaultValuesInit = {
+		RoomID,
+		TeacherID,
+		StudyTimeID: CaID,
 	};
-	const onChange_CheckBox = (e) => {
-		console.log(`checked = ${e.target.value}`);
+	const schema = yup.object().shape({
+		// RoomID: yup.number().when('StudyTimeID', (StudyTimeID, schema) => {
+		// 	console.log(StudyTimeID > 0);
+		// 	return StudyTimeID > 0
+		// 		? true
+		// 		: schema.min(1, 'Bạn cần chọn ca').required();
+		// }),
+		// TeacherID: yup.number().when('StudyTimeID', (StudyTimeID, schema) => {
+		// 	console.log(StudyTimeID > 0);
+		// 	return StudyTimeID > 0
+		// 		? true
+		// 		: schema.min(1, 'Bạn cần chọn ca').required();
+		// }),
+		StudyTimeID: yup.number().required('Bạn không được để trống'),
+		TeacherID: yup.number().required('Bạn không được để trống'),
+		RoomID: yup.number().required('Bạn không được để trống'),
+	});
+
+	const form = useForm({
+		defaultValues: defaultValuesInit,
+		resolver: yupResolver(schema),
+		mode: 'onChange',
+	});
+	// const
+	useEffect(() => {
+		console.log(scheduleObj);
+		form.setValue('StudyTimeID', scheduleObj.CaID);
+		form.setValue('RoomID', scheduleObj.RoomID);
+		form.setValue('TeacherID', scheduleObj.TeacherID);
+	}, [scheduleObj]);
+
+	const checkHandleChangeStatusSchedule = (vl, type) => {
+		if (!handleChangeStatusSchedule) return;
+		handleChangeStatusSchedule(vl, type);
 	};
-	const checkHandleActiveSchedule = () => {
-		if (!handleActiveSchedule) return;
-		console.log(idxToActive);
-		handleActiveSchedule();
+	const checkHandleChangeValueSchedule = (uid, key, vl) => {
+		if (!handleChangeValueSchedule) return;
+		handleChangeValueSchedule(uid, key, vl);
+	};
+	const setSiblingsFieldToDefault = () => {
+		form.setValue('RoomID', 0);
+		form.setValue('TeacherID', 0);
 	};
 	return (
 		<Panel
-			key={idxToActive}
+			{...props}
 			header={
 				<div className="info-course-item">
-					<Checkbox onChange={() => checkHandleActiveSchedule()}></Checkbox>
-					<p className="title">
-						Ngày học <span>1</span>
-					</p>
+					<Checkbox
+						onChange={() => {
+							if (isUpdate) {
+								// remove schedule to unavailable list
+								// add schedule to available list
+								checkHandleChangeStatusSchedule(scheduleObj, 2);
+							} else {
+								// remove schedule to available list
+								// add schedule to unavailable list
+								checkHandleChangeStatusSchedule(scheduleObj, 1);
+							}
+						}}
+						checked={isUpdate}
+					/>
+					<p className="title">{eventName}</p>
 					<ul className="info-course-list">
-						<li>Tiết 7: Môn học test</li>
-						<li>Tiết 8: Môn học test</li>
+						<li>{Tiet.CurriculumsDetailName}</li>
 					</ul>
 				</div>
 			}
@@ -36,72 +126,85 @@ const ScheduleItem = (props) => {
 			<div className="info-course-select">
 				<div className="row">
 					<div className="col-6">
-						<Select
-							className="style-input"
-							size="large"
-							showSearch
-							style={{width: '100%'}}
+						<SelectField
+							form={form}
+							name="RoomID"
+							isLoading={
+								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
+							}
 							placeholder="Chọn phòng"
-							optionFilterProp="children"
-							onSearch={onSearch}
-							filterOption={(input, option) =>
-								option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-							}
-						>
-							<Option value="jack">Lớp A</Option>
-							<Option value="lucy">Lớp B</Option>
-							<Option value="tom">Lớp C</Option>
-						</Select>
+							optionList={optionForScheduleList.optionRoomList}
+							onChangeSelect={(value) => {
+								checkHandleChangeValueSchedule(ID, 'RoomID', value);
+							}}
+						/>
 					</div>
-
 					<div className="col-6">
-						<Select
-							className="style-input"
-							size="large"
-							showSearch
-							style={{width: '100%'}}
+						<SelectField
+							form={form}
+							name="StudyTimeID"
 							placeholder="Chọn ca"
-							optionFilterProp="children"
-							onSearch={onSearch}
-							filterOption={(input, option) =>
-								option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-							}
-						>
-							<Option value="jack">Ca 1</Option>
-							<Option value="lucy">Ca 2</Option>
-							<Option value="tom">Ca 3</Option>
-						</Select>
+							optionList={optionStudyTime}
+							onChangeSelect={(value) => {
+								setSiblingsFieldToDefault();
+								checkHandleChangeValueSchedule(ID, 'CaID', value);
+							}}
+						/>
 					</div>
 					<div className="col-12 mt-2">
-						<Select
-							className="style-input"
-							size="large"
-							showSearch
-							style={{width: '100%'}}
-							placeholder="Chọn giáo viên"
-							optionFilterProp="children"
-							onSearch={onSearch}
-							filterOption={(input, option) =>
-								option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+						<SelectField
+							form={form}
+							name="TeacherID"
+							isLoading={
+								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
 							}
-						>
-							<Option value="jack">Nguyễn An</Option>
-							<Option value="lucy">Nguyễn Phi Hùng</Option>
-							<Option value="tom">Trương Thức</Option>
-						</Select>
+							placeholder="Chọn giáo viên"
+							optionList={optionForScheduleList.optionTeacherList}
+							onChangeSelect={(value) => {
+								checkHandleChangeValueSchedule(ID, 'TeacherID', value);
+							}}
+						/>
 					</div>
 				</div>
 			</div>
 		</Panel>
 	);
 };
-
+const optionPropTypes = PropTypes.arrayOf(
+	PropTypes.shape({
+		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	})
+);
 ScheduleItem.propTypes = {
-	handleActiveSchedule: PropTypes.func,
-	idxToActive: PropTypes.number,
+	handleChangeValueSchedule: PropTypes.func,
+	handleChangeStatusSchedule: PropTypes.func,
+	//
+	scheduleObj: PropTypes.shape({}),
+	isUpdate: PropTypes.bool,
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
+	//
+	optionForScheduleList: PropTypes.shape({
+		optionRoomList: optionPropTypes,
+		optionTeacherList: optionPropTypes,
+	}),
+	optionStudyTime: optionPropTypes,
 };
 ScheduleItem.defaultProps = {
-	handleActiveSchedule: null,
-	idxToActive: null,
+	handleChangeValueSchedule: null,
+	handleChangeStatusSchedule: null,
+	//
+	scheduleObj: {},
+	isUpdate: false,
+	isLoading: {type: '', status: false},
+	//
+	optionForScheduleList: {
+		optionRoomList: [],
+		optionTeacherList: [],
+	},
+	optionStudyTime: [],
 };
 export default ScheduleItem;

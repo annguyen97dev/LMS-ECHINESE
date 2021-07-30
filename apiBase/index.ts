@@ -1,4 +1,3 @@
-import { staffApi } from "./staff-manage/staff";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { contractApi } from "./options/contract";
@@ -29,3 +28,6 @@ export { parentsApi } from "./customer/parents/parents";
 export { staffApi } from "./staff-manage/staff";
 export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
+
+export { checkRoomApi } from "./course/check-room";
+export { checkTeacherApi } from "./course/check-teacher";
