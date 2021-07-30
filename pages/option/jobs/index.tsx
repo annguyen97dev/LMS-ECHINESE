@@ -29,6 +29,7 @@ const JobsList = () => {
       title: "Nghề nghiệp",
       dataIndex: "JobName",
       ...FilterColumn("JobName", onSearch, handleReset, "text"),
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
     { title: "Modified By", dataIndex: "ModifiedBy" },
     {

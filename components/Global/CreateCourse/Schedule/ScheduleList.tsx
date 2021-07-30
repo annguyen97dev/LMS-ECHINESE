@@ -1,41 +1,34 @@
-import {Card, Collapse} from 'antd';
-import React, {useEffect, useState} from 'react';
-import ScheduleItem from './ScheduleItem';
+import {Collapse} from 'antd';
+import React, {cloneElement, useState} from 'react';
 import PropTypes from 'prop-types';
-
 const ScheduleList = (props) => {
-	const {scheduleList} = props;
+	const {panelActiveListInModal} = props;
 	const [panelActiveList, setPanelActiveList] = useState<number[]>([]);
-	console.log(scheduleList);
 
 	const onActiveSchedule = (id: number) => {
-		console.log(id);
 		const newPanelActiveList = [...panelActiveList];
-		// panelActiveList.push(id);
-		setPanelActiveList([...panelActiveList, id]);
+		const isPanelActiveAlready = newPanelActiveList.findIndex((p) => p === id);
+		if (isPanelActiveAlready >= 0) {
+			newPanelActiveList.splice(isPanelActiveAlready, 1);
+		} else {
+			newPanelActiveList.push(id);
+		}
+		setPanelActiveList(newPanelActiveList);
 	};
-	useEffect(() => {
-		console.log(panelActiveList);
-	}, [panelActiveList]);
+
 	return (
-		<Collapse activeKey={panelActiveList}>
-			{scheduleList.map((s, idx) => (
-				<ScheduleItem
-					key={idx}
-					// {...s}
-					idxToActive={idx}
-					handleActiveSchedule={() => onActiveSchedule(idx)}
-				/>
-			))}
+		<Collapse
+			activeKey={
+				panelActiveList.length ? panelActiveList : panelActiveListInModal
+			}
+		>
+			{props.children.map((c, idx) => {
+				return cloneElement(c, {
+					handleActiveSchedule: () => onActiveSchedule(idx),
+				});
+			})}
 		</Collapse>
 	);
-};
-
-ScheduleList.propTypes = {
-	scheduleList: PropTypes.array,
-};
-ScheduleList.defaultProps = {
-	scheduleList: [],
 };
 
 export default ScheduleList;

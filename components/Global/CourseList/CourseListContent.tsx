@@ -58,7 +58,12 @@ const CourseListContent = () => {
           <List.Item.Meta
             avatar={<span className="tag green">Active</span>}
             title={
-              <Link href="/course/schedule-study">
+              <Link
+                href={{
+                  pathname: "/course/course-list/course-list-detail/[slug]",
+                  query: { slug: 2 },
+                }}
+              >
                 <a>{item.title}</a>
               </Link>
             }

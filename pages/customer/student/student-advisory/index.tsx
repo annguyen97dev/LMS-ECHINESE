@@ -17,21 +17,41 @@ export default function StudentAdvisory() {
   };
 
   const columns = [
-    { title: "Tỉnh/TP", dataIndex: "city", ...FilterColumn("city") },
+    {
+      title: "Tỉnh/TP",
+      dataIndex: "city",
+      //  ...FilterColumn("city")
+    },
     {
       title: "Họ và tên",
       dataIndex: "nameStudent",
-      ...FilterColumn("nameStudent"),
+      // ...FilterColumn("nameStudent"),
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
-    { title: "Số điện thoại", dataIndex: "tel", ...FilterColumn("tel") },
-    { title: "Email", dataIndex: "email", ...FilterColumn("email") },
-    { title: "Nguồn", dataIndex: "introducer", ...FilterColumn("introducer") },
-    { title: "Trạng thái", dataIndex: "reserve", ...FilterColumn("reserve") },
+    {
+      title: "Số điện thoại",
+      dataIndex: "tel",
+      // ...FilterColumn("tel")
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      // ...FilterColumn("email")
+    },
+    {
+      title: "Nguồn",
+      dataIndex: "introducer",
+      // ...FilterColumn("introducer")
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "reserve",
+      //  ...FilterColumn("reserve")
+    },
     {
       title: "Tư vấn viên",
       dataIndex: "consultant",
-      ...FilterColumn("consultant"),
+      // ...FilterColumn("consultant"),
     },
 
     {
@@ -60,7 +80,7 @@ export default function StudentAdvisory() {
       TitlePage="Học viên cần tư vấn"
       expandable={{ expandedRowRender }}
       dataSource={data6}
-      TitleCard={<StudyTimeForm showAdd={true} />}
+      // TitleCard={<StudyTimeForm showAdd={true} />}
       columns={columns}
       Extra={
         <div className="extra-table">

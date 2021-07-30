@@ -156,7 +156,7 @@ const ProfileBase = (props) => {
   return (
     <>
       <div className="row">
-        {/* <div className="col-md-3 col-12">
+        <div className="col-md-3 col-12">
           <Card className="info-profile-left">
             <div className="row">
               <div className="col-12 d-flex align-items-center justify-content-center flex-wrap">
@@ -173,17 +173,6 @@ const ProfileBase = (props) => {
                     <img src={"/images/user.png"} />
                   }
                 />
-                {path === "teacher-detail" && (
-                  <Rate
-                    disabled
-                    value={4}
-                    style={{
-                      width: "100%",
-                      textAlign: "center",
-                      marginTop: "10px",
-                    }}
-                  />
-                )}
               </div>
             </div>
             <div className="row pt-3">
@@ -227,7 +216,7 @@ const ProfileBase = (props) => {
               </div>
             </div>
           </Card>
-        </div> */}
+        </div>
         <div className="col-md-8 col-12">
           <Card className="space-top-card">
             <Form layout="vertical">
@@ -349,50 +338,6 @@ const ProfileBase = (props) => {
               </div>
             </Form>
           </Card>
-
-          {path === "teacher-detail" && (
-            <>
-              <div className="wrap-table table-overflow-x mt-2">
-                <Card title="Thông tin các lớp học">
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                  <Table
-                    pagination={false}
-                    className="mt-4"
-                    dataSource={dataSource}
-                    columns={columns}
-                    scroll={{ x: 1500 }}
-                  />
-                </Card>
-              </div>
-            </>
-          )}
         </div>
       </div>
 

@@ -4,17 +4,18 @@ import { useWrap } from "~/context/wrap";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { studentApi } from "~/apiBase";
 const AvatarBase = (props) => {
-  const { getValue } = props;
+  const { getValue, imageUrl } = props;
   const { showNoti } = useWrap();
-  const [imageUrl, setImageUrl] = useState();
+  const [imgUrl, setImgUrl] = useState();
   const [loadingImage, setLoadingImage] = useState(false);
+
   // ------------ AVATAR --------------
   const UploadButton = (props) => {
-    const { imageUrl } = props;
+    const { img } = props;
     return (
       <>
         <div
-          className={`bg-upload ${imageUrl && "have-img"} ${
+          className={`bg-upload ${img && "have-img"} ${
             loadingImage && "loading"
           }`}
         >
@@ -35,7 +36,7 @@ const AvatarBase = (props) => {
       let res = await studentApi.uploadImage(info.file.originFileObj);
       res?.status == 200 &&
         (showNoti("success", "Upload ảnh thành công"),
-        setImageUrl(res.data.data),
+        setImgUrl(res.data.data),
         getValue(res.data.data));
     } catch (error) {
       showNoti("danger", error.message);
@@ -43,6 +44,13 @@ const AvatarBase = (props) => {
       setLoadingImage(false);
     }
   };
+
+  console.log("Image Url: ", imageUrl);
+
+  useEffect(() => {
+    setImgUrl(imageUrl);
+    console.log("chui vô");
+  }, [imageUrl]);
 
   return (
     <>
@@ -56,17 +64,17 @@ const AvatarBase = (props) => {
         onChange={handleChange_img}
       >
         <img
-          src={imageUrl}
+          src={imgUrl}
           alt="avatar"
           style={{
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            display: imageUrl ? "block" : "none",
+            display: imgUrl ? "block" : "none",
           }}
         />
 
-        <UploadButton imageUrl={imageUrl} />
+        <UploadButton img={imgUrl} />
       </Upload>
     </>
   );

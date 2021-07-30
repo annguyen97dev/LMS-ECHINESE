@@ -37,6 +37,7 @@ const FeedBackList = () => {
       title: "Loại phản hồi",
       dataIndex: "Name",
       ...FilterColumn("Name", onSearch, handleReset, "text"),
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
     { title: "Modified By", dataIndex: "ModifiedBy" },
     {

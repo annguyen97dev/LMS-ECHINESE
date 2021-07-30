@@ -1,22 +1,19 @@
-import {DatePicker, Form, Input, Modal, Select, Spin} from 'antd';
-import React, {useEffect, useState} from 'react';
-import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
+import {Form, Modal, Spin} from 'antd';
 import moment from 'moment';
-import {useForm} from 'react-hook-form';
 import PropTypes from 'prop-types';
-import SelectField from '~/components/FormControl/SelectField';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
+import SelectField from '~/components/FormControl/SelectField';
 //  ----------- POPUP FORM ------------
 const CreateCourseForm = (props) => {
 	const {
 		handleGetCourse,
 		isUpdate,
-		handleUpdateTeacher,
-		updateObj,
 		isLoading,
-		indexUpdateObj,
 
 		//
 		optionBranchList,
@@ -31,14 +28,7 @@ const CreateCourseForm = (props) => {
 		handleFetchProgramByGrade,
 		handleGetValueBeforeFetchCurriculum,
 	} = props;
-	const {Option} = Select;
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	function onSearch(val) {
-		console.log('search:', val);
-	}
-	function onChangeDate(date, dateString) {
-		console.log(date, dateString);
-	}
 
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -49,10 +39,13 @@ const CreateCourseForm = (props) => {
 			.number()
 			.nullable()
 			.required('Bạn không được để trống'),
-		RoomID: yup.number().nullable().required('Bạn không được để trống'),
+		RoomID: yup
+			.array()
+			.min(1, 'Bạn phải chọn ít nhất 1 phòng học')
+			.required('Bạn không được để trống'),
 		StudyTimeID: yup
 			.array()
-			.min(1, 'Bạn phải chọn ít nhất 1 trung tâm')
+			.min(1, 'Bạn phải chọn ít nhất 1 ca học')
 			.required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
@@ -62,12 +55,12 @@ const CreateCourseForm = (props) => {
 			.array()
 			.min(1, 'Bạn phải chọn ít nhất 1 ngày trong tuần')
 			.required('Bạn không được để trống'),
-		CourseName: yup.string().required('Bạn không được để trống'),
+		CourseName: yup.string(),
 	});
 	const defaultValuesInit = {
 		BranchID: null,
 		UserInformationID: null,
-		RoomID: null,
+		RoomID: undefined,
 		StudyTimeID: undefined,
 		GradeID: null,
 		ProgramID: null,
@@ -81,25 +74,8 @@ const CreateCourseForm = (props) => {
 		resolver: yupResolver(schema),
 	});
 
-	// useEffect(() => {
-	// 	if (isUpdate && updateObj) {
-	// 		form.reset({
-	// 			...updateObj,
-	// 			Branch: updateObj.Branch.split(','),
-	// 		});
-	// 	}
-	// }, [updateObj]);
-
 	const createCourseSwitchFunc = (data) => {
 		switch (isUpdate) {
-			case true:
-				// if (!handleUpdateTeacher) return;
-				// handleUpdateTeacher(data, indexUpdateObj).then((res) => {
-				// 	if (res && res.status === 200) {
-				// 		closeModal();
-				// 	}
-				// });
-				break;
 			case false:
 				if (!handleGetCourse) return;
 				handleGetCourse(data).then((res) => {
@@ -183,6 +159,7 @@ const CreateCourseForm = (props) => {
 									name="RoomID"
 									label="Phòng học"
 									placeholder="Chọn phòng học"
+									mode="multiple"
 									isLoading={isLoading.type === 'BranchID' && isLoading.status}
 									optionList={optionFetchByBranch.roomList}
 								/>
@@ -262,14 +239,18 @@ const CreateCourseForm = (props) => {
 									form={form}
 									name="CourseName"
 									label="Tên khóa học"
-									placeholder="Ghi tên khóa học"
+									placeholder="[Trung tâm] - [Chương trình học] - [Ngày mở] - [Ca] - [Phòng]"
 								/>
 							</div>
 							<div
 								className="col-md-12 col-12 mt-3 "
 								style={{textAlign: 'center'}}
 							>
-								<button type="submit" className="btn btn-primary">
+								<button
+									type="submit"
+									className="btn btn-primary"
+									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+								>
 									Xem Lịch
 									{isLoading.type == 'ADD_DATA' && isLoading.status && (
 										<Spin className="loading-base" />
@@ -292,13 +273,10 @@ const optionPropTypes = PropTypes.arrayOf(
 CreateCourseForm.propTypes = {
 	handleGetCourse: PropTypes.func,
 	isUpdate: PropTypes.bool,
-	handleUpdateTeacher: PropTypes.func,
-	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
-	indexUpdateObj: PropTypes.number,
 	//
 	optionBranchList: optionPropTypes,
 	optionStudyTimeList: optionPropTypes,
@@ -319,10 +297,7 @@ CreateCourseForm.propTypes = {
 CreateCourseForm.defaultProps = {
 	handleGetCourse: null,
 	isUpdate: false,
-	handleUpdateTeacher: null,
-	updateObj: {},
 	isLoading: {type: '', status: false},
-	indexUpdateObj: -1,
 	//
 	optionBranchList: [],
 	optionStudyTimeList: [],
