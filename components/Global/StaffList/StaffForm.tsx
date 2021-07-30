@@ -75,6 +75,7 @@ const StaffForm = (props) => {
     name: "",
   });
   const [listData, setListData] = useState<listData>(listDataForm);
+  const [imageUrl, setImageUrl] = useState(null);
 
   const makeNewData = (data, name) => {
     let newData = null;
@@ -273,7 +274,8 @@ const StaffForm = (props) => {
     res.then(function (rs: any) {
       rs &&
         rs.status == 200 &&
-        (setIsModalVisible(false), !dataRow && form.reset(defaultValuesInit));
+        (setIsModalVisible(false),
+        !dataRow && (form.reset(defaultValuesInit), setImageUrl("")));
     });
   };
 
@@ -295,7 +297,14 @@ const StaffForm = (props) => {
             {/*  */}
 
             {/** ==== Thông tin cơ bản  ====*/}
-
+            <div className="row">
+              <div className="col-12">
+                <AvatarBase
+                  imageUrl={imageUrl}
+                  getValue={(value) => form.setValue("Avatar", value)}
+                />
+              </div>
+            </div>
             <div className="row">
               <div className="col-12">
                 <Divider orientation="center">Thông tin cơ bản</Divider>
