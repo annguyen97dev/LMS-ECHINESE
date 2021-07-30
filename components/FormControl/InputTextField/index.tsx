@@ -4,10 +4,16 @@ import { Controller } from "react-hook-form";
 import PropTypes from "prop-types";
 
 const InputTextField = (props) => {
-  const { form, name, label, placeholder, disabled } = props;
+  const { form, name, label, placeholder, disabled, handleChange } = props;
 
   const { errors } = form.formState;
   const hasError = errors[name];
+
+  const checkHandleChange = (value) => {
+    if (!handleChange) return;
+    handleChange(value);
+  };
+
   return (
     <Form.Item
       label={label}
@@ -25,6 +31,9 @@ const InputTextField = (props) => {
             allowClear={true}
             placeholder={placeholder}
             disabled={disabled}
+            onChange={(e) => (
+              checkHandleChange(e.target.value), field.onChange(e.target.value)
+            )}
           />
         )}
       />
@@ -42,6 +51,7 @@ InputTextField.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   disabled: PropTypes.bool,
+  handleChange: PropTypes.func,
 };
 InputTextField.defaultProps = {
   label: "",
