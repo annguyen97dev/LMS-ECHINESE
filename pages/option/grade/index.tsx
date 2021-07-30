@@ -162,7 +162,19 @@ const Grade = () => {
     }
   };
 
-  // -------------- CHECK FIELD ---------------------
+  // --------------- HANDLE SORT ----------------------
+  const handleSort = async (option) => {
+    let newTodoApi = {
+      ...listTodoApi,
+      pageIndex: 1,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    };
+    setCurrentPage(1), setTodoApi(newTodoApi);
+  };
+
+  // ------------ ON SEARCH -----------------------
+
   const checkField = (valueSearch, dataIndex) => {
     let newList = { ...listFieldSearch };
     Object.keys(newList).forEach(function (key) {
@@ -179,18 +191,6 @@ const Grade = () => {
     return newList;
   };
 
-  // --------------- HANDLE SORT ----------------------
-  const handleSort = async (option) => {
-    let newTodoApi = {
-      ...listTodoApi,
-      pageIndex: 1,
-      sort: option.title.sort,
-      sortType: option.title.sortType,
-    };
-    setCurrentPage(1), setTodoApi(newTodoApi);
-  };
-
-  // ------------ ON SEARCH -----------------------
   const onSearch = (valueSearch, dataIndex) => {
     let clearKey = checkField(valueSearch, dataIndex);
 

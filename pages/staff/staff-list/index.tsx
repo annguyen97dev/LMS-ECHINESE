@@ -5,16 +5,28 @@ import TitlePage from "~/components/TitlePage";
 import SearchBox from "~/components/Elements/SearchBox";
 import Link from "next/link";
 import PowerTable from "~/components/PowerTable";
-import ModalAdd from "~/components/Global/StaffList/ModalAdd";
+import ModalAdd from "~/components/Global/StaffList/StaffForm";
 import { useWrap } from "~/context/wrap";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { Eye, Filter, Search } from "react-feather";
 import LayoutBase from "~/components/LayoutBase";
-import { staffApi, branchApi, areaApi } from "~/apiBase";
+import {
+  branchApi,
+  areaApi,
+  studentApi,
+  districtApi,
+  wardApi,
+  jobApi,
+  puroseApi,
+  sourceInfomationApi,
+  parentsApi,
+  staffApi,
+} from "~/apiBase";
 import SortBox from "~/components/Elements/SortBox";
 import moment from "moment";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import { Roles } from "~/lib/roles/listRoles";
+import StaffForm from "~/components/Global/StaffList/StaffForm";
 
 let pageIndex = 1;
 
@@ -73,7 +85,87 @@ const dataOption = [
   },
 ];
 
+// -- FOR DIFFERENT VIEW --
+
+interface listDataForm {
+  Area: Array<Object>;
+  DistrictID: Array<Object>;
+  WardID: Array<Object>;
+  Role: Array<Object>;
+  Branch: Array<Object>;
+  Purposes: Array<Object>;
+  SourceInformation: Array<Object>;
+  Parent: Array<Object>;
+  Counselors: Array<Object>;
+}
+
+const optionGender = [
+  {
+    value: 0,
+    title: "Nữ",
+  },
+  {
+    value: 1,
+    title: "Nam",
+  },
+  {
+    value: 0,
+    title: "Khác",
+  },
+];
+
+const listApi = [
+  {
+    api: areaApi,
+    text: "Tỉnh/Tp",
+    name: "Area",
+  },
+
+  {
+    api: jobApi,
+    text: "Công việc",
+    name: "Job",
+  },
+  {
+    api: puroseApi,
+    text: "Mục đích học",
+    name: "Purposes",
+  },
+  {
+    api: branchApi,
+    text: "Trung tâm",
+    name: "Branch",
+  },
+  {
+    api: parentsApi,
+    text: "Phụ huynh",
+    name: "Parent",
+  },
+  {
+    api: sourceInfomationApi,
+    text: "Nguồn khách hàng",
+    name: "SourceInformation",
+  },
+  {
+    api: staffApi,
+    text: "Nguồn khách hàng",
+    name: "Counselors",
+  },
+];
+
 const StaffList = () => {
+  const [listDataForm, setListDataForm] = useState<listDataForm>({
+    Area: [],
+    DistrictID: [],
+    WardID: [],
+    Role: dataRoles,
+    Branch: [],
+    Purposes: [],
+    SourceInformation: [],
+    Parent: [],
+    Counselors: [],
+  });
+
   // ------ BASE USESTATE TABLE -------
   const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
   const [dataArea, setDataArea] = useState<IArea[]>([]);
@@ -139,6 +231,114 @@ const StaffList = () => {
       value: null,
     },
   ]);
+
+  // FOR STUDENT FORM
+  // ------------- ADD data to list --------------
+
+  const makeNewData = (data, name) => {
+    let newData = null;
+    switch (name) {
+      case "Area":
+        newData = data.map((item) => ({
+          title: item.AreaName,
+          value: item.AreaID,
+        }));
+        break;
+      case "DistrictID":
+        newData = data.map((item) => ({
+          title: item.DistrictName,
+          value: item.ID,
+        }));
+        break;
+      case "WardID":
+        newData = data.map((item) => ({
+          title: item.WardName,
+          value: item.ID,
+        }));
+        break;
+      case "Branch":
+        newData = data.map((item) => ({
+          title: item.BranchName,
+          value: item.ID,
+        }));
+        setDataFunc("BranchID", newData);
+        break;
+      case "Job":
+        newData = data.map((item) => ({
+          title: item.JobName,
+          value: item.JobID,
+        }));
+        break;
+      case "Purposes":
+        newData = data.map((item) => ({
+          title: item.PurposesName,
+          value: item.PurposesID,
+        }));
+        break;
+      case "Parent":
+        newData = data.map((item) => ({
+          title: item.FullNameUnicode,
+          value: item.UserInformationID,
+        }));
+        break;
+      case "SourceInformation":
+        newData = data.map((item) => ({
+          title: item.SourceInformationName,
+          value: item.SourceInformationID,
+        }));
+        setDataFunc("SourceInformationID", newData);
+        break;
+      case "Counselors":
+        newData = data.map((item) => ({
+          title: item.FullNameUnicode,
+          value: item.UserInformationID,
+        }));
+        break;
+      default:
+        break;
+    }
+
+    return newData;
+  };
+
+  const getDataTolist = (data: any, name: any) => {
+    let newData = makeNewData(data, name);
+
+    Object.keys(listDataForm).forEach(function (key) {
+      if (key == name) {
+        listDataForm[key] = newData;
+      }
+    });
+    setListDataForm({ ...listDataForm });
+  };
+
+  // ----------- GET DATA SOURCE ---------------
+  const getDataStudentForm = (arrApi) => {
+    arrApi.forEach((item, index) => {
+      (async () => {
+        let res = null;
+        try {
+          if (item.name == "Counselors") {
+            res = await item.api.getAll({
+              pageIndex: 1,
+              pageSize: 99999,
+              RoleID: 6,
+            });
+          } else {
+            res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+          }
+
+          res.status == 200 && getDataTolist(res.data.data, item.name);
+
+          res.status == 204 &&
+            showNoti("danger", item.text + " Không có dữ liệu");
+        } catch (error) {
+          showNoti("danger", error.message);
+        } finally {
+        }
+      })();
+    });
+  };
 
   // GET DATA SOURCE
   const getDataSource = async () => {
@@ -222,46 +422,30 @@ const StaffList = () => {
     setCurrentPage(1);
   };
 
-  // ----------------- ON SUBMIT --------------------
-  const _onSubmit = async (dataSubmit: any) => {
+  // ----------- SUBMI FORM ------------
+  const onSubmit = async (data: any) => {
+    data.Branch = data.Branch.toString();
+    console.log("DATA SUBMIT after: ", data);
+
     setIsLoading({
       type: "ADD_DATA",
       status: true,
     });
-
     let res = null;
-
-    if (dataSubmit.ID) {
-      try {
-        res = await staffApi.update(dataSubmit);
-
-        if (res.status == 200) {
-          let newDataSource = [...dataSource];
-          newDataSource.splice(indexRow, 1, dataSubmit);
-          setDataSource(newDataSource);
-          showNoti("success", res.data.message);
-        }
-      } catch (error) {
-        console.log("error: ", error);
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "ADD_DATA",
-          status: false,
-        });
+    try {
+      if (data.UserInformationID) {
+        res = await staffApi.update(data);
+      } else {
+        res = await staffApi.add(data);
       }
-    } else {
-      try {
-        res = await staffApi.add(dataSubmit);
-        res?.status == 200 && afterPost(res.data.message);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "ADD_DATA",
-          status: false,
-        });
-      }
+      res?.status == 200 && afterPost(res.data.message);
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "ADD_DATA",
+        status: false,
+      });
     }
 
     return res;
@@ -359,6 +543,7 @@ const StaffList = () => {
   useEffect(() => {
     getDataCenter();
     getDataArea();
+    getDataStudentForm(listApi);
   }, []);
 
   const columns = [
@@ -458,7 +643,13 @@ const StaffList = () => {
         columns={columns}
         dataSource={dataSource}
         TitlePage="Danh sách nhân viên"
-        TitleCard={<ModalAdd />}
+        TitleCard={
+          <StaffForm
+            isLoading={isLoading}
+            onSubmit={(data: any) => onSubmit(data)}
+            listDataForm={listDataForm}
+          />
+        }
         Extra={
           <div className="extra-table">
             <FilterBase

@@ -11,7 +11,11 @@ import {
   Spin,
   message,
 } from "antd";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import TitlePage from "~/components/TitlePage";
 import LayoutBase from "~/components/LayoutBase";
 import { useForm } from "react-hook-form";
@@ -107,21 +111,20 @@ const listApi = [
 
 const StudentForm = (props) => {
   const { dataRow, listDataForm } = props;
-  console.log("Data Row: ", dataRow);
+
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
-  const [imageUrl, setImageUrl] = useState();
+  const [imageUrl, setImageUrl] = useState(null);
   const [loadingImage, setLoadingImage] = useState(false);
   const [loadingSelect, setLoadingSelect] = useState({
     status: false,
     name: "",
   });
   const [listData, setListData] = useState<listData>(listDataForm);
-
-  console.log("DATA list: ", listData);
+  const [valueEmail, setValueEmail] = useState();
 
   // ------------- ADD data to list --------------
 
@@ -200,34 +203,6 @@ const StudentForm = (props) => {
     setListData({ ...listData });
   };
 
-  // ----------- GET DATA SOURCE ---------------
-  // const getDataSource = (arrApi) => {
-  //   arrApi.forEach((item, index) => {
-  //     (async () => {
-  //       let res = null;
-  //       try {
-  //         if (item.name == "Counselors") {
-  //           res = await item.api.getAll({
-  //             pageIndex: 1,
-  //             pageSize: 99999,
-  //             RoleID: 6,
-  //           });
-  //         } else {
-  //           res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
-  //         }
-
-  //         res.status == 200 && getDataTolist(res.data.data, item.name);
-
-  //         res.status == 204 &&
-  //           showNoti("danger", item.text + " Không có dữ liệu");
-  //       } catch (error) {
-  //         showNoti("danger", error.message);
-  //       } finally {
-  //       }
-  //     })();
-  //   });
-  // };
-
   //  ----- GET DATA DISTRICT -------
   const getDataWithID = async (ID, name) => {
     let res = null;
@@ -268,11 +243,18 @@ const StudentForm = (props) => {
   const handleChange_select = (value, name) => {
     console.log("Value is: ", value);
 
+    if (name == "DistrictID") {
+      form.setValue("WardID", null);
+
+      listData.DistrictID = [];
+      listData.WardID = [];
+      setListData({ ...listData });
+    }
     form.setValue(name, null);
     getDataWithID(value, name);
   };
 
-  // -----  DEFAULT VALUE INIT -------------
+  // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
     FullNameUnicode: null,
     Email: "",
@@ -289,11 +271,12 @@ const StudentForm = (props) => {
     CMNDDate: null, //Ngày làm
     CMNDRegister: null, //Nơi làm CMND
     Extension: null, //giới thiệu thêm
-    Branch: null, //string : id của trung tâm - LƯU Ý NẾU TỪ 2 TRUNG TÂM TRỞ LÊN THÌ NHẬP(ID,ID,ID)
+    Branch: undefined, //string : id của trung tâm - LƯU Ý NẾU TỪ 2 TRUNG TÂM TRỞ LÊN THÌ NHẬP(ID,ID,ID)
     AcademicPurposesID: null, // int id mục đích học
     JobID: null, //int mã công việc
     SourceInformationID: null, //int id nguồn
     ParentsOf: null, //int id phụ huynh
+    CounselorsID: null,
   };
 
   (function returnSchemaFunc() {
@@ -318,6 +301,13 @@ const StudentForm = (props) => {
             .typeError("CMND phải là số")
             .required("Bạn không được để trống");
           break;
+        case "CounselorsID":
+          returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          break;
+        case "Branch":
+          returnSchema[key] = yup.array().required("Bạn không được để trống");
+
+          break;
         default:
           // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
           break;
@@ -334,10 +324,9 @@ const StudentForm = (props) => {
 
   // ----------- SUBMI FORM ------------
   const onSubmit = async (data: any) => {
-    if (data.Branch !== null) {
-      data.Branch = data.Branch.toString();
-    }
+    data.Branch = data.Branch.toString();
     console.log("DATA SUBMIT after: ", data);
+
     setIsLoading({
       type: "ADD_DATA",
       status: true,
@@ -357,8 +346,7 @@ const StudentForm = (props) => {
             ? "Cập nhật học viên thành công"
             : "Tạo học viên thành công"
         ),
-        form.reset(defaultValuesInit),
-        setImageUrl(null));
+        !dataRow && (form.reset(defaultValuesInit), setImageUrl("")));
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -369,39 +357,25 @@ const StudentForm = (props) => {
     }
   };
 
-  // ------------ AVATAR --------------
-  const UploadButton = (props) => {
-    const { imageUrl } = props;
-    return (
-      <>
-        <div
-          className={`bg-upload ${imageUrl && "have-img"} ${
-            loadingImage && "loading"
-          }`}
-        >
-          {loadingImage ? <LoadingOutlined /> : <PlusOutlined />}
-        </div>
-      </>
-    );
-  };
-
-  const handleChange_img = async (info: any) => {
-    console.log("Info file: ", info.file.originFileObj);
-    if (info.file.status === "uploading") {
-      setLoadingImage(true);
-      return;
-    }
-
+  // Search Email to compare with data
+  const searchValue = async () => {
+    console.log("Value Email: ", valueEmail);
+    setIsLoading({
+      type: "SEARCH_EMAIL",
+      status: true,
+    });
     try {
-      let res = await studentApi.uploadImage(info.file.originFileObj);
-      res?.status == 200 &&
-        (showNoti("success", "Upload ảnh thành công"),
-        setImageUrl(res.data.data),
-        form.setValue("Avatar", res.data.data));
+      let res = await studentApi.getAll({ Email: valueEmail });
+
+      res?.status == 200 && showNoti("danger", "Email này đã tồn tại");
+      res?.status == 204 && showNoti("success", "Bạn có thể sử dụng email này");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
-      setLoadingImage(false);
+      setIsLoading({
+        type: "SEARCH_EMAIL",
+        status: false,
+      });
     }
   };
 
@@ -415,12 +389,13 @@ const StudentForm = (props) => {
       });
       dataRow.Branch = arrBranch;
       form.reset(dataRow);
-      getDataWithID(dataRow.AreaID, "DistrictID");
-      getDataWithID(dataRow.DistrictID, "WardID");
+      dataRow.AreaID && getDataWithID(dataRow.AreaID, "DistrictID");
+      dataRow.DistrictID && getDataWithID(dataRow.DistrictID, "WardID");
       setImageUrl(dataRow.Avatar);
-    } else {
-      form.setValue("Branch", null);
     }
+    // else {
+    //   form.setValue("Branch", []);
+    // }
   }, []);
 
   return (
@@ -434,27 +409,8 @@ const StudentForm = (props) => {
               {/** ==== Thông tin cơ bản  ====*/}
               <div className="row">
                 <div className="col-12">
-                  {/* <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    onChange={handleChange_img}
-                  >
-                    <img
-                      src={imageUrl}
-                      alt="avatar"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: imageUrl ? "block" : "none",
-                      }}
-                    />
-
-                    <UploadButton imageUrl={imageUrl} />
-                  </Upload> */}
                   <AvatarBase
+                    imageUrl={imageUrl}
                     getValue={(value) => form.setValue("Avatar", value)}
                   />
                 </div>
@@ -466,7 +422,29 @@ const StudentForm = (props) => {
               </div>
               <div className="row">
                 <div className="col-md-6 col-12">
-                  <InputTextField form={form} name="Email" label="Email" />
+                  <div className="search-box">
+                    <InputTextField
+                      form={form}
+                      name="Email"
+                      label="Email"
+                      handleChange={(value) => setValueEmail(value)}
+                    />
+                    <button
+                      type="button"
+                      className="btn-search"
+                      onClick={searchValue}
+                    >
+                      {isLoading.type == "SEARCH_EMAIL" && isLoading.status ? (
+                        <Spin
+                          indicator={
+                            <LoadingOutlined style={{ fontSize: 16 }} spin />
+                          }
+                        />
+                      ) : (
+                        <SearchOutlined />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="col-md-6 col-12">
@@ -660,7 +638,7 @@ const StudentForm = (props) => {
               </div>
 
               <div className="row">
-                <div className="col-12 d-flex justify-content-end">
+                <div className="col-12 d-flex justify-content-center">
                   <div style={{ paddingRight: 5 }}>
                     <button type="submit" className="btn btn-primary w-100">
                       Lưu

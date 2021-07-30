@@ -4,7 +4,7 @@ import ProfileBase from "~/components/Profile";
 import LayoutBase from "~/components/LayoutBase";
 
 const StaffDetail = () => {
-  return <ProfileBase />;
+  return <ProfileBase dataUser={{}} />;
 };
 
 StaffDetail.layout = LayoutBase;

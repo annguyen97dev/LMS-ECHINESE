@@ -25,6 +25,7 @@ import {
   parentsApi,
   staffApi,
 } from "~/apiBase";
+import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 // import StudentForm from "~/components/Global/Customer/Student/StudentForm";
 
 let pageIndex = 1;
@@ -34,34 +35,40 @@ let listFieldSearch = {
   FullNameUnicode: null,
 };
 
+let listFieldFilter = {
+  pageIndex: 1,
+  SourceInformationID: null,
+  BranchID: null,
+  fromDate: null,
+  toDate: null,
+};
+
 const listTodoApi = {
   pageSize: 10,
   pageIndex: pageIndex,
   sort: null,
   sortType: null,
-  formDate: null,
-  toDate: null,
   FullNameUnicode: null,
-  DistrictID: null,
   SourceInformationID: null,
-  JobID: null,
   BranchID: null,
+  fromDate: null,
+  toDate: null,
 };
 
 const dataOption = [
   {
     dataSort: {
       sort: 0,
-      sortType: false,
+      sortType: true,
     },
-    text: "Tên giảm dần",
+    text: "Tên A-Z",
   },
   {
     dataSort: {
       sort: 0,
-      sortType: true,
+      sortType: false,
     },
-    text: "Tên tăng dần ",
+    text: "Tên Z-A",
   },
 ];
 
@@ -148,6 +155,33 @@ const StudentData = () => {
     Counselors: [],
   });
 
+  // ------ LIST FILTER -------
+  const [dataFilter, setDataFilter] = useState([
+    {
+      name: "SourceInformationID",
+      title: "Nguồn khách",
+      col: "col-md-6 col-12",
+      type: "select",
+      optionList: null, // Gọi api xong trả data vào đây
+      value: null,
+    },
+    {
+      name: "BranchID",
+      title: "Trung tâm",
+      col: "col-md-6 col-12",
+      type: "select",
+      optionList: null,
+      value: null,
+    },
+    {
+      name: "date-range",
+      title: "Từ - đến",
+      col: "col-12",
+      type: "date-range",
+      value: null,
+    },
+  ]);
+
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<IStudent[]>([]);
   const { showNoti } = useWrap();
@@ -189,6 +223,7 @@ const StudentData = () => {
           title: item.BranchName,
           value: item.ID,
         }));
+        setDataFunc("BranchID", newData);
         break;
       case "Job":
         newData = data.map((item) => ({
@@ -213,6 +248,7 @@ const StudentData = () => {
           title: item.SourceInformationName,
           value: item.SourceInformationID,
         }));
+        setDataFunc("SourceInformationID", newData);
         break;
       case "Counselors":
         newData = data.map((item) => ({
@@ -290,6 +326,18 @@ const StudentData = () => {
     }
   };
 
+  // ------ SET DATA FUN ------
+  const setDataFunc = (name, data) => {
+    dataFilter.every((item, index) => {
+      if (item.name == name) {
+        item.optionList = data;
+        return false;
+      }
+      return true;
+    });
+    setDataFilter([...dataFilter]);
+  };
+
   // -------------- GET DATA CENTER ----------------
   const getDataCenter = async () => {
     setIsLoading({
@@ -318,6 +366,77 @@ const StudentData = () => {
     }
   };
 
+  // -------------- HANDLE FILTER ------------------
+  const handleFilter = (listFilter) => {
+    console.log("List Filter when submit: ", listFilter);
+
+    let newListFilter = { ...listFieldFilter };
+    listFilter.forEach((item, index) => {
+      let key = item.name;
+      Object.keys(newListFilter).forEach((keyFilter) => {
+        if (keyFilter == key) {
+          newListFilter[key] = item.value;
+        }
+      });
+    });
+    setTodoApi({ ...listTodoApi, ...newListFilter, pageIndex: 1 });
+  };
+
+  // --------------- HANDLE SORT ----------------------
+  const handleSort = async (option) => {
+    let newTodoApi = {
+      ...listTodoApi,
+      pageIndex: 1,
+      sort: option.title.sort,
+      sortType: option.title.sortType,
+    };
+    setCurrentPage(1), setTodoApi(newTodoApi);
+  };
+
+  // ------------ ON SEARCH -----------------------
+
+  const checkField = (valueSearch, dataIndex) => {
+    let newList = { ...listFieldSearch };
+    Object.keys(newList).forEach(function (key) {
+      console.log("key: ", key);
+      if (key != dataIndex) {
+        if (key != "pageIndex") {
+          newList[key] = null;
+        }
+      } else {
+        newList[key] = valueSearch;
+      }
+    });
+
+    return newList;
+  };
+
+  const onSearch = (valueSearch, dataIndex) => {
+    let clearKey = checkField(valueSearch, dataIndex);
+
+    setTodoApi({
+      ...todoApi,
+      ...clearKey,
+    });
+  };
+
+  // HANDLE RESET
+  const resetListFieldSearch = () => {
+    Object.keys(listFieldSearch).forEach(function (key) {
+      if (key != "pageIndex") {
+        listFieldSearch[key] = null;
+      }
+    });
+  };
+
+  const handleReset = () => {
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
+    });
+    setCurrentPage(1), resetListFieldSearch();
+  };
+
   // -------------- GET PAGE_NUMBER -----------------
   const getPagination = (pageNumber: number) => {
     pageIndex = pageNumber;
@@ -339,7 +458,7 @@ const StudentData = () => {
   }, []);
 
   // EXPAND ROW
-  console.log("Data row This: ", dataRow);
+
   const expandedRowRender = () => {
     return (
       <>
@@ -360,12 +479,12 @@ const StudentData = () => {
       // ...FilterColumn("city")
     },
     {
-      title: "Họ và tên",
+      title: "Họ tên",
       dataIndex: "FullNameUnicode",
-      // ...FilterColumn("nameStudent"),
       render: (nameStudent) => (
         <p className="font-weight-blue">{nameStudent}</p>
       ),
+      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
     },
     {
       title: "SĐT",
@@ -397,46 +516,8 @@ const StudentData = () => {
           </>
         );
       },
-      // filters: [
-      //   {
-      //     text: "Active",
-      //     value: "Active",
-      //   },
-      //   {
-      //     text: "Inactive",
-      //     value: "Inactive",
-      //   },
-      // ],
-      // onFilter: (value, record) => record.status.indexOf(value) === 0,
     },
 
-    // {
-    //   title: "Đã đăng kí",
-    //   dataIndex: "signUp",
-    //   align: "center",
-    //   render: (status) => {
-    //     return (
-    //       <>
-    //         {status == "Đã xong" ? (
-    //           <span className="tag blue">{status}</span>
-    //         ) : (
-    //           <span className="tag black">{status}</span>
-    //         )}
-    //       </>
-    //     );
-    //   },
-    //   filters: [
-    //     {
-    //       text: "Đã xong",
-    //       value: "Đã xong",
-    //     },
-    //     {
-    //       text: "Chưa đăng kí",
-    //       value: "Chưa đăng kí",
-    //     },
-    //   ],
-    //   onFilter: (value, record) => record.signUp.indexOf(value) === 0,
-    // },
     {
       title: "",
       render: () => (
@@ -471,8 +552,15 @@ const StudentData = () => {
       columns={columns}
       Extra={
         <div className="extra-table">
-          <FilterTable />
-          <SortBox dataOption={data} />
+          <FilterBase
+            dataFilter={dataFilter}
+            handleFilter={(listFilter: any) => handleFilter(listFilter)}
+            handleReset={handleReset}
+          />
+          <SortBox
+            handleSort={(value) => handleSort(value)}
+            dataOption={dataOption}
+          />
         </div>
       }
     />
