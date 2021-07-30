@@ -1202,9 +1202,9 @@ hr {
           &:nth-child(1) {
             border-top-left-radius: 0.575rem !important;
           }
-          // &:nth-child(2) {
-          //   border-top-left-radius: 0 !important;
-          // }
+          &:nth-child(2) {
+            border-top-left-radius: 0 !important;
+          }
           &:last-child {
             border-top-right-radius: 0.575rem !important;
           }
@@ -1868,4 +1868,24 @@ hr {
 }
 .color-white {
   color: white;
+}
+.mb-16 {
+  margin-bottom: 16px;
+}
+.avatar-uploader {
+  .ant-upload-select {
+    position: relative;
+    &:hover {
+      .bg-upload {
+        color: #1890ff;
+      }
+    }
+  }
+  .bg-upload {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.2s;
+  }
 }

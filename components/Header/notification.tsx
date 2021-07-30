@@ -148,6 +148,7 @@ const Notifiaction = () => {
             <Modal
 				title={<AlertCircle color="#32c6a4" />}
 				visible={isModalVisible}
+                width={1000}
 				onOk={() => {
                     setIsModalVisible(false)
                     contentRow.status == 0 && _onSubmit(dataSeen);

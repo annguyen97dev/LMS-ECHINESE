@@ -51,10 +51,6 @@ const StaffSalaryForm = (props) => {
       }
     }
   }, [isModalVisible]);
-<<<<<<< HEAD
-=======
-
->>>>>>> master
   return (
     <>
       {props.showIcon && (
@@ -79,7 +75,6 @@ const StaffSalaryForm = (props) => {
           Thêm mới
         </button>
       )}
-<<<<<<< HEAD
 			{/*  */}
 			<Modal
 				title={
@@ -184,129 +179,6 @@ const StaffSalaryForm = (props) => {
 			</Modal>
 		</>
 	);
-=======
-
-      {/*  */}
-      <Modal
-        title={
-          <>
-            {props.showAdd
-              ? "Thêm Lương Nhân Viên"
-              : "Cập Nhật Lương Nhân Viên"}
-          </>
-        }
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        footer={null}
-      >
-        <div className="container-fluid">
-          <Form form={form} layout="vertical" onFinish={onSubmit}>
-            <div className="row">
-              <div className="col-12">
-                {props.showAdd ? (
-                  <Form.Item
-                    label="Nhân viên"
-                    name="Staff"
-                    rules={[
-                      { required: true, message: "Bạn không được để trống" },
-                    ]}
-                  >
-                    <Select
-                      className="style-input"
-                      placeholder="Chọn nhân viên"
-                      allowClear={true}
-                      onChange={(value) => setValue("UserInformationID", value)}
-                    >
-                      {props.dataStaff &&
-                        props.dataStaff.map((row) => (
-                          <Option
-                            key={row.UserInformationID}
-                            value={row.UserInformationID}
-                          >
-                            {row.FullNameUnicode}
-                          </Option>
-                        ))}
-                      <Option value="disabled" disabled>
-                        Disabled
-                      </Option>
-                    </Select>
-                  </Form.Item>
-                ) : (
-                  <Form.Item label="Ghi chú" name="Note">
-                    <Input
-                      placeholder="Note"
-                      className="style-input"
-                      allowClear={true}
-                    />
-                  </Form.Item>
-                )}
-              </div>
-            </div>
-            {/*  */}
-            <div className="row">
-              <div className="col-12">
-                <Form.Item
-                  label="Loại"
-                  name="Salary Type"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                  initialValue={props.rowData?.StyleName}
-                >
-                  <Select
-                    className="style-input"
-                    placeholder="Salary Type"
-                    allowClear={true}
-                    onChange={(value) => setValue("Style", value)}
-                  >
-                    <Option value="1">Tính lương theo tháng</Option>
-                    <Option value="2">Tính lương theo giờ</Option>
-                    <Option value="disabled" disabled>
-                      Disabled
-                    </Option>
-                  </Select>
-                </Form.Item>
-              </div>
-            </div>
-            {/*  */}
-            {/*  */}
-            <div className="row">
-              <div className="col-12">
-                <Form.Item
-                  label="Mức Lương"
-                  name="Salary Const"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                  initialValue={props.rowData?.Salary}
-                >
-                  <InputNumber
-                    className="ant-input style-input w-100"
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                    onChange={(value) => setValue("Salary", value)}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-            {/*  */}
-            <div className="row ">
-              <div className="col-12">
-                <button type="submit" className="btn btn-primary w-100">
-                  Lưu
-                  {props.isLoading.type == "ADD_DATA" &&
-                    props.isLoading.status && <Spin className="loading-base" />}
-                </button>
-              </div>
-            </div>
-          </Form>
-        </div>
-      </Modal>
-    </>
-  );
->>>>>>> master
 };
 
 export default StaffSalaryForm;

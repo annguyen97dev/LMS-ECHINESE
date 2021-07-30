@@ -116,7 +116,11 @@ const Notification = () => {
 
     const columns = [
         { 
-            title: () => (<Checkbox value={0} onChange={onChange}><span className="color-white">Xem tất cả</span></Checkbox>), 
+            title: () => (
+                <Checkbox value={0} onChange={onChange} defaultChecked={false}>
+                    <span className="color-white">Xem tất cả</span>
+                </Checkbox>
+            ), 
             dataIndex: "Status",
             // render: (record) => (
             //     record.Status == 0
@@ -189,6 +193,7 @@ const Notification = () => {
                     setIsModalVisible(false)
                     contentRow.status == 0 && _onSubmit(dataSeen);
                 }}
+                width={1000}
 			>
 				<h4>{contentRow.title}</h4>
 				<div>{ReactHtmlParser(contentRow.content)}</div>

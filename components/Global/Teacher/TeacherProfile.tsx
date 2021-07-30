@@ -15,6 +15,8 @@ import {
   Rate,
   Table,
   Checkbox,
+  Tabs,
+  Spin,
 } from "antd";
 import ImgCrop from "antd-img-crop";
 import {
@@ -26,6 +28,13 @@ import {
 } from "@ant-design/icons";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
+import PowerTable from "~/components/PowerTable";
+import AvatarBase from "~/components/Elements/AvatarBase.tsx";
+
+import moment from 'moment';
+const dateFormat = 'YYYY/MM/DD';
+
+const { TabPane } = Tabs;
 
 const dataSource = [
   {
@@ -48,45 +57,45 @@ const columns = [
     title: "Tên lớp học",
     width: 200,
     dataIndex: "ClassName",
-    key: "classname",
+    // key: "classname",
 
     render: (text) => <p className="color-primary">{text}</p>,
   },
   {
     title: "Dạy",
     dataIndex: "Check",
-    key: "check",
+    // key: "check",
     render: () => <Checkbox />,
   },
   {
     title: "Listening",
     dataIndex: "Listening",
-    key: "listening",
+    // key: "listening",
     render: () => <SelectRemark />,
   },
   {
     title: "Wrting",
     dataIndex: "Wrting",
-    key: "wrting",
+    // key: "wrting",
     render: () => <SelectRemark />,
   },
   {
     title: "Reading",
     dataIndex: "Reading",
-    key: "reading",
+    // key: "reading",
     render: () => <SelectRemark />,
   },
 
   {
     title: "BT Listening",
     dataIndex: "ListeningWork",
-    key: "listeningwork",
+    // key: "listeningwork",
     render: () => <SelectRemark />,
   },
   {
     title: "BT Reading",
     dataIndex: "ReadingWork",
-    key: "readingwork",
+    // key: "readingwork",
     render: () => <SelectRemark />,
   },
 ];
@@ -106,7 +115,12 @@ const SelectRemark = () => {
   );
 };
 
+function callback(key) {
+  console.log(key);
+}
+
 const TeacherProfile = (props) => {
+  const [form] = Form.useForm();
   const {
     register,
     handleSubmit,
@@ -114,14 +128,13 @@ const TeacherProfile = (props) => {
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
   const { showNoti } = useWrap();
-
+  
   // --- GET DATA USER
   // let dataUser = null;
   // if (props.dataUser) {
   //   dataUser = props.dataUser;
   // }
-  const { dataUser } = props;
-  console.log("dataUSer: ", dataUser);
+  const { dataUser, isLoading } = props;
 
   const [fileList, setFileList] = useState([]);
 
@@ -143,179 +156,204 @@ const TeacherProfile = (props) => {
     const imgWindow = window.open(src);
     imgWindow.document.write(image.outerHTML);
   };
+  const { Option } = Select;
+
 
   useEffect(() => {}, []);
 
-  return (
-    <>
-      <div className="row">
-        <div className="col-md-8 col-12">
-          <Card className="space-top-card">
-            <Form layout="vertical">
-              <div className="row d-flex justify-content-center align-items-center">
-                <h5>Tài khoản nhân viên</h5>
-
-                <Divider></Divider>
+  if(isLoading.status == true) {
+    return (
+      <>
+        <Card className="space-top-card text-center">
+          <Spin></Spin>
+        </Card>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Card className="space-top-card">
+          <Tabs defaultActiveKey="1" onChange={callback}>
+            <TabPane tab="Tài khoản nhân viên" key="1">
+              <div className="row justify-content-center">
+                <div className="col-md-8 col-12">
+                  <Form form={form} layout="vertical">
+                    <div className="row">
+                      <div className="col-md-4 col-12">
+                        <Form.Item 
+                          label="Họ và tên" 
+                          name="họ và tên" 
+                          initialValue={dataUser?.FullNameUnicode}>
+                          <Input
+                            className="style-input"
+                            size="large"
+                            onChange={(e) =>
+                              setValue("FullNameUnicode", e.target.value)
+                            }
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-4 col-12">
+                        <Form.Item 
+                          label="Giới tính" 
+                          name="Giới tính" 
+                          initialValue={dataUser?.Gender == 1 ? "Nữ" : "Nam"}>
+                          <Select
+                            className="style-input"
+                            size="large"
+                          >
+                            <Option value={0}>Nam</Option>
+                            <Option value={1}>Nữ</Option>
+                          </Select>
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-4 col-12">
+                        <Form.Item
+                          label="Ngày sinh"
+                          name="Ngày sinh"
+                          initialValue={moment(`${dataUser?.DOB}`, dateFormat)}
+                          >
+                          <DatePicker 
+                            className="style-input"
+                            format={dateFormat} 
+                            onChange={(date, dateSting) => setValue("DOB", dateSting)}
+                            />
+                        </Form.Item>
+                      </div>
+                    </div>
+  
+                    <div className="row">
+                      <div className="col-md-6 col-12">
+                        <Form.Item 
+                          label="Địa chỉ email" 
+                          name="Địa chỉ email" 
+                          initialValue={dataUser?.Email}>
+                          <Input
+                            className="style-input"
+                            size="large"
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-6 col-12">
+                        <Form.Item 
+                          label="Số điện thoại" 
+                          name="Số điện thoại" 
+                          initialValue={dataUser?.Mobile}>
+                          <Input
+                            className="style-input"
+                            size="large"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-12">
+                        <Form.Item 
+                          label="Địa chỉ" 
+                          name="Địa chỉ" 
+                          initialValue={dataUser?.Address}>
+                          <Input
+                            className="style-input"
+                            size="large"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
+                    {/* <div className="row">
+                      <div className="col-md-6 col-12">
+                        <Form.Item label="Tên tài khoản">
+                          <Input
+                            className="style-input"
+                            defaultValue={dataUser?.UserName}
+                            size="large"
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-6 col-12">
+                        <Form.Item label="Mật khẩu mới">
+                          <Input
+                            className="style-input"
+                            size="large"
+                            type="password"
+                          />
+                        </Form.Item>
+                      </div>
+                    </div> */}
+                    <div className="row">
+                      <div className="col-12">
+                        <Form.Item label="Hình đại diện">
+                          <ImgCrop grid>
+                            <AvatarBase
+                              // initialValue={dataUser?.Avatar}
+                              getValue={(value) => setValue("Avatar", value)}
+                            />
+                          </ImgCrop>
+                        </Form.Item>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-12 d-flex justify-content-center">
+                        <button className="btn btn-primary">
+                          Cập nhật thông tin
+                        </button>
+                      </div>
+                    </div>
+                  </Form>
+                </div>
               </div>
-              <div className="row">
-                <div className="col-md-4 col-12">
-                  <Form.Item label="Họ và tên">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.FullNameUnicode}
-                      size="large"
-                      onChange={(e) =>
-                        setValue("FullNameUnicode", e.target.value)
-                      }
-                    />
-                  </Form.Item>
+            </TabPane>
+            <TabPane tab="Thông tin lớp học" key="2">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="wrap-table table-expand mb-16">
+                      <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        size="middle"
+                        pagination={false}
+                      />
+                    </div>
+                    <div className="wrap-table table-expand mb-16">
+                      <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        size="middle"
+                        pagination={false}
+                      />
+                    </div>
+  
+                    <div className="wrap-table table-expand mb-16">
+                      <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        size="middle"
+                        pagination={false}
+                      />
+                    </div>
+                    <div className="wrap-table table-expand mb-16">
+                      <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        size="middle"
+                        pagination={false}
+                      />
+                    </div>
+                    <div className="wrap-table table-expand mb-16">
+                      <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        size="middle"
+                        pagination={false}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="col-md-4 col-12">
-                  <Form.Item label="Giới tính">
-                    <Select
-                      className="style-input"
-                      size="large"
-                      defaultValue={dataUser?.Gender}
-                    >
-                      <option value={0}>Nam</option>
-                      <option value={1}>Nữ</option>
-                    </Select>
-                  </Form.Item>
-                </div>
-                <div className="col-md-4 col-12">
-                  <Form.Item label="Ngày sinh">
-                    <DatePicker
-                      size="large"
-                      // defaultValue={dataUser?.DOB}
-                      className="w-100 style-input"
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Địa chỉ email">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.Email}
-                      size="large"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Số điện thoại">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.Mobile}
-                      size="large"
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12">
-                  <Form.Item label="Địa chỉ">
-                    <Input
-                      className="style-input"
-                      size="large"
-                      defaultValue={dataUser.Address}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-              {/* <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Tên tài khoản">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.UserName}
-                      size="large"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Mật khẩu mới">
-                    <Input
-                      className="style-input"
-                      size="large"
-                      type="password"
-                    />
-                  </Form.Item>
-                </div>
-              </div> */}
-              <div className="row">
-                <div className="col-12">
-                  <Form.Item label="Hình đại diện">
-                    <ImgCrop grid>
-                      <Upload
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                        listType="picture-card"
-                        fileList={fileList}
-                        onChange={onChange}
-                        onPreview={onPreview}
-                      >
-                        {fileList.length < 1 && "+ Upload"}
-                      </Upload>
-                    </ImgCrop>
-                  </Form.Item>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12 d-flex justify-content-center">
-                  <button className="btn btn-primary">
-                    Cập nhật thông tin
-                  </button>
-                </div>
-              </div>
-            </Form>
-          </Card>
-
-          <div className="wrap-table table-overflow-x mt-2">
-            <Card title="Thông tin các lớp học">
-              <Table
-                pagination={false}
-                className="mt-4"
-                dataSource={dataSource}
-                columns={columns}
-                scroll={{ x: 1500 }}
-              />
-              <Table
-                pagination={false}
-                className="mt-4"
-                dataSource={dataSource}
-                columns={columns}
-                scroll={{ x: 1500 }}
-              />
-              <Table
-                pagination={false}
-                className="mt-4"
-                dataSource={dataSource}
-                columns={columns}
-                scroll={{ x: 1500 }}
-              />
-              <Table
-                pagination={false}
-                className="mt-4"
-                dataSource={dataSource}
-                columns={columns}
-                scroll={{ x: 1500 }}
-              />
-              <Table
-                pagination={false}
-                className="mt-4"
-                dataSource={dataSource}
-                columns={columns}
-                scroll={{ x: 1500 }}
-              />
-            </Card>
-          </div>
-        </div>
-      </div>
-
-      <div></div>
-    </>
-  );
+            </TabPane>
+          </Tabs>
+        </Card>
+      </>
+    );
+  }
 };
 
 export default TeacherProfile;

@@ -9,7 +9,7 @@ export const teacherApi = {
 		});
 	},
 	// Lấy theo id
-	getById(id: number) {
+	getById(id) {
 		return instance.get<IApiResultData<ITeacher[]>>(`${url}${id}`);
 	},
 	// Thêm mới data

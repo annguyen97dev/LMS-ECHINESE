@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { data } from "../../../lib/option/dataOption2";
 import NotificationForm from "~/components/Global/Option/NotificationForm";
 import ExpandTable from "~/components/ExpandTable";
-import PowerTable from "~/components/PowerTable";
 import { CheckCircle } from "react-feather";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
@@ -16,6 +15,7 @@ import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { AlertTriangle, X } from "react-feather";
 import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
+import ReactHtmlParser from 'react-html-parser';
 
 const Notification = () => {
   	const [dataTable, setDataTable] = useState([]);
@@ -130,7 +130,7 @@ const Notification = () => {
 		});
 		(async () => {
 		  try {
-			let res = await branchApi.getAll({pageSize: Number.MAX_SAFE_INTEGER,pageIndex: 1});
+			let res = await branchApi.getAll({pageSize: 9999,pageIndex: 1});
 			res.status == 200 && setDataBranch(res.data.data);
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -264,7 +264,7 @@ const Notification = () => {
   ];
 
   return (
-    <PowerTable
+    <ExpandTable
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
@@ -272,7 +272,7 @@ const Notification = () => {
       addClass="basic-header"
       TitlePage="Notification List"
       expandable={{
-        expandedRowRender: record => <p style={{ margin: 0 }}>{record.NotificationContent}</p>,
+        expandedRowRender: record => <p style={{ margin: 0 }}>{ReactHtmlParser(record.NotificationContent)}</p>,
         rowExpandable: record => record.NotificationTitle !== 'Not Expandable',
       }}
       TitleCard={
