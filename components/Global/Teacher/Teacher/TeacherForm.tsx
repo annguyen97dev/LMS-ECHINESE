@@ -55,7 +55,6 @@ const TeacherForm = (props) => {
 			),
 		Address: yup.string(),
 	});
-
 	const defaultValuesInit = {
 		AreaID: null,
 		Branch: undefined,
@@ -74,7 +73,7 @@ const TeacherForm = (props) => {
 		if (isUpdate && updateObj) {
 			form.reset({
 				...updateObj,
-				Branch: updateObj.Branch.split(','),
+				Branch: updateObj.Branch.map((obj) => obj.ID),
 			});
 		}
 	}, [updateObj]);
