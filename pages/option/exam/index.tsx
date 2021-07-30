@@ -1,14 +1,9 @@
 import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { examServiceApi } from "~/apiBase/options/examServices";
-import { feedbackApi } from "~/apiBase/options/feedback";
 import SortBox from "~/components/Elements/SortBox";
 import ExamServicesDelete from "~/components/Global/Option/ExamServices/ExamServicesDelete";
 import ExamServicesForm from "~/components/Global/Option/ExamServices/ExamServicesForm";
-import ExamForm from "~/components/Global/Option/ExamServices/ExamServicesForm";
-import FeedbackDelete from "~/components/Global/Option/Feedback/FeedbackDelete";
-import FeedBackForm from "~/components/Global/Option/Feedback/FeedBackForm";
-import FilterFeedbackTable from "~/components/Global/Option/FilterTable/FilterFeedbackTable";
 import FilterRegisterCourseTable from "~/components/Global/Option/FilterTable/FilterRegisterCourseTable";
 import LayoutBase from "~/components/LayoutBase";
 import PowerTable from "~/components/PowerTable";
@@ -32,11 +27,13 @@ const ExamServices = () => {
     {
       title: "Nhà cung cấp",
       dataIndex: "SupplierServicesName",
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
       title: "Dịch vụ",
       dataIndex: "ServicesName",
       ...FilterColumn("ServicesName", onSearch, handleReset, "text"),
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
       title: "Hình thức",
