@@ -111,7 +111,7 @@ const listApi = [
 
 const StudentForm = (props) => {
   const { dataRow, listDataForm } = props;
-  console.log("Data Row: ", dataRow);
+
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
