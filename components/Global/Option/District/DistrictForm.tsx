@@ -111,7 +111,11 @@ const DistrictForm = (props) => {
             </div>
             <div className="row mt-3">
               <div className="col-12">
-                <button type="submit" className="btn btn-primary w-100">
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100"
+                  disabled={isLoading.type == "ADD_DATA" && isLoading.status}
+                >
                   {isUpdate ? "Update" : "Create"}
                   {isLoading.type == "ADD_DATA" && isLoading.status && (
                     <Spin className="loading-base" />
