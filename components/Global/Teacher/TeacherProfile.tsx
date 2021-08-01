@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import {
   Row,
   Col,
@@ -19,19 +18,14 @@ import {
   Spin,
 } from "antd";
 import ImgCrop from "antd-img-crop";
-import {
-  UserOutlined,
-  DeploymentUnitOutlined,
-  WhatsAppOutlined,
-  MailOutlined,
-  AimOutlined,
-} from "@ant-design/icons";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
 import PowerTable from "~/components/PowerTable";
 import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 
 import moment from 'moment';
+
+const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
 
 const { TabPane } = Tabs;
@@ -159,7 +153,8 @@ const TeacherProfile = (props) => {
   const { Option } = Select;
 
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+  }, []);
 
   if(isLoading.status == true) {
     return (
@@ -208,20 +203,20 @@ const TeacherProfile = (props) => {
                         </Form.Item>
                       </div>
                       <div className="col-md-4 col-12">
-                        <Form.Item
+                        <Form.Item 
                           label="Ngày sinh"
-                          name="Ngày sinh"
-                          initialValue={moment(`${dataUser?.DOB}`, dateFormat)}
-                          >
-                          <DatePicker 
-                            className="style-input"
-                            format={dateFormat} 
-                            onChange={(date, dateSting) => setValue("DOB", dateSting)}
-                            />
+                          name="DOB"
+                          initialValue={moment(dataUser?.DOB)}
+                        >
+                            <DatePicker
+                              className="style-input"
+                              format={dateFormat}
+                              onChange={(date, dateString) => setValue("DOB", dateString)}
+                            >
+                            </DatePicker>
                         </Form.Item>
                       </div>
                     </div>
-  
                     <div className="row">
                       <div className="col-md-6 col-12">
                         <Form.Item 
@@ -284,7 +279,7 @@ const TeacherProfile = (props) => {
                         <Form.Item label="Hình đại diện">
                           <ImgCrop grid>
                             <AvatarBase
-                              // initialValue={dataUser?.Avatar}
+                              imageUrl={dataUser?.Avatar}
                               getValue={(value) => setValue("Avatar", value)}
                             />
                           </ImgCrop>

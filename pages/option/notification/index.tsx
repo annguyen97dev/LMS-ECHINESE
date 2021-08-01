@@ -223,12 +223,12 @@ const Notification = () => {
       // ...FilterColumn("teacher"),
       render: (role, record, index) => {
 		if(record.AllRole) {
-			return <span className="tag yellow">Tất cả</span>
+			return <span>Tất cả</span>
 		} else if(role) {
 			let arr = role.split(",");
 			return (
 				<div className="list-tag">
-					{arr.map((item, i) => (<span key={i} className="tag yellow">{item}</span>))}
+					{arr.map((item, i) => (<span key={i}>{item}</span>))}
 				</div>
 			)
 		}
@@ -239,12 +239,12 @@ const Notification = () => {
       dataIndex: "BranchName",
       render: (BranchName, record, index) => {
 		if(record.AllBranch) {
-			return <span className="tag green">Tất cả</span>
+			return <span>Tất cả</span>
 		} else if(BranchName){
           let arr = BranchName.split(",");
           return (
 			  <div className="list-tag">
-				  {arr.map((item, i) => (<span key={i} className="tag green">{item}</span>))}
+				  {arr.map((item, i) => (<span key={i}>{item}</span>))}
 			  </div>
 		  )
         }

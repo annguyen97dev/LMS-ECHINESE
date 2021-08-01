@@ -17,7 +17,7 @@ const TeacherDetail = () => {
     status: false,
   });
 
-  const fetchTeacherList = async () => {
+  const fetchTeacherByID = async () => {
     setIsLoading({
       type: "GET_BYID",
       status: true,
@@ -40,7 +40,7 @@ const TeacherDetail = () => {
   };
 
   useEffect(() => {
-    fetchTeacherList();
+    fetchTeacherByID();
   }, [slug]);
 
   return <TeacherProfile isLoading={isLoading} dataUser={dataUser} />;

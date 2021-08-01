@@ -1805,8 +1805,16 @@ hr {
   margin-bottom: 15px;
 }
 .list-tag {
-  .tag {
+  span {
     margin: 2px;
+    &::after {
+      content: ",";
+    }
+    &:last-child {
+      &::after {
+        content: unset;
+      }
+    }
   }
 }
 .list-notification {
