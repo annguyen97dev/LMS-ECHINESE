@@ -4,7 +4,13 @@ import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 // ------------ DRAWER INFO CORUSE --------------
 const SaveCreateCourse = (props) => {
-	const {isLoading, saveInfo, handleFetchDataToSave, handleSaveCourse} = props;
+	const {
+		isLoading,
+		saveInfo,
+		handleFetchDataToSave,
+		handleSaveCourse,
+		scheduleShow,
+	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -20,6 +26,32 @@ const SaveCreateCourse = (props) => {
 				closeModal();
 			}
 		});
+	};
+	const renderScheduleList = () => {
+		return Object.keys(scheduleShow).map((date, idx) => (
+			<div
+				className={`create-course-general-item ${
+					scheduleShow[date][0]?.isValid
+						? 'create-course-general-item-error'
+						: ''
+				}`}
+				key={idx}
+			>
+				<span>
+					{scheduleShow[date][0]?.dayOffWeek} - {date}: {}
+				</span>
+				<ul>
+					{scheduleShow[date]?.map((s, idx) => (
+						<li key={idx}>
+							<span>
+								{s.studyTimeName} - {s.roomName}
+							</span>
+							<p>Giáo viên: {s.teacherName}</p>
+						</li>
+					))}
+				</ul>
+			</div>
+		));
 	};
 	return (
 		<>
@@ -38,22 +70,30 @@ const SaveCreateCourse = (props) => {
 				visible={isModalVisible}
 				onCancel={closeModal}
 				footer={null}
+				width={800}
 			>
 				<div className="info-course-save">
 					<div className="row">
+						<div className="col-md-12 col-12">
+							<div className="item">
+								<p>
+									<span>Tên khóa học:</span>
+									<span>{saveInfo.CourseName}</span>
+								</p>
+							</div>
+						</div>
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Trung tâm</span>
+									<span>Trung tâm:</span>
 									<span>{saveInfo.BranchName}</span>
 								</p>
 							</div>
 						</div>
-
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Phòng</span>
+									<span>Phòng:</span>
 									<span>{saveInfo.RoomName}</span>
 								</p>
 							</div>
@@ -61,7 +101,7 @@ const SaveCreateCourse = (props) => {
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Ca</span>
+									<span>Ca:</span>
 									<span>{saveInfo.StudyTimeName}</span>
 								</p>
 							</div>
@@ -69,16 +109,15 @@ const SaveCreateCourse = (props) => {
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Thứ</span>
+									<span>Thứ:</span>
 									<span>{saveInfo.DaySelectedName}</span>
 								</p>
 							</div>
 						</div>
-
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Giáo trình</span>
+									<span>Giáo trình:</span>
 									<span>{saveInfo.CurriculumName}</span>
 								</p>
 							</div>
@@ -86,7 +125,7 @@ const SaveCreateCourse = (props) => {
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Chương trình học</span>
+									<span>Chương trình học:</span>
 									<span>{saveInfo.ProgramName}</span>
 								</p>
 							</div>
@@ -94,7 +133,7 @@ const SaveCreateCourse = (props) => {
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Ngày bắt đầu</span>
+									<span>Ngày bắt đầu:</span>
 									<span>{moment(saveInfo.StartDay).format('DD/MM/YYYY')}</span>
 								</p>
 							</div>
@@ -102,17 +141,19 @@ const SaveCreateCourse = (props) => {
 						<div className="col-md-6 col-12">
 							<div className="item">
 								<p>
-									<span>Học phí</span>
-									<span></span>
+									<span>Ngày kết thúc:</span>
+									<span>{moment(saveInfo.EndDay).format('DD/MM/YYYY')}</span>
 								</p>
 							</div>
 						</div>
 						<div className="col-md-12 col-12">
 							<div className="item">
-								<p>
-									<span>Tên khóa học</span>
-									<span>{saveInfo.CourseName}</span>
+								<p style={{marginBottom: 0}}>
+									<span>Lịch học tổng quát:</span>
 								</p>
+								<div className="create-course-general">
+									{renderScheduleList()}
+								</div>
 							</div>
 						</div>
 						<div className="col-12 mt-1">
@@ -139,11 +180,21 @@ SaveCreateCourse.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
+	scheduleShow: PropTypes.shape({}),
+	// scheduleShow: PropTypes.arrayOf(
+	// 	PropTypes.shape({
+	// 		date: PropTypes.string.isRequired,
+	// 		dayOffWeek: PropTypes.string.isRequired,
+	// 		roomName: PropTypes.string.isRequired,
+	// 		studyTimeName: PropTypes.string.isRequired,
+	// 	})
+	// ),
 	saveInfo: PropTypes.shape({}),
 	handleSaveCourse: PropTypes.func,
 	handleFetchDataToSave: PropTypes.func,
 };
 SaveCreateCourse.defaultProps = {
+	scheduleShow: {},
 	saveInfo: {},
 	handleSaveCourse: null,
 	handleFetchDataToSave: null,

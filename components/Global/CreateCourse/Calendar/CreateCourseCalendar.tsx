@@ -101,7 +101,8 @@ const CreateCourseCalendar = (props) => {
 		}));
 		handleChangeStatusSchedule(sch, type);
 	};
-
+	const checkHandleChangeValueSchedule = (uid, key, value, pos) =>
+		handleChangeValueSchedule(uid, key, value, pos);
 	return (
 		<>
 			<Calendar
@@ -159,7 +160,9 @@ const CreateCourseCalendar = (props) => {
 												isUpdate={true}
 												scheduleObj={s}
 												isLoading={isLoading}
-												handleChangeValueSchedule={handleChangeValueSchedule}
+												handleChangeValueSchedule={(uid, key, vl) =>
+													checkHandleChangeValueSchedule(uid, key, vl, idx)
+												}
 												handleChangeStatusSchedule={
 													checkHandleChangeStatusSchedule
 												}
