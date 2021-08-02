@@ -7,14 +7,18 @@ class Notification {
         params: todoApi,
     });
 
+    // Get data with id
+    // getByID = (id) => 
+    // instance.get<IApiResultData>(`/api/Notifications/${id}`);
+
+    // Thêm mới data
+    add = ( data ) => instance.post("/api/Notifications", data);
+
     // Lấy data with user
     getAllWithUser = ( todoApi: object ) =>
     instance.get<IApiResultData>("/api/NotificationUser", {
         params: todoApi,
     });
-
-    // Thêm mới data
-    add = ( data ) => instance.post("/api/Notifications", data);
 
     // Cập nhật data đã xem
     upadteSeen = ( data: any ) => instance.put("/api/NotificationUser", data, {});

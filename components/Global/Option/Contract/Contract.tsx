@@ -1,9 +1,18 @@
+<<<<<<< HEAD
+import {Editor} from '@tinymce/tinymce-react';
+import {Button, Card, Spin} from 'antd';
+import React, {useEffect, useState} from 'react';
+import { contractApi } from '~/apiBase/options/contract';
+import TitlePage from '~/components/TitlePage';
+import {useWrap} from '~/context/wrap';
+=======
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, Card, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { contractApi } from "~/apiBase/options/contract";
 import TitlePage from "~/components/TitlePage";
 import { useWrap } from "~/context/wrap";
+>>>>>>> master
 
 const Contract = () => {
   const [contract, setContract] = useState(null);

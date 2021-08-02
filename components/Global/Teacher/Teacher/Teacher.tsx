@@ -355,13 +355,13 @@ const Teacher = () => {
           <Link
             href={{
               pathname: "/staff/teacher-list/teacher-detail/[slug]",
-              query: { slug: 2 },
+              query: {slug: _.UserInformationID},
             }}
           >
             <Tooltip title="Xem phòng">
-              <button className="btn btn-icon">
+              <a className="btn btn-icon">
                 <Info />
-              </button>
+              </a>
             </Tooltip>
             {/* <a className="btn btn-icon">
 							<Tooltip title="Chi tiết">

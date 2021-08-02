@@ -72,10 +72,15 @@ const TeacherForm = (props) => {
 
 	useEffect(() => {
 		if (isUpdate && updateObj) {
-			form.reset({
-				...updateObj,
-				Branch: updateObj.Branch.split(','),
+			let arrBranch = [];
+			updateObj.Branch.forEach((item, index) => {
+				arrBranch.push(item.ID);
 			});
+			updateObj.Branch = arrBranch;
+			form.reset(
+				updateObj,
+				// Branch: updateObj.Branch.split(','),
+			);
 		}
 	}, [updateObj]);
 

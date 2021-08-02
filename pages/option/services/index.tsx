@@ -395,6 +395,7 @@ const ServiceList = () => {
           <div className="extra-table">
             <FilterServicesTable
               _onFilter={(value: any) => _onFilterTable(value)}
+			  _onHandleReset={handleReset}
             />
             <SortBox 
                 handleSort={(value) => handleSort(value)}
