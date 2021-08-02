@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ExpandTable from "~/components/ExpandTable";
 import { Eye } from "react-feather";
 import { Tooltip } from "antd";
@@ -14,23 +14,27 @@ import LayoutBase from "~/components/LayoutBase";
 ReportWarning.layout = LayoutBase;
 export default function ReportWarning() {
   const expandedRowRender = () => <ExpandBoxWarning />;
+  const [isLoading,setIsLoading] = useState({
+    type: null,
+    status: false
+  })
   const columns = [
     {
       title: "Trung tâm",
       dataIndex: "center",
-      ...FilterColumn("center"),
+      // ...FilterColumn("center"),
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
       title: "Học viên",
       dataIndex: "center",
-      ...FilterColumn("center"),
+      // ...FilterColumn("center"),
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {
       title: "Lớp",
       dataIndex: "rpCourse",
-      ...FilterColumn("rpCourse"),
+      // ...FilterColumn("rpCourse"),
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
@@ -41,9 +45,9 @@ export default function ReportWarning() {
     {
       title: "Người tạo",
       dataIndex: "rpCreator",
-      ...FilterColumn("rpCreator"),
+      // ...FilterColumn("rpCreator"),
     },
-    { title: "Chủ nhiệm", dataIndex: "rpLeader", ...FilterColumn("rpLeader") },
+    // { title: "Chủ nhiệm", dataIndex: "rpLeader", ...FilterColumn("rpLeader") },
     {
       title: "",
       render: () => (
@@ -68,9 +72,10 @@ export default function ReportWarning() {
 
   return (
     <ExpandTable
+      isLoading={isLoading}
       addClass="basic-header"
       TitlePage="Danh sách học viên bị cảnh báo"
-      TitleCard={<StudyTimeForm showAdd={true} />}
+      // TitleCard={<StudyTimeForm showAdd={true} />}
       dataSource={dataService}
       columns={columns}
       expandable={{ expandedRowRender }}

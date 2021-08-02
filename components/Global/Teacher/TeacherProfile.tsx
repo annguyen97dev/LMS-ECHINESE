@@ -16,6 +16,7 @@ import {
   Checkbox,
   Tabs,
   Spin,
+  List,
 } from "antd";
 import ImgCrop from "antd-img-crop";
 import { useForm } from "react-hook-form";
@@ -24,94 +25,25 @@ import PowerTable from "~/components/PowerTable";
 import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 
 import moment from 'moment';
+import { string } from "yup";
+import ExpandTable from "~/components/ExpandTable";
+import { faLeaf } from "@fortawesome/free-solid-svg-icons";
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
 
 const { TabPane } = Tabs;
 
-const dataSource = [
-  {
-    key: "1",
-    ClassName: "AS - IELTS Intermediate",
-    Check: "",
-    Listening: "",
-    Wrting: "",
-    Speaking: "",
-    Reading: "",
-    SpeakingWork: "",
-    ReadingWork: "",
-    width: "",
-    fixed: "",
-  },
-];
-
 const columns = [
   {
-    title: "Tên lớp học",
+    title: "Tên Chương trình học",
     width: 200,
-    dataIndex: "ClassName",
+    dataIndex: "ProgramName",
     // key: "classname",
 
-    render: (text) => <p className="color-primary">{text}</p>,
-  },
-  {
-    title: "Dạy",
-    dataIndex: "Check",
-    // key: "check",
-    render: () => <Checkbox />,
-  },
-  {
-    title: "Listening",
-    dataIndex: "Listening",
-    // key: "listening",
-    render: () => <SelectRemark />,
-  },
-  {
-    title: "Wrting",
-    dataIndex: "Wrting",
-    // key: "wrting",
-    render: () => <SelectRemark />,
-  },
-  {
-    title: "Reading",
-    dataIndex: "Reading",
-    // key: "reading",
-    render: () => <SelectRemark />,
-  },
-
-  {
-    title: "BT Listening",
-    dataIndex: "ListeningWork",
-    // key: "listeningwork",
-    render: () => <SelectRemark />,
-  },
-  {
-    title: "BT Reading",
-    dataIndex: "ReadingWork",
-    // key: "readingwork",
-    render: () => <SelectRemark />,
+    render: (text) => <p className="font-weight-blue">{text}</p>,
   },
 ];
-
-const SelectRemark = () => {
-  const { Option } = Select;
-
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
-  return (
-    <Select defaultValue="trungbinh" onChange={handleChange}>
-      <Option value="gioi">Giỏi</Option>
-      <Option value="kha">Khá</Option>
-      <Option value="trungbinh">Trung bình</Option>
-    </Select>
-  );
-};
-
-function callback(key) {
-  console.log(key);
-}
 
 const TeacherProfile = (props) => {
   const [form] = Form.useForm();
@@ -128,32 +60,72 @@ const TeacherProfile = (props) => {
   // if (props.dataUser) {
   //   dataUser = props.dataUser;
   // }
-  const { dataUser, isLoading } = props;
-
-  const [fileList, setFileList] = useState([]);
-
-  const onChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
+  const { dataUser, isLoading, updateTeacherID, userID, dataSubject, updateTeacherForSubject } = props;
+  const { Option } = Select;
+  
+  const onSubmit = handleSubmit((data) => {
+    console.log("Data submit:", data);
+    if(Object.keys(data).length === 1) {
+      showNoti("danger", "Bạn chưa chỉnh sửa");
+    } else {
+      let res = updateTeacherID(data);
+      res.then(function (rs: any) {
+        rs && rs.status == 200;
       });
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow.document.write(image.outerHTML);
-  };
-  const { Option } = Select;
+  });
 
+  const expandedRowRender = (record) => {
+    const columns = [];
+    const data = [
+      {
+        Subject: 'Subject'
+      }
+    ]
+
+    for(let i = 0; i < Object.keys(record.Subject).length; i++) {
+      columns.push({
+        key: record.Subject[i].SubjectID,
+        title: record.Subject[i].SubjectName,
+        dataIndex: "Subject",
+        render: () => <Checkbox value={record.Subject[i].SubjectID} checked={record.Subject[i].IsSelected ? true : false} onChange={onChangeCheckBox} />
+      })
+    }
+
+    const onChangeCheckBox = (e) => {
+      // console.log(`checked = ${e.target.value}`);
+      const data = {
+        UserInformationID: userID,
+        SubjectID: e.target.value
+      }
+      console.log("Data submit:",data);
+      let res = updateTeacherForSubject(data);
+      res.then(function (rs: any) {
+        rs && rs.status == 200;
+      });
+    }
+
+    if(Object.keys(record.Subject).length) {
+      return (
+        <div className="mini-table">
+          <Table 
+            columns={columns}
+            dataSource={data}
+            pagination={false}
+          />
+        </div>
+      )
+    } else {
+      return (
+        <p>Chưa có môn học</p>
+      )
+    }
+
+  }
 
   useEffect(() => {
+      setValue("UserInformationID", userID);
+      console.log("Data Subject", dataSubject);
   }, []);
 
   if(isLoading.status == true) {
@@ -168,11 +140,11 @@ const TeacherProfile = (props) => {
     return (
       <>
         <Card className="space-top-card">
-          <Tabs defaultActiveKey="1" onChange={callback}>
+          <Tabs defaultActiveKey="1">
             <TabPane tab="Tài khoản nhân viên" key="1">
               <div className="row justify-content-center">
                 <div className="col-md-8 col-12">
-                  <Form form={form} layout="vertical">
+                  <Form form={form} layout="vertical" onFinish={onSubmit}>
                     <div className="row">
                       <div className="col-md-4 col-12">
                         <Form.Item 
@@ -192,13 +164,14 @@ const TeacherProfile = (props) => {
                         <Form.Item 
                           label="Giới tính" 
                           name="Giới tính" 
-                          initialValue={dataUser?.Gender == 1 ? "Nữ" : "Nam"}>
+                          initialValue={dataUser?.Gender == 0 ? "Nữ" : "Nam"}>
                           <Select
                             className="style-input"
                             size="large"
+                            onChange={(value) => setValue("Gender", value)}
                           >
-                            <Option value={0}>Nam</Option>
-                            <Option value={1}>Nữ</Option>
+                            <Option value={0}>Nữ</Option>
+                            <Option value={1}>Nam</Option>
                           </Select>
                         </Form.Item>
                       </div>
@@ -226,6 +199,7 @@ const TeacherProfile = (props) => {
                           <Input
                             className="style-input"
                             size="large"
+                            onChange={(e) => setValue("Email", e.target.value)}
                           />
                         </Form.Item>
                       </div>
@@ -237,6 +211,7 @@ const TeacherProfile = (props) => {
                           <Input
                             className="style-input"
                             size="large"
+                            onChange={(e) => setValue("Mobile", e.target.value)}
                           />
                         </Form.Item>
                       </div>
@@ -250,6 +225,7 @@ const TeacherProfile = (props) => {
                           <Input
                             className="style-input"
                             size="large"
+                            onChange={(e) => setValue("Address", e.target.value)}
                           />
                         </Form.Item>
                       </div>
@@ -288,7 +264,7 @@ const TeacherProfile = (props) => {
                     </div>
                     <div className="row">
                       <div className="col-12 d-flex justify-content-center">
-                        <button className="btn btn-primary">
+                        <button className="btn btn-primary" type="submit">
                           Cập nhật thông tin
                         </button>
                       </div>
@@ -298,48 +274,19 @@ const TeacherProfile = (props) => {
               </div>
             </TabPane>
             <TabPane tab="Thông tin lớp học" key="2">
-                <div className="row">
-                  <div className="col-12">
-                    <div className="wrap-table table-expand mb-16">
-                      <Table
+                <div className="row justify-content-center">
+                  <div className="col-md-8 col-12">
+                    <div className="wrap-table table-expand">
+                      <Table 
+                        dataSource={dataSubject}
                         columns={columns}
-                        dataSource={dataSource}
                         size="middle"
+                        scroll={{ x: 600 }}
+                        expandable={{
+                          expandedRowRender: (record) => expandedRowRender(record),
+                        }}
                         pagination={false}
-                      />
-                    </div>
-                    <div className="wrap-table table-expand mb-16">
-                      <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        size="middle"
-                        pagination={false}
-                      />
-                    </div>
-  
-                    <div className="wrap-table table-expand mb-16">
-                      <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        size="middle"
-                        pagination={false}
-                      />
-                    </div>
-                    <div className="wrap-table table-expand mb-16">
-                      <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        size="middle"
-                        pagination={false}
-                      />
-                    </div>
-                    <div className="wrap-table table-expand mb-16">
-                      <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        size="middle"
-                        pagination={false}
-                      />
+                      />  
                     </div>
                   </div>
                 </div>
