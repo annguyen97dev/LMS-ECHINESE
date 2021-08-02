@@ -14,24 +14,24 @@ import LayoutBase from "~/components/LayoutBase";
 FinanceInvoice.layout = LayoutBase;
 export default function FinanceInvoice() {
   const columns = [
-    { title: "Trung tâm", dataIndex: "center", ...FilterColumn("center") },
+    { title: "Trung tâm", dataIndex: "center" },
     {
       title: "Học viên",
       dataIndex: "nameStudent",
-      ...FilterColumn("nameStudent"),
+
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
-    { title: "Số điện thoại", dataIndex: "tel", ...FilterColumn("tel") },
+    { title: "Số điện thoại", dataIndex: "tel" },
     {
       title: "Số tiền",
       dataIndex: "cost",
-      ...FilterColumn("cost"),
+
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
       title: "Lý do",
       dataIndex: "fnReason",
-      ...FilterColumn("fnReason"),
+
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {

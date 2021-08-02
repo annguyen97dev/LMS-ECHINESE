@@ -10,9 +10,9 @@ const TeacherConfigZoom = () => {
     {
       title: "Giáo viên",
       dataIndex: "teacherName",
-      ...FilterColumn("teacherName"),
+      // ...FilterColumn("teacherName"),
     },
-    { title: "Số điện thoại", dataIndex: "tel", ...FilterColumn("tel") },
+    { title: "Số điện thoại", dataIndex: "tel" },
     { title: "API Key", dataIndex: "apiKey" },
     {
       title: "API Secrect",
