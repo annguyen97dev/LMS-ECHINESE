@@ -31,3 +31,5 @@ export { rulesApi } from "./options/rules";
 
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
+export { examComingSoonApi } from "./customer/student/exam-coming-soon";
+export { warningApi } from "./customer/student/warning";

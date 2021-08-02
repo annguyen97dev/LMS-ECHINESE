@@ -127,6 +127,7 @@ const FilterBase = (props) => {
           <div className={item.col}>
             <Form.Item name={item.name} label={item.title}>
               <RangePicker
+                className="style-input"
                 format={dateFormat}
                 onChange={(value) =>
                   getValueFilter(value, "date-range", item.name)

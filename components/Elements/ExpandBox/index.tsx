@@ -49,10 +49,11 @@ export function ExpandBoxService() {
   );
 }
 
-export function ExpandBoxWarning() {
+export function ExpandBoxWarning(props) {
   return (
     <div className="feedback-detail-text">
-      <table className="tb-expand">
+      <p>{props.dataRow.WarningNote != null ? props.dataRow.WarningNote : "Không có nội dung"}</p> 
+      {/* <table className="tb-expand">
         <tr>
           <th>Roll up</th>
           <th>Capacity</th>
@@ -78,7 +79,7 @@ export function ExpandBoxWarning() {
             học để phụ đạo.{" "}
           </td>
         </tr>
-      </table>
+      </table> */}
     </div>
   );
 }
