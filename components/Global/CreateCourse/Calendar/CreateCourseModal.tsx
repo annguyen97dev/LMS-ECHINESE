@@ -14,6 +14,7 @@ const CreateCourseModal = (props) => {
 	const {dateString, limit, scheduleList, valid} = resource;
 	const scheduleInDay = scheduleList.length;
 	const dateFm = moment(dateString).format('DD/MM/YYYY');
+	console.log(resource);
 	return (
 		<Modal
 			title={`Chi tiết ngày ${dateFm}`}

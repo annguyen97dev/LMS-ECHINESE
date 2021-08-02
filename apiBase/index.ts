@@ -39,3 +39,4 @@ export { testCustomerApi } from "./customer/service/test-customer";
 export { userApi } from "./user/user";
 export { examComingSoonApi } from "./customer/student/exam-coming-soon";
 export { warningApi } from "./customer/student/warning";
+export { courseApi } from "./course/course";

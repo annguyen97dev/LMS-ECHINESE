@@ -18,6 +18,21 @@
 		background-color: $primary-color;
 		color: #fff;
 	}
+	&-general {
+		display: flex;
+		flex-wrap: wrap;
+		&-item {
+			width: 50%;
+			> span {
+				font-weight: 500;
+			}
+		}
+		&-item-error {
+			> span {
+				color: $red;
+			}
+		}
+	}
 }
 .wrap-card-info-course {
 	.ant-card-body {

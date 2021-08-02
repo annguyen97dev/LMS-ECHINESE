@@ -32,6 +32,7 @@ const ScheduleItem = (props) => {
 		scheduleObj,
 		isLoading,
 		isUpdate,
+		positionInScheduleList,
 		//
 		optionForScheduleList,
 		optionStudyTime,
@@ -50,26 +51,23 @@ const ScheduleItem = (props) => {
 	} = scheduleObj;
 
 	const defaultValuesInit = {
-		RoomID,
-		TeacherID,
+		RoomID: -1,
+		TeacherID: -1,
 		StudyTimeID: CaID,
 	};
 	const schema = yup.object().shape({
-		// RoomID: yup.number().when('StudyTimeID', (StudyTimeID, schema) => {
-		// 	console.log(StudyTimeID > 0);
-		// 	return StudyTimeID > 0
-		// 		? true
-		// 		: schema.min(1, 'Bạn cần chọn ca').required();
-		// }),
-		// TeacherID: yup.number().when('StudyTimeID', (StudyTimeID, schema) => {
-		// 	console.log(StudyTimeID > 0);
-		// 	return StudyTimeID > 0
-		// 		? true
-		// 		: schema.min(1, 'Bạn cần chọn ca').required();
-		// }),
-		StudyTimeID: yup.number().required('Bạn không được để trống'),
-		TeacherID: yup.number().required('Bạn không được để trống'),
-		RoomID: yup.number().required('Bạn không được để trống'),
+		StudyTimeID: yup
+			.number()
+			.min(1, 'Bạn cần chọn ca học')
+			.required('Bạn không được để trống'),
+		TeacherID: yup
+			.number()
+			.min(1, 'Bạn cần chọn giáo viên')
+			.required('Bạn không được để trống'),
+		RoomID: yup
+			.number()
+			.min(1, 'Bạn cần chọn phòng')
+			.required('Bạn không được để trống'),
 	});
 
 	const form = useForm({
@@ -79,10 +77,14 @@ const ScheduleItem = (props) => {
 	});
 	// const
 	useEffect(() => {
-		console.log(scheduleObj);
-		form.setValue('StudyTimeID', scheduleObj.CaID);
-		form.setValue('RoomID', scheduleObj.RoomID);
-		form.setValue('TeacherID', scheduleObj.TeacherID);
+		if (!isLoading.status) {
+			let roomId = scheduleObj.RoomID === 0 ? 0 : scheduleObj.RoomID;
+			let teacherId = scheduleObj.TeacherID === 0 ? 0 : scheduleObj.TeacherID;
+			form.setValue('StudyTimeID', scheduleObj.CaID);
+			form.setValue('RoomID', roomId);
+			form.setValue('TeacherID', teacherId);
+			form.clearErrors();
+		}
 	}, [scheduleObj]);
 
 	const checkHandleChangeStatusSchedule = (vl, type) => {
@@ -186,6 +188,7 @@ ScheduleItem.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
+	positionInScheduleList: PropTypes.number,
 	//
 	optionForScheduleList: PropTypes.shape({
 		optionRoomList: optionPropTypes,
@@ -200,6 +203,8 @@ ScheduleItem.defaultProps = {
 	scheduleObj: {},
 	isUpdate: false,
 	isLoading: {type: '', status: false},
+	positionInScheduleList: null,
+
 	//
 	optionForScheduleList: {
 		optionRoomList: [],

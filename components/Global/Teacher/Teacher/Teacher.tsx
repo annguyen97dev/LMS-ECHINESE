@@ -157,7 +157,7 @@ const Teacher = () => {
       if (res.status === 200 && res.data.totalRow) {
         const newBranchList = res.data.data.map((x) => ({
           title: x.BranchName,
-          value: `${x.ID}-${x.BranchName}`,
+          value: x.ID,
         }));
         setBranchList(newBranchList);
       }
@@ -213,7 +213,7 @@ const Teacher = () => {
     try {
       const newTeacher = {
         ...data,
-        Branch: data.Branch.map((b) => b.slice(0, b.indexOf("-"))).join(","),
+        Branch: data.Branch.join(","),
       };
       res = await teacherApi.add(newTeacher);
       res.status === 200 && showNoti("success", res.data.message);
@@ -236,19 +236,25 @@ const Teacher = () => {
     });
     let res;
     try {
-      const newTeacher = {
+      const newTeacherAPI = {
         ...newObj,
-        Branch: newObj.Branch.map((b) => b.slice(0, b.indexOf("-"))).join(","),
+        Branch: newObj.Branch.join(","),
       };
-      res = await teacherApi.update(newTeacher);
+      res = await teacherApi.update(newTeacherAPI);
       if (res.status === 200) {
-        const newDayOffList = [...teacherList];
-        newDayOffList.splice(idx, 1, {
+        const newTeacherList = [...teacherList];
+        const newBranch = branchList
+          .filter((ob) => newObj.Branch.some((nb) => nb === ob.value))
+          .map((b) => ({
+            ID: b.value,
+            BranchName: b.title,
+          }));
+        newTeacherList.splice(idx, 1, {
           ...newObj,
           AreaName: areaList.find((a) => a.value === newObj.AreaID).title,
-          Branch: newObj.Branch.join(","),
+          Branch: newBranch,
         });
-        setTeacherList(newDayOffList);
+        setTeacherList(newTeacherList);
         showNoti("success", res.data.message);
       }
     } catch (error) {
@@ -355,7 +361,7 @@ const Teacher = () => {
           <Link
             href={{
               pathname: "/staff/teacher-list/teacher-detail/[slug]",
-              query: {slug: _.UserInformationID},
+              query: { slug: _.UserInformationID },
             }}
           >
             <Tooltip title="Xem phòng">
