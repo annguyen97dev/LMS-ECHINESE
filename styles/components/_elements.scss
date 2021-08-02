@@ -2027,3 +2027,11 @@ hr {
     background-color: #fff;
   }
 }
+
+.w-70 {
+  width: 70%;
+  @include max-media(600px) {
+    width: 100%;
+    max-width: 100%;
+  }
+}
