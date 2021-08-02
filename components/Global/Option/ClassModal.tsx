@@ -24,7 +24,7 @@ const ClassModal = React.memo((props: any) => {
     handleSubmit,
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
-  } = useForm<IClass>();
+  } = useForm();
   const { showNoti } = useWrap();
   const { Option } = Select;
   const [valueRoom, setValueRoom] = useState("");
