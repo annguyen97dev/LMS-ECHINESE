@@ -1,3 +1,6 @@
+import { userApi } from "./user/user";
+import { testCustomerApi } from "./customer/service/test-customer";
+import { studentAdviseApi } from "./customer/student/student-advise";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { contractApi } from "./options/contract";
@@ -31,3 +34,6 @@ export { rulesApi } from "./options/rules";
 
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
+export { studentAdviseApi } from "./customer/student/student-advise";
+export { testCustomerApi } from "./customer/service/test-customer";
+export { userApi } from "./user/user";

@@ -7,12 +7,17 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import { CheckCircleOutlined, WarningOutlined } from "@ant-design/icons";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { userInformationApi } from "~/apiBase";
 
 export type IProps = {
   getTitlePage: Function;
   titlePage: string;
   getRouter: any;
   showNoti: Function;
+  getDataUser: Function;
+  userInformation: IUser;
 };
 
 const WrapContext = createContext<IProps>({
@@ -20,6 +25,8 @@ const WrapContext = createContext<IProps>({
   getRouter: "",
   getTitlePage: () => {},
   showNoti: () => {},
+  getDataUser: () => {},
+  userInformation: null,
 });
 
 // const initialState = {
@@ -36,25 +43,57 @@ export const WrapProvider = ({ children }) => {
     content: "",
     type: "",
   });
-  // const [state, dispatch] = useReducer(reducer, initialState);
-
+  const [userInfo, setUserInfo] = useState<IUser>(null);
+  // --- Get Title Page ---
   const getTitlePage = (title) => {
     setTitlePage(title);
   };
 
+  // --- Show Notification ---
   const showNoti = (type: string, content: string) => {
-    setTypeNoti({
-      content: content,
-      type: type,
-    });
+    const nodeNoti = () => {
+      return (
+        <div className={`noti-box`}>
+          <div className="noti-box__content">
+            <span className="icon">
+              {type == "danger" ? (
+                <WarningOutlined />
+              ) : (
+                type == "success" && <CheckCircleOutlined />
+              )}
+            </span>
+            <span className="text">{content}</span>
+          </div>
+        </div>
+      );
+    };
 
-    setTimeout(() => {
-      setTypeNoti({
-        content: "",
-        type: "",
-      });
-    }, 3000);
+    switch (type) {
+      case "success":
+        toast.success(nodeNoti);
+        break;
+      case "danger":
+        toast.error(nodeNoti);
+        break;
+      case "warning":
+        toast.warning(nodeNoti);
+        break;
+      default:
+        break;
+    }
   };
+
+  // --- Get Data User ---
+  const getDataUser = (data) => {
+    data && setUserInfo(data);
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("dataUserEchinese") !== null) {
+      const user = JSON.parse(localStorage.getItem("dataUserEchinese"));
+      setUserInfo(user);
+    }
+  }, []);
 
   return (
     <>
@@ -64,20 +103,22 @@ export const WrapProvider = ({ children }) => {
           getTitlePage,
           getRouter,
           showNoti,
+          getDataUser,
+          userInformation: userInfo,
         }}
       >
-        <div className={`noti-box ${typeNoti.type}`}>
-          <div className="noti-box__content">
-            <span className="icon">
-              {typeNoti.type == "danger" ? (
-                <WarningOutlined />
-              ) : (
-                typeNoti.type == "success" && <CheckCircleOutlined />
-              )}
-            </span>
-            <span className="text">{typeNoti.content}</span>
-          </div>
-        </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+
         {children}
       </WrapContext.Provider>
     </>

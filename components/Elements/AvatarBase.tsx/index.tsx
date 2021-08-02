@@ -45,11 +45,8 @@ const AvatarBase = (props) => {
     }
   };
 
-  console.log("Image Url: ", imageUrl);
-
   useEffect(() => {
     setImgUrl(imageUrl);
-    console.log("chui vô");
   }, [imageUrl]);
 
   return (

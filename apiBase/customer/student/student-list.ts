@@ -7,7 +7,7 @@ class StudentApi {
     });
 
   getWithID = (ID: number) =>
-    instance.get<IApiResult<IStudent[]>>(`/api/Student/${ID}`);
+    instance.get<IApiResultData<IStudent>>(`/api/Student/${ID}`);
 
   add = (data: IStudent) => instance.post("/api/Student", data, {});
 

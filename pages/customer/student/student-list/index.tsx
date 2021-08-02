@@ -3,14 +3,10 @@ import ExpandTable from "~/components/ExpandTable";
 import { Eye } from "react-feather";
 import { Card, Tooltip } from "antd";
 import Link from "next/link";
-import InfoCusCard from "~/components/Profile/ProfileCustomer/component/InfoCusCard";
 import { data } from "~/lib/customer-student/data";
 import SortBox from "~/components/Elements/SortBox";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
-import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";
-// import { studentApi, branchApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import StudentForm from "~/components/Global/Customer/Student/StudentForm";
 import {
@@ -26,7 +22,6 @@ import {
   staffApi,
 } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
-// import StudentForm from "~/components/Global/Customer/Student/StudentForm";
 
 let pageIndex = 1;
 
@@ -73,16 +68,21 @@ const dataOption = [
 ];
 
 // -- FOR DIFFERENT VIEW --
+interface optionObj {
+  title: string;
+  value: number;
+}
+
 interface listDataForm {
-  Area: Array<Object>;
-  DistrictID: Array<Object>;
-  WardID: Array<Object>;
-  Job: Array<Object>;
-  Branch: Array<Object>;
-  Purposes: Array<Object>;
-  SourceInformation: Array<Object>;
-  Parent: Array<Object>;
-  Counselors: Array<Object>;
+  Area: Array<optionObj>;
+  DistrictID: Array<optionObj>;
+  WardID: Array<optionObj>;
+  Job: Array<optionObj>;
+  Branch: Array<optionObj>;
+  Purposes: Array<optionObj>;
+  SourceInformation: Array<optionObj>;
+  Parent: Array<optionObj>;
+  Counselors: Array<optionObj>;
 }
 
 const optionGender = [
@@ -134,7 +134,7 @@ const listApi = [
   },
   {
     api: staffApi,
-    text: "Nguồn khách hàng",
+    text: "Tư vấn viên",
     name: "Counselors",
   },
 ];
@@ -338,31 +338,22 @@ const StudentData = () => {
     setDataFilter([...dataFilter]);
   };
 
-  // -------------- GET DATA CENTER ----------------
-  const getDataCenter = async () => {
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
-    });
-
-    try {
-      let res = await branchApi.getAll({
-        pageSize: Number.MAX_SAFE_INTEGER,
-        pageIndex: 1,
+  // ------ HANDLE SUBMIT -------
+  const _handleSubmitForm = (dataSubmit: any, index: number) => {
+    console.log("DATA SUBMIT: ", data);
+    console.log("INDEX: ", index);
+    if (dataSubmit.UserInformationID) {
+      let newDataSource = [...dataSource];
+      newDataSource.splice(index, 1, {
+        ...dataSubmit,
+        FullNameUnicode: dataSource.find(
+          (item) => item.UserInformationID == dataSubmit.UserInformationID
+        ).FullNameUnicode,
+        AreaName: listDataForm.Area.find(
+          (item) => item.value == dataSubmit.AreaID
+        ).title,
       });
-
-      res.status == 200 &&
-        (setDataCenter(res.data.data),
-        setTotalPage(res.data.totalRow),
-        showNoti("success", "Thành công"));
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
+      setDataSource(newDataSource);
     }
   };
 
@@ -459,13 +450,28 @@ const StudentData = () => {
 
   // EXPAND ROW
 
-  const expandedRowRender = () => {
+  const expandedRowRender = (data, index) => {
     return (
       <>
         {/* <Card title="Thông tin cá nhân">
           <InfoCusCard />
         </Card> */}
-        <StudentForm dataRow={dataRow} listDataForm={listDataForm} />
+        <StudentForm
+          index={index}
+          dataRow={data}
+          listDataForm={listDataForm}
+          _handleSubmit={(dataSubmit, index) => {
+            let newDataSource = [...dataSource];
+            newDataSource.splice(index, 1, {
+              ...dataSubmit,
+              AreaName: listDataForm.Area.find(
+                (item) => item.value == dataSubmit.AreaID
+              ).title,
+            });
+            console.log("NEW DATA: ", newDataSource);
+            setDataSource(newDataSource);
+          }}
+        />
       </>
     );
   };
@@ -539,15 +545,12 @@ const StudentData = () => {
 
   return (
     <ExpandTable
-      handleExpand={(data) => setDataRow(data)}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       loading={isLoading}
       addClass="basic-header"
       TitlePage="DANH SÁCH HỌC VIÊN"
-      // TitleCard={<StudentForm dataCenter={dataCenter} />}
-      expandable={{ expandedRowRender }}
       dataSource={dataSource}
       columns={columns}
       Extra={
@@ -563,6 +566,8 @@ const StudentData = () => {
           />
         </div>
       }
+      handleExpand={(data) => setDataRow(data)}
+      expandable={{ expandedRowRender }}
     />
   );
 };
