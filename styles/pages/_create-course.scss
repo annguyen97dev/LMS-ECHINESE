@@ -26,6 +26,9 @@
 			> span {
 				font-weight: 500;
 			}
+			@include max-media(600px) {
+				width: 100%;
+			}
 		}
 		&-item-error {
 			> span {
@@ -33,6 +36,36 @@
 			}
 		}
 	}
+	@include max-media(1199px) {
+		.wrap-card-info-course {
+			padding-top: calc(var(--bs-gutter-x) / 2);
+		}
+	}
+	@include max-media(767px) {
+		.rbc-toolbar {
+			justify-content: flex-start;
+		}
+		.rbc-btn-group:last-child {
+			margin-top: 10px;
+		}
+	}
+	// &-general {
+	// 	.ant-collapse-header {
+	// 		font-weight: 500;
+	// 	}
+	// 	&-error {
+	// 		&.ant-collapse-item .ant-collapse-header {
+	// 			color: $red;
+	// 		}
+	// 	}
+	// 	&-box {
+	// 		display: flex;
+	// 		flex-wrap: wrap;
+	// 	}
+	// 	&-item {
+	// 		width: 50%;
+	// 	}
+	// }
 }
 .wrap-card-info-course {
 	.ant-card-body {

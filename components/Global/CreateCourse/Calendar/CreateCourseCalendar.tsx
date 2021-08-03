@@ -106,13 +106,15 @@ const CreateCourseCalendar = (props) => {
 	return (
 		<>
 			<Calendar
-				selectable
 				localizer={localizer}
 				events={eventList}
 				startAccessor="start"
 				endAccessor="end"
 				style={{height: 600}}
 				popup={true}
+				// view="month"
+				views={['month', 'week']}
+				defaultView="month"
 				showMultiDayTimes={true}
 				eventPropGetter={customEventPropGetter}
 				components={{event: styleEvent}}

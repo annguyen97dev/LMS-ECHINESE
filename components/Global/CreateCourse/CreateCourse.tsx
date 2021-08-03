@@ -1,5 +1,6 @@
 import {Card} from 'antd';
 import moment from 'moment';
+import {useRouter} from 'next/router';
 import React, {useEffect, useRef, useState} from 'react';
 import {
 	branchApi,
@@ -65,6 +66,7 @@ const dayOfWeek = [
 	},
 ];
 const CreateCourse = (props) => {
+	const router = useRouter();
 	// -----------STATE-----------
 	// CREATE COURSE FORM STATE
 	const {showNoti} = useWrap();
@@ -431,8 +433,8 @@ const CreateCourse = (props) => {
 		const {BranchID, RoomID} = stoneDataToSave.current;
 		// SPLIT SCHEDULE TO 2 OBJECT TO CALL 2 API
 		// paramsArr = [ {Schedule-*: [{params teacher}, {params room}]} ]
-		const paramsArr = arrSchedule.map(({CaID, Date, Tiet}, idx) => {
-			const dateFm = moment(Date).format('YYYY/MM/DD');
+		const paramsArr = arrSchedule.map(({CaID, date, Tiet}, idx) => {
+			const dateFm = moment(date).format('YYYY/MM/DD');
 			const {SubjectID} = Tiet;
 			return {
 				[`Schedule-${idx + 1}`]: [
@@ -691,8 +693,12 @@ const CreateCourse = (props) => {
 				showNoti('danger', 'Đã xảy ra lỗi. Xin kiểm tra lại');
 				return;
 			}
-			res = await courseApi.add(saveCourseInfo);
-			res.status === 200 && showNoti('success', res.data.message);
+			console.log(saveCourseInfo);
+			// res = await courseApi.add(saveCourseInfo);
+			// if (res.status === 200) {
+			// 	showNoti('success', res.data.message);
+			// 	router.push('/course/course-list/');
+			// }
 		} catch (error) {
 			showNoti('error', error.message);
 		} finally {
@@ -739,7 +745,6 @@ const CreateCourse = (props) => {
 				'Thứ 7',
 			];
 			const dayOffWeek = dayArr[moment(s.date).day()];
-			const date = moment(s.date).format('DD/MM/YYYY');
 			let isValid = !s.RoomID || !s.TeacherID;
 			for (let i2 = 0; i2 < len; i2++) {
 				const s2 = scheduleList.unavailable[i2];
@@ -748,11 +753,12 @@ const CreateCourse = (props) => {
 				}
 			}
 			scheduleShow.push({
-				date,
+				date: s.date,
 				dayOffWeek,
 				studyTimeName: s.CaName,
 				roomName: s.RoomName,
 				teacherName: s.TeacherName,
+				StudyTimeID: s.CaID,
 				isValid,
 			});
 			newScheduleFm.push({
@@ -761,12 +767,15 @@ const CreateCourse = (props) => {
 				StudyTimeID: s.CaID,
 				RoomID: s.RoomID,
 				TeacherID: s.TeacherID,
+				SubjectID: s.Tiet.SubjectID,
 			});
 		}
-		const fmScheduleShowToObject = scheduleShow.reduce((newObj, s) => {
-			newObj[s.date] ? newObj[s.date].push(s) : (newObj[s.date] = [s]);
-			return newObj;
-		}, {});
+		const fmScheduleShowToObject = scheduleShow
+			.sort((a, b) => moment(a.date).valueOf() - moment(b.date).valueOf())
+			.reduce((newObj, s) => {
+				newObj[s.date] ? newObj[s.date].push(s) : (newObj[s.date] = [s]);
+				return newObj;
+			}, {});
 
 		const {
 			BranchID,
@@ -810,7 +819,7 @@ const CreateCourse = (props) => {
 		<div className="create-course">
 			<TitlePage title="Tạo khóa học" />
 			<div className="row">
-				<div className="col-md-8 col-12">
+				<div className="col-xl-8 col-12">
 					<Card
 						title="Sắp xếp lịch học"
 						extra={
@@ -863,7 +872,7 @@ const CreateCourse = (props) => {
 						</div>
 					</Card>
 				</div>
-				<div className="col-md-4 col-12">
+				<div className="col-xl-4 col-12">
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
