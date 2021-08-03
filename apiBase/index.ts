@@ -33,3 +33,5 @@ export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
 export { examComingSoonApi } from "./customer/student/exam-coming-soon";
 export { warningApi } from "./customer/student/warning";
+export { serviceCustomerExamApi } from "./customer/service/service-customer-exam";
+export { serviceCustomerExamResultApi } from "./customer/service/service-customer-exam-result";

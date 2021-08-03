@@ -52,34 +52,21 @@ export function ExpandBoxService() {
 export function ExpandBoxWarning(props) {
   return (
     <div className="feedback-detail-text">
-      <p>{props.dataRow.WarningNote != null ? props.dataRow.WarningNote : "Không có nội dung"}</p> 
-      {/* <table className="tb-expand">
+      {/* <p>{props.dataRow.WarningNote != null ? props.dataRow.WarningNote : "Không có nội dung"}</p>  */}
+      <table className="tb-expand">
         <tr>
-          <th>Roll up</th>
-          <th>Capacity</th>
-          <th>Note</th>
-          <th>Comment</th>
-          <th>Solution</th>
+          <th>Ghi chú</th>
+          <th>Cam kết</th>
+          <th>Cảnh báo</th>
         </tr>
         <tr>
-          <td>Có</td>
-          <td>Trung bình</td>
+          <td>{props.dataRow.Note != null ? props.dataRow.Note : "Không có nội dung"}</td>
+          <td>{props.dataRow.Commitment != null ? props.dataRow.Commitment : "Không có nội dung"}</td>
           <td>
-            {" "}
-            Làm đúng mới được khoảng 50% (12/25 câu đúng), dạng multiple choice
-            part 3 làm rất chậm, thiếu từ vựng nên hầu như không hiểu
-          </td>
-          <td>[No comment]</td>
-          <td>
-            [Solution] Đối với kỹ năng nói của cô Trà, giáo viên đã nhắc nhở bạn
-            làm bài tập. Nhờ cô Trà chia nhỏ bài tập thành 2 hoặc 3 ngày một lần
-            và TVV sẽ liên lạc với Giang để yêu cầu bạn làm để gửi lại cô Trà
-            đúng hạn. Đối với kỹ năng đọc, giáo viên đã giao thêm bài tập, trong
-            tuần sẽ yêu cầu bạn lên phòng tự học hoặc đến sơm 1 tiếng trước giờ
-            học để phụ đạo.{" "}
+            {props.dataRow.WarningNote != null ? props.dataRow.WarningNote : "Không có nội dung"}
           </td>
         </tr>
-      </table> */}
+      </table>
     </div>
   );
 }

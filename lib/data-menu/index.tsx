@@ -240,7 +240,7 @@ export const dataMenu = [
             ItemType: "single",
             Key: "/customer/service/service-package-result",
             Route: "/customer/service/service-package-result",
-            Text: "Danh sách kết quả test",
+            Text: "Danh sách kết quả đợt thi",
             Icon: "",
           },
         ],

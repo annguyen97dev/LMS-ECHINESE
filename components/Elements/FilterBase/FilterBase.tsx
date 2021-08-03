@@ -6,7 +6,7 @@ import { useWrap } from "~/context/wrap";
 
 const FilterBase = (props) => {
   const { dataFilter } = props;
-  console.log("DATA filter: ", dataFilter);
+  // console.log("DATA filter: ", dataFilter);
   const { handleFilter, handleReset } = props;
   const { showNoti } = useWrap();
   const { RangePicker } = DatePicker;
@@ -16,7 +16,7 @@ const FilterBase = (props) => {
   const [form] = Form.useForm();
   const { Option } = Select;
   const dateFormat = "YYYY/MM/DD";
-  console.log("List Filter: ", listFilter);
+  // console.log("List Filter: ", listFilter);
 
   // ------------ RESET FILTER -------------
   const resetFilter = () => {
