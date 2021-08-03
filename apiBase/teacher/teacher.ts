@@ -9,7 +9,7 @@ export const teacherApi = {
 		});
 	},
 	// Lấy theo id
-	getById(id:number) {
+	getById(id: number) {
 		return instance.get<IApiResultData<ITeacher[]>>(`${url}${id}`);
 	},
 	// Thêm mới data
@@ -33,10 +33,10 @@ export const teacherApi = {
 		return instance.put(url, data);
 	},
 	// Thông tin lớp học
-	getAllTeacherForSubject(id:number) {
+	getAllTeacherForSubject(id: number) {
 		return instance.get<IApiResultData>(`/api/AssignTeacherForSubject/${id}`);
 	},
 	updateTeacherForSubject(data: any) {
-		return instance.put('/api/AssignTeacherForSubject', data)
-	}
+		return instance.put('/api/AssignTeacherForSubject', data);
+	},
 };

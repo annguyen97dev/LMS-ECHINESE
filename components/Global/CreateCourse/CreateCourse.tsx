@@ -693,12 +693,11 @@ const CreateCourse = (props) => {
 				showNoti('danger', 'Đã xảy ra lỗi. Xin kiểm tra lại');
 				return;
 			}
-			console.log(saveCourseInfo);
-			// res = await courseApi.add(saveCourseInfo);
-			// if (res.status === 200) {
-			// 	showNoti('success', res.data.message);
-			// 	router.push('/course/course-list/');
-			// }
+			res = await courseApi.add(saveCourseInfo);
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				router.push('/course/course-list/');
+			}
 		} catch (error) {
 			showNoti('error', error.message);
 		} finally {
@@ -796,9 +795,9 @@ const CreateCourse = (props) => {
 		const StudyTimeName = getMultiTitle(studyTimeList, StudyTimeID);
 		const CourseNameFinal = CourseName
 			? CourseName
-			: `[${BranchName}] - [${ProgramName}] - [${moment(StartDay).format(
-					'DD/MM/YYY'
-			  )}] - [${StudyTimeName}] - [${RoomName}]`;
+			: `[${BranchName}][${ProgramName}][${CurriculumName}][${StudyTimeName}] - ${moment(
+					StartDay
+			  ).format('DD/MM/YYYY')}`;
 
 		setScheduleShow(fmScheduleShowToObject);
 		setSaveCourseInfo({

@@ -189,7 +189,7 @@ const optionPropTypes = PropTypes.arrayOf(
 	})
 );
 CreateCourseCalendar.propTypes = {
-	evenList: PropTypes.arrayOf(
+	eventList: PropTypes.arrayOf(
 		PropTypes.shape({
 			id: PropTypes.number.isRequired,
 			title: PropTypes.string.isRequired,

@@ -275,10 +275,12 @@ const Teacher = () => {
 		});
 		try {
 			const delObj = teacherList[idx];
-			const res = await teacherApi.delete({
+			const newDelObj = {
 				...delObj,
+				Branch: delObj['Branch'].map((o) => o.ID).join(','),
 				Enable: false,
-			});
+			};
+			const res = await teacherApi.delete(newDelObj);
 			res.status === 200 && showNoti('success', res.data.message);
 			if (teacherList.length === 1) {
 				filters.pageIndex === 1

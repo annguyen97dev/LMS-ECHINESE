@@ -239,7 +239,7 @@ const CreateCourseForm = (props) => {
 									form={form}
 									name="CourseName"
 									label="Tên khóa học"
-									placeholder="[Trung tâm] - [Chương trình học] - [Ngày mở] - [Ca] - [Phòng]"
+									placeholder="[Trung tâm][Chương trình học][Giáo trình][Ca học] - Ngày học "
 								/>
 							</div>
 							<div
