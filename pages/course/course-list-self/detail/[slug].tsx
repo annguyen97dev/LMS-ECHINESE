@@ -24,13 +24,13 @@ const CourseListSelfDetail = () => {
       title: "Giáo viên",
       dataIndex: "teacher",
       key: "teacher",
-      ...FilterColumn("teacher"),
+      // ...FilterColumn("teacher"),
     },
     {
       title: "Trung tâm",
       dataIndex: "center",
       key: "center",
-      ...FilterColumn("center"),
+      // ...FilterColumn("center"),
     },
     {
       title: "Ca",
@@ -41,7 +41,7 @@ const CourseListSelfDetail = () => {
       title: "Phòng học",
       key: "room",
       dataIndex: "room",
-      ...FilterColumn("room"),
+      // ...FilterColumn("room"),
     },
   ];
 

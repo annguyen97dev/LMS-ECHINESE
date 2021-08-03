@@ -8,7 +8,6 @@ import SortBox from "~/components/Elements/SortBox";
 import LayoutBase from "~/components/LayoutBase";
 import { gradeApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { Trash2 } from "react-feather";
 import moment from "moment";
 
 let pageIndex = 1;

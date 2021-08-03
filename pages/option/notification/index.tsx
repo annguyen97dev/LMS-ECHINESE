@@ -15,6 +15,7 @@ import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { AlertTriangle, X } from "react-feather";
 import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
+import ReactHtmlParser from 'react-html-parser';
 
 const Notification = () => {
   	const [dataTable, setDataTable] = useState([]);
@@ -129,7 +130,7 @@ const Notification = () => {
 		});
 		(async () => {
 		  try {
-			let res = await branchApi.getAll({pageSize: Number.MAX_SAFE_INTEGER,pageIndex: 1});
+			let res = await branchApi.getAll({pageSize: 9999,pageIndex: 1});
 			res.status == 200 && setDataBranch(res.data.data);
 		  } catch (error) {
 			showNoti("danger", error.message);
@@ -222,12 +223,12 @@ const Notification = () => {
       // ...FilterColumn("teacher"),
       render: (role, record, index) => {
 		if(record.AllRole) {
-			return <span className="tag yellow">Tất cả</span>
+			return <span>Tất cả</span>
 		} else if(role) {
 			let arr = role.split(",");
 			return (
 				<div className="list-tag">
-					{arr.map((item, i) => (<span key={i} className="tag yellow">{item}</span>))}
+					{arr.map((item, i) => (<span key={i}>{item}</span>))}
 				</div>
 			)
 		}
@@ -238,12 +239,12 @@ const Notification = () => {
       dataIndex: "BranchName",
       render: (BranchName, record, index) => {
 		if(record.AllBranch) {
-			return <span className="tag green">Tất cả</span>
+			return <span>Tất cả</span>
 		} else if(BranchName){
           let arr = BranchName.split(",");
           return (
 			  <div className="list-tag">
-				  {arr.map((item, i) => (<span key={i} className="tag green">{item}</span>))}
+				  {arr.map((item, i) => (<span key={i}>{item}</span>))}
 			  </div>
 		  )
         }
@@ -271,7 +272,7 @@ const Notification = () => {
       addClass="basic-header"
       TitlePage="Notification List"
       expandable={{
-        expandedRowRender: record => <p style={{ margin: 0 }}>{record.NotificationContent}</p>,
+        expandedRowRender: record => <p style={{ margin: 0 }}>{ReactHtmlParser(record.NotificationContent)}</p>,
         rowExpandable: record => record.NotificationTitle !== 'Not Expandable',
       }}
       TitleCard={

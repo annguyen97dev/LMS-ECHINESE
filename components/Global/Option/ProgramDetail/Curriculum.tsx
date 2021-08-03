@@ -73,7 +73,7 @@ const Curriculum = () => {
         if (res.data.data.length > 0) {
           setDataSource(res.data.data);
           setTotalPage(res.data.totalRow);
-          showNoti("success", "Thành công");
+          showNoti("success", "Tải giáo trình thành công");
         } else {
           showNoti("danger", "Không có dữ liệu");
         }
@@ -116,8 +116,6 @@ const Curriculum = () => {
       if (res.status == 200) {
         if (res.data.data.length > 0) {
           setDataSubject(res.data.data);
-
-          showNoti("success", "Thành công");
         } else {
           showNoti("danger", "Không có dữ liệu môn học");
         }

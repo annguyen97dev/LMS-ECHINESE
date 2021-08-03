@@ -1,34 +1,26 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Form,
-  Select,
-  Input,
-  Divider,
-  Button,
-  Upload,
-  Spin,
-  message,
-} from "antd";
-import {
-  LoadingOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import TitlePage from "~/components/TitlePage";
-import LayoutBase from "~/components/LayoutBase";
+import { Form, Divider, Spin, Modal, Tooltip } from "antd";
+
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
 import DateField from "~/components/FormControl/DateField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
-import { studentApi, areaApi, districtApi, wardApi, staffApi } from "~/apiBase";
+import { districtApi, wardApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import { data } from "~/lib/option/dataOption2";
 import AvatarBase from "~/components/Elements/AvatarBase.tsx";
-import { Modal } from "antd";
+import {
+  UserOutlined,
+  DeploymentUnitOutlined,
+  WhatsAppOutlined,
+  MailOutlined,
+  AimOutlined,
+} from "@ant-design/icons";
+
+import { Eye } from "react-feather";
 
 type LayoutType = Parameters<typeof Form>[0]["layout"];
 
@@ -63,11 +55,13 @@ const optionGender = [
 ];
 
 const StaffForm = (props) => {
-  const { dataRow, listDataForm, onSubmit, isLoading } = props;
+  const { rowData, listDataForm, onSubmit, isLoading, rowID, getIndex, index } =
+    props;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { showNoti } = useWrap();
   const showModal = () => {
     setIsModalVisible(true);
+    rowID && getIndex(index);
   };
 
   const [loadingSelect, setLoadingSelect] = useState({
@@ -153,6 +147,8 @@ const StaffForm = (props) => {
   };
 
   const getDataWithID = async (ID, name) => {
+    console.log("NAME is: ", name);
+
     let res = null;
     setLoadingSelect({
       status: true,
@@ -275,20 +271,64 @@ const StaffForm = (props) => {
       rs &&
         rs.status == 200 &&
         (setIsModalVisible(false),
-        !dataRow && (form.reset(defaultValuesInit), setImageUrl("")));
+        !rowData && (form.reset(defaultValuesInit), setImageUrl("")));
     });
   };
 
+  useEffect(() => {
+    if (isModalVisible) {
+      if (rowData) {
+        let arrBranch = [];
+        let cloneRowData = { ...rowData };
+        cloneRowData.Branch.forEach((item, index) => {
+          arrBranch.push(item.ID);
+        });
+        cloneRowData.Branch = arrBranch;
+        form.reset(cloneRowData);
+        cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
+        cloneRowData.DistrictID &&
+          getDataWithID(cloneRowData.DistrictID, "WardID");
+        setImageUrl(cloneRowData.Avatar);
+      }
+    }
+  }, [isModalVisible]);
+
   return (
     <>
-      <button className="btn btn-warning add-new" onClick={showModal}>
-        Thêm mới
-      </button>
+      {rowID ? (
+        <button className="btn btn-icon" onClick={showModal}>
+          <Tooltip title="Chi tiết">
+            <Eye />
+          </Tooltip>
+        </button>
+      ) : (
+        <button className="btn btn-warning add-new" onClick={showModal}>
+          Thêm mới
+        </button>
+      )}
+
       <Modal
         style={{ top: 20 }}
         title="Tạo mới nhân viên"
         visible={isModalVisible}
-        footer={null}
+        footer={
+          <div className="row">
+            <div className="col-12 d-flex justify-content-center">
+              <div style={{ paddingRight: 5 }}>
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100"
+                  onClick={form.handleSubmit(onSubmitForm)}
+                >
+                  Lưu
+                  {isLoading.type == "ADD_DATA" && isLoading.status && (
+                    <Spin className="loading-base" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
         onCancel={() => setIsModalVisible(false)}
         className="modal-50 modal-scroll"
       >
@@ -298,11 +338,36 @@ const StaffForm = (props) => {
 
             {/** ==== Thông tin cơ bản  ====*/}
             <div className="row">
-              <div className="col-12">
+              <div className="col-md-2 col-12">
                 <AvatarBase
                   imageUrl={imageUrl}
                   getValue={(value) => form.setValue("Avatar", value)}
                 />
+              </div>
+              <div className="col-md-10 col-12">
+                {rowData && (
+                  <div className="box-info-modal">
+                    <p className="name">{rowData?.FullNameUnicode}</p>
+                    <p className="detail">
+                      <span className="icon role">
+                        <DeploymentUnitOutlined />
+                      </span>
+                      <span className="text">{rowData?.RoleName}</span>
+                    </p>
+                    <p className="detail">
+                      <span className="icon mobile">
+                        <WhatsAppOutlined />
+                      </span>
+                      <span className="text">{rowData?.Mobile}</span>
+                    </p>
+                    <p className="detail">
+                      <span className="icon email">
+                        <MailOutlined />
+                      </span>
+                      <span className="text">{rowData?.Email}</span>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
             <div className="row">
@@ -464,11 +529,12 @@ const StaffForm = (props) => {
                   name="Extension"
                   label="Giới thiệu thêm"
                   form={form}
+                  rows={4}
                 />
               </div>
             </div>
 
-            <div className="row">
+            <div className="row d-none">
               <div className="col-12 d-flex justify-content-center">
                 <div style={{ paddingRight: 5 }}>
                   <button type="submit" className="btn btn-primary w-100">

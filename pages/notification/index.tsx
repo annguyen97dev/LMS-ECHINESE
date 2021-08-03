@@ -17,6 +17,7 @@ import document from "next/document";
 import ReactHtmlParser from 'react-html-parser';
 import { id } from "date-fns/locale";
 import Modal from "antd/lib/modal/Modal";
+import Link from "next/link";
 
 const Notification = () => {
     const [dataTable, setDataTable] = useState([]);
@@ -115,7 +116,11 @@ const Notification = () => {
 
     const columns = [
         { 
-            title: () => (<Checkbox value={0} onChange={onChange}><span className="color-white">Xem tất cả</span></Checkbox>), 
+            title: () => (
+                <Checkbox value={0} onChange={onChange} defaultChecked={false}>
+                    <span className="color-white">Xem tất cả</span>
+                </Checkbox>
+            ), 
             dataIndex: "Status",
             // render: (record) => (
             //     record.Status == 0
@@ -125,9 +130,9 @@ const Notification = () => {
             render: (text, record) => 
                 <div>{text == 0 
                     ? (<Checkbox className="uncheck" value={record.ID} onChange={onChange}>
-                        <span className="font-weight-black">Xem</span></Checkbox>) 
+                        <span>Xem</span></Checkbox>) 
                     : (<Checkbox checked>
-                        <span className="font-weight-black">Xem</span></Checkbox>)}
+                        <span>Xem</span></Checkbox>)}
                 </div>
         },
         { 
@@ -151,12 +156,12 @@ const Notification = () => {
             render: (record) => (
                 <Tooltip title="Chi tiết">
                     <button
-                        className="btn btn-icon edit"
+                        className="btn btn-icon delete"
                         onClick={() => {
                             setIsModalVisible(true);
                             setDataSeen({
-                                ID: record.ID,
-                            });
+                                ID: record.ID
+                            })
                             setContentRow({
                                 content: record.NotificationContent,
                                 title: record.NotificationTitle,
@@ -172,7 +177,7 @@ const Notification = () => {
     ];
 
     useEffect(() => {
-        getDataTable()
+        getDataTable();
     }, [todoApi])
 
     return (
@@ -180,27 +185,18 @@ const Notification = () => {
             <Modal
 				title={<AlertCircle color="#32c6a4" />}
 				visible={isModalVisible}
-				onOk={
-                    () => {
-                        setIsModalVisible(false);
-                        if(contentRow.status == 0) {
-                            _onSubmit(dataSeen)
-                        } 
-                    }
-                    }
-				onCancel={
-                    () => {
-                        setIsModalVisible(false);
-                        if(contentRow.status == 0) {
-                            _onSubmit(dataSeen)
-                        } 
-                       }
-                    }
+				onOk={() => {
+                    setIsModalVisible(false)
+                    contentRow.status == 0 && _onSubmit(dataSeen);
+                }}
+                onCancel={() => {
+                    setIsModalVisible(false)
+                    contentRow.status == 0 && _onSubmit(dataSeen);
+                }}
+                width={1000}
 			>
-				<div className="content-notification">
-                    <p className="font-weight-black fz-18 mb-15">{contentRow.title}</p>
-                    {ReactHtmlParser(contentRow.content)}
-                </div>
+				<h4>{contentRow.title}</h4>
+				<div>{ReactHtmlParser(contentRow.content)}</div>
 			</Modal>
             <PowerTable
                 loading={isLoading}

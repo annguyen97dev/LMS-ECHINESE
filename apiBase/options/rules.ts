@@ -2,8 +2,10 @@ import { instance } from "~/apiBase/instance";
 
 class Rules {
     // Lấy tất cả data
-    getAll = () =>
-    instance.get<IApiResultData<IRules[]>>("/api/Rules");
+    getAll = (params) =>
+    instance.get<IApiResultData<IRules[]>>("/api/Rules", {
+        params
+    });
 
     // Thêm mới data
     // add = ( data: IPurpose ) => instance.post("/api/Purposes", data);

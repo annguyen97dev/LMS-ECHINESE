@@ -39,6 +39,7 @@ const FilterDiscountTable = (props:any) => {
 	const funcShowFilter = () => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
+	const [form] = Form.useForm();
 
 	const {
 		register,
@@ -53,9 +54,15 @@ const FilterDiscountTable = (props:any) => {
 		showFilterSet(false);
 	});
 
+	const handleReset = () => {
+		form.resetFields();
+		props._onHandleReset();
+		showFilterSet(false);
+	}
+
 	const content = (
 		<div className={`wrap-filter small`}>
-			<Form layout="vertical" onFinish={onSubmit}>
+			<Form form={form} layout="vertical" onFinish={onSubmit}>
 				<div className="row">
 					<div className="col-md-12">
 						<Form.Item 
@@ -64,7 +71,7 @@ const FilterDiscountTable = (props:any) => {
 							>
 							<Select 
 								className="style-input" 
-								placeholder="Chọn nhân viên"
+								placeholder="Chọn"
 								allowClear={true}
 								onChange={(value) => setValue("Status", value)}>
 								{status && status.map(item => (
@@ -92,10 +99,10 @@ const FilterDiscountTable = (props:any) => {
 					</div>
 					<div className="col-md-12">
 						<Form.Item className="mb-0">
-							<button className="btn btn-primary" style={{marginRight: '10px'}} onClick={onSubmit}>
+							<button className="btn btn-primary" style={{marginRight: '10px'}} type="submit">
 								Tìm kiếm
 							</button>
-							{/* <button className="btn btn-success">Export</button> */}
+							<span className="btn btn-light" onClick={handleReset}>Reset</span>
 						</Form.Item>
 					</div>
 				</div>

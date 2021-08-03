@@ -286,6 +286,13 @@ const Discount = () => {
 		{
 			title: 'Trạng thái', 
 			dataIndex: 'StatusName',
+			render: (text, record) => {
+				switch(record.Status) {
+					case 1: return <span className="tag green">{text}</span>; break;
+					case 2: return <span className="tag yellow">{text}</span>; break;
+					case 3: return <span className="tag red">{text}</span>; break;
+				}
+			}
 		},
 		{title: 'Số lượng', dataIndex: 'Quantity'},
 		{title: 'Số lượng còn lại', dataIndex: 'QuantityLeft'},
@@ -359,6 +366,7 @@ const Discount = () => {
 						<div className="extra-table">
 							<FilterDiscountTable 
 								_onFilter={(value: any) => _onFilterTable(value)}
+								_onHandleReset={handleReset}
 							/>
 							<SortBox 
 								handleSort={(value) => handleSort(value)}

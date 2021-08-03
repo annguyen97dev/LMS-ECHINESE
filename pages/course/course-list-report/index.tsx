@@ -25,7 +25,7 @@ const CourseListReport = () => {
       dataIndex: "CourseName",
       key: "coursename",
       width: 450,
-      ...FilterColumn("CourseName"),
+      // ...FilterColumn("CourseName"),
       render: (text) => (
         <a className="color-primary" style={{ fontWeight: 500 }}>
           {text}
@@ -37,7 +37,7 @@ const CourseListReport = () => {
       dataIndex: "Address",
       key: "address",
       width: 370,
-      ...FilterColumn("Address"),
+      // ...FilterColumn("Address"),
     },
     {
       title: "Tình trạng",

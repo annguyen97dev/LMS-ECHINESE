@@ -24,6 +24,7 @@ const FilterSupplierTable = (props:any) => {
 	const funcShowFilter = () => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
+	const [form] = Form.useForm();
 
 	const {
 		register,
@@ -38,12 +39,20 @@ const FilterSupplierTable = (props:any) => {
 		showFilterSet(false);
 	});
 
+	const handleReset = () => {
+		form.resetFields();
+		props._onHandleReset();
+		showFilterSet(false);
+	}
+
 	const content = (
 		<div className={`wrap-filter small`}>
-			<Form layout="vertical" onFinish={onSubmit}>
+			<Form form={form} layout="vertical" onFinish={onSubmit}>
 				<div className="row">
 					<div className="col-md-12">
-						<Form.Item>
+						<Form.Item
+							label="Thời gian"
+							name="Time">
 							<RangePicker
 								format={dateFormat}
 								allowClear={true}
@@ -57,7 +66,7 @@ const FilterSupplierTable = (props:any) => {
 							<button className="btn btn-primary" style={{marginRight: '10px'}} onClick={onSubmit}>
 								Tìm kiếm
 							</button>
-							{/* <button className="btn btn-success">Export</button> */}
+							<span className="btn btn-light" onClick={handleReset}>Reset</span>
 						</Form.Item>
 					</div>
 				</div>

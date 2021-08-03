@@ -11,7 +11,7 @@ import Link from "next/link";
 import ScheduleRoom from "~/components/Global/CourseList/ScheduleRoom";
 import ScheduleTeacher from "~/components/Global/CourseList/ScheduleTeacher";
 import TitlePage from "~/components/Elements/TitlePage";
-import FilterBase from "~/components/FilterBase";
+
 import LayoutBase from "~/components/LayoutBase";
 
 const dataOption = [

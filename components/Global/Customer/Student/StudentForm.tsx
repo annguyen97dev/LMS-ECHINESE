@@ -1,29 +1,21 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Form,
-  Select,
-  Input,
-  Divider,
-  Button,
-  Upload,
-  Spin,
-  message,
-} from "antd";
+import { Card, Form, Divider, Spin } from "antd";
 import {
   LoadingOutlined,
   PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import TitlePage from "~/components/TitlePage";
+
 import LayoutBase from "~/components/LayoutBase";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
 import DateField from "~/components/FormControl/DateField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
+import { useWrap } from "~/context/wrap";
+import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 import {
   studentApi,
   areaApi,
@@ -36,9 +28,6 @@ import {
   parentsApi,
   staffApi,
 } from "~/apiBase";
-import { useWrap } from "~/context/wrap";
-import { data } from "~/lib/option/dataOption2";
-import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 
 let returnSchema = {};
 let schema = null;
@@ -70,47 +59,8 @@ const optionGender = [
   },
 ];
 
-const listApi = [
-  {
-    api: areaApi,
-    text: "Tỉnh/Tp",
-    name: "Area",
-  },
-
-  {
-    api: jobApi,
-    text: "Công việc",
-    name: "Job",
-  },
-  {
-    api: puroseApi,
-    text: "Mục đích học",
-    name: "Purposes",
-  },
-  {
-    api: branchApi,
-    text: "Trung tâm",
-    name: "Branch",
-  },
-  {
-    api: parentsApi,
-    text: "Phụ huynh",
-    name: "Parent",
-  },
-  {
-    api: sourceInfomationApi,
-    text: "Nguồn khách hàng",
-    name: "SourceInformation",
-  },
-  {
-    api: staffApi,
-    text: "Nguồn khách hàng",
-    name: "Counselors",
-  },
-];
-
 const StudentForm = (props) => {
-  const { dataRow, listDataForm } = props;
+  const { dataRow, listDataForm, _handleSubmit, index } = props;
 
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
@@ -118,7 +68,6 @@ const StudentForm = (props) => {
     status: false,
   });
   const [imageUrl, setImageUrl] = useState(null);
-  const [loadingImage, setLoadingImage] = useState(false);
   const [loadingSelect, setLoadingSelect] = useState({
     status: false,
     name: "",
@@ -325,7 +274,6 @@ const StudentForm = (props) => {
   // ----------- SUBMI FORM ------------
   const onSubmit = async (data: any) => {
     data.Branch = data.Branch.toString();
-    console.log("DATA SUBMIT after: ", data);
 
     setIsLoading({
       type: "ADD_DATA",
@@ -335,6 +283,7 @@ const StudentForm = (props) => {
     try {
       if (data.UserInformationID) {
         res = await studentApi.update(data);
+        res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
       } else {
         res = await studentApi.add(data);
       }
@@ -367,8 +316,12 @@ const StudentForm = (props) => {
     try {
       let res = await studentApi.getAll({ Email: valueEmail });
 
-      res?.status == 200 && showNoti("danger", "Email này đã tồn tại");
-      res?.status == 204 && showNoti("success", "Bạn có thể sử dụng email này");
+      res?.status == 200 &&
+        (showNoti("success", "Tìm kiếm thành công"),
+        handleDataRow(res.data.data[0]));
+      res?.status == 204 &&
+        (showNoti("danger", "Không tìm thấy email"),
+        form.reset(defaultValuesInit));
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -379,23 +332,34 @@ const StudentForm = (props) => {
     }
   };
 
-  useEffect(() => {
-    // getDataSource(listApi);
+  const handleDataRow = (data) => {
+    let arrBranch = [];
+    let cloneRowData = { ...data };
+    cloneRowData.Branch.forEach((item, index) => {
+      arrBranch.push(item.ID);
+    });
+    cloneRowData.Branch = arrBranch;
+    form.reset(cloneRowData);
+    cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
+    cloneRowData.DistrictID && getDataWithID(cloneRowData.DistrictID, "WardID");
+    setImageUrl(cloneRowData.Avatar);
+  };
 
+  useEffect(() => {
     if (dataRow) {
-      let arrBranch = [];
-      dataRow.Branch.forEach((item, index) => {
-        arrBranch.push(item.ID);
-      });
-      dataRow.Branch = arrBranch;
-      form.reset(dataRow);
-      dataRow.AreaID && getDataWithID(dataRow.AreaID, "DistrictID");
-      dataRow.DistrictID && getDataWithID(dataRow.DistrictID, "WardID");
-      setImageUrl(dataRow.Avatar);
+      handleDataRow(dataRow);
+      // let arrBranch = [];
+      // let cloneRowData = { ...dataRow };
+      // cloneRowData.Branch.forEach((item, index) => {
+      //   arrBranch.push(item.ID);
+      // });
+      // cloneRowData.Branch = arrBranch;
+      // form.reset(cloneRowData);
+      // cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
+      // cloneRowData.DistrictID &&
+      //   getDataWithID(cloneRowData.DistrictID, "WardID");
+      // setImageUrl(cloneRowData.Avatar);
     }
-    // else {
-    //   form.setValue("Branch", []);
-    // }
   }, []);
 
   return (
