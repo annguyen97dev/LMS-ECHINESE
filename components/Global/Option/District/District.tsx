@@ -123,10 +123,10 @@ const District = () => {
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				setFilters({
-					...listFieldInit,
-					...refValue.current,
-				});
+				// setFilters({
+				// 	...listFieldInit,
+				// 	...refValue.current,
+				// });
 				showNoti('danger', 'Không tìm thấy');
 			}
 		} catch (error) {
