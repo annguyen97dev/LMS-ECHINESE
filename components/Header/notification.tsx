@@ -11,6 +11,7 @@ import { Eye, AlertCircle } from "react-feather";
 
 const Notifiaction = () => {
     const [dataTable, setDataTable] = useState([]);
+    const [show, setShow] = useState(false)
     const [isLoading, setIsLoading] = useState({
         type: "",
         status: false,
@@ -92,9 +93,10 @@ const Notifiaction = () => {
                         <a 
                             onClick={() => {
                                 setIsModalVisible(true);
+                                setShow(false);
                                 setDataSeen({
                                     ID: item.ID
-                                })
+                                });
                                 setContentRow({
                                     content: item.NotificationContent,
                                     title: item.NotificationTitle,
@@ -135,6 +137,10 @@ const Notifiaction = () => {
         }
     }
 
+    const handleVisibleChange = (visible) => {
+        setShow(visible);
+    }
+
     useEffect(() => {
         getDataNotification();
         // const interval = setInterval(() => {
@@ -161,7 +167,12 @@ const Notifiaction = () => {
 				<h4>{contentRow.title}</h4>
 				<div>{ReactHtmlParser(contentRow.content)}</div>
 			</Modal>
-            <Popover placement="bottomRight" content={content_notification} trigger="focus">
+            <Popover 
+                placement="bottomRight" 
+                content={content_notification} 
+                trigger="click"
+                visible={show} 
+                onVisibleChange={visible => handleVisibleChange(visible)}>
                 <button className="notification-icon">
                     <BellOutlined />
                 </button>
