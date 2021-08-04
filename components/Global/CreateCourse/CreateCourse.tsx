@@ -20,6 +20,7 @@ import CreateCourseForm from '~/components/Global/CreateCourse/CreateCourseForm/
 import SaveCreateCourse from '~/components/Global/CreateCourse/SaveCreateCourse';
 import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
+import {fmSelectArr} from '~/helpers';
 import CreateCourseCalendar from './Calendar/CreateCourseCalendar';
 import Schedule from './Schedule/Schedule';
 import ScheduleItem from './Schedule/ScheduleItem';
@@ -29,12 +30,6 @@ import ScheduleList from './Schedule/ScheduleList';
 // to the correct localizer.
 
 // ------------ MAIN COMPONENT ------------------
-const fmSelectArr = (arr, title, value, options = []) =>
-	arr.map((x) => ({
-		title: x[title],
-		value: x[value],
-		options: options.reduce((obj, o) => ({...obj, [o]: x[o]}), {}),
-	}));
 const dayOfWeek = [
 	{
 		title: 'Thứ 2',
