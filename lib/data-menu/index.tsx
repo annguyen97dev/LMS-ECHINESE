@@ -683,6 +683,13 @@ export const dataMenu = [
           },
           {
             ItemType: "single",
+            Key: "/option/consultation-status",
+            Route: "/option/consultation-status",
+            Text: "Tình trạng tư vấn khách hàng",
+            Icon: "",
+          },
+          {
+            ItemType: "single",
             Key: "/option/feedback",
             Route: "/option/feedback",
             Text: "Loại phản hồi",
