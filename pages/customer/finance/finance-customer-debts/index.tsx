@@ -2,7 +2,7 @@ import { Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { Info } from "react-feather";
+import { Eye, Info } from "react-feather";
 import { branchApi, courseApi } from "~/apiBase";
 import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student-price";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
@@ -70,6 +70,20 @@ const CourseStudentPrice = () => {
     {
       render: (data) => (
         <>
+          <Link
+            href={{
+              pathname:
+                "/customer/finance/finance-customer-debts/student-detail/[slug]",
+              query: { slug: 2 },
+            }}
+          >
+            <Tooltip title="Xem thông tin học viên">
+              <button className="btn btn-icon">
+                <Eye />
+              </button>
+            </Tooltip>
+          </Link>
+
           <CourseOfStudentPriceForm
             infoDetail={data}
             infoId={data.ID}

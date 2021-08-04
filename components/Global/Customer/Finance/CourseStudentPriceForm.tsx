@@ -8,6 +8,7 @@ import {
   Spin,
   TimePicker,
   DatePicker,
+  InputNumber,
 } from "antd";
 import { CreditCard, RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
@@ -142,11 +143,19 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
               </div>
 
               <div className="col-12 col-md-6">
-                <Form.Item name="MoneyInDebt" label="Số tiền còn lại">
-                  <Input
+                <Form.Item
+                  name="MoneyInDebt"
+                  label="Số tiền còn lại"
+                  initialValue={infoDetail.MoneyInDebt}
+                >
+                  <InputNumber
                     disabled
-                    className="style-input"
-                    onChange={(e) => setValue("MoneyInDebt", e.target.value)}
+                    className="ant-input style-input w-100"
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                    onChange={(value) => setValue("MoneyInDebt", value)}
                   />
                 </Form.Item>
               </div>
@@ -157,14 +166,13 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                 <Form.Item
                   name="Course"
                   label="Khóa học"
-                  rules={[
-                    { required: true, message: "Vui lòng điền đủ thông tin!" },
-                  ]}
+                  initialValue={infoDetail.Course.CourseName}
                 >
-                  <Select
-                    className="w-100 style-input"
-                    mode="multiple"
-                  ></Select>
+                  <Select className="w-100 style-input" mode="multiple">
+                    {course.map((x) => {
+                      <Option value={x.ID}>{x.CourseName}</Option>;
+                    })}
+                  </Select>
                 </Form.Item>
               </div>
             </div> */}
@@ -178,11 +186,15 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                     { required: true, message: "Vui lòng điền đủ thông tin!" },
                   ]}
                 >
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    className="style-input"
-                    onChange={(e) => setValue("Paid", e.target.value)}
+                  <InputNumber
+                    defaultValue={"0"}
+                    className="ant-input style-input w-100"
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    //@ts-ignore
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                    onChange={(value) => setValue("Paid", value)}
                   />
                 </Form.Item>
               </div>
