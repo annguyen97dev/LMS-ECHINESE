@@ -14,6 +14,7 @@ import {
 import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
+import { userInformationApi } from "~/apiBase";
 
 const StaffSalaryForm = (props) => {
   const { Option } = Select;
@@ -22,6 +23,7 @@ const StaffSalaryForm = (props) => {
   const [form] = Form.useForm();
 
   const { showNoti } = useWrap();
+  const [style, setStyle] = useState(false);
 
   const {
     register,
@@ -35,12 +37,21 @@ const StaffSalaryForm = (props) => {
     if (typeof data.Salary == "string") {
       data.Salary = Number(data.Salary.replace(/\$\s?|(,*)/g, ""));
     }
+	console.log("Data submit", data);
 
-    let res = props._onSubmit(data);
-    res.then(function (rs: any) {
-      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
-    });
+    // let res = props._onSubmit(data);
+    // res.then(function (rs: any) {
+    //   rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
+    // });
   });
+
+  const onchange = (value, option) => {
+	if(option.role == 2) {
+		setStyle(!style);
+		setValue("Style", 1);
+	}
+	setValue("UserInformationID", value);
+  }
 
   useEffect(() => {
     if (isModalVisible) {
@@ -100,14 +111,11 @@ const StaffSalaryForm = (props) => {
 											className="style-input" 
 											placeholder="Chọn nhân viên"
 											allowClear={true}
-											onChange={(value) => setValue("UserInformationID", value)}>
+											onChange={(value, option) => onchange(value, option)}>
 											{props.dataStaff && props.dataStaff.map(row => (
-												<Option key={row.UserInformationID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
+												<Option key={row.UserInformationID} role={row.RoleID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
 											))
 											}
-											<Option value="disabled" disabled>
-												Disabled
-											</Option>
 										</Select>
 									</Form.Item>
 								) : (
@@ -120,6 +128,25 @@ const StaffSalaryForm = (props) => {
 						{/*  */}
 						<div className="row">
 							<div className="col-12">
+								{style ? (
+								<Form.Item 
+									label="Loại"
+									name="Salary Type"
+									rules={[
+										{ required: true, message: "Bạn không được để trống" },
+									]}
+									// initialValue="Tính lương theo tháng"
+									>
+									<Select 
+										className="style-input"
+										placeholder="Tính lương theo tháng" 
+										allowClear={true}
+										onChange={(value) => setValue("Style", value)}
+										disabled
+										>
+									</Select>
+								</Form.Item>
+								) : (
 								<Form.Item 
 									label="Loại"
 									name="Salary Type"
@@ -135,11 +162,10 @@ const StaffSalaryForm = (props) => {
 										onChange={(value) => setValue("Style", value)}>
 										<Option value="1">Tính lương theo tháng</Option>
 										<Option value="2">Tính lương theo giờ</Option>
-										<Option value="disabled" disabled>
-											Disabled
-										</Option>
 									</Select>
 								</Form.Item>
+								)}
+
 							</div>
 						</div>
 						{/*  */}
