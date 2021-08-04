@@ -7,7 +7,9 @@ import { branchApi, courseApi } from "~/apiBase";
 import { courseStudentApi } from "~/apiBase/customer/student/course-student";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
+import ExpandTable from "~/components/ExpandTable";
 import ChangeCourse from "~/components/Global/Customer/Student/ChangeCourse";
+import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
 import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
 import ReserveCourse from "~/components/Global/Customer/Student/ReserveCourse";
 import LayoutBase from "~/components/LayoutBase";
@@ -116,6 +118,7 @@ const CourseStudent = () => {
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemDetail, setItemDetail] = useState();
 
   const listParamsDefault = {
     pageSize: 10,
@@ -301,8 +304,19 @@ const CourseStudent = () => {
     getDataCourseStudent(currentPage);
   }, [params]);
 
+  const expandedRowRender = (data, index) => {
+    return (
+      <Fragment>
+        <CourseOfStudentExpand
+          infoID={data.CourseOfStudentPriceID}
+          // infoIndex={index}
+        />
+      </Fragment>
+    )
+  };
+
   return (
-    <PowerTable
+    <ExpandTable
       currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
@@ -325,6 +339,8 @@ const CourseStudent = () => {
           />
         </div>
       }
+      handleExpand={(data) => setItemDetail(data)}
+      expandable={{ expandedRowRender }}
     />
   );
 };
