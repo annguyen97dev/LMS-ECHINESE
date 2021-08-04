@@ -9,7 +9,8 @@ import { useRouter } from "next/router";
 import { CheckCircleOutlined, WarningOutlined } from "@ant-design/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { userInformationApi } from "~/apiBase";
+import { userApi } from "~/apiBase";
+import { signIn, useSession } from "next-auth/client";
 
 export type IProps = {
   getTitlePage: Function;
@@ -36,6 +37,7 @@ const WrapContext = createContext<IProps>({
 // function reducer() {}
 
 export const WrapProvider = ({ children }) => {
+  const [session, loading] = useSession();
   const [titlePage, setTitlePage] = useState("");
   const router = useRouter();
   const getRouter = router.pathname;
@@ -88,12 +90,26 @@ export const WrapProvider = ({ children }) => {
     data && setUserInfo(data);
   };
 
-  useEffect(() => {
-    if (localStorage.getItem("dataUserEchinese") !== null) {
-      const user = JSON.parse(localStorage.getItem("dataUserEchinese"));
-      setUserInfo(user);
+  console.log("User info wrap: ", userInfo);
+
+  // --- Get New Data Use ---
+  const getNewDataUser = async () => {
+    try {
+      let res = await userApi.getNew();
+      res.status == 200 && setUserInfo(res.data.data);
+    } catch (error) {
+      console.log("Lỗi lấy thông tin user: ", error);
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    console.log("Session: ", session);
+    if (typeof session !== "undefined") {
+      if (session !== null) {
+        getNewDataUser();
+      }
+    }
+  }, [session]);
 
   return (
     <>

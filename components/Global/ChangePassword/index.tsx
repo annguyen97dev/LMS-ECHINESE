@@ -31,7 +31,9 @@ import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
 import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 import { userApi, userInformationApi } from "~/apiBase";
-import TitlePage from "../Elements/TitlePage";
+import TitlePage from "~/components/Elements/TitlePage";
+import InputPassField from "~/components/FormControl/InputPassField";
+
 let returnSchema = {};
 let schema = null;
 const optionGender = [
@@ -49,22 +51,7 @@ const optionGender = [
   },
 ];
 
-const SelectRemark = () => {
-  const { Option } = Select;
-
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
-  return (
-    <Select defaultValue="trungbinh" onChange={handleChange}>
-      <Option value="gioi">Giỏi</Option>
-      <Option value="kha">Khá</Option>
-      <Option value="trungbinh">Trung bình</Option>
-    </Select>
-  );
-};
-
-const ProfileBase = (props) => {
+const ChangePassword = (props) => {
   const {
     register,
     handleSubmit,
@@ -84,26 +71,29 @@ const ProfileBase = (props) => {
   console.log("dataUSer: ", dataUser);
 
   const defaultValuesInit = {
-    FullNameUnicode: null,
-    DOB: null,
-    Email: "",
-    Gender: null,
-    Address: null,
-    Mobile: null,
-    Avatar: null,
+    KeyForgotPassword: "",
+    Password: "",
+    RePassword: "",
   };
 
   (function returnSchemaFunc() {
     returnSchema = { ...defaultValuesInit };
     Object.keys(returnSchema).forEach(function (key) {
       switch (key) {
-        case "Email":
-          returnSchema[key] = yup.string().email("Email nhập sai cú pháp");
+        case "KeyForgotPassword":
+          returnSchema[key] = yup.string().required("Bạn không được bỏ trống");
           break;
-        case "Mobile":
-          returnSchema[key] = yup.number().typeError("SDT phải là số");
+        case "Password":
+          returnSchema[key] = yup.string().required("Bạn không được bỏ trống");
           break;
-
+        case "RePassword":
+          returnSchema[key] = yup
+            .string()
+            .oneOf(
+              [yup.ref("Password"), null],
+              "Password mới xác nhận lại chưa đúng"
+            )
+            .required("Bạn không được bỏ trống");
           break;
         default:
           // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
@@ -127,12 +117,10 @@ const ProfileBase = (props) => {
     });
     let res = null;
     try {
-      res = await userApi.update(data);
+      res = await userApi.changePassword(data);
       res?.status == 200 &&
-        (showNoti("success", "Cập nhật thành công"),
-        form.reset(data),
-        setDataForm(res.data.data),
-        getDataUser(res.data.data));
+        (showNoti("success", "Đổi mật khẩu thành công"),
+        form.reset(defaultValuesInit));
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -148,12 +136,10 @@ const ProfileBase = (props) => {
       dataUser.Gender = parseInt(dataUser.Gender);
 
       if (userInformation === null) {
-        form.reset(dataUser);
         setDataForm(dataUser);
         setImageUrl(dataUser.Avatar);
       } else {
         setDataForm(userInformation);
-        form.reset(userInformation);
         setImageUrl(userInformation.Avatar);
       }
       // dataForm == null && setDataForm(dataUser);
@@ -162,7 +148,7 @@ const ProfileBase = (props) => {
 
   return (
     <>
-      <TitlePage title="Profile" />
+      <TitlePage title="Đổi mật khẩu" />
       <div className="row">
         <div className="col-md-3 col-12">
           <Card className="info-profile-left">
@@ -217,54 +203,28 @@ const ProfileBase = (props) => {
           <Card className="space-top-card">
             <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
               <div className="row d-flex justify-content-center align-items-center">
-                <h5>Tài khoản cá nhân</h5>
+                <h5>Form thay đổi mật khẩu</h5>
 
                 <Divider></Divider>
               </div>
-              <div className="row mb-3">
-                <div className="col-12">
-                  <AvatarBase
-                    imageUrl={imageUrl}
-                    getValue={(value) => form.setValue("Avatar", value)}
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-4 col-12">
-                  <InputTextField
-                    form={form}
-                    name="FullNameUnicode"
-                    label="Họ tên"
-                  />
-                </div>
-                <div className="col-md-4 col-12">
-                  <SelectField
-                    form={form}
-                    name="Gender"
-                    label="Giới tính"
-                    optionList={optionGender}
-                  />
-                </div>
-                <div className="col-md-4 col-12">
-                  <DateField form={form} name="DOB" label="Ngày sinh" />
-                </div>
-              </div>
 
               <div className="row">
-                <div className="col-md-6 col-12">
-                  <InputTextField form={form} name="Email" label="Email" />
-                </div>
-                <div className="col-md-6 col-12">
-                  <InputTextField
+                <div className="col-md-5 col-12">
+                  <InputPassField
                     form={form}
-                    name="Mobile"
-                    label="Số điện thoại"
+                    name="KeyForgotPassword"
+                    label="Mật khẩu cũ"
                   />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12">
-                  <InputTextField form={form} name="Address" label="Địa chỉ" />
+                  <InputPassField
+                    form={form}
+                    name="Password"
+                    label="Mật khẩu mới"
+                  />
+                  <InputPassField
+                    form={form}
+                    name="RePassword"
+                    label="Xác nhận mật khẩu mới"
+                  />
                 </div>
               </div>
 
@@ -288,4 +248,4 @@ const ProfileBase = (props) => {
   );
 };
 
-export default ProfileBase;
+export default ChangePassword;

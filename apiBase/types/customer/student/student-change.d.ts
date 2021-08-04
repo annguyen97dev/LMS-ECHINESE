@@ -1,4 +1,4 @@
-type IUser = IBaseApi<{
+type IStudentChange = IBaseApi<{
   UserInformationID: number;
   UserAccountID: number;
   Username: string;
@@ -32,6 +32,4 @@ type IUser = IBaseApi<{
   SourceInformationName: string;
   ParentsIDOf: number;
   ParentsNameOf: string;
-  role: string;
-  RoleName: string;
 }>;
