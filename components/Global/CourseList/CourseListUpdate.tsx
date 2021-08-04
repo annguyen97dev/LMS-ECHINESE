@@ -1,12 +1,20 @@
-import React, {useState} from 'react';
-import {Modal, Button, Form, Input, Select} from 'antd';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {Form, Modal, Spin} from 'antd';
+import PropTypes from 'prop-types';
+import React, {useEffect, useState} from 'react';
 import {UserCheck} from 'react-feather';
+import {useForm} from 'react-hook-form';
+import * as yup from 'yup';
+import SelectField from '~/components/FormControl/SelectField';
 
-const CourseListUpdate = () => {
-	const {Option} = Select;
-	function handleChange(value) {
-		console.log(`selected ${value}`);
-	}
+const CourseListUpdate = (props) => {
+	const {
+		handleFetchDataForUpdateForm,
+		handleOnUpdateCourse,
+		courseObj,
+		isLoading,
+		optionList,
+	} = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -22,6 +30,43 @@ const CourseListUpdate = () => {
 		setIsModalVisible(false);
 	};
 
+	const schema = yup.object().shape({
+		AcademicUID: yup.number(),
+		TeacherLeaderUID: yup.number(),
+	});
+	const defaultValuesInit = {
+		AcademicUID: 0,
+		TeacherLeaderUID: 0,
+	};
+	const form = useForm({
+		defaultValues: defaultValuesInit,
+		resolver: yupResolver(schema),
+	});
+
+	useEffect(() => {
+		if (courseObj) {
+			form.reset({
+				...courseObj,
+			});
+		}
+	}, [courseObj]);
+
+	const checkHandleFetchDataForUpdateForm = ({BranchID}) => {
+		if (!handleFetchDataForUpdateForm) return;
+		handleFetchDataForUpdateForm(BranchID);
+	};
+
+	const checkHandleOnUpdateCourse = (data) => {
+		if (!handleOnUpdateCourse) return;
+		handleOnUpdateCourse(data).then((res) => {
+			res && res.status === 200 && handleCancel();
+		});
+	};
+
+	useEffect(() => {
+		isModalVisible && checkHandleFetchDataForUpdateForm(courseObj);
+	}, [isModalVisible]);
+
 	return (
 		<>
 			<button className="btn btn-icon" onClick={showModal}>
@@ -36,38 +81,32 @@ const CourseListUpdate = () => {
 				footer={null}
 			>
 				<div className="wrap-form">
-					<Form layout="vertical">
-						<Form.Item label="Academic Officer:">
-							<Select
-								defaultValue="lucy"
-								className="style-input"
-								onChange={handleChange}
-							>
-								<Option value="jack">Jack</Option>
-								<Option value="lucy">Lucy</Option>
-								<Option value="disabled" disabled>
-									Disabled
-								</Option>
-								<Option value="Yiminghe">yiminghe</Option>
-							</Select>
-						</Form.Item>
-						<Form.Item label="Teacher Leader:">
-							<Select
-								defaultValue="lucy"
-								className="style-input"
-								onChange={handleChange}
-							>
-								<Option value="jack">Jack</Option>
-								<Option value="lucy">Lucy</Option>
-								<Option value="disabled" disabled>
-									Disabled
-								</Option>
-								<Option value="Yiminghe">yiminghe</Option>
-							</Select>
-						</Form.Item>
-						<Form.Item className="mb-1">
-							<button className="btn btn-primary w-100">Submit</button>
-						</Form.Item>
+					<Form
+						layout="vertical"
+						onFinish={form.handleSubmit(checkHandleOnUpdateCourse)}
+					>
+						<SelectField
+							form={form}
+							name="AcademicUID"
+							label="Academic Officer:"
+							optionList={optionList.academicList}
+						/>
+						<SelectField
+							form={form}
+							name="TeacherLeaderUID"
+							label="Teacher Leader:"
+							optionList={optionList.teacherLeadList}
+						/>
+						<button
+							type="submit"
+							className="btn btn-primary w-100"
+							disabled={isLoading.type == 'UPDATE_DATA' && isLoading.status}
+						>
+							Update
+							{isLoading.type == 'UPDATE_DATA' && isLoading.status && (
+								<Spin className="loading-base" />
+							)}
+						</button>
 					</Form>
 				</div>
 			</Modal>
@@ -75,4 +114,33 @@ const CourseListUpdate = () => {
 	);
 };
 
+const propTypesOption = PropTypes.arrayOf(
+	PropTypes.shape({
+		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	})
+);
+CourseListUpdate.propTypes = {
+	handleOnUpdateCourse: PropTypes.func,
+	handleFetchDataForUpdateForm: PropTypes.func,
+	courseObj: PropTypes.shape({
+		ID: PropTypes.number.isRequired,
+		BranchID: PropTypes.number.isRequired,
+	}),
+	optionList: PropTypes.shape({
+		teacherLeadList: propTypesOption,
+		academicList: propTypesOption,
+	}),
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
+};
+CourseListUpdate.defaultProps = {
+	handleOnUpdateCourse: null,
+	handleFetchDataForUpdateForm: null,
+	courseObj: null,
+	optionList: {},
+	isLoading: {type: '', status: false},
+};
 export default CourseListUpdate;

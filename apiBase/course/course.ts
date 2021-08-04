@@ -12,4 +12,8 @@ export const courseApi = {
 	add(data) {
 		return instance.post(url, data);
 	},
+	// update mới data
+	update(data) {
+		return instance.put(url, data);
+	},
 };

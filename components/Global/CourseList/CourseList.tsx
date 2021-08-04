@@ -1,13 +1,12 @@
 import {Card} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
-import {branchApi, courseApi, programApi} from '~/apiBase';
+import {branchApi, courseApi, programApi, staffApi} from '~/apiBase';
 import TitlePage from '~/components/Elements/TitlePage';
 import CourseListFilterForm from '~/components/Global/CourseList/CourseListFilterForm';
-import CourseListFilter from '~/components/Global/CourseList/CourseListFilterForm';
 import PowerList from '~/components/Global/CourseList/PowerList';
-import LayoutBase from '~/components/LayoutBase';
 import {useWrap} from '~/context/wrap';
 import {fmSelectArr} from '~/helpers';
+import CourseListUpdate from './CourseListUpdate';
 
 const statusList = [
 	{
@@ -35,6 +34,10 @@ const CourseList = () => {
 		statusList,
 		branchList: [],
 		programList: [],
+	});
+	const [optionListForUpdate, setOptionListForUpdate] = useState({
+		academicList: [],
+		teacherLeadList: [],
 	});
 	// FILTER
 	const listFieldInit = {
@@ -145,6 +148,75 @@ const CourseList = () => {
 	useEffect(() => {
 		fetchScheduleList();
 	}, [filters]);
+
+	// FETCH DATA FOR UPDATE FORM
+	const fetchDataForUpdateForm = async (BranchID) => {
+		try {
+			const res = await Promise.all([
+				staffApi.getAll({RoleID: 7, BranchID: BranchID}),
+				staffApi.getAll({RoleID: 2, BranchID: BranchID}),
+			])
+				.then(([academicRes, teacherLeadRes]) => {
+					const newOptionList = {
+						academicList: [{title: '---Trống---', value: 0}],
+						teacherLeadList: [{title: '---Trống---', value: 0}],
+					};
+					academicRes.status === 200 &&
+						(newOptionList.academicList = [
+							...newOptionList.academicList,
+							...fmSelectArr(
+								academicRes.data.data,
+								'FullNameUnicode',
+								'UserInformationID'
+							),
+						]);
+					teacherLeadRes.status === 200 &&
+						(newOptionList.teacherLeadList = [
+							...newOptionList.teacherLeadList,
+							...fmSelectArr(
+								teacherLeadRes.data.data,
+								'FullNameUnicode',
+								'UserInformationID'
+							),
+						]);
+					setOptionListForUpdate({
+						...optionListForUpdate,
+						...newOptionList,
+					});
+				})
+				.catch((err) =>
+					console.log('fetchDataForFilterForm - PromiseAll:', err)
+				);
+		} catch (error) {
+			showNoti('danger', error.message);
+		}
+	};
+	// UPATE COURSE
+	const onUpdateCourse = async (obj) => {
+		setIsLoading({
+			type: 'UPDATE_DATA',
+			status: true,
+		});
+		let res;
+		try {
+			const {BranchID, ...newObj} = obj;
+			res = await courseApi.update(newObj);
+			if (res.status === 200) {
+				fetchScheduleList();
+				showNoti('Success', 'Cập nhật dữ liệu thành công');
+			} else if (res.status === 204) {
+				showNoti('danger', 'Không tìm thấy');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'UPDATE_DATA',
+				status: false,
+			});
+		}
+		return res;
+	};
 	return (
 		<div className="course-list-page">
 			<div className="row">
@@ -169,7 +241,14 @@ const CourseList = () => {
 									dataSource={courseList}
 									totalPage={totalPage}
 									getPagination={getPagination}
-								/>
+								>
+									<CourseListUpdate
+										isLoading={isLoading}
+										optionList={optionListForUpdate}
+										handleOnUpdateCourse={onUpdateCourse}
+										handleFetchDataForUpdateForm={fetchDataForUpdateForm}
+									/>
+								</PowerList>
 							</div>
 						</Card>
 					</div>
@@ -179,5 +258,4 @@ const CourseList = () => {
 	);
 };
 
-CourseList.layout = LayoutBase;
 export default CourseList;

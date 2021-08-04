@@ -1,12 +1,12 @@
 import {List, Avatar, Tag, Divider} from 'antd';
 import ModalUpdate from './CourseListUpdate';
 import Link from 'next/link';
-import {useState} from 'react';
+import {cloneElement, useState} from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import CourseListUpdate from './CourseListUpdate';
 const PowerList = (props) => {
-	const {dataSource, isLoading, totalPage, getPagination} = props;
+	const {dataSource, isLoading, totalPage, getPagination, children} = props;
 	const checkGetPagination = (page) => {
 		if (!getPagination) return;
 		getPagination(page);
@@ -48,15 +48,22 @@ const PowerList = (props) => {
 				StatusName,
 				CourseName,
 				AcademicName,
+				AcademicUID,
 				TeacherLeaderName,
+				TeacherLeaderUID,
 				TeacherName,
 				Price,
 				TotalDays,
 				StartDay,
 				EndDay,
 				TotalStudents,
+				BranchID,
 			}) => (
-				<List.Item extra={<CourseListUpdate />}>
+				<List.Item
+					extra={cloneElement(children, {
+						courseObj: {ID, BranchID, AcademicUID, TeacherLeaderUID},
+					})}
+				>
 					<List.Item.Meta
 						avatar={checkStatus(Status, StatusName)}
 						title={
@@ -73,10 +80,12 @@ const PowerList = (props) => {
 							<div className="content-body">
 								<ul className="list-ver">
 									<li>
-										<span>Academic: </span> <span>{AcademicName}</span>
+										<span>Academic: </span>{' '}
+										<span>{AcademicName || 'Trống'}</span>
 									</li>
 									<li>
-										<span>Leader: </span> <span>{TeacherLeaderName}</span>
+										<span>Leader: </span>{' '}
+										<span>{TeacherLeaderName || 'Trống'}</span>
 									</li>
 									<li>
 										<span>Teachers: </span> <span>{TeacherName}</span>
@@ -122,7 +131,7 @@ PowerList.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
-
+	children: PropTypes.element,
 	//
 	getPagination: PropTypes.func,
 };
