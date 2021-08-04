@@ -18,7 +18,8 @@ const TeacherForm = (props) => {
 		updateObj,
 		isLoading,
 		indexUpdateObj,
-
+		//
+		isClearForm,
 		//
 		optionAreaList,
 		optionBranchList,
@@ -78,6 +79,10 @@ const TeacherForm = (props) => {
 		}
 	}, [updateObj]);
 
+	useEffect(() => {
+		isClearForm && form.reset({...defaultValuesInit});
+	}, [isClearForm]);
+
 	const checkHandleFetchBranch = (value) => {
 		if (!handleFetchBranch) return;
 		form.setValue('Branch', undefined);
@@ -99,7 +104,7 @@ const TeacherForm = (props) => {
 				handleCreateTeacher(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
-						form.reset({...defaultValuesInit});
+						// form.reset({...defaultValuesInit});
 					}
 				});
 				break;
@@ -206,6 +211,8 @@ TeacherForm.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
+	//
+	isClearForm: PropTypes.bool,
 	indexUpdateObj: PropTypes.number,
 	//
 	optionAreaList: optionPropTypes,
@@ -219,6 +226,7 @@ TeacherForm.defaultProps = {
 	handleUpdateTeacher: null,
 	updateObj: {},
 	isLoading: {type: '', status: false},
+	isClearForm: false,
 	indexUpdateObj: -1,
 	optionAreaList: [],
 	optionBranchList: [],
