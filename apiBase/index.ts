@@ -1,5 +1,3 @@
-import { studentChangeCourseApi } from "./customer/student/student-change-course";
-import { studentChangeApi } from "./customer/student/student-change";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { contractApi } from "./options/contract";
