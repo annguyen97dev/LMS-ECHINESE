@@ -21,6 +21,7 @@ import {
   staffApi,
 } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
+import StudentExchangeForm from "~/components/Global/Customer/Student/StudentExchangeForm";
 
 let pageIndex = 1;
 
@@ -337,23 +338,68 @@ const StudentExchange = () => {
     setDataFilter([...dataFilter]);
   };
 
-  // ------ HANDLE SUBMIT -------
-  const _handleSubmitForm = (dataSubmit: any, index: number) => {
-    console.log("DATA SUBMIT: ", data);
-    console.log("INDEX: ", index);
+  // ---------------- AFTER SUBMIT -----------------
+  const afterPost = (mes) => {
+    // showNoti("success", mes);
+    setTodoApi({
+      ...listTodoApi,
+      pageIndex: 1,
+    });
+    setCurrentPage(1);
+  };
+
+  console.log("LIST DATA FORM: ", listDataForm);
+
+  // ----------------- ON SUBMIT --------------------
+  const _onSubmit = async (dataSubmit: any, rowData: IStudentChange) => {
+    console.log("Data submit: ", dataSubmit);
+
+    setIsLoading({
+      type: "ADD_DATA",
+      status: true,
+    });
+
+    let res = null;
+
     if (dataSubmit.UserInformationID) {
-      let newDataSource = [...dataSource];
-      newDataSource.splice(index, 1, {
-        ...dataSubmit,
-        FullNameUnicode: dataSource.find(
-          (item) => item.UserInformationID == dataSubmit.UserInformationID
-        ).FullNameUnicode,
-        AreaName: listDataForm.Area.find(
-          (item) => item.value == dataSubmit.AreaID
-        ).title,
-      });
-      setDataSource(newDataSource);
+      try {
+        res = await studentChangeApi.update(dataSubmit);
+
+        if (res.status == 200) {
+          let newDataSource = [...dataSource];
+          newDataSource.splice(indexRow, 1, {
+            ...rowData,
+            CounselorsName: listDataForm.Counselors.find(
+              (item) => item.value == dataSubmit.CounselorsID
+            ).title,
+          });
+          setDataSource(newDataSource);
+          showNoti("success", res.data.message);
+        }
+      } catch (error) {
+        console.log("error: ", error);
+        showNoti("danger", error.message);
+      } finally {
+        setIsLoading({
+          type: "ADD_DATA",
+          status: false,
+        });
+      }
+    } else {
+      try {
+        res = await studentChangeApi.add(dataSubmit);
+        res?.status == 200 && afterPost(res.data.message);
+      } catch (error) {
+        showNoti("danger", error.message);
+      } finally {
+        setIsLoading({
+          type: "ADD_DATA",
+          status: false,
+        });
+      }
     }
+
+    return res;
   };
 
   // -------------- HANDLE FILTER ------------------
@@ -502,6 +548,10 @@ const StudentExchange = () => {
       // ...FilterColumn("email")
     },
     {
+      title: "Tư vấn viên",
+      dataIndex: "CounselorsName",
+    },
+    {
       title: "Nguồn",
       dataIndex: "SourceInformationName",
       //  ...FilterColumn("introducer")
@@ -525,19 +575,32 @@ const StudentExchange = () => {
 
     {
       title: "",
-      render: () => (
-        <Link
-          href={{
-            pathname: "/customer/student/student-list/student-detail/[slug]",
-            query: { slug: 2 },
-          }}
-        >
-          <Tooltip title="Xem chi tiết">
-            <button className="btn btn-icon">
-              <Eye />
-            </button>
-          </Tooltip>
-        </Link>
+      render: (text, data, index) => (
+        <>
+          <Link
+            href={{
+              pathname: "/customer/student/student-list/student-detail/[slug]",
+              query: { slug: 2 },
+            }}
+          >
+            <Tooltip title="Xem chi tiết">
+              <button className="btn btn-icon">
+                <Eye />
+              </button>
+            </Tooltip>
+          </Link>
+          <StudentExchangeForm
+            getIndex={() => setIndexRow(index)}
+            index={index}
+            rowData={data}
+            rowID={data.UserInformationID}
+            listData={listDataForm}
+            isLoading={isLoading}
+            _onSubmit={(data: any, rowData: IStudentChange) =>
+              _onSubmit(data, rowData)
+            }
+          />
+        </>
       ),
     },
   ];
