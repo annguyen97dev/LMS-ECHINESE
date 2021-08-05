@@ -3,11 +3,13 @@ import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
 import { Info } from "react-feather";
-import { branchApi } from "~/apiBase";
+import { branchApi, courseApi } from "~/apiBase";
 import { courseStudentApi } from "~/apiBase/customer/student/course-student";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
+import ExpandTable from "~/components/ExpandTable";
 import ChangeCourse from "~/components/Global/Customer/Student/ChangeCourse";
+import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
 import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
 import ReserveCourse from "~/components/Global/Customer/Student/ReserveCourse";
 import LayoutBase from "~/components/LayoutBase";
@@ -116,6 +118,7 @@ const CourseStudent = () => {
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemDetail, setItemDetail] = useState();
 
   const listParamsDefault = {
     pageSize: 10,
@@ -158,6 +161,14 @@ const CourseStudent = () => {
       value: null,
     },
     {
+      name: "CourseID",
+      title: "Khóa học",
+      col: "col-12",
+      type: "select",
+      optionList: null,
+      value: null,
+    },
+    {
       name: "date-range",
       title: "Ngày tạo",
       col: "col-12",
@@ -174,6 +185,7 @@ const CourseStudent = () => {
       fromDate: null,
       toDate: null,
       BranchID: null,
+      CourseID: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;
@@ -231,8 +243,27 @@ const CourseStudent = () => {
     }
   };
 
+  const getDataCourse = async () => {
+    try {
+      let res = await courseApi.getAll({ pageSize: 99999, pageIndex: 1 });
+      if (res.status == 200) {
+        const newData = res.data.data.map((item) => ({
+          title: item.CourseName,
+          value: item.ID,
+        }));
+        setDataFunc("CourseID", newData);
+      }
+
+      res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+    }
+  };
+
   useEffect(() => {
     getDataCenter();
+    getDataCourse();
   }, []);
 
   const getPagination = (pageNumber: number) => {
@@ -273,22 +304,25 @@ const CourseStudent = () => {
     getDataCourseStudent(currentPage);
   }, [params]);
 
+  const expandedRowRender = (data, index) => {
+    return (
+      <Fragment>
+        <CourseOfStudentExpand
+          infoID={data.CourseOfStudentPriceID}
+          // infoIndex={index}
+        />
+      </Fragment>
+    )
+  };
+
   return (
-    <PowerTable
+    <ExpandTable
       currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       addClass="basic-header"
       TitlePage="DANH SÁCH HỌC VIÊN TRONG KHÓA"
-      // TitleCard={
-      //   <ParentsForm
-      //     reloadData={(firstPage) => {
-      //       setCurrentPage(1);
-      //       getDataCourseStudent(firstPage);
-      //     }}
-      //   />
-      // }
       dataSource={courseStudent}
       columns={columns}
       Extra={
@@ -305,6 +339,8 @@ const CourseStudent = () => {
           />
         </div>
       }
+      handleExpand={(data) => setItemDetail(data)}
+      expandable={{ expandedRowRender }}
     />
   );
 };
