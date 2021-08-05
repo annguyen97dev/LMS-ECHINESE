@@ -7,9 +7,10 @@ import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student
 import PowerTable from "~/components/PowerTable";
 import { useWrap } from "~/context/wrap";
 
-const CourseOfStudentExpand = React.memo((props: any) => {
+const CourseOfStudentExpand = (props) => {
   const { infoID } = props;
-  const [detailInfo, setDetailInfo] = useState();
+
+  const [detail, setDetail] = useState([]);
   const { showNoti } = useWrap();
 
   const fetchDetailInfo = async () => {
@@ -17,8 +18,7 @@ const CourseOfStudentExpand = React.memo((props: any) => {
       let res = await courseStudentPriceApi.getDetail(infoID);
       console.log("res", res.data.data);
       //@ts-ignore
-      setDetailInfo(res.data.data);
-      console.log(detailInfo);
+      res.status == 200 && setDetail(res.data.data);
     } catch (err) {
       showNoti("danger", err.message);
     }
@@ -51,11 +51,13 @@ const CourseOfStudentExpand = React.memo((props: any) => {
     },
   ];
 
+  console.log(detail);
+
   return (
     <Fragment>
-      <PowerTable columns={columns} dataSource={detailInfo} />
+      <PowerTable columns={columns} dataSource={detail} />
     </Fragment>
   );
-});
+};
 
 export default CourseOfStudentExpand;
