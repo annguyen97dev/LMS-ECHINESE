@@ -1,4 +1,4 @@
-import {Collapse, Modal, Spin} from 'antd';
+import {Modal, Spin} from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
@@ -14,7 +14,6 @@ const SaveCreateCourse = (props) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
-	const {Panel} = Collapse;
 	const checkHandleFetchDataToSave = () => {
 		if (!handleFetchDataToSave) return;
 		handleFetchDataToSave();
@@ -27,33 +26,6 @@ const SaveCreateCourse = (props) => {
 			}
 		});
 	};
-	// const renderScheduleList = () => {
-	// 	return Object.keys(scheduleShow).map((date, idx1) => (
-	// 		<Panel
-	// 			header={`${scheduleShow[date][0]?.dayOffWeek} - ${moment(date).format(
-	// 				'DD/MM/YYYY'
-	// 			)}`}
-	// 			key={idx1 + 1}
-	// 			className={`create-course-general ${
-	// 				scheduleShow[date][0]?.isValid ? 'create-course-general-error' : ''
-	// 			}`}
-	// 		>
-	// 			<div className="create-course-general-box">
-	// 				{scheduleShow[date]
-	// 					?.sort((a, b) => a.StudyTimeID - b.StudyTimeID)
-	// 					.map((s, idx2) => (
-	// 						<div className="create-course-general-item" key={idx2}>
-	// 							<span>
-	// 								{s.studyTimeName} - {s.roomName}
-	// 							</span>
-	// 							<br />
-	// 							<span>Giáo viên: {s.teacherName}</span>
-	// 						</div>
-	// 					))}
-	// 			</div>
-	// 		</Panel>
-	// 	));
-	// };
 	const renderScheduleList = () => {
 		return Object.keys(scheduleShow).map((date, idx) => (
 			<div
@@ -186,18 +158,6 @@ const SaveCreateCourse = (props) => {
 								</div>
 							</div>
 						</div>
-						{/* <div className="col-md-12 col-12">
-							<div className="item">
-								<p style={{marginBottom: 0}}>
-									<span>Lịch học tổng quát:</span>
-								</p>
-								<div>
-									<Collapse defaultActiveKey={['1']} accordion>
-										{renderScheduleList()}
-									</Collapse>
-								</div>
-							</div>
-						</div> */}
 						<div className="col-12 mt-3">
 							<button
 								className="btn btn-primary w-100"
@@ -223,14 +183,6 @@ SaveCreateCourse.propTypes = {
 		status: PropTypes.bool.isRequired,
 	}),
 	scheduleShow: PropTypes.shape({}),
-	// scheduleShow: PropTypes.arrayOf(
-	// 	PropTypes.shape({
-	// 		date: PropTypes.string.isRequired,
-	// 		dayOffWeek: PropTypes.string.isRequired,
-	// 		roomName: PropTypes.string.isRequired,
-	// 		studyTimeName: PropTypes.string.isRequired,
-	// 	})
-	// ),
 	saveInfo: PropTypes.shape({}),
 	handleSaveCourse: PropTypes.func,
 	handleFetchDataToSave: PropTypes.func,

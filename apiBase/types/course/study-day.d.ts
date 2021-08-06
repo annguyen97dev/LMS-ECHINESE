@@ -1,3 +1,4 @@
 type IStudyDay = IBaseApi<{
-	data: object[];
+	Day: string;
+	Limit: number;
 }>;

@@ -83,8 +83,6 @@ const CreateCourse = (props) => {
 	});
 	const [curriculumList, setCurriculumList] = useState([]);
 	const stoneStudyTimeList = useRef(studyTimeList);
-	const stonePrevStudyTimeList = useRef(null);
-	const prevStudyTime = useRef('');
 	//Lesson
 	const [scheduleList, setScheduleList] = useState({
 		available: [],

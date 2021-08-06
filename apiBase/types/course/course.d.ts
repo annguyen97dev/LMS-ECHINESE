@@ -1,4 +1,4 @@
-type ICourse = IBaseApi<{
+type ICourse = {
 	CourseName: string;
 	AcademicUID: number;
 	BranchID: number;
@@ -9,5 +9,12 @@ type ICourse = IBaseApi<{
 	TypeCourse: string;
 	CurriculumID: number;
 	StartDay: string;
-	Schedule: object[];
-}>;
+	Schedule: Array<{
+		CurriculumsDetailID: number;
+		SubjectID: number;
+		Date: string;
+		StudyTimeID: number;
+		RoomID: number;
+		TeacherID: number;
+	}>;
+};
