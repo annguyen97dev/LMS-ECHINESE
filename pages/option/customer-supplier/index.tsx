@@ -136,7 +136,7 @@ const CustomerSupplier = () => {
 		}
 	
 		return res;
-	  }
+	}
 	
 	const afterPost = (value) => {
 		showNoti("success", `${value} thành công`);

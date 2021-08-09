@@ -133,9 +133,9 @@ const StudyTimeForm = (props) => {
               <div className="col-12">
                 <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                  {/* {isLoading.type == "ADD_DATA" && isLoading.status && (
+                  {isLoading.type == "ADD_DATA" && isLoading.status && (
                     <Spin className="loading-base" />
-                  )} */}
+                  )}
                 </button>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Select, Avatar, Tabs, Affix } from "antd";
 import {
   UserOutlined,
@@ -14,9 +14,40 @@ import InfoPaymentCard from "./component/InfoPaymentCard";
 import InfoChangeCard from "./component/InfoChangeCard";
 import InfoOtherCard from "./component/InfoOtherCard";
 import InfoTestResultCard from "./component/InfoTestResultCard";
+import { studentApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
 
-const ProfileCustomer = () => {
+const ProfileCustomer = (props) => {
+  const id = props.id;
+  const { showNoti } = useWrap();
   const { TabPane } = Tabs;
+  const [isLoading, setIsLoading] = useState({
+    type: null,
+    status: false,
+  })
+  const [info, setInfo] = useState<IStudent[]>([]);
+
+  const getInfoCustomer = async () => {
+    setIsLoading({
+      type: "GET_INFO",
+      status: true
+    })
+    try {
+      let res = await studentApi.getWithID(id);
+      res.status == 200 && setInfo(res.data.data);
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_INFO",
+        status: false
+      })
+    }
+  }
+
+  useEffect(() => {
+    getInfoCustomer();
+  }, []);
 
   return (
     <div className="page-no-scroll">
@@ -25,14 +56,14 @@ const ProfileCustomer = () => {
           <Card className="info-profile-left">
             <div className="row">
               <div className="col-12 d-flex align-items-center justify-content-center">
-                <Avatar size={120} src={<img src="/images/user2.jpg" />} />
+                <Avatar size={120} src={<img src={info?.Avatar} />} />
               </div>
             </div>
             <div className="row pt-5">
               <div className="col-2">
                 <UserOutlined />
               </div>
-              <div className="col-10  d-flex ">Nguyễn Lâm Thảo Tâm</div>
+              <div className="col-10  d-flex ">{info?.FullNameUnicode}</div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
@@ -44,19 +75,19 @@ const ProfileCustomer = () => {
               <div className="col-2">
                 <WhatsAppOutlined />
               </div>
-              <div className="col-10  d-flex ">0978111222</div>
+              <div className="col-10  d-flex ">{info?.Mobile}</div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <MailOutlined />
               </div>
-              <div className="col-10  d-flex ">kimjisoo@gmail.com</div>
+              <div className="col-10  d-flex ">{info?.Email}</div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <AimOutlined />
               </div>
-              <div className="col-10  d-flex ">Seoul, Korea</div>
+              <div className="col-10  d-flex ">{info?.Address}</div>
             </div>
           </Card>
         </div>
@@ -64,7 +95,7 @@ const ProfileCustomer = () => {
           <Card className="space-top-card">
             <Tabs type="card">
               <TabPane tab="Test Info" key="2" className="profile-tabs">
-                <InfoTestCard />
+                <InfoTestCard id={id}/>
               </TabPane>
               <TabPane tab="Course Joined" key="3" className="profile-tabs">
                 <InfoCourseCard />

@@ -1,5 +1,6 @@
 import { Card } from "antd";
 import React from "react";
+import ReactHtmlParser from 'react-html-parser';
 
 export default function ExpandBox() {
   return (
@@ -28,22 +29,35 @@ export default function ExpandBox() {
   );
 }
 
-export function ExpandBoxService() {
+export function ExpandBoxService(props) {
+  // console.log(props.dataRow);
   return (
     <div className="feedback-detail-text">
       <table className="tb-expand">
-        <tr>
-          <th>Ghi chú</th>
-          <th>Ngày đặt</th>
-          <th>Phương thức thanh toán</th>
-          <th>Ngày Tạo</th>
-        </tr>
-        <tr>
-          <td>Đăng ký thi IELTS tại BC hoặc IDP</td>
-          <td>10/08/2019</td>
-          <td>Thanh toán thẻ</td>
-          <td>24/07/2019</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Lý do hoàn tiền</th>
+            <th>Khóa học</th>
+            <th>Phương thức thanh toán</th>
+            <th>Ngày đặt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{props.dataRow?.Reason == "" ? "Không có lý do" : props.dataRow?.Reason}</td>
+            <td>
+              <div className="list-coursename">
+              {
+                props.dataRow?.RefundsDetail && props.dataRow?.RefundsDetail.map((item, index) => (
+                  <span className="item-coursename" key={index}>{item.CourseName}</span>
+                ))
+              }
+              </div>
+            </td>
+            <td>{props.dataRow?.PaymentMethodsName}</td>
+            <td>{props.dataRow?.CreatedOn}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   );
@@ -52,34 +66,21 @@ export function ExpandBoxService() {
 export function ExpandBoxWarning(props) {
   return (
     <div className="feedback-detail-text">
-      <p>{props.dataRow.WarningNote != null ? props.dataRow.WarningNote : "Không có nội dung"}</p> 
-      {/* <table className="tb-expand">
+      {/* <p>{props.dataRow.WarningNote != null ? props.dataRow.WarningNote : "Không có nội dung"}</p>  */}
+      <table className="tb-expand">
         <tr>
-          <th>Roll up</th>
-          <th>Capacity</th>
-          <th>Note</th>
-          <th>Comment</th>
-          <th>Solution</th>
+          <th>Ghi chú</th>
+          <th>Cam kết</th>
+          <th>Cảnh báo</th>
         </tr>
         <tr>
-          <td>Có</td>
-          <td>Trung bình</td>
+          <td>{props.dataRow.Note != null ? props.dataRow.Note : "Không có nội dung"}</td>
+          <td>{props.dataRow.Commitment != null ? props.dataRow.Commitment : "Không có nội dung"}</td>
           <td>
-            {" "}
-            Làm đúng mới được khoảng 50% (12/25 câu đúng), dạng multiple choice
-            part 3 làm rất chậm, thiếu từ vựng nên hầu như không hiểu
-          </td>
-          <td>[No comment]</td>
-          <td>
-            [Solution] Đối với kỹ năng nói của cô Trà, giáo viên đã nhắc nhở bạn
-            làm bài tập. Nhờ cô Trà chia nhỏ bài tập thành 2 hoặc 3 ngày một lần
-            và TVV sẽ liên lạc với Giang để yêu cầu bạn làm để gửi lại cô Trà
-            đúng hạn. Đối với kỹ năng đọc, giáo viên đã giao thêm bài tập, trong
-            tuần sẽ yêu cầu bạn lên phòng tự học hoặc đến sơm 1 tiếng trước giờ
-            học để phụ đạo.{" "}
+            {props.dataRow.WarningNote != null ? props.dataRow.WarningNote : "Không có nội dung"}
           </td>
         </tr>
-      </table> */}
+      </table>
     </div>
   );
 }

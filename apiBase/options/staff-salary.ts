@@ -7,8 +7,13 @@ class StaffSalary {
       params: todoApi,
     });
 
+  // Lấy dât theo id
+
+  getByID = (id: number) =>
+    instance.get<IApiResultData<IStaffSalary[]>>(`/api/Salary/${id}`);
+
   // Thêm mới data
-  add = (data: any) => instance.post("/api/Salary", data);
+  add = (data: IStaffSalary) => instance.post("/api/Salary", data);
 
   // Cập nhật data
   update = (data: any) => instance.put("/api/Salary", data, {});
