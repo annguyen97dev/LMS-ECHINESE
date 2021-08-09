@@ -31,6 +31,9 @@ export { rulesApi } from "./options/rules";
 
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
+export { studentAdviseApi } from "./customer/student/student-advise";
+export { testCustomerApi } from "./customer/service/test-customer";
+export { userApi } from "./user/user";
 export { examComingSoonApi } from "./customer/student/exam-coming-soon";
 export { warningApi } from "./customer/student/warning";
 export { serviceCustomerExamApi } from "./customer/service/service-customer-exam";
@@ -41,3 +44,4 @@ export { courseApi } from "./course/course";
 export { voucherApi } from "./customer/finance/finance-cashier-payment";
 export { invoiceApi } from "./customer/finance/finance-cashier-invoice";
 export { examAppointmentResultApi } from "./customer/student/exam-appointment-result";
+export { courseStudentApi } from "./customer/student/course-student";

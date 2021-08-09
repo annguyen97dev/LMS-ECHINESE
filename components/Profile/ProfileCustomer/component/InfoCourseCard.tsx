@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Collapse, Divider, Tag } from "antd";
 import PowerTable from "~/components/PowerTable";
 import { dataService } from "../../../../lib/customer/dataCustomer";
 import ExpandTable from "~/components/ExpandTable";
 import { Info } from "react-feather";
+import { courseStudentApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
+import moment from "moment";
 const expandedRowRender = () => {
   return (
     <>
@@ -14,8 +17,43 @@ const expandedRowRender = () => {
     </>
   );
 };
-const InfoCourseCard = () => {
+
+const InfoCourseCard = (props) => {
+  const id = props.id;
   const { Panel } = Collapse;
+  const [courseStudent, setCourseStudent] = useState<ICourseOfStudent[]>([]);
+  const { showNoti } = useWrap();
+  const [isLoading, setIsLoading] = useState({
+    type: null,
+    status: false,
+  })
+
+  const getCourseStudent = async () => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true
+    })
+    try {
+      let res = await courseStudentApi.getDetail(id);
+      if(res.status == 200) {
+        let arr = [];    
+        arr.push(res.data.data);
+        setCourseStudent(arr);
+      }
+      if(res.status == 204) {
+        showNoti("danger", "Không tim thấy dữ liệu");
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false
+      })
+    }
+  }
+
+
   const columns = [
     { title: "Ngày", dataIndex: "testDate" },
     { title: "Môn học", dataIndex: "pfSubject" },
@@ -119,6 +157,10 @@ const InfoCourseCard = () => {
       title: "Ghi chú",
     },
   ];
+
+  useEffect(() => {
+    getCourseStudent();
+  }, [])
 
   return (
     <>

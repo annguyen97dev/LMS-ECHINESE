@@ -254,6 +254,7 @@ export default function FinanceInvoice() {
     return res;
   }
   const columns = [
+<<<<<<< HEAD
     { 
       title: "Trung tâm", 
       dataIndex: "BranchName", 
@@ -280,6 +281,25 @@ export default function FinanceInvoice() {
       title: "Lý do",
       dataIndex: "Reason",
       // ...FilterColumn("fnReasonPayment"),
+=======
+    { title: "Trung tâm", dataIndex: "center" },
+    {
+      title: "Học viên",
+      dataIndex: "nameStudent",
+
+      render: (a) => <p className="font-weight-blue">{a}</p>,
+    },
+    { title: "Số điện thoại", dataIndex: "tel" },
+    {
+      title: "Số tiền",
+      dataIndex: "cost",
+
+      render: (a) => <p className="font-weight-black">{a}</p>,
+    },
+    {
+      title: "Lý do",
+      dataIndex: "fnReason",
+>>>>>>> master
 
       render: (a) => <p className="font-weight-black">{a}</p>,
     },

@@ -99,7 +99,6 @@ const ProgramForm = React.memo((props: any) => {
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
-        className="modal-medium"
       >
         <div className="container-fluid">
           <Form form={form} layout="vertical" onFinish={onSubmit}>

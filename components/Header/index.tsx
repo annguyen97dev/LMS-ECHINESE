@@ -16,6 +16,7 @@ import {
   SearchOutlined,
   LoginOutlined,
   FormOutlined,
+  RedoOutlined,
 } from "@ant-design/icons";
 import { User } from "react-feather";
 import TitlePage from "../Elements/TitlePage";
@@ -38,13 +39,15 @@ export default function Header({
   funcMenuMobile: Function;
   openMenuMobile: boolean;
 }) {
+  const [isSearch, setIsSearch] = useState(false);
+  const { titlePage, userInformation } = useWrap();
   const [session, loading] = useSession();
-
-  let dataUser = null;
-  if (session !== undefined) {
-    dataUser = session?.user;
-    console.log("data user: ", dataUser);
-  }
+  const [dataUser, setDataUser] = useState<IUser>();
+  // let dataUser = null;
+  // if (session !== undefined) {
+  //   dataUser = session?.user;
+  //   console.log("data user: ", dataUser);
+  // }
 
   const content_search = (
     <div className="input-search">
@@ -73,16 +76,23 @@ export default function Header({
           </a>
         </Link>
       </li>
-      {/* <li>
-        <a href="#">
-          <span className="icon inbox">
-            <MailOutlined />
-          </span>
-          <span className="function-name">Inbox</span>
-        </a>
-      </li> */}
       <li>
-        <a href="#" onClick={() => signOut()}>
+        <Link href="/change-password">
+          <a href="#">
+            <span className="icon inbox">
+              <RedoOutlined />
+            </span>
+            <span className="function-name">Đổi mật khẩu</span>
+          </a>
+        </Link>
+      </li>
+      <li>
+        <a
+          href="#"
+          onClick={() => (
+            signOut(), localStorage.removeItem("dataUserEchinese")
+          )}
+        >
           <span className="icon logout">
             <LogoutOutlined />
           </span>
@@ -113,12 +123,9 @@ export default function Header({
     </ul>
   );
 
-  const [isSearch, setIsSearch] = useState(false);
   const openSearch = () => {
     !isSearch ? setIsSearch(true) : setIsSearch(false);
   };
-
-  const { titlePage } = useWrap();
 
   let visibleUser: {
     visible: Boolean;
@@ -141,6 +148,32 @@ export default function Header({
   if (!isOpen) {
     countOpen++;
   }
+
+  function parseJwt(token) {
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
+  }
+
+  useEffect(() => {
+    if (session !== undefined) {
+      let token = session.accessToken;
+      if (userInformation) {
+        setDataUser(userInformation);
+      } else {
+        setDataUser(parseJwt(token));
+      }
+    }
+  }, [userInformation]);
 
   return (
     <header className={`app-header ${openMenuMobile ? "mobile" : ""}`}>
@@ -241,7 +274,7 @@ export default function Header({
                         <div className="user-img">
                           <img
                             src={
-                              dataUser?.Avatar !== null
+                              dataUser?.Avatar
                                 ? dataUser.Avatar
                                 : "/images/user.jpg"
                             }
@@ -249,7 +282,9 @@ export default function Header({
                           />
                         </div>
                         <div className="user-info">
-                          <p className="user-name">{dataUser?.UserName}</p>
+                          <p className="user-name">
+                            {dataUser?.FullNameUnicode}
+                          </p>
                           <p className="user-position">{dataUser?.RoleName}</p>
                         </div>
                       </div>

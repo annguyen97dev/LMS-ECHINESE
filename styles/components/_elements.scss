@@ -434,6 +434,7 @@ textarea.form-control {
 textarea.ant-input {
   font-size: 14px;
   border-radius: 0.375rem !important;
+  height: auto !important;
 }
 .style-input {
   .ant-select-selection-item-remove {
@@ -616,7 +617,7 @@ textarea.ant-input {
   z-index: 10;
 
   &.small {
-    width: 400px;
+    width: 450px;
     right: 7px;
     transform: inherit;
     left: inherit;
@@ -1572,41 +1573,42 @@ hr {
     }
   }
 }
-
+.notification__item {
+  border-radius: 0.375rem !important;
+}
 .noti-box {
-  position: fixed;
-  top: 71px;
-  right: 20px;
-  padding: 15px 20px;
-  box-shadow: -2px 2px 12px #00000014;
-  border-radius: 0.375rem;
-  background-color: white;
-  color: black;
-  z-index: 9999;
-  display: none;
+  // position: fixed;
+  // top: 71px;
+  // right: 20px;
+  // padding: 19px 20px;
+  // box-shadow: -2px 2px 12px #00000014;
+  // border-radius: 0.375rem;
+  // color: black;
+  // z-index: 9999;
+  // width: 100%;
 
   &__content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    // justify-content: center;
 
     span.icon {
       line-height: 0;
       margin-right: 10px;
 
       svg {
-        font-size: 17px;
+        font-size: 20px;
         font-weight: 500;
       }
     }
   }
 
   &.success {
-    display: block;
+    // display: block;
     background-color: #10ca93;
     color: white;
     font-weight: 500;
-    animation: showNoti 0.5s forwards;
+    // animation: showNoti 0.5s forwards;
   }
 
   &.danger {
@@ -1960,6 +1962,59 @@ hr {
     }
   }
 }
+
+.box-info-modal {
+  p {
+    margin-bottom: 5px;
+  }
+  .name {
+    font-weight: 500;
+    font-size: 17px;
+  }
+  .detail {
+    display: flex;
+    align-items: center;
+
+    .icon {
+      line-height: 0;
+      margin-right: 10px;
+      &.role {
+        svg {
+          color: #b18114;
+        }
+      }
+      &.mobile {
+        svg {
+          color: #4f33a7;
+        }
+      }
+      &.email {
+        svg {
+          color: #0a4296;
+        }
+      }
+    }
+    .text {
+      font-weight: 500;
+      color: #717171;
+    }
+  }
+}
+
+.fix-noti {
+  .notification__item--success {
+    background-color: #10ca93;
+    border-left: 8px solid #06bb85;
+  }
+  .notification__item--danger {
+    background-color: #e85563;
+    border-left: 8px solid #e74d5c;
+  }
+  .notification__item--warning {
+    background-color: #ffc107;
+    border-left: 8px solid #ebb30c;
+  }
+}
 .mini-table {
   .ant-table-container {
     box-shadow: unset;
@@ -1979,5 +2034,13 @@ hr {
 .list-coursename {
   .item-coursename {
     display: block;
+  }
+}
+
+.w-70 {
+  width: 70%;
+  @include max-media(600px) {
+    width: 100%;
+    max-width: 100%;
   }
 }

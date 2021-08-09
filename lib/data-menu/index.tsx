@@ -34,13 +34,13 @@ export const dataMenu = [
             Text: "Tạo khóa học",
             Icon: "",
           },
-          {
-            ItemType: "single",
-            Key: "/course/create-course-self",
-            Route: "/course/create-course-self",
-            Text: "Tạo khóa tự học",
-            Icon: "",
-          },
+          // {
+          //   ItemType: "single",
+          //   Key: "/course/create-course-self",
+          //   Route: "/course/create-course-self",
+          //   Text: "Tạo khóa tự học",
+          //   Icon: "",
+          // },
           {
             ItemType: "single",
             Key: "/course/course-list",
@@ -48,13 +48,13 @@ export const dataMenu = [
             Text: "Danh sách khóa học",
             Icon: "",
           },
-          {
-            ItemType: "single",
-            Key: "/course/course-list-self",
-            Route: "/course/course-list-self",
-            Text: "Danh sách khóa tự học",
-            Icon: "",
-          },
+          // {
+          //   ItemType: "single",
+          //   Key: "/course/course-list-self",
+          //   Route: "/course/course-list-self",
+          //   Text: "Danh sách khóa tự học",
+          //   Icon: "",
+          // },
         ],
       },
       {
@@ -686,6 +686,13 @@ export const dataMenu = [
             Key: "/option/services",
             Route: "/option/services",
             Text: "Dịch vụ",
+            Icon: "",
+          },
+          {
+            ItemType: "single",
+            Key: "/option/consultation-status",
+            Route: "/option/consultation-status",
+            Text: "Tình trạng tư vấn khách hàng",
             Icon: "",
           },
           {

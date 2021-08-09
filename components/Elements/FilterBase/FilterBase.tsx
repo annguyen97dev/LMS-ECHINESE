@@ -6,7 +6,11 @@ import { useWrap } from "~/context/wrap";
 
 const FilterBase = (props) => {
   const { dataFilter } = props;
+<<<<<<< HEAD
   // console.log("DATA filter: ", dataFilter);
+=======
+
+>>>>>>> master
   const { handleFilter, handleReset } = props;
   const { showNoti } = useWrap();
   const { RangePicker } = DatePicker;
@@ -16,7 +20,10 @@ const FilterBase = (props) => {
   const [form] = Form.useForm();
   const { Option } = Select;
   const dateFormat = "YYYY/MM/DD";
+<<<<<<< HEAD
   // console.log("List Filter: ", listFilter);
+=======
+>>>>>>> master
 
   // ------------ RESET FILTER -------------
   const resetFilter = () => {
@@ -70,6 +77,10 @@ const FilterBase = (props) => {
           showNoti("danger", "Chưa chọn đầy đủ ngày");
         }
         break;
+      case "date-single":
+        let formatValue = moment(value.toDate()).format("YYYY/MM/DD");
+        returnListFilter(formatValue, nameFilter);
+        break;
       default:
         returnListFilter(value, nameFilter);
         break;
@@ -107,6 +118,7 @@ const FilterBase = (props) => {
             </Form.Item>
           </div>
         );
+        break;
       case "text":
         return (
           <div key={index} className={item.col}>
@@ -122,6 +134,7 @@ const FilterBase = (props) => {
             </Form.Item>
           </div>
         );
+        break;
       case "date-range":
         return (
           <div key={index} className={item.col}>
@@ -137,7 +150,20 @@ const FilterBase = (props) => {
           </div>
         );
         break;
-
+      case "date-single":
+        return (
+          <div className={item.col}>
+            <Form.Item name={item.name} label={item.title}>
+              <DatePicker
+                format={dateFormat}
+                onChange={(value) =>
+                  getValueFilter(value, "date-single", item.name)
+                }
+              />
+            </Form.Item>
+          </div>
+        );
+        break;
       default:
         break;
     }

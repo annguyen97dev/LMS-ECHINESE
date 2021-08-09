@@ -27,6 +27,7 @@ import moment from "moment";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from "~/components/Global/StaffList/StaffForm";
+import { number, string } from "yup";
 
 let pageIndex = 1;
 
@@ -37,7 +38,6 @@ let dataRoles = [];
     title: item.RoleName,
     value: item.id,
   }));
-  console.log("NEW LIST: ", dataRoles);
 })();
 
 let listFieldSearch = {
@@ -87,16 +87,21 @@ const dataOption = [
 
 // -- FOR DIFFERENT VIEW --
 
+interface objData {
+  title: string;
+  value: number;
+}
+
 interface listDataForm {
-  Area: Array<Object>;
-  DistrictID: Array<Object>;
-  WardID: Array<Object>;
-  Role: Array<Object>;
-  Branch: Array<Object>;
-  Purposes: Array<Object>;
-  SourceInformation: Array<Object>;
-  Parent: Array<Object>;
-  Counselors: Array<Object>;
+  Area: Array<objData>;
+  DistrictID: Array<objData>;
+  WardID: Array<objData>;
+  Role: Array<objData>;
+  Branch: Array<objData>;
+  Purposes: Array<objData>;
+  SourceInformation: Array<objData>;
+  Parent: Array<objData>;
+  Counselors: Array<objData>;
 }
 
 const optionGender = [
@@ -243,6 +248,7 @@ const StaffList = () => {
           title: item.AreaName,
           value: item.AreaID,
         }));
+        setDataFunc("AreaID", newData);
         break;
       case "DistrictID":
         newData = data.map((item) => ({
@@ -376,42 +382,6 @@ const StaffList = () => {
     setDataFilter([...dataFilter]);
   };
 
-  // ------ GET DATA CENTER + Data Area -----
-  const getDataCenter = async () => {
-    try {
-      let res = await branchApi.getAll({ pageSize: 99999, pageIndex: 1 });
-      if (res.status == 200) {
-        const newData = res.data.data.map((item) => ({
-          title: item.BranchName,
-          value: item.ID,
-        }));
-        setDataFunc("BranchID", newData);
-      }
-
-      res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-    }
-  };
-
-  const getDataArea = async () => {
-    try {
-      let res = await areaApi.getAll({ pageSize: 99999, pageIndex: 1 });
-      if (res.status == 200) {
-        const newData = res.data.data.map((item) => ({
-          title: item.AreaName,
-          value: item.AreaID,
-        }));
-        setDataFunc("AreaID", newData);
-      }
-      res.status == 204 && showNoti("danger", "Tỉnh/TP Không có dữ liệu");
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-    }
-  };
-
   // ---------------- AFTER SUBMIT -----------------
   const afterPost = (mes) => {
     showNoti("success", mes);
@@ -422,7 +392,28 @@ const StaffList = () => {
     setCurrentPage(1);
   };
 
+  console.log("List data: ", listDataForm);
+
   // ----------- SUBMI FORM ------------
+  const returnBranchName = (branchID) => {
+    let newArr = [];
+    let listID = branchID.split(",");
+
+    console.log("List ID: ", listID);
+
+    listID.forEach((item) => {
+      let newObj = {
+        ID: parseInt(item),
+        BranchName: listDataForm.Branch.find((a) => a.value === parseInt(item))
+          .title,
+      };
+      newObj && newArr.push(newObj);
+    });
+
+    console.log("New arr: ", newArr);
+    return newArr;
+  };
+
   const onSubmit = async (data: any) => {
     data.Branch = data.Branch.toString();
     console.log("DATA SUBMIT after: ", data);
@@ -435,10 +426,20 @@ const StaffList = () => {
     try {
       if (data.UserInformationID) {
         res = await staffApi.update(data);
+        if (res.status == 200) {
+          let newDataSource = [...dataSource];
+          newDataSource.splice(indexRow, 1, {
+            ...data,
+            Branch: returnBranchName(data.Branch),
+            RoleName: dataRoles.find((item) => item.value == data.RoleID).title,
+          });
+          setDataSource(newDataSource);
+          showNoti("success", res.data.message);
+        }
       } else {
         res = await staffApi.add(data);
+        res?.status == 200 && afterPost(res.data.message);
       }
-      res?.status == 200 && afterPost(res.data.message);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -470,8 +471,6 @@ const StaffList = () => {
 
   // -------------- HANDLE FILTER ------------------
   const handleFilter = (listFilter) => {
-    console.log("List Filter when submit: ", listFilter);
-
     let newListFilter = { ...listFieldFilter };
     listFilter.forEach((item, index) => {
       let key = item.name;
@@ -541,8 +540,6 @@ const StaffList = () => {
   }, [todoApi]);
 
   useEffect(() => {
-    getDataCenter();
-    getDataArea();
     getDataStudentForm(listApi);
   }, []);
 
@@ -556,14 +553,10 @@ const StaffList = () => {
     {
       title: "Trung tâm",
       dataIndex: "Branch",
-
-      // ...FilterColumn("Center"),
       render: (branch) => (
         <>
           {branch.map((item) => (
-            <a href="/" className="font-weight-blue d-block">
-              {item.BranchName}
-            </a>
+            <p className="font-weight-blue d-block">{item.BranchName}</p>
           ))}
         </>
       ),
@@ -588,7 +581,7 @@ const StaffList = () => {
     //   dataIndex: "Mobile",
     // },
     {
-      title: "Chức vụ",
+      title: "Vị trí",
       dataIndex: "RoleName",
     },
     {
@@ -612,25 +605,24 @@ const StaffList = () => {
     },
     {
       title: "",
-      dataIndex: "Action",
-      key: "action",
+      dataIndex: "",
+
       align: "center",
-      render: (Action) => (
-        <Link
-          href={{
-            pathname: "/staff/staff-list/staff-detail/[slug]",
-            query: { slug: 2 },
-          }}
-        >
-          <a className="btn btn-icon">
-            <Tooltip title="Chi tiết">
-              <Eye />
-            </Tooltip>
-          </a>
-        </Link>
+      render: (text, data, index) => (
+        <StaffForm
+          getIndex={() => setIndexRow(index)}
+          index={index}
+          rowData={data}
+          rowID={data.UserInformationID}
+          isLoading={isLoading}
+          onSubmit={(data: any) => onSubmit(data)}
+          listDataForm={listDataForm}
+        />
       ),
     },
   ];
+
+  console.log("Data Source: ", dataSource);
 
   return (
     <>

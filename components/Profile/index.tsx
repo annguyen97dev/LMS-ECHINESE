@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useRouter } from "next/router";
 import {
-  Row,
-  Col,
   Form,
   Card,
   Divider,
@@ -12,8 +10,7 @@ import {
   Button,
   Avatar,
   Upload,
-  Rate,
-  Table,
+  Spin,
   Checkbox,
 } from "antd";
 import ImgCrop from "antd-img-crop";
@@ -25,69 +22,30 @@ import {
   AimOutlined,
 } from "@ant-design/icons";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import InputTextField from "~/components/FormControl/InputTextField";
+import DateField from "~/components/FormControl/DateField";
+import SelectField from "~/components/FormControl/SelectField";
+import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
-
-const dataSource = [
+import AvatarBase from "~/components/Elements/AvatarBase.tsx";
+import { userApi, userInformationApi } from "~/apiBase";
+import TitlePage from "../Elements/TitlePage";
+let returnSchema = {};
+let schema = null;
+const optionGender = [
   {
-    key: "1",
-    ClassName: "AS - IELTS Intermediate",
-    Check: "",
-    Listening: "",
-    Wrting: "",
-    Speaking: "",
-    Reading: "",
-    SpeakingWork: "",
-    ReadingWork: "",
-    width: "",
-    fixed: "",
-  },
-];
-
-const columns = [
-  {
-    title: "Tên lớp học",
-    width: 200,
-    dataIndex: "ClassName",
-    key: "classname",
-
-    render: (text) => <p className="color-primary">{text}</p>,
+    value: 0,
+    title: "Nữ",
   },
   {
-    title: "Dạy",
-    dataIndex: "Check",
-    key: "check",
-    render: () => <Checkbox />,
+    value: 1,
+    title: "Nam",
   },
   {
-    title: "Listening",
-    dataIndex: "Listening",
-    key: "listening",
-    render: () => <SelectRemark />,
-  },
-  {
-    title: "Wrting",
-    dataIndex: "Wrting",
-    key: "wrting",
-    render: () => <SelectRemark />,
-  },
-  {
-    title: "Reading",
-    dataIndex: "Reading",
-    key: "reading",
-    render: () => <SelectRemark />,
-  },
-
-  {
-    title: "BT Listening",
-    dataIndex: "ListeningWork",
-    key: "listeningwork",
-    render: () => <SelectRemark />,
-  },
-  {
-    title: "BT Reading",
-    dataIndex: "ReadingWork",
-    key: "readingwork",
-    render: () => <SelectRemark />,
+    value: 0,
+    title: "Khác",
   },
 ];
 
@@ -113,64 +71,112 @@ const ProfileBase = (props) => {
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
-  const { showNoti } = useWrap();
+  const { showNoti, getDataUser, userInformation } = useWrap();
+  const [isLoading, setIsLoading] = useState({
+    type: "",
+    status: false,
+  });
+  const [imageUrl, setImageUrl] = useState(null);
+  const [loadingImage, setLoadingImage] = useState(false);
 
-  // --- GET DATA USER
-  // let dataUser = null;
-  // if (props.dataUser) {
-  //   dataUser = props.dataUser;
-  // }
   const { dataUser } = props;
+  const [dataForm, setDataForm] = useState<IUser>(null);
   console.log("dataUSer: ", dataUser);
-  // Get path and slug
-  const router = useRouter();
-  const slug = router.query.slug;
-  let path: string = router.pathname;
-  let pathString: string[] = path.split("/");
-  path = pathString[pathString.length - 2];
-  // --------------- //
 
-  const [fileList, setFileList] = useState([]);
-
-  const onChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
+  const defaultValuesInit = {
+    FullNameUnicode: null,
+    DOB: null,
+    Email: "",
+    Gender: null,
+    Address: null,
+    Mobile: null,
+    Avatar: null,
   };
 
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
+  (function returnSchemaFunc() {
+    returnSchema = { ...defaultValuesInit };
+    Object.keys(returnSchema).forEach(function (key) {
+      switch (key) {
+        case "Email":
+          returnSchema[key] = yup.string().email("Email nhập sai cú pháp");
+          break;
+        case "Mobile":
+          returnSchema[key] = yup.number().typeError("SDT phải là số");
+          break;
+
+          break;
+        default:
+          // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          break;
+      }
+    });
+
+    schema = yup.object().shape(returnSchema);
+  })();
+
+  const form = useForm({
+    defaultValues: defaultValuesInit,
+    resolver: yupResolver(schema),
+  });
+
+  // ----------- SUBMI FORM ------------
+  const onSubmit = async (data: any) => {
+    setIsLoading({
+      type: "ADD_DATA",
+      status: true,
+    });
+    let res = null;
+    try {
+      res = await userApi.update(data);
+      res?.status == 200 &&
+        (showNoti("success", "Cập nhật thành công"),
+        form.reset(data),
+        setDataForm(res.data.data),
+        getDataUser(res.data.data));
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "ADD_DATA",
+        status: false,
       });
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow.document.write(image.outerHTML);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (dataUser) {
+      dataUser.Gender = parseInt(dataUser.Gender);
+
+      if (userInformation === null) {
+        form.reset(dataUser);
+        setDataForm(dataUser);
+        setImageUrl(dataUser.Avatar);
+      } else {
+        setDataForm(userInformation);
+        form.reset(userInformation);
+        setImageUrl(userInformation.Avatar);
+      }
+      // dataForm == null && setDataForm(dataUser);
+    }
+  }, [userInformation]);
 
   return (
     <>
+      <TitlePage title="Profile" />
       <div className="row">
         <div className="col-md-3 col-12">
           <Card className="info-profile-left">
-            <div className="row">
+            <div className="row mb-3">
               <div className="col-12 d-flex align-items-center justify-content-center flex-wrap">
                 <Avatar
                   size={64}
                   src={
-                    // <img
-                    //   src={
-                    //     dataUser?.Avatar !== null
-                    //       ? dataUser.Avatar
-                    //       : "/images/user.png"
-                    //   }
-                    // />
-                    <img src={"/images/user.png"} />
+                    <img
+                      src={
+                        dataForm?.Avatar ? dataForm.Avatar : "/images/user.png"
+                      }
+                    />
+                    // <img src={"/images/user.png"} />
                   }
                 />
               </div>
@@ -179,160 +185,96 @@ const ProfileBase = (props) => {
               <div className="col-2">
                 <UserOutlined />
               </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.FullNameUnicode && dataUser?.FullNameUnicode}
-              </div>
+              <div className="col-10  d-flex ">{dataForm?.FullNameUnicode}</div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <DeploymentUnitOutlined />
               </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.RoleName && dataUser?.RoleName}
-              </div>
+              <div className="col-10  d-flex ">{dataForm?.RoleName}</div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <WhatsAppOutlined />
               </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.Mobile && dataUser?.Mobile}
-              </div>
+              <div className="col-10  d-flex ">{dataForm?.Mobile}</div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <MailOutlined />
               </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.Email && dataUser?.Email}
-              </div>
+              <div className="col-10  d-flex ">{dataForm?.Email}</div>
             </div>
             <div className="row pt-4">
               <div className="col-2">
                 <AimOutlined />
               </div>
-              <div className="col-10  d-flex ">
-                {dataUser?.Address && dataUser?.Address}
-              </div>
+              <div className="col-10  d-flex ">{dataForm?.Address}</div>
             </div>
           </Card>
         </div>
         <div className="col-md-8 col-12">
           <Card className="space-top-card">
-            <Form layout="vertical">
+            <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
               <div className="row d-flex justify-content-center align-items-center">
-                <h5>Tài khoản nhân viên</h5>
+                <h5>Tài khoản cá nhân</h5>
 
                 <Divider></Divider>
               </div>
+              <div className="row mb-3">
+                <div className="col-12">
+                  <AvatarBase
+                    imageUrl={imageUrl}
+                    getValue={(value) => form.setValue("Avatar", value)}
+                  />
+                </div>
+              </div>
               <div className="row">
                 <div className="col-md-4 col-12">
-                  <Form.Item label="Họ và tên">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.FullNameUnicode}
-                      size="large"
-                      onChange={(e) =>
-                        setValue("FullNameUnicode", e.target.value)
-                      }
-                    />
-                  </Form.Item>
+                  <InputTextField
+                    form={form}
+                    name="FullNameUnicode"
+                    label="Họ tên"
+                  />
                 </div>
                 <div className="col-md-4 col-12">
-                  <Form.Item label="Giới tính">
-                    <Select
-                      className="style-input"
-                      size="large"
-                      defaultValue={dataUser?.Gender}
-                    >
-                      <option value={0}>Nam</option>
-                      <option value={1}>Nữ</option>
-                    </Select>
-                  </Form.Item>
+                  <SelectField
+                    form={form}
+                    name="Gender"
+                    label="Giới tính"
+                    optionList={optionGender}
+                  />
                 </div>
                 <div className="col-md-4 col-12">
-                  <Form.Item label="Ngày sinh">
-                    <DatePicker
-                      size="large"
-                      // defaultValue={dataUser?.DOB}
-                      className="w-100 style-input"
-                    />
-                  </Form.Item>
+                  <DateField form={form} name="DOB" label="Ngày sinh" />
                 </div>
               </div>
 
               <div className="row">
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Địa chỉ email">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.Email}
-                      size="large"
-                    />
-                  </Form.Item>
+                  <InputTextField form={form} name="Email" label="Email" />
                 </div>
                 <div className="col-md-6 col-12">
-                  <Form.Item label="Số điện thoại">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.Mobile}
-                      size="large"
-                    />
-                  </Form.Item>
+                  <InputTextField
+                    form={form}
+                    name="Mobile"
+                    label="Số điện thoại"
+                  />
                 </div>
               </div>
               <div className="row">
                 <div className="col-12">
-                  <Form.Item label="Địa chỉ">
-                    <Input
-                      className="style-input"
-                      size="large"
-                      defaultValue={dataUser.Address}
-                    />
-                  </Form.Item>
+                  <InputTextField form={form} name="Address" label="Địa chỉ" />
                 </div>
               </div>
-              {/* <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Tên tài khoản">
-                    <Input
-                      className="style-input"
-                      defaultValue={dataUser?.UserName}
-                      size="large"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Mật khẩu mới">
-                    <Input
-                      className="style-input"
-                      size="large"
-                      type="password"
-                    />
-                  </Form.Item>
-                </div>
-              </div> */}
-              <div className="row">
-                <div className="col-12">
-                  <Form.Item label="Hình đại diện">
-                    <ImgCrop grid>
-                      <Upload
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                        listType="picture-card"
-                        fileList={fileList}
-                        onChange={onChange}
-                        onPreview={onPreview}
-                      >
-                        {fileList.length < 1 && "+ Upload"}
-                      </Upload>
-                    </ImgCrop>
-                  </Form.Item>
-                </div>
-              </div>
-              <div className="row">
+
+              <div className="row mt-3">
                 <div className="col-12 d-flex justify-content-center">
-                  <button className="btn btn-primary">
-                    Cập nhật thông tin
+                  <button type="submit" className="btn btn-primary">
+                    Lưu
+                    {isLoading.type == "ADD_DATA" && isLoading.status && (
+                      <Spin className="loading-base" />
+                    )}
                   </button>
                 </div>
               </div>

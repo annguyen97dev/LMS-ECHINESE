@@ -101,17 +101,20 @@ const CreateCourseCalendar = (props) => {
 		}));
 		handleChangeStatusSchedule(sch, type);
 	};
-
+	const checkHandleChangeValueSchedule = (uid, key, value, pos) =>
+		handleChangeValueSchedule(uid, key, value, pos);
 	return (
 		<>
 			<Calendar
-				selectable
 				localizer={localizer}
 				events={eventList}
 				startAccessor="start"
 				endAccessor="end"
 				style={{height: 600}}
 				popup={true}
+				// view="month"
+				views={['month', 'week']}
+				defaultView="month"
 				showMultiDayTimes={true}
 				eventPropGetter={customEventPropGetter}
 				components={{event: styleEvent}}
@@ -159,7 +162,9 @@ const CreateCourseCalendar = (props) => {
 												isUpdate={true}
 												scheduleObj={s}
 												isLoading={isLoading}
-												handleChangeValueSchedule={handleChangeValueSchedule}
+												handleChangeValueSchedule={(uid, key, vl) =>
+													checkHandleChangeValueSchedule(uid, key, vl, idx)
+												}
 												handleChangeStatusSchedule={
 													checkHandleChangeStatusSchedule
 												}

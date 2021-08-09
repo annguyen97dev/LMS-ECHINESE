@@ -50,7 +50,7 @@ const CourseListSelf = () => {
       title: "Trung tâm",
       dataIndex: "center",
       key: "trungtam",
-      ...FilterColumn("center"),
+      // ...FilterColumn("center"),
       render: (text) => (
         <a href="/" className="font-weight-blue">
           {text}
@@ -61,26 +61,26 @@ const CourseListSelf = () => {
       title: "Khóa",
       dataIndex: "course",
       key: "course",
-      ...FilterColumn("course"),
+      // ...FilterColumn("course"),
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
       title: "Ngày mở",
       dataIndex: "startday",
       key: "ngaymo",
-      ...FilterColumn("startday"),
+      // ...FilterColumn("startday"),
     },
     {
       title: "Phòng",
       key: "phong",
       dataIndex: "room",
-      ...FilterColumn("room"),
+      // ...FilterColumn("room"),
     },
     {
       title: "Ngày tạo",
       key: "ngaytao",
       dataIndex: "createday",
-      ...FilterDateColumn("createday"),
+      // ...FilterDateColumn("createday"),
     },
     {
       title: "",

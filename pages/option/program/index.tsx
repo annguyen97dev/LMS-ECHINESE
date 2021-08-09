@@ -95,7 +95,8 @@ const Programs = () => {
       res.status == 200 &&
         (setDataSource(res.data.data),
         setTotalPage(res.data.totalRow),
-        setDataLevel(res.data.listLevel));
+        setDataLevel(res.data.listLevel),
+        showNoti("success", res.data.message));
 
       res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
@@ -110,26 +111,16 @@ const Programs = () => {
 
   // GET DATA CENTER
   const getDataGrade = async () => {
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
-    });
-
     try {
       let res = await gradeApi.getAll({
         pageIndex: 1,
         pageSize: Number.MAX_SAFE_INTEGER,
       });
-      res.status == 200 &&
-        (setDataGrade(res.data.data), showNoti("success", "Thành công"));
+      res.status == 200 && setDataGrade(res.data.data);
       res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
     }
   };
 
@@ -159,7 +150,11 @@ const Programs = () => {
 
         if (res.status == 200) {
           let newDataSource = [...dataSource];
-          newDataSource.splice(indexRow, 1, dataSubmit);
+          newDataSource.splice(indexRow, 1, {
+            ...dataSubmit,
+            GradeName: dataGrade.find((item) => item.ID === dataSubmit.GradeID)
+              .GradeName,
+          });
           setDataSource(newDataSource);
           showNoti("success", res.data.message);
         }

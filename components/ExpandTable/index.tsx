@@ -37,6 +37,10 @@ const ExpandTable = (props) => {
     }
   };
 
+  // const onRowchange = (row) => {
+  //   console.log("ROW: ", row);
+  // };
+
   const rowSelection = {
     selectedRowKeys: state.selectedRowKeys,
     onChange: onSelectedRowKeysChange,

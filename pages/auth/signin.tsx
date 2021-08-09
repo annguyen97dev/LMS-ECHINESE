@@ -23,7 +23,7 @@ export default function SignIn({ providers, csrfToken }) {
         case 200:
           showNoti("success", "Đăng nhập thành công");
           break;
-        case 401:
+        case 400:
           showNoti("danger", "Tên đăng nhập hoặc mật khẩu không đúng");
           setHaveError(erData.message);
           break;
