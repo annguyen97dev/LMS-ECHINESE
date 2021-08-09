@@ -3,7 +3,7 @@ import React from 'react';
 
 const Schedule = (props) => {
 	return (
-		<div className="wrap-card-info-course">
+		<div className="wrap-card-info-course wrap-modal">
 			<Card title="Danh sách các buổi học" className="space-top-card">
 				<div className="info-course">{props.children}</div>
 			</Card>

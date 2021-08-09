@@ -32,27 +32,15 @@ const ScheduleItem = (props) => {
 		scheduleObj,
 		isLoading,
 		isUpdate,
-		positionInScheduleList,
 		//
 		optionForScheduleList,
 		optionStudyTime,
 	} = props;
-	const {
-		ID,
-		eventName,
-		Tiet,
-		RoomName,
-		RoomID,
-		CaID,
-		CaName,
-		TeacherID,
-		TeacherName,
-		date,
-	} = scheduleObj;
+	const {ID, eventName, Tiet, CaID} = scheduleObj;
 
 	const defaultValuesInit = {
-		RoomID: -1,
-		TeacherID: -1,
+		RoomID: 0,
+		TeacherID: 0,
 		StudyTimeID: CaID,
 	};
 	const schema = yup.object().shape({
@@ -73,19 +61,8 @@ const ScheduleItem = (props) => {
 	const form = useForm({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema),
-		mode: 'onChange',
+		mode: 'all',
 	});
-	// const
-	useEffect(() => {
-		if (!isLoading.status) {
-			let roomId = scheduleObj.RoomID === 0 ? 0 : scheduleObj.RoomID;
-			let teacherId = scheduleObj.TeacherID === 0 ? 0 : scheduleObj.TeacherID;
-			form.setValue('StudyTimeID', scheduleObj.CaID);
-			form.setValue('RoomID', roomId);
-			form.setValue('TeacherID', teacherId);
-			form.clearErrors();
-		}
-	}, [scheduleObj]);
 
 	const checkHandleChangeStatusSchedule = (vl, type) => {
 		if (!handleChangeStatusSchedule) return;
@@ -99,6 +76,30 @@ const ScheduleItem = (props) => {
 		form.setValue('RoomID', 0);
 		form.setValue('TeacherID', 0);
 	};
+
+	useEffect(() => {
+		let {ID, RoomID, TeacherID} = scheduleObj;
+		const {optionRoomList, optionTeacherList} = optionForScheduleList;
+		if (optionRoomList.length > 1 && optionTeacherList.length > 1) {
+			if (!optionRoomList.some((o) => o.value === RoomID)) {
+				form.setValue('RoomID', 0);
+				checkHandleChangeValueSchedule(ID, 'RoomID', 0);
+			}
+			if (!optionTeacherList.some((o) => o.value === TeacherID)) {
+				form.setValue('TeacherID', 0);
+				checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
+			}
+		}
+	}, [optionForScheduleList]);
+
+	useEffect(() => {
+		let {RoomID, TeacherID, CaID} = scheduleObj;
+		form.setValue('StudyTimeID', CaID);
+		form.setValue('RoomID', RoomID || 0);
+		form.setValue('TeacherID', TeacherID || 0);
+		form.clearErrors();
+	}, [scheduleObj]);
+
 	return (
 		<Panel
 			{...props}
@@ -188,7 +189,6 @@ ScheduleItem.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
-	positionInScheduleList: PropTypes.number,
 	//
 	optionForScheduleList: PropTypes.shape({
 		optionRoomList: optionPropTypes,
@@ -204,7 +204,6 @@ ScheduleItem.defaultProps = {
 	isUpdate: false,
 	isLoading: {type: '', status: false},
 	positionInScheduleList: null,
-
 	//
 	optionForScheduleList: {
 		optionRoomList: [],
