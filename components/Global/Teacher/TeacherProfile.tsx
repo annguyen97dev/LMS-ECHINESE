@@ -112,6 +112,7 @@ const TeacherProfile = (props) => {
             columns={columns}
             dataSource={data}
             pagination={false}
+            className="tb-expand"
           />
         </div>
       )

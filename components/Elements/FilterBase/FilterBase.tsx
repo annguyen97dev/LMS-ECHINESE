@@ -85,11 +85,11 @@ const FilterBase = (props) => {
     setVisible(false);
   };
 
-  const fieldOfFilter = (item) => {
+  const fieldOfFilter = (item, index) => {
     switch (item.type) {
       case "select":
         return (
-          <div className={item.col}>
+          <div key={index} className={item.col}>
             <Form.Item name={item.name} label={item.title}>
               <Select
                 style={{ width: "100%" }}
@@ -109,7 +109,7 @@ const FilterBase = (props) => {
         );
       case "text":
         return (
-          <div className={item.col}>
+          <div key={index} className={item.col}>
             <Form.Item name={item.name} label={item.title}>
               <Input
                 placeholder=""
@@ -124,7 +124,7 @@ const FilterBase = (props) => {
         );
       case "date-range":
         return (
-          <div className={item.col}>
+          <div key={index} className={item.col}>
             <Form.Item name={item.name} label={item.title}>
               <RangePicker
                 className="style-input"
@@ -147,7 +147,7 @@ const FilterBase = (props) => {
     <div className={`wrap-filter small`}>
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <div className="row">
-          {dataFilter.map((item, index) => fieldOfFilter(item))}
+          {dataFilter.map((item, index) => fieldOfFilter(item,index))}
 
           <div className="col-md-12">
             <Form.Item className="mb-0">

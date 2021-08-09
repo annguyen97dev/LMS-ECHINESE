@@ -520,11 +520,11 @@ const StudentData = () => {
 
     {
       title: "",
-      render: () => (
+      render: (record) => (
         <Link
           href={{
             pathname: "/customer/student/student-list/student-detail/[slug]",
-            query: { slug: 2 },
+            query: { slug: record.UserInformationID },
           }}
         >
           <Tooltip title="Xem chi tiết">

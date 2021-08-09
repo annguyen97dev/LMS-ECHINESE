@@ -1,5 +1,6 @@
 import { Card } from "antd";
 import React from "react";
+import ReactHtmlParser from 'react-html-parser';
 
 export default function ExpandBox() {
   return (
@@ -28,22 +29,35 @@ export default function ExpandBox() {
   );
 }
 
-export function ExpandBoxService() {
+export function ExpandBoxService(props) {
+  // console.log(props.dataRow);
   return (
     <div className="feedback-detail-text">
       <table className="tb-expand">
-        <tr>
-          <th>Ghi chú</th>
-          <th>Ngày đặt</th>
-          <th>Phương thức thanh toán</th>
-          <th>Ngày Tạo</th>
-        </tr>
-        <tr>
-          <td>Đăng ký thi IELTS tại BC hoặc IDP</td>
-          <td>10/08/2019</td>
-          <td>Thanh toán thẻ</td>
-          <td>24/07/2019</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Lý do hoàn tiền</th>
+            <th>Khóa học</th>
+            <th>Phương thức thanh toán</th>
+            <th>Ngày đặt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{props.dataRow?.Reason == "" ? "Không có lý do" : props.dataRow?.Reason}</td>
+            <td>
+              <div className="list-coursename">
+              {
+                props.dataRow?.RefundsDetail && props.dataRow?.RefundsDetail.map((item, index) => (
+                  <span className="item-coursename" key={index}>{item.CourseName}</span>
+                ))
+              }
+              </div>
+            </td>
+            <td>{props.dataRow?.PaymentMethodsName}</td>
+            <td>{props.dataRow?.CreatedOn}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   );

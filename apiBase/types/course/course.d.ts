@@ -1,4 +1,5 @@
 type ICourse = IBaseApi<{
+	ID: number,
 	CourseName: string;
 	AcademicUID: number;
 	BranchID: number;

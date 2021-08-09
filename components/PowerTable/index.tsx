@@ -38,6 +38,7 @@ const PowerTable = React.memo((props: any) => {
     hideSelectAll: true,
   };
 
+
   useEffect(() => {
     if (props.TitlePage) {
       getTitlePage(props.TitlePage);
