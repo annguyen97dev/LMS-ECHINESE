@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Input } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import TinyBox from "~/components/Elements/TinyBox";
+import Editor from "~/components/Elements/Editor";
 
 const TopicModal = (props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -63,7 +63,7 @@ const TopicModal = (props) => {
               <label htmlFor="Description" className="mb-1">
                 Description:{" "}
               </label>
-              <TinyBox />
+              <Editor />
             </div>
           </form>
         </div>

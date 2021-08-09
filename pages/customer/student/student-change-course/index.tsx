@@ -14,6 +14,7 @@ import { useWrap } from "~/context/wrap";
 import { studentChangeCourseApi, branchApi } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import { ifError } from "assert";
+import StudentPay from "~/components/Global/Customer/Student/StudentPay";
 let pageIndex = 1;
 
 let listFieldSearch = {
@@ -240,12 +241,13 @@ export default function StudentCourseChange() {
   const expandedRowRender = (data) => {
     return (
       <>
-        <p>
+        {/* <p>
           <b className="font-weight-black">Ghi chú: </b> {data?.Note}{" "}
         </p>
         <p className="mt-3">
           <b className="font-weight-black">Cam kết: </b> {data?.Commitment}{" "}
-        </p>
+        </p> */}
+        <StudentPay CourseOfStudentPriceID={data.CourseOfStudentPriceID} />
       </>
     );
   };
@@ -269,7 +271,18 @@ export default function StudentCourseChange() {
       dataIndex: "CourseNameAfter",
       render: (course) => <p className="font-weight-black">{course}</p>,
     },
-
+    {
+      title: "Trung tâm",
+      dataIndex: "Branch",
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "Note",
+    },
+    {
+      title: "Cam kết",
+      dataIndex: "Commited",
+    },
     {
       title: "",
       render: () => (

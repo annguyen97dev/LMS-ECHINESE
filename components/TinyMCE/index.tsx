@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { render } from "react-dom";
 import { Editor } from "@tinymce/tinymce-react";
 
-
 const TinyMceEditor = (props) => {
   const onChange = (e) => {
     props.value(e.target.getContent());
@@ -24,13 +23,13 @@ const TinyMceEditor = (props) => {
   );
 };
 
-const TinyBox = (props) => (
+const Editor = (props) => (
   <div>
     <TinyMceEditor
-      initialValue = {props.initialValue}
-      value={value => props.onChangeTinyMCE(value)}
+      initialValue={props.initialValue}
+      value={(value) => props.onChangeTinyMCE(value)}
     />
   </div>
 );
 
-export default TinyBox;
+export default Editor;
