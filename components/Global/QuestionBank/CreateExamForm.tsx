@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Drawer, Form, Select, Input, Radio } from "antd";
-import TinyBox from "~/components/Elements/TinyBox";
+import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
 
 const CreateExamForm = (props) => {

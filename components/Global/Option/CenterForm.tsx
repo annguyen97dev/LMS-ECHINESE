@@ -3,18 +3,14 @@ import {
   Modal,
   Form,
   Input,
-  Button,
-  message,
   Spin,
   Select,
   Tooltip,
-  Skeleton,
 } from "antd";
-import { FormProvider, useForm } from "react-hook-form";
-import { branchApi, areaApi, districtApi } from "~/apiBase";
+import { useForm } from "react-hook-form";
+import { districtApi } from "~/apiBase";
 
 import { useWrap } from "~/context/wrap";
-import SelectFilterBox from "~/components/Elements/SelectFilterBox";
 import { RotateCcw } from "react-feather";
 
 // type CenterFormProps = IFormBaseProps & {
@@ -25,7 +21,6 @@ const CenterForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { showNoti } = useWrap();
-  // const [dataArea, setDataArea] = useState<IArea[]>(null);
   const {
     reset,
     register,

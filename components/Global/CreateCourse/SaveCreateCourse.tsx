@@ -58,7 +58,7 @@ const SaveCreateCourse = (props) => {
 		return Object.keys(scheduleShow).map((date, idx) => (
 			<div
 				className={`create-course-general-item ${
-					scheduleShow[date][0]?.isValid
+					scheduleShow[date].some((obj) => obj.isValid)
 						? 'create-course-general-item-error'
 						: ''
 				}`}

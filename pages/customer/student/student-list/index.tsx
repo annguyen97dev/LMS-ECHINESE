@@ -339,23 +339,23 @@ const StudentData = () => {
   };
 
   // ------ HANDLE SUBMIT -------
-  const _handleSubmitForm = (dataSubmit: any, index: number) => {
-    console.log("DATA SUBMIT: ", data);
-    console.log("INDEX: ", index);
-    if (dataSubmit.UserInformationID) {
-      let newDataSource = [...dataSource];
-      newDataSource.splice(index, 1, {
-        ...dataSubmit,
-        FullNameUnicode: dataSource.find(
-          (item) => item.UserInformationID == dataSubmit.UserInformationID
-        ).FullNameUnicode,
-        AreaName: listDataForm.Area.find(
-          (item) => item.value == dataSubmit.AreaID
-        ).title,
-      });
-      setDataSource(newDataSource);
-    }
-  };
+  // const _handleSubmitForm = (dataSubmit: any, index: number) => {
+  //   console.log("DATA SUBMIT: ", data);
+  //   console.log("INDEX: ", index);
+  //   if (dataSubmit.UserInformationID) {
+  //     let newDataSource = [...dataSource];
+  //     newDataSource.splice(index, 1, {
+  //       ...dataSubmit,
+  //       FullNameUnicode: dataSource.find(
+  //         (item) => item.UserInformationID == dataSubmit.UserInformationID
+  //       ).FullNameUnicode,
+  //       AreaName: listDataForm.Area.find(
+  //         (item) => item.value == dataSubmit.AreaID
+  //       ).title,
+  //     });
+  //     setDataSource(newDataSource);
+  //   }
+  // };
 
   // -------------- HANDLE FILTER ------------------
   const handleFilter = (listFilter) => {
@@ -526,11 +526,11 @@ const StudentData = () => {
 
     {
       title: "",
-      render: () => (
+      render: (record) => (
         <Link
           href={{
             pathname: "/customer/student/student-list/student-detail/[slug]",
-            query: { slug: 2 },
+            query: { slug: record.UserInformationID },
           }}
         >
           <Tooltip title="Xem chi tiết">

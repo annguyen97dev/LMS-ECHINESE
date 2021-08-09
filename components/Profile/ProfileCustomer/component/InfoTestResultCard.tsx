@@ -1,6 +1,6 @@
 import TitlePage from "~/components/TitlePage";
 import { Card, Form, Select, Input, Table, Button } from "antd";
-import TinyBox from "~/components/TinyMCE";
+import Editor from "~/components/TinyMCE";
 import { Comment, Tooltip, Avatar, Rate, Tag } from "antd";
 import { dataService } from "../../../../lib/customer/dataCustomer";
 import { Upload, Save, Info } from "react-feather";
@@ -107,7 +107,7 @@ const InfoTestResultCard = () => {
           <div className="row mt-2">
             <div className="col-12">
               <Card title="Nhận xét giáo viên">
-                <TinyBox />
+                <Editor />
               </Card>
             </div>
           </div>

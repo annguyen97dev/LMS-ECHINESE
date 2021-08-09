@@ -9,7 +9,7 @@ import {
   MailOutlined,
   AimOutlined,
 } from "@ant-design/icons";
-import TinyBox from "~/components/Elements/TinyBox";
+import Editor from "~/components/Elements/Editor";
 import CommentBox from "~/components/Elements/CommentBox";
 import LayoutBase from "~/components/LayoutBase";
 
@@ -117,7 +117,7 @@ const FeedbackListDetail = (props) => {
         <div className="col-md-9 col-12">
           <Card title="Comment" className="space-top-card">
             <div className="box-comment">
-              <TinyBox />
+              <Editor />
               <button className="btn btn-primary mt-3">Reply</button>
             </div>
             <hr />

@@ -37,9 +37,15 @@ const WrapContext = createContext<IProps>({
 // function reducer() {}
 
 export const WrapProvider = ({ children }) => {
+  // Get path and slug
+  const router = useRouter();
+  const slug = router.query.slug;
+  let path: string = router.pathname;
+  let pathString: string[] = path.split("/");
+  // ---- //
   const [session, loading] = useSession();
   const [titlePage, setTitlePage] = useState("");
-  const router = useRouter();
+
   const getRouter = router.pathname;
   const [typeNoti, setTypeNoti] = useState({
     content: "",
@@ -106,7 +112,9 @@ export const WrapProvider = ({ children }) => {
     console.log("Session: ", session);
     if (typeof session !== "undefined") {
       if (session !== null) {
-        getNewDataUser();
+        if (path.search("signin") < 1) {
+          getNewDataUser();
+        }
       }
     }
   }, [session]);

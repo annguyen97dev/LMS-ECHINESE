@@ -5,6 +5,7 @@ import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
+import {fmSelectArr} from '~/helpers';
 import DistrictDelete from './DistrictDelete';
 import DistrictForm from './DistrictForm';
 
@@ -151,10 +152,7 @@ const District = () => {
 				selectall: true,
 			});
 			if (res.status === 200) {
-				const newAreaList = res.data.data.map((x) => ({
-					title: x.AreaName,
-					value: x.AreaID,
-				}));
+				const newAreaList = fmSelectArr(res.data.data, 'AreaName', ',AreaID');
 				setAreaList(newAreaList);
 			}
 		} catch (error) {
