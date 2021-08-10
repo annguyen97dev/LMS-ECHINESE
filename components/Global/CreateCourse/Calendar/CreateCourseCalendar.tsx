@@ -16,6 +16,7 @@ const CreateCourseCalendar = (props) => {
 		handleSelectDate,
 		dateSelected,
 		//
+		isEdit,
 		isLoading,
 		//
 		unavailableSch,
@@ -246,6 +247,7 @@ CreateCourseCalendar.propTypes = {
 	dateSelected: PropTypes.shape({
 		dateString: PropTypes.string.isRequired,
 	}),
+	isEdit: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
@@ -272,6 +274,7 @@ CreateCourseCalendar.defaultProps = {
 	dateSelected: {
 		dateString: '',
 	},
+	isEdit: false,
 	isLoading: {type: '', status: false},
 	//
 	handleChangeValueSchedule: null,
