@@ -18,6 +18,8 @@ const CreateCourseCalendar = (props) => {
 		//
 		isLoading,
 		//
+		unavailableSch,
+		//
 		handleChangeValueSchedule,
 		handleFetchInfoAvailableSchedule,
 		handleChangeStatusSchedule,
@@ -57,8 +59,10 @@ const CreateCourseCalendar = (props) => {
 							scheduleList,
 						});
 						openModal();
-						if (valid) {
+						if (handleSelectDate) {
 							handleSelectDate(event);
+						}
+						if (valid) {
 							showNoti(
 								'success',
 								`Ngày ${dateFm}- hãy chọn ${limit - scheduleInDay} ca`
@@ -66,43 +70,70 @@ const CreateCourseCalendar = (props) => {
 						}
 					}}
 				>
-					<strong>Số ca trống: {limit - scheduleInDay}</strong>
+					<strong>Còn trống: {limit - scheduleInDay}</strong>
 					<br />
-					<strong>Số ca đã xếp: {scheduleInDay}</strong>
+					<strong>Đã xếp: {scheduleInDay}</strong>
 				</div>
 			</>
 		);
 	};
 
 	const customEventPropGetter = (event, start, end, isSelected) => {
+		let cls;
+		if (event.resource.limit !== event.resource.scheduleList.length) {
+			cls = 'create-course-event create-course-event-green';
+		}
+		if (event.resource.limit === event.resource.scheduleList.length) {
+			cls = 'create-course-event';
+		}
+		if (event.resource.scheduleList.length === 0) {
+			cls = 'create-course-event create-course-event-gray';
+		}
 		if (event.resource.dateString === dateString) {
 			return {
 				className: 'create-course-event create-course-event-active',
 			};
 		} else {
 			return {
-				className: 'create-course-event',
+				className: cls,
 			};
 		}
 	};
 
 	useEffect(() => {
-		handleFetchInfoAvailableSchedule(scheduleList);
+		handleFetchInfoAvailableSchedule &&
+			handleFetchInfoAvailableSchedule(scheduleList);
 	}, [scheduleList]);
 
-	const checkHandleChangeStatusSchedule = (sch, type) => {
+	useEffect(() => {
+		unavailableSch.ID && handleScheduleUnavailableList(unavailableSch);
+	}, [unavailableSch]);
+
+	const handleScheduleUnavailableList = (sch) => {
 		const newScheduleList = [...dataModal.scheduleList];
 		const idx = newScheduleList.findIndex((s) => s.ID === sch.ID);
-		newScheduleList.splice(idx, 1);
+		if (idx >= 0) {
+			newScheduleList.splice(idx, 1);
+		} else {
+			newScheduleList.push(sch);
+		}
+
 		setDataModal((prevState) => ({
 			...prevState,
 			scheduleInDay: newScheduleList.length,
 			scheduleList: newScheduleList,
 		}));
+	};
+
+	const checkHandleChangeStatusSchedule = (sch, type) => {
+		if (!handleChangeStatusSchedule) return;
+		handleScheduleUnavailableList(sch);
 		handleChangeStatusSchedule(sch, type);
 	};
-	const checkHandleChangeValueSchedule = (uid, key, value, pos) =>
+	const checkHandleChangeValueSchedule = (uid, key, value, pos) => {
+		if (!handleChangeValueSchedule) return;
 		handleChangeValueSchedule(uid, key, value, pos);
+	};
 	return (
 		<>
 			<Calendar
@@ -112,7 +143,6 @@ const CreateCourseCalendar = (props) => {
 				endAccessor="end"
 				style={{height: 600}}
 				popup={true}
-				// view="month"
 				views={['month', 'week']}
 				defaultView="month"
 				showMultiDayTimes={true}
@@ -120,6 +150,8 @@ const CreateCourseCalendar = (props) => {
 				components={{event: styleEvent}}
 			/>
 			<Modal
+				getContainer=".wrap-modal"
+				zIndex={900}
 				title={`Chi tiết ngày ${dateFm}`}
 				visible={isVisible}
 				footer={null}
@@ -137,12 +169,12 @@ const CreateCourseCalendar = (props) => {
 						</div>
 						<div className="col-12 col-md-4">
 							<p>
-								Số ca đã sắp xếp: <strong>{scheduleInDay}</strong>
+								Đã xếp: <strong>{scheduleInDay}</strong>
 							</p>
 						</div>
 						<div className="col-12 col-md-4">
 							<p>
-								Số ca còn lại: <strong>{limit - scheduleInDay}</strong>
+								Còn trống: <strong>{limit - scheduleInDay}</strong>
 							</p>
 						</div>
 					</div>
@@ -189,37 +221,34 @@ const optionPropTypes = PropTypes.arrayOf(
 	})
 );
 CreateCourseCalendar.propTypes = {
-	evenList: PropTypes.arrayOf(
+	eventList: PropTypes.arrayOf(
 		PropTypes.shape({
 			id: PropTypes.number.isRequired,
 			title: PropTypes.string.isRequired,
 			start: PropTypes.instanceOf(Date).isRequired,
 			end: PropTypes.instanceOf(Date).isRequired,
-			resource: PropTypes.arrayOf(
-				PropTypes.shape({
-					center: PropTypes.string.isRequired,
-					academy: PropTypes.string.isRequired,
-					room: PropTypes.string.isRequired,
-					session: PropTypes.string.isRequired,
-					book: PropTypes.string.isRequired,
-					block: PropTypes.string.isRequired,
-					classTT: PropTypes.string.isRequired,
-				}).isRequired
-			),
+			resource: PropTypes.shape({
+				dateString: PropTypes.string.isRequired,
+				valid: PropTypes.bool.isRequired,
+				limit: PropTypes.number.isRequired,
+				scheduleList: PropTypes.array,
+			}),
 		})
-	),
-	handleSelectDate: PropTypes.func.isRequired,
+	).isRequired,
+	handleSelectDate: PropTypes.func,
 	dateSelected: PropTypes.shape({
 		dateString: PropTypes.string.isRequired,
 	}),
-	//
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
-	handleChangeValueSchedule: PropTypes.func.isRequired,
-	handleFetchInfoAvailableSchedule: PropTypes.func.isRequired,
-	handleChangeStatusSchedule: PropTypes.func.isRequired,
+	//
+	handleChangeValueSchedule: PropTypes.func,
+	handleFetchInfoAvailableSchedule: PropTypes.func,
+	handleChangeStatusSchedule: PropTypes.func,
+	//
+	unavailableSch: PropTypes.shape({}),
 	optionForScheduleList: PropTypes.shape({
 		list: PropTypes.arrayOf(
 			PropTypes.shape({
@@ -228,18 +257,44 @@ CreateCourseCalendar.propTypes = {
 			})
 		),
 		optionStudyTimeList: optionPropTypes,
-	}).isRequired,
+	}),
 };
 CreateCourseCalendar.defaultProps = {
 	eventList: [],
+	handleSelectDate: null,
 	dateSelected: {
 		dateString: '',
 	},
 	isLoading: {type: '', status: false},
 	//
+	handleChangeValueSchedule: null,
+	handleFetchInfoAvailableSchedule: null,
+	handleChangeStatusSchedule: null,
+	//
+	unavailableSch: {},
 	optionForScheduleList: {
-		list: [{optionRoomList: [], optionTeacherList: []}],
-		optionStudyTimeList: [],
+		list: [
+			{
+				optionRoomList: [
+					{
+						title: '',
+						value: '',
+					},
+				],
+				optionTeacherList: [
+					{
+						title: '',
+						value: '',
+					},
+				],
+			},
+		],
+		optionStudyTimeList: [
+			{
+				title: '',
+				value: '',
+			},
+		],
 	},
 };
 export default CreateCourseCalendar;

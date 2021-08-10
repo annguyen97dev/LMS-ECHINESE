@@ -35,6 +35,7 @@ const LayoutBase = ({ children }) => {
           signIn();
         }
       } else {
+        console.log("LOADING FALSE");
         setIsLoading(false);
       }
     }
@@ -55,7 +56,7 @@ const LayoutBase = ({ children }) => {
           <Lottie options={defaultOptions} height="auto" width="60vw" />
         </div>
       ) : (
-        <Layout>{children}</Layout>
+        session.accessToken && <Layout>{children}</Layout>
       )}
 
       {/* <Layout>{children}</Layout> */}

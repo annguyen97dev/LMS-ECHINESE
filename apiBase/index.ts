@@ -36,15 +36,23 @@ export { testCustomerApi } from "./customer/service/test-customer";
 export { userApi } from "./user/user";
 export { examComingSoonApi } from "./customer/student/exam-coming-soon";
 export { warningApi } from "./customer/student/warning";
+<<<<<<< HEAD
+=======
+export { courseApi } from "./course/course";
+export { studentChangeApi } from "./customer/student/student-change";
+export { studentChangeCourseApi } from "./customer/student/student-change-course";
+>>>>>>> 2226ecb0821090b727c071718e74b7ea5bab23d0
 export { serviceCustomerExamApi } from "./customer/service/service-customer-exam";
 export { serviceCustomerExamResultApi } from "./customer/service/service-customer-exam-result";
 export { refundsApi } from "./customer/finance/finance-cashier-refund";
 export { contractCustomerListApi } from "./customer/contract/contract-customer-list";
-export { courseApi } from "./course/course";
 export { voucherApi } from "./customer/finance/finance-cashier-payment";
 export { invoiceApi } from "./customer/finance/finance-cashier-invoice";
 export { examAppointmentResultApi } from "./customer/student/exam-appointment-result";
+<<<<<<< HEAD
 export { courseStudentApi } from "./customer/student/course-student";
 export { rollUpApi } from "./course/rollup";
 export { courseOfStudentPriceApi } from "./course/course-of-student-price";
 export { configApi } from "./options/config";
+=======
+>>>>>>> 2226ecb0821090b727c071718e74b7ea5bab23d0

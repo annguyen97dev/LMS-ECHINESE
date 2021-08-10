@@ -20,6 +20,7 @@ import CreateCourseForm from '~/components/Global/CreateCourse/CreateCourseForm/
 import SaveCreateCourse from '~/components/Global/CreateCourse/SaveCreateCourse';
 import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
+import {fmSelectArr} from '~/helpers';
 import CreateCourseCalendar from './Calendar/CreateCourseCalendar';
 import Schedule from './Schedule/Schedule';
 import ScheduleItem from './Schedule/ScheduleItem';
@@ -29,12 +30,6 @@ import ScheduleList from './Schedule/ScheduleList';
 // to the correct localizer.
 
 // ------------ MAIN COMPONENT ------------------
-const fmSelectArr = (arr, title, value, options = []) =>
-	arr.map((x) => ({
-		title: x[title],
-		value: x[value],
-		options: options.reduce((obj, o) => ({...obj, [o]: x[o]}), {}),
-	}));
 const dayOfWeek = [
 	{
 		title: 'Thứ 2',
@@ -115,6 +110,7 @@ const CreateCourse = (props) => {
 	const [scheduleShow, setScheduleShow] = useState({});
 	const stoneDataToSave = useRef({
 		CourseName: '',
+		AcademicUID: 0,
 		BranchID: 0,
 		RoomID: '',
 		CurriculumID: 0,
@@ -126,6 +122,7 @@ const CreateCourse = (props) => {
 	});
 	const [saveCourseInfo, setSaveCourseInfo] = useState({
 		CourseName: '',
+		AcademicUID: 0,
 		BranchID: 0,
 		BranchName: '',
 		GradeID: 0,
@@ -143,6 +140,9 @@ const CreateCourse = (props) => {
 		DaySelectedName: '',
 		Schedule: [],
 	});
+	// CALENDAR MODAL
+	const [unavailableSch, setUnavailableSch] = useState({});
+	// const unavailableSch = useMemo(() => unavailableSchObj, [unavailableSchObj]);
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
@@ -363,9 +363,11 @@ const CreateCourse = (props) => {
 				ProgramID,
 				GradeID,
 				CourseName,
+				UserInformationID,
 			} = object;
 			stoneDataToSave.current = {
 				CourseName,
+				AcademicUID: UserInformationID,
 				BranchID,
 				RoomID: RoomID.join(','),
 				CurriculumID,
@@ -384,6 +386,7 @@ const CreateCourse = (props) => {
 				DaySelected: DaySelected.join(','),
 			};
 			const studyDayParams = {
+				BranchID,
 				StudyTimeID: StudyTimeID.join(','),
 				StartDate,
 				DaySelected: DaySelected.join(','),
@@ -396,7 +399,8 @@ const CreateCourse = (props) => {
 				.then(([lessonList, studyDayList]) => {
 					if (lessonList.status === 200) {
 						setScheduleList({
-							...scheduleList,
+							endDate: '',
+							available: [],
 							unavailable: lessonList.data['schedule'],
 						});
 					}
@@ -540,14 +544,14 @@ const CreateCourse = (props) => {
 					(o) => o.value === vl
 				)?.title;
 				return {
-					TeacherName,
+					TeacherName: vl ? TeacherName : 'Giáo viên trống',
 					[key]: vl,
 				};
 				break;
 			case 'RoomID':
 				const RoomName = optionRoomList.find((o) => o.value === vl)?.title;
 				return {
-					RoomName,
+					RoomName: vl ? RoomName : 'Phòng trống',
 					[key]: vl,
 				};
 				break;
@@ -614,6 +618,7 @@ const CreateCourse = (props) => {
 			const idx = newScheduleUnavailableList.findIndex((s) => s.ID === sch.ID);
 			newScheduleUnavailableList.splice(idx, 1);
 			newScheduleAvailableList.push(newScheduleObj);
+			setUnavailableSch({});
 		}
 		// type = 1 => available to unavailable
 		if (type === 1) {
@@ -625,6 +630,7 @@ const CreateCourse = (props) => {
 			const idx = newScheduleAvailableList.findIndex((s) => s.ID === sch.ID);
 			newScheduleAvailableList.splice(idx, 1);
 			newScheduleUnavailableList.push(newScheduleObj);
+			setUnavailableSch(newScheduleObj);
 		}
 		setScheduleList((prevState) => ({
 			...prevState,
@@ -693,12 +699,11 @@ const CreateCourse = (props) => {
 				showNoti('danger', 'Đã xảy ra lỗi. Xin kiểm tra lại');
 				return;
 			}
-			console.log(saveCourseInfo);
-			// res = await courseApi.add(saveCourseInfo);
-			// if (res.status === 200) {
-			// 	showNoti('success', res.data.message);
-			// 	router.push('/course/course-list/');
-			// }
+			res = await courseApi.add(saveCourseInfo);
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				router.push('/course/course-list/');
+			}
 		} catch (error) {
 			showNoti('error', error.message);
 		} finally {
@@ -796,9 +801,9 @@ const CreateCourse = (props) => {
 		const StudyTimeName = getMultiTitle(studyTimeList, StudyTimeID);
 		const CourseNameFinal = CourseName
 			? CourseName
-			: `[${BranchName}] - [${ProgramName}] - [${moment(StartDay).format(
-					'DD/MM/YYY'
-			  )}] - [${StudyTimeName}] - [${RoomName}]`;
+			: `[${BranchName}][${ProgramName}][${CurriculumName}][${StudyTimeName}] - ${moment(
+					StartDay
+			  ).format('DD/MM/YYYY')}`;
 
 		setScheduleShow(fmScheduleShowToObject);
 		setSaveCourseInfo({
@@ -819,7 +824,7 @@ const CreateCourse = (props) => {
 		<div className="create-course">
 			<TitlePage title="Tạo khóa học" />
 			<div className="row">
-				<div className="col-xl-8 col-12">
+				<div className="col-md-8 col-12">
 					<Card
 						title="Sắp xếp lịch học"
 						extra={
@@ -863,6 +868,8 @@ const CreateCourse = (props) => {
 								//
 								isLoading={isLoading}
 								//
+								unavailableSch={unavailableSch}
+								//
 								handleFetchInfoAvailableSchedule={fetchInfoAvailableSchedule}
 								handleChangeValueSchedule={onChangeValueSchedule}
 								handleChangeStatusSchedule={onChangeStatusSchedule}
@@ -872,7 +879,7 @@ const CreateCourse = (props) => {
 						</div>
 					</Card>
 				</div>
-				<div className="col-xl-4 col-12">
+				<div className="col-md-4 col-12">
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Form, Select, Input, Radio } from "antd";
-import TinyBox from "~/components/Elements/TinyBox";
+import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
 import FormSingle from "./FormSingle";
 
@@ -58,7 +58,7 @@ const EditQuestionForm = (props) => {
           <div className="row">
             <div className="col-md-12 col-12">
               <Form.Item label="Nhập câu hỏi">
-                <TinyBox />
+                <Editor />
               </Form.Item>
             </div>
 

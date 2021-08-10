@@ -1889,6 +1889,7 @@ hr {
 .avatar-uploader {
   .ant-upload-select {
     position: relative;
+
     &:hover {
       .bg-upload {
         color: #1890ff;
@@ -1901,6 +1902,15 @@ hr {
     left: 50%;
     transform: translate(-50%, -50%);
     transition: 0.2s;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.have-img:hover {
+      background: #00000029;
+    }
   }
 }
 

@@ -1,16 +1,23 @@
+import {Tooltip} from 'antd';
 import moment from 'moment';
+import Link from 'next/link';
 import React, {useEffect, useRef, useState} from 'react';
-import {areaApi, branchApi, teacherApi} from '~/apiBase';
+import {Info} from 'react-feather';
+import {
+	areaApi,
+	branchApi,
+	staffSalaryApi,
+	teacherApi,
+	userInformationApi,
+} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
+import StaffSalaryForm from '../../Option/StaffSalaryForm';
 import TeacherDelete from './TeacherDelete';
 import TeacherFilterForm from './TeacherFilterForm';
 import TeacherForm from './TeacherForm';
-import {Tooltip} from 'antd';
-import Link from 'next/link';
-import {Info} from 'react-feather';
 
 const Teacher = () => {
 	const [teacherList, setTeacherList] = useState<ITeacher[]>([]);
@@ -41,6 +48,10 @@ const Teacher = () => {
 		sortType: false,
 	});
 	const [filters, setFilters] = useState(listFieldInit);
+	// ADD SALARY TO NEW TEACHER
+	const [isClearForm, setIsClearForm] = useState(false);
+	const [openSalaryForm, setOpenSalaryForm] = useState(false);
+	const [dataStaff, setDataStaff] = useState([]);
 	// SORT OPTION
 	const sortOptionList = [
 		{
@@ -203,6 +214,48 @@ const Teacher = () => {
 		fetchTeacherList();
 	}, [filters]);
 
+	// SALARY
+	const onOpenSalaryForm = (userID) => {
+		setIsClearForm(false);
+		setOpenSalaryForm(true);
+		getInfoTeacherToAddSalary(userID);
+	};
+	const onCloseSalaryForm = () => {
+		setIsClearForm(true);
+		setOpenSalaryForm(false);
+		setDataStaff([]);
+	};
+	const getInfoTeacherToAddSalary = async (userID) => {
+		try {
+			const res = await userInformationApi.getByID(userID);
+			res.status === 200 && setDataStaff([res.data.data]);
+		} catch (error) {
+			showNoti('danger', error.message);
+		}
+	};
+
+	const saveSalary = async (obj) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		let res;
+		try {
+			res = await staffSalaryApi.add(obj);
+			if (res.status === 200) {
+				onCloseSalaryForm();
+				showNoti('success', res.data.message);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
+		return res;
+	};
 	// CREATE
 	const onCreateTeacher = async (data: any) => {
 		setIsLoading({
@@ -216,8 +269,11 @@ const Teacher = () => {
 				Branch: data.Branch.join(','),
 			};
 			res = await teacherApi.add(newTeacher);
-			res.status === 200 && showNoti('success', res.data.message);
-			onResetSearch(); // <== khi tạo xong r reset search để trở về trang đầu tiên
+			if (res.status === 200) {
+				onOpenSalaryForm(res.data.data.UserInformationID);
+				showNoti('success', res.data.message);
+				onResetSearch(); // <== khi tạo xong r reset search để trở về trang đầu tiên
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -275,10 +331,12 @@ const Teacher = () => {
 		});
 		try {
 			const delObj = teacherList[idx];
-			const res = await teacherApi.delete({
+			const newDelObj = {
 				...delObj,
+				Branch: delObj['Branch'].map((o) => o.ID).join(','),
 				Enable: false,
-			});
+			};
+			const res = await teacherApi.delete(newDelObj);
 			res.status === 200 && showNoti('success', res.data.message);
 			if (teacherList.length === 1) {
 				filters.pageIndex === 1
@@ -395,6 +453,15 @@ const Teacher = () => {
 
 	return (
 		<>
+			<StaffSalaryForm
+				showInTeacherView={true}
+				isLoading={isLoading}
+				isOpenModalFromOutSide={openSalaryForm}
+				openModalFromOutSide={onCloseSalaryForm}
+				dataStaff={dataStaff}
+				dataIDStaff={dataStaff[0]?.UserInformationID}
+				_onSubmit={(data: any) => saveSalary(data)}
+			/>
 			<PowerTable
 				currentPage={filters.pageIndex}
 				totalPage={totalPage}
@@ -407,6 +474,7 @@ const Teacher = () => {
 				// TitleCard={<ModalAdd />}
 				TitleCard={
 					<TeacherForm
+						isClearForm={isClearForm}
 						isLoading={isLoading}
 						optionAreaList={areaList}
 						optionBranchList={branchList}

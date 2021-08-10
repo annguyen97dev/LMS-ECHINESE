@@ -32,4 +32,6 @@ type IStudentChange = IBaseApi<{
   SourceInformationName: string;
   ParentsIDOf: number;
   ParentsNameOf: string;
+  CounselorsID: number;
+  CounselorsName: string;
 }>;

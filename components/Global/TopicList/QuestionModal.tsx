@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Input, Select } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import TinyBox from "~/components/Elements/TinyBox";
+import Editor from "~/components/Elements/Editor";
 
 const QuestionModal = (props) => {
   const { Option } = Select;
@@ -84,7 +84,7 @@ const QuestionModal = (props) => {
               <label htmlFor="Description" className="mb-1">
                 Question:{" "}
               </label>
-              <TinyBox />
+              <Editor />
             </div>
           </form>
         </div>

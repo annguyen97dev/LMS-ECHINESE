@@ -14,7 +14,6 @@ import {
 import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
-import { userInformationApi } from "~/apiBase";
 
 const StaffSalaryForm = (props) => {
   const { Option } = Select;
@@ -23,7 +22,6 @@ const StaffSalaryForm = (props) => {
   const [form] = Form.useForm();
 
   const { showNoti } = useWrap();
-  const [style, setStyle] = useState(false);
 
   const {
     register,
@@ -37,21 +35,12 @@ const StaffSalaryForm = (props) => {
     if (typeof data.Salary == "string") {
       data.Salary = Number(data.Salary.replace(/\$\s?|(,*)/g, ""));
     }
-	console.log("Data submit", data);
 
-    // let res = props._onSubmit(data);
-    // res.then(function (rs: any) {
-    //   rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
-    // });
+    let res = props._onSubmit(data);
+    res.then(function (rs: any) {
+      rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
+    });
   });
-
-  const onchange = (value, option) => {
-	if(option.role == 2) {
-		setStyle(!style);
-		setValue("Style", 1);
-	}
-	setValue("UserInformationID", value);
-  }
 
   useEffect(() => {
     if (isModalVisible) {
@@ -62,6 +51,15 @@ const StaffSalaryForm = (props) => {
       }
     }
   }, [isModalVisible]);
+
+  useEffect(() => {
+    if (props.dataIDStaff && props.dataStaff.length === 1) {
+      form.setFieldsValue({
+        Staff: props.dataIDStaff,
+      });
+      setValue("UserInformationID", props.dataIDStaff);
+    }
+  }, [props.dataIDStaff]);
   return (
     <>
       {props.showIcon && (
@@ -86,125 +84,134 @@ const StaffSalaryForm = (props) => {
           Thêm mới
         </button>
       )}
-			{/*  */}
-			<Modal
-				title={
-					<>{props.showAdd ? 'Thêm Lương Nhân Viên' : 'Cập Nhật Lương Nhân Viên'}</>
-				}
-				visible={isModalVisible}
-				onCancel={() => setIsModalVisible(false)}
-				footer={null}
-			>
-				<div className="container-fluid">
-					<Form form={form} layout="vertical" onFinish={onSubmit}>
-						<div className="row">
-							<div className="col-12">
-								{props.showAdd ? (
-									<Form.Item 
-										label="Nhân viên"
-										name="Staff"
-										rules={[
-											{ required: true, message: "Bạn không được để trống" },
-										]}
-										>
-										<Select 
-											className="style-input" 
-											placeholder="Chọn nhân viên"
-											allowClear={true}
-											onChange={(value, option) => onchange(value, option)}>
-											{props.dataStaff && props.dataStaff.map(row => (
-												<Option key={row.UserInformationID} role={row.RoleID} value={row.UserInformationID}>{row.FullNameUnicode}</Option>
-											))
-											}
-										</Select>
-									</Form.Item>
-								) : (
-									<Form.Item label="Ghi chú" name="Note">
-										<Input placeholder="Note" className="style-input" allowClear={true}/>
-									</Form.Item>
-								)}
-							</div>
-						</div>
-						{/*  */}
-						<div className="row">
-							<div className="col-12">
-								{style ? (
-								<Form.Item 
-									label="Loại"
-									name="Salary Type"
-									rules={[
-										{ required: true, message: "Bạn không được để trống" },
-									]}
-									// initialValue="Tính lương theo tháng"
-									>
-									<Select 
-										className="style-input"
-										placeholder="Tính lương theo tháng" 
-										allowClear={true}
-										onChange={(value) => setValue("Style", value)}
-										disabled
-										>
-									</Select>
-								</Form.Item>
-								) : (
-								<Form.Item 
-									label="Loại"
-									name="Salary Type"
-									rules={[
-										{ required: true, message: "Bạn không được để trống" },
-									]}
-									initialValue={props.rowData?.StyleName}
-									>
-									<Select 
-										className="style-input"
-										placeholder="Salary Type" 
-										allowClear={true}
-										onChange={(value) => setValue("Style", value)}>
-										<Option value="1">Tính lương theo tháng</Option>
-										<Option value="2">Tính lương theo giờ</Option>
-									</Select>
-								</Form.Item>
-								)}
-
-							</div>
-						</div>
-						{/*  */}
-						{/*  */}
-						<div className="row">
-							<div className="col-12">
-								<Form.Item 
-									label="Mức Lương"
-									name="Salary Const"
-									rules={[
-										{ required: true, message: "Bạn không được để trống" },
-									]}
-									initialValue={props.rowData?.Salary}
-									>
-									<InputNumber
-										className='ant-input style-input w-100'
-										formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-										parser={value => value.replace(/\$\s?|(,*)/g, '')}
-										onChange={value => setValue("Salary", value)}
-									/>
-								</Form.Item>
-							</div>
-						</div>
-						{/*  */}
-						<div className="row ">
-							<div className="col-12">
-								<button type="submit" className="btn btn-primary w-100">
-								Lưu
-								{props.isLoading.type == "ADD_DATA" && props.isLoading.status && (
-									<Spin className="loading-base" />
-								)}
-								</button>
-							</div>
-						</div>
-					</Form>
-				</div>
-			</Modal>
-		</>
-	);
+      {/*  */}
+      <Modal
+        title={
+          <>
+            {props.showAdd
+              ? "Thêm Lương Nhân Viên"
+              : "Cập Nhật Lương Nhân Viên"}
+          </>
+        }
+        visible={
+          props.isOpenModalFromOutSide
+            ? props.isOpenModalFromOutSide
+            : isModalVisible
+        }
+        onCancel={() =>
+          props.openModalFromOutSide
+            ? props.openModalFromOutSide()
+            : setIsModalVisible(false)
+        }
+        footer={null}
+      >
+        <div className="container-fluid">
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
+            <div className="row">
+              <div className="col-12">
+                {props.showAdd || props.showInTeacherView ? (
+                  <Form.Item
+                    label="Nhân viên"
+                    name="Staff"
+                    rules={[
+                      { required: true, message: "Bạn không được để trống" },
+                    ]}
+                  >
+                    <Select
+                      className="style-input"
+                      placeholder="Chọn nhân viên"
+                      allowClear={true}
+                      onChange={(value) => setValue("UserInformationID", value)}
+                    >
+                      {props.dataStaff &&
+                        props.dataStaff.map((row) => (
+                          <Option
+                            key={row.UserInformationID}
+                            value={row.UserInformationID}
+                          >
+                            {row.FullNameUnicode}
+                          </Option>
+                        ))}
+                      <Option value="disabled" disabled>
+                        Disabled
+                      </Option>
+                    </Select>
+                  </Form.Item>
+                ) : (
+                  <Form.Item label="Ghi chú" name="Note">
+                    <Input
+                      placeholder="Note"
+                      className="style-input"
+                      allowClear={true}
+                    />
+                  </Form.Item>
+                )}
+              </div>
+            </div>
+            {/*  */}
+            <div className="row">
+              <div className="col-12">
+                <Form.Item
+                  label="Loại"
+                  name="Salary Type"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                  initialValue={props.rowData?.StyleName}
+                >
+                  <Select
+                    className="style-input"
+                    placeholder="Salary Type"
+                    allowClear={true}
+                    onChange={(value) => setValue("Style", value)}
+                  >
+                    <Option value="1">Tính lương theo tháng</Option>
+                    <Option value="2">Tính lương theo giờ</Option>
+                    <Option value="disabled" disabled>
+                      Disabled
+                    </Option>
+                  </Select>
+                </Form.Item>
+              </div>
+            </div>
+            {/*  */}
+            {/*  */}
+            <div className="row">
+              <div className="col-12">
+                <Form.Item
+                  label="Mức Lương"
+                  name="Salary Const"
+                  rules={[
+                    { required: true, message: "Bạn không được để trống" },
+                  ]}
+                  initialValue={props.rowData?.Salary}
+                >
+                  <InputNumber
+                    className="ant-input style-input w-100"
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                    onChange={(value) => setValue("Salary", value)}
+                  />
+                </Form.Item>
+              </div>
+            </div>
+            {/*  */}
+            <div className="row ">
+              <div className="col-12">
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {props.isLoading.type == "ADD_DATA" &&
+                    props.isLoading.status && <Spin className="loading-base" />}
+                </button>
+              </div>
+            </div>
+          </Form>
+        </div>
+      </Modal>
+    </>
+  );
 };
 
 export default StaffSalaryForm;

@@ -9,7 +9,7 @@ type ITeacher = IBaseApi<{
 	DistrictID: number;
 	DistrictName: string;
 	Avatar: string;
-	BranchID: string;
+	Branch: any;
 	CMND: number;
 	CMNDDate: null;
 	CMNDRegister: null;

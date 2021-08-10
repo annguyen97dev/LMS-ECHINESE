@@ -164,7 +164,7 @@ const FilterBase = (props) => {
     <div className={`wrap-filter small`}>
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <div className="row">
-          {dataFilter.map((item, index) => fieldOfFilter(item,index))}
+          {dataFilter.map((item, index) => fieldOfFilter(item, index))}
 
           <div className="col-md-12">
             <Form.Item className="mb-0">

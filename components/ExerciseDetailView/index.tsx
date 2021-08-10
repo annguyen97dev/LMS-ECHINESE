@@ -1,6 +1,6 @@
 import TitlePage from "../Elements/TitlePage";
 import { Card } from "antd";
-import TinyBox from "../Elements/TinyBox";
+import Editor from "../Elements/Editor";
 import { Comment, Tooltip, Avatar, Rate } from "antd";
 
 const ExerciseDoneView = (props) => {
@@ -62,7 +62,7 @@ const ExerciseDoneView = (props) => {
             </ul>
           </Card>
           <Card title="Comment" className="mt-3">
-            <TinyBox />
+            <Editor />
           </Card>
         </div>
         <div className="col-md-4 col-12">

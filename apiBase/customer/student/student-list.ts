@@ -7,7 +7,11 @@ class StudentApi {
     });
 
   getWithID = (ID: number) =>
+<<<<<<< HEAD
     instance.get<IApiResultData<IStudent[]>>(`/api/Student/${ID}`);
+=======
+    instance.get<IApiResultData<IStudent>>(`/api/Student/${ID}`);
+>>>>>>> 2226ecb0821090b727c071718e74b7ea5bab23d0
 
   add = (data: IStudent) => instance.post("/api/Student", data, {});
 
