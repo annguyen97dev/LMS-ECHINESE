@@ -83,8 +83,6 @@ const CreateCourse = (props) => {
 	});
 	const [curriculumList, setCurriculumList] = useState([]);
 	const stoneStudyTimeList = useRef(studyTimeList);
-	const stonePrevStudyTimeList = useRef(null);
-	const prevStudyTime = useRef('');
 	//Lesson
 	const [scheduleList, setScheduleList] = useState({
 		available: [],
@@ -263,7 +261,7 @@ const CreateCourse = (props) => {
 		}
 	};
 	// CURRICULUM
-	const checkStudyTime = async (value) => {
+	const checkStudyTime = async (value: [number]) => {
 		if (!value.length) {
 			setStudyTimeList(stoneStudyTimeList.current);
 			return;
@@ -285,6 +283,7 @@ const CreateCourse = (props) => {
 					return st;
 				}
 				if (
+					// KIỂM TRA MỖI CA HỌC KHÔNG CÓ THỜI GIAN TRÙNG LÊN NHAU
 					!(
 						(s1 < s2 && e1 > e2 && s1 < e2) ||
 						(s1 > s2 && e1 > e2 && s1 < e2) ||
@@ -602,10 +601,6 @@ const CreateCourse = (props) => {
 		const newScheduleUnavailableList = [...scheduleList.unavailable];
 		const newScheduleAvailableList = [...scheduleList.available];
 		const fmDate = moment(dateString).format('YYYY-MM-DD');
-		const newScheduleObj = {
-			...sch,
-			date: fmDate,
-		};
 		const fmScheduleUnavailableToObject = newScheduleUnavailableList.reduce(
 			(newObj, s) => {
 				newObj[s.date] ? newObj[s.date].push(s) : (newObj[s.date] = [s]);
@@ -616,6 +611,10 @@ const CreateCourse = (props) => {
 		// type = 2 => unavailable to available
 		if (type === 2) {
 			const idx = newScheduleUnavailableList.findIndex((s) => s.ID === sch.ID);
+			const newScheduleObj = {
+				...newScheduleUnavailableList[idx],
+				date: fmDate,
+			};
 			newScheduleUnavailableList.splice(idx, 1);
 			newScheduleAvailableList.push(newScheduleObj);
 			setUnavailableSch({});
@@ -628,6 +627,10 @@ const CreateCourse = (props) => {
 				return;
 			}
 			const idx = newScheduleAvailableList.findIndex((s) => s.ID === sch.ID);
+			const newScheduleObj = {
+				...newScheduleAvailableList[idx],
+				date: fmDate,
+			};
 			newScheduleAvailableList.splice(idx, 1);
 			newScheduleUnavailableList.push(newScheduleObj);
 			setUnavailableSch(newScheduleObj);

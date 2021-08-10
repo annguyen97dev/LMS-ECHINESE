@@ -16,6 +16,7 @@ const CreateCourseCalendar = (props) => {
 		handleSelectDate,
 		dateSelected,
 		//
+		isEdit,
 		isLoading,
 		//
 		unavailableSch,
@@ -137,6 +138,7 @@ const CreateCourseCalendar = (props) => {
 	return (
 		<>
 			<Calendar
+				className="custom-calendar"
 				localizer={localizer}
 				events={eventList}
 				startAccessor="start"
@@ -148,9 +150,15 @@ const CreateCourseCalendar = (props) => {
 				showMultiDayTimes={true}
 				eventPropGetter={customEventPropGetter}
 				components={{event: styleEvent}}
+				formats={{
+					monthHeaderFormat: (date) => moment(date).format('MM/YYYY'),
+					dayRangeHeaderFormat: ({start, end}) =>
+						`${moment(start).format('DD/MM')} - ${moment(end).format('DD/MM')}`,
+				}}
 			/>
 			<Modal
-				getContainer=".wrap-modal"
+				className="create-course-modal"
+				getContainer=".create-course-wrap-modal"
 				zIndex={900}
 				title={`Chi tiết ngày ${dateFm}`}
 				visible={isVisible}
@@ -239,6 +247,7 @@ CreateCourseCalendar.propTypes = {
 	dateSelected: PropTypes.shape({
 		dateString: PropTypes.string.isRequired,
 	}),
+	isEdit: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
@@ -265,6 +274,7 @@ CreateCourseCalendar.defaultProps = {
 	dateSelected: {
 		dateString: '',
 	},
+	isEdit: false,
 	isLoading: {type: '', status: false},
 	//
 	handleChangeValueSchedule: null,

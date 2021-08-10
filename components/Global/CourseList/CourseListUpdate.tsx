@@ -45,6 +45,7 @@ const CourseListUpdate = (props) => {
 
 	useEffect(() => {
 		if (courseObj) {
+			console.log(courseObj);
 			form.reset({
 				...courseObj,
 			});
@@ -66,6 +67,19 @@ const CourseListUpdate = (props) => {
 	useEffect(() => {
 		isModalVisible && checkHandleFetchDataForUpdateForm(courseObj);
 	}, [isModalVisible]);
+
+	useEffect(() => {
+		const {AcademicUID, TeacherLeaderUID} = courseObj;
+		const {academicList, teacherLeadList} = optionList;
+		if (academicList.length && teacherLeadList.length) {
+			if (!academicList.some((o) => o.value === AcademicUID)) {
+				form.setValue('AcademicUID', 0);
+			}
+			if (!teacherLeadList.some((o) => o.value === TeacherLeaderUID)) {
+				form.setValue('TeacherLeaderUID', 0);
+			}
+		}
+	}, [optionList]);
 
 	return (
 		<>

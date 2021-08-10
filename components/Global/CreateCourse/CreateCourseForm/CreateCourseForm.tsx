@@ -111,6 +111,7 @@ const CreateCourseForm = (props) => {
 		form.setValue('CurriculumID', undefined);
 		handleGetValueBeforeFetchCurriculum(key, value);
 		if (key === 'StudyTimeID' && handleCheckStudyTime) {
+			// value = [1, 2, ...];
 			handleCheckStudyTime(value);
 		}
 	};
