@@ -1,6 +1,7 @@
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Collapse} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
@@ -36,7 +37,18 @@ const ScheduleItem = (props) => {
 		optionForScheduleList,
 		optionStudyTime,
 	} = props;
-	const {ID, eventName, Tiet, CaID} = scheduleObj;
+	const {
+		ID,
+		eventName,
+		Tiet,
+		CaID,
+		// EDIT
+		Date,
+		TeacherName,
+		RoomName,
+		SubjectName,
+		CourseName,
+	} = scheduleObj;
 
 	const defaultValuesInit = {
 		RoomID: 0,
@@ -93,8 +105,8 @@ const ScheduleItem = (props) => {
 	}, [optionForScheduleList]);
 
 	useEffect(() => {
-		let {RoomID, TeacherID, CaID} = scheduleObj;
-		form.setValue('StudyTimeID', CaID);
+		let {RoomID, TeacherID, CaID, StudyTimeID} = scheduleObj;
+		form.setValue('StudyTimeID', CaID || StudyTimeID);
 		form.setValue('RoomID', RoomID || 0);
 		form.setValue('TeacherID', TeacherID || 0);
 		form.clearErrors();
@@ -119,9 +131,12 @@ const ScheduleItem = (props) => {
 						}}
 						checked={isUpdate}
 					/>
-					<p className="title">{eventName}</p>
+					<p className="title">
+						{eventName ||
+							`${moment(Date).format('DD/MM')} - ${TeacherName} - ${RoomName}`}
+					</p>
 					<ul className="info-course-list">
-						<li>{Tiet.CurriculumsDetailName}</li>
+						<li>{Tiet?.CurriculumsDetailName || SubjectName}</li>
 					</ul>
 				</div>
 			}
