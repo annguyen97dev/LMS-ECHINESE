@@ -21,17 +21,51 @@ import {
   sourceInfomationApi,
   parentsApi,
   staffApi,
+  staffSalaryApi,
 } from "~/apiBase";
 import SortBox from "~/components/Elements/SortBox";
 import moment from "moment";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
-import { Roles } from "~/lib/roles/listRoles";
+// import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from "~/components/Global/StaffList/StaffForm";
 import { number, string } from "yup";
 
 let pageIndex = 1;
 
+interface dataRoles {
+  title: string;
+  value: number;
+}
+
 let dataRoles = [];
+
+const Roles = [
+  {
+    id: 1,
+    RoleName: "Admin",
+  },
+
+  {
+    id: 5,
+    RoleName: "Nhân viên quản lí",
+  },
+  {
+    id: 6,
+    RoleName: "Nhân viên bán hàng",
+  },
+  {
+    id: 7,
+    RoleName: "Học vụ",
+  },
+  {
+    id: 8,
+    RoleName: "Quản lí chuyên môn",
+  },
+  {
+    id: 9,
+    RoleName: "Kế toán",
+  },
+];
 
 (function getListRoles() {
   dataRoles = Roles.map((item) => ({
@@ -384,7 +418,7 @@ const StaffList = () => {
 
   // ---------------- AFTER SUBMIT -----------------
   const afterPost = (mes) => {
-    showNoti("success", mes);
+    // showNoti("success", "Thêm nhân viên thành công");
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -414,9 +448,39 @@ const StaffList = () => {
     return newArr;
   };
 
+  const onSubmitSalary = async (data: any) => {
+    console.log("DATA SUBMIT SALARY: ", data);
+
+    setIsLoading({
+      type: "ADD_DATA",
+      status: true,
+    });
+    let res = null;
+    try {
+      res = await staffSalaryApi.update(data);
+      if (res.status == 200) {
+        showNoti("success", "Thêm lương thành công");
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "ADD_DATA",
+        status: false,
+      });
+    }
+
+    return res;
+  };
+
   const onSubmit = async (data: any) => {
-    data.Branch = data.Branch.toString();
-    console.log("DATA SUBMIT after: ", data);
+    if (typeof data.Branch != "undefined") {
+      data.Branch = data.Branch.toString();
+    } else {
+      data.Branch = "";
+    }
+
+    console.log("DATA SUBMIT STAFF: ", data);
 
     setIsLoading({
       type: "ADD_DATA",
@@ -616,6 +680,7 @@ const StaffList = () => {
           rowID={data.UserInformationID}
           isLoading={isLoading}
           onSubmit={(data: any) => onSubmit(data)}
+          onSubmitSalary={(data: any) => onSubmitSalary(data)}
           listDataForm={listDataForm}
         />
       ),

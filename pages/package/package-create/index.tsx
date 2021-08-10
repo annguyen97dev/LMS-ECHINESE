@@ -14,7 +14,7 @@ import {
 import { Headphones } from "react-feather";
 
 import ImgCrop from "antd-img-crop";
-import TinyBox from "~/components/Elements/TinyBox";
+import Editor from "~/components/Elements/Editor";
 import LayoutBase from "~/components/LayoutBase";
 import { useRouter } from "next/router";
 
@@ -159,7 +159,7 @@ const PackageCreate = () => {
 
                 <div className="form-item">
                   <label htmlFor="">Description: </label>
-                  <TinyBox />
+                  <Editor />
                 </div>
 
                 <div className="form-item justify-content-center">

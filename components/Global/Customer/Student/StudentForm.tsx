@@ -61,7 +61,7 @@ const optionGender = [
 
 const StudentForm = (props) => {
   const { dataRow, listDataForm, _handleSubmit, index } = props;
-
+  console.log("lst", dataRow);
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",

@@ -16,6 +16,7 @@ import {
   SearchOutlined,
   LoginOutlined,
   FormOutlined,
+  RedoOutlined,
 } from "@ant-design/icons";
 import { User } from "react-feather";
 import TitlePage from "../Elements/TitlePage";
@@ -75,14 +76,16 @@ export default function Header({
           </a>
         </Link>
       </li>
-      {/* <li>
-        <a href="#">
-          <span className="icon inbox">
-            <MailOutlined />
-          </span>
-          <span className="function-name">Inbox</span>
-        </a>
-      </li> */}
+      <li>
+        <Link href="/change-password">
+          <a href="#">
+            <span className="icon inbox">
+              <RedoOutlined />
+            </span>
+            <span className="function-name">Đổi mật khẩu</span>
+          </a>
+        </Link>
+      </li>
       <li>
         <a
           href="#"

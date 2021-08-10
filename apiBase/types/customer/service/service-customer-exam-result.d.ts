@@ -1,0 +1,21 @@
+type IServiceCustomerExamResult = IBaseApi<{
+    ID: number,
+    StudentExamOfServiceID: number,
+    ExamOfServiceID: number,
+    ExamOfServiceName: string,
+    UserInformationID: number,
+    FullNameUnicode: string,
+    Mobile: number,
+    ListeningPoint: number,
+    SpeakingPoint: number,
+    ReadingPoint: number,
+    WritingPoint: number,
+    Skills: number,
+    OverAll: number,
+    ExamDate: string,
+    Enable: boolean,
+    CreatedOn: string,
+    CreatedBy: string,
+    ModifiedOn: string,
+    ModifiedBy: string
+}>

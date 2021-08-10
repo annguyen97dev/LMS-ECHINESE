@@ -30,7 +30,7 @@ import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
 import AvatarBase from "~/components/Elements/AvatarBase.tsx";
-import { userApi } from "~/apiBase";
+import { userApi, userInformationApi } from "~/apiBase";
 import TitlePage from "../Elements/TitlePage";
 let returnSchema = {};
 let schema = null;
@@ -71,7 +71,7 @@ const ProfileBase = (props) => {
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
-  const { showNoti, getDataUser } = useWrap();
+  const { showNoti, getDataUser, userInformation } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -121,8 +121,6 @@ const ProfileBase = (props) => {
 
   // ----------- SUBMI FORM ------------
   const onSubmit = async (data: any) => {
-    console.log("Data submit bên đây: ", data);
-
     setIsLoading({
       type: "ADD_DATA",
       status: true,
@@ -134,7 +132,6 @@ const ProfileBase = (props) => {
         (showNoti("success", "Cập nhật thành công"),
         form.reset(data),
         setDataForm(res.data.data),
-        localStorage.setItem("dataUserEchinese", JSON.stringify(res.data.data)),
         getDataUser(res.data.data));
     } catch (error) {
       showNoti("danger", error.message);
@@ -150,19 +147,18 @@ const ProfileBase = (props) => {
     if (dataUser) {
       dataUser.Gender = parseInt(dataUser.Gender);
 
-      if (localStorage.getItem("dataUserEchinese") === null) {
+      if (userInformation === null) {
         form.reset(dataUser);
         setDataForm(dataUser);
         setImageUrl(dataUser.Avatar);
       } else {
-        const user = JSON.parse(localStorage.getItem("dataUserEchinese"));
-        setDataForm(user);
-        form.reset(user);
-        setImageUrl(user.Avatar);
+        setDataForm(userInformation);
+        form.reset(userInformation);
+        setImageUrl(userInformation.Avatar);
       }
       // dataForm == null && setDataForm(dataUser);
     }
-  }, []);
+  }, [userInformation]);
 
   return (
     <>

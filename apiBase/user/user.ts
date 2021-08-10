@@ -5,6 +5,9 @@ class UserApi {
   // Lấy tất cả data
   getAll = (params) => instance.get<IApiResultData<IUser[]>>(url, { params });
 
+  // Lấy data mới nhất
+  getNew = () => instance.get<IApiResultData<IUser>>(url + "0");
+
   // Thêm mới data
   add(data: IUser) {
     return instance.post(url, data);
@@ -16,6 +19,11 @@ class UserApi {
   // Xóa data
   delete(data: IUser) {
     return instance.put(url, data);
+  }
+
+  // Đổi mật khẩu
+  changePassword(data: any) {
+    return instance.put("/api/Account", data);
   }
 }
 
