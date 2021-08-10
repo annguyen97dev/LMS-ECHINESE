@@ -45,3 +45,6 @@ export { voucherApi } from "./customer/finance/finance-cashier-payment";
 export { invoiceApi } from "./customer/finance/finance-cashier-invoice";
 export { examAppointmentResultApi } from "./customer/student/exam-appointment-result";
 export { courseStudentApi } from "./customer/student/course-student";
+export { rollUpApi } from "./course/rollup";
+export { courseOfStudentPriceApi } from "./course/course-of-student-price";
+export { configApi } from "./options/config";

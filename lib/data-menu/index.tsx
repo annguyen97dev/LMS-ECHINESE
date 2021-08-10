@@ -760,6 +760,13 @@ export const dataMenu = [
             Text: "Điều khoản",
             Icon: "",
           },
+          {
+            ItemType: "single",
+            Key: "/option/config-voucher-invoice",
+            Route: "/option/config-voucher-invoice",
+            Text: "Phiếu thu, phiếu chi",
+            Icon: "",
+          },
         ],
       },
     ],

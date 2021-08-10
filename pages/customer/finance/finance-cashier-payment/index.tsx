@@ -315,7 +315,7 @@ export default function FinancePayment() {
             href={{
               pathname:
                 "/customer/finance/finance-cashier-payment/invoice-detail/[slug]",
-              query: { slug: 2 },
+              query: { slug: record.ID },
             }}
           >
             <Tooltip title="Xuất phiếu chi">

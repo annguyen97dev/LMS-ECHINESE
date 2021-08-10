@@ -101,13 +101,13 @@ const ProfileCustomer = (props) => {
                 <InfoCourseCard id={id} />
               </TabPane>
               <TabPane tab="Payment History" key="4" className="profile-tabs">
-                <InfoPaymentCard />
+                <InfoPaymentCard id={id}/>
               </TabPane>
               <TabPane tab="Change History" key="5" className="profile-tabs">
                 <InfoChangeCard />
               </TabPane>
               <TabPane tab="Test result" key="6" className="profile-tabs">
-                <InfoTestResultCard />
+                <InfoTestResultCard id={id}/>
               </TabPane>
               <TabPane tab="Other" key="7" className="profile-tabs">
                 <InfoOtherCard />
