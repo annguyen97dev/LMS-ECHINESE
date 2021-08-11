@@ -65,6 +65,14 @@ const EditorSummernote = () => {
     console.log("onChange", content);
   };
 
+  const onImageUpload = (fileList) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      ReactSummernote.insertImage(reader.result);
+    };
+    reader.readAsDataURL(fileList[0]);
+  };
+
   return (
     <ReactSummernote
       value="Default value"
@@ -83,6 +91,7 @@ const EditorSummernote = () => {
         ],
       }}
       onChange={onChange}
+      onImageUpload={onImageUpload}
     />
   );
 };
