@@ -52,6 +52,7 @@ const CenterForm = React.memo((props: any) => {
   // };
 
   // Get DATA DISTRICT
+  console.log(dataDistrict);
   const getDistrictByArea = (AreaID: number) => {
     setLoadingSelect(true);
 
