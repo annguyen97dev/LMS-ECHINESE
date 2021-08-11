@@ -8,14 +8,13 @@ import { courseStudentApi } from "~/apiBase/customer/student/course-student";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
 import ExpandTable from "~/components/ExpandTable";
-import ChangeCourse from "~/components/Global/Customer/Student/ChangeCourse";
+import ChangeCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ChangeCourseForm";
 import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
 import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
-import ReserveCourse from "~/components/Global/Customer/Student/ReserveCourse";
 import LayoutBase from "~/components/LayoutBase";
-import PowerTable from "~/components/PowerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
+import ReserveCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ReserveCourseForm";
 
 const CourseStudent = () => {
   const onSearch = (data) => {
@@ -70,49 +69,29 @@ const CourseStudent = () => {
       title: "Cam kết ",
       dataIndex: "Commitment",
     },
-    // {
-    //   render: (data) => (
-    //     <Fragment>
-    //       <ParentsForm
-    //         parentsDetail={data}
-    //         parentsID={data.UserInformationID}
-    //         reloadData={(firstPage) => {
-    //           getDataParents(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
 
-    //       <Link
-    //         href={{
-    //           pathname: "/customer/parents/detail/[slug]",
-    //           query: { slug: `${data.UserInformationID}` },
-    //         }}
-    //       >
-    //         <Tooltip title="Xem học viên liên kết">
-    //           <button className="btn btn-icon">
-    //             <Info />
-    //           </button>
-    //         </Tooltip>
-    //       </Link>
-
-    //       <ParentsDelete
-    //         parentsID={data.UserInformationID}
-    //         reloadData={(firstPage) => {
-    //           getDataParents(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
-    //     </Fragment>
-    //   ),
-    // },
     {
-      render: () => (
+      render: (data) => (
         <Fragment>
-          <ChangeCourse />
+          <ChangeCourseForm
+            infoDetail={data}
+            infoId={data.ID}
+            reloadData={(firstPage) => {
+              getDataCourseStudent(firstPage);
+            }}
+            currentPage={currentPage}
+          />
 
-          <ReserveCourse />
+          <ReserveCourseForm
+            infoDetail={data}
+            infoId={data.ID}
+            reloadData={(firstPage) => {
+              getDataCourseStudent(firstPage);
+            }}
+            currentPage={currentPage}
+          />
 
-          <RefundCourse />
+          {/* <RefundCourse /> */}
         </Fragment>
       ),
     },
@@ -312,7 +291,7 @@ const CourseStudent = () => {
           // infoIndex={index}
         />
       </Fragment>
-    )
+    );
   };
 
   return (

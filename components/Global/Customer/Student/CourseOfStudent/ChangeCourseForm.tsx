@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useState } from "react";
 import {
   Modal,
@@ -9,8 +10,9 @@ import {
   TimePicker,
   DatePicker,
   InputNumber,
+  Divider,
 } from "antd";
-import { CreditCard, RotateCcw } from "react-feather";
+import { CreditCard, Move, RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 import { branchApi, serviceApi } from "~/apiBase";
@@ -19,7 +21,7 @@ import { examServiceApi } from "~/apiBase/options/examServices";
 import { paymentMethodApi } from "~/apiBase/options/payment-method";
 import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student-price";
 
-const CourseOfStudentPriceForm = React.memo((props: any) => {
+const ChangeCourseForm = React.memo((props: any) => {
   const { Option } = Select;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { infoId, reloadData, infoDetail, currentPage } = props;
@@ -27,58 +29,49 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
   const { setValue } = useForm();
-
-  const [paymentMethod, setPaymentMethod] = useState<IPaymentMethod[]>();
-  const [payBranch, setPayBranch] = useState<IBranch[]>();
+  const [courseStudentPrice, setCourseStudentPrice] = useState(null);
 
   const fetchData = () => {
     (async () => {
       try {
-        const _paymentMethod = await paymentMethodApi.getAll({});
-
-        const _payBranch = await branchApi.getAll({
-          pageSize: 99999,
-          pageIndex: 1,
-        });
-
-        _paymentMethod.status == 200 &&
-          // @ts-ignore
-          setPaymentMethod(_paymentMethod.data.data);
-        //@ts-ignore
-        _payBranch.status == 200 && setPayBranch(_payBranch.data.data);
+        const _courseStudentPrice = await courseStudentPriceApi.getDetail(
+          infoDetail.CourseOfStudentPriceID
+        );
+        _courseStudentPrice.status == 200 &&
+          setCourseStudentPrice(_courseStudentPrice.data.data);
       } catch (err) {
         showNoti("danger", err.message);
       }
     })();
   };
 
-  const onSubmit = async (data: any) => {
-    setLoading(true);
-    if (infoId) {
-      try {
-        let res = await courseStudentPriceApi.update({
-          ...data,
-          Enable: true,
-          ID: infoId,
-        });
-        reloadData(currentPage);
-        afterSubmit(res?.data.message);
-      } catch (error) {
-        showNoti("danger", error.message);
-        setLoading(false);
-      }
-    } else {
-      try {
-        let res = await courseStudentPriceApi.add({ ...data, Enable: true });
-        afterSubmit(res?.data.message);
-        reloadData(1);
-        form.resetFields();
-      } catch (error) {
-        showNoti("danger", error.message);
-        setLoading(false);
-      }
-    }
-  };
+  // const onSubmit = async (data: any) => {
+  //   setLoading(true);
+  //   if (infoId) {
+  //     try {
+  //       let res = await courseStudentPriceApi.update({
+  //         ...data,
+  //         Enable: true,
+  //         ID: infoId,
+  //       });
+  //       reloadData(currentPage);
+  //       afterSubmit(res?.data.message);
+  //     } catch (error) {
+  //       showNoti("danger", error.message);
+  //       setLoading(false);
+  //     }
+  //   } else {
+  //     try {
+  //       let res = await courseStudentPriceApi.add({ ...data, Enable: true });
+  //       afterSubmit(res?.data.message);
+  //       reloadData(1);
+  //       form.resetFields();
+  //     } catch (error) {
+  //       showNoti("danger", error.message);
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
 
   const afterSubmit = (mes) => {
     showNoti("success", mes);
@@ -87,13 +80,11 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
   };
 
   useEffect(() => {
-    if (isModalVisible == true) {
+    if (isModalVisible) {
       fetchData();
       if (infoDetail) {
         form.setFieldsValue({
           ...infoDetail,
-          PayDate: null,
-          payBranch: null,
         });
       }
     }
@@ -101,38 +92,31 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
 
   return (
     <>
-      {infoId ? (
-        <button
-          className="btn btn-icon edit"
-          onClick={() => {
-            setIsModalVisible(true);
-          }}
-        >
-          <Tooltip title="Thanh toán học phí">
-            <CreditCard />
-          </Tooltip>
-        </button>
-      ) : (
-        <button
-          className="btn btn-warning add-new"
-          onClick={() => {
-            setIsModalVisible(true);
-          }}
-        >
-          Thêm mới
-        </button>
-      )}
-
+      <button
+        className="btn btn-icon edit"
+        onClick={() => {
+          setIsModalVisible(true);
+        }}
+      >
+        <Tooltip title="Chuyển khóa">
+          <Move />
+        </Tooltip>
+      </button>
       <Modal
-        title={<>{infoId ? "Thanh toán học phí" : "Học viên nợ học phí"}</>}
+        title="Chuyển khóa"
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
         <div className="container-fluid">
-          <Form form={form} layout="vertical" onFinish={onSubmit}>
+          <Form
+            form={form}
+            layout="vertical"
+            // onFinish={onSubmit}
+          >
+            <Divider orientation="center">Thông tin khóa hiện tại</Divider>
             <div className="row">
-              <div className="col-12 col-md-6">
+              <div className="col-12">
                 <Form.Item name="FullNameUnicode" label="Học viên">
                   <Input
                     disabled
@@ -143,43 +127,81 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                   />
                 </Form.Item>
               </div>
-
-              <div className="col-12 col-md-6">
-                <Form.Item
-                  name="MoneyInDebt"
-                  label="Số tiền còn lại"
-                  initialValue={infoDetail.MoneyInDebt}
-                >
-                  <InputNumber
+            </div>
+            <div className="row">
+              <div className="col-12">
+                <Form.Item name="CourseIDBefore" label="Trung tâm">
+                  <Select
+                    style={{ width: "100%" }}
+                    className="style-input"
                     disabled
-                    className="ant-input style-input w-100"
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                    onChange={(value) => setValue("MoneyInDebt", value)}
-                  />
+                    defaultValue={infoDetail.CourseID}
+                  >
+                    <Option value={infoDetail.CourseID}>
+                      {infoDetail.CourseName}
+                    </Option>
+                  </Select>
                 </Form.Item>
               </div>
             </div>
 
-            {/* <div className="row">
-              <div className="col-12">
-                <Form.Item
-                  name="Course"
-                  label="Khóa học"
-                  initialValue={infoDetail.Course.CourseName}
-                >
-                  <Select className="w-100 style-input" mode="multiple">
-                    {course.map((x) => {
-                      <Option value={x.ID}>{x.CourseName}</Option>;
-                    })}
-                  </Select>
-                </Form.Item>
-              </div>
-            </div> */}
+            {courseStudentPrice != null && (
+              <>
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Giá tiền">
+                      <Input
+                        defaultValue={Intl.NumberFormat("ja-JP").format(
+                          courseStudentPrice.Price
+                        )}
+                        disabled
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
 
-            <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Giảm giá">
+                      <Input
+                        defaultValue={Intl.NumberFormat("ja-JP").format(
+                          courseStudentPrice.Reduced
+                        )}
+                        disabled
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Đã đóng">
+                      <Input
+                        defaultValue={Intl.NumberFormat("ja-JP").format(
+                          courseStudentPrice.Paid
+                        )}
+                        disabled
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Còn lại">
+                      <Input
+                        defaultValue={Intl.NumberFormat("ja-JP").format(
+                          courseStudentPrice.MoneyInDebt
+                        )}
+                        disabled
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* <div className="row">
               <div className="col-12 col-md-6">
                 <Form.Item
                   name="Paid"
@@ -258,7 +280,7 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                   />
                 </Form.Item>
               </div>
-            </div>
+            </div> */}
             {/*  */}
 
             <div className="row ">
@@ -276,4 +298,4 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
   );
 });
 
-export default CourseOfStudentPriceForm;
+export default ChangeCourseForm;

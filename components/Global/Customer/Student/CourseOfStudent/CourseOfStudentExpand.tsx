@@ -1,10 +1,8 @@
-import { Table, Tooltip } from "antd";
+//@ts-nocheck
+import { Descriptions, Table, Tooltip } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import React, { Fragment, useEffect, useState } from "react";
-import { AlertTriangle, X } from "react-feather";
-import { jobApi } from "~/apiBase";
 import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student-price";
-import PowerTable from "~/components/PowerTable";
 import { useWrap } from "~/context/wrap";
 
 const CourseOfStudentExpand = (props) => {
@@ -28,35 +26,31 @@ const CourseOfStudentExpand = (props) => {
     fetchDetailInfo();
   }, []);
 
-  const columns = [
-    {
-      title: "Trung tâm thanh toán",
-      dataIndex: "PayBranchName",
-    },
-    {
-      title: "Giá tiền",
-      dataIndex: "Price",
-    },
-    {
-      title: "Đã giảm",
-      dataIndex: "Reduced",
-    },
-    {
-      title: "Đã thanh toán",
-      dataIndex: "Paid",
-    },
-    {
-      title: "Còn lại",
-      dataIndex: "MoneyInDebt",
-    },
-  ];
-
   console.log(detail);
 
   return (
-    <Fragment>
-      <PowerTable columns={columns} dataSource={detail} />
-    </Fragment>
+    <div className="container-fluid">
+      <Descriptions
+        layout="vertical"
+        bordered
+        column={4}
+        size="small"
+        labelStyle={{ fontWeight: 500, color: "rgb(99, 99, 99)" }}
+      >
+        <Descriptions.Item label="Giá tiền">
+          {Intl.NumberFormat("ja-JP").format(detail.Price)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Giảm giá">
+          {Intl.NumberFormat("ja-JP").format(detail.Reduced)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Đã đóng">
+          {Intl.NumberFormat("ja-JP").format(detail.Paid)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Còn lại">
+          {Intl.NumberFormat("ja-JP").format(detail.MoneyInDebt)}
+        </Descriptions.Item>
+      </Descriptions>
+    </div>
   );
 };
 
