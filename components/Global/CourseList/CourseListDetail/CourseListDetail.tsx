@@ -12,14 +12,14 @@ import {
   FileText,
   Flag,
 } from "react-feather";
-import Comment from "~/components/Global/CourseList/CourseListDetail/Comment";
 import DocumentCourse from "~/components/Global/CourseList/CourseListDetail/DocumentCourse";
 import Exam from "~/components/Global/CourseList/CourseListDetail/Exam";
 import Exercise from "~/components/Global/CourseList/CourseListDetail/Exercise";
-import NotificationCourse from "~/components/Global/CourseList/CourseListDetail/NotificationCourse";
 import RollUp from "~/components/Global/CourseList/CourseListDetail/RollUp/RollUp";
 import StudentsList from "~/components/Global/CourseList/CourseListDetail/StudentList/StudentList";
+import Comment from "./Comment/Comment";
 import CourseDetailCalendar from "./CourseDetailCalendar/CourseDetailCalendar";
+import NotificationCourse from "./NotificationCourse/NotificationCourse";
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
@@ -121,18 +121,20 @@ const CourseListDetail = () => {
           }
           key="8"
         >
-          <Comment />
+          <Comment courseID={parseInt(router.query.slug as string)} />
         </TabPane>
         <TabPane
           tab={
             <>
               <Bell />
-              <span title="tab-title"> Notification</span>
+              <span title="tab-title"> Thông báo</span>
             </>
           }
           key="9"
         >
-          <NotificationCourse />
+          <NotificationCourse
+            courseID={parseInt(router.query.slug as string)}
+          />
         </TabPane>
       </Tabs>
     </div>
