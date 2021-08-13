@@ -88,7 +88,7 @@ const Teacher = () => {
 		},
 	];
 	// FILTER
-	const onFilterTeacherJobDate = (obj) => {
+	const onFilter = (obj) => {
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -422,7 +422,7 @@ const Teacher = () => {
 							query: {slug: _.UserInformationID},
 						}}
 					>
-						<Tooltip title="Xem phòng">
+						<Tooltip title="Xem giáo viên">
 							<a className="btn btn-icon">
 								<Info />
 							</a>
@@ -486,7 +486,8 @@ const Teacher = () => {
 				Extra={
 					<div className="extra-table">
 						<TeacherFilterForm
-							handleFilterTeacherJobDate={onFilterTeacherJobDate}
+							handleFilter={onFilter}
+							handleResetFilter={onResetSearch}
 						/>
 						<SortBox handleSort={onSort} dataOption={sortOptionList} />
 					</div>

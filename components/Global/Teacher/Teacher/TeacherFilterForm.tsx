@@ -9,7 +9,7 @@ import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 
 const TeacherFilterForm = (props) => {
-	const {handleFilterTeacherJobDate} = props;
+	const {handleFilter, handleResetFilter} = props;
 
 	const [showFilter, showFilterSet] = useState(false);
 
@@ -17,20 +17,15 @@ const TeacherFilterForm = (props) => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
 	const schema = yup.object().shape({
-		fromDate: yup
-			.date()
-			.max(
-				yup.ref('toDate'),
-				({max}) => `Ngày bắt đầu cần trước ${moment(max).format('DD-MM-YYYY')}`
-			)
-			.required('Bạn không được bỏ trống'),
+		fromDate: yup.date().required('Bạn không được để trống'),
 		toDate: yup
 			.date()
-			.min(
-				yup.ref('fromDate'),
-				({min}) => `Ngày kết thúc cần sau ${moment(min).format('DD-MM-YYYY')}`
-			)
-			.required('Bạn không được bỏ trống'),
+			.required('Bạn không được để trống')
+			.when(
+				'fromDate',
+				(startDate, schema) =>
+					startDate && schema.min(startDate, `Ngày không hợp lệ`)
+			),
 	});
 
 	const defaultValuesInit = {
@@ -41,17 +36,20 @@ const TeacherFilterForm = (props) => {
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema),
 	});
-	const checkHandleFilterTeacherJobDate = (createdBy) => {
-		if (!handleFilterTeacherJobDate) return;
-		handleFilterTeacherJobDate(createdBy);
+	const checkHandleFilter = (createdBy) => {
+		if (!handleFilter) return;
+		handleFilter(createdBy);
 		funcShowFilter();
+	};
+	const checkHandleResetFilter = () => {
+		if (!handleResetFilter) return;
+		handleResetFilter();
+		funcShowFilter();
+		form.reset({...defaultValuesInit});
 	};
 	const content = (
 		<div className={`wrap-filter small`}>
-			<Form
-				layout="vertical"
-				onFinish={form.handleSubmit(checkHandleFilterTeacherJobDate)}
-			>
+			<Form layout="vertical" onFinish={form.handleSubmit(checkHandleFilter)}>
 				<div className="row">
 					<div className="col-md-12">
 						<DateField form={form} name="fromDate" label="Ngày nhận việc từ" />
@@ -69,6 +67,13 @@ const TeacherFilterForm = (props) => {
 							{/* {isLoading.type === 'FILTER_CREATED' && isLoading.status && (
 								<Spin className="loading-base" />
 							)} */}
+						</button>
+						<button
+							type="button"
+							className="light btn btn-secondary"
+							onClick={checkHandleResetFilter}
+						>
+							Reset
 						</button>
 					</div>
 				</div>
@@ -96,9 +101,11 @@ const TeacherFilterForm = (props) => {
 	);
 };
 TeacherFilterForm.propTypes = {
-	handleFilterTeacherJobDate: PropTypes.func,
+	handleFilter: PropTypes.func,
+	handleResetFilter: PropTypes.func,
 };
 TeacherFilterForm.defaultProps = {
-	handleFilterTeacherJobDate: null,
+	handleFilter: null,
+	handleResetFilter: null,
 };
 export default TeacherFilterForm;
