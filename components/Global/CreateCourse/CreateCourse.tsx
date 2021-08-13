@@ -140,7 +140,6 @@ const CreateCourse = (props) => {
 	});
 	// CALENDAR MODAL
 	const [unavailableSch, setUnavailableSch] = useState({});
-	// const unavailableSch = useMemo(() => unavailableSchObj, [unavailableSchObj]);
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
@@ -262,7 +261,7 @@ const CreateCourse = (props) => {
 	};
 	// CURRICULUM
 	const checkStudyTime = async (value: [number]) => {
-		if (!value.length) {
+		if (!value?.length) {
 			setStudyTimeList(stoneStudyTimeList.current);
 			return;
 		}
@@ -407,7 +406,7 @@ const CreateCourse = (props) => {
 						setCalendarList(studyDayList.data.data);
 					if (lessonList.status === 200 && studyDayList.status === 200) {
 						setIsSave(true);
-						checkStudyTime('');
+						checkStudyTime(null);
 						showNoti('success', 'Thành công');
 						return true;
 					}
@@ -863,23 +862,22 @@ const CreateCourse = (props) => {
 							</div>
 						}
 					>
-						<div className="wrap-calendar">
-							<CreateCourseCalendar
-								eventList={calendarDateFormat(calendarList)}
-								handleSelectDate={onSelectDate}
-								dateSelected={dateSelected}
-								//
-								isLoading={isLoading}
-								//
-								unavailableSch={unavailableSch}
-								//
-								handleFetchInfoAvailableSchedule={fetchInfoAvailableSchedule}
-								handleChangeValueSchedule={onChangeValueSchedule}
-								handleChangeStatusSchedule={onChangeStatusSchedule}
-								//
-								optionForScheduleList={optionForSchedule}
-							/>
-						</div>
+						<CreateCourseCalendar
+							eventList={calendarDateFormat(calendarList)}
+							handleSelectDate={onSelectDate}
+							dateSelected={dateSelected}
+							//
+							isLoaded={true}
+							isLoading={isLoading}
+							//
+							unavailableSch={unavailableSch}
+							//
+							handleFetchInfoAvailableSchedule={fetchInfoAvailableSchedule}
+							handleChangeValueSchedule={onChangeValueSchedule}
+							handleChangeStatusSchedule={onChangeStatusSchedule}
+							//
+							optionForScheduleList={optionForSchedule}
+						/>
 					</Card>
 				</div>
 				<div className="col-md-4 col-12">

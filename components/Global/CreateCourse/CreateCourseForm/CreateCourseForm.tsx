@@ -121,7 +121,7 @@ const CreateCourseForm = (props) => {
 				Thông tin khóa học
 			</button>
 			<Modal
-				style={{top: 20}}
+				// style={{top: 20}}
 				title="Thông tin khóa học"
 				visible={isModalVisible}
 				footer={null}

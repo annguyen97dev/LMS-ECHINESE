@@ -1,3 +1,4 @@
+import {Spin} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -16,7 +17,7 @@ const CreateCourseCalendar = (props) => {
 		handleSelectDate,
 		dateSelected,
 		//
-		isEdit,
+		isLoaded,
 		isLoading,
 		//
 		unavailableSch,
@@ -100,12 +101,12 @@ const CreateCourseCalendar = (props) => {
 			};
 		}
 	};
-
+	// FETCH DATA FOR SELECT FIELD IF DAY HAVE SCHEDULE
 	useEffect(() => {
 		handleFetchInfoAvailableSchedule &&
 			handleFetchInfoAvailableSchedule(scheduleList);
 	}, [scheduleList]);
-
+	// ADD UNAVAILABLE SCHEDULE TO LOCAL ARRAY ON MODAL CALENDAR (UI)
 	useEffect(() => {
 		unavailableSch.ID && handleScheduleUnavailableList(unavailableSch);
 	}, [unavailableSch]);
@@ -136,14 +137,16 @@ const CreateCourseCalendar = (props) => {
 		handleChangeValueSchedule(uid, key, value, pos);
 	};
 	return (
-		<>
+		<div
+			className={`wrap-calendar ${!isLoaded ? 'wrap-calendar-loading' : ''}`}
+		>
 			<Calendar
 				className="custom-calendar"
 				localizer={localizer}
 				events={eventList}
 				startAccessor="start"
 				endAccessor="end"
-				style={{height: 600}}
+				style={{minHeight: 600}}
 				popup={true}
 				views={['month', 'week']}
 				defaultView="month"
@@ -156,8 +159,9 @@ const CreateCourseCalendar = (props) => {
 						`${moment(start).format('DD/MM')} - ${moment(end).format('DD/MM')}`,
 				}}
 			/>
+			<Spin className="calendar-loading" size="large" />
 			<Modal
-				className="create-course-modal"
+				className="custom-calendar-modal create-course-modal"
 				getContainer=".create-course-wrap-modal"
 				zIndex={900}
 				title={`Chi tiết ngày ${dateFm}`}
@@ -166,60 +170,66 @@ const CreateCourseCalendar = (props) => {
 				onCancel={closeModal}
 			>
 				<div>
-					<p style={{marginBottom: '5px'}}>
-						<strong>Thông tin cơ bản: </strong>
-					</p>
-					<div className="row">
-						<div className="col-12 col-md-4">
-							<p>
-								Tổng số ca: <strong>{limit}</strong>
-							</p>
-						</div>
-						<div className="col-12 col-md-4">
-							<p>
-								Đã xếp: <strong>{scheduleInDay}</strong>
-							</p>
-						</div>
-						<div className="col-12 col-md-4">
-							<p>
-								Còn trống: <strong>{limit - scheduleInDay}</strong>
-							</p>
+					<div className="tt">
+						<p style={{marginBottom: '5px'}}>
+							<strong>Thông tin cơ bản: </strong>
+						</p>
+						<div className="row">
+							<div className="col-12 col-md-4">
+								<p>
+									Tổng số ca: <strong>{limit}</strong>
+								</p>
+							</div>
+							<div className="col-12 col-md-4">
+								<p>
+									Đã xếp: <strong>{scheduleInDay}</strong>
+								</p>
+							</div>
+							<div className="col-12 col-md-4">
+								<p>
+									Còn trống: <strong>{limit - scheduleInDay}</strong>
+								</p>
+							</div>
 						</div>
 					</div>
-					<div>
-						<p style={{marginBottom: '5px'}}>
+					<div className="cnt-wrap">
+						<p className="tt" style={{marginBottom: '5px'}}>
 							<strong>Chi tiết các ca trong ngày: </strong>
 						</p>
-						<div className="wrap-card-info-course">
-							<div className="info-course">
-								{
-									<ScheduleList
-										panelActiveListInModal={scheduleList.map((_, idx) => idx)}
-									>
-										{scheduleList.map((s, idx) => (
-											<ScheduleItem
-												key={idx}
-												isUpdate={true}
-												scheduleObj={s}
-												isLoading={isLoading}
-												handleChangeValueSchedule={(uid, key, vl) =>
-													checkHandleChangeValueSchedule(uid, key, vl, idx)
-												}
-												handleChangeStatusSchedule={
-													checkHandleChangeStatusSchedule
-												}
-												optionForScheduleList={optionForScheduleList.list[idx]}
-												optionStudyTime={optionStudyTime}
-											/>
-										))}
-									</ScheduleList>
-								}
+						<div className="cnt">
+							<div className="wrap-card-info-course">
+								<div className="info-course">
+									{
+										<ScheduleList
+											panelActiveListInModal={scheduleList.map((_, idx) => idx)}
+										>
+											{scheduleList.map((s, idx) => (
+												<ScheduleItem
+													key={idx}
+													isUpdate={true}
+													scheduleObj={s}
+													isLoading={isLoading}
+													handleChangeValueSchedule={(uid, key, vl) =>
+														checkHandleChangeValueSchedule(uid, key, vl, idx)
+													}
+													handleChangeStatusSchedule={
+														checkHandleChangeStatusSchedule
+													}
+													optionForScheduleList={
+														optionForScheduleList.list[idx]
+													}
+													optionStudyTime={optionStudyTime}
+												/>
+											))}
+										</ScheduleList>
+									}
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</Modal>
-		</>
+		</div>
 	);
 };
 const optionPropTypes = PropTypes.arrayOf(
@@ -247,7 +257,7 @@ CreateCourseCalendar.propTypes = {
 	dateSelected: PropTypes.shape({
 		dateString: PropTypes.string.isRequired,
 	}),
-	isEdit: PropTypes.bool,
+	isLoaded: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
@@ -274,7 +284,7 @@ CreateCourseCalendar.defaultProps = {
 	dateSelected: {
 		dateString: '',
 	},
-	isEdit: false,
+	isLoaded: false,
 	isLoading: {type: '', status: false},
 	//
 	handleChangeValueSchedule: null,

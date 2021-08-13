@@ -47,7 +47,6 @@ const ScheduleItem = (props) => {
 		TeacherName,
 		RoomName,
 		SubjectName,
-		CourseName,
 	} = scheduleObj;
 
 	const defaultValuesInit = {
@@ -89,6 +88,7 @@ const ScheduleItem = (props) => {
 		form.setValue('TeacherID', 0);
 	};
 
+	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
 		let {ID, RoomID, TeacherID} = scheduleObj;
 		const {optionRoomList, optionTeacherList} = optionForScheduleList;
@@ -104,6 +104,7 @@ const ScheduleItem = (props) => {
 		}
 	}, [optionForScheduleList]);
 
+	// SET VALUE TO INPUT IF HAVE DATA
 	useEffect(() => {
 		let {RoomID, TeacherID, CaID, StudyTimeID} = scheduleObj;
 		form.setValue('StudyTimeID', CaID || StudyTimeID);
@@ -120,11 +121,11 @@ const ScheduleItem = (props) => {
 					<Checkbox
 						onChange={() => {
 							if (isUpdate) {
-								// remove schedule to unavailable list
+								// remove schedule from unavailable list
 								// add schedule to available list
 								checkHandleChangeStatusSchedule(scheduleObj, 2);
 							} else {
-								// remove schedule to available list
+								// remove schedule from available list
 								// add schedule to unavailable list
 								checkHandleChangeStatusSchedule(scheduleObj, 1);
 							}
@@ -198,7 +199,24 @@ ScheduleItem.propTypes = {
 	handleChangeValueSchedule: PropTypes.func,
 	handleChangeStatusSchedule: PropTypes.func,
 	//
-	scheduleObj: PropTypes.shape({}),
+	scheduleObj: PropTypes.shape({
+		ID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+		eventName: PropTypes.string,
+		Tiet: PropTypes.shape({
+			CurriculumsDetailID: PropTypes.number,
+			CurriculumsDetailName: PropTypes.string,
+			SubjectID: PropTypes.number,
+		}),
+		TeacherID: PropTypes.number,
+		TeacherName: PropTypes.string,
+		CaID: PropTypes.number,
+		CaName: PropTypes.string,
+		RoomID: PropTypes.number,
+		RoomName: PropTypes.string,
+		StudyTimeID: PropTypes.number,
+		SubjectName: PropTypes.string,
+		Date: PropTypes.string,
+	}),
 	isUpdate: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
