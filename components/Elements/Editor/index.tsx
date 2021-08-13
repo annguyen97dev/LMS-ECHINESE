@@ -9,9 +9,9 @@ const Editor = (props) => {
   const { handleChange } = props;
 
   return (
-    <div>
+    <div className="summernote-style">
       <DynamicComponentWithNoSSR
-      // getDataEditor={(value) => handleChange(value)}
+        getDataEditor={(value) => handleChange(value)}
       />
     </div>
   );

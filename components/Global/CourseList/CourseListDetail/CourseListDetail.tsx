@@ -17,11 +17,7 @@ import DocumentCourse from "~/components/Global/CourseList/CourseListDetail/Docu
 import Exam from "~/components/Global/CourseList/CourseListDetail/Exam";
 import Exercise from "~/components/Global/CourseList/CourseListDetail/Exercise";
 import NotificationCourse from "~/components/Global/CourseList/CourseListDetail/NotificationCourse";
-<<<<<<< HEAD
-// import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
-=======
 import RollUp from "~/components/Global/CourseList/CourseListDetail/RollUp/RollUp";
->>>>>>> fa4735c98570160febfecd42ae221826cd478abe
 import StudentsList from "~/components/Global/CourseList/CourseListDetail/StudentList/StudentList";
 import CourseDetailCalendar from "./CourseDetailCalendar/CourseDetailCalendar";
 

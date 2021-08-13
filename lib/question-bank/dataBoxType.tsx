@@ -1,6 +1,6 @@
 export const dataBoxType = [
   {
-    TabName: "all",
+    TabName: 0,
     Number: "13",
     TypeName: "Tất cả",
     Images: "",
@@ -12,37 +12,37 @@ export const dataBoxType = [
   //   Images: "/images/yesno.png",
   // },
   {
-    TabName: "choose-one",
+    TabName: 1,
     Number: "17",
     TypeName: "Lựa chọn một",
     Images: "/images/radio.png",
   },
   {
-    TabName: "choose-many",
+    TabName: 4,
     Number: "22",
     TypeName: "Lựa chọn nhiều",
     Images: "/images/checkbox.png",
   },
-  // {
-  //   TabName: "match-answer",
-  //   Number: "13",
-  //   TypeName: "Ghép đáp án",
-  //   Images: "/images/match.png",
-  // },
   {
-    TabName: "type-text",
+    TabName: 5,
+    Number: "13",
+    TypeName: "Ghép đáp án",
+    Images: "/images/match.png",
+  },
+  {
+    TabName: 3,
     Number: "31",
     TypeName: "Điền từ",
     Images: "/images/typetext.png",
   },
   {
-    TabName: "tu-luan",
+    TabName: 6,
     Number: "0",
-    TypeName: "Map",
+    TypeName: "Tự luận",
     Images: "/images/compose.png",
   },
   {
-    TabName: "drag",
+    TabName: 2,
     Number: "0",
     TypeName: "Kéo thả",
     Images: "/images/drag.png",

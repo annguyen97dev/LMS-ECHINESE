@@ -53,24 +53,45 @@ import React, { Component } from "react";
 import ReactSummernote from "react-summernote";
 import "react-summernote/dist/react-summernote.css"; // import styles
 import "react-summernote/lang/summernote-ru-RU"; // you can import any other locale
+import { studentApi } from "~/apiBase";
 
 // Import bootstrap(v3 or v4) dependencies
 import "bootstrap/js/src/modal";
 import "bootstrap/js/src/dropdown";
 import "bootstrap/js/src/tooltip";
-import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap/dist/css/bootstrap.css";
 
-const EditorSummernote = () => {
+const EditorSummernote = (props) => {
+  const { getDataEditor } = props;
+
   const onChange = (content) => {
     console.log("onChange", content);
+    getDataEditor(content);
   };
 
-  const onImageUpload = (fileList) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      ReactSummernote.insertImage(reader.result);
-    };
-    reader.readAsDataURL(fileList[0]);
+  const onImageUpload = async (fileList) => {
+    console.log("Filelist: ", fileList);
+
+    try {
+      let res = await studentApi.uploadImage(fileList[0]);
+      if (res.status == 200) {
+        ReactSummernote.insertImage(res.data.data);
+        // const reader = new FileReader();
+        // reader.onloadend = () => {
+        //   ReactSummernote.insertImage(res.data.data);
+        // };
+        // reader.readAsDataURL(res.data.data);
+      }
+    } catch (error) {
+    } finally {
+    }
+
+    // const reader = new FileReader();
+    // reader.onloadend = () => {
+    //   ReactSummernote.insertImage(reader.result);
+    //   console.log("Reader: ", reader.result);
+    // };
+    // reader.readAsDataURL(fileList[0]);
   };
 
   return (
@@ -78,7 +99,7 @@ const EditorSummernote = () => {
       value="Default value"
       options={{
         lang: "vn",
-        height: 350,
+        height: 220,
         dialogsInBody: true,
         toolbar: [
           ["style", ["style"]],
