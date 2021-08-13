@@ -5,13 +5,15 @@ import {Controller} from 'react-hook-form';
 import PropTypes from 'prop-types';
 
 const TextAreaField = (props) => {
-	const {form, name, rows, label, placeholder, disabled} = props;
+	const {form, name, rows, label, placeholder, disabled, style, className} =
+		props;
 	const {errors} = form.formState;
 	const hasError = errors[name];
 	return (
 		<Form.Item
+			style={style}
 			label={label}
-			className={`${
+			className={`${className} ${
 				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
 			}`}
 		>
@@ -44,11 +46,15 @@ TextAreaField.propTypes = {
 	label: PropTypes.string,
 	placeholder: PropTypes.string,
 	disabled: PropTypes.bool,
+	style: PropTypes.shape({}),
+	className: PropTypes.string,
 };
 TextAreaField.defaultProps = {
 	rows: 2,
 	label: '',
 	placeholder: '',
 	disabled: false,
+	style: {},
+	className: '',
 };
 export default TextAreaField;
