@@ -45,7 +45,6 @@ const CourseListUpdate = (props) => {
 
 	useEffect(() => {
 		if (courseObj) {
-			console.log(courseObj);
 			form.reset({
 				...courseObj,
 			});
@@ -69,14 +68,16 @@ const CourseListUpdate = (props) => {
 	}, [isModalVisible]);
 
 	useEffect(() => {
-		const {AcademicUID, TeacherLeaderUID} = courseObj;
-		const {academicList, teacherLeadList} = optionList;
-		if (academicList.length && teacherLeadList.length) {
-			if (!academicList.some((o) => o.value === AcademicUID)) {
-				form.setValue('AcademicUID', 0);
-			}
-			if (!teacherLeadList.some((o) => o.value === TeacherLeaderUID)) {
-				form.setValue('TeacherLeaderUID', 0);
+		if (isLoading.type == 'FETCH_DATA' && isLoading.status) {
+			const {AcademicUID, TeacherLeaderUID} = courseObj;
+			const {academicList, teacherLeadList} = optionList;
+			if (academicList.length && teacherLeadList.length) {
+				if (!academicList.some((o) => o.value === AcademicUID)) {
+					form.setValue('AcademicUID', 0);
+				}
+				if (!teacherLeadList.some((o) => o.value === TeacherLeaderUID)) {
+					form.setValue('TeacherLeaderUID', 0);
+				}
 			}
 		}
 	}, [optionList]);
@@ -104,12 +105,14 @@ const CourseListUpdate = (props) => {
 							name="AcademicUID"
 							label="Academic Officer:"
 							optionList={optionList.academicList}
+							isLoading={isLoading.type == 'FETCH_DATA' && isLoading.status}
 						/>
 						<SelectField
 							form={form}
 							name="TeacherLeaderUID"
 							label="Teacher Leader:"
 							optionList={optionList.teacherLeadList}
+							isLoading={isLoading.type == 'FETCH_DATA' && isLoading.status}
 						/>
 						<button
 							type="submit"

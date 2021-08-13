@@ -25,7 +25,7 @@ CreateNewScheduleForm.propTypes = {
 };
 CreateNewScheduleForm.defaultProps = {
 	handleOnCreateSchedule: null,
-	optionSubjectList: {},
+	optionSubjectList: [],
 	isLoading: {type: '', status: false},
 };
 function CreateNewScheduleForm(props) {

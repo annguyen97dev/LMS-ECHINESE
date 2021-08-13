@@ -545,7 +545,7 @@ const EditCourse = (props) => {
 	const fetchCourseToEdit = async () => {
 		try {
 			await Promise.all([
-				courseDetailApi.getByID(courseID),
+				courseDetailApi.getAll({CourseID: courseID}),
 				courseDetailAvailableDayApi.getAll(courseID),
 			])
 				.then(([scheduleList, dayList]) => {
@@ -683,7 +683,7 @@ const EditCourse = (props) => {
 	}, []);
 	return (
 		<div className="create-course">
-			<TitlePage title="Tạo khóa học" />
+			<TitlePage title="Cập nhật khóa học" />
 			<div className="row">
 				<div className="col-md-8 col-12">
 					<Card
@@ -709,29 +709,22 @@ const EditCourse = (props) => {
 							</div>
 						}
 					>
-						<div
-							className={`wrap-calendar ${
-								!isLoaded ? 'wrap-calendar-loading' : ''
-							}`}
-						>
-							<CreateCourseCalendar
-								eventList={calendarDateFormat(calendarList)}
-								handleSelectDate={onSelectDate}
-								dateSelected={dateSelected}
-								//
-								isEdit={true}
-								isLoading={isLoading}
-								//
-								unavailableSch={unavailableSch}
-								//
-								handleFetchInfoAvailableSchedule={fetchInfoAvailableSchedule}
-								handleChangeValueSchedule={onChangeValueSchedule}
-								handleChangeStatusSchedule={onChangeStatusSchedule}
-								//
-								optionForScheduleList={optionForSchedule}
-							/>
-							<Spin className="loading-base" />
-						</div>
+						<CreateCourseCalendar
+							eventList={calendarDateFormat(calendarList)}
+							handleSelectDate={onSelectDate}
+							dateSelected={dateSelected}
+							//
+							isLoading={isLoading}
+							isLoaded={isLoaded}
+							//
+							unavailableSch={unavailableSch}
+							//
+							handleFetchInfoAvailableSchedule={fetchInfoAvailableSchedule}
+							handleChangeValueSchedule={onChangeValueSchedule}
+							handleChangeStatusSchedule={onChangeStatusSchedule}
+							//
+							optionForScheduleList={optionForSchedule}
+						/>
 					</Card>
 				</div>
 				<div className="col-md-4 col-12">

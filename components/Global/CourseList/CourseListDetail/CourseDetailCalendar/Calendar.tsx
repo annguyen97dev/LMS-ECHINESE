@@ -1,4 +1,4 @@
-import {Popover} from 'antd';
+import {Popover, Spin} from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
@@ -9,7 +9,7 @@ const localizer = momentLocalizer(moment);
 
 const CDCalendar = (props) => {
 	const now = new Date();
-	const {eventList} = props;
+	const {eventList, isLoaded} = props;
 	const [firstEventStartTime, setFirstEventStartTime] = useState(now);
 	const styleEvent = ({event}) => {
 		const {
@@ -134,7 +134,9 @@ const CDCalendar = (props) => {
 	}, [eventList]);
 
 	return (
-		<>
+		<div
+			className={`wrap-calendar ${!isLoaded ? 'wrap-calendar-loading' : ''}`}
+		>
 			<Calendar
 				className="custom-calendar"
 				localizer={localizer}
@@ -174,7 +176,8 @@ const CDCalendar = (props) => {
 				}}
 				messages={{}}
 			/>
-		</>
+			<Spin className="calendar-loading" size="large" />
+		</div>
 	);
 };
 CDCalendar.propTypes = {
@@ -185,15 +188,20 @@ CDCalendar.propTypes = {
 			start: PropTypes.instanceOf(Date).isRequired,
 			end: PropTypes.instanceOf(Date).isRequired,
 			resource: PropTypes.shape({
-				// dateString: PropTypes.string.isRequired,
-				// valid: PropTypes.bool.isRequired,
-				// limit: PropTypes.number.isRequired,
-				// scheduleList: PropTypes.array,
+				CourseID: PropTypes.number,
+				RoomName: PropTypes.string,
+				BranchName: PropTypes.string,
+				TeacherName: PropTypes.string,
+				SubjectName: PropTypes.string,
+				//
+				studyTime: PropTypes.string,
 			}),
 		})
 	).isRequired,
+	isLoaded: PropTypes.bool,
 };
 CDCalendar.defaultProps = {
 	eventList: [],
+	isLoaded: false,
 };
 export default CDCalendar;
