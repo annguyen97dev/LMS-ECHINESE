@@ -13,6 +13,7 @@ const InputTextField = (props) => {
 		handleChange,
 		style,
 		className,
+		allowClear,
 	} = props;
 
 	const {errors} = form.formState;
@@ -38,7 +39,7 @@ const InputTextField = (props) => {
 					<Input
 						{...field}
 						className="style-input"
-						allowClear={true}
+						allowClear={allowClear}
 						placeholder={placeholder}
 						disabled={disabled}
 						onChange={(e) => (
@@ -64,6 +65,7 @@ InputTextField.propTypes = {
 	handleChange: PropTypes.func,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
+	allowClear: PropTypes.bool,
 };
 InputTextField.defaultProps = {
 	label: '',
@@ -72,5 +74,6 @@ InputTextField.defaultProps = {
 	handleChange: null,
 	style: {},
 	className: '',
+	allowClear: true,
 };
 export default InputTextField;
