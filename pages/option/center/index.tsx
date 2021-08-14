@@ -5,7 +5,7 @@ import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { Info, RotateCcw } from "react-feather";
 import SortBox from "~/components/Elements/SortBox";
 
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+// import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import Link from "next/link";
 import LayoutBase from "~/components/LayoutBase";
 import { branchApi, areaApi } from "~/apiBase";
