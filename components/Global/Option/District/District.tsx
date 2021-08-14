@@ -235,11 +235,12 @@ const District = () => {
 			res.status === 200 && showNoti('success', res.data.message);
 			if (districtList.length === 1) {
 				filters.pageIndex === 1
-					? setFilters({
+					? (setFilters({
 							...listFieldInit,
 							...refValue.current,
 							pageIndex: 1,
-					  })
+					  }),
+					  setDistrictList([]))
 					: setFilters({
 							...filters,
 							...refValue.current,

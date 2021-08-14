@@ -190,11 +190,12 @@ const Area = () => {
 			res.status === 200 && showNoti('success', res.data.message);
 			if (areaList.length === 1) {
 				filters.pageIndex === 1
-					? setFilters({
+					? (setFilters({
 							...listFieldInit,
 							...refValue.current,
 							pageIndex: 1,
-					  })
+					  }),
+					  setAreaList([]))
 					: setFilters({
 							...filters,
 							...refValue.current,

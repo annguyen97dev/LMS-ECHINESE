@@ -340,11 +340,12 @@ const Teacher = () => {
 			res.status === 200 && showNoti('success', res.data.message);
 			if (teacherList.length === 1) {
 				filters.pageIndex === 1
-					? setFilters({
+					? (setFilters({
 							...listFieldInit,
 							...refValue.current,
 							pageIndex: 1,
-					  })
+					  }),
+					  setTeacherList([]))
 					: setFilters({
 							...filters,
 							...refValue.current,
