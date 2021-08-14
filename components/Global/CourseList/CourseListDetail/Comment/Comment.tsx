@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Timeline, Card } from "antd";
+import { Timeline, Card, Spin } from "antd";
 import LayoutBase from "~/components/LayoutBase";
 import { timelineApi } from "~/apiBase/course-detail/timeline";
 import { useWrap } from "~/context/wrap";
+import moment from "moment";
+import CommentCreate from "./CommentCreate";
+
+moment.locale("vn");
 
 const Comment = (props: any) => {
   const { courseID } = props;
@@ -31,19 +35,43 @@ const Comment = (props: any) => {
 
   return (
     <div className="container-fluid">
-      <Card title="Phản hồi">
+      <Card
+        title="Phản hồi"
+        extra={
+          <>
+            <CommentCreate
+              reloadData={() => {
+                getDataTimeline();
+              }}
+            />
+          </>
+        }
+      >
         <div>
-          <Timeline mode="right">
-            {timeline.map((x) => (
-              <Timeline.Item label="25/12/2019 14:38">
-                <div>
-                  <p className="font-weight-black">{x.Note}</p>
-                </div>
-                <div>{x.CreatedBy}</div>
-                <div>{x.RoleName}</div>
-              </Timeline.Item>
-            ))}
-          </Timeline>
+          <Spin spinning={isLoading} size="large">
+            <Timeline mode="right">
+              {timeline.map((x) => (
+                <Timeline.Item
+                  label={
+                    <>
+                      <div>
+                        <p className="font-weight-black">
+                          {moment(x.CreatedOn).format("DD/MM/YYYY")}
+                        </p>
+                      </div>
+                      <div>{moment(x.CreatedOn).format("LT")}</div>
+                    </>
+                  }
+                >
+                  <div>
+                    <p className="font-weight-blue">{x.Note}</p>
+                  </div>
+                  <div>{x.CreatedBy}</div>
+                  <div>{x.RoleName}</div>
+                </Timeline.Item>
+              ))}
+            </Timeline>
+          </Spin>
         </div>
       </Card>
     </div>

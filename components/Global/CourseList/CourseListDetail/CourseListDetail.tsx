@@ -41,7 +41,7 @@ const CourseListDetail = () => {
           tab={
             <>
               <Calendar />
-              <span title="tab-title"> Schedule</span>
+              <span title="tab-title"> Lịch học</span>
             </>
           }
           key="1"
@@ -52,7 +52,7 @@ const CourseListDetail = () => {
           tab={
             <>
               <Edit />
-              <span title="tab-title"> Edit</span>
+              <span title="tab-title"> Chỉnh sửa</span>
             </>
           }
           key="2"
@@ -61,7 +61,7 @@ const CourseListDetail = () => {
           tab={
             <>
               <Book />
-              <span title="tab-title"> Students List</span>
+              <span title="tab-title"> Học viên</span>
             </>
           }
           key="3"
@@ -72,18 +72,18 @@ const CourseListDetail = () => {
           tab={
             <>
               <CheckCircle />
-              <span title="tab-title"> Roll Up</span>
+              <span title="tab-title"> Điểm danh</span>
             </>
           }
           key="4"
         >
-          <RollUp />
+          <RollUp courseID={parseInt(router.query.slug as string)} />
         </TabPane>
         <TabPane
           tab={
             <>
               <Activity />
-              <span title="tab-title"> Exam</span>
+              <span title="tab-title"> Nhập điểm</span>
             </>
           }
           key="5"
@@ -94,7 +94,7 @@ const CourseListDetail = () => {
           tab={
             <>
               <BookOpen />
-              <span title="tab-title"> Exercise</span>
+              <span title="tab-title"> Bài tập</span>
             </>
           }
           key="6"
@@ -105,7 +105,7 @@ const CourseListDetail = () => {
           tab={
             <>
               <FileText />
-              <span title="tab-title"> Document</span>
+              <span title="tab-title"> Tài liệu</span>
             </>
           }
           key="7"
@@ -116,7 +116,7 @@ const CourseListDetail = () => {
           tab={
             <>
               <Flag />
-              <span title="tab-title"> Comment</span>
+              <span title="tab-title"> Phản hồi</span>
             </>
           }
           key="8"

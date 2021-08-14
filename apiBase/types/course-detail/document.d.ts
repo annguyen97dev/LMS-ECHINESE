@@ -4,3 +4,9 @@ type ICategoryDoc = IBaseApi<{
   CurriculumnID: number;
   Enable: boolean;
 }>;
+
+type IDocument = IBaseApi<{
+  ID: number;
+  CategoryID: number;
+  DocumentLink: string;
+}>;
