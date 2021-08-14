@@ -48,3 +48,6 @@ export {contractCustomerListApi} from './customer/contract/contract-customer-lis
 export {voucherApi} from './customer/finance/finance-cashier-payment';
 export {invoiceApi} from './customer/finance/finance-cashier-invoice';
 export {examAppointmentResultApi} from './customer/student/exam-appointment-result';
+export {checkBranchScheduleStudy} from './schedule/check-branch-schedule';
+export {checkTeacherScheduleStudy} from './schedule/check-teacher-schedule';
+export {programDetailPointColumnApi} from './options/program-detail-point-column';

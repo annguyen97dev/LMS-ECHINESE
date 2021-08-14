@@ -19,7 +19,7 @@ import NotificationCourse from '~/components/Global/CourseList/CourseListDetail/
 // import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
-import Exam from './Exam/Exam';
+import Transcript from './Transcript/Transcript';
 
 const {TabPane} = Tabs;
 const CourseListDetail = () => {
@@ -90,7 +90,7 @@ const CourseListDetail = () => {
 					}
 					key="5"
 				>
-					{activeTab === 5 && <Exam />}
+					{activeTab === 5 && <Transcript />}
 				</TabPane>
 				<TabPane
 					tab={

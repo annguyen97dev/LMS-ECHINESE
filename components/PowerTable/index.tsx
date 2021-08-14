@@ -41,7 +41,7 @@ const PowerTable = React.memo((props: any) => {
 		if (props.TitlePage) {
 			getTitlePage(props.TitlePage);
 		}
-		if (props.dataSource && props.dataSource.length > 0) {
+		if (props.dataSource) {
 			let dataClone = [...props.dataSource];
 			dataClone.forEach((item, index) => {
 				item.key = index.toString();
