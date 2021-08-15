@@ -2,12 +2,10 @@ import {Spin} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Calendar, momentLocalizer} from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {useWrap} from '~/context/wrap';
-import ScheduleItem from '../Schedule/ScheduleItem';
-import ScheduleList from '../Schedule/ScheduleList';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
 
@@ -18,33 +16,20 @@ const CreateCourseCalendar = (props) => {
 		dateSelected,
 		//
 		isLoaded,
-		isLoading,
 		//
-		unavailableSch,
-		//
-		handleChangeValueSchedule,
-		handleFetchInfoAvailableSchedule,
-		handleChangeStatusSchedule,
-		//
-		optionForScheduleList,
+		handleSetDataModalCalendar,
+		dataModalCalendar,
 	} = props;
+
 	const [isVisible, setIsVisible] = useState(false);
-	const {dateString} = dateSelected;
 	const {showNoti} = useWrap();
-	const [dataModal, setDataModal] = useState({
-		dateFm: '',
-		limit: 0,
-		scheduleInDay: 0,
-		scheduleList: [],
-	});
-	const [optionStudyTime, setOptionStudyTime] = useState([]);
 	const openModal = () => setIsVisible(true);
 	const closeModal = () => setIsVisible(false);
-	const {dateFm, limit, scheduleInDay, scheduleList} = dataModal;
-	useEffect(() => {
-		setOptionStudyTime(optionForScheduleList.optionStudyTimeList);
-	}, [optionForScheduleList]);
-
+	const {dateFm, limit, scheduleInDay, scheduleList} = dataModalCalendar;
+	const checkHandleSetDataModalCalendar = (obj) => {
+		if (!handleSetDataModalCalendar) return;
+		handleSetDataModalCalendar(obj);
+	};
 	const styleEvent = ({event}) => {
 		const {dateString, limit, scheduleList, valid} = event.resource;
 		const scheduleInDay = scheduleList.length;
@@ -54,7 +39,7 @@ const CreateCourseCalendar = (props) => {
 				<div
 					onClick={(e) => {
 						e.stopPropagation();
-						setDataModal({
+						checkHandleSetDataModalCalendar({
 							dateFm,
 							limit,
 							scheduleInDay,
@@ -79,7 +64,6 @@ const CreateCourseCalendar = (props) => {
 			</>
 		);
 	};
-
 	const customEventPropGetter = (event, start, end, isSelected) => {
 		let cls;
 		if (event.resource.limit !== event.resource.scheduleList.length) {
@@ -91,7 +75,7 @@ const CreateCourseCalendar = (props) => {
 		if (event.resource.scheduleList.length === 0) {
 			cls = 'create-course-event create-course-event-gray';
 		}
-		if (event.resource.dateString === dateString) {
+		if (event.resource.dateString === dateSelected) {
 			return {
 				className: 'create-course-event create-course-event-active',
 			};
@@ -100,41 +84,6 @@ const CreateCourseCalendar = (props) => {
 				className: cls,
 			};
 		}
-	};
-	// FETCH DATA FOR SELECT FIELD IF DAY HAVE SCHEDULE
-	useEffect(() => {
-		handleFetchInfoAvailableSchedule &&
-			handleFetchInfoAvailableSchedule(scheduleList);
-	}, [scheduleList]);
-	// ADD UNAVAILABLE SCHEDULE TO LOCAL ARRAY ON MODAL CALENDAR (UI)
-	useEffect(() => {
-		unavailableSch.ID && handleScheduleUnavailableList(unavailableSch);
-	}, [unavailableSch]);
-
-	const handleScheduleUnavailableList = (sch) => {
-		const newScheduleList = [...dataModal.scheduleList];
-		const idx = newScheduleList.findIndex((s) => s.ID === sch.ID);
-		if (idx >= 0) {
-			newScheduleList.splice(idx, 1);
-		} else {
-			newScheduleList.push(sch);
-		}
-
-		setDataModal((prevState) => ({
-			...prevState,
-			scheduleInDay: newScheduleList.length,
-			scheduleList: newScheduleList,
-		}));
-	};
-
-	const checkHandleChangeStatusSchedule = (sch, type) => {
-		if (!handleChangeStatusSchedule) return;
-		handleScheduleUnavailableList(sch);
-		handleChangeStatusSchedule(sch, type);
-	};
-	const checkHandleChangeValueSchedule = (uid, key, value, pos) => {
-		if (!handleChangeValueSchedule) return;
-		handleChangeValueSchedule(uid, key, value, pos);
 	};
 	return (
 		<div
@@ -198,32 +147,7 @@ const CreateCourseCalendar = (props) => {
 						</p>
 						<div className="cnt">
 							<div className="wrap-card-info-course">
-								<div className="info-course">
-									{
-										<ScheduleList
-											panelActiveListInModal={scheduleList.map((_, idx) => idx)}
-										>
-											{scheduleList.map((s, idx) => (
-												<ScheduleItem
-													key={idx}
-													isUpdate={true}
-													scheduleObj={s}
-													isLoading={isLoading}
-													handleChangeValueSchedule={(uid, key, vl) =>
-														checkHandleChangeValueSchedule(uid, key, vl, idx)
-													}
-													handleChangeStatusSchedule={
-														checkHandleChangeStatusSchedule
-													}
-													optionForScheduleList={
-														optionForScheduleList.list[idx]
-													}
-													optionStudyTime={optionStudyTime}
-												/>
-											))}
-										</ScheduleList>
-									}
-								</div>
+								<div className="info-course">{props.children}</div>
 							</div>
 						</div>
 					</div>
@@ -232,12 +156,6 @@ const CreateCourseCalendar = (props) => {
 		</div>
 	);
 };
-const optionPropTypes = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 CreateCourseCalendar.propTypes = {
 	eventList: PropTypes.arrayOf(
 		PropTypes.shape({
@@ -254,67 +172,31 @@ CreateCourseCalendar.propTypes = {
 		})
 	).isRequired,
 	handleSelectDate: PropTypes.func,
-	dateSelected: PropTypes.shape({
-		dateString: PropTypes.string.isRequired,
-	}),
+	dateSelected: PropTypes.string,
 	isLoaded: PropTypes.bool,
-	isLoading: PropTypes.shape({
-		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+	//
+	handleSetDataModalCalendar: PropTypes.func,
+	dataModalCalendar: PropTypes.shape({
+		dateFm: PropTypes.string,
+		limit: PropTypes.number,
+		scheduleInDay: PropTypes.number,
+		scheduleList: PropTypes.array,
 	}),
 	//
-	handleChangeValueSchedule: PropTypes.func,
-	handleFetchInfoAvailableSchedule: PropTypes.func,
-	handleChangeStatusSchedule: PropTypes.func,
-	//
-	unavailableSch: PropTypes.shape({}),
-	optionForScheduleList: PropTypes.shape({
-		list: PropTypes.arrayOf(
-			PropTypes.shape({
-				optionRoomList: optionPropTypes,
-				optionTeacherList: optionPropTypes,
-			})
-		),
-		optionStudyTimeList: optionPropTypes,
-	}),
+	children: PropTypes.node,
 };
 CreateCourseCalendar.defaultProps = {
 	eventList: [],
 	handleSelectDate: null,
-	dateSelected: {
-		dateString: '',
-	},
+	dateSelected: '',
 	isLoaded: false,
-	isLoading: {type: '', status: false},
 	//
-	handleChangeValueSchedule: null,
-	handleFetchInfoAvailableSchedule: null,
-	handleChangeStatusSchedule: null,
-	//
-	unavailableSch: {},
-	optionForScheduleList: {
-		list: [
-			{
-				optionRoomList: [
-					{
-						title: '',
-						value: '',
-					},
-				],
-				optionTeacherList: [
-					{
-						title: '',
-						value: '',
-					},
-				],
-			},
-		],
-		optionStudyTimeList: [
-			{
-				title: '',
-				value: '',
-			},
-		],
+	handleSetDataModalCalendar: null,
+	dataModalCalendar: {
+		dateFm: '',
+		limit: 0,
+		scheduleInDay: 0,
+		scheduleList: [],
 	},
 };
 export default CreateCourseCalendar;

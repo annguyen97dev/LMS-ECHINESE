@@ -12,7 +12,7 @@ import {
 } from '~/apiBase';
 import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/helpers';
+import {fmSelectArr} from '~/utils/functions';
 import CDCalendar from '../CourseList/CourseListDetail/CourseDetailCalendar/Calendar';
 import CheckBranch from './Form/CheckBranch';
 import CheckOneTeacher from './Form/CheckOneTeacher';
@@ -206,7 +206,7 @@ const ScheduleStudy = () => {
 		return res;
 	};
 	// CALENDAR FORMAT
-	const calendarFm = (calendarArr: ICourseDetail[]) => {
+	const calendarFm = (calendarArr: ICourseDetailSchedule[]) => {
 		const rs = calendarArr.map((c, idx) => {
 			const {
 				ID,
@@ -224,7 +224,7 @@ const ScheduleStudy = () => {
 			const studyTime = `${studyTimeStart} - ${studyTimeEnd}`;
 
 			return {
-				id: ID,
+				id: +ID,
 				title: CourseName,
 				start: moment(StartTime).toDate(),
 				end: moment(EndTime).toDate(),

@@ -1,5 +1,5 @@
-type ICourseDetail = IBaseApi<{
-	ID: number;
+type ICourseDetailSchedule = {
+	ID: number | string;
 	CourseID: number;
 	CourseName: string;
 	BranchID: number;
@@ -16,4 +16,5 @@ type ICourseDetail = IBaseApi<{
 	SubjectID: number;
 	SubjectName: string;
 	CurriculumID: number;
-}>;
+	isValid?: boolean;
+};

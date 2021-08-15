@@ -7,19 +7,14 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
-const optionPropTypes = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 CheckManyEmptyTeacher.propTypes = {
 	optionList: PropTypes.shape({
-		branchList: optionPropTypes,
-		studyTimeList: optionPropTypes,
-		roomList: optionPropTypes,
-		teacherList: optionPropTypes,
+		branchList: optionCommonPropTypes,
+		studyTimeList: optionCommonPropTypes,
+		roomList: optionCommonPropTypes,
+		teacherList: optionCommonPropTypes,
 	}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,

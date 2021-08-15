@@ -5,7 +5,7 @@ import TitlePage from '~/components/Elements/TitlePage';
 import CourseListFilterForm from '~/components/Global/CourseList/CourseListFilterForm';
 import PowerList from '~/components/Global/CourseList/PowerList';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/helpers';
+import {fmSelectArr} from '~/utils/functions';
 import CourseListUpdate from './CourseListUpdate';
 
 const statusList = [

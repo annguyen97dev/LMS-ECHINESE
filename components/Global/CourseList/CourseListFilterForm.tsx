@@ -8,6 +8,7 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
 const CourseListFilterForm = (props) => {
 	const {handleFilter, handleResetFilter, optionList} = props;
@@ -128,19 +129,13 @@ const CourseListFilterForm = (props) => {
 	);
 };
 
-const propTypesOption = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 CourseListFilterForm.propTypes = {
 	handleFilter: PropTypes.func,
 	handleResetFilter: PropTypes.func,
 	optionList: PropTypes.shape({
-		statusList: propTypesOption,
-		branchList: propTypesOption,
-		programList: propTypesOption,
+		statusList: optionCommonPropTypes,
+		branchList: optionCommonPropTypes,
+		programList: optionCommonPropTypes,
 	}),
 };
 CourseListFilterForm.defaultProps = {

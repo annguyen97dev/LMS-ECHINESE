@@ -7,6 +7,7 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
 const PointColumnForm = (props) => {
 	const {
@@ -163,12 +164,6 @@ const PointColumnForm = (props) => {
 	);
 };
 
-const optionPropTypes = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 PointColumnForm.propTypes = {
 	handleCreatePointColumn: PropTypes.func,
 	isUpdate: PropTypes.bool,
@@ -178,7 +173,7 @@ PointColumnForm.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
-	optionType: optionPropTypes,
+	optionType: optionCommonPropTypes,
 };
 PointColumnForm.defaultProps = {
 	handleCreatePointColumn: null,

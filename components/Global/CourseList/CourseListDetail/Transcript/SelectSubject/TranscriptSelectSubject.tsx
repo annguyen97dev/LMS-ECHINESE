@@ -2,16 +2,11 @@ import PropTypes from 'prop-types';
 import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
-const propTypesOption = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 TranscriptSelectSubject.propTypes = {
 	handleOnFetchStudent: PropTypes.func,
-	optionSubjectList: propTypesOption,
+	optionSubjectList: optionCommonPropTypes,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,

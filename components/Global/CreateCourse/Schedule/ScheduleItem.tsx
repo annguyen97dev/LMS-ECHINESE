@@ -7,6 +7,7 @@ import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 const {Panel} = Collapse;
 
 //   scheduleObj = {
@@ -34,7 +35,7 @@ const ScheduleItem = (props) => {
 		isLoading,
 		isUpdate,
 		//
-		optionForScheduleList,
+		optionRoomAndTeacherForADay,
 		optionStudyTime,
 	} = props;
 	const {
@@ -91,8 +92,8 @@ const ScheduleItem = (props) => {
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
 		let {ID, RoomID, TeacherID} = scheduleObj;
-		const {optionRoomList, optionTeacherList} = optionForScheduleList;
-		if (optionRoomList.length > 1 && optionTeacherList.length > 1) {
+		const {optionRoomList, optionTeacherList} = optionRoomAndTeacherForADay;
+		if (optionRoomList.length && optionTeacherList.length) {
 			if (!optionRoomList.some((o) => o.value === RoomID)) {
 				form.setValue('RoomID', 0);
 				checkHandleChangeValueSchedule(ID, 'RoomID', 0);
@@ -102,7 +103,7 @@ const ScheduleItem = (props) => {
 				checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
 			}
 		}
-	}, [optionForScheduleList]);
+	}, [optionRoomAndTeacherForADay]);
 
 	// SET VALUE TO INPUT IF HAVE DATA
 	useEffect(() => {
@@ -152,7 +153,7 @@ const ScheduleItem = (props) => {
 								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
 							}
 							placeholder="Chọn phòng"
-							optionList={optionForScheduleList.optionRoomList}
+							optionList={optionRoomAndTeacherForADay.optionRoomList}
 							onChangeSelect={(value) => {
 								checkHandleChangeValueSchedule(ID, 'RoomID', value);
 							}}
@@ -178,7 +179,7 @@ const ScheduleItem = (props) => {
 								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
 							}
 							placeholder="Chọn giáo viên"
-							optionList={optionForScheduleList.optionTeacherList}
+							optionList={optionRoomAndTeacherForADay.optionTeacherList}
 							onChangeSelect={(value) => {
 								checkHandleChangeValueSchedule(ID, 'TeacherID', value);
 							}}
@@ -189,12 +190,6 @@ const ScheduleItem = (props) => {
 		</Panel>
 	);
 };
-const optionPropTypes = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 ScheduleItem.propTypes = {
 	handleChangeValueSchedule: PropTypes.func,
 	handleChangeStatusSchedule: PropTypes.func,
@@ -223,11 +218,11 @@ ScheduleItem.propTypes = {
 		status: PropTypes.bool.isRequired,
 	}),
 	//
-	optionForScheduleList: PropTypes.shape({
-		optionRoomList: optionPropTypes,
-		optionTeacherList: optionPropTypes,
+	optionRoomAndTeacherForADay: PropTypes.shape({
+		optionRoomList: optionCommonPropTypes,
+		optionTeacherList: optionCommonPropTypes,
 	}),
-	optionStudyTime: optionPropTypes,
+	optionStudyTime: optionCommonPropTypes,
 };
 ScheduleItem.defaultProps = {
 	handleChangeValueSchedule: null,
@@ -238,7 +233,7 @@ ScheduleItem.defaultProps = {
 	isLoading: {type: '', status: false},
 	positionInScheduleList: null,
 	//
-	optionForScheduleList: {
+	optionRoomAndTeacherForADay: {
 		optionRoomList: [],
 		optionTeacherList: [],
 	},

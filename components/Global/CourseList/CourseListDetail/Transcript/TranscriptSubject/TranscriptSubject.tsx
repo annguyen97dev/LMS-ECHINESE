@@ -4,7 +4,7 @@ import {programDetailPointColumnApi, subjectApi} from '~/apiBase';
 import {transcriptApi} from '~/apiBase/course-detail/transcript';
 import PowerTable from '~/components/PowerTable';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/helpers';
+import {fmSelectArr} from '~/utils/functions';
 import TranscriptSelectSubject from '../SelectSubject/TranscriptSelectSubject';
 import NoteInput from '../TableFormControl/NoteInput';
 import PointInput from '../TableFormControl/PointInput';
