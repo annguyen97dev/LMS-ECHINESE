@@ -3,34 +3,14 @@ import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
 import { Form, Input, Checkbox } from "antd";
 import Editor from "~/components/Elements/Editor";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import InputTextField from "~/components/FormControl/InputTextField";
-import DateField from "~/components/FormControl/DateField";
-import SelectField from "~/components/FormControl/SelectField";
-import TextAreaField from "~/components/FormControl/TextAreaField";
+import { exerciseApi } from "~/apiBase/";
+import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 
 // let returnSchema = {};
 // let schema = null;
 
-const QuestionSimple = {
-  Subject: "",
-  SubjectType: "",
-  QuestionType: "",
-  Level: "",
-  QuestionData: {
-    Question: "",
-    AnswerList: [
-      {
-        isCorrect: true,
-        text: "",
-      },
-    ],
-  },
-};
-
 const ChoiceForm = (props) => {
-  const { isSubmit, questionData } = props;
+  const { isSubmit, questionData, changeIsSubmit } = props;
   const { showNoti } = useWrap();
   const {
     reset,
@@ -41,9 +21,10 @@ const ChoiceForm = (props) => {
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
   const [form] = Form.useForm();
-  const [questionBase, setQuestionBase] = useState(questionData);
+  const [questionDataForm, setQuestionDataForm] = useState(questionData);
+  const [isResetEditor, setIsResetEditor] = useState(false);
 
-  console.log("Question base: ", questionBase);
+  console.log("Question base: ", questionDataForm);
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
@@ -53,34 +34,66 @@ const ChoiceForm = (props) => {
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
     console.log("Value Editor Form: ", dataEditor);
-    questionBase.Content = dataEditor;
+    questionDataForm.Content = dataEditor;
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
+  // Reset value in form
+  const resetForm = () => {
+    questionDataForm.Content = "";
+    questionDataForm.ExerciseAnswer.forEach((item) => {
+      item.AnswerContent = "";
+      item.isTrue = false;
+    });
+    setQuestionDataForm({ ...questionDataForm });
   };
 
   // ON CHANGE IS CORRECT
   const onChange_isCorrect = (e, AnswerID) => {
     console.log(`checked = ${e.target.checked}`);
     let checked = e.target.checked;
-    let AnswerIndex = questionBase.ExerciseAnswer.findIndex(
+
+    // Xóa các isTrue còn lại (vì là câu hỏi chọn 1 đáp án)
+    questionData.ExerciseAnswer.forEach((item) => {
+      item.isTrue = false;
+    });
+
+    // Tìm vị trí sau đó gán correct vào
+    let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
       (item) => item.ID == AnswerID
     );
-    questionBase.ExerciseAnswer[AnswerIndex].isTrue = checked;
-    setQuestionBase({ ...questionBase });
+    questionDataForm.ExerciseAnswer[AnswerIndex].isTrue = checked;
+    setQuestionDataForm({ ...questionDataForm });
   };
 
   // ON CHANGE TEXT
   const onChange_text = (e, AnswerID) => {
     let text = e.target.value;
-    let AnswerIndex = questionBase.ExerciseAnswer.findIndex(
+    let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
       (item) => item.ID == AnswerID
     );
-    questionBase.ExerciseAnswer[AnswerIndex].AnswerContent = text;
-    setQuestionBase({ ...questionBase });
+    questionDataForm.ExerciseAnswer[AnswerIndex].AnswerContent = text;
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
+  // SUBMIT FORM
+  const handleSubmitQuestion = async () => {
+    try {
+      let res = await exerciseApi.add(questionDataForm);
+      if (res.status == 200) {
+        changeIsSubmit();
+        resetForm();
+        setIsResetEditor(true);
+        setTimeout(() => {
+          setIsResetEditor(false);
+        }, 500);
+      }
+    } catch (error) {}
   };
 
   useEffect(() => {
-    if (isSubmit) {
-      console.log("DATA SUBMIT: ", questionBase);
-    }
+    console.log("DATA SUBMIT: ", questionDataForm);
+    isSubmit && handleSubmitQuestion();
   }, [isSubmit]);
 
   return (
@@ -90,7 +103,10 @@ const ChoiceForm = (props) => {
           <div className="row">
             <div className="col-12">
               <Form.Item name="Question" label="Câu hỏi">
-                <Editor handleChange={(value) => getDataEditor(value)} />
+                <Editor
+                  handleChange={(value) => getDataEditor(value)}
+                  isReset={isResetEditor}
+                />
               </Form.Item>
             </div>
           </div>
@@ -98,14 +114,16 @@ const ChoiceForm = (props) => {
             <div className="col-12">
               <p className="style-label">Nhập câu trả lời</p>
             </div>
-            {questionBase?.ExerciseAnswer.map((item, index) => (
-              <div className="col-md-6 col-12">
+            {questionDataForm?.ExerciseAnswer.map((item, index) => (
+              <div className="col-md-6 col-12" key={index}>
                 <div className="row-ans">
                   <Checkbox
+                    checked={item.isTrue}
                     onChange={(e) => onChange_isCorrect(e, item.ID)}
                   ></Checkbox>
                   <Form.Item>
                     <Input
+                      value={item.AnswerContent}
                       className="style-input"
                       onChange={(e) => onChange_text(e, item.ID)}
                     ></Input>

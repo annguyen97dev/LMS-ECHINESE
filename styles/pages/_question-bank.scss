@@ -39,6 +39,10 @@
           margin-bottom: 0;
           font-weight: 500;
           color: rgb(95, 95, 95);
+
+          p {
+            margin-bottom: 0;
+          }
         }
       }
 
@@ -120,7 +124,7 @@
   }
 
   .title-big {
-    font-size: 18px;
+    font-size: 16px;
     color: #d86e00;
     display: flex;
     align-items: center;
@@ -256,7 +260,7 @@
 
   .ant-card-body {
     // height: calc(100vh - 206px);
-    height: calc(100vh - 228px);
+    height: calc(100vh - 217px);
     padding-right: 10px;
 
     @include max-media(800px) {
@@ -326,7 +330,7 @@
   &.active {
     display: block;
     animation: show_box 0.5s forwards;
-    height: calc(100vh - 271px);
+    height: calc(100vh - 292px);
     overflow: auto;
 
     &::-webkit-scrollbar-track {

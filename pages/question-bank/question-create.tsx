@@ -1,22 +1,23 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { Popover, Card, Tooltip, Select, Spin } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
 import { type } from "os";
-import { dataBoxType } from "~/lib/question-bank/dataBoxType";
+import { dataTypeGroup, dataTypeSingle } from "~/lib/question-bank/dataBoxType";
 import { data } from "~/lib/option/dataOption2";
 import SelectFilterBox from "~/components/Elements/SelectFilterBox";
 import LayoutBase from "~/components/LayoutBase";
 import QuestionSingle from "~/components/Global/QuestionBank/QuestionSingle";
 import QuestionMultiple from "~/components/Global/QuestionBank/QuestionMultiple";
 import QuestionWrite from "~/components/Global/QuestionBank/QuestionWrite";
-import { programApi, subjectApi } from "~/apiBase";
+import { programApi, subjectApi, exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import index from "~/components/LoginForm";
 
 const { Option, OptGroup } = Select;
-
+let countSelect = 0;
 const objData = {
   ExerciseGroupID: 0,
   SubjectID: null,
@@ -51,58 +52,65 @@ const objData = {
   ],
 };
 
-type initialState = {
-  boxActive: string;
-  showBoxType: boolean;
-  typeQuestion: string;
-  course: string;
-};
-
-type state = {
-  boxActive: string;
-  showBoxType: boolean;
-  typeQuestion: string;
-  course: string;
-};
-
-type action = {
-  type: string;
-  tab: number;
-  isShow: boolean;
-  questionType: string;
-};
-
-const initialState: initialState = {
-  boxActive: "all", // Dạng câu hỏi 1 hay nhiều, map, ...
-  typeQuestion: "single", // Câu hỏi đơn hoặc nhóm
-  showBoxType: true, // xác định mới vào mở hay chưa
-  course: "", // chọn khóa học
-};
-
-const reducer = (state: state, action: action) => {
-  switch (action.type) {
-    case "changeTab":
-      return { ...state, boxActive: action.tab };
-    case "showBoxType":
-      return { ...state, showBoxType: action.isShow };
-    case "showQuestionType":
-      return { ...state, showQuestionType: action.questionType };
-    default:
-      throw new Error();
-  }
+const listTodoApi = {
+  pageSize: 10,
+  pageIndex: 1,
+  SubjectID: null,
+  Type: null,
+  Level: null,
+  ExerciseGroupID: null,
+  ExamTopicType: null,
 };
 
 const QuestionCreate = () => {
   const { showNoti } = useWrap();
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [isLoading, isLoadingSet] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [dataProgram, setDataProgram] = useState<IProgram[]>(null);
   const [dataSubject, setDataSubject] = useState<ISubject[]>(null);
   const [loadingSelect, setLoadingSelect] = useState(false);
   const [questionData, setQuestionData] = useState(objData);
+  const [showListQuestion, setShowListQuestion] = useState(false);
+  const [showTypeQuetion, setShowTypeQuestion] = useState({
+    type: null,
+    status: false,
+  });
+  const [todoApi, setTodoApi] = useState(listTodoApi);
+  const [dataSource, setDataSource] = useState([]);
+  const boxEl = useRef(null);
+  const [totalPageIndex, setTotalPageIndex] = useState(0);
+  const [loadingQuestion, setLoadingQuestion] = useState(false);
 
-  console.log("STATE is: ", state);
+  // GET DATA SOURCE - DATA EXERCISE
+  const getDataSource = async () => {
+    try {
+      let res = await exerciseApi.getAll(todoApi);
+      if (res.status == 200) {
+        let cloneData = [...dataSource];
+        res.data.data.forEach((item, index) => {
+          cloneData.push(item);
+        });
 
+        setDataSource([...cloneData]);
+        todoApi.pageIndex == 1 &&
+          showNoti("success", "Tải danh sách thành công");
+        !showListQuestion && setShowListQuestion(true);
+
+        // Tính phân trang
+        let totalPage = Math.ceil(res.data.totalRow / 10);
+        setTotalPageIndex(totalPage);
+      }
+
+      res.status == 204 &&
+        (showNoti("danger", "Không có dữ liệu"), setShowListQuestion(true));
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading(false);
+      loadingQuestion && setLoadingQuestion(false);
+    }
+  };
+
+  // GET DATA PROGRAM
   const getDataProgram = async () => {
     try {
       let res = await programApi.getAll({ pageIndex: 1, pageSize: 999999 });
@@ -114,6 +122,7 @@ const QuestionCreate = () => {
     }
   };
 
+  // GET DATA SUBJECT
   const getDataSubject = async (id) => {
     setLoadingSelect(true);
     try {
@@ -131,71 +140,154 @@ const QuestionCreate = () => {
     }
   };
 
-  const changeBoxType = (e: any, TabName: number) => {
+  const changeBoxType = (e: any, Type: number, TypeName: string) => {
     e.preventDefault();
 
-    questionData.Type = TabName;
+    questionData.Type = Type;
+    questionData.TypeName = TypeName;
+
+    // Add value vào data chung
     setQuestionData({ ...questionData });
 
-    dispatch({
-      type: "changeTab",
-      tab: TabName,
-      isShow: state.showBoxType,
-      questionType: state.typeQuestion,
+    // Active
+    setShowTypeQuestion({
+      ...showTypeQuetion,
+      type: Type,
+    });
+
+    // Show danh sách câu hỏi bên cạnh
+    setIsLoading(true);
+    setDataSource([]);
+    setTodoApi({
+      ...todoApi,
+      Type: Type,
+      pageIndex: 1,
     });
   };
 
   console.log("Question Data: ", questionData);
 
   const handleChange_select = (selectName, option) => {
-    console.log(`Option:  ${option}`);
-
     switch (selectName) {
       case "program":
         getDataSubject(option.value);
         setDataSubject(null);
+        countSelect++;
         break;
       case "type-question":
         questionData.ExerciseGroupID = option.value;
+        countSelect++;
         break;
       case "subject":
         questionData.SubjectID = option.value;
         questionData.SubjectName = option.children;
+        countSelect++;
         break;
       case "level":
         questionData.Level = option.value;
         questionData.LevelName = option.children;
+        countSelect++;
+        break;
       default:
         break;
     }
     setQuestionData({ ...questionData });
 
-    !state.showBoxType &&
-      dispatch({
-        type: "showBoxType",
-        tab: null,
-        isShow: true,
-        questionType: state.typeQuestion,
-      });
-    isLoadingSet(true);
-
-    setTimeout(() => {
-      isLoadingSet(false);
-    }, 1000);
+    // kiểm tra mới vào đã chọn đầy đủ 4 trường hay chưa rồi mới show danh sách dạng câu hỏi
+    if (!showTypeQuetion.status) {
+      if (countSelect == 4) {
+        setShowTypeQuestion({
+          ...showTypeQuetion,
+          status: true,
+        });
+      }
+    }
   };
 
-  const handleChange_selectType = (value) => {
-    dispatch({
-      type: "showQuestionType",
-      tab: null,
-      isShow: true,
-      questionType: state.typeQuestion,
-    });
+  // Phân loại dạng câu hỏi để trả ra danh sách
+  const returnQuestionType = () => {
+    switch (todoApi.Type) {
+      /** Q uesion Single */
+      case 1:
+        return (
+          <QuestionSingle
+            loadingQuestion={loadingQuestion}
+            listQuestion={dataSource}
+          />
+        );
+        break;
+      default:
+        return (
+          <p className="text-center">
+            <b>Danh sách còn trống</b>
+          </p>
+        );
+        break;
+    }
   };
+
+  // SCROLL TO TOP
+  const scrollToTop = () => {
+    boxEl.current.scrollTo(0, 0);
+  };
+
+  // ON SCROLL
+  const onScroll = () => {
+    const scrollHeight = boxEl.current.scrollHeight;
+    const offsetHeight = boxEl.current.offsetHeight;
+    const scrollTop = boxEl.current.scrollTop;
+
+    console.log("Height: ", scrollHeight - offsetHeight);
+    console.log("Scroll: ", scrollTop);
+
+    if (scrollTop > scrollHeight - offsetHeight - 40) {
+      if (todoApi.pageIndex < totalPageIndex) {
+        setLoadingQuestion(true);
+
+        if (scrollTop > 0 && loadingQuestion == false) {
+          setTodoApi({
+            ...todoApi,
+            pageIndex: todoApi.pageIndex + 1,
+          });
+        }
+      }
+    }
+
+    // if (scrollTop == 0) {
+    //   setCalScroll(scrollTop);
+    //   if (todoApi.pageIndex < totalPageIndex) {
+    //     setLoadingQuestion(true);
+
+    //     setTodoApi({
+    //       ...todoApi,
+    //       pageIndex: todoApi.pageIndex + 1,
+    //     });
+    //   }
+    // } else {
+    //   if (scrollTop > calScroll + 1500) {
+    //     if (todoApi.pageIndex < totalPageIndex) {
+    //       setLoadingQuestion(true);
+    //       setTodoApi({
+    //         ...todoApi,
+    //         pageIndex: todoApi.pageIndex + 1,
+    //       });
+    //     }
+    //     setCalScroll(scrollTop + 1400);
+    //   }
+    // }
+  };
+
+  console.log("DATA exercise: ", dataSource);
 
   useEffect(() => {
-    getDataProgram();
+    getDataProgram(); // Lấy data chương trình
   }, []);
+
+  useEffect(() => {
+    if (questionData.Type !== 0) {
+      getDataSource();
+    }
+  }, [todoApi]);
 
   return (
     <div className="question-create">
@@ -212,20 +304,29 @@ const QuestionCreate = () => {
                 <h3 className="title-big">
                   <Bookmark /> Danh sách câu hỏi
                 </h3>
-                <p className="text-lesson">
+                {/* <p className="text-lesson">
                   <span className="font-weight-black">Môn học:</span>
-                  <span>Tiếng anh</span>
-                </p>
+                  <span>{questionData?.SubjectName}</span>
+                </p> */}
               </div>
             }
             extra={
-              <CreateQuestionForm questionData={questionData} isEdit={false} />
+              <CreateQuestionForm
+                questionData={questionData}
+                isEdit={false}
+                onFetchData={() => (
+                  scrollToTop(),
+                  setIsLoading(true),
+                  setDataSource([]),
+                  setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 })
+                )}
+              />
             }
           >
-            {!state.showBoxType ? (
+            {!showListQuestion ? (
               <>
                 <p className="font-weight-blue text-center">
-                  Vui lòng chọn môn học
+                  Vui lòng chọn môn học và dạng câu hỏi
                 </p>
                 <div className="img-load">
                   <img src="/images/study-min.jpg" alt="" />
@@ -237,21 +338,18 @@ const QuestionCreate = () => {
               </div>
             ) : (
               <div
-                className={`question-list ${state.showBoxType ? "active" : ""}`}
+                className={`question-list active`}
+                ref={boxEl}
+                onScroll={onScroll}
               >
-                {/** Q uesion Single */}
-                <QuestionSingle />
-                {/** Quesion Multiple */}
-                <QuestionMultiple />
-                {/** Question Write */}
-                <QuestionWrite />
+                {returnQuestionType()}
               </div>
             )}
           </Card>
         </div>
         <div className="col-md-4 col-12">
           <Card className="card-box-type">
-            <div className={`row ${state.showBoxType ? "mb-2" : ""}`}>
+            <div className={`row ${showTypeQuetion ? "mb-2" : ""}`}>
               {/** CHỌN CHƯƠNG TRÌNH */}
               <div className="col-md-6 col-12 ">
                 <div className="item-select">
@@ -333,30 +431,64 @@ const QuestionCreate = () => {
             <div className="row">
               <div
                 className={`wrap-type-question w-100 ${
-                  state.showBoxType ? "active" : "nun-active"
+                  showTypeQuetion.status ? "active" : "nun-active"
                 }`}
               >
-                {dataBoxType?.map((item, index) => (
-                  <div className="col-md-12">
-                    <div className="box-type-question">
-                      <a
-                        href="#"
-                        onClick={(e) => changeBoxType(e, item.TabName)}
-                        className={
-                          item.TabName === state.boxActive ? "active" : ""
-                        }
-                      >
-                        <div className="type-img">
-                          <img src={item.Images} alt="" className="img-inner" />
+                {questionData.ExerciseGroupID == 1
+                  ? dataTypeGroup?.map((item, index) => (
+                      <div className="col-md-12">
+                        <div className="box-type-question">
+                          <a
+                            href="#"
+                            onClick={(e) =>
+                              changeBoxType(e, item.Type, item.TypeName)
+                            }
+                            className={
+                              item.Type === showTypeQuetion.type ? "active" : ""
+                            }
+                          >
+                            <div className="type-img">
+                              <img
+                                src={item.Images}
+                                alt=""
+                                className="img-inner"
+                              />
+                            </div>
+                            <div className="type-detail">
+                              <h5 className="number">{item.Number}</h5>
+                              <div className="p text">{item.TypeName}</div>
+                            </div>
+                          </a>
                         </div>
-                        <div className="type-detail">
-                          <h5 className="number">{item.Number}</h5>
-                          <div className="p text">{item.TypeName}</div>
+                      </div>
+                    ))
+                  : dataTypeSingle?.map((item, index) => (
+                      <div className="col-md-12">
+                        <div className="box-type-question">
+                          <a
+                            href="#"
+                            onClick={(e) =>
+                              changeBoxType(e, item.Type, item.TypeName)
+                            }
+                            className={
+                              item.Type === showTypeQuetion.type ? "active" : ""
+                            }
+                          >
+                            <div className="type-img">
+                              <img
+                                src={item.Images}
+                                alt=""
+                                className="img-inner"
+                              />
+                            </div>
+                            <div className="type-detail">
+                              <h5 className="number">{item.Number}</h5>
+                              <div className="p text">{item.TypeName}</div>
+                            </div>
+                          </a>
                         </div>
-                      </a>
-                    </div>
-                  </div>
-                ))}
+                      </div>
+                    ))}
               </div>
             </div>
           </Card>

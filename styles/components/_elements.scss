@@ -334,16 +334,16 @@
   border-color: #ebeef6;
 
   &:hover {
-    background: white;
+    background: #dfe1e7;
     color: #181c32;
-    border-color: white;
+    border-color: #dfe1e7;
   }
 
   &:focus {
     box-shadow: none;
-    background: white;
+    background: #dfe1e7;
     color: #181c32;
-    border-color: white;
+    border-color: #dfe1e7;
   }
 }
 
@@ -713,7 +713,7 @@ textarea.ant-input {
     background-color: #b1b1b1;
   }
 
-  &.close {
+  &.close-app {
     width: calc(100% - 80px);
   }
 
@@ -1452,7 +1452,7 @@ hr {
   }
 }
 .wrap-breadcrumb {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   padding: 0 15px;
 }
 

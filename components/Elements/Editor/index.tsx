@@ -6,12 +6,13 @@ const DynamicComponentWithNoSSR = dynamic(() => import("./Editor"), {
 });
 
 const Editor = (props) => {
-  const { handleChange } = props;
+  const { handleChange, isReset } = props;
 
   return (
     <div className="summernote-style">
       <DynamicComponentWithNoSSR
         getDataEditor={(value) => handleChange(value)}
+        isReset={isReset}
       />
     </div>
   );
