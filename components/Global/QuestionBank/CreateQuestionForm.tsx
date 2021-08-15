@@ -5,17 +5,43 @@ import { Edit } from "react-feather";
 import ChoiceForm from "./QuestionType/ChoiceForm";
 
 const CreateQuestionForm = (props) => {
+  const { questionData, isEdit } = props;
+  console.log("props", props);
+  console.log("QuestionData Drawer: ", questionData);
+
   const [visible, setVisible] = useState(false);
   const [value, setValue] = React.useState(1);
   const [openAns, setOpenAns] = useState(false);
-
-  const { isEdit } = props;
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const showDrawer = () => {
     setVisible(true);
   };
   const onClose = () => {
     setVisible(false);
+  };
+
+  const onSubmitData = () => {
+    !isSubmit && setIsSubmit(true);
+
+    setTimeout(() => {
+      setIsSubmit(false);
+    }, 500);
+  };
+
+  const renderFormContent = (type: number) => {
+    console.log("Type is: ", type);
+    switch (type) {
+      case 0:
+        return <p className="font-weight-bold">Vui lòng chọn dạng câu hỏi</p>;
+        break;
+      case 1:
+        return <ChoiceForm questionData={questionData} isSubmit={isSubmit} />;
+        break;
+      default:
+        return <p>Vui lòng chọn dạng câu hỏi</p>;
+        break;
+    }
   };
 
   return (
@@ -37,8 +63,20 @@ const CreateQuestionForm = (props) => {
         onClose={onClose}
         visible={visible}
         width={900}
+        footer={
+          <div className="text-center">
+            {questionData?.Type !== 0 && (
+              <button
+                className="btn btn-primary"
+                onClick={() => onSubmitData()}
+              >
+                Lưu
+              </button>
+            )}
+          </div>
+        }
       >
-        <ChoiceForm />
+        {renderFormContent(questionData.Type)}
       </Drawer>
     </>
   );

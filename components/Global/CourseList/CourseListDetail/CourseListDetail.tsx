@@ -1,4 +1,4 @@
-import {Spin, Tabs} from 'antd';
+import {Tabs} from 'antd';
 import {useRouter} from 'next/router';
 import React, {useState} from 'react';
 import {
@@ -16,7 +16,7 @@ import Comment from '~/components/Global/CourseList/CourseListDetail/Comment';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/DocumentCourse';
 import Exercise from '~/components/Global/CourseList/CourseListDetail/Exercise';
 import NotificationCourse from '~/components/Global/CourseList/CourseListDetail/NotificationCourse';
-// import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
+import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
 import Transcript from './Transcript/Transcript';
@@ -56,9 +56,7 @@ const CourseListDetail = () => {
 						</>
 					}
 					key="2"
-				>
-					{/* <Spin /> */}
-				</TabPane>
+				></TabPane>
 				<TabPane
 					tab={
 						<>
@@ -79,13 +77,13 @@ const CourseListDetail = () => {
 					}
 					key="4"
 				>
-					{/* <RollUp /> */}
+					<RollUp />
 				</TabPane>
 				<TabPane
 					tab={
 						<>
 							<Activity />
-							<span title="tab-title"> Transcript</span>
+							<span title="tab-title"> Exam</span>
 						</>
 					}
 					key="5"
