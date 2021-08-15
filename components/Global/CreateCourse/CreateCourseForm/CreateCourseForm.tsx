@@ -8,21 +8,16 @@ import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-//  ----------- POPUP FORM ------------
+import {optionCommonPropTypes} from '~/utils/proptypes';
+
 const CreateCourseForm = (props) => {
 	const {
-		handleGetCourse,
 		isUpdate,
 		isLoading,
-
 		//
-		optionBranchList,
-		optionStudyTimeList,
-		optionGradeList,
-		optionFetchByBranch,
-		optionProgramList,
-		optionCurriculum,
-		optionDayOfWeek,
+		optionListForForm,
+		//
+		handleGetCourse,
 		handleCheckStudyTime,
 		handleFetchDataByBranch,
 		handleFetchProgramByGrade,
@@ -68,12 +63,10 @@ const CreateCourseForm = (props) => {
 		StartDay: moment().format('YYYY/MM/DD'),
 		CourseName: '',
 	};
-
 	const form = useForm({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema),
 	});
-
 	const createCourseSwitchFunc = (data) => {
 		switch (isUpdate) {
 			case false:
@@ -121,7 +114,7 @@ const CreateCourseForm = (props) => {
 				Thông tin khóa học
 			</button>
 			<Modal
-				style={{top: 20}}
+				// style={{top: 20}}
 				title="Thông tin khóa học"
 				visible={isModalVisible}
 				footer={null}
@@ -140,7 +133,7 @@ const CreateCourseForm = (props) => {
 									name="BranchID"
 									label="Trung Tâm"
 									placeholder="Chọn trung tâm"
-									optionList={optionBranchList}
+									optionList={optionListForForm.branchList}
 									onChangeSelect={checkHandleFetchUserInformation}
 								/>
 							</div>
@@ -151,7 +144,7 @@ const CreateCourseForm = (props) => {
 									label="Học vụ"
 									placeholder="Chọn học vụ"
 									isLoading={isLoading.type === 'BranchID' && isLoading.status}
-									optionList={optionFetchByBranch.userInformationList}
+									optionList={optionListForForm.userInformationList}
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -162,7 +155,7 @@ const CreateCourseForm = (props) => {
 									placeholder="Chọn phòng học"
 									mode="multiple"
 									isLoading={isLoading.type === 'BranchID' && isLoading.status}
-									optionList={optionFetchByBranch.roomList}
+									optionList={optionListForForm.roomList}
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -171,7 +164,7 @@ const CreateCourseForm = (props) => {
 									name="StudyTimeID"
 									label="Ca học"
 									placeholder="Chọn ca học"
-									optionList={optionStudyTimeList}
+									optionList={optionListForForm.studyTimeList}
 									mode="multiple"
 									onChangeSelect={(value) => {
 										checkHandleGetValueBeforeFetchCurriculum(
@@ -187,7 +180,7 @@ const CreateCourseForm = (props) => {
 									name="GradeID"
 									label="Khối học"
 									placeholder="Chọn khối học"
-									optionList={optionGradeList}
+									optionList={optionListForForm.gradeList}
 									onChangeSelect={checkHandleFetchProgramByGrade}
 								/>
 							</div>
@@ -198,7 +191,7 @@ const CreateCourseForm = (props) => {
 									label="Chương trình học"
 									isLoading={isLoading.type === 'GradeID' && isLoading.status}
 									placeholder="Chọn chương trình học"
-									optionList={optionProgramList}
+									optionList={optionListForForm.programList}
 									onChangeSelect={(value) => {
 										checkHandleGetValueBeforeFetchCurriculum(
 											'ProgramID',
@@ -214,7 +207,7 @@ const CreateCourseForm = (props) => {
 									label="Giáo trình"
 									isLoading={isLoading.type === 'ProgramID' && isLoading.status}
 									placeholder="Chọn giáo trình"
-									optionList={optionCurriculum}
+									optionList={optionListForForm.curriculumList}
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -231,7 +224,7 @@ const CreateCourseForm = (props) => {
 									name="DaySelected"
 									label="Thứ"
 									placeholder="Chọn thứ"
-									optionList={optionDayOfWeek}
+									optionList={optionListForForm.dayOfWeek}
 									mode="multiple"
 								/>
 							</div>
@@ -265,55 +258,48 @@ const CreateCourseForm = (props) => {
 		</>
 	);
 };
-const optionPropTypes = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 CreateCourseForm.propTypes = {
-	handleGetCourse: PropTypes.func,
 	isUpdate: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
 	//
-	optionBranchList: optionPropTypes,
-	optionStudyTimeList: optionPropTypes,
-	optionGradeList: optionPropTypes,
-	optionFetchByBranch: PropTypes.shape({
-		userInformationList: optionPropTypes,
-		roomList: optionPropTypes,
+	optionListForForm: PropTypes.shape({
+		branchList: optionCommonPropTypes,
+		studyTimeList: optionCommonPropTypes,
+		gradeList: optionCommonPropTypes,
+		programList: optionCommonPropTypes,
+		dayOfWeek: optionCommonPropTypes,
+		curriculumList: optionCommonPropTypes,
+		userInformationList: optionCommonPropTypes,
+		roomList: optionCommonPropTypes,
 	}),
-	optionProgramList: optionPropTypes,
-	optionCurriculum: optionPropTypes,
-	optionDayOfWeek: optionPropTypes,
+	//
+	handleGetCourse: PropTypes.func,
 	handleCheckStudyTime: PropTypes.func,
 	handleFetchDataByBranch: PropTypes.func,
 	handleFetchProgramByGrade: PropTypes.func,
 	handleGetValueBeforeFetchCurriculum: PropTypes.func,
 };
-
 CreateCourseForm.defaultProps = {
-	handleGetCourse: null,
 	isUpdate: false,
 	isLoading: {type: '', status: false},
 	//
-	optionBranchList: [],
-	optionStudyTimeList: [],
-	optionGradeList: [],
-	optionFetchByBranch: {
+	optionListForForm: {
+		branchList: [],
+		studyTimeList: [],
+		gradeList: [],
+		programList: [],
+		dayOfWeek: [],
+		curriculumList: [],
 		userInformationList: [],
 		roomList: [],
 	},
-	optionProgramList: [],
-	optionCurriculum: [],
-	optionDayOfWeek: [],
+	handleGetCourse: null,
 	handleCheckStudyTime: null,
 	handleFetchDataByBranch: null,
 	handleFetchProgramByGrade: null,
 	handleGetValueBeforeFetchCurriculum: null,
 };
-
 export default CreateCourseForm;

@@ -1,18 +1,19 @@
 import {DatePicker, Form} from 'antd';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
-import {Controller} from 'react-hook-form';
 import PropTypes from 'prop-types';
+import React from 'react';
+import {Controller} from 'react-hook-form';
 
 const DateField = (props) => {
-	const {form, name, label, placeholder, disabled} = props;
+	const {form, name, label, placeholder, disabled, style, className} = props;
 	const {errors} = form.formState;
 	const hasError = errors[name];
 
 	return (
 		<Form.Item
+			style={style}
 			label={label}
-			className={`${
+			className={`${className} ${
 				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
 			}`}
 		>
@@ -51,11 +52,15 @@ DateField.propTypes = {
 	label: PropTypes.string,
 	placeholder: PropTypes.string,
 	disabled: PropTypes.bool,
+	style: PropTypes.shape({}),
+	className: PropTypes.string,
 };
 DateField.defaultProps = {
 	label: '',
 	placeholder: '',
 	disabled: false,
+	style: {},
+	className: '',
 };
 
 export default DateField;

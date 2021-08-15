@@ -8,16 +8,11 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
-const propTypesOption = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 CreateNewScheduleForm.propTypes = {
 	handleOnCreateSchedule: PropTypes.func,
-	optionSubjectList: propTypesOption,
+	optionSubjectList: optionCommonPropTypes,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
@@ -25,7 +20,7 @@ CreateNewScheduleForm.propTypes = {
 };
 CreateNewScheduleForm.defaultProps = {
 	handleOnCreateSchedule: null,
-	optionSubjectList: {},
+	optionSubjectList: [],
 	isLoading: {type: '', status: false},
 };
 function CreateNewScheduleForm(props) {
@@ -47,11 +42,11 @@ function CreateNewScheduleForm(props) {
 
 	const schema = yup.object().shape({
 		SubjectID: yup.number().min(1, 'Bạn cần chọn môn học'),
-		StudyDay: yup.string().required('Bạn không được bỏ trống'),
+		StudyDay: yup.number().nullable().required('Bạn không được bỏ trống'),
 	});
 	const defaultValuesInit = {
 		SubjectID: 0,
-		StudyDay: '',
+		StudyDay: null,
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,

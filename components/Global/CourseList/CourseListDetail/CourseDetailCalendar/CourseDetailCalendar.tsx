@@ -1,8 +1,10 @@
+import {Spin} from 'antd';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 import React, {useEffect, useState} from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {courseDetailApi} from '~/apiBase';
+import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
 import CDCalendar from './Calendar';
 
@@ -11,26 +13,10 @@ const CourseDetailCalendar = () => {
 	const {slug: ID} = router.query;
 	const {showNoti} = useWrap();
 	const [calendarList, setCalendarList] = useState<ICourseDetail[]>([]);
-
+	const [isLoaded, setIsLoaded] = useState(false);
 	// -----------CALENDAR-----------
 	const calendarDateFormat = (calendarArr: ICourseDetail[]) => {
 		const rs = calendarArr.map((c, idx) => {
-			// [
-			// 	{
-			// 		ID: 97,
-			// 		CourseID: 9,
-			// 		CourseName:
-			// 			'[Mona Media 1] - [Chương trình học 2] - [02/08/212021] - [Ca 20:00 - 21:00, Ca 07:00 - 08:00] - [P2, P1]',
-			// 		BranchID: 1043,
-			// 		BranchName: 'Mona Media 1',
-			// 		RoomName: 'Phòng 2',
-			// 		StartTime: '2021-08-02T07:00:00',
-			// 		EndTime: '2021-08-02T08:00:00',
-			// 		TeacherName: 'Hữu Minh Teacher 10',
-			// 		LinkDocument: null,
-			// 		SubjectName: 'Sinh',
-			// 	},
-			// ];
 			const {
 				ID,
 				CourseID,
@@ -64,12 +50,14 @@ const CourseDetailCalendar = () => {
 		});
 		return rs;
 	};
-	// calendarDateFormat(calendarList);
 	const fetchCalendarList = async () => {
 		try {
-			const res = await courseDetailApi.getByID(ID);
-			res.status === 200 && setCalendarList(res.data.data);
-			showNoti('success', res.data.message);
+			const res = await courseDetailApi.getAll({CourseID: ID});
+			if (res.status === 200) {
+				setCalendarList(res.data.data);
+				setIsLoaded(true);
+				showNoti('success', res.data.message);
+			}
 		} catch (error) {
 			showNoti('error', error.message);
 		}
@@ -81,7 +69,11 @@ const CourseDetailCalendar = () => {
 
 	return (
 		<>
-			<CDCalendar eventList={calendarDateFormat(calendarList)} />
+			<TitlePage title="Chi tiết khóa học" />
+			<CDCalendar
+				isLoaded={isLoaded}
+				eventList={calendarDateFormat(calendarList)}
+			/>
 		</>
 	);
 };

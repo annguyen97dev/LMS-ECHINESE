@@ -30,9 +30,9 @@ const SaveCreateCourse = (props) => {
 	const renderScheduleList = () => {
 		return Object.keys(scheduleShow).map((date, idx) => (
 			<div
-				className={`create-course-general-item ${
+				className={`create-course-save-list-item ${
 					scheduleShow[date].some((obj) => obj.isValid)
-						? 'create-course-general-item-error'
+						? 'create-course-save-list-item-error'
 						: ''
 				}`}
 				key={idx}
@@ -68,151 +68,141 @@ const SaveCreateCourse = (props) => {
 			>
 				Lưu
 			</button>
-			{isEdit ? (
+			{
+				// isEdit ? (
 				<Modal
-					title="Cập nhật khóa học"
+					style={{top: 20}}
+					className={`${!isEdit ? 'create-course-save modal-scroll' : ''}`}
+					title={isEdit ? 'Cập nhật khóa học' : 'Thông tin khóa học'}
 					visible={isModalVisible}
 					onCancel={closeModal}
-					footer={null}
-					width={600}
+					footer={
+						<div className="col-12 mt-3">
+							<button
+								className="btn btn-primary w-100"
+								onClick={checkHandleSaveCourse}
+								disabled={isLoading.type == 'SAVE_COURSE' && isLoading.status}
+							>
+								{isEdit ? 'Cập nhật' : 'Lưu tất cả'}
+								{isLoading.type == 'SAVE_COURSE' && isLoading.status && (
+									<Spin className="loading-base" />
+								)}
+							</button>
+						</div>
+					}
+					width={isEdit ? 600 : 800}
 				>
-					<div className="info-course-save">
+					<div
+						className={`create-course-save-info ${!isEdit ? 'box-form' : ''}`}
+					>
 						<div className="row">
-							<div className="col-md-12 col-12">
-								<div className="item">
-									<p style={{marginBottom: 0}}>
-										<span>Những buổi học đã thay đổi:</span>
-									</p>
-									<div className="create-course-general">
-										{renderScheduleList()}
+							{!isEdit && (
+								<>
+									<div className="col-md-12 col-12">
+										<div className="item">
+											<p>
+												<span>Tên khóa học:</span>
+												<span>{saveInfo.CourseName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Trung tâm:</span>
+												<span>{saveInfo.BranchName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Phòng:</span>
+												<span>{saveInfo.RoomName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Ca:</span>
+												<span>{saveInfo.StudyTimeName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Thứ:</span>
+												<span>{saveInfo.DaySelectedName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Giáo trình:</span>
+												<span>{saveInfo.CurriculumName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Chương trình học:</span>
+												<span>{saveInfo.ProgramName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Ngày bắt đầu:</span>
+												<span>
+													{moment(saveInfo.StartDay).format('DD/MM/YYYY')}
+												</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Ngày kết thúc:</span>
+												<span>
+													{moment(saveInfo.EndDay).format('DD/MM/YYYY')}
+												</span>
+											</p>
+										</div>
+									</div>
+								</>
+							)}
+							{isEdit ? (
+								<div className="col-md-12 col-12">
+									<div className="item">
+										<p style={{marginBottom: 0}}>
+											<span>Những buổi học đã thay đổi:</span>
+										</p>
+										<div className="create-course-save-list">
+											{renderScheduleList()}
+										</div>
 									</div>
 								</div>
-							</div>
-							<div className="col-12 mt-3">
-								<button
-									className="btn btn-primary w-100"
-									onClick={checkHandleSaveCourse}
-									disabled={isLoading.type == 'SAVE_COURSE' && isLoading.status}
-								>
-									Cập nhật
-									{isLoading.type == 'SAVE_COURSE' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
-								</button>
-							</div>
+							) : (
+								<div className="col-md-12 col-12">
+									<div className="item">
+										<p style={{marginBottom: 0}}>
+											<span>Lịch học tổng quát:</span>
+										</p>
+										<div className="create-course-save-list">
+											{renderScheduleList()}
+										</div>
+									</div>
+								</div>
+							)}
 						</div>
 					</div>
 				</Modal>
-			) : (
-				<Modal
-					title="Thông tin khóa học"
-					visible={isModalVisible}
-					onCancel={closeModal}
-					footer={null}
-					width={800}
-				>
-					<div className="info-course-save">
-						<div className="row">
-							<div className="col-md-12 col-12">
-								<div className="item">
-									<p>
-										<span>Tên khóa học:</span>
-										<span>{saveInfo.CourseName}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Trung tâm:</span>
-										<span>{saveInfo.BranchName}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Phòng:</span>
-										<span>{saveInfo.RoomName}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Ca:</span>
-										<span>{saveInfo.StudyTimeName}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Thứ:</span>
-										<span>{saveInfo.DaySelectedName}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Giáo trình:</span>
-										<span>{saveInfo.CurriculumName}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Chương trình học:</span>
-										<span>{saveInfo.ProgramName}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Ngày bắt đầu:</span>
-										<span>
-											{moment(saveInfo.StartDay).format('DD/MM/YYYY')}
-										</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-6 col-12">
-								<div className="item">
-									<p>
-										<span>Ngày kết thúc:</span>
-										<span>{moment(saveInfo.EndDay).format('DD/MM/YYYY')}</span>
-									</p>
-								</div>
-							</div>
-							<div className="col-md-12 col-12">
-								<div className="item">
-									<p style={{marginBottom: 0}}>
-										<span>Lịch học tổng quát:</span>
-									</p>
-									<div className="create-course-general">
-										{renderScheduleList()}z
-									</div>
-								</div>
-							</div>
-							<div className="col-12 mt-3">
-								<button
-									className="btn btn-primary w-100"
-									onClick={checkHandleSaveCourse}
-									disabled={isLoading.type == 'SAVE_COURSE' && isLoading.status}
-								>
-									Lưu tất cả
-									{isLoading.type == 'SAVE_COURSE' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
-								</button>
-							</div>
-						</div>
-					</div>
-				</Modal>
-			)}
+			}
 		</>
 	);
 };
@@ -224,7 +214,16 @@ SaveCreateCourse.propTypes = {
 	}),
 	isEdit: PropTypes.bool,
 	scheduleShow: PropTypes.shape({}),
-	saveInfo: PropTypes.shape({}),
+	saveInfo: PropTypes.shape({
+		CourseName: PropTypes.string,
+		BranchName: PropTypes.string,
+		RoomName: PropTypes.string,
+		ProgramName: PropTypes.string,
+		CurriculumName: PropTypes.string,
+		DaySelectedName: PropTypes.string,
+		StudyTimeName: PropTypes.string,
+		EndDay: PropTypes.string,
+	}),
 	handleSaveCourse: PropTypes.func,
 	handleFetchDataToSave: PropTypes.func,
 };

@@ -8,10 +8,10 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
 const CourseListFilterForm = (props) => {
-	const {handleFilterCourseList, handleResetFilterCourseList, optionList} =
-		props;
+	const {handleFilter, handleResetFilter, optionList} = props;
 	const {statusList, branchList, programList} = optionList;
 	const [showFilter, showFilterSet] = useState(false);
 
@@ -36,25 +36,22 @@ const CourseListFilterForm = (props) => {
 		resolver: yupResolver(schema),
 	});
 
-	const checkHandleFilterCourseList = (objVl) => {
-		if (!handleFilterCourseList) return;
-		handleFilterCourseList(objVl);
+	const checkHandleFilter = (objVl) => {
+		if (!handleFilter) return;
+		handleFilter(objVl);
 		funcShowFilter();
 		form.reset({...defaultValuesInit});
 	};
-	const checkHandleResetFilterCourseList = () => {
-		if (!handleResetFilterCourseList) return;
-		handleResetFilterCourseList();
+	const checkHandleResetFilter = () => {
+		if (!handleResetFilter) return;
+		handleResetFilter();
 		funcShowFilter();
 		form.reset({...defaultValuesInit});
 	};
 
 	const content = (
 		<div className={`wrap-filter small`}>
-			<Form
-				layout="vertical"
-				onFinish={form.handleSubmit(checkHandleFilterCourseList)}
-			>
+			<Form layout="vertical" onFinish={form.handleSubmit(checkHandleFilter)}>
 				<div className="row">
 					<div className="col-md-6">
 						<InputTextField
@@ -102,8 +99,7 @@ const CourseListFilterForm = (props) => {
 						<button
 							type="button"
 							className="light btn btn-secondary"
-							style={{marginRight: '10px'}}
-							onClick={checkHandleResetFilterCourseList}
+							onClick={checkHandleResetFilter}
 						>
 							Reset
 						</button>
@@ -133,24 +129,18 @@ const CourseListFilterForm = (props) => {
 	);
 };
 
-const propTypesOption = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 CourseListFilterForm.propTypes = {
-	handleFilterCourseList: PropTypes.func,
-	handleResetFilterCourseList: PropTypes.func,
+	handleFilter: PropTypes.func,
+	handleResetFilter: PropTypes.func,
 	optionList: PropTypes.shape({
-		statusList: propTypesOption,
-		branchList: propTypesOption,
-		programList: propTypesOption,
+		statusList: optionCommonPropTypes,
+		branchList: optionCommonPropTypes,
+		programList: optionCommonPropTypes,
 	}),
 };
 CourseListFilterForm.defaultProps = {
-	handleFilterCourseList: null,
-	handleResetFilterCourseList: null,
+	handleFilter: null,
+	handleResetFilter: null,
 	optionList: {},
 };
 export default CourseListFilterForm;

@@ -71,7 +71,7 @@ const DayOff = () => {
 		},
 	];
 	// FILTER
-	const onFilterDayOff = (obj) => {
+	const onFilter = (obj) => {
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -221,11 +221,12 @@ const DayOff = () => {
 			res.status === 200 && showNoti('success', res.data.message);
 			if (dayOffList.length === 1) {
 				filters.pageIndex === 1
-					? setFilters({
+					? (setFilters({
 							...listFieldInit,
 							...refValue.current,
 							pageIndex: 1,
-					  })
+					  }),
+					  setDayOffList([]))
 					: setFilters({
 							...filters,
 							...refValue.current,
@@ -302,7 +303,10 @@ const DayOff = () => {
 			columns={columns}
 			Extra={
 				<div className="extra-table">
-					<DayOffFilterForm handleFilterDayOff={onFilterDayOff} />
+					<DayOffFilterForm
+						handleFilter={onFilter}
+						handleResetFilter={onResetSearch}
+					/>
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

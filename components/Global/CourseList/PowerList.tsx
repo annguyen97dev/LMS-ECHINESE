@@ -61,7 +61,7 @@ const PowerList = (props) => {
 			}) => (
 				<List.Item
 					extra={cloneElement(children, {
-						courseObj: {ID, BranchID, AcademicUID, TeacherLeaderUID},
+						courseObj: {AcademicUID, TeacherLeaderUID},
 					})}
 				>
 					<List.Item.Meta

@@ -29,6 +29,7 @@ export { staffApi } from "./staff-manage/staff";
 export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
 
+export { exerciseApi } from "./exercise/exercise";
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
 export { studentAdviseApi } from "./customer/student/student-advise";
@@ -48,4 +49,6 @@ export { contractCustomerListApi } from "./customer/contract/contract-customer-l
 export { voucherApi } from "./customer/finance/finance-cashier-payment";
 export { invoiceApi } from "./customer/finance/finance-cashier-invoice";
 export { examAppointmentResultApi } from "./customer/student/exam-appointment-result";
-export { exerciseApi } from "./exercise/exercise";
+export { checkBranchScheduleStudy } from "./schedule/check-branch-schedule";
+export { checkTeacherScheduleStudy } from "./schedule/check-teacher-schedule";
+export { programDetailPointColumnApi } from "./options/program-detail-point-column";
