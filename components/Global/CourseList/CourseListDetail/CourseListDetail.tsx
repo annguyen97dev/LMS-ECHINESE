@@ -12,7 +12,7 @@ import {
   FileText,
   Flag,
 } from "react-feather";
-import DocumentCourse from "~/components/Global/CourseList/CourseListDetail/DocumentCourse";
+import DocumentCourse from "~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse";
 import Exam from "~/components/Global/CourseList/CourseListDetail/Exam";
 import Exercise from "~/components/Global/CourseList/CourseListDetail/Exercise";
 import RollUp from "~/components/Global/CourseList/CourseListDetail/RollUp/RollUp";
@@ -110,7 +110,7 @@ const CourseListDetail = () => {
           }
           key="7"
         >
-          <DocumentCourse />
+          <DocumentCourse courseID={parseInt(router.query.slug as string)} />
         </TabPane>
         <TabPane
           tab={

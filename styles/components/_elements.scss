@@ -2064,3 +2064,10 @@ hr {
     background-color: #3462c8;
   }
 }
+
+.folder-hr {
+  border: none;
+  border-left: 1px solid hsla(200, 10%, 50%, 100);
+  height: 100vh;
+  width: 1px;
+}
