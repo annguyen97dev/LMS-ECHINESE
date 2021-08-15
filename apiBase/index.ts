@@ -52,3 +52,7 @@ export { examAppointmentResultApi } from "./customer/student/exam-appointment-re
 export { checkBranchScheduleStudy } from "./schedule/check-branch-schedule";
 export { checkTeacherScheduleStudy } from "./schedule/check-teacher-schedule";
 export { programDetailPointColumnApi } from "./options/program-detail-point-column";
+export { courseStudentApi } from "./customer/student/course-student";
+export { rollUpApi } from "./course/rollup";
+export { courseOfStudentPriceApi } from "./course/course-of-student-price";
+export { configApi } from "./options/config";

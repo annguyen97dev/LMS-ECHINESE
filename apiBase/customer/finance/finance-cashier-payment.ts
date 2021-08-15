@@ -12,6 +12,9 @@ class Voucher {
     instance.get<IApiResultData<IVoucher>>(`${url}/${id}`);
 
   update = (data: IVoucher) => instance.put(url, data, {});
+
+  export = (id) =>
+    instance.get<IApiResultData>(`/api/ExportVoucher/${id}`);
 }
 
 export const voucherApi = new Voucher();

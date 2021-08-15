@@ -1,47 +1,119 @@
-import TitlePage from "~/components/TitlePage";
+import React, { Fragment, useEffect, useState } from "react";
 import { Card, Form, Select, Input, Table, Button } from "antd";
 import Editor from "~/components/TinyMCE";
 import { Comment, Tooltip, Avatar, Rate, Tag } from "antd";
 import { dataService } from "../../../../lib/customer/dataCustomer";
 import { Upload, Save, Info } from "react-feather";
 import PowerTable from "~/components/PowerTable";
+import { serviceCustomerExamResultApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
 
-const InfoTestResultCard = () => {
+const InfoTestResultCard = (props) => {
+	const [dataTable, setDataTable] = useState<IServiceCustomerExamResult[]>([]);
+	const { showNoti } = useWrap();
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isLoading, setIsLoading] = useState({
+		type: "",
+		status: false,
+	});
+	const [totalPage, setTotalPage] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
+
+	let pageIndex = 1;
+
+	// PARAMS API GETALL
+	const listTodoApi = {
+		pageSize: 10,
+		pageIndex: pageIndex,
+		sort: null,
+		sortType: null,
+		UserInformationID: props.id,
+	};
+	const [todoApi, setTodoApi] = useState(listTodoApi);
+
+	// GET DATA TABLE
+	const getDataTable = () => {
+		setIsLoading({
+		  type: "GET_ALL",
+		  status: true,
+		});
+		(async () => {
+		  try {
+			let res = await serviceCustomerExamResultApi.getAll(todoApi);
+			if (res.status == 204) {
+				showNoti("danger", "Không có dữ liệu");
+			}
+			if(res.status == 200){
+				setDataTable(res.data.data);
+				setTotalPage(res.data.totalRow);
+			}
+		  } catch (error) {
+			showNoti("danger", error.message);
+		  } finally {
+			setIsLoading({
+			  type: "GET_ALL",
+			  status: false,
+			});
+		  }
+		})();
+	};
+
+	// PAGINATION
+	const getPagination = (pageNumber: number) => {
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+			...todoApi,
+			pageIndex: pageIndex,
+		});
+	};
+
   const columns = [
     {
       title: "Listening",
-      dataIndex: "listening",
+      dataIndex: "ListeningPoint",
       render: (listening) => {
-        return <span className="tag green">{listening}</span>;
+        return <span>{listening}</span>;
       },
     },
     {
       title: "Reading",
-      dataIndex: "reading",
+      dataIndex: "ReadingPoint",
       render: (reading) => {
-        return <span className="tag green">{reading}</span>;
+        return <span>{reading}</span>;
       },
     },
     {
       title: "Writing",
-      dataIndex: "writing",
+      dataIndex: "WritingPoint",
       render: (writing) => {
-        return <span className="tag green">{writing}</span>;
+        return <span>{writing}</span>;
       },
     },
     {
       title: "Speaking",
-      dataIndex: "speaking",
+      dataIndex: "SpeakingPoint",
       render: (speaking) => {
-        return <span className="tag green">{speaking}</span>;
+        return <span>{speaking}</span>;
       },
     },
     {
       title: "Overall",
-      dataIndex: "overall",
+      dataIndex: "OverAll",
       render: (overall) => {
-        return <span className="tag blue">{overall}</span>;
-      },
+        // Làm tròn 
+        let n = parseFloat(overall); 
+        overall = Math.round(n * 10)/10;
+
+        if(overall >= 8) {
+          return <span className="tag green">{overall}</span>;
+        }
+        else if(overall >= 5) {
+          return <span className="tag yellow">{overall}</span>;
+        } else {
+          return <span className="tag red">{overall}</span>;
+        }
+      }
     },
     {
       render: () => (
@@ -63,6 +135,10 @@ const InfoTestResultCard = () => {
   ];
   const { Option } = Select;
 
+  useEffect(() => {
+    getDataTable();
+  }, []);
+
   return (
     <>
       <div className="row">
@@ -73,6 +149,10 @@ const InfoTestResultCard = () => {
                 <div className="row">
               </Card> */}
               <PowerTable
+                loading={isLoading}
+                currentPage={currentPage}
+                totalPage={totalPage && totalPage}
+                getPagination={(pageNumber: number) => getPagination(pageNumber)}
                 Extra={
                   <Form layout="vertical">
                     <div className="row">
@@ -100,7 +180,7 @@ const InfoTestResultCard = () => {
                 noScroll
                 pagination={false}
                 columns={columns}
-                dataSource={dataService}
+                dataSource={dataTable}
               />
             </div>
           </div>

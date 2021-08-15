@@ -1,0 +1,22 @@
+type ICourseOfStudentPirce = IBaseApi<{
+	ID: number,
+	Course: [],
+	UserInformationID: number,
+	FullNameUnicode: string,
+	PayBranchID: number,
+	PayBranchName: string,
+	Price: number,
+	DiscountCode: string,
+	Reduced: number,
+	Paid: number,
+	MoneyInDebt: number,
+	PaymentMethodsID: number,
+	PaymentMethodsName: string,
+	DonePaid: boolean,
+	PayDate: null,
+	Enable: boolean,
+	CreatedBy: string,
+	CreatedOn: string,
+	ModifiedBy: string,
+	ModifiedOn: string
+}>;

@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Collapse, Divider, Tag } from "antd";
 import PowerTable from "~/components/PowerTable";
 import { dataService } from "../../../../lib/customer/dataCustomer";
 import ExpandTable from "~/components/ExpandTable";
 import { Info } from "react-feather";
+import { courseStudentApi, rollUpApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
+import moment from "moment";
 const expandedRowRender = () => {
   return (
     <>
@@ -14,8 +17,25 @@ const expandedRowRender = () => {
     </>
   );
 };
-const InfoCourseCard = () => {
-  const { Panel } = Collapse;
+
+const RollUpTable = (props) => {
+  const { showNoti } = useWrap();
+  const [rollUp, setRollUp] = useState([])
+
+  const getRollUp = async () => {
+    try {
+      let res = await rollUpApi.getAll({CourseID: props.idCourse});
+      if(res.status == 200) {
+        setRollUp(res.data.data);
+      }
+      if(res.status == 204) {
+        showNoti("danger", "Không tim thấy dữ liệu");
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    }
+  }
+
   const columns = [
     { title: "Ngày", dataIndex: "testDate" },
     { title: "Môn học", dataIndex: "pfSubject" },
@@ -46,6 +66,56 @@ const InfoCourseCard = () => {
     { title: "Ghi chú" },
     { title: "Cảnh báo" },
   ];
+
+  useEffect(() => {
+    getRollUp();
+  }, []);
+
+  return (
+    <PowerTable
+    noScroll
+    dataSource={rollUp}
+    columns={columns}
+    Extra={<h5>Điểm danh</h5>}
+  />
+  )
+}
+
+const InfoCourseCard = (props) => {
+  const id = props.id;
+  const { Panel } = Collapse;
+  const [courseStudent, setCourseStudent] = useState<ICourseOfStudent[]>([]);
+  const { showNoti } = useWrap();
+  const [isLoading, setIsLoading] = useState({
+    type: null,
+    status: false,
+  })
+
+  const getCourseStudent = async () => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true
+    })
+    try {
+      let res = await courseStudentApi.getAll({UserInformationID: id});
+      if(res.status == 200) {
+        setCourseStudent(res.data.data);
+      }
+      if(res.status == 204) {
+        showNoti("danger", "Không tim thấy dữ liệu");
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false
+      })
+    }
+  }
+
+
+
   const columns2 = [
     { title: "Nhóm bài", dataIndex: "pfSubject" },
     { title: "Ngày tạo", dataIndex: "testDate" },
@@ -120,19 +190,19 @@ const InfoCourseCard = () => {
     },
   ];
 
+  useEffect(() => {
+    getCourseStudent();
+  }, [])
+
   return (
     <>
       <Collapse accordion>
+        {courseStudent.map((item, index) => (
         <Panel
-          header="[ZIM - 20L5 Thái Hà] - A-IELTS Foundation, 01/12, 18:30-20:30"
-          key="1"
+          header={item.BranchName}
+          key={index}
         >
-          <PowerTable
-            noScroll
-            dataSource={dataService}
-            columns={columns}
-            Extra={<h5>Điểm danh</h5>}
-          />
+          <RollUpTable idCourse={item.ID}/>
           <Divider />
 
           <ExpandTable
@@ -152,6 +222,7 @@ const InfoCourseCard = () => {
             Extra={<h5>Điểm thi</h5>}
           />
         </Panel>
+        ))}
       </Collapse>
     </>
   );
