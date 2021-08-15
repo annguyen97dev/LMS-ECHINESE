@@ -2054,3 +2054,13 @@ hr {
     max-width: 100%;
   }
 }
+
+.folder-btn {
+  &:hover {
+    background-color: #a87a42;
+    cursor: pointer;
+  }
+  &:visited {
+    background-color: #3462c8;
+  }
+}
