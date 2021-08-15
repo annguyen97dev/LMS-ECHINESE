@@ -5,7 +5,7 @@ import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/helpers';
+import {fmSelectArr} from '~/utils/functions';
 import DistrictDelete from './DistrictDelete';
 import DistrictForm from './DistrictForm';
 

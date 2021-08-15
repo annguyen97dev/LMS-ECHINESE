@@ -9,6 +9,7 @@ import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
 const TeacherForm = (props) => {
 	const {
@@ -196,12 +197,6 @@ const TeacherForm = (props) => {
 	);
 };
 
-const optionPropTypes = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 TeacherForm.propTypes = {
 	handleCreateTeacher: PropTypes.func,
 	isUpdate: PropTypes.bool,
@@ -215,8 +210,8 @@ TeacherForm.propTypes = {
 	isClearForm: PropTypes.bool,
 	indexUpdateObj: PropTypes.number,
 	//
-	optionAreaList: optionPropTypes,
-	optionBranchList: optionPropTypes,
+	optionAreaList: optionCommonPropTypes,
+	optionBranchList: optionCommonPropTypes,
 	handleFetchBranch: PropTypes.func,
 	loadingFetchBranch: PropTypes.bool,
 };
