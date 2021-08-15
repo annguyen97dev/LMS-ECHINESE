@@ -44,10 +44,14 @@ const JobForm = React.memo((props: any) => {
   };
 
   useEffect(() => {
-    if (jobDetail) {
-      form.setFieldsValue(jobDetail);
+    if (isModalVisible === true) {
+      if (jobDetail) {
+        form.setFieldsValue(jobDetail);
+      }
     }
   }, [isModalVisible]);
+
+  console.log("job");
 
   return (
     <>

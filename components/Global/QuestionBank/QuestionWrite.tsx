@@ -22,7 +22,7 @@ const QuestionWrite = () => {
         </div>
         <div className="box-action">
           <Tooltip placement="topLeft" title="Sửa câu hỏi">
-            <CreateQuestionForm isEdit={true} />
+            {/* <CreateQuestionForm isEdit={true} /> */}
           </Tooltip>
           <Tooltip placement="topLeft" title="Xóa câu hỏi">
             <button className="btn btn-icon delete">
