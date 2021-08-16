@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Card, Form, Select, Input, Table, Button } from "antd";
-import Editor from "~/components/TinyMCE";
+// import Editor from "~/components/TinyMCE";
 import { Comment, Tooltip, Avatar, Rate, Tag } from "antd";
 import { dataService } from "../../../../lib/customer/dataCustomer";
 import { Upload, Save, Info } from "react-feather";
