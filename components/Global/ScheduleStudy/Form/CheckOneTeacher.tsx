@@ -37,7 +37,7 @@ CheckOneTeacher.defaultProps = {
 };
 function CheckOneTeacher(props) {
 	const {isLoading, optionList, handleFetchTeacher, handleSubmit} = props;
-	const {branchList, studyTimeList, roomList, teacherList} = optionList;
+	const {branchList, teacherList} = optionList;
 	const [showFilter, showFilterSet] = useState(false);
 
 	const funcShowFilter = () => {

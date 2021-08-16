@@ -207,6 +207,8 @@ const CreateCourse = () => {
 		scheduleInDay: 0,
 		scheduleList: [],
 	});
+	const debounceFetchInfoAvailableSchedule = useRef(null);
+	const TIMING = 500;
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
@@ -508,10 +510,6 @@ const CreateCourse = () => {
 	// -----------SCHEDULE-----------
 	// FETCH DATA FOR SELECT SCHEDULE
 	const fetchInfoAvailableSchedule = async (arrSchedule: ISchedule[]) => {
-		setIsLoading({
-			type: 'CHECK_SCHEDULE',
-			status: true,
-		});
 		const {BranchID, RoomID} = stoneDataToSave.current;
 		// SPLIT SCHEDULE TO 2 OBJECT TO CALL 2 API
 		// paramsArr = [ {Schedule-*: [{params teacher}, {params room}]} ]
@@ -595,6 +593,16 @@ const CreateCourse = () => {
 			});
 		}
 	};
+	const onDebounceFetchInfoAvailableSchedule = (params) => {
+		setIsLoading({
+			type: 'CHECK_SCHEDULE',
+			status: true,
+		});
+		clearTimeout(debounceFetchInfoAvailableSchedule.current);
+		debounceFetchInfoAvailableSchedule.current = setTimeout(() => {
+			fetchInfoAvailableSchedule(params);
+		}, TIMING);
+	};
 	const checkDuplicateStudyTimeInDay = (arr: ISchedule[], vl) => {
 		const scheduleSameStudyTime = arr.filter((s) => s.CaID === vl);
 		if (scheduleSameStudyTime.length > 1) {
@@ -671,7 +679,7 @@ const CreateCourse = () => {
 			if (checkDuplicateStudyTimeInDay(scheduleList, vl)) {
 				showNoti('danger', 'Dữ liệu trùng lập');
 			} else {
-				fetchInfoAvailableSchedule(scheduleList);
+				onDebounceFetchInfoAvailableSchedule(scheduleList);
 			}
 		}
 
@@ -765,7 +773,7 @@ const CreateCourse = () => {
 	};
 	const onSetDataModalCalendar = (obj: IDataModal) => {
 		const {scheduleList} = obj;
-		fetchInfoAvailableSchedule(scheduleList);
+		onDebounceFetchInfoAvailableSchedule(scheduleList);
 		setDataModalCalendar(obj);
 	};
 	const onToggleSchedule = (sch: ISchedule, type: number) => {

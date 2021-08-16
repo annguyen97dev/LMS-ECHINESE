@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {Card, Select, DatePicker, Input, Form, Popover, Spin} from 'antd';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
+import {Form, Popover, Spin} from 'antd';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, {useState} from 'react';
+import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import SelectField from '~/components/FormControl/SelectField';
 import DateField from '~/components/FormControl/DateField';
+import SelectField from '~/components/FormControl/SelectField';
 import {optionCommonPropTypes} from '~/utils/proptypes';
 
 CheckRoom.propTypes = {
@@ -37,7 +37,7 @@ CheckRoom.defaultProps = {
 };
 function CheckRoom(props) {
 	const {isLoading, optionList, handleFetchRoom, handleSubmit} = props;
-	const {branchList, studyTimeList, roomList, teacherList} = optionList;
+	const {branchList, roomList} = optionList;
 	const [showFilter, showFilterSet] = useState(false);
 
 	const funcShowFilter = () => {
@@ -79,7 +79,6 @@ function CheckRoom(props) {
 	const checkHandleSubmit = (value) => {
 		if (!handleSubmit) return;
 		handleSubmit(value).then((res) => {
-			console.log(res);
 			if (res && res.status === 200) {
 				funcShowFilter();
 				form.reset({...defaultValuesInit});

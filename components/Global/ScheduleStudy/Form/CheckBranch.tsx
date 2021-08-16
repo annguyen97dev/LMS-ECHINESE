@@ -1,16 +1,41 @@
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Form, Popover, Spin} from 'antd';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
-const CheckBranch = (props) => {
+CheckBranch.propTypes = {
+	optionList: PropTypes.shape({
+		branchList: optionCommonPropTypes,
+		studyTimeList: optionCommonPropTypes,
+		roomList: optionCommonPropTypes,
+		teacherList: optionCommonPropTypes,
+	}),
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
+	handleSubmit: PropTypes.func,
+};
+CheckBranch.defaultProps = {
+	optionList: {
+		branchList: [],
+		studyTimeList: [],
+		roomList: [],
+		teacherList: [],
+	},
+	isLoading: {type: '', status: false},
+	//
+	handleSubmit: null,
+};
+function CheckBranch(props) {
 	const {isLoading, optionList, handleSubmit} = props;
-	const {branchList, studyTimeList, roomList, areaList, teacherList} =
-		optionList;
+	const {branchList} = optionList;
 	const [showFilter, showFilterSet] = useState(false);
 
 	const funcShowFilter = () => {
@@ -129,6 +154,6 @@ const CheckBranch = (props) => {
 			</div>
 		</>
 	);
-};
+}
 
 export default CheckBranch;

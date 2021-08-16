@@ -37,7 +37,7 @@ CheckManyEmptyTeacher.defaultProps = {
 };
 function CheckManyEmptyTeacher(props) {
 	const {isLoading, optionList, handleFetchTeacher, handleSubmit} = props;
-	const {branchList, studyTimeList, roomList, teacherList} = optionList;
+	const {branchList, studyTimeList, teacherList} = optionList;
 	const [showFilter, showFilterSet] = useState(false);
 
 	const funcShowFilter = () => {
