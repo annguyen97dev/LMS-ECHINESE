@@ -78,7 +78,9 @@ const CourseListDetail = () => {
           }
           key="4"
         >
-          <RollUp courseID={parseInt(router.query.slug as string)} />
+          {activeTab === 4 && (
+            <RollUp courseID={parseInt(router.query.slug as string)} />
+          )}
         </TabPane>
         <TabPane
           tab={
@@ -90,7 +92,7 @@ const CourseListDetail = () => {
           key="5"
         >
           {/* <Exam /> */}
-          <Transcript />
+          {activeTab === 5 && <Transcript />}
         </TabPane>
         <TabPane
           tab={
@@ -101,7 +103,7 @@ const CourseListDetail = () => {
           }
           key="6"
         >
-          <Exercise />
+          {activeTab === 6 && <Exercise />}
         </TabPane>
         <TabPane
           tab={
@@ -112,7 +114,9 @@ const CourseListDetail = () => {
           }
           key="7"
         >
-          <DocumentCourse courseID={parseInt(router.query.slug as string)} />
+          {activeTab === 7 && (
+            <DocumentCourse courseID={parseInt(router.query.slug as string)} />
+          )}
         </TabPane>
         <TabPane
           tab={
@@ -123,7 +127,9 @@ const CourseListDetail = () => {
           }
           key="8"
         >
-          <Comment courseID={parseInt(router.query.slug as string)} />
+          {activeTab === 8 && (
+            <Comment courseID={parseInt(router.query.slug as string)} />
+          )}
         </TabPane>
         <TabPane
           tab={
@@ -134,9 +140,11 @@ const CourseListDetail = () => {
           }
           key="9"
         >
-          <NotificationCourse
-            courseID={parseInt(router.query.slug as string)}
-          />
+          {activeTab === 9 && (
+            <NotificationCourse
+              courseID={parseInt(router.query.slug as string)}
+            />
+          )}
         </TabPane>
       </Tabs>
     </div>
