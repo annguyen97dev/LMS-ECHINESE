@@ -87,7 +87,7 @@
       }
     }
 
-    &.close {
+    &.close-app {
       width: 0;
       box-shadow: none;
 
@@ -128,7 +128,7 @@
       padding: 0 15px;
     }
 
-    &.close {
+    &.close-app {
       width: calc(100% - 80px);
     }
 

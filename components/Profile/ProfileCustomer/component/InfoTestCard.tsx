@@ -4,8 +4,17 @@ import { dataService } from "../../../../lib/customer/dataCustomer";
 import { examAppointmentResultApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import moment from "moment";
+import ExpandTable from "~/components/ExpandTable";
 
 const InfoTestCard = (props) => {
+  const expandedRowRender = (props) => {
+    return (
+      <>
+        <p><span className="font-weight-black">Ghi chú: </span>{props.Note}</p>
+      </>
+    );
+  };
+
   const id = props.id;
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
@@ -62,11 +71,12 @@ const InfoTestCard = (props) => {
 
   return (
     <>
-      <PowerTable
+      <ExpandTable
         loading={isLoading}
         dataSource={exam}
         columns={columns}
         addClass="basic-header"
+        expandable={{expandedRowRender: record => expandedRowRender(record)}}
         Extra={<h5>Chi tiết bài test</h5>}
       />
     </>

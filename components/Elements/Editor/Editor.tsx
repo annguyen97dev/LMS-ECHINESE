@@ -49,7 +49,7 @@
 
 // export default Editor;
 
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import ReactSummernote from "react-summernote";
 import "react-summernote/dist/react-summernote.css"; // import styles
 import "react-summernote/lang/summernote-ru-RU"; // you can import any other locale
@@ -62,7 +62,7 @@ import "bootstrap/js/src/tooltip";
 // import "bootstrap/dist/css/bootstrap.css";
 
 const EditorSummernote = (props) => {
-  const { getDataEditor } = props;
+  const { getDataEditor, isReset } = props;
 
   const onChange = (content) => {
     console.log("onChange", content);
@@ -93,6 +93,10 @@ const EditorSummernote = (props) => {
     // };
     // reader.readAsDataURL(fileList[0]);
   };
+
+  useEffect(() => {
+    isReset && ReactSummernote.reset();
+  }, [isReset]);
 
   return (
     <ReactSummernote

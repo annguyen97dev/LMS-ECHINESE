@@ -107,7 +107,7 @@
     z-index: 8;
     display: none;
 
-    &.close {
+    &.close-app {
       display: none;
     }
 
@@ -141,7 +141,7 @@
       }
     }
 
-    &.close {
+    &.close-app {
       width: 0;
       box-shadow: none;
 
@@ -278,7 +278,7 @@
     }
   }
 
-  &.close {
+  &.close-app {
     .ant-menu-item-group-title {
       display: none !important;
     }
