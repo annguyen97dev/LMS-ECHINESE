@@ -20,6 +20,7 @@ import StudentsList from "~/components/Global/CourseList/CourseListDetail/Studen
 import Comment from "./Comment/Comment";
 import CourseDetailCalendar from "./CourseDetailCalendar/CourseDetailCalendar";
 import NotificationCourse from "./NotificationCourse/NotificationCourse";
+import Transcript from "./Transcript/Transcript";
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
@@ -89,6 +90,7 @@ const CourseListDetail = () => {
           key="5"
         >
           {/* <Exam /> */}
+          <Transcript />
         </TabPane>
         <TabPane
           tab={
