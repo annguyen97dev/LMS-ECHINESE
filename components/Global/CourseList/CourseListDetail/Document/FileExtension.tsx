@@ -56,9 +56,39 @@ const FileExtension = (props: any) => {
   }, [categoryID]);
 
   return (
-    <>
-      <div className="pb-3 font-weight-black">Tài liệu</div>
-      <Spin spinning={isLoading}>
+    <div
+      className="container-fluid border-left border-right"
+      style={{ height: "100vh" }}
+    >
+      <div className="card-file-box">
+        <div className="pb-3 font-weight-black">Tài liệu</div>
+
+        <div className="row">
+          {document.map((doc) => (
+            <div className="col-12 col-md-4">
+              <div className="file-man-box">
+                <div className="file-img-box">
+                  <img
+                    src="https://coderthemes.com/highdmin/layouts/assets/images/file_icons/doc.svg"
+                    alt="icon"
+                  />
+                </div>
+
+                <a href={doc.DocumentLink} className="file-download">
+                  <i className="fa fa-download"></i>
+                </a>
+
+                <div className="file-man-title">
+                  <h5 className="mb-0 text-overflow">{doc.DocumentLink}</h5>
+                  <p className="mb-0">
+                    <small>0.0 kb</small>
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* <Spin spinning={isLoading}>
         <List
           grid={{
             gutter: 16,
@@ -81,8 +111,9 @@ const FileExtension = (props: any) => {
             </a>
           )}
         />
-      </Spin>
-    </>
+      </Spin> */}
+      </div>
+    </div>
   );
 };
 FileExtension.layout = LayoutBase;
