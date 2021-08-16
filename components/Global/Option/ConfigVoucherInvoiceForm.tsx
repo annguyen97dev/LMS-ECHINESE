@@ -76,6 +76,7 @@ const ConfigVoucherInvoiceForm = (props) => {
       <Modal
         title={<>{props.showAdd ? "Thêm Phiếu" : "Cập Nhật Phiếu"}</>}
         visible={isModalVisible}
+        width={1000}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
@@ -102,7 +103,7 @@ const ConfigVoucherInvoiceForm = (props) => {
                 </Form.Item>
               </div>
             </div>
-            <div className="row">
+            {/* <div className="row">
               <div className="col-12">
                 <Form.Item 
                     label="Nội dung" 
@@ -138,7 +139,7 @@ const ConfigVoucherInvoiceForm = (props) => {
                         <a className="btn-code-editor" type="primary">Mã hướng dẫn</a>
                     </Popover>
                 </div>
-            </div>
+            </div> */}
             <div className="row ">
               <div className="col-12">
               <button type="submit" className="btn btn-primary w-100">

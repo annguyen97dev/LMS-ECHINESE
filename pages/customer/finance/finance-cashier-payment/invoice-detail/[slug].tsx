@@ -4,12 +4,12 @@ import InvoiceForm from "~/components/Global/Customer/Finance/InvoiceForm";
 import { voucherApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import { useRouter } from "next/router";
-const { showNoti } = useWrap();
 
 const InvoiceDetail = () => {
   const router = useRouter();
   const slug = router.query.slug;
   const [data, setData] = useState([]);
+  const { showNoti } = useWrap();
   
   const getVoucher = async () => {
     try {
@@ -31,7 +31,7 @@ const InvoiceDetail = () => {
     getVoucher();
   }, []);
 
-  return <InvoiceForm />;
+  return <InvoiceForm title="Phiếu chi" data={data} />;
 };
 InvoiceDetail.layout = LayoutBase;
 export default InvoiceDetail;

@@ -14,6 +14,13 @@ export const dataMenu = [
         Icon: "",
         Text: "Trang chủ",
       },
+      {
+        TypeItem: "single",
+        Key: "/newsfeed",
+        Route: "/newsfeed",
+        Icon: "",
+        Text: "Newsfeed",
+      },
     ],
   },
   {
