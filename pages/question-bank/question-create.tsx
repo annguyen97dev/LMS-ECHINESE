@@ -4,7 +4,6 @@ import { Popover, Card, Tooltip, Select, Spin } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
-import { type } from "os";
 import { dataTypeGroup, dataTypeSingle } from "~/lib/question-bank/dataBoxType";
 import { data } from "~/lib/option/dataOption2";
 import SelectFilterBox from "~/components/Elements/SelectFilterBox";
@@ -14,10 +13,8 @@ import QuestionMultiple from "~/components/Global/QuestionBank/QuestionMultiple"
 import QuestionWrite from "~/components/Global/QuestionBank/QuestionWrite";
 import { programApi, subjectApi, exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import index from "~/components/LoginForm";
 
 const { Option, OptGroup } = Select;
-let countSelect = 0;
 const objData = {
   ExerciseGroupID: 0,
   SubjectID: null,
@@ -91,8 +88,7 @@ const QuestionCreate = () => {
         });
 
         setDataSource([...cloneData]);
-        todoApi.pageIndex == 1 &&
-          showNoti("success", "Tải danh sách thành công");
+        todoApi.pageIndex == 1 && showNoti("success", "Thành công");
         !showListQuestion && setShowListQuestion(true);
 
         // Tính phân trang
@@ -157,6 +153,7 @@ const QuestionCreate = () => {
 
     // Show danh sách câu hỏi bên cạnh
     setIsLoading(true);
+    !showListQuestion && setShowListQuestion(true);
     setDataSource([]);
     setTodoApi({
       ...todoApi,
@@ -172,21 +169,21 @@ const QuestionCreate = () => {
       case "program":
         getDataSubject(option.value);
         setDataSubject(null);
-        countSelect++;
+
         break;
       case "type-question":
         questionData.ExerciseGroupID = option.value;
-        countSelect++;
+
         break;
       case "subject":
         questionData.SubjectID = option.value;
         questionData.SubjectName = option.children;
-        countSelect++;
+
         break;
       case "level":
         questionData.Level = option.value;
         questionData.LevelName = option.children;
-        countSelect++;
+
         break;
       default:
         break;
@@ -195,7 +192,11 @@ const QuestionCreate = () => {
 
     // kiểm tra mới vào đã chọn đầy đủ 4 trường hay chưa rồi mới show danh sách dạng câu hỏi
     if (!showTypeQuetion.status) {
-      if (countSelect == 4) {
+      if (
+        questionData.ExerciseGroupID !== null &&
+        questionData.SubjectID !== null &&
+        questionData.Level !== null
+      ) {
         setShowTypeQuestion({
           ...showTypeQuetion,
           status: true,
@@ -213,6 +214,12 @@ const QuestionCreate = () => {
           <QuestionSingle
             loadingQuestion={loadingQuestion}
             listQuestion={dataSource}
+            onFetchData={() => (
+              scrollToTop(),
+              setIsLoading(true),
+              setDataSource([]),
+              setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 })
+            )}
           />
         );
         break;
@@ -313,8 +320,8 @@ const QuestionCreate = () => {
             extra={
               <CreateQuestionForm
                 questionData={questionData}
-                isEdit={false}
                 onFetchData={() => (
+                  console.log("runn"),
                   scrollToTop(),
                   setIsLoading(true),
                   setDataSource([]),

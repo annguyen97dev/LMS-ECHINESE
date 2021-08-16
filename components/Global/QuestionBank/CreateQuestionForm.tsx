@@ -6,8 +6,8 @@ import ChoiceForm from "./QuestionType/ChoiceForm";
 
 const CreateQuestionForm = (props) => {
   const { questionData, isEdit, onFetchData } = props;
-  console.log("props", props);
-  console.log("QuestionData Drawer: ", questionData);
+  // console.log("props", props);
+  // console.log("QuestionData Drawer: ", questionData);
 
   const [visible, setVisible] = useState(false);
   const [value, setValue] = React.useState(1);
@@ -28,9 +28,8 @@ const CreateQuestionForm = (props) => {
   };
 
   const onSuccessSubmit = () => {
-    isSubmit && (setIsSubmit(false), setIsLoading(false));
-
-    onFetchData();
+    isSubmit && (setIsSubmit(false), setIsLoading(false), onFetchData());
+    console.log("chạy vô đây");
   };
 
   const renderFormContent = (type: number) => {
@@ -56,7 +55,7 @@ const CreateQuestionForm = (props) => {
 
   return (
     <>
-      {props.isEdit ? (
+      {questionData.ID ? (
         <button className="btn btn-icon" onClick={showDrawer}>
           <Edit />
         </button>
