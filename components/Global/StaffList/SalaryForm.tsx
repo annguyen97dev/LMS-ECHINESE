@@ -113,7 +113,7 @@ const SalaryForm = (props) => {
     });
     let res = null;
     try {
-      res = await staffSalaryApi.add(cloneDataSubmit);
+      res = await staffSalaryApi.addData(cloneDataSubmit);
       if (res.status == 200) {
         showNoti("success", "Thành công");
         changeVisible();
