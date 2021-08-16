@@ -12,15 +12,16 @@ import ReactHtmlParser, {
 const listAlphabet = ["A", "B", "C", "D", "F", "G"];
 
 const QuestionSingle = (props: any) => {
-  const { listQuestion, loadingQuestion } = props;
+  const { listQuestion, loadingQuestion, onFetchData } = props;
   const [value, setValue] = React.useState(1);
   const [dataListQuestion, setDataListQuestion] = useState(listQuestion);
 
   console.log("List Question: ", listQuestion);
 
   const onChange = (e) => {
-    console.log("radio checked", e.target.value);
     e.preventDefault();
+    console.log("radio checked", e.target.value);
+
     // setValue(e.target.value);
   };
 
@@ -46,6 +47,7 @@ const QuestionSingle = (props: any) => {
                     className="d-block"
                     value={ans.ID}
                     onChange={onChange}
+                    disabled={ans.isTrue ? false : true}
                   >
                     <span className="tick">{listAlphabet[i]}</span>
                     <span className="text">{ans.AnswerContent}</span>
@@ -56,7 +58,10 @@ const QuestionSingle = (props: any) => {
           </div>
           <div className="box-action">
             <Tooltip placement="topLeft" title="Sửa câu hỏi">
-              <EditQuestionForm />
+              <CreateQuestionForm
+                questionData={item}
+                onFetchData={onFetchData}
+              />
             </Tooltip>
             <Tooltip placement="topLeft" title="Xóa câu hỏi">
               <button className="btn btn-icon delete">

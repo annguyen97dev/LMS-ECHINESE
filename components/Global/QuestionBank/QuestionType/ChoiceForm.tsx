@@ -106,6 +106,8 @@ const ChoiceForm = (props) => {
                 <Editor
                   handleChange={(value) => getDataEditor(value)}
                   isReset={isResetEditor}
+                  questionContent={questionDataForm?.Content}
+                  questionData={questionDataForm}
                 />
               </Form.Item>
             </div>
