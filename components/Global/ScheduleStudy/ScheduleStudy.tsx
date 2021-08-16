@@ -20,19 +20,29 @@ import CheckRoom from './Form/CheckRoom';
 import CheckManyEmptyTeacher from './Form/ManyTeacher';
 import ScheduleStudyList from './List/List';
 
+type IOptionList = {
+	branchList: IOptionCommon[];
+	studyTimeList: IOptionCommon[];
+	roomList: IOptionCommon[];
+	teacherList: IOptionCommon[];
+};
+type IDataList = {
+	list: ICourseDetailSchedule[];
+	type: string;
+};
 const ScheduleStudy = () => {
 	const {showNoti} = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
 	});
-	const [optionList, setOptionList] = useState({
+	const [optionList, setOptionList] = useState<IOptionList>({
 		branchList: [],
 		studyTimeList: [],
 		roomList: [],
 		teacherList: [],
 	});
-	const [dataList, setDataList] = useState({
+	const [dataList, setDataList] = useState<IDataList>({
 		list: [],
 		type: '',
 	});
@@ -277,7 +287,6 @@ const ScheduleStudy = () => {
 		return res;
 	};
 	const fmListOfEmptyTeacher = (calendarArr: ICheckTeacherScheduleStudy[]) => {
-		const rs = {};
 		// rs = {
 		//     "2021/08/11": {
 		//         "21-Ca 08:00 - 10:00": [
@@ -293,9 +302,8 @@ const ScheduleStudy = () => {
 		//         ],
 		//     }
 		// }
-		const newCalendarArr = [...calendarArr].sort(
-			(a, b) => +moment(a.Date).format('X') - +moment(b.Date).format('X')
-		);
+		const rs = {};
+		const newCalendarArr = [...calendarArr];
 		for (let i = 0; i < newCalendarArr.length; i++) {
 			const c = newCalendarArr[i];
 			const {Date, StudyTimeID, StudyTimeName, StartTime} = c;
@@ -352,7 +360,6 @@ const ScheduleStudy = () => {
 		return res;
 	};
 	const fmListOfBranch = (calendarArr: ICheckBranchScheduleStudyData[]) => {
-		const rs = {};
 		// rs = {
 		// 		'2021/08/13': {
 		// 			'31-Phòng 1-31': [
@@ -377,10 +384,8 @@ const ScheduleStudy = () => {
 		// 			],
 		// 		},
 		// 	};
-		const newCalendarArr = [...calendarArr].sort(
-			(a, b) =>
-				+moment(a.StartTime).format('X') - +moment(b.StartTime).format('X')
-		);
+		const rs = {};
+		const newCalendarArr = [...calendarArr];
 		for (let i = 0; i < newCalendarArr.length; i++) {
 			const c = newCalendarArr[i];
 			const {StartTime, StudyTimeID, RoomName, RoomID, StudyTimeName} = c;
@@ -397,7 +402,6 @@ const ScheduleStudy = () => {
 				newCalendarArr.push(c);
 			}
 		}
-		console.log(rs);
 		return rs;
 	};
 	const fmList = (type, arr) => {

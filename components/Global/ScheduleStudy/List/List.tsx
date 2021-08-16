@@ -1,17 +1,8 @@
 import {Card, List} from 'antd';
 import moment from 'moment';
-import Link from 'next/link';
 import PropTypes from 'prop-types';
 const ScheduleStudyList = (props) => {
-	const {dataSource, isLoading, totalPage, getPagination, children} = props;
-	const checkGetPagination = (page) => {
-		if (!getPagination) return;
-		getPagination(page);
-	};
-	const checkStatus = (vl, ctn) => {
-		const rs = ['yellow', 'green', 'gray'];
-		return <span className={`tag ${rs[vl]}`}>{ctn}</span>;
-	};
+	const {dataSource, isLoading} = props;
 	const ListChild = (data) => {
 		// SỐ CA || SỐ PHÒNG
 		const getValuesFromData = Object.keys(data).sort(
@@ -31,12 +22,18 @@ const ScheduleStudyList = (props) => {
 								title={item.slice(item.indexOf('-') + 1, item.lastIndexOf('-'))}
 							>
 								<div className="content-body">
-									{data[item].map((i, idx) => (
-										<p key={idx}>
-											{i.TeacherID && <span>GV: {i.TeacherName}</span>}
-											{i.RoomID && <span>Ca: {i.StudyTimeName}</span>}
-										</p>
-									))}
+									{data[item]
+										.sort(
+											(a, b) =>
+												+moment(a.StartTime).format('X') -
+												+moment(b.StartTime).format('X')
+										)
+										.map((i, idx) => (
+											<p key={idx}>
+												{i.TeacherID && <span>GV: {i.TeacherName}</span>}
+												{i.RoomID && <span>Ca: {i.StudyTimeName}</span>}
+											</p>
+										))}
 								</div>
 							</Card>
 						</List.Item>
@@ -49,12 +46,10 @@ const ScheduleStudyList = (props) => {
 		<List
 			className="schedule-study-list"
 			loading={isLoading?.type === 'GET_ALL' && isLoading?.status}
-			// pagination={{
-			// 	onChange: checkGetPagination,
-			// 	total: totalPage,
-			// }}
 			itemLayout="vertical"
-			dataSource={Object.keys(dataSource)} // MỖI ITEM SẼ LÀ 1 NGÀY
+			dataSource={Object.keys(dataSource).sort(
+				(a, b) => +moment(a).format('X') - +moment(b).format('X')
+			)} // MỖI ITEM SẼ LÀ 1 NGÀY
 			renderItem={(item) => {
 				const dayArr = [
 					'Chủ Nhật',
@@ -80,9 +75,20 @@ const ScheduleStudyList = (props) => {
 		/>
 	);
 };
-
 ScheduleStudyList.propTypes = {
-	dataSource: PropTypes.shape({}).isRequired,
+	dataSource: PropTypes.objectOf(
+		PropTypes.shape({
+			TeacherID: PropTypes.number,
+			TeacherName: PropTypes.string,
+			StudyTimeID: PropTypes.number,
+			StudyTimeName: PropTypes.string,
+			Date: PropTypes.string,
+			StartTime: PropTypes.string,
+			EndTime: PropTypes.string,
+			RoomID: PropTypes.number,
+			RoomName: PropTypes.number,
+		}).isRequired
+	).isRequired,
 	totalPage: PropTypes.number,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
