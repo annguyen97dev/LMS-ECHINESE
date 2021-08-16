@@ -6,7 +6,7 @@ import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
 import { AlertTriangle, X } from "react-feather";
 import moment from "moment";
 import { useWrap } from "~/context/wrap";
-import ConfigVoucherInvoiceForm from "~/components/Global/Option/ConfigVoucherInvoice";
+import ConfigVoucherInvoiceForm from "~/components/Global/Option/ConfigVoucherInvoiceForm";
 
 const ConfigVoucherInvoice = () => {
     const [dataTable, setDataTable] = useState<IConfig[]>([]);
@@ -101,7 +101,7 @@ const ConfigVoucherInvoice = () => {
 		{
 			render: (record) => (
 				<>
-                	<ConfigVoucherInvoiceForm 
+          <ConfigVoucherInvoiceForm 
 						showIcon={true}
 						rowData={record}
 						isLoading={isLoading}

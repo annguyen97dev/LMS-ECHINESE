@@ -5,7 +5,7 @@ import SortBox from "~/components/Elements/SortBox";
 import { dataService } from "lib/customer/dataCustomer";
 import ConsultantForm from "~/components/Global/Customer/Finance/ConsultantForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+// import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import { ShoppingCart } from "react-feather";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
