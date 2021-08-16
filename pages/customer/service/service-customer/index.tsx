@@ -9,7 +9,7 @@ import { ExpandBoxService } from "~/components/Elements/ExpandBox";
 import Link from "next/link";
 import RegRefund from "~/components/Global/Customer/Student/RegRefund";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";
 CustomerService.layout = LayoutBase;

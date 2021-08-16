@@ -5,7 +5,7 @@ import SortBox from "~/components/Elements/SortBox";
 import { dataService } from "lib/customer/dataCustomer";
 import ConsultantForm from "~/components/Global/Customer/Finance/ConsultantForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
-// import FilterTable from "~/components/Global/CourseList/FitlerTable";
+// import FilterTable from "~/components/Global/CourseList/FilterTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import { ShoppingCart } from "react-feather";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
@@ -37,13 +37,13 @@ export default function FinancePayment() {
       value: null,
     },
     {
-    name: "date-range",
-    title: "Từ - đến",
-    col: "col-12",
-    type: "date-range",
-    value: null,
+      name: "date-range",
+      title: "Từ - đến",
+      col: "col-12",
+      type: "date-range",
+      value: null,
     },
-  ])
+  ]);
 
   let pageIndex = 1;
 
@@ -55,7 +55,7 @@ export default function FinancePayment() {
         sortType: false,
       },
       value: 3,
-      text: 'Tên giảm dần',
+      text: "Tên giảm dần",
     },
     {
       dataSort: {
@@ -63,7 +63,7 @@ export default function FinancePayment() {
         sortType: true,
       },
       value: 4,
-      text: 'Tên tăng dần ',
+      text: "Tên tăng dần ",
     },
   ];
 
@@ -90,17 +90,17 @@ export default function FinancePayment() {
   const [todoApi, setTodoApi] = useState(listTodoApi);
 
   const setDataFunc = (name, data) => {
-    if(Object.keys(data).length > 0) {
-    dataFilter.every((item, index) => {
-      if (item.name == name) {
-      item.optionList = data;
-      return false;
-      }
-      return true;
-    });
-    setDataFilter([...dataFilter]);
+    if (Object.keys(data).length > 0) {
+      dataFilter.every((item, index) => {
+        if (item.name == name) {
+          item.optionList = data;
+          return false;
+        }
+        return true;
+      });
+      setDataFilter([...dataFilter]);
     } else {
-    // setDataCourse(dataCourse);
+      // setDataCourse(dataCourse);
     }
   };
 
@@ -112,24 +112,24 @@ export default function FinancePayment() {
     });
     (async () => {
       try {
-      let res = await voucherApi.getAll(todoApi);
-      if (res.status == 204) {
-        showNoti("danger", "Không có dữ liệu");
-      }
-      if(res.status == 200){
-        setDataTable(res.data.data);
-        if(res.data.data.length < 1) {
-          handleReset();
+        let res = await voucherApi.getAll(todoApi);
+        if (res.status == 204) {
+          showNoti("danger", "Không có dữ liệu");
         }
-        setTotalPage(res.data.totalRow);
-      }
+        if (res.status == 200) {
+          setDataTable(res.data.data);
+          if (res.data.data.length < 1) {
+            handleReset();
+          }
+          setTotalPage(res.data.totalRow);
+        }
       } catch (error) {
-      showNoti("danger", error.message);
+        showNoti("danger", error.message);
       } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
+        setIsLoading({
+          type: "GET_ALL",
+          status: false,
+        });
       }
     })();
   };
@@ -140,27 +140,27 @@ export default function FinancePayment() {
       status: true,
     });
     (async () => {
-    try {
-      let res = await branchApi.getAll({selectAll: true});
-      if (res.status == 204) {
-        showNoti("danger", "Không có dữ liệu");
+      try {
+        let res = await branchApi.getAll({ selectAll: true });
+        if (res.status == 204) {
+          showNoti("danger", "Không có dữ liệu");
+        }
+        if (res.status == 200) {
+          setDataBranch(res.data.data);
+          const newData = res.data.data.map((item) => ({
+            title: item.BranchName,
+            value: item.ID,
+          }));
+          setDataFunc("BranchID", newData);
+        }
+      } catch (error) {
+        showNoti("danger", error.message);
+      } finally {
+        setIsLoading({
+          type: "GET_ALL",
+          status: false,
+        });
       }
-      if(res.status == 200){
-        setDataBranch(res.data.data);
-        const newData = res.data.data.map((item) => ({
-          title: item.BranchName,
-          value: item.ID,
-        }));
-        setDataFunc("BranchID", newData);
-      }
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
-    }
     })();
   };
 
@@ -170,9 +170,9 @@ export default function FinancePayment() {
     Object.keys(listField).forEach(function (key) {
       console.log("key: ", key);
       if (key != dataIndex) {
-      listField[key] = "";
+        listField[key] = "";
       } else {
-      listField[key] = valueSearch;
+        listField[key] = valueSearch;
       }
     });
     newList = listField;
@@ -189,7 +189,7 @@ export default function FinancePayment() {
     });
   };
 
-    // HANDLE RESET
+  // HANDLE RESET
   const handleReset = () => {
     setTodoApi({
       ...listTodoApi,
@@ -224,7 +224,7 @@ export default function FinancePayment() {
   };
   // HANDLE SORT
   const handleSort = async (option) => {
-    console.log('Show option: ', option);
+    console.log("Show option: ", option);
 
     let newTodoApi = {
       ...listTodoApi,
@@ -237,45 +237,52 @@ export default function FinancePayment() {
 
   const _onSubmit = async (data) => {
     setIsLoading({
-    type: "ADD_DATA",
-    status: true
+      type: "ADD_DATA",
+      status: true,
     });
     let res;
     try {
-    res = await voucherApi.update(data);
-    res?.status == 200 && showNoti("success", "Cập nhật thành công"), getDataTable();
+      res = await voucherApi.update(data);
+      res?.status == 200 && showNoti("success", "Cập nhật thành công"),
+        getDataTable();
     } catch (error) {
-    showNoti("danger", error.message);
+      showNoti("danger", error.message);
     } finally {
-    setIsLoading({
-      type: "ADD_DATA",
-      status: false
-    })
+      setIsLoading({
+        type: "ADD_DATA",
+        status: false,
+      });
     }
     return res;
-  }
+  };
   const columns = [
-    { 
-      title: "Trung tâm", 
-      dataIndex: "BranchName", 
-      // ...FilterColumn("center") 
+    {
+      title: "Trung tâm",
+      dataIndex: "BranchName",
+      // ...FilterColumn("center")
     },
     {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
-      ...FilterColumn('FullNameUnicode', onSearch, handleReset, "text"),
+      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
-    { 
-      title: "Số điện thoại", 
-      dataIndex: "Mobile", 
-      // ...FilterColumn("tel") 
+    {
+      title: "Số điện thoại",
+      dataIndex: "Mobile",
+      // ...FilterColumn("tel")
     },
     {
       title: "Số tiền",
       dataIndex: "Price",
       // ...FilterColumn("cost"),
-      render: (a) =>  { return <p className="font-weight-black">{Intl.NumberFormat('ja-JP').format(a)}</p> }
+      render: (a) => {
+        return (
+          <p className="font-weight-black">
+            {Intl.NumberFormat("ja-JP").format(a)}
+          </p>
+        );
+      },
     },
     {
       title: "Lý do",
@@ -288,16 +295,13 @@ export default function FinancePayment() {
       title: "Ngày tạo",
       dataIndex: "CreatedOn",
       // ...FilterDateColumn("regDate"),
-      render: (a) => <p>{moment(a).format("DD/MM/YYYY")}</p>
+      render: (a) => <p>{moment(a).format("DD/MM/YYYY")}</p>,
     },
     {
       title: "QR Code",
       render: (record) => (
         <>
-            <Image
-              width={50}
-              src={record.Qrcode}
-            />
+          <Image width={50} src={record.Qrcode} />
         </>
       ),
     },
@@ -309,7 +313,7 @@ export default function FinancePayment() {
             title="Chỉnh sửa phiếu chi"
             isLoading={isLoading}
             rowData={record}
-            _onSubmit={(data) =>_onSubmit(data)}
+            _onSubmit={(data) => _onSubmit(data)}
           />
           <Link
             href={{
@@ -331,7 +335,7 @@ export default function FinancePayment() {
   useEffect(() => {
     getDataTable();
     getDataBranch();
-  }, [todoApi])
+  }, [todoApi]);
 
   return (
     <PowerTable
@@ -346,13 +350,15 @@ export default function FinancePayment() {
       columns={columns}
       Extra={
         <div className="extra-table">
-            <FilterBase            
-              dataFilter={dataFilter}
-              handleFilter={(listFilter: any) => handleFilter(listFilter)}
-              handleReset={handleReset} />
-            <SortBox 
-              handleSort={(value) => handleSort(value)}
-              dataOption={dataOption} />
+          <FilterBase
+            dataFilter={dataFilter}
+            handleFilter={(listFilter: any) => handleFilter(listFilter)}
+            handleReset={handleReset}
+          />
+          <SortBox
+            handleSort={(value) => handleSort(value)}
+            dataOption={dataOption}
+          />
         </div>
       }
     />

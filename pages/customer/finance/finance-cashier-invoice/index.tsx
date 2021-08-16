@@ -7,7 +7,7 @@ import Link from "next/link";
 import SortBox from "~/components/Elements/SortBox";
 import ConsultantForm from "~/components/Global/Customer/Finance/ConsultantForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";
@@ -255,25 +255,15 @@ export default function FinanceInvoice() {
     return res;
   };
   const columns = [
-<<<<<<< HEAD
-<<<<<<< HEAD
     {
       title: "Trung tâm",
       dataIndex: "BranchName",
       // ...FilterColumn("center")
-=======
-<<<<<<< HEAD
-=======
->>>>>>> tufe
-    { 
-      title: "Trung tâm", 
-      dataIndex: "BranchName", 
-      // ...FilterColumn("center") 
-<<<<<<< HEAD
->>>>>>> tufe
-=======
-
->>>>>>> tufe
+    },
+    {
+      title: "Trung tâm",
+      dataIndex: "BranchName",
+      // ...FilterColumn("center")
     },
     {
       title: "Học viên",
@@ -302,10 +292,7 @@ export default function FinanceInvoice() {
       title: "Lý do",
       dataIndex: "Reason",
       // ...FilterColumn("fnReasonPayment"),
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
+    },
     { title: "Trung tâm", dataIndex: "center" },
     {
       title: "Học viên",
@@ -323,11 +310,7 @@ export default function FinanceInvoice() {
     {
       title: "Lý do",
       dataIndex: "fnReason",
->>>>>>> master
->>>>>>> tufe
 
-=======
->>>>>>> tufe
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {

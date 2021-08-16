@@ -4,7 +4,7 @@ import { data } from "../../../lib/option/dataOption2";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import SortBox from "~/components/Elements/SortBox";
-// import FilterTable from "~/components/Global/CourseList/FitlerTable";
+// import FilterTable from "~/components/Global/CourseList/FilterTable";
 import LayoutBase from "~/components/LayoutBase";
 import { Copy, Power } from "react-feather";
 import { Tooltip } from "antd";

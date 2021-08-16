@@ -10,7 +10,7 @@ import ExpandTable from "~/components/ExpandTable";
 import FilterBox from "~/components/Elements/FilterBox";
 import { Filter, Eye, CheckCircle } from "react-feather";
 import { Tooltip } from "antd";
-import FilterTable from "~/components/Global/FeedbackList/FitlerTable";
+import FilterTable from "~/components/Global/FeedbackList/FilterTable";
 
 import FilterColumn from "~/components/Tables/FilterColumn";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
