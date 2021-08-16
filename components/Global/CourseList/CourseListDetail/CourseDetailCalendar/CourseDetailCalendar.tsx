@@ -12,10 +12,10 @@ const CourseDetailCalendar = () => {
 	const router = useRouter();
 	const {slug: ID} = router.query;
 	const {showNoti} = useWrap();
-	const [calendarList, setCalendarList] = useState<ICourseDetail[]>([]);
+	const [calendarList, setCalendarList] = useState<ICourseDetailSchedule[]>([]);
 	const [isLoaded, setIsLoaded] = useState(false);
 	// -----------CALENDAR-----------
-	const calendarDateFormat = (calendarArr: ICourseDetail[]) => {
+	const calendarDateFormat = (calendarArr: ICourseDetailSchedule[]) => {
 		const rs = calendarArr.map((c, idx) => {
 			const {
 				ID,
@@ -33,7 +33,7 @@ const CourseDetailCalendar = () => {
 			const studyTime = `${studyTimeStart} - ${studyTimeEnd}`;
 
 			return {
-				id: ID,
+				id: +ID,
 				title: CourseName,
 				start: moment(StartTime).toDate(),
 				end: moment(EndTime).toDate(),

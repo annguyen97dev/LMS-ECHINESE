@@ -4,7 +4,7 @@ const url = '/api/CourseSchedules/';
 export const courseDetailApi = {
 	// Lấy tất cả data
 	getAll(params) {
-		return instance.get<IApiResultData<ICourseDetail[]>>(url, {
+		return instance.get<IApiResultData<ICourseDetailSchedule[]>>(url, {
 			params,
 		});
 	},
