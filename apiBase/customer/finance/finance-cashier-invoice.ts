@@ -12,6 +12,9 @@ class Invoice {
     instance.get<IApiResultData<IInvoice>>(`${url}/${id}`);
 
   update = (data: IInvoice) => instance.put(url, data, {});
+
+  export = (id) =>
+  instance.get<IApiResultData>(`/api/ExportInvoice/${id}`);
 }
 
 export const invoiceApi = new Invoice();

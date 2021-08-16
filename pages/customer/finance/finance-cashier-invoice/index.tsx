@@ -255,18 +255,11 @@ export default function FinanceInvoice() {
     return res;
   };
   const columns = [
-<<<<<<< HEAD
-<<<<<<< HEAD
     { 
       title: "Trung tâm", 
       dataIndex: "BranchName", 
       // ...FilterColumn("center") 
-=======
-    {
-      title: "Trung tâm",
-      dataIndex: "BranchName",
-      // ...FilterColumn("center")
->>>>>>> 2226ecb0821090b727c071718e74b7ea5bab23d0
+
     },
     {
       title: "Học viên",
@@ -295,29 +288,6 @@ export default function FinanceInvoice() {
       title: "Lý do",
       dataIndex: "Reason",
       // ...FilterColumn("fnReasonPayment"),
-<<<<<<< HEAD
-=======
-    { title: "Trung tâm", dataIndex: "center" },
-    {
-      title: "Học viên",
-      dataIndex: "nameStudent",
-
-      render: (a) => <p className="font-weight-blue">{a}</p>,
-    },
-    { title: "Số điện thoại", dataIndex: "tel" },
-    {
-      title: "Số tiền",
-      dataIndex: "cost",
-
-      render: (a) => <p className="font-weight-black">{a}</p>,
-    },
-    {
-      title: "Lý do",
-      dataIndex: "fnReason",
->>>>>>> master
-=======
->>>>>>> 2226ecb0821090b727c071718e74b7ea5bab23d0
-
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
@@ -348,7 +318,7 @@ export default function FinanceInvoice() {
             href={{
               pathname:
                 "/customer/finance/finance-cashier-invoice/invoice-detail/[slug]",
-              query: { slug: 2 },
+              query: { slug: record.ID },
             }}
           >
             <Tooltip title="Xuất phiếu thu">
