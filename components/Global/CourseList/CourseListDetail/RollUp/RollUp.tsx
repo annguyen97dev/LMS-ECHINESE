@@ -1,6 +1,7 @@
+import { Select } from "antd";
 import Checkbox from "antd/lib/checkbox/Checkbox";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { courseDetailApi } from "~/apiBase";
 import { notificationCourseApi } from "~/apiBase/course-detail/notification-course";
 import { rollUpApi } from "~/apiBase/course-detail/roll-up";
@@ -66,6 +67,7 @@ const RollUp = (props: any) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(null);
+  const { Option } = Select;
 
   const listParamsDefault = {
     pageSize: 10,
@@ -114,56 +116,16 @@ const RollUp = (props: any) => {
     })();
   };
 
-  const [dataFilter, setDataFilter] = useState([
-    {
-      name: "CourseScheduleID",
-      title: "Ca học",
-      col: "col-12",
-      type: "select",
-      optionList: null,
-      value: null,
-    },
-  ]);
-
-  const handleFilter = (listFilter) => {
-    console.log("List Filter when submit: ", listFilter);
-
-    let newListFilter = {
-      pageIndex: 1,
-      CourseScheduleID: null,
-    };
-    listFilter.forEach((item, index) => {
-      let key = item.name;
-      Object.keys(newListFilter).forEach((keyFilter) => {
-        if (keyFilter == key) {
-          newListFilter[key] = item.value;
-        }
-      });
-    });
-    setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
-  };
-
-  const setDataFunc = (name, data) => {
-    dataFilter.every((item, index) => {
-      if (item.name == name) {
-        item.optionList = data;
-        return false;
-      }
-      return true;
-    });
-    setDataFilter([...dataFilter]);
-  };
+  const [courseSchedule, setCourseSchedule] = useState<ICourseDetailSchedule[]>(
+    []
+  );
 
   const getDataCourseSchedule = async () => {
     try {
-      const res = await courseDetailApi.getByID(props.courseID);
-      if (res.status == 200) {
-        const newData = res.data.data.map((item) => ({
-          title: item.CourseName,
-          value: item.ID,
-        }));
-        setDataFunc("CourseScheduleID", newData);
-      }
+      const res = await courseDetailApi.getAll({
+        CourseScheduleID: props.courseID,
+      });
+      res.status == 200 && setCourseSchedule(res.data.data);
       res.status == 204 && showNoti("danger", "Tỉnh/TP Không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
@@ -171,9 +133,12 @@ const RollUp = (props: any) => {
     }
   };
 
-  const handleReset = () => {
-    setCurrentPage(1);
-    setParams(listParamsDefault);
+  const handleSelectCourseSchedule = (CourseScheduleID: any) => {
+    console.log(CourseScheduleID);
+    setParams({
+      ...params,
+      CourseScheduleID: CourseScheduleID,
+    });
   };
 
   useEffect(() => {
@@ -195,6 +160,11 @@ const RollUp = (props: any) => {
       dataSource={rollUp}
       columns={columns}
       Extra="Điểm danh khóa học"
+      // Extra={
+      //   <div className="align-items-center">
+      //     <h6>Điểm danh khóa học</h6>
+      //   </div>
+      // }
       // TitleCard={
       //   <div className="extra-table">
       //     <FilterBase
@@ -204,6 +174,24 @@ const RollUp = (props: any) => {
       //     />
       //   </div>
       // }
+      TitleCard={
+        <div
+          // style={{ marginTop: "3px" }}
+          className="align-items-center"
+        >
+          <span className="font-weight-black">Chọn ca học: </span>
+          <Select
+            className="w-50 style-input"
+            onChange={handleSelectCourseSchedule}
+          >
+            {courseSchedule?.map((item, index) => (
+              <Option key={index} value={item.ID}>
+                {item.CourseName}
+              </Option>
+            ))}
+          </Select>
+        </div>
+      }
     />
   );
 };
