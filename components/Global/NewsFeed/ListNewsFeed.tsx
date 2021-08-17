@@ -104,12 +104,13 @@ const ListNewsFeed = (props) => {
         return (
             <>
                 <ul className="more-list">
-                    <li><button className="btn" onClick={() => hiddenPost(data)}><EyeOff />Ẩn bài viết</button></li>
                     {dataUser?.UserInformationID == data.UserInformationID ? (
                         <li>
                             <button className="btn" onClick={showModal}><Edit2 />Chỉnh sửa bài viết</button>
                         </li>
                     ) : ""}
+                    <li><button className="btn del" onClick={() => hiddenPost(data)}><EyeOff />Ẩn bài viết</button></li>
+
                 </ul>
                 <Modal 
                     title="Chỉnh sửa bài viết" 

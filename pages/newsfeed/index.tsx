@@ -47,7 +47,7 @@ const NewsFeed = () => {
         try {
             let res = await newsFeedApi.getAll({
                             pageIndex: pageIndex, 
-                            pageSize: 10, 
+                            pageSize: 5, 
                             GroupNewsFeedID: inGroup, 
                             BranchID: inTeam, 
                             FullNameUnicode: searchName});
@@ -412,7 +412,7 @@ const NewsFeed = () => {
                     <p className="card-newsfeed__label font-weight-black">NHÓM</p>
                     <Select
                         className="style-input list-group-nf__moblie mb-0"
-                        placeholder="Chọn trung tâm"
+                        placeholder="Chọn nhóm"
                         onChange={(value) => inGroupFuncMB(value)}
                     >
                         {groupNewsFeed && groupNewsFeed.map((item, index) => (

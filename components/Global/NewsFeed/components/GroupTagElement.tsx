@@ -1,4 +1,4 @@
-import { Card, Popover, Modal, Skeleton } from "antd";
+import { Card, Popover, Modal, Skeleton, Tooltip } from "antd";
 import { MoreHorizontal, AlertTriangle, Trash2 } from "react-feather";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { groupNewsFeedApi, userGroupNewsFeedApi } from "~/apiBase"
@@ -109,14 +109,14 @@ const GroupTagElement = (props) => {
                 />
                 <li>
                     <button 
-                            className="btn" 
-                            onClick={() => {
-                                setIsModalVisible(true);
-                                setDataDelete({
-                                    ID: data.ID,
-                                    Enable: false,
-                                });
-                            }}
+                        className="btn del" 
+                        onClick={() => {
+                            setIsModalVisible(true);
+                            setDataDelete({
+                                ID: data.ID,
+                                Enable: false,
+                            });
+                        }}
                     >
                         <Trash2/>
                         Xóa nhóm
@@ -124,6 +124,19 @@ const GroupTagElement = (props) => {
                 </li>
             </ul>
             </>
+        )
+    }
+
+    const popoverUser = (userInGroup) => {
+        return (
+            <ul className="list-user-in-group">
+            {userInGroup.map((item, index) => (
+                <li key={index}>
+                    <img src={item.Avatar} alt="" />
+                    {item.FullNameUnicode}
+                </li>
+            ))}
+            </ul>
         )
     }
 
@@ -166,16 +179,22 @@ const GroupTagElement = (props) => {
                         <p>Thành viên: </p>
                         {totalUserInGroup > 5 ? (
                             <div className="members">
-                                <span><MoreHorizontal/></span>
+                                <Popover placement="bottom" title="Thành viên" content={popoverUser(userInGroup)} trigger="click">
+                                    <span><MoreHorizontal/></span>
+                                </Popover>
                                 {userInGroup && userInGroup.filter((item, idx) => idx < 5).map((item, index) => (
-                                    <img key={index} src={item.Avatar} alt="" />
+                                    <Tooltip title={item.FullNameUnicode} key={index}>
+                                        <button className="item-user"><img src={item.Avatar} alt="" /></button>
+                                    </Tooltip>
                                 ))}
                             </div>
                         ) : (
                             <div className="members">
                                 {/* <span>{totalUserInGroup}</span> */}
                                 {userInGroup && userInGroup.map((item, index) => (
-                                    <img key={index} src={item.Avatar} alt="" />
+                                    <Tooltip title={item.FullNameUnicode} key={index}>
+                                        <button className="item-user"><img src={item.Avatar} alt="" /></button>
+                                    </Tooltip>
                                 ))}
                             </div>
                         )}
