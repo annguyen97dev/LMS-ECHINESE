@@ -56,3 +56,4 @@ export { newsFeedCommentApi } from "./newsfeed/newsfeed-comment"
 export { newsFeedCommentReplyApi } from "./newsfeed/newsfeed-commentreply"
 export { userBranchApi } from "./newsfeed/user-branch";
 export { groupNewsFeedApi } from "./newsfeed/group-newsfeed";
+export { userGroupNewsFeedApi } from "./newsfeed/user-group-newsfeed";

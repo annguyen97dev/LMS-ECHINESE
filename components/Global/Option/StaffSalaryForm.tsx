@@ -167,9 +167,6 @@ const StaffSalaryForm = (props) => {
                   >
                     <Option value="1">Tính lương theo tháng</Option>
                     <Option value="2">Tính lương theo giờ</Option>
-                    <Option value="disabled" disabled>
-                      Disabled
-                    </Option>
                   </Select>
                 </Form.Item>
               </div>

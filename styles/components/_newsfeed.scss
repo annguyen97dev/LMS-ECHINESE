@@ -2,7 +2,10 @@
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 5px 10px 15px rgba($color: #000000, $alpha: 0.1);
-  padding: 10px;
+  padding: 15px 15px 7.5px;
+  @include max-media(768px) {
+    padding: 10px 10px 5px;
+  }
   .avatar {
     width: 50px;
     height: 50px;
@@ -12,6 +15,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    @include max-media(500px) {
+      width: 40px;
+      height: 40px;
     }
   }
   .box-newsfeed {
@@ -30,18 +37,27 @@
         background-color: #e5e5e5;
       }
     }
+    @include max-media(500px) {
+      width: calc(99% - 40px);
+    }
   }
   .top-nf {
     padding-bottom: 10px;
     border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
   }
   .bottom-nf {
-    padding-top: 10px;
+    padding-top: 7.5px;
     display: flex;
     justify-content: center;
     .item-func {
       flex-basis: 33.33%;
       padding: 7px;
+      @include max-media(768px) {
+        padding: 5px;
+      }
+      @include max-media(500px) {
+        padding: 0;
+      }
     }
     .btn {
       display: flex;
@@ -50,14 +66,34 @@
       justify-content: center;
       svg {
         width: 20px;
+        @include max-media(500px) {
+          width: 15px;
+        }
       }
       span {
         margin-left: 3px;
+        @include max-media(500px) {
+          font-size: 12px;
+        }
       }
       &:hover,
       &:focus {
         background-color: #e4e6ec !important;
       }
+      &.disable {
+        pointer-events: none;
+        background-color: #e4e6ec !important;
+      }
+      @include max-media(768px) {
+        padding: 3px 5px;
+      }
+      @include max-media(500px) {
+        background-color: transparent;
+        border-color: transparent;
+      }
+    }
+    @include max-media(768px) {
+      padding-top: 5px;
     }
   }
 }
@@ -134,6 +170,12 @@
     }
   }
 }
+.wrap-newsfeed {
+  @include max-media(767px) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
 .info-current-user {
   .avatar {
     width: 40px;
@@ -146,12 +188,19 @@
       object-fit: cover;
       border-radius: 50%;
     }
+    @include max-media(500px) {
+      width: 30px;
+      height: 30px;
+    }
   }
   .name-user {
-    width: calc(99% - 50px);
+    width: calc(99% - 40px);
     display: inline-block;
     padding-left: 10px;
     vertical-align: middle;
+    @include max-media(500px) {
+      width: calc(99% - 30px);
+    }
     .name {
       font-size: 16px;
       font-weight: 500;
@@ -159,20 +208,54 @@
       @include line-clamp(1);
       .share-point {
         margin: 0 5px;
-        font-weight: normal;
         display: inline-block;
-        font-size: 14px;
+        color: rgba($color: #000000, $alpha: 0.5);
+        svg {
+          width: 15px;
+        }
+      }
+      ul {
+        list-style: none;
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+        li {
+          display: inline-block;
+          cursor: pointer;
+          &:hover {
+            color: #000000;
+            text-decoration: underline;
+          }
+        }
+      }
+      a {
+        &:hover {
+          color: #000000;
+          text-decoration: underline;
+        }
       }
       .item-branch {
         &::after {
-          content: ", ";
+          content: ",";
+          margin-right: 5px;
         }
+        &:last-child {
+          &::after {
+            content: unset;
+          }
+        }
+      }
+      @include max-media(500px) {
+        font-size: 14px;
       }
     }
     .newsfeed-time {
       font-size: 12px;
       margin-top: -4px;
       display: block;
+      @include max-media(500px) {
+        font-size: 10px;
+      }
     }
   }
 }
@@ -211,14 +294,20 @@
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 5px 10px 15px rgba($color: #000000, $alpha: 0.1);
-  padding: 10px 10px 5px;
+  padding: 15px 15px 7.5px;
   margin-bottom: 15px;
+  @include max-media(768px) {
+    padding: 10px 10px 5px;
+  }
   &-action {
-    padding-top: 5px;
+    padding-top: 7.5px;
     border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
+    @include max-media(768px) {
+      padding-top: 5px;
+    }
     // margin: 0 -5px;
     .action {
       width: 50%;
@@ -254,11 +343,17 @@
         border: 0;
         box-shadow: unset;
       }
+      @include max-media(500px) {
+        padding: 3px;
+      }
     }
   }
   &-content {
     padding-top: 10px;
     border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
+    pre {
+      font: inherit;
+    }
   }
   .info-current-user {
     padding-bottom: 10px;
@@ -311,21 +406,43 @@
         display: inline-block;
         padding-left: 10px;
         vertical-align: middle;
+        .style-input {
+          background-color: #f0f2f5;
+          color: #000000;
+          border-radius: 20px !important;
+          border-color: transparent;
+          &:hover {
+            background-color: #e5e5e5;
+            border-color: transparent;
+          }
+          &:focus {
+            border-color: transparent;
+            box-shadow: unset;
+            background-color: #e5e5e5;
+          }
+        }
       }
       .content-comment {
         width: calc(100% - 40px);
         display: inline-block;
         padding-left: 10px;
         vertical-align: top;
+        &.reply {
+          .time-comment {
+            margin-left: 15px;
+          }
+        }
         .user-comment {
           margin-top: 10px;
         }
         .box-comment {
-          border-radius: 5px;
+          border-radius: 15px;
           background-color: #efefef;
-          padding: 5px;
+          padding: 5px 13px;
+          margin-bottom: 3px;
         }
         .a-reply {
+          margin-left: 13px;
           &:hover {
             color: #0d6efd;
             text-decoration: underline;
@@ -372,6 +489,11 @@
   &:last-child {
     margin-bottom: 0;
     height: calc(100vh - 230px);
+    overflow: auto;
+    @include max-media(767px) {
+      margin-bottom: 15px;
+      height: unset;
+    }
     &::-webkit-scrollbar-track {
       border-radius: 10px;
       background-color: white;
@@ -402,6 +524,9 @@
     padding-bottom: 10px;
     border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
     margin-bottom: 7px;
+    @include max-media(767px) {
+      margin-bottom: 15px;
+    }
   }
   .list-group-nf {
     list-style: none;
@@ -418,5 +543,195 @@
         background-color: #e4e6ec;
       }
     }
+    @include max-media(767px) {
+      display: none;
+    }
+  }
+  .add-group {
+    padding: 7px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background-color: #e4e6ec;
+    }
+    &.active {
+      background-color: #e4e6ec;
+    }
+    @include max-media(767px) {
+      margin-top: 5px;
+      background-color: #e4e6ec;
+    }
+  }
+  .list-group-nf__moblie {
+    display: none;
+    margin: 0 0 15px;
+    @include max-media(767px) {
+      display: block;
+    }
+  }
+}
+.card-group-nf {
+  margin-bottom: 15px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 5px 10px 15px rgb(0 0 0 / 10%);
+  &__header {
+    padding: 0 15px;
+    min-height: 120px;
+    display: flex;
+    align-items: flex-end;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    @include max-media(500px) {
+      min-height: 100px;
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba($color: #000000, $alpha: 0.5);
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .name-group {
+      font-size: 25px;
+      color: #fff;
+      @include max-media(500px) {
+        font-size: 20px;
+      }
+    }
+    .name-admin {
+      color: #fff;
+    }
+    .infomation-group {
+      padding-bottom: 15px;
+      position: relative;
+      z-index: 1;
+      p {
+        margin-bottom: 0;
+      }
+    }
+    .more-group {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 1;
+      width: 40px;
+      .btn-more {
+        background-color: transparent;
+        border-radius: 50%;
+        border: 0;
+        width: 40px;
+        height: 40px;
+        color: #fff;
+        transition: 0.2s;
+        &:hover,
+        &:focus {
+          background-color: rgba($color: #000000, $alpha: 0.7);
+        }
+      }
+    }
+  }
+  &__body {
+    padding: 15px;
+    p {
+      margin-bottom: 5px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    ul {
+      padding: 0;
+      margin: 0;
+    }
+    @include max-media(500px) {
+      padding: 10px;
+    }
+  }
+  &.skeleton {
+    padding: 15px;
+    @include max-media(768px) {
+      padding: 10px;
+    }
+  }
+}
+.add-group {
+  display: flex;
+  align-items: center;
+  color: #0571e5;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  span {
+    padding-left: 3px;
+  }
+}
+.group {
+  p,
+  .members {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+.members {
+  height: 40px;
+  margin-left: 5px;
+  @include max-media(500px) {
+    height: 30px;
+  }
+}
+.members img {
+  height: 40px;
+  width: 40px;
+  float: right;
+  margin: 0 -8px 0 0;
+  border-radius: 50%;
+  color: #fff;
+  border: 2px solid #efefef;
+  @include max-media(500px) {
+    height: 30px;
+    width: 30px;
+  }
+}
+.members span {
+  line-height: 42px;
+  height: 40px;
+  width: 40px;
+  float: right;
+  margin: 0 -8px 0 0;
+  background: rgba($color: #000000, $alpha: 0.5);
+  border-radius: 50%;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  border: 2px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    width: 22px;
+    height: 22px;
+    @include max-media(500px) {
+      height: 18px;
+      width: 18px;
+    }
+  }
+  @include max-media(500px) {
+    height: 30px;
+    width: 30px;
+  }
+}
+.wrap-create-nf {
+  @include max-media(500px) {
+    padding: 0;
   }
 }
