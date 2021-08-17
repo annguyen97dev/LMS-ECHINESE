@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, Button, Divider, Tooltip, Select } from "antd";
 import { Info, Layout } from "react-feather";
-import TinyMCE from "~/components/TinyMCE";
+// import TinyMCE from "~/components/TinyMCE";
 
 const InfoForm = (props) => {
   const { Option } = Select;
@@ -84,9 +84,7 @@ const InfoForm = (props) => {
               <Form.Item label="Note">
                 <TextArea rows={2} />
               </Form.Item>
-              <Form.Item label="Content">
-                <TinyMCE />
-              </Form.Item>
+              <Form.Item label="Content">{/* <TinyMCE /> */}</Form.Item>
             </Form>
 
             <div className="row ">

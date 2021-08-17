@@ -64,7 +64,6 @@ type IScheduleListToSave = {
 const EditCourse = (props) => {
 	const router = useRouter();
 	const {slug: courseID} = router.query;
-	let isMounted = true;
 	// -----------STATE-----------
 	// CREATE COURSE FORM STATE
 	const {showNoti} = useWrap();
@@ -772,6 +771,7 @@ const EditCourse = (props) => {
 		return res;
 	};
 	useEffect(() => {
+		let isMounted = true;
 		if (isMounted) {
 			fetchSubject();
 			fetchStudyTime();

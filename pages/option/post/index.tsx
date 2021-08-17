@@ -2,7 +2,7 @@ import React from "react";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import SortBox from "~/components/Elements/SortBox";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import { data } from "../../../lib/option/dataOption2";
 import PostForm from "~/components/Global/Option/PostForm";
 import ExpandTable from "~/components/ExpandTable";

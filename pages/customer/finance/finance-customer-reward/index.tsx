@@ -4,7 +4,7 @@ import { Image } from "antd";
 import SortBox from "~/components/Elements/SortBox";
 import { dataService } from "lib/customer/dataCustomer";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import LayoutBase from "~/components/LayoutBase";
 FinanceReward.layout = LayoutBase;
 export default function FinanceReward() {

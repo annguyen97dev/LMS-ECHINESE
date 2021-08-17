@@ -1,9 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import {Modal, Form, Input, Button, Divider, Tooltip, Select, Skeleton, InputNumber, Spin, Collapse, Popover } from 'antd';
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  Form,
+  Input,
+  Button,
+  Divider,
+  Tooltip,
+  Select,
+  Skeleton,
+  InputNumber,
+  Spin,
+  Collapse,
+  Popover,
+} from "antd";
 import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
-import TinyMCE from "~/components/TinyMCE";
+// import TinyMCE from "~/components/TinyMCE";
 const { Panel } = Collapse;
 
 const ConfigVoucherInvoiceForm = (props) => {
@@ -15,7 +28,7 @@ const ConfigVoucherInvoiceForm = (props) => {
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
-    });
+  });
   const { showNoti } = useWrap();
 
   const {
@@ -24,7 +37,7 @@ const ConfigVoucherInvoiceForm = (props) => {
     setValue,
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
-    // const { showNoti } = useWrap();
+  // const { showNoti } = useWrap();
 
   const onSubmit = handleSubmit((data: any) => {
     let res = props._onSubmit(data);
@@ -35,10 +48,10 @@ const ConfigVoucherInvoiceForm = (props) => {
 
   const onChangeTinyMCE = (value) => {
     setValue("NotificationContent", value);
-  }
+  };
 
   useEffect(() => {
-    if(isModalVisible) {
+    if (isModalVisible) {
       if (props.rowData) {
         Object.keys(props.rowData).forEach(function (key) {
           setValue(key, props.rowData[key]);
@@ -85,7 +98,7 @@ const ConfigVoucherInvoiceForm = (props) => {
             {/*  */}
             <div className="row">
               <div className="col-12">
-                <Form.Item 
+                <Form.Item
                   label="Loại phiếu"
                   name="Loại phiếu"
                   rules={[
@@ -93,13 +106,13 @@ const ConfigVoucherInvoiceForm = (props) => {
                   ]}
                   initialValue={props.rowData?.TypeName}
                 >
-                    <Select
-                        className="style-input"
-                        onChange={(value) => setValue("Type",value)}
-                    >
-                        <Option value="1">Phiếu chi</Option>
-                        <Option value="1">Phiếu thu</Option>
-                    </Select>
+                  <Select
+                    className="style-input"
+                    onChange={(value) => setValue("Type", value)}
+                  >
+                    <Option value="1">Phiếu chi</Option>
+                    <Option value="1">Phiếu thu</Option>
+                  </Select>
                 </Form.Item>
               </div>
             </div>
@@ -142,11 +155,10 @@ const ConfigVoucherInvoiceForm = (props) => {
             </div> */}
             <div className="row ">
               <div className="col-12">
-              <button type="submit" className="btn btn-primary w-100">
+                <button type="submit" className="btn btn-primary w-100">
                   Lưu
-                  {props.isLoading.type == "ADD_DATA" && props.isLoading.status && (
-                    <Spin className="loading-base" />
-                  )}
+                  {props.isLoading.type == "ADD_DATA" &&
+                    props.isLoading.status && <Spin className="loading-base" />}
                 </button>
               </div>
             </div>

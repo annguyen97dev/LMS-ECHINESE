@@ -1,4 +1,4 @@
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import { Button, Card, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { contractApi } from "~/apiBase/options/contract";
@@ -58,7 +58,7 @@ const Contract = () => {
       </div>
       <Card>
         <div className="col-12">
-          <Editor
+          {/* <Editor
             apiKey="la1igo0sfogafdrl7wrj7w9j1mghl7txxke654lgzvkt86im"
             initialValue={contract?.ContractContent}
             init={{
@@ -69,7 +69,7 @@ const Contract = () => {
                 "undo redo | bold italic | alignleft aligncenter alignright | code",
             }}
             onChange={changeContractContent}
-          />
+          /> */}
         </div>
         <div className="row pt-3">
           <div className="col-12 d-flex justify-content-center">
