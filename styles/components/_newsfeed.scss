@@ -474,11 +474,16 @@
   padding: 0;
   margin: 0;
   .btn {
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 5px;
     border-radius: 4px;
     text-align: left;
+    svg {
+      width: 15px;
+      margin-right: 10px;
+    }
     &:hover {
       background-color: #efefef;
     }

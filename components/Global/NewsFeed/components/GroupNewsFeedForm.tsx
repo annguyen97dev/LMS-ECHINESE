@@ -1,7 +1,7 @@
 import { Input,Form, Spin, Select } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import { useEffect, useState } from "react";
-import { PlusCircle } from "react-feather";
+import { PlusCircle, Edit2 } from "react-feather";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
 import { courseApi } from "~/apiBase";
@@ -75,7 +75,10 @@ const GroupNewsFeedFrom = (props) => {
         )
         }
         {showEdit && (
-            <li className="edit-group btn" onClick={() => setIsVisibleModal(true)}>Chỉnh sửa nhóm</li>
+            <li className="edit-group btn" onClick={() => setIsVisibleModal(true)}>
+                <Edit2/>
+                Chỉnh sửa nhóm
+            </li>
         )
         }
         {/* {} */}

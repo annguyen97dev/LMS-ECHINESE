@@ -1,5 +1,5 @@
 import { Card, Popover, Modal, Skeleton } from "antd";
-import { MoreHorizontal, AlertTriangle } from "react-feather";
+import { MoreHorizontal, AlertTriangle, Trash2 } from "react-feather";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { groupNewsFeedApi, userGroupNewsFeedApi } from "~/apiBase"
 import GroupNewsFeedFrom from "./GroupNewsFeedForm";
@@ -118,6 +118,7 @@ const GroupTagElement = (props) => {
                                 });
                             }}
                     >
+                        <Trash2/>
                         Xóa nhóm
                     </button>
                 </li>

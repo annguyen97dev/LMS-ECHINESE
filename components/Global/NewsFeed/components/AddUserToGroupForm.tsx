@@ -1,7 +1,7 @@
 import { Input,Form, Spin, Select } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import { useEffect, useState } from "react";
-import { PlusCircle } from "react-feather";
+import { PlusCircle, UserPlus } from "react-feather";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
 import { userInformationApi } from "~/apiBase";
@@ -59,6 +59,7 @@ const AddUserToGroupForm = (props) => {
     return (
         <>
         <li className="add-user-to-group btn" onClick={() => setIsVisibleModal(true)}>
+            <UserPlus />
             <span>Thêm thành viên</span>
         </li>
         {/* {} */}

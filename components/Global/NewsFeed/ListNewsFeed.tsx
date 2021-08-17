@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Popover, Button, Input, Modal, Form, Tooltip, Select } from 'antd';
-import { ThumbsUp, MessageCircle, MoreHorizontal, Image, Users, Send, Home, Navigation  } from "react-feather";
+import { ThumbsUp, MessageCircle, MoreHorizontal, Image, Users, Send, Home, Navigation, EyeOff, Trash2, Edit2 } from "react-feather";
 import UploadMutipleFile from "./components/UploadMutipleFile";
 import { useForm } from "react-hook-form";
 import moment from "moment";
@@ -104,10 +104,10 @@ const ListNewsFeed = (props) => {
         return (
             <>
                 <ul className="more-list">
-                    <li><button className="btn" onClick={() => hiddenPost(data)}>Ẩn bài viết</button></li>
+                    <li><button className="btn" onClick={() => hiddenPost(data)}><EyeOff />Ẩn bài viết</button></li>
                     {dataUser?.UserInformationID == data.UserInformationID ? (
                         <li>
-                            <button className="btn" onClick={showModal}>Chỉnh sửa bài viết</button>
+                            <button className="btn" onClick={showModal}><Edit2 />Chỉnh sửa bài viết</button>
                         </li>
                     ) : ""}
                 </ul>
