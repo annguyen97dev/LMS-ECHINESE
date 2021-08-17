@@ -90,20 +90,20 @@ const ScheduleItem = (props) => {
 	};
 
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
-	useEffect(() => {
-		let {ID, RoomID, TeacherID} = scheduleObj;
-		const {optionRoomList, optionTeacherList} = optionRoomAndTeacherForADay;
-		if (optionRoomList.length && optionTeacherList.length) {
-			if (!optionRoomList.some((o) => o.value === RoomID)) {
-				form.setValue('RoomID', 0);
-				checkHandleChangeValueSchedule(ID, 'RoomID', 0);
-			}
-			if (!optionTeacherList.some((o) => o.value === TeacherID)) {
-				form.setValue('TeacherID', 0);
-				checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
-			}
-		}
-	}, [optionRoomAndTeacherForADay]);
+	// useEffect(() => {
+	// 	let {ID, RoomID, TeacherID} = scheduleObj;
+	// 	const {optionRoomList, optionTeacherList} = optionRoomAndTeacherForADay;
+	// 	if (optionRoomList.length && optionTeacherList.length) {
+	// 		if (!optionRoomList.some((o) => o.value === RoomID)) {
+	// 			form.setValue('RoomID', 0);
+	// 			checkHandleChangeValueSchedule(ID, 'RoomID', 0);
+	// 		}
+	// 		if (!optionTeacherList.some((o) => o.value === TeacherID)) {
+	// 			form.setValue('TeacherID', 0);
+	// 			checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
+	// 		}
+	// 	}
+	// }, [optionRoomAndTeacherForADay]);
 
 	// SET VALUE TO INPUT IF HAVE DATA
 	useEffect(() => {
