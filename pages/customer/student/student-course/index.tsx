@@ -148,6 +148,23 @@ const CourseStudent = () => {
       value: null,
     },
     {
+      name: "Combo",
+      title: "Chọn gói",
+      col: "col-12",
+      type: "select",
+      optionList: [
+        {
+          value: true,
+          title: "Gói combo",
+        },
+        {
+          value: false,
+          title: "Gói lẻ",
+        },
+      ],
+      value: null,
+    },
+    {
       name: "date-range",
       title: "Ngày tạo",
       col: "col-12",
@@ -165,6 +182,7 @@ const CourseStudent = () => {
       toDate: null,
       BranchID: null,
       CourseID: null,
+      Combo: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;
