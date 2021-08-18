@@ -7,11 +7,23 @@ class GroupNewsFeed {
         params: todoApi,
     });
 
+    // Lấy theo id
+    getByID = (id:number) => 
+    instance.get<IApiResultData<IGroupNewsFeed[]>>(`/api/GroupNewsFeed/${id}`);
+
     // Thêm mới data
     add = ( data: IGroupNewsFeed ) => instance.post("/api/GroupNewsFeed", data);
 
     // Cập nhật data
     update = ( data: any ) => instance.put("/api/GroupNewsFeed", data, {});
+
+    // Upload background
+    uploadImage = (file: any) => {
+        let fData = new FormData();
+        fData.append("File", file);
+        console.log("FDATA: ", fData);
+        return instance.post("/api/uploadfileGroup", fData, {});
+    };
 }
 
 export const groupNewsFeedApi = new GroupNewsFeed();

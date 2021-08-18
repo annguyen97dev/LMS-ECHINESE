@@ -3,6 +3,7 @@ import { Drawer, Form, Select, Input, Radio, Spin } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
 import ChoiceForm from "./QuestionType/ChoiceForm";
+import MultipleForm from "./QuestionType/MultipleForm";
 
 const CreateQuestionForm = (props) => {
   const { questionData, isEdit, onFetchData } = props;
@@ -10,8 +11,6 @@ const CreateQuestionForm = (props) => {
   // console.log("QuestionData Drawer: ", questionData);
 
   const [visible, setVisible] = useState(false);
-  const [value, setValue] = React.useState(1);
-  const [openAns, setOpenAns] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +27,11 @@ const CreateQuestionForm = (props) => {
   };
 
   const onSuccessSubmit = () => {
-    isSubmit && (setIsSubmit(false), setIsLoading(false), onFetchData());
+    isSubmit &&
+      (setIsSubmit(false),
+      setIsLoading(false),
+      onFetchData(),
+      setVisible(false));
     console.log("chạy vô đây");
   };
 
@@ -41,6 +44,15 @@ const CreateQuestionForm = (props) => {
       case 1:
         return (
           <ChoiceForm
+            questionData={questionData}
+            isSubmit={isSubmit}
+            changeIsSubmit={onSuccessSubmit}
+          />
+        );
+        break;
+      case 4:
+        return (
+          <MultipleForm
             questionData={questionData}
             isSubmit={isSubmit}
             changeIsSubmit={onSuccessSubmit}
