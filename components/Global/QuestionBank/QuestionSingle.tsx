@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Radio, Tooltip, Skeleton } from "antd";
+import { Radio, Tooltip, Skeleton, Popconfirm } from "antd";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
 import EditQuestionForm from "./EditQuestionForm";
@@ -8,21 +8,66 @@ import ReactHtmlParser, {
   convertNodeToElement,
   htmlparser2,
 } from "react-html-parser";
+import { exerciseApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
 
 const listAlphabet = ["A", "B", "C", "D", "F", "G"];
 
 const QuestionSingle = (props: any) => {
-  const { listQuestion, loadingQuestion, onFetchData } = props;
+  const { listQuestion, loadingQuestion, onFetchData, onRemoveData } = props;
   const [value, setValue] = React.useState(1);
   const [dataListQuestion, setDataListQuestion] = useState(listQuestion);
+  const { showNoti } = useWrap();
+  const [visible, setVisible] = useState({
+    id: null,
+    status: false,
+  });
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   console.log("List Question: ", listQuestion);
 
   const onChange = (e) => {
     e.preventDefault();
-    console.log("radio checked", e.target.value);
-
     // setValue(e.target.value);
+  };
+
+  const deleteQuestionItem = (quesID) => {
+    !visible.status
+      ? setVisible({
+          id: quesID,
+          status: true,
+        })
+      : setVisible({
+          id: quesID,
+          status: false,
+        });
+  };
+
+  // Chấp nhận xóa câu hỏi
+  const handleOk = async (quesItem) => {
+    setConfirmLoading(true);
+    quesItem.Enable = false;
+    try {
+      let res = await exerciseApi.update(quesItem);
+      if (res.status == 200) {
+        setVisible({
+          ...visible,
+          status: false,
+        });
+        onRemoveData(quesItem.ID);
+      }
+    } catch (error) {
+      showNoti("danger", error);
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
+
+  const handleCancel = (quesID) => {
+    setVisible({
+      id: quesID,
+      status: false,
+    });
   };
 
   useEffect(() => {
@@ -57,17 +102,21 @@ const QuestionSingle = (props: any) => {
             </div>
           </div>
           <div className="box-action">
-            <Tooltip placement="topLeft" title="Sửa câu hỏi">
-              <CreateQuestionForm
-                questionData={item}
-                onFetchData={onFetchData}
-              />
-            </Tooltip>
-            <Tooltip placement="topLeft" title="Xóa câu hỏi">
-              <button className="btn btn-icon delete">
+            <CreateQuestionForm questionData={item} onFetchData={onFetchData} />
+            <Popconfirm
+              title="Bạn có chắc muốn xóa?"
+              visible={item.ID == visible.id && visible.status}
+              onConfirm={() => handleOk(item)}
+              okButtonProps={{ loading: confirmLoading }}
+              onCancel={() => handleCancel(item.ID)}
+            >
+              <button
+                className="btn btn-icon delete"
+                onClick={() => deleteQuestionItem(item.ID)}
+              >
                 <Trash2 />
               </button>
-            </Tooltip>
+            </Popconfirm>
           </div>
         </div>
       ))}

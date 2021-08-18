@@ -466,3 +466,23 @@
     margin-right: 0;
   }
 }
+
+.row-ans {
+  .delete-ans {
+    height: 36px;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 7px;
+    border: none;
+    background: transparent;
+
+    svg {
+      font-size: 15px;
+      color: #c32f2f;
+      &:hover {
+        color: #9a1212;
+      }
+    }
+  }
+}

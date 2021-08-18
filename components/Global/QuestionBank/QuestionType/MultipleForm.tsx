@@ -5,11 +5,15 @@ import { Form, Input, Checkbox } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { exerciseApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
+import { CloseOutlined } from "@ant-design/icons";
+import { data } from "~/lib/option/dataOption";
 
 // let returnSchema = {};
 // let schema = null;
 
-const ChoiceForm = (props) => {
+let AnsID = 0;
+
+const MultipleForm = (props) => {
   const { isSubmit, questionData, changeIsSubmit } = props;
   const { showNoti } = useWrap();
   const {
@@ -23,6 +27,7 @@ const ChoiceForm = (props) => {
   const [form] = Form.useForm();
   const [questionDataForm, setQuestionDataForm] = useState(questionData);
   const [isResetEditor, setIsResetEditor] = useState(false);
+  const [answerList, setAnswerList] = useState(questionData.ExerciseAnswer);
 
   console.log("Question base: ", questionDataForm);
 
@@ -41,10 +46,7 @@ const ChoiceForm = (props) => {
   // Reset value in form
   const resetForm = () => {
     questionDataForm.Content = "";
-    questionDataForm.ExerciseAnswer.forEach((item) => {
-      item.AnswerContent = "";
-      item.isTrue = false;
-    });
+    questionDataForm.ExerciseAnswer = [];
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -52,11 +54,6 @@ const ChoiceForm = (props) => {
   const onChange_isCorrect = (e, AnswerID) => {
     console.log(`checked = ${e.target.checked}`);
     let checked = e.target.checked;
-
-    // Xóa các isTrue còn lại (vì là câu hỏi chọn 1 đáp án)
-    questionData.ExerciseAnswer.forEach((item) => {
-      item.isTrue = false;
-    });
 
     // Tìm vị trí sau đó gán correct vào
     let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
@@ -81,7 +78,14 @@ const ChoiceForm = (props) => {
     let res = null;
     try {
       if (questionDataForm.ID) {
-        res = await exerciseApi.update(questionDataForm);
+        let cloneData = { ...questionDataForm };
+        cloneData.ExerciseAnswer.forEach((item, index) => {
+          if (item.isAdd) {
+            delete item.ID;
+          }
+        });
+
+        res = await exerciseApi.update(cloneData);
       } else {
         res = await exerciseApi.add(questionDataForm);
       }
@@ -96,10 +100,45 @@ const ChoiceForm = (props) => {
     } catch (error) {}
   };
 
+  // HANLDE ADD ANSWER
+  const handleAddAnswer = () => {
+    AnsID++;
+    questionDataForm.ExerciseAnswer.push({
+      ID: AnsID,
+      AnswerContent: "",
+      isTrue: false,
+      Enable: true,
+      isAdd: true,
+    });
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
+  // HANDLE DELETE ANSWER ITEM
+  const deleteAnswerItem = async (AnswerID) => {
+    let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
+      (item) => item.ID == AnswerID
+    );
+    // answerList.splice(AnswerIndex, 1);
+    questionDataForm.ExerciseAnswer[AnswerIndex].Enable = false;
+
+    // setAnswerList([...answerList]);
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
   useEffect(() => {
-    console.log("DATA SUBMIT: ", questionDataForm);
-    isSubmit && handleSubmitQuestion();
+    console.log("Data submit: ", questionDataForm);
+    isSubmit &&
+      (handleSubmitQuestion(), console.log("DATA SUBMIT: ", questionDataForm));
   }, [isSubmit]);
+
+  // useEffect(() => {
+  //   if (!questionData.ID) {
+  //     setQuestionDataForm({
+  //       ...questionDataForm,
+  //       ExerciseAnswer: [],
+  //     });
+  //   }
+  // }, [questionData]);
 
   return (
     <div className="form-create-question">
@@ -118,26 +157,38 @@ const ChoiceForm = (props) => {
             </div>
           </div>
           <div className="row">
-            <div className="col-12">
+            <div className="col-12 mb-4">
               <p className="style-label">Đáp án</p>
+              <button className="btn btn-warning" onClick={handleAddAnswer}>
+                Thêm đáp án
+              </button>
             </div>
-            {questionDataForm?.ExerciseAnswer.map((item, index) => (
-              <div className="col-md-6 col-12" key={index}>
-                <div className="row-ans">
-                  <Checkbox
-                    checked={item.isTrue}
-                    onChange={(e) => onChange_isCorrect(e, item.ID)}
-                  ></Checkbox>
-                  <Form.Item>
-                    <Input
-                      value={item.AnswerContent}
-                      className="style-input"
-                      onChange={(e) => onChange_text(e, item.ID)}
-                    ></Input>
-                  </Form.Item>
-                </div>
-              </div>
-            ))}
+            {questionData?.ExerciseAnswer?.map(
+              (item, index) =>
+                item.Enable && (
+                  <div className="col-md-6 col-12" key={index}>
+                    <div className="row-ans">
+                      <Checkbox
+                        checked={item.isTrue}
+                        onChange={(e) => onChange_isCorrect(e, item.ID)}
+                      ></Checkbox>
+                      <Form.Item>
+                        <Input
+                          value={item.AnswerContent}
+                          className="style-input"
+                          onChange={(e) => onChange_text(e, item.ID)}
+                        ></Input>
+                      </Form.Item>
+                      <button
+                        className="delete-ans"
+                        onClick={() => deleteAnswerItem(item.ID)}
+                      >
+                        <CloseOutlined />
+                      </button>
+                    </div>
+                  </div>
+                )
+            )}
           </div>
         </div>
       </Form>
@@ -145,4 +196,4 @@ const ChoiceForm = (props) => {
   );
 };
 
-export default ChoiceForm;
+export default MultipleForm;

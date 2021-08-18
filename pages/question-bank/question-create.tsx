@@ -13,41 +13,9 @@ import QuestionMultiple from "~/components/Global/QuestionBank/QuestionMultiple"
 import QuestionWrite from "~/components/Global/QuestionBank/QuestionWrite";
 import { programApi, subjectApi, exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import { questionObj } from "./TypeData/";
 
 const { Option, OptGroup } = Select;
-const objData = {
-  ExerciseGroupID: 0,
-  SubjectID: null,
-  SubjectName: "",
-  DescribeAnswer: "",
-  Level: null,
-  LevelName: "",
-  LinkAudio: "",
-  Type: 0,
-  TypeName: "",
-  ExerciseAnswer: [
-    {
-      ID: 1,
-      AnswerContent: "",
-      isTrue: null,
-    },
-    {
-      ID: 2,
-      AnswerContent: "",
-      isTrue: null,
-    },
-    {
-      ID: 3,
-      AnswerContent: "",
-      isTrue: null,
-    },
-    {
-      ID: 4,
-      AnswerContent: "",
-      isTrue: null,
-    },
-  ],
-};
 
 const listTodoApi = {
   pageSize: 10,
@@ -65,7 +33,7 @@ const QuestionCreate = () => {
   const [dataProgram, setDataProgram] = useState<IProgram[]>(null);
   const [dataSubject, setDataSubject] = useState<ISubject[]>(null);
   const [loadingSelect, setLoadingSelect] = useState(false);
-  const [questionData, setQuestionData] = useState(objData);
+  const [questionData, setQuestionData] = useState(questionObj);
   const [showListQuestion, setShowListQuestion] = useState(false);
   const [showTypeQuetion, setShowTypeQuestion] = useState({
     type: null,
@@ -142,6 +110,18 @@ const QuestionCreate = () => {
     questionData.Type = Type;
     questionData.TypeName = TypeName;
 
+    // Kiểm dạng câu hỏi gì để thay đổi list answer
+    switch (Type) {
+      case 4:
+        questionData.ExerciseAnswer = [];
+        setQuestionData({ ...questionData });
+        break;
+      case 1:
+        questionData.ExerciseAnswer = questionObj.ExerciseAnswer;
+      default:
+        break;
+    }
+
     // Add value vào data chung
     setQuestionData({ ...questionData });
 
@@ -205,6 +185,21 @@ const QuestionCreate = () => {
     }
   };
 
+  // ON REMOVE DATA
+  const onRemoveData = (quesID) => {
+    let quesIndex = dataSource.findIndex((item) => item.ID == quesID);
+    dataSource.splice(quesIndex, 1);
+    setDataSource([...dataSource]);
+  };
+
+  // ON FETCH DATA
+  const onFetchData = () => {
+    scrollToTop(),
+      setIsLoading(true),
+      setDataSource([]),
+      setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 });
+  };
+
   // Phân loại dạng câu hỏi để trả ra danh sách
   const returnQuestionType = () => {
     switch (todoApi.Type) {
@@ -214,15 +209,20 @@ const QuestionCreate = () => {
           <QuestionSingle
             loadingQuestion={loadingQuestion}
             listQuestion={dataSource}
-            onFetchData={() => (
-              scrollToTop(),
-              setIsLoading(true),
-              setDataSource([]),
-              setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 })
-            )}
+            onFetchData={onFetchData}
+            onRemoveData={(quesID) => onRemoveData(quesID)}
           />
         );
         break;
+      case 4:
+        return (
+          <QuestionMultiple
+            loadingQuestion={loadingQuestion}
+            listQuestion={dataSource}
+            onFetchData={onFetchData}
+            onRemoveData={(quesID) => onRemoveData(quesID)}
+          />
+        );
       default:
         return (
           <p className="text-center">
@@ -259,29 +259,6 @@ const QuestionCreate = () => {
         }
       }
     }
-
-    // if (scrollTop == 0) {
-    //   setCalScroll(scrollTop);
-    //   if (todoApi.pageIndex < totalPageIndex) {
-    //     setLoadingQuestion(true);
-
-    //     setTodoApi({
-    //       ...todoApi,
-    //       pageIndex: todoApi.pageIndex + 1,
-    //     });
-    //   }
-    // } else {
-    //   if (scrollTop > calScroll + 1500) {
-    //     if (todoApi.pageIndex < totalPageIndex) {
-    //       setLoadingQuestion(true);
-    //       setTodoApi({
-    //         ...todoApi,
-    //         pageIndex: todoApi.pageIndex + 1,
-    //       });
-    //     }
-    //     setCalScroll(scrollTop + 1400);
-    //   }
-    // }
   };
 
   console.log("DATA exercise: ", dataSource);
@@ -294,6 +271,16 @@ const QuestionCreate = () => {
     if (questionData.Type !== 0) {
       getDataSource();
     }
+    questionData.Content = "";
+    switch (questionData.Type) {
+      case 4:
+        questionData.ExerciseAnswer = [];
+        break;
+
+      default:
+        break;
+    }
+    setQuestionData({ ...questionData });
   }, [todoApi]);
 
   return (
@@ -320,13 +307,7 @@ const QuestionCreate = () => {
             extra={
               <CreateQuestionForm
                 questionData={questionData}
-                onFetchData={() => (
-                  console.log("runn"),
-                  scrollToTop(),
-                  setIsLoading(true),
-                  setDataSource([]),
-                  setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 })
-                )}
+                onFetchData={onFetchData}
               />
             }
           >
