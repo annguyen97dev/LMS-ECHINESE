@@ -25,6 +25,7 @@ const NewsFeed = () => {
     const [emptyNewsFeed, setEmptyNewsFeed] = useState(false);
 
     const intialNewsFeed = [];
+    const intialPageIndex = 1;
 
     const [newsFeed, setNewsFeed] = useState<INewsFeed[]>(intialNewsFeed);
     const [userBranch, setUserBranch] = useState<IUserBranch[]>([]);
@@ -222,7 +223,7 @@ const NewsFeed = () => {
 
     const reset = () => {
         setNewsFeed(intialNewsFeed);
-        setPageIndex(1);
+        setPageIndex(intialPageIndex);
         console.log("reset");
     }
 
@@ -267,6 +268,82 @@ const NewsFeed = () => {
         setSearchName(null);
         reset();
         setInTeam(value);
+    }
+
+    const SideBar = () => {
+        return (
+            <>
+            <Card className="card-newsfeed" title="TÌM KIẾM" bordered={false}>
+                <Search 
+                    className="style-input"
+                    placeholder={searchName != null ? searchName : "Nhập từ khóa"}
+                    allowClear 
+                    onSearch={onSearch}
+                    // defaultValue={searchName}
+                />
+            </Card>
+            <Card className="card-newsfeed" bordered={false}>
+                <p className="card-newsfeed__label font-weight-black">TRUNG TÂM</p>
+                <Select
+                    className="style-input list-group-nf__moblie"
+                    placeholder="Chọn trung tâm"
+                    onChange={(value) => inTeamFuncMB(value)}
+                >
+                    {userBranch && userBranch.map((item, index) => (
+                        <Option 
+                            key={index} 
+                            value={item.BranchID}
+                        >
+                            {item.BranchName}
+                        </Option>
+                    ))}
+                </Select>
+                <ul className="list-group-nf">
+                    {userBranch && userBranch.map((item, index) => (
+                        <li 
+                            className={inTeam == item.BranchID ? "active" : ""}
+                            key={index} 
+                            value={item.BranchID}
+                            onClick={e => inTeamFunc(e)}
+                        >
+                            {item.BranchName}
+                        </li>
+                    ))}
+                </ul>
+                <p className="card-newsfeed__label font-weight-black">NHÓM</p>
+                <Select
+                    className="style-input list-group-nf__moblie mb-0"
+                    placeholder="Chọn nhóm"
+                    onChange={(value) => inGroupFuncMB(value)}
+                >
+                    {groupNewsFeed && groupNewsFeed.map((item, index) => (
+                        <Option 
+                            key={index} 
+                            value={item.ID}
+                        >
+                            {item.Name}
+                        </Option>
+                    ))}
+                </Select>
+                <ul className="list-group-nf mb-0">
+                    {groupNewsFeed && groupNewsFeed.map((item, index) => (
+                        <li 
+                            className={inGroup == item.ID ? "active" : ""} 
+                            key={index} 
+                            value={item.ID}
+                            onClick={e => inGroupFunc(e)}
+                        >
+                            {item.Name}
+                        </li>
+                    ))}
+                </ul>
+                <GroupNewsFeedFrom 
+                        showAdd={true}
+                        isLoading={isLoading} 
+                        onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)}/>
+            </Card>
+            </>
+        )
     }
 
     // console.log("Group: ", inGroup);
@@ -372,75 +449,7 @@ const NewsFeed = () => {
                 </div>
             )}
             <div className="col-md-4 col-12">
-                <Card className="card-newsfeed" title="TÌM KIẾM" bordered={false}>
-                    <Search 
-                        className="style-input"
-                        placeholder={searchName != null ? searchName : "Nhập từ khóa"}
-                        allowClear 
-                        onSearch={onSearch}
-                        // defaultValue={searchName}
-                    />
-                </Card>
-                <Card className="card-newsfeed" bordered={false}>
-                    <p className="card-newsfeed__label font-weight-black">TRUNG TÂM</p>
-                    <Select
-                        className="style-input list-group-nf__moblie"
-                        placeholder="Chọn trung tâm"
-                        onChange={(value) => inTeamFuncMB(value)}
-                    >
-                        {userBranch && userBranch.map((item, index) => (
-                            <Option 
-                                key={index} 
-                                value={item.BranchID}
-                            >
-                                {item.BranchName}
-                            </Option>
-                        ))}
-                    </Select>
-                    <ul className="list-group-nf">
-                        {userBranch && userBranch.map((item, index) => (
-                            <li 
-                                className={inTeam == item.BranchID ? "active" : ""}
-                                key={index} 
-                                value={item.BranchID}
-                                onClick={e => inTeamFunc(e)}
-                            >
-                                {item.BranchName}
-                            </li>
-                        ))}
-                    </ul>
-                    <p className="card-newsfeed__label font-weight-black">NHÓM</p>
-                    <Select
-                        className="style-input list-group-nf__moblie mb-0"
-                        placeholder="Chọn nhóm"
-                        onChange={(value) => inGroupFuncMB(value)}
-                    >
-                        {groupNewsFeed && groupNewsFeed.map((item, index) => (
-                            <Option 
-                                key={index} 
-                                value={item.ID}
-                            >
-                                {item.Name}
-                            </Option>
-                        ))}
-                    </Select>
-                    <ul className="list-group-nf mb-0">
-                        {groupNewsFeed && groupNewsFeed.map((item, index) => (
-                            <li 
-                                className={inGroup == item.ID ? "active" : ""} 
-                                key={index} 
-                                value={item.ID}
-                                onClick={e => inGroupFunc(e)}
-                            >
-                                {item.Name}
-                            </li>
-                        ))}
-                    </ul>
-                    <GroupNewsFeedFrom 
-                            showAdd={true}
-                            isLoading={isLoading} 
-                            onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)}/>
-                </Card>
+                <SideBar />
             </div>
         </div>
         </>
