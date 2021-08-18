@@ -20,17 +20,8 @@ const ListNewsFeed = (props) => {
             groupNewsFeed, 
             userBranch, 
             inGroup, 
-            inTeam } = props;
-
-    const hiddenPost = (data) => {
-        // console.log(data);
-        const dataSubmit = {
-            ID: data.ID,
-            Enable: false,
-        }
-        console.log(dataSubmit);
-        _onSubmit(dataSubmit)
-    }
+            inTeam,
+            isLoading } = props;
 
     const content = (data) => {
         const [isVisibleModal, setIsVisibleModal] = useState(false);
@@ -53,6 +44,16 @@ const ListNewsFeed = (props) => {
             setIsOpenUploadFile(!isOpenUploadFile);
         };
 
+        const hiddenPost = (data) => {
+            // console.log(data);
+            const dataSubmit = {
+                ID: data.ID,
+                Enable: false,
+            }
+            console.log(dataSubmit);
+            _onSubmit(dataSubmit)
+        }
+
         const [form] = Form.useForm();
 
         const {
@@ -64,17 +65,12 @@ const ListNewsFeed = (props) => {
     
         const onSubmit = handleSubmit((data: any) => {
             console.log("Data submit: ", data);
-            if(Object.keys(data).length <= 2) {
-                showNoti("danger", "Bạn chưa thay đổi");
-                setIsVisibleModal(false);
-            } else {
-                props._onSubmit(data);
-                setIsVisibleModal(false);
-                form.resetFields();
-                setValue("Content", "");
-                setValue("BranchList", "");
-                setValue("GroupNewsFeedID", "");
-            }
+            props._onSubmit(data);
+            setIsVisibleModal(false);
+            form.resetFields();
+            setValue("Content", "");
+            setValue("BranchList", "");
+            setValue("GroupNewsFeedID", "");
         });
 
         const setChooseBranchFunc = (data) => {
@@ -90,16 +86,20 @@ const ListNewsFeed = (props) => {
         // console.log(chooseBranch);
         // console.log("News branchList: ", branchList);
         useEffect(() => {
-            if(data.GroupNewsFeedName != "") {
-                setChooseBranch('group');
+            if(isVisibleModal) {
+                if(data.GroupNewsFeedName != "") {
+                    setChooseBranch('group');
+                    setValue("GroupNewsFeedID", data.GroupNewsFeedID);
+                }
+                else if(Object.keys(data.NewsFeedBranch).length > 0) {
+                    setChooseBranch('team');
+                    setValue("BranchList", defaultValueBranchList);
+                }
+                setValue("ID", data.ID);
+                setValue("File", data.NewsFeedFile);
             }
-            else if(Object.keys(data.NewsFeedBranch).length > 0) {
-                setChooseBranch('team');
-            }
-            setValue("ID", data.ID);
-            // setValue("BranchList", defaultValueBranchList);
-            setValue("File", data.NewsFeedFile);
-        }, []);
+
+        }, [isVisibleModal]);
 
         return (
             <>
@@ -307,119 +307,46 @@ const ListNewsFeed = (props) => {
         )
     }
 
-    const ItemComment = (data) => {
-        const [addCommentAction, setCommentAction] = useState(false);
-        const [commentReply, setCommentReply] = useState<INewsFeedCommentReply[]>([]);
+    const CommentAction = (props) => {
+        const [form] = Form.useForm();
+        const {
+            register,
+            handleSubmit,
+            setValue,
+            formState: { isSubmitting, errors, isSubmitted },
+        } = useForm();
 
-        // console.log("Data Comment", data);
-
-        const handleCommentsAction = () => {
-            setCommentAction(!addCommentAction);
-        }
-
-        const getCommentReply = async () => {
-            try {
-                let res = await newsFeedCommentReplyApi.getAll({selectAll: true, NewsFeedCommentID: data.data?.ID});
-                if(res.status == 200) {
-                    setCommentReply(res.data.data);
-                }
-            } catch (error) {
-                console.log("Lỗi", error.message);
+        const onChange = (e) => {
+            if(!props.reply) {
+                setValue("CommentContent", e.target.value);
+            } else {
+                setValue("ReplyContent", e.target.value);
             }
         }
 
-        const commentReplyNewsFeed = async (data) => {
-            try {
-                let res = await newsFeedCommentReplyApi.add(data);
-                if(res.status == 204) {
-                    console.log("Không có dữ liệu");
-                }
-                if(res.status == 200) {
-                    getCommentReply();
-                }
-            } catch (error) {
-                console.log("Lỗi: ", error.message);
+        const onsubmit = handleSubmit((data) => {
+            console.log("Data submit: ", data);
+            if(!props.reply) {
+                let res = props.commentNewsFeed(data);
+                res.then(function (rs: any) {
+                    rs && rs.status == 200 && form.resetFields();
+                });
+            } else {
+                console.log("Reply");
+                let res = props.commentReplyNewsFeed(data);
+                res.then(function (rs: any) {
+                    rs && rs.status == 200 && form.resetFields(), props.handleCommentsAction();
+                });
             }
-        }
-
-        // console.log("Data Comment Reply", commentReply);
+        });
 
         useEffect(() => {
-            getCommentReply();
-        }, []);
-
-        return (
-        <li className="item-comment">
-            <div className="info-current-user">
-                <div className="avatar">
-                    <img
-                        src={
-                        data.data?.Avatar
-                            ? data.data.Avatar
-                            : "/images/user.jpg"
-                        }
-                        alt=""
-                    />
-                </div>
-                <div className="content-comment">
-                    <div className="box-comment">
-                        <p className="name-comment font-weight-black">{data.data?.FullNameUnicode}</p>
-                        {data.data?.CommentContent}
-                    </div>
-                    <a className="a-reply" onClick={handleCommentsAction}>Phản hồi</a> <span className="time-comment">{moment(data.data?.CreatedOn).format("DD/MM/YYYY HH:mm")}</span>
-                    {addCommentAction ? (
-                        <CommentAction 
-                            reply={true} 
-                            id={data.data?.ID} 
-                            commentReplyNewsFeed={(data) => commentReplyNewsFeed(data)}/>
-                    ): (<></>)}
-                    {Object.keys(commentReply).length > 0 ? (
-                        <ul className="list-comments">
-                            {commentReply?.map((item, index) => (
-                                <li key={index} className="item-comment">
-                                <div className="info-current-user">
-                                    <div className="avatar">
-                                        <img
-                                            src={
-                                                item?.Avatar
-                                                ? item.Avatar
-                                                : "/images/user.jpg"
-                                            }
-                                            alt=""
-                                        />
-                                    </div>
-                                    <div className="content-comment reply">
-                                        <div className="box-comment">
-                                            <p className="name-comment font-weight-black">{item?.FullNameUnicode}</p>
-                                            {item?.ReplyContent}
-                                        </div>
-                                        <span className="time-comment">{moment(item?.CreatedOn).format("DD/MM/YYYY HH:mm")}</span>
-                                    </div>
-                                </div>
-                            </li>
-                            ))}
-                        </ul>
-                    ) : (<></>)}
-                </div>
-            </div>
-        </li>
-        )
-    }
-
-    const CommentAction = (props) => {
-        const onPressEnter = (e) => {
             if(!props.reply) {
-                props.commentNewsFeed({
-                    NewsFeedID: props.id,
-                    CommentContent: e.target.value
-                })
+                setValue("NewsFeedID", props.id)
             } else {
-                props.commentReplyNewsFeed({
-                    NewsFeedCommentID: props.id,
-                    ReplyContent: e.target.value
-                })
+                setValue("NewsFeedCommentID", props.id)
             }
-        }
+        }, [])
 
         return (
         <div className="info-current-user user-comment">
@@ -434,9 +361,113 @@ const ListNewsFeed = (props) => {
                 />
             </div>
             <div className="input-comments">
-                <Input className="style-input" placeholder="Viết bình luận ..." onPressEnter={(e) => onPressEnter(e)} />
+                <Form form={form} onFinish={onsubmit}>
+                    <Form.Item name="form bình luận">
+                        <Input 
+                            className="style-input" 
+                            placeholder="Viết bình luận ..."
+                            onChange={(e) => onChange(e)}
+                            onPressEnter={onsubmit}
+                            id={`form-comment-${props.id}`}
+                        />
+                    </Form.Item>
+                </Form>
             </div>
         </div>
+        )
+    }
+
+    const ReplyComment = (props) => {
+        const [commentReply, setCommentReply] = useState<INewsFeedCommentReply[]>([]);
+        const getCommentReply = async () => {
+            try {
+                let res = await newsFeedCommentReplyApi.getAll({selectAll: true, NewsFeedCommentID: props.id});
+                if(res.status == 200) {
+                    setCommentReply(res.data.data);
+                } if(res.status == 204) {
+                    return;
+                }
+            } catch (error) {
+                console.log("Lỗi", error.message);
+            }
+        }
+
+        useEffect(() => {
+            getCommentReply();
+        }, []);
+
+        return (
+            <ul className="list-comments">
+                {commentReply?.map((item, index) => (
+                    <li key={index} className="item-comment">
+                        <div className="info-current-user">
+                            <div className="avatar">
+                                <img
+                                    src={
+                                        item?.Avatar
+                                        ? item.Avatar
+                                        : "/images/user.jpg"
+                                    }
+                                    alt=""
+                                />
+                            </div>
+                            <div className="content-comment reply">
+                                <div className="box-comment">
+                                    <p className="name-comment font-weight-black">{item?.FullNameUnicode}</p>
+                                    {item?.ReplyContent}
+                                </div>
+                                <span className="time-comment">{moment(item?.CreatedOn).format("DD/MM/YYYY HH:mm")}</span>
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        )
+    }
+
+    const Comments = (props) => {
+        const { dataCommentIndex, commentReplyNewsFeed } = props;
+        const [addCommentAction, setCommentAction] = useState(false);
+
+        const handleCommentsAction = () => {
+            setCommentAction(!addCommentAction);
+        }
+
+        return (
+        <li className="item-comment">
+            <div className="info-current-user">
+                <div className="avatar">
+                    <img
+                        src={
+                            dataCommentIndex?.Avatar
+                            ? dataCommentIndex?.Avatar
+                            : "/images/user.jpg"
+                        }
+                        alt=""
+                    />
+                </div>
+                <div className="content-comment">
+                    <div className="box-comment">
+                        <p className="name-comment font-weight-black">{dataCommentIndex?.FullNameUnicode}</p>
+                        {dataCommentIndex?.CommentContent}
+                    </div>
+                    <a className="a-reply" onClick={handleCommentsAction}>Phản hồi</a> <span className="time-comment">{moment(dataCommentIndex?.CreatedOn).format("DD/MM/YYYY HH:mm")}</span>
+                    {addCommentAction && (
+                        <CommentAction 
+                            reply={true} 
+                            id={dataCommentIndex?.ID}
+                            commentReplyNewsFeed={(data) => commentReplyNewsFeed(data)}
+                            handleCommentsAction={() => handleCommentsAction()}
+                        />
+                    )}
+                    {dataCommentIndex.isReply && (
+                        <ReplyComment 
+                            id={dataCommentIndex?.ID}
+                        />
+                    )}
+                </div>
+            </div>
+        </li>
         )
     }
 
@@ -445,12 +476,11 @@ const ListNewsFeed = (props) => {
         const [totalLike, setTotalLike] = useState(0);
         const [totalComment, setTotalComment] = useState(0);
         const [listComment, setListComment] = useState<INewsFeedComment[]>([]);
+
         const [liked, setLiked] = useState(false);
         const handleShowComments = () => {
             setShowComments(!showComments);
         }
-
-        // console.log("Data: ", data);
 
         const getTotalLike = async () => {
             try {
@@ -507,7 +537,7 @@ const ListNewsFeed = (props) => {
                 }
                 if(res.status == 200) {
                     getTotalLike();
-                    checkedLike();
+                    // checkedLike();
                 }
             } catch (error) {
                 console.log("Lỗi: ", error.message);
@@ -515,8 +545,9 @@ const ListNewsFeed = (props) => {
         }
 
         const commentNewsFeed = async (data) => {
+            let res;
             try {
-                let res = await newsFeedCommentApi.add(data);
+                res = await newsFeedCommentApi.add(data);
                 if(res.status == 204) {
                     console.log("Không có dữ liệu");
                 }
@@ -526,16 +557,38 @@ const ListNewsFeed = (props) => {
             } catch (error) {
                 console.log("Lỗi: ", error.message);
             }
+            return res;
         }
+
         const _onSearch = (e) => {
             onSearch(e.target.text);
         }
 
+        const commentReplyNewsFeed = async (data) => {
+            let res;
+            try {
+                res = await newsFeedCommentReplyApi.add(data);
+                if(res.status == 204) {
+                    console.log("Không có dữ liệu");
+                }
+                if(res.status == 200) {
+                    getTotalComment();
+                }
+            } catch (error) {
+                console.log("Lỗi: ", error.message);
+            }
+            return res;
+        }
+
+        // console.log("Data comment: ", listComment);
+
         useEffect(() => {
-            getTotalLike();
-            getTotalComment();
-            checkedLike();
-        }, [])
+            if(!isLoading.status) {
+                // getTotalLike();
+                // checkedLike();
+                getTotalComment();
+            }
+        }, []);
 
         return (
         <li className="item-nf">
@@ -617,12 +670,23 @@ const ListNewsFeed = (props) => {
                     </div>
                 </div>
                 <div className={showComments ? "newsfeed-comments" : "hide"}>
-                    <CommentAction reply={false} id={data.data?.ID} commentNewsFeed={(data) => commentNewsFeed(data)}/>
-                    <ul className="list-comments">
-                        {listComment?.map((item, index) => (
-                            <ItemComment key={index} data={item} />
-                        ))}
-                    </ul>
+                    <CommentAction
+                        getTotalComment={getTotalComment} 
+                        reply={false} 
+                        id={data.data?.ID} 
+                        commentNewsFeed={(data) => commentNewsFeed(data)}
+                    />
+                    {totalComment > 0 && (
+                        <ul className="list-comments">
+                            {listComment?.map((item, index) => (
+                                <Comments 
+                                    key={index} 
+                                    dataCommentIndex={item}
+                                    commentReplyNewsFeed={(data) => commentReplyNewsFeed(data)}
+                                />
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </li>
@@ -632,7 +696,7 @@ const ListNewsFeed = (props) => {
     return (
         <>
             <ul className="list-nf">
-                {dataNewsFeed.map((item, index) => (
+                {dataNewsFeed && dataNewsFeed.map((item, index) => (
                     <NewsFeed key={index}  data={item}/>
                 ))}
             </ul>
