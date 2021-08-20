@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Image, Users, Send, Home } from "react-feather";
 import { useWrap } from "~/context/wrap";
-import { Form, Modal, Button, Input, Tooltip, Upload, Popover, Select } from 'antd';
+import { Form, Modal, Button, Input, Tooltip, Upload, Popover, Select, Spin } from 'antd';
+import { FileImageFilled, GroupOutlined, TeamOutlined } from "@ant-design/icons";
 import { PlusOutlined } from '@ant-design/icons';
 import UploadMutipleFile from "./components/UploadMutipleFile";
 import { useForm } from "react-hook-form";
@@ -47,11 +48,13 @@ const CreateNewsFeed = (props) => {
     const showModalSelectBranch = () => {
         setIsVisibleModal(true);
         setVisibleSelectBranch(true);
+        setChooseBranchFunc('group');
     };
 
     const resetOption = () => {
         setIsOpenUploadFile(false);
         setVisibleSelectBranch(false);
+        setChooseBranchFunc('team');
     }
 
     const openUploadFile = () => {
@@ -122,7 +125,7 @@ const CreateNewsFeed = (props) => {
             className="modal-create-nf"
         >
             <div className="container-fluid wrap-create-nf">
-                <Form form={form} layout="vertical" onFinish={onSubmit}>
+                <Form form={form} layout="vertical">
                     <div className="row">
                         <div className="col-12">
                             <div className="info-current-user">
@@ -156,7 +159,9 @@ const CreateNewsFeed = (props) => {
                     </div>
                     <div className={isOpenUploadFile ? "row" : "hide"}>
                         <div className="col-12">
-                            <UploadMutipleFile />
+                            <UploadMutipleFile 
+                                getValue={(value) => setValue("NewsFeedFile", value)}
+                            />
                         </div>
                     </div>
                     <div className="row">
@@ -169,8 +174,8 @@ const CreateNewsFeed = (props) => {
                                     <div className="list-option">
                                         <div className="item-option">
                                             <Tooltip title="Thêm Ảnh/Video">
-                                                <button className="btn" onClick={openUploadFile}>
-                                                    <Image color="#10ca93"/>
+                                                <button className={isOpenUploadFile ? "btn active" : "btn"} onClick={openUploadFile}>
+                                                    <FileImageFilled style={{color: "#10ca93"}}/>
                                                 </button>
                                             </Tooltip>
                                         </div>
@@ -179,14 +184,14 @@ const CreateNewsFeed = (props) => {
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào trung tâm">
                                                 <button className={inTeam != null ? "btn active" : "btn disable"}>
-                                                    <Users color="#ffc107"/>
+                                                    <GroupOutlined style={{color: "#ffc107"}}/>
                                                 </button>
                                             </Tooltip>
                                         </div>
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào nhóm">
                                                 <button className={inGroup != null ? "btn active" : "btn disable"}>
-                                                    <Home color="#00afef"/>
+                                                    <TeamOutlined style={{color: "#00afef"}}/>
                                                 </button>
                                             </Tooltip>
                                         </div>
@@ -196,14 +201,14 @@ const CreateNewsFeed = (props) => {
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào trung tâm">
                                                 <button className={chooseBranch == 'team' ? "btn active" : "btn"} onClick={() => setChooseBranchFunc('team')}>
-                                                    <Users color="#ffc107"/>
+                                                    <GroupOutlined style={{color: "#ffc107"}}/>
                                                 </button>
                                             </Tooltip>
                                         </div>
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào nhóm">
                                                 <button className={chooseBranch == 'group' ? "btn active" : "btn"} onClick={() => setChooseBranchFunc('group')}>
-                                                    <Home color="#00afef"/>
+                                                    <TeamOutlined style={{color: "#00afef"}}/>
                                                 </button>
                                             </Tooltip>
                                         </div>
@@ -288,11 +293,11 @@ const CreateNewsFeed = (props) => {
                     </div>
                     <div className="row ">
                         <div className="col-12">
-                            <button type="submit" className="btn btn-primary w-100">
+                            <button type="submit" className="btn btn-primary w-100" onClick={onSubmit}>
                             Đăng
-                            {/* {props.isLoading.type == "ADD_DATA" && props.isLoading.status && (
+                            {props.isLoading.type == "ADD" && props.isLoading.status && (
                                 <Spin className="loading-base" />
-                            )} */}
+                            )}
                             </button>
                         </div>
                     </div>

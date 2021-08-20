@@ -33,13 +33,12 @@ const NewsFeed = () => {
     const [userBranch, setUserBranch] = useState<IUserBranch[]>([]);
     const [groupNewsFeed, setGroupNewsFeed] = useState<IGroupNewsFeed[]>([]);
     const [hasNextPage, setHasNextPage] = useState(true);
-    const [pageIndex, setPageIndex] = useState(0);
+    const [pageIndex, setPageIndex] = useState(1);
 
     const [inGroup, setInGroup] = useState(null);
     const [inTeam, setInTeam] = useState(null);
     const [searchName, setSearchName] = useState(null);
     const [totalRow, setTotalRow] = useState(1);
-
 
     const fetchListNewsFeed = async () => {
         // if(!hasNextPage) return;
@@ -63,7 +62,7 @@ const NewsFeed = () => {
                 setNewsFeed([...newsFeed, ...res.data.data]);
                 setTotalRow(res.data.totalRow);
                 setEmptyNewsFeed(false);
-                if(res.data.totalRow <= newsFeed.length + res.data.data.length) {
+                if(res.data.data.length < 5) {
                     setHasNextPage(false);
                 }
             }
@@ -76,9 +75,6 @@ const NewsFeed = () => {
             });
         }
     }
-    // if(!isLoading.status) {
-    //     console.log(isLoading);
-    // }
 
     const fetchUserBranch = async () => {
         try {
@@ -119,11 +115,7 @@ const NewsFeed = () => {
                 res = await newsFeedApi.update(data);
                 if(res.status == 200) {
                     showNoti("success", "Update thành công");
-                    reset();
-                    if(inGroup != null || inTeam != null) {
-                        setHasNextPage(true);
-                    }
-                    // fetchListNewsFeed();
+                    setNewsFeed(prev => prev.map(item => (item.ID == data.ID ? res.data.data : item)));
                 }
                 if(res.status == 204) {
                     showNoti("danger", "Không có dữ liệu")
@@ -141,10 +133,8 @@ const NewsFeed = () => {
                 res = await newsFeedApi.add(data);
                 if(res.status == 200) {
                     showNoti("success", "Đăng thành công");
-                    reset();
-                    if(inGroup != null || inTeam != null) {
-                        setHasNextPage(true);
-                    }
+                    let obj = {...res.data.data}
+                    setNewsFeed([obj, ...newsFeed]);
                 }
                 if(res.status == 204) {
                     showNoti("danger", "Không có dữ liệu")
@@ -157,6 +147,33 @@ const NewsFeed = () => {
                     status: false,
                 });
             }
+        }
+        return res;
+    }
+
+    const handleRemove = async (data) => {
+        setIsLoading({
+            type: "ADD",
+            status: true,
+        })
+        let res;
+        try {
+            res = await newsFeedApi.update(data);
+            if(res.status == 200) {
+                showNoti("success", "Update thành công");
+                const newArray = newsFeed.filter(item => item.ID != data.ID);
+                setNewsFeed(newArray);
+            }
+            if(res.status == 204) {
+                showNoti("danger", "Không có dữ liệu")
+            }
+        } catch (error) {
+            showNoti("danger", error.message)
+        } finally {
+            setIsLoading({
+                type: "ADD",
+                status: false,
+            })
         }
         return res;
     }
@@ -384,68 +401,71 @@ const NewsFeed = () => {
         }
     }, [pageIndex, inGroup, inTeam, searchName]);
 
-
     return (
         <>  
         <div className="row wrap-newsfeed">
             {emptyNewsFeed == false ? (
                 <div className="col-md-8 col-12">
-                    {inGroup != null ? (
-                        <>
-                            <GroupTagElement onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)} dataUser={dataUser} totalRow={totalRow} inGroup={inGroup}/>
-                        </>
-                    ) : (<></>)}
-                    {session?.user ? (
-                        <>
-                        <CreateNewsFeed 
-                            inGroup={inGroup} 
-                            inTeam={inTeam} 
-                            dataUser={dataUser} 
-                            groupNewsFeed={groupNewsFeed} 
-                            userBranch={userBranch} 
-                            _onSubmit={(data) => onSubmit(data)}
-                        />
-                        <ListNewsFeed 
-                            onSearch={(value) => onSearch(value)} 
-                            dataUser={dataUser} 
-                            dataNewsFeed={newsFeed} 
-                            groupNewsFeed={groupNewsFeed} 
-                            userBranch={userBranch} 
-                            inGroup={inGroup} 
-                            inTeam={inTeam} 
-                            inGroupFunc={(e) => inGroupFunc(e)} 
-                            inTeamFunc={(e) => inTeamFunc(e)}
-                            _onSubmit={(data) => onSubmit(data)}
-                            isLoading={isLoading}
-                        />
-                        </>
-                    ) : (
-                        <>Bạn cần phải đăng nhập</>
-                    )}
-                    {hasNextPage &&(
-                        <Waypoint onEnter={loadMore}>
-                            <ul className="list-nf skeleton">
-                                <li className="item-nf">
-                                    <div className="newsfeed">
-                                        <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                        <Skeleton active paragraph={{ rows: 2 }}/>
-                                    </div>
-                                </li>
-                                <li className="item-nf">
-                                    <div className="newsfeed">
-                                        <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                        <Skeleton active paragraph={{ rows: 2 }}/>
-                                    </div>
-                                </li>
-                                <li className="item-nf">
-                                    <div className="newsfeed">
-                                        <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                        <Skeleton active paragraph={{ rows: 2 }}/>
-                                    </div>
-                                </li>
-                            </ul>
-                        </Waypoint>
-                    )}
+                    <div className="list-newsfeed">
+                        {inGroup != null ? (
+                            <>
+                                <GroupTagElement onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)} dataUser={dataUser} totalRow={totalRow} inGroup={inGroup}/>
+                            </>
+                        ) : (<></>)}
+                        {session?.user ? (
+                            <>
+                            <CreateNewsFeed 
+                                inGroup={inGroup} 
+                                inTeam={inTeam} 
+                                dataUser={dataUser} 
+                                groupNewsFeed={groupNewsFeed} 
+                                userBranch={userBranch} 
+                                _onSubmit={(data) => onSubmit(data)}
+                                isLoading={isLoading}
+                            />
+                            <ListNewsFeed 
+                                onSearch={(value) => onSearch(value)} 
+                                dataUser={dataUser} 
+                                dataNewsFeed={newsFeed} 
+                                groupNewsFeed={groupNewsFeed} 
+                                userBranch={userBranch} 
+                                inGroup={inGroup} 
+                                inTeam={inTeam} 
+                                inGroupFunc={(e) => inGroupFunc(e)} 
+                                inTeamFunc={(e) => inTeamFunc(e)}
+                                _onSubmit={(data) => onSubmit(data)}
+                                _handleRemove={(data) => handleRemove(data)}
+                                isLoading={isLoading}
+                            />
+                            </>
+                        ) : (
+                            <>Bạn cần phải đăng nhập</>
+                        )}
+                        {hasNextPage &&(
+                            <Waypoint onEnter={loadMore}>
+                                <ul className="list-nf skeleton">
+                                    <li className="item-nf">
+                                        <div className="newsfeed">
+                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
+                                            <Skeleton active paragraph={{ rows: 2 }}/>
+                                        </div>
+                                    </li>
+                                    <li className="item-nf">
+                                        <div className="newsfeed">
+                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
+                                            <Skeleton active paragraph={{ rows: 2 }}/>
+                                        </div>
+                                    </li>
+                                    <li className="item-nf">
+                                        <div className="newsfeed">
+                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
+                                            <Skeleton active paragraph={{ rows: 2 }}/>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </Waypoint>
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div className="col-md-8 col-12">
@@ -463,6 +483,7 @@ const NewsFeed = () => {
                             groupNewsFeed={groupNewsFeed} 
                             userBranch={userBranch} 
                             _onSubmit={(data) => onSubmit(data)}
+                            isLoading={isLoading}
                         />
                         <div className="mt-4"><Empty /></div>
                         </>

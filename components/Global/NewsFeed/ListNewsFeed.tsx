@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Popover, Button, Input, Modal, Form, Tooltip, Select } from 'antd';
-import { ThumbsUp, MessageCircle, MoreHorizontal, Image, Users, Send, Home, Navigation, EyeOff, Trash2, Edit2 } from "react-feather";
+import { Popover, Button, Input, Modal, Form, Tooltip, Select, Image } from 'antd';
+import { ThumbsUp, MessageCircle, MoreHorizontal, Users, Send , Home, Navigation, EyeOff, Trash2, Edit2, AlertTriangle } from "react-feather";
+import { FileImageFilled, GroupOutlined, TeamOutlined } from "@ant-design/icons";
 import UploadMutipleFile from "./components/UploadMutipleFile";
 import { useForm } from "react-hook-form";
 import moment from "moment";
@@ -16,7 +17,8 @@ const ListNewsFeed = (props) => {
             onSearch, 
             inGroupFunc, 
             inTeamFunc, 
-            _onSubmit,        
+            _onSubmit,
+            _handleRemove,        
             groupNewsFeed, 
             userBranch, 
             inGroup, 
@@ -30,6 +32,11 @@ const ListNewsFeed = (props) => {
         const [chooseBranch, setChooseBranch] = useState('team');
         const { showNoti } = useWrap();
         const [branchList, setBranchList]= useState([]);
+        const [dataDelete, setDataDelete]  = useState({
+            ID: null,
+            Enable: null,
+        });
+        const [isModalVisible, setIsModalVisible] = useState(false);
 
         const showModal = () => {
             setIsVisibleModal(true);
@@ -44,14 +51,10 @@ const ListNewsFeed = (props) => {
             setIsOpenUploadFile(!isOpenUploadFile);
         };
 
-        const hiddenPost = (data) => {
+        const hiddenPost = () => {
             // console.log(data);
-            const dataSubmit = {
-                ID: data.ID,
-                Enable: false,
-            }
-            console.log(dataSubmit);
-            _onSubmit(dataSubmit)
+            console.log("Data submit: ", dataDelete);
+            _handleRemove(dataDelete)
         }
 
         const [form] = Form.useForm();
@@ -71,6 +74,7 @@ const ListNewsFeed = (props) => {
             setValue("Content", "");
             setValue("BranchList", "");
             setValue("GroupNewsFeedID", "");
+            setValue("NewsFeedFile", "");
         });
 
         const setChooseBranchFunc = (data) => {
@@ -87,18 +91,21 @@ const ListNewsFeed = (props) => {
         // console.log("News branchList: ", branchList);
         useEffect(() => {
             if(isVisibleModal) {
-                if(data.GroupNewsFeedName != "") {
+                if(data.GroupNewsFeedName != null) {
                     setChooseBranch('group');
                     setValue("GroupNewsFeedID", data.GroupNewsFeedID);
                 }
                 else if(Object.keys(data.NewsFeedBranch).length > 0) {
                     setChooseBranch('team');
+                    console.log('team');
                     setValue("BranchList", defaultValueBranchList);
                 }
+                if(Object.keys(data.NewsFeedFile).length > 0) {
+                    setIsOpenUploadFile(true);
+                    setValue("NewsFeedFile", data.NewsFeedFile);
+                }
                 setValue("ID", data.ID);
-                setValue("File", data.NewsFeedFile);
             }
-
         }, [isVisibleModal]);
 
         return (
@@ -109,7 +116,20 @@ const ListNewsFeed = (props) => {
                             <button className="btn" onClick={showModal}><Edit2 />Chỉnh sửa bài viết</button>
                         </li>
                     ) : ""}
-                    <li><button className="btn del" onClick={() => hiddenPost(data)}><EyeOff />Ẩn bài viết</button></li>
+                    <li>
+                        <button 
+                            className="btn del" 
+                            onClick={() => {
+                                setIsModalVisible(true);
+                                setDataDelete({
+                                    ID: data.ID,
+                                    Enable: false,
+                                });
+                            }}
+                        >
+                            <Trash2 />Xóa bài viết
+                        </button>
+                    </li>
 
                 </ul>
                 <Modal 
@@ -155,7 +175,10 @@ const ListNewsFeed = (props) => {
                             </div>
                             <div className={isOpenUploadFile ? "row" : "hide"}>
                                 <div className="col-12">
-                                    <UploadMutipleFile />
+                                    <UploadMutipleFile 
+                                        getValue={(value) => setValue("NewsFeedFile", value)}
+                                        imagesOld={data.NewsFeedFile}
+                                    />
                                 </div>
                             </div>
                             <div className="row">
@@ -168,8 +191,8 @@ const ListNewsFeed = (props) => {
                                             <div className="list-option">
                                                 <div className="item-option">
                                                     <Tooltip title="Thêm Ảnh/Video">
-                                                        <button className="btn" onClick={openUploadFile}>
-                                                            <Image color="#10ca93"/>
+                                                        <button className={isOpenUploadFile ? "btn active" : "btn"} onClick={openUploadFile}>
+                                                            <FileImageFilled style={{color: "#10ca93"}}/>
                                                         </button>
                                                     </Tooltip>
                                                 </div>
@@ -178,14 +201,14 @@ const ListNewsFeed = (props) => {
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào trung tâm">
                                                         <button className={inTeam != null ? "btn active" : "btn disable"}>
-                                                            <Users color="#ffc107"/>
+                                                            <GroupOutlined style={{color: "#ffc107"}}/>
                                                         </button>
                                                     </Tooltip>
                                                 </div>
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào nhóm">
                                                         <button className={inGroup != null ? "btn active" : "btn disable"}>
-                                                            <Home color="#00afef"/>
+                                                            <TeamOutlined style={{color: "#00afef"}}/>
                                                         </button>
                                                     </Tooltip>
                                                 </div>
@@ -195,14 +218,14 @@ const ListNewsFeed = (props) => {
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào trung tâm">
                                                         <button className={chooseBranch == 'team' ? "btn active" : "btn disable"} onClick={() => setChooseBranchFunc('team')}>
-                                                            <Users color="#ffc107"/>
+                                                            <GroupOutlined style={{color: "#ffc107"}}/>
                                                         </button>
                                                     </Tooltip>
                                                 </div>
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào nhóm">
                                                         <button className={chooseBranch == 'group' ? "btn active" : "btn disable"} onClick={() => setChooseBranchFunc('group')}>
-                                                            <Home color="#00afef"/>
+                                                            <TeamOutlined style={{color: "#00afef"}}/>
                                                         </button>
                                                     </Tooltip>
                                                 </div>
@@ -302,6 +325,14 @@ const ListNewsFeed = (props) => {
                             </div>
                         </Form>
                     </div>
+                </Modal>
+                <Modal
+				title={<AlertTriangle color="red" />}
+                    visible={isModalVisible}
+                    onOk={() => hiddenPost()}
+                    onCancel={() => setIsModalVisible(false)}
+                >
+                    <span className="text-confirm">Bạn có chắc chắn muốn xóa không ?</span>
                 </Modal>
             </>
         )
@@ -476,6 +507,7 @@ const ListNewsFeed = (props) => {
         const [totalLike, setTotalLike] = useState(0);
         const [totalComment, setTotalComment] = useState(0);
         const [listComment, setListComment] = useState<INewsFeedComment[]>([]);
+        const [visible, setVisible] = useState(false);
 
         const [liked, setLiked] = useState(false);
         const handleShowComments = () => {
@@ -584,9 +616,13 @@ const ListNewsFeed = (props) => {
 
         useEffect(() => {
             if(!isLoading.status) {
-                // getTotalLike();
-                // checkedLike();
-                getTotalComment();
+                if(data.data?.isLike) {
+                    getTotalLike();
+                    checkedLike();
+                }
+                if(data.data?.isComment) {
+                    getTotalComment();
+                }
             }
         }, []);
 
@@ -649,9 +685,70 @@ const ListNewsFeed = (props) => {
                 <div className="newsfeed-content">
                     <pre>{data.data?.Content}</pre>
                 </div>
+                {Object.keys(data.data?.NewsFeedFile).length > 0 && (
+                <div className="newsfeed-images">
+                    {Object.keys(data.data?.NewsFeedFile).length > 2 ? (
+                        <div className="more-than-3-images">
+                        {data.data?.NewsFeedFile.filter((item, idx) => idx < 2).map((item, index) => (
+                            <Image
+                                preview={{ visible: false }}
+                                width={"50%"}
+                                src={item.NameFile}
+                                onClick={() => setVisible(true)}
+                                key={index}
+                            />
+                        ))}
+                            <div className="preview-total" onClick={() => setVisible(true)}>
+                                + {Object.keys(data.data?.NewsFeedFile).length - 2}
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                        {Object.keys(data.data?.NewsFeedFile).length == 1 ? (
+                            <div className="one-image">
+                            {data.data?.NewsFeedFile.map((item, index) => (
+                                <Image
+                                    preview={{ visible: false }}
+                                    width={"100%"}
+                                    src={item.NameFile}
+                                    onClick={() => setVisible(true)}
+                                    key={index}
+                                />
+                            ))}
+                            </div>
+                        ) : (
+                            <div className="two-images">
+                            {data.data?.NewsFeedFile.map((item, index) => (
+                                <Image
+                                    preview={{ visible: false }}
+                                    width={"50%"}
+                                    src={item.NameFile}
+                                    onClick={() => setVisible(true)}
+                                    key={index}
+                                />
+                            ))}
+                            </div>
+                        )}
+
+                        </>
+                    )}
+                    <div style={{ display: 'none' }}>
+                        <Image.PreviewGroup preview={{ visible, onVisibleChange: vis => setVisible(vis) }}>
+                        {data.data?.NewsFeedFile.filter((item) => item.Type == 1).map((item, index) => (
+                            <Image src={item.NameFile} key={index} />
+                        ))}
+                        </Image.PreviewGroup>
+                    </div>
+                </div>
+                ) }
+
                 <div className="newsfeed-total">
-                    <p><ThumbsUp color="#0571e5"/> {totalLike}</p>
-                    <p>{totalComment} Bình luận</p>
+                    {totalLike > 0 && (
+                        <p><ThumbsUp color="#0571e5"/> {totalLike}</p>
+                    )}
+                    {totalComment > 0 && (
+                        <p className="total-comments" onClick={() => setShowComments(!showComments)}>{totalComment} Bình luận</p>
+                    )}
                 </div>
                 <div className="newsfeed-action">
                     <div className="action">

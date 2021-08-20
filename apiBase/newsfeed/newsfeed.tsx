@@ -12,6 +12,14 @@ class NewsFeed {
 
     // Cập nhật data
     update = ( data: any ) => instance.put("/api/NewsFeed", data, {});
+
+    // Upload file
+    uploadFile = (file: any) => {
+        let fData = new FormData();
+        fData.append("File", file);
+        console.log("FDATA: ", fData);
+        return instance.post("/api/uploadfile", fData, {});
+    };
 }
 
 export const newsFeedApi = new NewsFeed();
