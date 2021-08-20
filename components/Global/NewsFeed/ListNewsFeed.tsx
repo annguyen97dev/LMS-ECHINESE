@@ -79,9 +79,14 @@ const ListNewsFeed = (props) => {
 
         const setChooseBranchFunc = (data) => {
             setChooseBranch(data);
+            if(data == 'team') {
+                setValue('GroupNewsFeedID', null);
+            }
+            if(data == 'group') {
+                setValue("BranchList", null) 
+            }
         }
 
-        // console.log("Data Index", data);
         const defaultValueBranchList = [];
         for(let i=0; i < data.NewsFeedBranch.length; i++) {
             defaultValueBranchList.push(data.NewsFeedBranch[i].BranchID);
@@ -91,7 +96,8 @@ const ListNewsFeed = (props) => {
         // console.log("News branchList: ", branchList);
         useEffect(() => {
             if(isVisibleModal) {
-                if(data.GroupNewsFeedName != null) {
+                console.log("Data Index", data);
+                if(data.GroupNewsFeedName != "") {
                     setChooseBranch('group');
                     setValue("GroupNewsFeedID", data.GroupNewsFeedID);
                 }
@@ -191,25 +197,25 @@ const ListNewsFeed = (props) => {
                                             <div className="list-option">
                                                 <div className="item-option">
                                                     <Tooltip title="Thêm Ảnh/Video">
-                                                        <button className={isOpenUploadFile ? "btn active" : "btn"} onClick={openUploadFile}>
+                                                        <div className={isOpenUploadFile ? "btn active" : "btn"} onClick={openUploadFile}>
                                                             <FileImageFilled style={{color: "#10ca93"}}/>
-                                                        </button>
+                                                        </div>
                                                     </Tooltip>
                                                 </div>
                                                 {inTeam != null || inGroup != null ? (
                                                 <>
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào trung tâm">
-                                                        <button className={inTeam != null ? "btn active" : "btn disable"}>
+                                                        <div className={inTeam != null ? "btn active" : "btn disable"}>
                                                             <GroupOutlined style={{color: "#ffc107"}}/>
-                                                        </button>
+                                                        </div>
                                                     </Tooltip>
                                                 </div>
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào nhóm">
-                                                        <button className={inGroup != null ? "btn active" : "btn disable"}>
+                                                        <div className={inGroup != null ? "btn active" : "btn disable"}>
                                                             <TeamOutlined style={{color: "#00afef"}}/>
-                                                        </button>
+                                                        </div>
                                                     </Tooltip>
                                                 </div>
                                                 </>
@@ -217,16 +223,16 @@ const ListNewsFeed = (props) => {
                                                 <>
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào trung tâm">
-                                                        <button className={chooseBranch == 'team' ? "btn active" : "btn disable"} onClick={() => setChooseBranchFunc('team')}>
+                                                        <div className={chooseBranch == 'team' ? "btn active" : "btn disable"} onClick={() => setChooseBranchFunc('team')}>
                                                             <GroupOutlined style={{color: "#ffc107"}}/>
-                                                        </button>
+                                                        </div>
                                                     </Tooltip>
                                                 </div>
                                                 <div className="item-option">
                                                     <Tooltip title="Chia sẻ vào nhóm">
-                                                        <button className={chooseBranch == 'group' ? "btn active" : "btn disable"} onClick={() => setChooseBranchFunc('group')}>
+                                                        <div className={chooseBranch == 'group' ? "btn active" : "btn disable"} onClick={() => setChooseBranchFunc('group')}>
                                                             <TeamOutlined style={{color: "#00afef"}}/>
-                                                        </button>
+                                                        </div>
                                                     </Tooltip>
                                                 </div>
                                                 </>

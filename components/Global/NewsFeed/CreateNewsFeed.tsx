@@ -14,6 +14,7 @@ const CreateNewsFeed = (props) => {
     const [isOpenUploadFile, setIsOpenUploadFile] = useState(false);
     const [visibleSelectBranch, setVisibleSelectBranch] = useState(false);
     const [chooseBranch, setChooseBranch] = useState('team');
+    const [fileList, setFileList] = useState([]);
 
     const [form] = Form.useForm();
 
@@ -26,12 +27,16 @@ const CreateNewsFeed = (props) => {
 
     const onSubmit = handleSubmit((data: any) => {
         console.log("Data submit: ", data);
-        props._onSubmit(data);
-        setIsVisibleModal(false);
-        form.resetFields();
-        setValue("Content", "");
-        setValue("BranchList", "");
-        setValue("GroupNewsFeedID", "");
+        let res = props._onSubmit(data);
+        res.then(function (rs: any) {
+            rs && rs.status == 200 && 
+                setIsVisibleModal(false), 
+                form.resetFields(), 
+                setValue("Content", ""),
+                setValue("BranchList", ""),
+                setValue("GroupNewsFeedID", ""),
+                setValue("NewsFeedFile", "");
+          });
     });
 
     const { dataUser, groupNewsFeed, userBranch, inGroup, inTeam } = props;
@@ -63,6 +68,12 @@ const CreateNewsFeed = (props) => {
 
     const setChooseBranchFunc = (data) => {
         setChooseBranch(data);
+        if(data == 'team') {
+            setValue('GroupNewsFeedID', null);
+        }
+        if(data == 'group') {
+            setValue("BranchList", null) 
+        }
     }
 
     useEffect(() => {
@@ -125,7 +136,7 @@ const CreateNewsFeed = (props) => {
             className="modal-create-nf"
         >
             <div className="container-fluid wrap-create-nf">
-                <Form form={form} layout="vertical">
+                <Form form={form} layout="vertical" onFinish={onSubmit}>
                     <div className="row">
                         <div className="col-12">
                             <div className="info-current-user">
@@ -159,9 +170,11 @@ const CreateNewsFeed = (props) => {
                     </div>
                     <div className={isOpenUploadFile ? "row" : "hide"}>
                         <div className="col-12">
-                            <UploadMutipleFile 
-                                getValue={(value) => setValue("NewsFeedFile", value)}
-                            />
+                            <Form.Item label="Chọn File" name="Chọn File">
+                                <UploadMutipleFile
+                                    getValue={(value) => setValue("NewsFeedFile", value)}
+                                />
+                            </Form.Item>
                         </div>
                     </div>
                     <div className="row">
@@ -174,25 +187,25 @@ const CreateNewsFeed = (props) => {
                                     <div className="list-option">
                                         <div className="item-option">
                                             <Tooltip title="Thêm Ảnh/Video">
-                                                <button className={isOpenUploadFile ? "btn active" : "btn"} onClick={openUploadFile}>
+                                                <div className={isOpenUploadFile ? "btn active" : "btn"} onClick={openUploadFile}>
                                                     <FileImageFilled style={{color: "#10ca93"}}/>
-                                                </button>
+                                                </div>
                                             </Tooltip>
                                         </div>
                                         {inTeam != null || inGroup != null ? (
                                         <>
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào trung tâm">
-                                                <button className={inTeam != null ? "btn active" : "btn disable"}>
+                                                <div className={inTeam != null ? "btn active" : "btn disable"}>
                                                     <GroupOutlined style={{color: "#ffc107"}}/>
-                                                </button>
+                                                </div>
                                             </Tooltip>
                                         </div>
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào nhóm">
-                                                <button className={inGroup != null ? "btn active" : "btn disable"}>
+                                                <div className={inGroup != null ? "btn active" : "btn disable"}>
                                                     <TeamOutlined style={{color: "#00afef"}}/>
-                                                </button>
+                                                </div>
                                             </Tooltip>
                                         </div>
                                         </>
@@ -200,28 +213,32 @@ const CreateNewsFeed = (props) => {
                                         <>
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào trung tâm">
-                                                <button className={chooseBranch == 'team' ? "btn active" : "btn"} onClick={() => setChooseBranchFunc('team')}>
+                                                <div className={chooseBranch == 'team' ? "btn active" : "btn"} onClick={() => setChooseBranchFunc('team')}>
                                                     <GroupOutlined style={{color: "#ffc107"}}/>
-                                                </button>
+                                                </div>
                                             </Tooltip>
                                         </div>
                                         <div className="item-option">
                                             <Tooltip title="Chia sẻ vào nhóm">
-                                                <button className={chooseBranch == 'group' ? "btn active" : "btn"} onClick={() => setChooseBranchFunc('group')}>
+                                                <div className={chooseBranch == 'group' ? "btn active" : "btn"} onClick={() => setChooseBranchFunc('group')}>
                                                     <TeamOutlined style={{color: "#00afef"}}/>
-                                                </button>
+                                                </div>
                                             </Tooltip>
                                         </div>
                                         </>
                                         )}
-
                                     </div>
                                 </div>
                                 <div className="option-for-nf--body">
                                     {inGroup != null || inTeam != null ? (
                                         <div className="choose-branch">
                                             {inGroup != null ? (
-                                            <Form.Item>
+                                            <Form.Item 
+                                                name="Chọn trung tâm"
+                                                rules={[
+                                                    { required: true, message: "Bạn không được để trống" },
+                                                ]}
+                                            >
                                                 {groupNewsFeed && groupNewsFeed.map((item, index) => (
                                                     item.ID == inGroup && (
                                                         <Input 
@@ -232,7 +249,12 @@ const CreateNewsFeed = (props) => {
                                                 ))}
                                             </Form.Item>
                                             ) : (
-                                            <Form.Item>
+                                            <Form.Item 
+                                                name="Chọn nhóm"
+                                                rules={[
+                                                    { required: true, message: "Bạn không được để trống" },
+                                                ]}
+                                            >
                                                 {userBranch && userBranch.map((item, index) => (
                                                     item.BranchID == inTeam && (
                                                         <Input 

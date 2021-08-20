@@ -56,8 +56,6 @@ const UploadMutipleFile = (props) => {
   const setDefaultFileList = (imagesOld) => {
     let object = {};
     let newObject = {}
-    console.log(imagesOld);
-
     imagesOld.map(item => {
       object = {
           uid: item.UID,
