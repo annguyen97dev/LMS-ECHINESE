@@ -18,19 +18,6 @@ const FileExtension = (props: any) => {
   const { showNoti } = useWrap();
   const [document, setDocument] = useState<IDocument[]>([]);
 
-  //   const data = [
-  //     {
-  //       title: "Title 1",
-  //     },
-  //     {
-  //       title: "Title 2",
-  //     },
-  //     {
-  //       title: "Title 3",
-  //     },
-
-  //   ];
-
   const getDataDocByCategoryID = () => {
     setIsLoading(true);
     (async () => {
@@ -56,10 +43,7 @@ const FileExtension = (props: any) => {
   }, [categoryID]);
 
   return (
-    <div
-      className="container-fluid border-left border-right"
-      style={{ height: "100vh" }}
-    >
+    <div className="container-fluid border-left border-right">
       <div className="card-file-box">
         <div className="pb-3 font-weight-black">Tài liệu</div>
 
@@ -79,7 +63,7 @@ const FileExtension = (props: any) => {
                 </a>
 
                 <div className="file-man-title">
-                  <h5 className="mb-0 text-overflow">{doc.DocumentLink}</h5>
+                  <h5 className="mb-0 text-overflow">{doc.DocumentName}</h5>
                   <p className="mb-0">
                     <small>0.0 kb</small>
                   </p>

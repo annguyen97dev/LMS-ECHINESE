@@ -56,7 +56,6 @@ const DocumentCourse = (props: any) => {
     <div>
       <Card
         title="Tài liệu"
-        style={{ height: "100vh" }}
         extra={
           <>
             <button className="btn btn-success" style={{ marginRight: "10px" }}>
