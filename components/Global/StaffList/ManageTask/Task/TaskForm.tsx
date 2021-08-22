@@ -395,7 +395,7 @@ function TaskForm(props) {
 																	handleDeleteTask={checkHandleDeleteTask}
 																	index={idx}
 																/>
-															) : (
+															) : isAuthorization() === 'Accept' ? (
 																<Tooltip title="Cập nhật công việc">
 																	<button
 																		type="button"
@@ -414,10 +414,13 @@ function TaskForm(props) {
 																		<RotateCcw />
 																	</button>
 																</Tooltip>
+															) : (
+																''
 															)}
 														</span>
 													</div>
 												) : !item.StaffID ? (
+													// if empty task
 													<div className="action d-flex align-items-center">
 														<span className="action-item">
 															<Tooltip title="Nhận công việc">
