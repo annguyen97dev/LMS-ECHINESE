@@ -23,7 +23,7 @@ const FileExtension = (props: any) => {
     (async () => {
       try {
         let res = await documentApi.getAll({
-          CategoryID: 2,
+          CategoryID: categoryID,
         });
         //@ts-ignore
         res.status == 200 && setDocument(res.data.data);
@@ -46,32 +46,34 @@ const FileExtension = (props: any) => {
     <div className="container-fluid border-left border-right">
       <div className="card-file-box">
         <div className="pb-3 font-weight-black">Tài liệu</div>
+        <Spin spinning={isLoading}>
+          <div className="row">
+            {document.map((doc) => (
+              <div className="col-12 col-md-4">
+                <div className="file-man-box">
+                  <div className="file-img-box">
+                    <img
+                      src="https://coderthemes.com/highdmin/layouts/assets/images/file_icons/doc.svg"
+                      alt="icon"
+                    />
+                  </div>
 
-        <div className="row">
-          {document.map((doc) => (
-            <div className="col-12 col-md-4">
-              <div className="file-man-box">
-                <div className="file-img-box">
-                  <img
-                    src="https://coderthemes.com/highdmin/layouts/assets/images/file_icons/doc.svg"
-                    alt="icon"
-                  />
-                </div>
+                  <a href={doc.DocumentLink} className="file-download">
+                    <i className="fa fa-download"></i>
+                  </a>
 
-                <a href={doc.DocumentLink} className="file-download">
-                  <i className="fa fa-download"></i>
-                </a>
-
-                <div className="file-man-title">
-                  <h5 className="mb-0 text-overflow">{doc.DocumentName}</h5>
-                  <p className="mb-0">
-                    <small>0.0 kb</small>
-                  </p>
+                  <div className="file-man-title">
+                    <h5 className="mb-0 text-overflow">{doc.DocumentName}</h5>
+                    <p className="mb-0">
+                      <small>0.0 kb</small>
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </Spin>
+
         {/* <Spin spinning={isLoading}>
         <List
           grid={{

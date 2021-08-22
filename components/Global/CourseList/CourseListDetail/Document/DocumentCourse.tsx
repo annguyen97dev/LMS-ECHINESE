@@ -49,9 +49,6 @@ const DocumentCourse = (props: any) => {
     getDataCategoryDoc();
   }, []);
 
-  console.log(categoryDoc);
-  console.log("id", categoryID);
-
   return (
     <div>
       <Card
@@ -91,7 +88,7 @@ const DocumentCourse = (props: any) => {
               </Menu>
             </div>
             <div className="col-9">
-              <FileExtension />
+              <FileExtension categoryID={categoryID} />
             </div>
           </div>
         </Spin>
