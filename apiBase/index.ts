@@ -30,6 +30,7 @@ export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
 
 export { exerciseApi } from "./exercise/exercise";
+export { exerciseGroupApi } from "./exercise/exerciseGroup";
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
 export { studentAdviseApi } from "./customer/student/student-advise";

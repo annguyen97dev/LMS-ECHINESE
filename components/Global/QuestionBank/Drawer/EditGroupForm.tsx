@@ -2,37 +2,27 @@ import React, { useEffect, useState } from "react";
 import { Drawer, Form, Select, Input, Radio, Spin } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
-import ChoiceForm from "./QuestionType/ChoiceForm";
-import MultipleForm from "./QuestionType/MultipleForm";
-import GroupForm from "./GroupForm";
-import {
-  FormOutlined,
-  DeleteOutlined,
-  AppstoreAddOutlined,
-} from "@ant-design/icons";
+import ChoiceForm from "../QuestionType/ChoiceForm";
+import MultipleForm from "../QuestionType/MultipleForm";
+import GroupForm from "../GroupForm";
+import { FormOutlined } from "@ant-design/icons";
+import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 
-const CreateQuestionForm = (props) => {
-  const {
-    questionData,
-    isGroup,
-    onFetchData,
-    handlePopover,
-    onEditData,
-    onAddData,
-  } = props;
+const EditGroupForm = (props) => {
+  const { questionData, isGroup, onFetchData, handlePopover, openForm } = props;
   // console.log("props", props);
   // console.log("QuestionData Drawer: ", questionData);
 
   const [visible, setVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [titleForm, setTitleForm] = useState("");
-  const [questionDataForm, setQuestionDataForm] = useState(questionData);
+  const [questionDataForm, setQuestionDataForm] = useState(null);
+
+  console.log("DATA trong edit: ", questionDataForm);
 
   const showDrawer = () => {
     setVisible(true);
   };
-
   const onClose = (e) => {
     setVisible(false);
     e.stopPropagation();
@@ -43,33 +33,18 @@ const CreateQuestionForm = (props) => {
     setIsLoading(true);
   };
 
-  const onSuccessSubmit = (data) => {
-    console.log("question submit in create: ", data);
-    console.log("question Data in create: ", questionData);
+  const onSuccessSubmit = () => {
     isSubmit &&
       (setIsSubmit(false),
       setIsLoading(false),
-      console.log("Check ID: ", questionData.ID),
-      // onFetchData(),
-      questionData.ID ? onEditData(data) : onAddData(data),
+      onFetchData(),
       setVisible(false));
-  };
-
-  // ON EDIT GROUP ITEM
-  const onEditGroupItem = () => {
-    handlePopover();
-    showDrawer();
-  };
-
-  // ON ADD DATA TO GROUP
-  const onAddDataToGroup = () => {
-    handlePopover();
-    showDrawer();
+    console.log("chạy vô đây");
   };
 
   // RENDER FORM GROUP
   const renderFormGroup = () => {
-    let type = questionData.Type;
+    let type = questionDataForm?.Type;
     // let groupID = questionData.ExerciseGroupID;
 
     // console.log("Group ID là gì: ", groupID);
@@ -77,8 +52,7 @@ const CreateQuestionForm = (props) => {
     if (type) {
       return (
         <GroupForm
-          visible={visible}
-          questionData={questionData}
+          questionData={questionDataForm}
           isSubmit={isSubmit}
           changeIsSubmit={onSuccessSubmit}
         />
@@ -95,7 +69,7 @@ const CreateQuestionForm = (props) => {
   // RENDER FORM SINGLE
   const renderFormSingle = () => {
     // console.log("Type is: ", type);
-    let type = questionData?.Type;
+    let type = questionDataForm?.Type;
     switch (type) {
       case 0:
         return <p className="font-weight-bold">Vui lòng chọn dạng câu hỏi</p>;
@@ -103,22 +77,18 @@ const CreateQuestionForm = (props) => {
       case 1:
         return (
           <ChoiceForm
-            isGroup={isGroup}
-            visible={visible}
             questionData={questionData}
             isSubmit={isSubmit}
-            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+            changeIsSubmit={onSuccessSubmit}
           />
         );
         break;
       case 4:
         return (
           <MultipleForm
-            isGroup={isGroup}
-            visible={visible}
             questionData={questionData}
             isSubmit={isSubmit}
-            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+            changeIsSubmit={onSuccessSubmit}
           />
         );
         break;
@@ -128,30 +98,16 @@ const CreateQuestionForm = (props) => {
     }
   };
 
-  // RETURN TITLE FORM
-  const renderTitleForm = () => {
-    let text = "";
-    if (questionData?.ID) {
-      if (!isGroup?.status) {
-        text = "Form sửa câu hỏi";
-      } else {
-        text = "Form sửa nhóm";
-      }
-    } else {
-      if (isGroup?.status) {
-        text = "Form tạo nhóm";
-      } else {
-        text = "Form tạo câu hỏi";
-      }
-    }
-
-    setTitleForm(text);
-    return text;
+  const onEditGroupItem = (e) => {
+    e.stopPropagation();
+    handlePopover();
+    showDrawer();
   };
 
-  // RETURN BUTTON
-  const renderButton = () => {
-    if (questionData?.ID) {
+  const returnButton = (questionData) => {
+    console.log("question data trong này: ", questionData);
+    console.log("is Group là: ", isGroup);
+    if (questionDataForm?.ID) {
       if (isGroup?.status) {
         return (
           <button className="btn btn-icon edit" onClick={onEditGroupItem}>
@@ -174,38 +130,43 @@ const CreateQuestionForm = (props) => {
           </button>
         );
       } else {
-        if (isGroup?.id) {
-          return (
-            <button className="btn btn-icon add" onClick={onAddDataToGroup}>
-              <AppstoreAddOutlined />
-              Thêm câu hỏi
-            </button>
-          );
-        } else {
-          return (
-            <button className="btn btn-success" onClick={showDrawer}>
-              Tạo câu hỏi
-            </button>
-          );
-        }
+        return (
+          <button className="btn btn-success" onClick={showDrawer}>
+            Tạo câu hỏi
+          </button>
+        );
       }
     }
   };
 
   useEffect(() => {
-    visible && renderTitleForm();
-  }, [visible]);
-
-  // useEffect(() => {
-  //   renderButton();
-  // }, [isGroup]);
+    console.log("Open form: ", openForm);
+    if (openForm.status) {
+      setVisible(true);
+      setQuestionDataForm(openForm.data);
+    }
+  }, [openForm]);
 
   return (
     <>
-      {renderButton()}
+      {/* {questionData.ID ? (
+        <button className="btn btn-icon" onClick={showDrawer}>
+          <Edit />
+        </button>
+      ) : !isGroup.status ? (
+        <button className="btn btn-success" onClick={showDrawer}>
+          Tạo câu hỏi
+        </button>
+      ) : (
+        <button className="btn btn-success" onClick={showDrawer}>
+          Tạo nhóm
+        </button>
+      )} */}
+
+      {/* {returnButton(questionData)} */}
 
       <Drawer
-        title={titleForm}
+        title={questionDataForm?.ID ? "Form sửa câu hỏi" : "Form tạo câu hỏi"}
         placement="right"
         closable={false}
         onClose={onClose}
@@ -216,7 +177,7 @@ const CreateQuestionForm = (props) => {
             <button className="btn btn-light mr-2" onClick={onClose}>
               Đóng
             </button>
-            {questionData?.Type !== 0 && (
+            {questionDataForm?.Type !== 0 && (
               <button
                 className="btn btn-primary"
                 onClick={() => onSubmitData()}
@@ -234,4 +195,4 @@ const CreateQuestionForm = (props) => {
   );
 };
 
-export default CreateQuestionForm;
+export default EditGroupForm;

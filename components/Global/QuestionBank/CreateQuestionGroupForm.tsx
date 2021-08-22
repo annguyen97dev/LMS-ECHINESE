@@ -44,12 +44,10 @@ const CreateQuestionForm = (props) => {
   };
 
   const onSuccessSubmit = (data) => {
-    console.log("question submit in create: ", data);
-    console.log("question Data in create: ", questionData);
+    console.log("question in create: ", data);
     isSubmit &&
       (setIsSubmit(false),
       setIsLoading(false),
-      console.log("Check ID: ", questionData.ID),
       // onFetchData(),
       questionData.ID ? onEditData(data) : onAddData(data),
       setVisible(false));
@@ -114,7 +112,6 @@ const CreateQuestionForm = (props) => {
       case 4:
         return (
           <MultipleForm
-            isGroup={isGroup}
             visible={visible}
             questionData={questionData}
             isSubmit={isSubmit}
@@ -152,44 +149,57 @@ const CreateQuestionForm = (props) => {
   // RETURN BUTTON
   const renderButton = () => {
     if (questionData?.ID) {
-      if (isGroup?.status) {
-        return (
-          <button className="btn btn-icon edit" onClick={onEditGroupItem}>
-            <FormOutlined />
-            Sửa nhóm
-          </button>
-        );
-      } else {
-        return (
-          <button className="btn btn-icon" onClick={showDrawer}>
-            <Edit />
-          </button>
-        );
-      }
+      return (
+        <button className="btn btn-icon edit" onClick={onEditGroupItem}>
+          <FormOutlined />
+          Sửa nhóm
+        </button>
+      );
     } else {
-      if (isGroup?.status) {
-        return (
-          <button className="btn btn-success" onClick={showDrawer}>
-            Tạo nhóm
-          </button>
-        );
-      } else {
-        if (isGroup?.id) {
-          return (
-            <button className="btn btn-icon add" onClick={onAddDataToGroup}>
-              <AppstoreAddOutlined />
-              Thêm câu hỏi
-            </button>
-          );
-        } else {
-          return (
-            <button className="btn btn-success" onClick={showDrawer}>
-              Tạo câu hỏi
-            </button>
-          );
-        }
-      }
+      return (
+        <button className="btn btn-success" onClick={showDrawer}>
+          Tạo nhóm
+        </button>
+      );
     }
+
+    // if (questionData?.ID) {
+    //   if (isGroup?.status) {
+    //     return (
+    //       <button className="btn btn-icon edit" onClick={onEditGroupItem}>
+    //         <FormOutlined />
+    //         Sửa nhóm
+    //       </button>
+    //     );
+    //   } else {
+    //     <button className="btn btn-icon" onClick={showDrawer}>
+    //       <Edit />
+    //     </button>;
+    //   }
+    // } else {
+    //   if (isGroup?.status) {
+    //     return (
+    //       <button className="btn btn-success" onClick={showDrawer}>
+    //         Tạo nhóm
+    //       </button>
+    //     );
+    //   } else {
+    //     if (isGroup?.id) {
+    //       return (
+    //         <button className="btn btn-icon add" onClick={onAddDataToGroup}>
+    //           <AppstoreAddOutlined />
+    //           Thêm câu hỏi
+    //         </button>
+    //       );
+    //     } else {
+    //       return (
+    //         <button className="btn btn-success" onClick={showDrawer}>
+    //           Tạo câu hỏi
+    //         </button>
+    //       );
+    //     }
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -228,7 +238,7 @@ const CreateQuestionForm = (props) => {
           </div>
         }
       >
-        {!isGroup?.status ? renderFormSingle() : renderFormGroup()}
+        {renderFormGroup()}
       </Drawer>
     </>
   );

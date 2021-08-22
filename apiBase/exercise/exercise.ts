@@ -1,3 +1,4 @@
+import { Upload } from "antd";
 import { instance } from "~/apiBase/instance";
 
 const url = "/api/Exercise";

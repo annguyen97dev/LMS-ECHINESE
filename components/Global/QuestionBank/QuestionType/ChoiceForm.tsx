@@ -10,30 +10,19 @@ import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 // let schema = null;
 
 const ChoiceForm = (props) => {
-  const { isSubmit, questionData, changeIsSubmit } = props;
+  const { isSubmit, questionData, changeIsSubmit, visible, isGroup } = props;
   const { showNoti } = useWrap();
   const {
-    reset,
-    register,
-    handleSubmit,
-    control,
-    setValue,
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
   const [form] = Form.useForm();
-  const [questionDataForm, setQuestionDataForm] = useState(questionData);
+  const [questionDataForm, setQuestionDataForm] = useState(null);
   const [isResetEditor, setIsResetEditor] = useState(false);
 
-  console.log("Question base: ", questionDataForm);
-
-  // SUBMI FORM
-  const onSubmit = handleSubmit((data: any, e) => {
-    console.log("DATA SUBMIT: ", data);
-  });
+  // console.log("Question in form: ", questionDataForm);
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
-    console.log("Value Editor Form: ", dataEditor);
     questionDataForm.Content = dataEditor;
     setQuestionDataForm({ ...questionDataForm });
   };
@@ -50,7 +39,6 @@ const ChoiceForm = (props) => {
 
   // ON CHANGE IS CORRECT
   const onChange_isCorrect = (e, AnswerID) => {
-    console.log(`checked = ${e.target.checked}`);
     let checked = e.target.checked;
 
     // Xóa các isTrue còn lại (vì là câu hỏi chọn 1 đáp án)
@@ -78,6 +66,8 @@ const ChoiceForm = (props) => {
 
   // SUBMIT FORM
   const handleSubmitQuestion = async () => {
+    console.log("Question SUBMIT in form: ", questionDataForm);
+
     let res = null;
     try {
       if (questionDataForm.ID) {
@@ -86,9 +76,16 @@ const ChoiceForm = (props) => {
         res = await exerciseApi.add(questionDataForm);
       }
       if (res.status == 200) {
-        changeIsSubmit();
-        resetForm();
+        changeIsSubmit(questionDataForm.ID ? questionDataForm : res.data.data);
+        showNoti(
+          "success",
+          `${questionDataForm.ID ? "Cập nhật" : "Thêm"} Thành công`
+        );
+        if (!questionDataForm.ID) {
+          resetForm();
+        }
         setIsResetEditor(true);
+
         setTimeout(() => {
           setIsResetEditor(false);
         }, 500);
@@ -97,50 +94,84 @@ const ChoiceForm = (props) => {
   };
 
   useEffect(() => {
-    console.log("DATA SUBMIT: ", questionDataForm);
     isSubmit && handleSubmitQuestion();
   }, [isSubmit]);
 
+  useEffect(() => {
+    visible ? setQuestionDataForm(questionData) : setQuestionDataForm(null);
+  }, [visible]);
+
+  // useEffect(() => {
+  //   questionDataForm.ExerciseAnswer = [
+  //     {
+  //       ID: 1,
+  //       AnswerContent: "",
+  //       isTrue: false,
+  //     },
+  //     {
+  //       ID: 2,
+  //       AnswerContent: "",
+  //       isTrue: false,
+  //     },
+  //     {
+  //       ID: 3,
+  //       AnswerContent: "",
+  //       isTrue: false,
+  //     },
+  //     {
+  //       ID: 4,
+  //       AnswerContent: "",
+  //       isTrue: false,
+  //     },
+  //   ];
+  //   setQuestionDataForm([...questionDataForm]);
+  // }, [isGroup]);
+
+  // console.log
+
   return (
     <div className="form-create-question">
-      <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-12">
-              <Form.Item name="Question" label="Câu hỏi">
-                <Editor
-                  handleChange={(value) => getDataEditor(value)}
-                  isReset={isResetEditor}
-                  questionContent={questionDataForm?.Content}
-                  questionData={questionDataForm}
-                />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-12">
-              <p className="style-label">Đáp án</p>
-            </div>
-            {questionDataForm?.ExerciseAnswer.map((item, index) => (
-              <div className="col-md-6 col-12" key={index}>
-                <div className="row-ans">
-                  <Checkbox
-                    checked={item.isTrue}
-                    onChange={(e) => onChange_isCorrect(e, item.ID)}
-                  ></Checkbox>
-                  <Form.Item>
-                    <Input
-                      value={item.AnswerContent}
-                      className="style-input"
-                      onChange={(e) => onChange_text(e, item.ID)}
-                    ></Input>
-                  </Form.Item>
-                </div>
+      {visible && questionDataForm && (
+        <Form form={form} layout="vertical">
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-12">
+                <Form.Item name="Question" label="Câu hỏi">
+                  <Editor
+                    visible={visible}
+                    handleChange={(value) => getDataEditor(value)}
+                    isReset={isResetEditor}
+                    questionContent={questionData?.Content}
+                    questionData={questionData}
+                  />
+                </Form.Item>
               </div>
-            ))}
+            </div>
+            <div className="row">
+              <div className="col-12">
+                <p className="style-label">Đáp án</p>
+              </div>
+              {questionDataForm?.ExerciseAnswer.map((item, index) => (
+                <div className="col-md-6 col-12" key={index}>
+                  <div className="row-ans">
+                    <Checkbox
+                      checked={item.isTrue}
+                      onChange={(e) => onChange_isCorrect(e, item.ID)}
+                    ></Checkbox>
+                    <Form.Item>
+                      <Input
+                        value={item.AnswerContent}
+                        className="style-input"
+                        onChange={(e) => onChange_text(e, item.ID)}
+                      ></Input>
+                    </Form.Item>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </Form>
+        </Form>
+      )}
     </div>
   );
 };
