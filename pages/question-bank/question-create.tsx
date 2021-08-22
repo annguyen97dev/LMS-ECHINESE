@@ -18,7 +18,7 @@ import {
   exerciseGroupApi,
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { questionObj } from "./TypeData/";
+import { questionObj } from "~/lib/TypeData";
 import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
 
 const { Option, OptGroup } = Select;
