@@ -49,14 +49,10 @@ const DocumentCourse = (props: any) => {
     getDataCategoryDoc();
   }, []);
 
-  console.log(categoryDoc);
-  console.log("id", categoryID);
-
   return (
     <div>
       <Card
         title="Tài liệu"
-        style={{ height: "100vh" }}
         extra={
           <>
             <button className="btn btn-success" style={{ marginRight: "10px" }}>
@@ -92,7 +88,7 @@ const DocumentCourse = (props: any) => {
               </Menu>
             </div>
             <div className="col-9">
-              <FileExtension />
+              <FileExtension categoryID={categoryID} />
             </div>
           </div>
         </Spin>

@@ -9,4 +9,5 @@ type IDocument = IBaseApi<{
   ID: number;
   CategoryID: number;
   DocumentLink: string;
+  DocumentName: string;
 }>;

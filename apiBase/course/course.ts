@@ -16,4 +16,8 @@ export const courseApi = {
   update(data) {
     return instance.put(url, data);
   },
+
+  getById(id: number) {
+    return instance.get<IApiResultData<ICourse[]>>(`${url}${id}`);
+  },
 };

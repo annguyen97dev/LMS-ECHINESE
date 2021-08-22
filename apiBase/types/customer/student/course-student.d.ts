@@ -14,3 +14,11 @@ type ICourseOfStudent = IBaseApi<{
   Combo: boolean;
   isContract: boolean;
 }>;
+
+type ICourseOfStudentChange = IBaseApi<{
+  CourseOfStudentID: number; //int ID
+  CourseIDAfter: number; //int ID khóa học mới
+  Paid: number; //số tiền thanh toán thêm
+  Note: string;
+  Commitment: string;
+}>;

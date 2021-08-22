@@ -20,7 +20,8 @@ const DocumentList = (props) => {
     (async () => {
       try {
         let res = await documentCategoryApi.getAll({
-          CourseID: 1,
+          pageIndex: 1,
+          pageSize: 99999,
         });
         //@ts-ignore
         res.status == 200 && setCategoryDoc(res.data.data);
@@ -38,9 +39,6 @@ const DocumentList = (props) => {
   useEffect(() => {
     getDataCategoryDoc();
   }, []);
-
-  console.log(categoryDoc);
-  console.log("id", categoryID);
 
   return (
     <div className="h-100">
@@ -64,14 +62,10 @@ const DocumentList = (props) => {
                   {cate.CategoryName}
                 </Menu.Item>
               ))}
-
-              <Menu.Item key="3" icon={<Folder />}>
-                Test Category
-              </Menu.Item>
             </Menu>
           </div>
           <div className="col-9">
-            <FileExtension />
+            <FileExtension categoryID={categoryID} />
           </div>
         </div>
       </Card>

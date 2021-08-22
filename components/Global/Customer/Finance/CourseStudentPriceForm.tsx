@@ -26,12 +26,14 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { setValue } = useForm();
 
   const [paymentMethod, setPaymentMethod] = useState<IPaymentMethod[]>();
   const [payBranch, setPayBranch] = useState<IBranch[]>();
 
   const fetchData = () => {
+    setIsLoading(true);
     (async () => {
       try {
         const _paymentMethod = await paymentMethodApi.getAll({});
@@ -48,6 +50,8 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
         _payBranch.status == 200 && setPayBranch(_payBranch.data.data);
       } catch (err) {
         showNoti("danger", err.message);
+      } finally {
+        setIsLoading(false);
       }
     })();
   };
@@ -92,6 +96,7 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
       if (infoDetail) {
         form.setFieldsValue({
           ...infoDetail,
+          Paid: null,
           PayDate: null,
           payBranch: null,
         });
@@ -135,29 +140,27 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
               <div className="col-12 col-md-6">
                 <Form.Item name="FullNameUnicode" label="Học viên">
                   <Input
-                    disabled
+                    value={infoDetail.FullNameUnicode}
+                    readOnly={true}
                     className="style-input"
-                    onChange={(e) =>
-                      setValue("FullNameUnicode", e.target.value)
-                    }
+                    // onChange={(e) =>
+                    //   setValue("FullNameUnicode", e.target.value)
+                    // }
                   />
                 </Form.Item>
               </div>
 
               <div className="col-12 col-md-6">
-                <Form.Item
-                  name="MoneyInDebt"
-                  label="Số tiền còn lại"
-                  initialValue={infoDetail.MoneyInDebt}
-                >
+                <Form.Item name="MoneyInDebt" label="Số tiền còn lại">
                   <InputNumber
-                    disabled
+                    value={infoDetail.MoneyInDebt}
+                    readOnly={true}
                     className="ant-input style-input w-100"
                     formatter={(value) =>
                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                     parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                    onChange={(value) => setValue("MoneyInDebt", value)}
+                    // onChange={(value) => setValue("MoneyInDebt", value)}
                   />
                 </Form.Item>
               </div>
@@ -185,11 +188,14 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                   name="Paid"
                   label="Thanh toán"
                   rules={[
-                    { required: true, message: "Vui lòng điền đủ thông tin!" },
+                    {
+                      required: true,
+                      message: "Vui lòng điền đủ thông tin!",
+                    },
                   ]}
                 >
                   <InputNumber
-                    defaultValue={"0"}
+                    value="0"
                     className="ant-input style-input w-100"
                     formatter={(value) =>
                       `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -206,7 +212,10 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                   name="PaymentMethodsID"
                   label="Hình thức thanh toán"
                   rules={[
-                    { required: true, message: "Vui lòng điền đủ thông tin!" },
+                    {
+                      required: true,
+                      message: "Vui lòng điền đủ thông tin!",
+                    },
                   ]}
                 >
                   <Select
@@ -229,7 +238,10 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                   name="PayBranchID"
                   label="Trung tâm thanh toán"
                   rules={[
-                    { required: true, message: "Vui lòng điền đủ thông tin!" },
+                    {
+                      required: true,
+                      message: "Vui lòng điền đủ thông tin!",
+                    },
                   ]}
                 >
                   <Select
@@ -249,7 +261,10 @@ const CourseOfStudentPriceForm = React.memo((props: any) => {
                   name="PayDate"
                   label="Ngày thu tiếp theo"
                   rules={[
-                    { required: true, message: "Vui lòng điền đủ thông tin!" },
+                    {
+                      required: true,
+                      message: "Vui lòng điền đủ thông tin!",
+                    },
                   ]}
                 >
                   <DatePicker

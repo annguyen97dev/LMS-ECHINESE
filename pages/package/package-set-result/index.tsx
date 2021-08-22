@@ -2,24 +2,23 @@ import { Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { branchApi, programApi } from "~/apiBase";
+import { studentApi } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
 import ExpandTable from "~/components/ExpandTable";
-
 import LayoutBase from "~/components/LayoutBase";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
-import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
-import CourseRegExpand from "~/components/Global/Customer/Student/CourseRegistration/CourseRegExpand";
-import CourseRegForm from "~/components/Global/Customer/Student/CourseRegistration/CourseRegForm";
+import { packageResultApi } from "~/apiBase/package/package-result";
+import { packageDetailApi } from "~/apiBase/package/package-detail";
+import PackageResultExpand from "~/components/Global/Package/PackageResult/PackageResultExpand";
 
-const CourseRegistration = () => {
+const PackageSetResult = () => {
   const onSearch = (data) => {
     setCurrentPage(1);
     setParams({
       ...listParamsDefault,
-      FullNameUnicode: data,
+      StudentName: data,
     });
   };
 
@@ -30,40 +29,42 @@ const CourseRegistration = () => {
   const columns = [
     {
       title: "Học viên",
-      dataIndex: "FullNameUnicode",
+      dataIndex: "StudentName",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
       render: (text) => <p className="font-weight-blue">{text}</p>,
     },
+
     {
-      title: "Trung tâm",
-      dataIndex: "BranchName",
+      title: "Đề thi",
+      dataIndex: "ExamTopicName",
+    },
+    {
+      title: "Mức độ",
+      dataIndex: "SetPackageLevel",
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
-      title: "Chuơng trình học",
-      dataIndex: "ProgramName",
+      title: "Hình thức",
+      dataIndex: "ExamTopicTypeName",
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
-      title: "Ca học",
-      dataIndex: "StudyTimeName",
+      title: "Giáo viên",
+      dataIndex: "TeacherName",
     },
     {
-      render: (data) => (
+      title: "Trạng thái",
+      dataIndex: "isDone",
+      render: (type) => (
         <Fragment>
-          <CourseRegForm
-            infoDetail={data}
-            infoId={data.ID}
-            reloadData={(firstPage) => {
-              getDataCourseReg(firstPage);
-            }}
-            currentPage={currentPage}
-          />
+          {type == true && <span className="tag green">Đã hoàn thành</span>}
+          {type == false && <span className="tag yellow">Chưa hoàn thành</span>}
         </Fragment>
       ),
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemDetail, setItemDetail] = useState();
 
   const listParamsDefault = {
     pageSize: 10,
@@ -72,10 +73,10 @@ const CourseRegistration = () => {
     sortType: null,
     fromDate: null,
     toDate: null,
-    BranchID: null,
-    ProgramID: null,
-    StudyTimeID: null,
-    FullNameUnicode: null,
+    StudentID: null,
+    SetPackageDetailID: null,
+    isDone: null,
+    StudentName: null,
   };
 
   const sortOption = [
@@ -97,19 +98,36 @@ const CourseRegistration = () => {
 
   const [dataFilter, setDataFilter] = useState([
     {
-      name: "BranchID",
-      title: "Trung tâm",
+      name: "StudentID",
+      title: "Học viên",
       col: "col-12",
       type: "select",
       optionList: null,
       value: null,
     },
     {
-      name: "ProgramID",
-      title: "Chương trình học",
+      name: "SetPackageDetailID",
+      title: "Gói bài",
       col: "col-12",
       type: "select",
       optionList: null,
+      value: null,
+    },
+    {
+      name: "isDone",
+      title: "Trạng thái",
+      col: "col-12",
+      type: "select",
+      optionList: [
+        {
+          value: true,
+          title: "Đã hoàn thành",
+        },
+        {
+          value: false,
+          title: "Chưa hoàn thành",
+        },
+      ],
       value: null,
     },
     {
@@ -128,8 +146,10 @@ const CourseRegistration = () => {
       pageIndex: 1,
       fromDate: null,
       toDate: null,
-      BranchID: null,
-      ProgramID: null,
+      StudentID: null,
+      SetPackageDetailID: null,
+      isDone: null,
+      StudentName: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;
@@ -152,7 +172,9 @@ const CourseRegistration = () => {
   const [params, setParams] = useState(listParamsDefault);
   const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
-  const [courseReg, setCourseReg] = useState<ICourseRegistration[]>([]);
+  const [packageSetResult, setPackageSetResult] = useState<ISetPackageResult[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState({
     type: "GET_ALL",
     status: false,
@@ -169,36 +191,39 @@ const CourseRegistration = () => {
     setDataFilter([...dataFilter]);
   };
 
-  const getDataCenter = async () => {
+  const getDataStudent = async () => {
     try {
-      let res = await branchApi.getAll({ pageSize: 99999, pageIndex: 1 });
+      let res = await studentApi.getAll({ pageSize: 99999, pageIndex: 1 });
       if (res.status == 200) {
         const newData = res.data.data.map((item) => ({
-          title: item.BranchName,
-          value: item.ID,
+          title: item.FullNameUnicode,
+          value: item.UserInformationID,
         }));
-        setDataFunc("BranchID", newData);
+        setDataFunc("StudentID", newData);
       }
 
-      res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
+      res.status == 204 && showNoti("danger", "Không có dữ liệu học sinh này!");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
     }
   };
 
-  const getDataProgram = async () => {
+  const getDataPackageDetail = async () => {
     try {
-      let res = await programApi.getAll({ pageSize: 99999, pageIndex: 1 });
+      let res = await packageDetailApi.getAll({
+        pageSize: 99999,
+        pageIndex: 1,
+      });
       if (res.status == 200) {
         const newData = res.data.data.map((item) => ({
-          title: item.ProgramName,
+          title: item.SetPackageName,
           value: item.ID,
         }));
-        setDataFunc("ProgramID", newData);
+        setDataFunc("SetPackageDetailID", newData);
       }
 
-      res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
+      res.status == 204 && showNoti("danger", "Không có dữ liệu gói bài này!");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -206,8 +231,8 @@ const CourseRegistration = () => {
   };
 
   useEffect(() => {
-    getDataCenter();
-    getDataProgram();
+    getDataStudent();
+    getDataPackageDetail();
   }, []);
 
   const getPagination = (pageNumber: number) => {
@@ -218,19 +243,16 @@ const CourseRegistration = () => {
     });
   };
 
-  const getDataCourseReg = (page: any) => {
+  const getDataSetPackageResult = (page: any) => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
     (async () => {
       try {
-        let res = await courseRegistrationApi.getAll({
-          ...params,
-          pageIndex: page,
-        });
+        let res = await packageResultApi.getAll({ ...params, pageIndex: page });
         //@ts-ignore
-        res.status == 200 && setCourseReg(res.data.data);
+        res.status == 200 && setPackageSetResult(res.data.data);
         if (res.status == 204) {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
@@ -248,18 +270,13 @@ const CourseRegistration = () => {
   };
 
   useEffect(() => {
-    getDataCourseReg(currentPage);
+    getDataSetPackageResult(currentPage);
   }, [params]);
-
-  const [itemDetail, setItemDetail] = useState();
 
   const expandedRowRender = (data, index) => {
     return (
       <Fragment>
-        <CourseRegExpand
-          infoID={data.UserInformationID}
-          // infoIndex={index}
-        />
+        <PackageResultExpand info={data} infoIndex={index} />
       </Fragment>
     );
   };
@@ -271,8 +288,8 @@ const CourseRegistration = () => {
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       addClass="basic-header"
-      TitlePage="DANH SÁCH HỌC VIÊN hẹn đăng kí"
-      dataSource={courseReg}
+      TitlePage="KẾT QUẢ GÓI BÀI"
+      dataSource={packageSetResult}
       columns={columns}
       Extra={
         <div className="extra-table">
@@ -293,5 +310,5 @@ const CourseRegistration = () => {
     />
   );
 };
-CourseRegistration.layout = LayoutBase;
-export default CourseRegistration;
+PackageSetResult.layout = LayoutBase;
+export default PackageSetResult;

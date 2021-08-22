@@ -2,7 +2,7 @@ import { Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { Info } from "react-feather";
+import { Eye, Info } from "react-feather";
 import { branchApi, courseApi } from "~/apiBase";
 import { courseStudentApi } from "~/apiBase/customer/student/course-student";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
@@ -73,6 +73,20 @@ const CourseStudent = () => {
     {
       render: (data) => (
         <Fragment>
+          <Link
+            href={{
+              pathname:
+                "/customer/student/student-course/student-detail/[slug]",
+              query: { slug: data.UserInformationID },
+            }}
+          >
+            <Tooltip title="Xem chi tiết">
+              <button className="btn btn-icon">
+                <Eye />
+              </button>
+            </Tooltip>
+          </Link>
+
           <ChangeCourseForm
             infoDetail={data}
             infoId={data.ID}
@@ -148,6 +162,23 @@ const CourseStudent = () => {
       value: null,
     },
     {
+      name: "Combo",
+      title: "Chọn gói",
+      col: "col-12",
+      type: "select",
+      optionList: [
+        {
+          value: true,
+          title: "Gói combo",
+        },
+        {
+          value: false,
+          title: "Gói lẻ",
+        },
+      ],
+      value: null,
+    },
+    {
       name: "date-range",
       title: "Ngày tạo",
       col: "col-12",
@@ -165,6 +196,7 @@ const CourseStudent = () => {
       toDate: null,
       BranchID: null,
       CourseID: null,
+      Combo: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;

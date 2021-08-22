@@ -10,6 +10,8 @@ import {
   Divider,
   Skeleton,
   InputNumber,
+  Switch,
+  DatePicker,
 } from "antd";
 import { CreditCard, Move, RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
@@ -22,9 +24,11 @@ import {
   studentChangeCourseApi,
 } from "~/apiBase";
 import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student-price";
-import SkeletonInput from "antd/lib/skeleton/Input";
+import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
+import { paymentMethodApi } from "~/apiBase/options/payment-method";
+import { courseReserveApi } from "~/apiBase/customer/student/course-reserve";
 
-const ChangeCourseForm = React.memo((props: any) => {
+const CourseReserveIntoCourse = React.memo((props: any) => {
   const { Option } = Select;
   const { TextArea } = Input;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -33,7 +37,7 @@ const ChangeCourseForm = React.memo((props: any) => {
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
   const { setValue } = useForm();
-  const [courseStudentPrice, setCourseStudentPrice] = useState(null);
+  // const [courseStudentPrice, setCourseStudentPrice] = useState(null);
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -43,9 +47,11 @@ const ChangeCourseForm = React.memo((props: any) => {
   const [courseAfter, setCourseAfter] = useState<ICourse[]>();
   const [courseAfterId, setCourseAfterId] = useState();
   const [courseAfterDetail, setCourseAfterDetail] = useState<ICourseDetail>();
+  const [paymentMethod, setPaymentMethod] = useState<IPaymentMethod[]>();
+
+  const [isContract, setIsContract] = useState(false);
   const [requestMoney, setRequestMoney] = useState();
-  const [leftMoney, setLeftMoney] = useState();
-  const [newMoney, setNewMoney] = useState();
+  const [courseStudentPrice, setCourseStudentPrice] = useState(null);
 
   const fetchDataPrice = () => {
     setIsLoading(true);
@@ -64,7 +70,20 @@ const ChangeCourseForm = React.memo((props: any) => {
     })();
   };
 
-  const fetchDataCourseAfter = () => {
+  const fetchDataPaymentMethod = () => {
+    (async () => {
+      try {
+        const _paymentMethod = await paymentMethodApi.getAll({});
+        _paymentMethod.status == 200 &&
+          setPaymentMethod(_paymentMethod.data.data);
+      } catch (err) {
+        showNoti("danger", err.message);
+      }
+    })();
+  };
+
+  const fetchDataCourse = () => {
+    setIsLoading(true);
     (async () => {
       try {
         const _courseAfter = await courseApi.getAll({
@@ -74,6 +93,8 @@ const ChangeCourseForm = React.memo((props: any) => {
         _courseAfter.status == 200 && setCourseAfter(_courseAfter.data.data);
       } catch (err) {
         showNoti("danger", err.message);
+      } finally {
+        setIsLoading(false);
       }
     })();
   };
@@ -98,13 +119,14 @@ const ChangeCourseForm = React.memo((props: any) => {
   };
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     setLoading(true);
     if (infoId) {
       try {
-        let res = await studentChangeCourseApi.changeCourse({
+        let res = await courseReserveApi.reserveAddCourse({
           ...data,
-          CourseOfStudentID: infoId,
+          UserInformationID: infoDetail.UserInformationID,
+          CourseReserveID: infoDetail.ID,
+          BranchID: infoDetail.BranchID,
         });
         reloadData(currentPage);
         afterSubmit(res?.data.message);
@@ -123,8 +145,9 @@ const ChangeCourseForm = React.memo((props: any) => {
 
   useEffect(() => {
     if (isModalVisible) {
+      fetchDataCourse();
       fetchDataPrice();
-      fetchDataCourseAfter();
+      fetchDataPaymentMethod();
     }
   }, [isModalVisible]);
 
@@ -151,27 +174,22 @@ const ChangeCourseForm = React.memo((props: any) => {
           setIsModalVisible(true);
         }}
       >
-        <Tooltip title="Chuyển khóa">
+        <Tooltip title="Chuyển học viên vào khóa học">
           <Move />
         </Tooltip>
       </button>
       <Modal
-        title="Chuyển khóa"
+        title="Chuyển học viên vào khóa học"
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
         <div className="container-fluid">
           <Form form={form} layout="vertical" onFinish={onSubmit}>
-            <Divider orientation="center">Thông tin khóa hiện tại</Divider>
-
             <Spin spinning={isLoading}>
               <div className="row">
                 <div className="col-12">
-                  <Form.Item
-                    // name="FullNameUnicode"
-                    label="Học viên"
-                  >
+                  <Form.Item label="Học viên">
                     <Input
                       className="style-input"
                       readOnly={true}
@@ -180,89 +198,40 @@ const ChangeCourseForm = React.memo((props: any) => {
                   </Form.Item>
                 </div>
               </div>
+
               <div className="row">
                 <div className="col-12">
-                  <Form.Item label="Khóa học">
-                    <Select
-                      style={{ width: "100%" }}
+                  <Form.Item label="Trung tâm">
+                    <Input
                       className="style-input"
-                      defaultValue={infoDetail.CourseID}
                       readOnly={true}
-                    >
-                      <Option value={infoDetail.CourseID}>
-                        {infoDetail.CourseName}
-                      </Option>
-                    </Select>
+                      value={infoDetail.BranchName}
+                    />
                   </Form.Item>
                 </div>
               </div>
 
-              {courseStudentPrice != null && (
-                <>
-                  <div className="row">
-                    <div className="col-md-6 col-12">
-                      <Form.Item label="Giá tiền">
-                        <Input
-                          defaultValue={Intl.NumberFormat("ja-JP").format(
-                            courseStudentPrice.Price
-                          )}
-                          className="style-input"
-                          readOnly={true}
-                        />
-                      </Form.Item>
-                    </div>
+              <div className="row">
+                <div className="col-12">
+                  <Form.Item label="Chương trình học">
+                    <Input
+                      className="style-input"
+                      readOnly={true}
+                      value={infoDetail.ProgramName}
+                    />
+                  </Form.Item>
+                </div>
+              </div>
 
-                    <div className="col-md-6 col-12">
-                      <Form.Item label="Giảm giá">
-                        <Input
-                          defaultValue={Intl.NumberFormat("ja-JP").format(
-                            courseStudentPrice.Reduced
-                          )}
-                          className="style-input"
-                          readOnly={true}
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
-
-                  <div className="row">
-                    <div className="col-md-6 col-12">
-                      <Form.Item label="Đã đóng">
-                        <Input
-                          defaultValue={Intl.NumberFormat("ja-JP").format(
-                            courseStudentPrice.Paid
-                          )}
-                          className="style-input"
-                          readOnly={true}
-                        />
-                      </Form.Item>
-                    </div>
-
-                    <div className="col-md-6 col-12">
-                      <Form.Item label="Còn lại">
-                        <Input
-                          defaultValue={Intl.NumberFormat("ja-JP").format(
-                            courseStudentPrice.MoneyInDebt
-                          )}
-                          className="style-input"
-                          readOnly={true}
-                        />
-                      </Form.Item>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <Divider orientation="center">Khóa chuyển đến</Divider>
               {courseAfter != null && (
                 <div className="row">
                   <div className="col-12">
-                    <Form.Item name="CourseIDAfter" label="Khóa học chuyển đến">
+                    <Form.Item name="CourseID" label="Khóa học chuyển đến">
                       <Select
                         style={{ width: "100%" }}
                         className="style-input"
                         onChange={handleChangeCourseAfter}
-                        placeholder="Chọn khóa học chuyển đến"
+                        placeholder="Chọn khóa học"
                       >
                         {courseAfter?.map((item, index) => (
                           <Option key={index} value={item.ID}>
@@ -310,7 +279,7 @@ const ChangeCourseForm = React.memo((props: any) => {
               </Spin>
 
               <div className="row">
-                <div className="col-12">
+                <div className="col-12 col-md-6">
                   <Form.Item
                     name="Paid"
                     label="Thanh toán"
@@ -329,15 +298,47 @@ const ChangeCourseForm = React.memo((props: any) => {
                     />
                   </Form.Item>
                 </div>
+
+                <div className="col-12 col-md-6">
+                  <Form.Item
+                    name="PaymentMethodsID"
+                    label="Hình thức thanh toán"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng điền đủ thông tin!",
+                      },
+                    ]}
+                  >
+                    <Select
+                      className="w-100 style-input"
+                      placeholder="Chọn hình thức thanh toán"
+                    >
+                      {paymentMethod?.map((item, index) => (
+                        <Option key={index} value={item.ID}>
+                          {item.Name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </div>
               </div>
 
               <div className="row">
                 <div className="col-12">
-                  <Form.Item name="Commitment" label="Cam kết">
-                    <TextArea
+                  <Form.Item
+                    name="PayDate"
+                    label="Ngày thu tiếp theo"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng điền đủ thông tin!",
+                      },
+                    ]}
+                  >
+                    <DatePicker
                       className="style-input w-100"
-                      onChange={(e) => setValue("Commitment", e.target.value)}
-                      allowClear={true}
+                      onChange={(e) => setValue("PayDate", e)}
                     />
                   </Form.Item>
                 </div>
@@ -345,10 +346,10 @@ const ChangeCourseForm = React.memo((props: any) => {
 
               <div className="row">
                 <div className="col-12">
-                  <Form.Item name="Note" label="Ghi chú">
+                  <Form.Item name="Note" label="Cam kết">
                     <TextArea
                       className="style-input w-100"
-                      onChange={(e) => setValue("Note", e.target.value)}
+                      onChange={(e) => setValue("Commitment", e.target.value)}
                       allowClear={true}
                     />
                   </Form.Item>
@@ -372,4 +373,4 @@ const ChangeCourseForm = React.memo((props: any) => {
   );
 });
 
-export default ChangeCourseForm;
+export default CourseReserveIntoCourse;
