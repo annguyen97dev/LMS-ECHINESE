@@ -11,24 +11,43 @@ import ReactHtmlParser, {
 import { exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 
-const listAlphabet = ["A", "B", "C", "D", "F", "G"];
-
 const QuestionSingle = (props: any) => {
-  const { listQuestion, loadingQuestion, onFetchData, onRemoveData } = props;
+  const {
+    listQuestion,
+    loadingQuestion,
+    onFetchData,
+    onRemoveData,
+    isGroup,
+    onEditData,
+    listAlphabet,
+  } = props;
   const [value, setValue] = React.useState(1);
-  const [dataListQuestion, setDataListQuestion] = useState(listQuestion);
+  const [dataListQuestion, setDataListQuestion] = useState(null);
   const { showNoti } = useWrap();
   const [visible, setVisible] = useState({
     id: null,
     status: false,
   });
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [loadingInGroup, setLoadingInGroup] = useState(false);
 
-  console.log("List Question: ", listQuestion);
+  // console.log("List Question: ", listQuestion);
 
   const onChange = (e) => {
     e.preventDefault();
     // setValue(e.target.value);
+  };
+
+  // ON EDIT
+  const onEdit = (dataEdit) => {
+    if (!isGroup.status) {
+      onEditData(dataEdit);
+    } else {
+      let index = dataListQuestion.findIndex((item) => item.ID == dataEdit.ID);
+      dataListQuestion.splice(index, 1, dataEdit);
+
+      setDataListQuestion([...dataListQuestion]);
+    }
   };
 
   const deleteQuestionItem = (quesID) => {
@@ -54,7 +73,8 @@ const QuestionSingle = (props: any) => {
           ...visible,
           status: false,
         });
-        onRemoveData(quesItem.ID);
+        onRemoveData(quesItem);
+        showNoti("success", "Xóa thành công");
       }
     } catch (error) {
       showNoti("danger", error);
@@ -70,9 +90,33 @@ const QuestionSingle = (props: any) => {
     });
   };
 
+  const getQuestionInGroup = async () => {
+    setLoadingInGroup(true);
+    try {
+      let res = await exerciseApi.getAll({
+        pageIndex: 1,
+        pageSize: 9999,
+        ExerciseGroupID: isGroup.id,
+      });
+      res.status == 200 && setDataListQuestion(res.data.data);
+      res.status == 204 && setDataListQuestion([]);
+    } catch (error) {
+      showNoti("danger", error);
+    } finally {
+      setLoadingInGroup(false);
+    }
+  };
+
   useEffect(() => {
-    setDataListQuestion(listQuestion);
+    !isGroup.status
+      ? setDataListQuestion(listQuestion)
+      : isGroup.id && getQuestionInGroup();
   }, [listQuestion]);
+
+  useEffect(() => {
+    isGroup.status && setDataListQuestion([]);
+    isGroup.status && isGroup.id && getQuestionInGroup();
+  }, [isGroup]);
 
   return (
     <>
@@ -87,7 +131,7 @@ const QuestionSingle = (props: any) => {
               <div className="question-single question-wrap w-100">
                 {item.ExerciseAnswer?.map((ans, i) => (
                   <Radio
-                    defaultChecked={ans.isTrue}
+                    checked={ans.isTrue}
                     key={i}
                     className="d-block"
                     value={ans.ID}
@@ -102,7 +146,11 @@ const QuestionSingle = (props: any) => {
             </div>
           </div>
           <div className="box-action">
-            <CreateQuestionForm questionData={item} onFetchData={onFetchData} />
+            <CreateQuestionForm
+              questionData={item}
+              onFetchData={onFetchData}
+              onEditData={(dataEdit) => onEdit(dataEdit)}
+            />
             <Popconfirm
               title="Bạn có chắc muốn xóa?"
               visible={item.ID == visible.id && visible.status}
@@ -120,6 +168,18 @@ const QuestionSingle = (props: any) => {
           </div>
         </div>
       ))}
+
+      {isGroup?.status && loadingInGroup ? (
+        <div>
+          <Skeleton />
+        </div>
+      ) : (
+        dataListQuestion?.length == 0 && (
+          <p style={{ color: "#dd4667" }}>
+            <i>Nhóm này chưa có câu hỏi</i>
+          </p>
+        )
+      )}
       {loadingQuestion && (
         <div>
           <Skeleton />

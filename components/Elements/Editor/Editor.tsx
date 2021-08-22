@@ -69,8 +69,6 @@ import "bootstrap/js/src/tooltip";
 const EditorSummernote = (props) => {
   const { getDataEditor, isReset, questionContent } = props;
 
-  const [valueEditor, setValueEditor] = useState(questionContent);
-
   const onChange = (content) => {
     getDataEditor(content);
   };
@@ -80,11 +78,6 @@ const EditorSummernote = (props) => {
       let res = await studentApi.uploadImage(fileList[0]);
       if (res.status == 200) {
         ReactSummernote.insertImage(res.data.data);
-        // const reader = new FileReader();
-        // reader.onloadend = () => {
-        //   ReactSummernote.insertImage(res.data.data);
-        // };
-        // reader.readAsDataURL(res.data.data);
       }
     } catch (error) {
     } finally {
@@ -96,25 +89,27 @@ const EditorSummernote = (props) => {
   }, [isReset]);
 
   return (
-    <ReactSummernote
-      children={ReactHtmlParser(questionContent)}
-      options={{
-        lang: "vn",
-        height: 220,
-        dialogsInBody: true,
-        toolbar: [
-          ["style", ["style"]],
-          ["font", ["bold", "underline", "clear"]],
-          ["fontname", ["fontname"]],
-          ["para", ["ul", "ol", "paragraph"]],
-          ["table", ["table"]],
-          ["insert", ["link", "picture", "video"]],
-          ["view", ["fullscreen", "codeview"]],
-        ],
-      }}
-      onChange={onChange}
-      onImageUpload={onImageUpload}
-    />
+    <>
+      <ReactSummernote
+        children={ReactHtmlParser(questionContent)}
+        options={{
+          lang: "vn",
+          height: 220,
+          dialogsInBody: true,
+          toolbar: [
+            ["style", ["style"]],
+            ["font", ["bold", "underline", "clear"]],
+            ["fontname", ["fontname"]],
+            ["para", ["ul", "ol", "paragraph"]],
+            ["table", ["table"]],
+            ["insert", ["link", "picture", "video"]],
+            ["view", ["fullscreen", "codeview"]],
+          ],
+        }}
+        onChange={onChange}
+        onImageUpload={onImageUpload}
+      />
+    </>
   );
 };
 
