@@ -31,13 +31,24 @@ const UploadMutipleFile = (props) => {
 
   const beforeUpload = async (file) => {
     console.log("File: ", file);
+    let typeFile;
+    if(file.type.includes("image")) {
+      typeFile = 2;
+    }
+    if(file.type.includes("audio")) {
+      typeFile = 3;
+    }
+    if(file.type.includes("video")) {
+      typeFile = 4;
+    }
+    // console.log(typeFile);
     let object = {};
     try {
       let res = await newsFeedApi.uploadFile(file);
       if(res.status == 200) {
         showNoti("success", "Upload thành công");
         object = {
-          Type: 1,
+          Type: typeFile,
           NameFile: res.data.data,
           uid: file.uid,
         }
@@ -80,7 +91,7 @@ const UploadMutipleFile = (props) => {
 
   return (
     <>
-      <ImgCrop rotate>
+      {/* <ImgCrop rotate> */}
         <Upload
           // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           listType="picture-card"
@@ -89,11 +100,12 @@ const UploadMutipleFile = (props) => {
           onPreview={onPreview}
           beforeUpload={beforeUpload}
           onRemove={onRemove}
+          accept="image/*, audio/*, video/*"
         >
           {fileList.length < 5 && '+ Upload'}
           {getValue(list)}
         </Upload>
-      </ImgCrop>
+      {/* </ImgCrop> */}
     </>
   );
 };

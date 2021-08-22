@@ -691,11 +691,11 @@ const ListNewsFeed = (props) => {
                 <div className="newsfeed-content">
                     <pre>{data.data?.Content}</pre>
                 </div>
-                {Object.keys(data.data?.NewsFeedFile).length > 0 && (
+                {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length > 0 && (
                 <div className="newsfeed-images">
-                    {Object.keys(data.data?.NewsFeedFile).length > 2 ? (
+                    {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length > 2 ? (
                         <div className="more-than-3-images">
-                        {data.data?.NewsFeedFile.filter((item, idx) => idx < 2).map((item, index) => (
+                        {data.data?.NewsFeedFile.filter((item, idx) => idx < 2 && item.Type == 2).map((item, index) => (
                             <Image
                                 preview={{ visible: false }}
                                 width={"50%"}
@@ -710,9 +710,9 @@ const ListNewsFeed = (props) => {
                         </div>
                     ) : (
                         <>
-                        {Object.keys(data.data?.NewsFeedFile).length == 1 ? (
+                        {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length == 1 ? (
                             <div className="one-image">
-                            {data.data?.NewsFeedFile.map((item, index) => (
+                            {data.data?.NewsFeedFile.filter((item, idx) => item.Type == 2).map((item, index) => (
                                 <Image
                                     preview={{ visible: false }}
                                     width={"100%"}
@@ -724,7 +724,7 @@ const ListNewsFeed = (props) => {
                             </div>
                         ) : (
                             <div className="two-images">
-                            {data.data?.NewsFeedFile.map((item, index) => (
+                            {data.data?.NewsFeedFile.filter((item, idx) => item.Type == 2).map((item, index) => (
                                 <Image
                                     preview={{ visible: false }}
                                     width={"50%"}
@@ -740,14 +740,22 @@ const ListNewsFeed = (props) => {
                     )}
                     <div style={{ display: 'none' }}>
                         <Image.PreviewGroup preview={{ visible, onVisibleChange: vis => setVisible(vis) }}>
-                        {data.data?.NewsFeedFile.filter((item) => item.Type == 1).map((item, index) => (
+                        {data.data?.NewsFeedFile.filter((item) => item.Type == 2).map((item, index) => (
                             <Image src={item.NameFile} key={index} />
                         ))}
                         </Image.PreviewGroup>
                     </div>
                 </div>
                 ) }
-
+                {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 3)).length > 0 && (
+                <div className="newsfeed-audio">
+                    {data.data?.NewsFeedFile.filter((item) => item.Type == 3).map((item, index) => (
+                        <audio className="audio-tag" controls key={index}>
+                            <source src={item.NameFile} type="audio/mpeg" />
+                        </audio>
+                    ))}
+                </div>
+                )}
                 <div className="newsfeed-total">
                     {totalLike > 0 && (
                         <p><ThumbsUp color="#0571e5"/> {totalLike}</p>
