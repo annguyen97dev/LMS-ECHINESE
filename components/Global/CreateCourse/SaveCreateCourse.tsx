@@ -77,18 +77,16 @@ const SaveCreateCourse = (props) => {
 					visible={isModalVisible}
 					onCancel={closeModal}
 					footer={
-						<div className="col-12 mt-3">
-							<button
-								className="btn btn-primary w-100"
-								onClick={checkHandleSaveCourse}
-								disabled={isLoading.type == 'SAVE_COURSE' && isLoading.status}
-							>
-								{isEdit ? 'Cập nhật' : 'Lưu tất cả'}
-								{isLoading.type == 'SAVE_COURSE' && isLoading.status && (
-									<Spin className="loading-base" />
-								)}
-							</button>
-						</div>
+						<button
+							className="btn btn-primary w-100"
+							onClick={checkHandleSaveCourse}
+							disabled={isLoading.type == 'SAVE_COURSE' && isLoading.status}
+						>
+							{isEdit ? 'Cập nhật' : 'Lưu tất cả'}
+							{isLoading.type == 'SAVE_COURSE' && isLoading.status && (
+								<Spin className="loading-base" />
+							)}
+						</button>
 					}
 					width={isEdit ? 600 : 800}
 				>

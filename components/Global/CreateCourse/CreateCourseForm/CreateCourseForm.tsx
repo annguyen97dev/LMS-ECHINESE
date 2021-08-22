@@ -134,6 +134,9 @@ const CreateCourseForm = (props) => {
 									label="Trung Tâm"
 									placeholder="Chọn trung tâm"
 									optionList={optionListForForm.branchList}
+									isLoading={
+										isLoading.type === 'FETCH_DATA' && isLoading.status
+									}
 									onChangeSelect={checkHandleFetchUserInformation}
 								/>
 							</div>
@@ -164,6 +167,9 @@ const CreateCourseForm = (props) => {
 									name="StudyTimeID"
 									label="Ca học"
 									placeholder="Chọn ca học"
+									isLoading={
+										isLoading.type === 'FETCH_DATA' && isLoading.status
+									}
 									optionList={optionListForForm.studyTimeList}
 									mode="multiple"
 									onChangeSelect={(value) => {
@@ -180,6 +186,9 @@ const CreateCourseForm = (props) => {
 									name="GradeID"
 									label="Khối học"
 									placeholder="Chọn khối học"
+									isLoading={
+										isLoading.type === 'FETCH_DATA' && isLoading.status
+									}
 									optionList={optionListForForm.gradeList}
 									onChangeSelect={checkHandleFetchProgramByGrade}
 								/>

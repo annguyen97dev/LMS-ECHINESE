@@ -73,7 +73,7 @@
 	}
 }
 .custom-calendar-modal {
-	@include max-media(1439px) {
+	@media screen and (min-width: 768px) and (max-width: 1439px) {
 		margin: 0 calc(100% / 12 * 4 - 0.75rem) 0 auto;
 	}
 }

@@ -24,3 +24,9 @@ export const fmArrayToObjectWithSpecialKey = (arr, key) => {
 		return newObj;
 	}, {});
 };
+export const numberWithCommas = (x) => {
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+export const mathRound = (number) => {
+	return Math.round(number * 100) / 100;
+};
