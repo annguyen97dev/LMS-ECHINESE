@@ -1,4 +1,5 @@
 type INewsFeedComment = IBaseApi<{
+    Avatar: string,
     ID: number,
     UserInformationID: number,
     FullNameUnicode: string,
@@ -9,4 +10,5 @@ type INewsFeedComment = IBaseApi<{
     CreatedBy: string,
     ModifiedOn: string,
     ModifiedBy: string
+    isReply: boolean,
 }>;
