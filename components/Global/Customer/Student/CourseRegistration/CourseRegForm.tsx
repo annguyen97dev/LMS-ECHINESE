@@ -126,7 +126,6 @@ const CourseRegForm = React.memo((props: any) => {
 
   useEffect(() => {
     if (isModalVisible) {
-      // fetchDataPrice();
       fetchDataCourseAfter();
     }
   }, [isModalVisible]);
@@ -136,12 +135,6 @@ const CourseRegForm = React.memo((props: any) => {
       fetchDataCourseAfterDetail();
     }
   }, [courseAfterId]);
-
-  // useEffect(() => {
-  //   if (isModalVisible == true) {
-  //     setRequestMoney(courseAfterDetail.Price - courseStudentPrice.Paid);
-  //   }
-  // }, [courseAfterDetail]);
 
   return (
     <>

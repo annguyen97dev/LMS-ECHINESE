@@ -2,83 +2,69 @@ import { Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { Info } from "react-feather";
-import { areaApi, branchApi, parentsApi, programApi } from "~/apiBase";
-import { courseReserveApi } from "~/apiBase/customer/student/course-reserve";
+import { studentApi } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
-import ParentsDelete from "~/components/Global/Customer/ParentsList/ParentsDelete";
-import ParentsForm from "~/components/Global/Customer/ParentsList/ParentsForm";
-import CourseReserveIntoCourse from "~/components/Global/Customer/Student/CourseReserve/CourseReserveIntoCourse";
-import RegCancel from "~/components/Global/Customer/Student/RegCancel";
-import RegInfo from "~/components/Global/Customer/Student/RegInfo";
-import ReserveChangeCourse from "~/components/Global/Customer/Student/ReserveChangeCourse";
+import ExpandTable from "~/components/ExpandTable";
 import LayoutBase from "~/components/LayoutBase";
-import PowerTable from "~/components/PowerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
+import { packageResultApi } from "~/apiBase/package/package-result";
+import { packageDetailApi } from "~/apiBase/package/package-detail";
+import PackageResultExpand from "~/components/Global/Package/PackageResult/PackageResultExpand";
 
-const StudentCourseReserve = () => {
+const PackageSetResult = () => {
+  const onSearch = (data) => {
+    setCurrentPage(1);
+    setParams({
+      ...listParamsDefault,
+      StudentName: data,
+    });
+  };
+
   const handleReset = () => {
     setCurrentPage(1);
     setParams(listParamsDefault);
   };
-
   const columns = [
     {
       title: "Học viên",
-      dataIndex: "FullNameUnicode",
+      dataIndex: "StudentName",
+      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
       render: (text) => <p className="font-weight-blue">{text}</p>,
-    },
-    {
-      title: "Trung tâm",
-      dataIndex: "BranchName",
-      render: (text) => <p className="font-weight-black">{text}</p>,
-    },
-    {
-      title: "Chương trình học",
-      dataIndex: "ProgramName",
-      render: (text) => <p className="font-weight-black">{text}</p>,
-    },
-    {
-      title: "Số tiền",
-      dataIndex: "ProgramPrice",
-      render: (price) => (
-        <span>{Intl.NumberFormat("en-US").format(price)}</span>
-      ),
-    },
-    {
-      title: "Ngày bảo lưu",
-      dataIndex: "ProgramName",
-      render: (DOB) => moment(DOB).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Ngày hết hạn",
-      dataIndex: "ExpirationDate",
-      render: (DOB) => moment(DOB).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "StatusName",
-      render: (status) => <>{<span className="tag green">{status}</span>}</>,
     },
 
     {
-      render: (data) => (
+      title: "Đề thi",
+      dataIndex: "ExamTopicName",
+    },
+    {
+      title: "Mức độ",
+      dataIndex: "SetPackageLevel",
+      render: (text) => <p className="font-weight-black">{text}</p>,
+    },
+    {
+      title: "Hình thức",
+      dataIndex: "ExamTopicTypeName",
+      render: (text) => <p className="font-weight-black">{text}</p>,
+    },
+    {
+      title: "Giáo viên",
+      dataIndex: "TeacherName",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "isDone",
+      render: (type) => (
         <Fragment>
-          <CourseReserveIntoCourse
-            infoDetail={data}
-            infoId={data.ID}
-            reloadData={(firstPage) => {
-              getDataCourseReserve(firstPage);
-            }}
-            currentPage={currentPage}
-          />
+          {type == true && <span className="tag green">Đã hoàn thành</span>}
+          {type == false && <span className="tag yellow">Chưa hoàn thành</span>}
         </Fragment>
       ),
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemDetail, setItemDetail] = useState();
 
   const listParamsDefault = {
     pageSize: 10,
@@ -87,8 +73,10 @@ const StudentCourseReserve = () => {
     sortType: null,
     fromDate: null,
     toDate: null,
-    BranchID: null,
-    ProgramID: null,
+    StudentID: null,
+    SetPackageDetailID: null,
+    isDone: null,
+    StudentName: null,
   };
 
   const sortOption = [
@@ -110,20 +98,36 @@ const StudentCourseReserve = () => {
 
   const [dataFilter, setDataFilter] = useState([
     {
-      name: "BranchID",
-      title: "Trung tâm",
+      name: "StudentID",
+      title: "Học viên",
       col: "col-12",
       type: "select",
       optionList: null,
       value: null,
     },
-
     {
-      name: "ProgramID",
-      title: "Chương trình học",
+      name: "SetPackageDetailID",
+      title: "Gói bài",
       col: "col-12",
       type: "select",
       optionList: null,
+      value: null,
+    },
+    {
+      name: "isDone",
+      title: "Trạng thái",
+      col: "col-12",
+      type: "select",
+      optionList: [
+        {
+          value: true,
+          title: "Đã hoàn thành",
+        },
+        {
+          value: false,
+          title: "Chưa hoàn thành",
+        },
+      ],
       value: null,
     },
     {
@@ -142,9 +146,10 @@ const StudentCourseReserve = () => {
       pageIndex: 1,
       fromDate: null,
       toDate: null,
-      BranchID: null,
-      StatusID: null,
-      AreaID: null,
+      StudentID: null,
+      SetPackageDetailID: null,
+      isDone: null,
+      StudentName: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;
@@ -167,10 +172,9 @@ const StudentCourseReserve = () => {
   const [params, setParams] = useState(listParamsDefault);
   const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
-  const [studentCourseReserve, setStudentCourseReserve] = useState<
-    ICourseReserve[]
-  >([]);
-
+  const [packageSetResult, setPackageSetResult] = useState<ISetPackageResult[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState({
     type: "GET_ALL",
     status: false,
@@ -187,36 +191,39 @@ const StudentCourseReserve = () => {
     setDataFilter([...dataFilter]);
   };
 
-  const getDataCenter = async () => {
+  const getDataStudent = async () => {
     try {
-      let res = await branchApi.getAll({ pageSize: 99999, pageIndex: 1 });
+      let res = await studentApi.getAll({ pageSize: 99999, pageIndex: 1 });
       if (res.status == 200) {
         const newData = res.data.data.map((item) => ({
-          title: item.BranchName,
-          value: item.ID,
+          title: item.FullNameUnicode,
+          value: item.UserInformationID,
         }));
-        setDataFunc("BranchID", newData);
+        setDataFunc("StudentID", newData);
       }
 
-      res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
+      res.status == 204 && showNoti("danger", "Không có dữ liệu học sinh này!");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
     }
   };
 
-  const getDataProgram = async () => {
+  const getDataPackageDetail = async () => {
     try {
-      let res = await programApi.getAll({ pageSize: 99999, pageIndex: 1 });
+      let res = await packageDetailApi.getAll({
+        pageSize: 99999,
+        pageIndex: 1,
+      });
       if (res.status == 200) {
         const newData = res.data.data.map((item) => ({
-          title: item.ProgramName,
+          title: item.SetPackageName,
           value: item.ID,
         }));
-        setDataFunc("ProgramID", newData);
+        setDataFunc("SetPackageDetailID", newData);
       }
-      res.status == 204 &&
-        showNoti("danger", "Chương trình học Không có dữ liệu");
+
+      res.status == 204 && showNoti("danger", "Không có dữ liệu gói bài này!");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -224,8 +231,8 @@ const StudentCourseReserve = () => {
   };
 
   useEffect(() => {
-    getDataCenter();
-    getDataProgram();
+    getDataStudent();
+    getDataPackageDetail();
   }, []);
 
   const getPagination = (pageNumber: number) => {
@@ -236,16 +243,16 @@ const StudentCourseReserve = () => {
     });
   };
 
-  const getDataCourseReserve = (page: any) => {
+  const getDataSetPackageResult = (page: any) => {
     setIsLoading({
       type: "GET_ALL",
       status: true,
     });
     (async () => {
       try {
-        let res = await courseReserveApi.getAll({ ...params, pageIndex: page });
+        let res = await packageResultApi.getAll({ ...params, pageIndex: page });
         //@ts-ignore
-        res.status == 200 && setStudentCourseReserve(res.data.data);
+        res.status == 200 && setPackageSetResult(res.data.data);
         if (res.status == 204) {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
@@ -263,26 +270,26 @@ const StudentCourseReserve = () => {
   };
 
   useEffect(() => {
-    getDataCourseReserve(currentPage);
+    getDataSetPackageResult(currentPage);
   }, [params]);
 
+  const expandedRowRender = (data, index) => {
+    return (
+      <Fragment>
+        <PackageResultExpand info={data} infoIndex={index} />
+      </Fragment>
+    );
+  };
+
   return (
-    <PowerTable
+    <ExpandTable
       currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       addClass="basic-header"
-      TitlePage="Học viên bảo lưu"
-      // TitleCard={
-      //   <ParentsForm
-      //     reloadData={(firstPage) => {
-      //       setCurrentPage(1);
-      //       getDataParents(firstPage);
-      //     }}
-      //   />
-      // }
-      dataSource={studentCourseReserve}
+      TitlePage="KẾT QUẢ GÓI BÀI"
+      dataSource={packageSetResult}
       columns={columns}
       Extra={
         <div className="extra-table">
@@ -298,8 +305,10 @@ const StudentCourseReserve = () => {
           />
         </div>
       }
+      handleExpand={(data) => setItemDetail(data)}
+      expandable={{ expandedRowRender }}
     />
   );
 };
-StudentCourseReserve.layout = LayoutBase;
-export default StudentCourseReserve;
+PackageSetResult.layout = LayoutBase;
+export default PackageSetResult;
