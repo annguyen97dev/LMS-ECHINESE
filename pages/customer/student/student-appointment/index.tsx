@@ -2,21 +2,17 @@ import { Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { Info } from "react-feather";
-import { branchApi, courseApi, programApi } from "~/apiBase";
-import { courseStudentApi } from "~/apiBase/customer/student/course-student";
+import { branchApi, programApi } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
 import ExpandTable from "~/components/ExpandTable";
-import ChangeCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ChangeCourseForm";
-import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
-import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
+
 import LayoutBase from "~/components/LayoutBase";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
-import ReserveCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ReserveCourseForm";
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
 import CourseRegExpand from "~/components/Global/Customer/Student/CourseRegistration/CourseRegExpand";
+import CourseRegForm from "~/components/Global/Customer/Student/CourseRegistration/CourseRegForm";
 
 const CourseRegistration = () => {
   const onSearch = (data) => {
@@ -55,29 +51,19 @@ const CourseRegistration = () => {
     {
       render: (data) => (
         <Fragment>
-          {/* <ChangeCourseForm
+          <CourseRegForm
             infoDetail={data}
             infoId={data.ID}
             reloadData={(firstPage) => {
-              getDataCourseStudent(firstPage);
+              getDataCourseReg(firstPage);
             }}
             currentPage={currentPage}
           />
-
-          <ReserveCourseForm
-            infoDetail={data}
-            infoId={data.ID}
-            reloadData={(firstPage) => {
-              getDataCourseStudent(firstPage);
-            }}
-            currentPage={currentPage}
-          /> */}
         </Fragment>
       ),
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemDetail, setItemDetail] = useState();
 
   const listParamsDefault = {
     pageSize: 10,
@@ -265,16 +251,18 @@ const CourseRegistration = () => {
     getDataCourseReg(currentPage);
   }, [params]);
 
-  // const expandedRowRender = (data, index) => {
-  //   return (
-  //     <Fragment>
-  //       <CourseRegExpand
-  //         infoID={data.UserInformationID}
-  //         // infoIndex={index}
-  //       />
-  //     </Fragment>
-  //   );
-  // };
+  const [itemDetail, setItemDetail] = useState();
+
+  const expandedRowRender = (data, index) => {
+    return (
+      <Fragment>
+        <CourseRegExpand
+          infoID={data.UserInformationID}
+          // infoIndex={index}
+        />
+      </Fragment>
+    );
+  };
 
   return (
     <ExpandTable
@@ -300,8 +288,8 @@ const CourseRegistration = () => {
           />
         </div>
       }
-      // handleExpand={(data) => setItemDetail(data)}
-      // expandable={{ expandedRowRender }}
+      handleExpand={(data) => setItemDetail(data)}
+      expandable={{ expandedRowRender }}
     />
   );
 };
