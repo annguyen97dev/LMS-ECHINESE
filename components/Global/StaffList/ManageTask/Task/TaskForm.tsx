@@ -151,12 +151,19 @@ function TaskForm(props) {
 	};
 
 	const checkHandleUpdateTask = (
-		obj: {ID: number; StaffID: number},
+		obj: {
+			ID: number;
+			WorkContent: string;
+			isAddStaff: boolean;
+			RoleID: number;
+			StaffID: number;
+			OldStaffID: number;
+		},
 		idx: number
 	) => {
-		if (!handleUpdateTask) return;
-		handleUpdateTask(obj, idx).then((res) => {
-			if (res?.status === 200) {
+		if (!handleSubmit) return;
+		handleSubmit(obj, idx).then((res) => {
+			if (res) {
 				form.reset({...defaultValuesInit});
 				setShowMoreField(false);
 				setIsUpdateWorkContent({
@@ -168,7 +175,12 @@ function TaskForm(props) {
 		});
 	};
 
-	const checkHandleSubmit = (data) => {
+	const checkHandleSubmit = (data: {
+		WorkContent: string;
+		isAddStaff: boolean;
+		RoleID: number;
+		StaffID: number;
+	}) => {
 		if (!handleSubmit) return;
 		handleSubmit(data).then((res) => {
 			if (res) {
@@ -178,10 +190,19 @@ function TaskForm(props) {
 		});
 	};
 
-	const taskSubmitSwitch = (data) => {
+	const taskSubmitSwitch = (data: {
+		WorkContent: string;
+		isAddStaff: boolean;
+		RoleID: number;
+		StaffID: number;
+	}) => {
 		if (isUpdateWorkContent.status) {
 			checkHandleUpdateTask(
-				{...data, ID: isUpdateWorkContent.item.ID},
+				{
+					...data,
+					ID: isUpdateWorkContent.item.ID,
+					OldStaffID: isUpdateWorkContent.item.StaffID,
+				},
 				isUpdateWorkContent.idx
 			);
 		} else {
@@ -315,7 +336,7 @@ function TaskForm(props) {
 										: ''
 								}`}
 							>
-								<Form.Item label="Danh sách task">
+								<Form.Item label="Danh sách công việc">
 									<div className="ant-checkbox-group">
 										{taskList.map((item: ITask, idx) => (
 											<div

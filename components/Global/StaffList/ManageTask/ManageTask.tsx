@@ -106,6 +106,16 @@ const ManageTask = () => {
 			text: 'Tiến độ giảm dần',
 		},
 	];
+	// 1: ADMIN - 5: MANAGER
+	const checkAuthorization = (StaffID?: number) => {
+		if (!userInformation) return;
+		const role = userInformation['RoleID'];
+		const uid = userInformation.UserInformationID;
+		if (role === 1 || role === 5 || +StaffID === +uid) {
+			return 'Accept';
+		}
+		return 'Ignore';
+	};
 	// FILTER
 	const onFilter = (arr: string[]) => {
 		setFilters({
@@ -268,14 +278,44 @@ const ManageTask = () => {
 			status: true,
 		});
 		try {
-			let res = await taskGroupApi.getAll(filters);
-			if (res.status === 200) {
-				if (res.data.totalRow && res.data.data.length) {
-					setTaskGroupList(res.data.data);
-					setTotalPage(res.data.totalRow);
+			if (!userInformation) return;
+			// ADMIN: 1 - MANAGER 5: SEE ALL TASK GROUP
+			// OTHERWISE: MUST HAVE ID IN STAFF OF TASK GROUP
+			if (userInformation['RoleID'] === 1 || userInformation['RoleID'] === 5) {
+				let res = await taskGroupApi.getAll(filters);
+				if (res.status === 200) {
+					if (res.data.totalRow && res.data.data.length) {
+						setTaskGroupList(res.data.data);
+						setTotalPage(res.data.totalRow);
+					}
 				}
-			} else if (res.status === 204) {
-				showNoti('danger', 'Không tìm thấy');
+				if (res.status === 204) {
+					showNoti('danger', 'Không tìm thấy');
+				}
+			} else {
+				const StaffID = userInformation.UserInformationID;
+				const [taskGroupRes, staffOfTaskGroupRes] = await Promise.all([
+					taskGroupApi.getAll(filters),
+					staffOfTaskGroupApi.getAll({StaffID}),
+				]);
+				if (taskGroupRes.status === 200 && staffOfTaskGroupRes.status === 200) {
+					if (taskGroupRes.data.totalRow && staffOfTaskGroupRes.data.totalRow) {
+						const newTaskGroupList = taskGroupRes.data.data;
+						const newStaffOfTaskGroupList = staffOfTaskGroupRes.data.data;
+						const taskGroupListOfStaff = newTaskGroupList.filter((tg) => {
+							if (
+								newStaffOfTaskGroupList.some((s) => s.TaskGroupID === tg.ID)
+							) {
+								return tg;
+							}
+						});
+						setTaskGroupList(taskGroupListOfStaff);
+						setTotalPage(taskGroupListOfStaff.length);
+					}
+				}
+				if (taskGroupRes.status === 204 || staffOfTaskGroupRes.status === 204) {
+					showNoti('danger', 'Không tìm thấy');
+				}
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -289,7 +329,7 @@ const ManageTask = () => {
 	const onDebounceFetchGroupTask = useDebounce(fetchGroupTask, 500, []);
 	useEffect(() => {
 		fetchGroupTask();
-	}, [filters]);
+	}, [filters, userInformation]);
 	// ----------STAFF OF TASK GROUP----------
 	const optionRoleList = [
 		{
@@ -481,39 +521,56 @@ const ManageTask = () => {
 			});
 		}
 	};
-	const middlewareCreateTask = (ID: number) => {
-		return async (obj: {
-			WorkContent: number;
-			isAddStaff: boolean;
-			RoleID?: number;
-			StaffID?: number;
-		}) => {
-			const {WorkContent, isAddStaff, StaffID} = obj;
+	const middlewareHandleTask = (TaskGroupID: number) => {
+		return async (
+			obj: {
+				ID?: number;
+				WorkContent: string;
+				isAddStaff: boolean;
+				RoleID?: number;
+				StaffID?: number;
+				OldStaffID?: number;
+			},
+			idx?: number
+		) => {
+			const {ID, WorkContent, isAddStaff, StaffID, OldStaffID} = obj;
 			let isDone = true;
 			if (isAddStaff) {
-				await onCreateStaffOfTaskGroup({
-					TaskGroupID: ID,
-					StaffID,
-				}).then((res) => {
-					if (res?.status !== 200) isDone = false;
-				});
+				await staffOfTaskGroupApi
+					.add({
+						TaskGroupID,
+						StaffID,
+					})
+					.catch((err) => console.log(err));
 			}
-			if (isDone) {
+			// IDX >= 0 IS HANDLE UPDATE
+			if (idx >= 0) {
+				const checkStaffID =
+					isAddStaff && OldStaffID !== StaffID ? StaffID : OldStaffID;
+				const res = await onUpdateTask(
+					{
+						ID,
+						WorkContent,
+						StaffID: checkStaffID,
+					},
+					idx
+				);
+				if (res?.status !== 200) isDone = false;
+			} else {
 				const checkStaffID = isAddStaff ? StaffID : null;
-				await onCreateTask({
-					TaskGroupID: ID,
+				const res = await onCreateTask({
+					TaskGroupID,
 					WorkContent,
 					StaffID: checkStaffID,
-				}).then((res) => {
-					if (res?.status !== 200) isDone = false;
 				});
+				if (res?.status !== 200) isDone = false;
 			}
 			return isDone;
 		};
 	};
 	const onCreateTask = async (obj: {
 		TaskGroupID: number;
-		WorkContent: number;
+		WorkContent: string;
 		StaffID?: number;
 	}) => {
 		setIsLoading({
@@ -620,15 +677,7 @@ const ManageTask = () => {
 		}
 	};
 	// ----------COLUMN----------
-	const checkAuthorization = (StaffID?: number) => {
-		if (!userInformation) return;
-		const role = userInformation['RoleID'];
-		const uid = userInformation.UserInformationID;
-		if (role === 1 || role === 5 || +StaffID === +uid) {
-			return 'Accept';
-		}
-		return 'Ignore';
-	};
+
 	const columns = [
 		{
 			title: 'Nhóm công việc',
@@ -665,7 +714,7 @@ const ManageTask = () => {
 						handleFetchStaffListByRole={fetchStaffListByRole}
 						optionRoleList={optionRoleList}
 						optionStaffList={optionStaffList}
-						handleSubmit={middlewareCreateTask(value.ID)}
+						handleSubmit={middlewareHandleTask(value.ID)}
 						handleUpdateTask={onUpdateTask}
 						handleDeleteTask={onDeleteTask}
 						handleActionOfStaff={onDebounceActionOfStaff}
