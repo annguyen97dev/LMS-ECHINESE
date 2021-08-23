@@ -3,8 +3,8 @@ import Providers from "next-auth/providers";
 import { login } from "~/services/auth";
 var FormData = require("form-data");
 // .env.local.example variable
-//
-// NEXTAUTH_URL=http://localhost:3000
+
+// NEXTAUTH_URL= http://lmsv2.monamedia.net/
 // NEXTAUTH_TWITTER_ID=
 // NEXTAUTH_TWITTER_SECRET=
 // NEXTAUTH_GITHUB_ID=
