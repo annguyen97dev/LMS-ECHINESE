@@ -514,6 +514,7 @@ const ListNewsFeed = (props) => {
         const [totalComment, setTotalComment] = useState(0);
         const [listComment, setListComment] = useState<INewsFeedComment[]>([]);
         const [visible, setVisible] = useState(false);
+        const [toggler, setToggler] = useState(false);
 
         const [liked, setLiked] = useState(false);
         const handleShowComments = () => {
@@ -756,6 +757,8 @@ const ListNewsFeed = (props) => {
                     ))}
                 </div>
                 )}
+                <div className="newsfeed-lightbox">
+                </div>
                 <div className="newsfeed-total">
                     {totalLike > 0 && (
                         <p><ThumbsUp color="#0571e5"/> {totalLike}</p>
