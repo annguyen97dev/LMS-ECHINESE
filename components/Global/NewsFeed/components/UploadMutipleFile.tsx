@@ -100,7 +100,7 @@ const UploadMutipleFile = (props) => {
           onPreview={onPreview}
           beforeUpload={beforeUpload}
           onRemove={onRemove}
-          accept="image/*, audio/*, video/*"
+          accept=".jpeg, .png, .bmp, .mp4, .flv, .mpeg, .mov, .wmv, .mp3"
         >
           {fileList.length < 5 && '+ Upload'}
           {getValue(list)}
