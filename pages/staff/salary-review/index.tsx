@@ -1,149 +1,284 @@
-import React, { useState } from "react";
-import { Input, Modal, Tooltip } from "antd";
-
-import SearchBox from "~/components/Elements/SearchBox";
+import { Tooltip } from "antd";
+import moment from "moment";
 import Link from "next/link";
-import PowerTable from "~/components/PowerTable";
+import React, { Fragment, useEffect, useState } from "react";
+import { Eye, Info } from "react-feather";
+import { branchApi, courseApi } from "~/apiBase";
+import { courseStudentApi } from "~/apiBase/customer/student/course-student";
+import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
-import { Filter, Eye, CreditCard } from "react-feather";
-import FilterTable from "~/components/Global/CostList/FilterTable";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterDateColumn from "~/components/Tables/FilterDateColumn";
+import ExpandTable from "~/components/ExpandTable";
+import ChangeCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ChangeCourseForm";
+import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
+import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
 import LayoutBase from "~/components/LayoutBase";
-
-const { TextArea } = Input;
-
-const dataOption = [
-  {
-    text: "Option 1",
-    value: "option 1",
-  },
-  {
-    text: "Option 2",
-    value: "option 2",
-  },
-  {
-    text: "Option 3",
-    value: "option 3",
-  },
-];
-
-const AcceptPay = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  return (
-    <>
-      <button className="btn btn-icon" onClick={showModal}>
-        <Tooltip title="Thanh toán">
-          <CreditCard />
-        </Tooltip>
-      </button>
-
-      <Modal
-        title="Xác nhận"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <h6 style={{ color: "#e17d00" }}>Xác nhận bảng lương?</h6>
-      </Modal>
-    </>
-  );
-};
+import FilterColumn from "~/components/Tables/FilterColumn";
+import { useWrap } from "~/context/wrap";
+import { Roles } from "~/lib/roles/listRoles";
+import { payRollApi } from "~/apiBase/staff-manage/pay-roll";
 
 const SalaryReview = () => {
-  const [showFilter, showFilterSet] = useState(false);
-  const funcShowFilter = () => {
-    showFilter ? showFilterSet(false) : showFilterSet(true);
+  const onSearch = (data) => {
+    setCurrentPage(1);
+    setParams({
+      ...listParamsDefault,
+      FullNameUnicode: data,
+    });
   };
 
-  const dataSource = [];
-
-  for (let i = 0; i < 50; i++) {
-    dataSource.push({
-      key: i,
-      FullName: "Nguyễn Phi Hùng",
-      SaleCamp: "Giai đoạn 1 - 7/2019",
-      Money: "2,200,000",
-      MoneyBonus: "",
-      Total: "2,200,000",
-      Note: "",
-      Action: "",
-    });
-  }
-
+  const handleReset = () => {
+    setCurrentPage(1);
+    setParams(listParamsDefault);
+  };
   const columns = [
     {
-      title: "Họ và tên",
-      dataIndex: "FullName",
-      key: "fullname",
-      ...FilterColumn("FullName"),
+      title: "Học viên",
+      dataIndex: "FullNameUnicode",
+      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      render: (text) => <p className="font-weight-blue">{text}</p>,
     },
     {
-      title: "Chiến dịch sale",
-      dataIndex: "SaleCamp",
-      key: "salecamp",
-      ...FilterColumn("SaleCamp"),
+      title: "Số điện thoại",
+      dataIndex: "Mobile",
     },
     {
-      title: "Số tiền",
-      dataIndex: "Money",
-      key: "money",
+      title: "Role",
+      dataIndex: "RoleName",
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
-      title: "Thưởng",
-      dataIndex: "MoneyBonus",
-      key: "moneybonus",
-      render: () => <Input style={{ width: 150 }} placeholder="2,500,000" />,
+      title: "Loại lương",
+      dataIndex: "styleName",
     },
     {
-      title: "Tổng",
-      dataIndex: "Total",
-      key: "total",
+      title: "Lương tháng",
+      render: (text) => (
+        <p>
+          {text.Month}-{text.Year}
+        </p>
+      ),
     },
     {
-      title: "Ghi chú",
-      dataIndex: "Note",
-      key: "note",
-      render: () => <TextArea rows={3} />,
+      title: "Số giờ dạy",
+      dataIndex: "TeachingTime",
+      render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
-      title: "Action",
-      dataIndex: "Action",
-      key: "action",
-      align: "center",
-      render: () => <AcceptPay />,
+      title: "Tổng lương",
+      dataIndex: "TotalSalary",
+      render: (text) => (
+        <p className="font-weight-blue">
+          {Intl.NumberFormat("en-US").format(text)}
+        </p>
+      ),
+    },
+
+    {
+      render: (data) => (
+        <Fragment>
+          {/* <ChangeCourseForm
+            infoDetail={data}
+            infoId={data.ID}
+            reloadData={(firstPage) => {
+              getDataCourseStudent(firstPage);
+            }}
+            currentPage={currentPage}
+          /> */}
+        </Fragment>
+      ),
+    },
+  ];
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const listParamsDefault = {
+    pageSize: 10,
+    pageIndex: currentPage,
+    sort: null,
+    sortType: null,
+    fromDate: null,
+    toDate: null,
+    FullNameUnicode: null,
+    RoleID: null,
+    Month: null,
+    Year: null,
+    Style: null,
+  };
+
+  const sortOption = [
+    {
+      dataSort: {
+        sortType: null,
+      },
+      value: 1,
+      text: "Mới cập nhật",
+    },
+    {
+      dataSort: {
+        sortType: true,
+      },
+      value: 2,
+      text: "Từ dưới lên",
     },
   ];
 
-  return (
-    <>
-      <PowerTable
-        columns={columns}
-        dataSource={dataSource}
-        TitlePage="Duyệt lương Office"
-        TitleCard=""
-        Extra={
-          <div className="extra-table">
-            <SortBox dataOption={dataOption} />
-          </div>
+  const [dataFilter, setDataFilter] = useState([
+    {
+      name: "RoleID",
+      title: "Chọn Role",
+      col: "col-12",
+      type: "select",
+      optionList: null,
+      value: null,
+    },
+    {
+      name: "date-range",
+      title: "Ngày tạo",
+      col: "col-12",
+      type: "date-range",
+      value: null,
+    },
+    // {
+    //   name: "Combo",
+    //   title: "Chọn gói",
+    //   col: "col-12",
+    //   type: "select",
+    //   optionList: [
+    //     {
+    //       value: true,
+    //       title: "Gói combo",
+    //     },
+    //     {
+    //       value: false,
+    //       title: "Gói lẻ",
+    //     },
+    //   ],
+    //   value: null,
+    // },
+  ]);
+
+  const handleFilter = (listFilter) => {
+    console.log("List Filter when submit: ", listFilter);
+
+    let newListFilter = {
+      pageIndex: 1,
+      fromDate: null,
+      toDate: null,
+      RoleID: null,
+    };
+    listFilter.forEach((item, index) => {
+      let key = item.name;
+      Object.keys(newListFilter).forEach((keyFilter) => {
+        if (keyFilter == key) {
+          newListFilter[key] = item.value;
         }
-      ></PowerTable>
-    </>
+      });
+    });
+    setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
+  };
+
+  const handleSort = async (option) => {
+    setParams({
+      ...listParamsDefault,
+      sortType: option.title.sortType,
+    });
+  };
+
+  const [params, setParams] = useState(listParamsDefault);
+  const { showNoti } = useWrap();
+  const [totalPage, setTotalPage] = useState(null);
+  const [payRoll, setPayRoll] = useState<IPayRoll[]>([]);
+  const [isLoading, setIsLoading] = useState({
+    type: "GET_ALL",
+    status: false,
+  });
+
+  const setDataFunc = (name, data) => {
+    dataFilter.every((item, index) => {
+      if (item.name == name) {
+        item.optionList = data;
+        return false;
+      }
+      return true;
+    });
+    setDataFilter([...dataFilter]);
+  };
+
+  const getDataRole = () => {
+    const newData = Roles.map((item) => ({
+      title: item.RoleName,
+      value: item.id,
+    }));
+    setDataFunc("RoleID", newData);
+  };
+
+  useEffect(() => {
+    getDataRole();
+  }, []);
+
+  const getPagination = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    setParams({
+      ...params,
+      pageIndex: currentPage,
+    });
+  };
+
+  const getDataPayRoll = (page: any) => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
+    (async () => {
+      try {
+        let res = await payRollApi.getAll({ ...params, pageIndex: page });
+        //@ts-ignore
+        res.status == 200 && setPayRoll(res.data.data);
+        if (res.status == 204) {
+          showNoti("danger", "Không tìm thấy dữ liệu!");
+          setCurrentPage(1);
+          setParams(listParamsDefault);
+        } else setTotalPage(res.data.totalRow);
+      } catch (error) {
+        showNoti("danger", error.message);
+      } finally {
+        setIsLoading({
+          type: "GET_ALL",
+          status: false,
+        });
+      }
+    })();
+  };
+
+  useEffect(() => {
+    getDataPayRoll(currentPage);
+  }, [params]);
+
+  return (
+    <ExpandTable
+      currentPage={currentPage}
+      loading={isLoading}
+      totalPage={totalPage && totalPage}
+      getPagination={(pageNumber: number) => getPagination(pageNumber)}
+      addClass="basic-header"
+      TitlePage="Duyệt lương office"
+      dataSource={payRoll}
+      columns={columns}
+      Extra={
+        <div className="extra-table">
+          <FilterBase
+            dataFilter={dataFilter}
+            handleFilter={(listFilter: any) => handleFilter(listFilter)}
+            handleReset={handleReset}
+          />
+
+          <SortBox
+            dataOption={sortOption}
+            handleSort={(value) => handleSort(value)}
+          />
+        </div>
+      }
+    />
   );
 };
-
 SalaryReview.layout = LayoutBase;
 export default SalaryReview;
