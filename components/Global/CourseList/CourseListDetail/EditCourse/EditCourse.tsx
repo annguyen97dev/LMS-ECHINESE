@@ -16,6 +16,8 @@ import Schedule from '~/components/Global/CreateCourse/Schedule/Schedule';
 import ScheduleItem from '~/components/Global/CreateCourse/Schedule/ScheduleItem';
 import ScheduleList from '~/components/Global/CreateCourse/Schedule/ScheduleList';
 import TitlePage from '~/components/TitlePage';
+import {useDebounce} from '~/context/useDebounce';
+import {useThrottle} from '~/context/useThrottle';
 import {useWrap} from '~/context/wrap';
 import {
 	clearOptionsDuplicate,
@@ -112,10 +114,6 @@ const EditCourse = (props) => {
 	const fetchInfoAvailableSchedule = async (
 		arrSchedule: ICourseDetailSchedule[]
 	) => {
-		setIsLoading({
-			type: 'CHECK_SCHEDULE',
-			status: true,
-		});
 		// SPLIT SCHEDULE TO 2 OBJECT TO CALL 2 API
 		// paramsArr = [ {Schedule-*: [{params teacher}, {params room}]} ]
 		const paramsArr = arrSchedule.map((sch, idx) => {
@@ -219,6 +217,16 @@ const EditCourse = (props) => {
 				status: false,
 			});
 		}
+	};
+	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 1000, []);
+	const onDebounceFetchInfoAvailableSchedule = (
+		params: ICourseDetailSchedule[]
+	) => {
+		setIsLoading({
+			type: 'CHECK_SCHEDULE',
+			status: true,
+		});
+		onDebounceFetch(params);
 	};
 	const checkDuplicateStudyTimeInDay = (arr: ICourseDetailSchedule[], vl) => {
 		const scheduleSameStudyTime = arr.filter((s) => s.StudyTimeID === vl);
@@ -329,7 +337,7 @@ const EditCourse = (props) => {
 			) {
 				showNoti('danger', 'Dữ liệu không phù hợp');
 			} else {
-				fetchInfoAvailableSchedule(scheduleList);
+				onDebounceFetchInfoAvailableSchedule(scheduleList);
 			}
 		}
 		if (key === 'RoomID') {
@@ -337,14 +345,13 @@ const EditCourse = (props) => {
 				(s) => s.Date === date
 			);
 			if (!scheduleList.some((s) => s.RoomID === 0)) {
-				fetchInfoAvailableSchedule(scheduleList);
+				onDebounceFetchInfoAvailableSchedule(scheduleList);
 				setDataModalCalendar({
 					...dataModalCalendar,
 					scheduleList,
 				});
 			}
 		}
-
 		setScheduleList((prevState) => ({
 			...prevState,
 			unavailable: newUnavailableScheduleList,
@@ -433,11 +440,6 @@ const EditCourse = (props) => {
 	const onSelectDate = (vl) => {
 		setDateSelected(vl.resource.dateString);
 	};
-	const onSetDataModalCalendar = (obj: IDataModal) => {
-		const {scheduleList} = obj;
-		fetchInfoAvailableSchedule(scheduleList);
-		setDataModalCalendar(obj);
-	};
 	const onToggleSchedule = (sch: ICourseDetailSchedule, type: number) => {
 		if (changeStatusSchedule(sch, type)) {
 			const newScheduleList = [...dataModalCalendar.scheduleList];
@@ -447,13 +449,19 @@ const EditCourse = (props) => {
 			} else {
 				newScheduleList.push(sch);
 			}
-			onSetDataModalCalendar({
+			setDataModalCalendar({
 				...dataModalCalendar,
 				scheduleInDay: newScheduleList.length,
 				scheduleList: newScheduleList,
 			});
 		}
 	};
+	useEffect(() => {
+		const {scheduleList} = dataModalCalendar;
+		if (scheduleList.length) {
+			onDebounceFetchInfoAvailableSchedule(scheduleList);
+		}
+	}, [dataModalCalendar]);
 	// -----------SAVE COURSE-----------
 	const onFindScheduleChanged = (arr: ICourseDetailSchedule[]) => {
 		const {current: stoneScheduleList} = stoneScheduleListToFindDifference;
@@ -606,6 +614,8 @@ const EditCourse = (props) => {
 			}
 			res = await courseDetailApi.update(scheduleListToSave);
 			if (res.status === 200) {
+				setScheduleShow({});
+				setScheduleListToSave([]);
 				showNoti('success', res.data.message);
 			}
 		} catch (error) {
@@ -761,9 +771,15 @@ const EditCourse = (props) => {
 		return res;
 	};
 	useEffect(() => {
-		fetchSubject();
-		fetchStudyTime();
-		fetchCourseToEdit();
+		let isMounted = true;
+		if (isMounted) {
+			fetchSubject();
+			fetchStudyTime();
+			fetchCourseToEdit();
+		}
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 	return (
 		<div className="create-course">
@@ -800,7 +816,7 @@ const EditCourse = (props) => {
 							//
 							isLoaded={isLoaded}
 							//
-							handleSetDataModalCalendar={onSetDataModalCalendar}
+							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
 						>
 							<ScheduleList

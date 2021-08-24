@@ -11,9 +11,15 @@ import LayoutBase from "~/components/LayoutBase";
 import QuestionSingle from "~/components/Global/QuestionBank/QuestionSingle";
 import QuestionMultiple from "~/components/Global/QuestionBank/QuestionMultiple";
 import QuestionWrite from "~/components/Global/QuestionBank/QuestionWrite";
-import { programApi, subjectApi, exerciseApi } from "~/apiBase";
+import {
+  programApi,
+  subjectApi,
+  exerciseApi,
+  exerciseGroupApi,
+} from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { questionObj } from "./TypeData/";
+import { questionObj } from "~/lib/TypeData";
+import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
 
 const { Option, OptGroup } = Select;
 
@@ -26,6 +32,8 @@ const listTodoApi = {
   ExerciseGroupID: null,
   ExamTopicType: null,
 };
+
+const listAlphabet = ["A", "B", "C", "D", "F", "G"];
 
 const QuestionCreate = () => {
   const { showNoti } = useWrap();
@@ -44,18 +52,41 @@ const QuestionCreate = () => {
   const boxEl = useRef(null);
   const [totalPageIndex, setTotalPageIndex] = useState(0);
   const [loadingQuestion, setLoadingQuestion] = useState(false);
+  const [isGroup, setIsGroup] = useState({
+    id: null,
+    status: false,
+  });
+  const [valueSubject, setValueSubject] = useState("Chọn môn học");
+  const [dataGroup, setDataGroup] = useState([]);
 
   // GET DATA SOURCE - DATA EXERCISE
   const getDataSource = async () => {
+    let res = null;
     try {
-      let res = await exerciseApi.getAll(todoApi);
-      if (res.status == 200) {
-        let cloneData = [...dataSource];
-        res.data.data.forEach((item, index) => {
-          cloneData.push(item);
-        });
+      if (!isGroup.status) {
+        res = await exerciseApi.getAll({ ...todoApi, ExerciseGroupID: 0 });
+      } else {
+        res = await exerciseGroupApi.getAll(todoApi);
+      }
 
-        setDataSource([...cloneData]);
+      if (res.status == 200) {
+        // Xét coi này câu hỏi nhóm hay đơn
+        if (!isGroup.status) {
+          let cloneData = [...dataSource];
+          res.data.data.forEach((item, index) => {
+            cloneData.push(item);
+          });
+
+          setDataSource([...cloneData]);
+        } else {
+          let cloneData = [...dataGroup];
+          res.data.data.forEach((item, index) => {
+            cloneData.push(item);
+          });
+
+          setDataGroup([...cloneData]);
+        }
+
         todoApi.pageIndex == 1 && showNoti("success", "Thành công");
         !showListQuestion && setShowListQuestion(true);
 
@@ -104,6 +135,7 @@ const QuestionCreate = () => {
     }
   };
 
+  // CHỌN DẠNG CÂU HỎI (CHOICE, MULTIPLE,...)
   const changeBoxType = (e: any, Type: number, TypeName: string) => {
     e.preventDefault();
 
@@ -135,35 +167,87 @@ const QuestionCreate = () => {
     setIsLoading(true);
     !showListQuestion && setShowListQuestion(true);
     setDataSource([]);
+    setDataGroup([]);
     setTodoApi({
       ...todoApi,
       Type: Type,
+      SubjectID: questionData.SubjectID,
+      Level: questionData.Level,
       pageIndex: 1,
     });
   };
 
   console.log("Question Data: ", questionData);
 
+  // HANDLE CHANGE SELECT - THAO TÁC VỚI CÁC SELECT
   const handleChange_select = (selectName, option) => {
+    setDataSource([]);
+    setDataGroup([]);
     switch (selectName) {
+      // -- Chọn chương trình
       case "program":
         getDataSubject(option.value);
         setDataSubject(null);
+        setValueSubject("Chọn môn học");
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            pageIndex: 1,
+            SubjectID: null,
+          }));
 
         break;
-      case "type-question":
-        questionData.ExerciseGroupID = option.value;
+
+      // -- Chọn loại câu hỏi đơn hay nhóm
+      case "type-question-group":
+        // questionData.ExerciseGroupID = option.value;
+        if (option.value == 0) {
+          setIsGroup({
+            id: null,
+            status: false,
+          });
+        } else {
+          setIsGroup({
+            ...isGroup,
+            status: true,
+          });
+        }
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            pageIndex: 1,
+          }));
 
         break;
+
+      // -- Chọn môn học
       case "subject":
         questionData.SubjectID = option.value;
         questionData.SubjectName = option.children;
+        setValueSubject(option.value);
+
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            SubjectID: option.value,
+            pageIndex: 1,
+          }));
 
         break;
+
+      // -- Chọn level (Dễ, trung bình, khó)
       case "level":
         questionData.Level = option.value;
         questionData.LevelName = option.children;
-
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            Level: option.value,
+          }));
         break;
       default:
         break;
@@ -185,19 +269,109 @@ const QuestionCreate = () => {
     }
   };
 
+  // ON ADD NEW DATA
+  const addDataGroup = (dataAdd) => {
+    dataGroup.splice(0, 0, dataAdd);
+    setDataGroup([...dataGroup]);
+  };
+
+  const addDataSingle = (dataAdd) => {
+    dataSource.splice(0, 0, dataAdd);
+    setDataSource([...dataSource]);
+  };
+
+  const onAddData = (dataAdd) => {
+    console.log("DATA add outside: ", dataAdd);
+    console.log("Is group outside: ", isGroup);
+
+    if (!isGroup.status) {
+      addDataSingle(dataAdd);
+    } else {
+      if (dataAdd.ExerciseGroupID) {
+        addDataSingle(dataAdd);
+      } else {
+        addDataGroup(dataAdd);
+      }
+    }
+    questionData.Content = "";
+    setQuestionData({ ...questionData });
+  };
+
+  console.log("DATA SOURCE: ", dataSource);
+  console.log("DATA GROUP: ", dataGroup);
+
+  // ON EDIT DATA
+
+  const editDataGroup = (dataEdit) => {
+    let index = dataGroup.findIndex((item) => item.ID == dataEdit.ID);
+    dataGroup.splice(index, 1, dataEdit);
+
+    setDataGroup([...dataGroup]);
+  };
+
+  const editDataSingle = (dataEdit) => {
+    if (dataEdit.Type == 4) {
+      let newAnswerList = dataEdit.ExerciseAnswer.filter(
+        (item) => item.Enable !== false
+      );
+      dataEdit.ExerciseAnswer = newAnswerList;
+    }
+
+    let index = dataSource.findIndex((item) => item.ID == dataEdit.ID);
+    dataSource.splice(index, 1, dataEdit);
+
+    setDataSource([...dataSource]);
+  };
+
+  const onEditData = (dataEdit) => {
+    console.log("DATA edit outside ", dataEdit);
+    console.log("Is group outside: ", isGroup);
+
+    if (!isGroup.status) {
+      console.log("Chạy vô đây");
+      // Nếu là dạng câu hỏi nhiều đáp án thì phải xóa nó đi
+      editDataSingle(dataEdit);
+    } else {
+      if (dataEdit.ExerciseGroupID) {
+        editDataSingle(dataEdit);
+      } else {
+        editDataGroup(dataEdit);
+      }
+    }
+
+    questionData.Content = "";
+    setQuestionData({ ...questionData });
+  };
+
   // ON REMOVE DATA
-  const onRemoveData = (quesID) => {
-    let quesIndex = dataSource.findIndex((item) => item.ID == quesID);
+  const removeDataSingle = (dataRemove) => {
+    let quesIndex = dataSource.findIndex((item) => item.ID == dataRemove.ID);
     dataSource.splice(quesIndex, 1);
     setDataSource([...dataSource]);
   };
 
+  const removeDataGroup = (dataRemove) => {
+    let quesIndex = dataGroup.findIndex((item) => item.ID == dataRemove.ID);
+    dataGroup.splice(quesIndex, 1);
+    setDataGroup([...dataGroup]);
+  };
+
+  const onRemoveData = (dataRemove) => {
+    if (!isGroup.status) {
+      removeDataSingle(dataRemove);
+    } else {
+      if (dataRemove.ExerciseGroupID) {
+        removeDataSingle(dataRemove);
+      } else {
+        removeDataGroup(dataRemove);
+      }
+    }
+  };
+
   // ON FETCH DATA
   const onFetchData = () => {
-    scrollToTop(),
-      setIsLoading(true),
-      setDataSource([]),
-      setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 });
+    scrollToTop(), setIsLoading(true), setDataSource([]), setDataGroup([]);
+    setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 });
   };
 
   // Phân loại dạng câu hỏi để trả ra danh sách
@@ -206,23 +380,50 @@ const QuestionCreate = () => {
       /** Q uesion Single */
       case 1:
         return (
-          <QuestionSingle
-            loadingQuestion={loadingQuestion}
-            listQuestion={dataSource}
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
             onFetchData={onFetchData}
-            onRemoveData={(quesID) => onRemoveData(quesID)}
-          />
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionSingle
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataSource}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
         );
         break;
       case 4:
         return (
-          <QuestionMultiple
-            loadingQuestion={loadingQuestion}
-            listQuestion={dataSource}
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
             onFetchData={onFetchData}
-            onRemoveData={(quesID) => onRemoveData(quesID)}
-          />
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionMultiple
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataSource}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
         );
+        break;
       default:
         return (
           <p className="text-center">
@@ -244,8 +445,8 @@ const QuestionCreate = () => {
     const offsetHeight = boxEl.current.offsetHeight;
     const scrollTop = boxEl.current.scrollTop;
 
-    console.log("Height: ", scrollHeight - offsetHeight);
-    console.log("Scroll: ", scrollTop);
+    // console.log("Height: ", scrollHeight - offsetHeight);
+    // console.log("Scroll: ", scrollTop);
 
     if (scrollTop > scrollHeight - offsetHeight - 40) {
       if (todoApi.pageIndex < totalPageIndex) {
@@ -261,7 +462,7 @@ const QuestionCreate = () => {
     }
   };
 
-  console.log("DATA exercise: ", dataSource);
+  // console.log("DATA exercise: ", dataSource);
 
   useEffect(() => {
     getDataProgram(); // Lấy data chương trình
@@ -296,7 +497,8 @@ const QuestionCreate = () => {
             title={
               <div className="title-question-bank">
                 <h3 className="title-big">
-                  <Bookmark /> Danh sách câu hỏi
+                  <Bookmark />{" "}
+                  {!isGroup ? "Danh sách câu hỏi" : "Danh sách nhóm câu hỏi"}
                 </h3>
                 {/* <p className="text-lesson">
                   <span className="font-weight-black">Môn học:</span>
@@ -308,6 +510,8 @@ const QuestionCreate = () => {
               <CreateQuestionForm
                 questionData={questionData}
                 onFetchData={onFetchData}
+                isGroup={isGroup}
+                onAddData={(data) => onAddData(data)}
               />
             }
           >
@@ -365,6 +569,7 @@ const QuestionCreate = () => {
                     loading={loadingSelect}
                     className="style-input"
                     defaultValue="Chọn môn học"
+                    value={valueSubject}
                     style={{ width: "100%" }}
                     onChange={(value, option) =>
                       handleChange_select("subject", option)
@@ -388,11 +593,11 @@ const QuestionCreate = () => {
                     defaultValue="Chọn loại câu hỏi"
                     style={{ width: "100%" }}
                     onChange={(value, option) =>
-                      handleChange_select("type-question", option)
+                      handleChange_select("type-question-group", option)
                     }
                   >
-                    <Option value="0">Câu hỏi đơn</Option>
-                    <Option value="1">Câu hỏi nhóm</Option>
+                    <Option value={0}>Câu hỏi đơn</Option>
+                    <Option value={1}>Câu hỏi nhóm</Option>
                   </Select>
                 </div>
               </div>
@@ -409,9 +614,9 @@ const QuestionCreate = () => {
                       handleChange_select("level", option)
                     }
                   >
-                    <Option value="1">Dễ</Option>
-                    <Option value="2">Trung bình</Option>
-                    <Option value="3">Khó</Option>
+                    <Option value={1}>Dễ</Option>
+                    <Option value={2}>Trung bình</Option>
+                    <Option value={3}>Khó</Option>
                   </Select>
                 </div>
               </div>

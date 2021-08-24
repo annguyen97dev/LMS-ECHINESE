@@ -2,7 +2,8 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import LayoutBase from "~/components/LayoutBase";
 import { useWrap } from "~/context/wrap";
 import moment from "moment";
-import { Checkbox, Row, Col, Tooltip, Spin, Card, Input, Skeleton, Empty, Form, Select } from 'antd';
+import { Checkbox, Row, Col, Tooltip, Spin, Card, Input, Skeleton, Empty, Form, Select, Drawer } from 'antd';
+import { MoreHorizontal } from "react-feather";
 import { signIn, signOut, useSession } from "next-auth/client";
 import { newsFeedApi, userBranchApi, groupNewsFeedApi } from "~/apiBase";
 import CreateNewsFeed from "~/components/Global/NewsFeed/CreateNewsFeed";
@@ -10,6 +11,7 @@ import ListNewsFeed from "~/components/Global/NewsFeed/ListNewsFeed";
 import { Waypoint } from "react-waypoint";
 import GroupTagElement from "~/components/Global/NewsFeed/components/GroupTagElement";
 import GroupNewsFeedFrom from "~/components/Global/NewsFeed/components/GroupNewsFeedForm";
+import Link from "next/dist/client/link";
 const { Search } = Input;
 const { Option } = Select;
 
@@ -36,8 +38,7 @@ const NewsFeed = () => {
     const [inGroup, setInGroup] = useState(null);
     const [inTeam, setInTeam] = useState(null);
     const [searchName, setSearchName] = useState(null);
-    const [totalRow, setTotalRow] = useState(0);
-
+    const [totalRow, setTotalRow] = useState(1);
 
     const fetchListNewsFeed = async () => {
         // if(!hasNextPage) return;
@@ -61,7 +62,7 @@ const NewsFeed = () => {
                 setNewsFeed([...newsFeed, ...res.data.data]);
                 setTotalRow(res.data.totalRow);
                 setEmptyNewsFeed(false);
-                if(res.data.totalRow <= newsFeed.length + res.data.data.length) {
+                if(res.data.data.length < 5) {
                     setHasNextPage(false);
                 }
             }
@@ -76,38 +77,30 @@ const NewsFeed = () => {
     }
 
     const fetchUserBranch = async () => {
-        if(userInformation?.UserInformationID != undefined) {
-            try {
-                let res = await userBranchApi.getAll({UserInfomationID: userInformation.UserInformationID});
-                if(res.status == 204) {
-                    console.log("Không có dữ liệu");
-                }
-                if(res.status == 200) {
-                    setUserBranch(res.data.data);
-                }
-            } catch (error) {
-                console.log("Lỗi UserBranch", error.message);
+        try {
+            let res = await userBranchApi.getAll({getbytokenID: true});
+            if(res.status == 204) {
+                console.log("Không có dữ liệu");
             }
-        } else {
-            return;
+            if(res.status == 200) {
+                setUserBranch(res.data.data);
+            }
+        } catch (error) {
+            console.log("Lỗi UserBranch", error.message);
         }
     }
 
     const fetchGroupNewsFeed = async () => {
-        if(userInformation?.UserInformationID != undefined) {
-            try {
-                let res = await groupNewsFeedApi.getAll({selectAll: true});
-                if(res.status == 204) {
-                    console.log("Không có dữ liệu");
-                }
-                if(res.status == 200) {
-                    setGroupNewsFeed(res.data.data);
-                }
-            } catch (error) {
-                console.log("Lỗi UserBranch", error.message);
+        try {
+            let res = await groupNewsFeedApi.getAll({selectAll: true});
+            if(res.status == 204) {
+                console.log("Không có dữ liệu");
             }
-        } else {
-            return;
+            if(res.status == 200) {
+                setGroupNewsFeed(res.data.data);
+            }
+        } catch (error) {
+            console.log("Lỗi UserBranch", error.message);
         }
     }
 
@@ -122,7 +115,7 @@ const NewsFeed = () => {
                 res = await newsFeedApi.update(data);
                 if(res.status == 200) {
                     showNoti("success", "Update thành công");
-                    reset();
+                    setNewsFeed(prev => prev.map(item => (item.ID == data.ID ? res.data.data : item)));
                 }
                 if(res.status == 204) {
                     showNoti("danger", "Không có dữ liệu")
@@ -140,7 +133,8 @@ const NewsFeed = () => {
                 res = await newsFeedApi.add(data);
                 if(res.status == 200) {
                     showNoti("success", "Đăng thành công");
-                    reset();
+                    let obj = {...res.data.data}
+                    setNewsFeed([obj, ...newsFeed]);
                 }
                 if(res.status == 204) {
                     showNoti("danger", "Không có dữ liệu")
@@ -153,6 +147,33 @@ const NewsFeed = () => {
                     status: false,
                 });
             }
+        }
+        return res;
+    }
+
+    const handleRemove = async (data) => {
+        setIsLoading({
+            type: "ADD",
+            status: true,
+        })
+        let res;
+        try {
+            res = await newsFeedApi.update(data);
+            if(res.status == 200) {
+                showNoti("success", "Update thành công");
+                const newArray = newsFeed.filter(item => item.ID != data.ID);
+                setNewsFeed(newArray);
+            }
+            if(res.status == 204) {
+                showNoti("danger", "Không có dữ liệu")
+            }
+        } catch (error) {
+            showNoti("danger", error.message)
+        } finally {
+            setIsLoading({
+                type: "ADD",
+                status: false,
+            })
         }
         return res;
     }
@@ -224,15 +245,12 @@ const NewsFeed = () => {
     const reset = () => {
         setNewsFeed(intialNewsFeed);
         setPageIndex(intialPageIndex);
-        console.log("reset");
+        // console.log("reset");
     }
 
     const loadMore = () => {
-        if(Object.keys(newsFeed).length >= 10) {
-            setPageIndex(pageIndex + 1);
-        } else {
-            fetchListNewsFeed();
-        }
+        setPageIndex(pageIndex + 1);
+        fetchListNewsFeed();
     }
 
     const onSearch = value => {
@@ -257,6 +275,7 @@ const NewsFeed = () => {
     }
 
     const inGroupFuncMB = (value) => {
+        onClose();
         setInTeam(null);
         setSearchName(null);
         reset();
@@ -264,6 +283,7 @@ const NewsFeed = () => {
     }
 
     const inTeamFuncMB = (value) => {
+        onClose();
         setInGroup(null);
         setSearchName(null);
         reset();
@@ -273,7 +293,8 @@ const NewsFeed = () => {
     const SideBar = () => {
         return (
             <>
-            <Card className="card-newsfeed" title="TÌM KIẾM" bordered={false}>
+            <Card className="card-newsfeed" bordered={false}>
+                <p className="card-newsfeed__label font-weight-black">TÌM KIẾM</p>
                 <Search 
                     className="style-input"
                     placeholder={searchName != null ? searchName : "Nhập từ khóa"}
@@ -346,83 +367,105 @@ const NewsFeed = () => {
         )
     }
 
+    const [visible, setVisible] = useState(false);
+    const showDrawer = () => {
+      setVisible(true);
+    };
+    const onClose = () => {
+      setVisible(false);
+    };
+
     // console.log("Group: ", inGroup);
     // console.log("Team: ", inTeam);
+    // console.log(newsFeed);
 
     useEffect(() => {
         if (session !== undefined) {
-          let token = session.accessToken;
-          if (userInformation) {
-            setDataUser(userInformation);
-          } else {
-            setDataUser(parseJwt(token));
+            let token = session.accessToken;
+            if (userInformation) {
+              setDataUser(userInformation);
+            } else {
+              setDataUser(parseJwt(token));
+            }
           }
-        }
-        fetchListNewsFeed();
-        fetchUserBranch();
+    }, [userInformation]);
+
+    useEffect(() => {
         fetchGroupNewsFeed();
-    }, [userInformation, pageIndex, inGroup, inTeam, searchName]);
+        fetchUserBranch();
+    }, []);
+
+    useEffect(() => {
+        if(inGroup != null || inTeam != null || searchName != '') {
+            setHasNextPage(true)
+        }
+    }, [pageIndex, inGroup, inTeam, searchName]);
 
     return (
         <>  
         <div className="row wrap-newsfeed">
             {emptyNewsFeed == false ? (
                 <div className="col-md-8 col-12">
-                    {inGroup != null ? (
-                        <>
-                            <GroupTagElement onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)} dataUser={dataUser} totalRow={totalRow} inGroup={inGroup}/>
-                        </>
-                    ) : (<></>)}
-                    {session?.user ? (
-                        <>
-                        <CreateNewsFeed 
-                            inGroup={inGroup} 
-                            inTeam={inTeam} 
-                            dataUser={dataUser} 
-                            groupNewsFeed={groupNewsFeed} 
-                            userBranch={userBranch} 
-                            _onSubmit={(data) => onSubmit(data)}
-                        />
-                        <ListNewsFeed 
-                            onSearch={(value) => onSearch(value)} 
-                            dataUser={dataUser} 
-                            dataNewsFeed={newsFeed} 
-                            groupNewsFeed={groupNewsFeed} 
-                            userBranch={userBranch} 
-                            inGroup={inGroup} 
-                            inTeam={inTeam} 
-                            inGroupFunc={(e) => inGroupFunc(e)} 
-                            inTeamFunc={(e) => inTeamFunc(e)}
-                            _onSubmit={(data) => onSubmit(data)}
-                        />
-                        </>
-                    ) : (
-                        <>Bạn cần phải đăng nhập</>
-                    )}
-                    {hasNextPage &&(
-                        <Waypoint onEnter={loadMore}>
-                            <ul className="list-nf skeleton">
-                                <li className="item-nf">
-                                    <div className="newsfeed">
-                                        <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                        <Skeleton active paragraph={{ rows: 2 }}/>
-                                    </div>
-                                </li>
-                                <li className="item-nf">
-                                    <div className="newsfeed">
-                                        <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                        <Skeleton active paragraph={{ rows: 2 }}/>
-                                    </div>
-                                </li>
-                                <li className="item-nf">
-                                    <div className="newsfeed">
-                                        <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                        <Skeleton active paragraph={{ rows: 2 }}/>
-                                    </div>
-                                </li>
-                            </ul>
-                        </Waypoint>
-                    )}
+                    <div className="list-newsfeed">
+                        {inGroup != null ? (
+                            <>
+                                <GroupTagElement onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)} dataUser={dataUser} totalRow={totalRow} inGroup={inGroup}/>
+                            </>
+                        ) : (<></>)}
+                        {session?.user ? (
+                            <>
+                            <CreateNewsFeed 
+                                inGroup={inGroup} 
+                                inTeam={inTeam} 
+                                dataUser={dataUser} 
+                                groupNewsFeed={groupNewsFeed} 
+                                userBranch={userBranch} 
+                                _onSubmit={(data) => onSubmit(data)}
+                                isLoading={isLoading}
+                            />
+                            <ListNewsFeed 
+                                onSearch={(value) => onSearch(value)} 
+                                dataUser={dataUser} 
+                                dataNewsFeed={newsFeed} 
+                                groupNewsFeed={groupNewsFeed} 
+                                userBranch={userBranch} 
+                                inGroup={inGroup} 
+                                inTeam={inTeam} 
+                                inGroupFunc={(e) => inGroupFunc(e)} 
+                                inTeamFunc={(e) => inTeamFunc(e)}
+                                _onSubmit={(data) => onSubmit(data)}
+                                _handleRemove={(data) => handleRemove(data)}
+                                isLoading={isLoading}
+                            />
+                            </>
+                        ) : (
+                            <>Bạn cần phải đăng nhập</>
+                        )}
+                        {hasNextPage &&(
+                            <Waypoint onEnter={loadMore}>
+                                <ul className="list-nf skeleton">
+                                    <li className="item-nf">
+                                        <div className="newsfeed">
+                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
+                                            <Skeleton active paragraph={{ rows: 2 }}/>
+                                        </div>
+                                    </li>
+                                    <li className="item-nf">
+                                        <div className="newsfeed">
+                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
+                                            <Skeleton active paragraph={{ rows: 2 }}/>
+                                        </div>
+                                    </li>
+                                    <li className="item-nf">
+                                        <div className="newsfeed">
+                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
+                                            <Skeleton active paragraph={{ rows: 2 }}/>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </Waypoint>
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div className="col-md-8 col-12">
@@ -440,6 +483,7 @@ const NewsFeed = () => {
                             groupNewsFeed={groupNewsFeed} 
                             userBranch={userBranch} 
                             _onSubmit={(data) => onSubmit(data)}
+                            isLoading={isLoading}
                         />
                         <div className="mt-4"><Empty /></div>
                         </>
@@ -449,7 +493,26 @@ const NewsFeed = () => {
                 </div>
             )}
             <div className="col-md-4 col-12">
-                <SideBar />
+                <div className="sidebar-desktop">
+                    <SideBar />
+                </div>
+                <div className="sidebar-mobile">
+                    <Link href="/newsfeed">
+                        <a><p className="label-nf font-weight-black">NewsFeed</p></a>
+                    </Link>
+                    <button className="btn btn-light" onClick={showDrawer}>
+                        <MoreHorizontal/>
+                    </button>
+                    <Drawer
+                        placement="right"
+                        closable={false}
+                        onClose={onClose}
+                        visible={visible}
+                        className="drawer-newsfeed"
+                    >
+                        <SideBar/>
+                    </Drawer>
+                </div>
             </div>
         </div>
         </>

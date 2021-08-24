@@ -19,6 +19,7 @@ import {
 import CreateCourseForm from '~/components/Global/CreateCourse/CreateCourseForm/CreateCourseForm';
 import SaveCreateCourse from '~/components/Global/CreateCourse/SaveCreateCourse';
 import TitlePage from '~/components/TitlePage';
+import {useDebounce} from '~/context/useDebounce';
 import {useWrap} from '~/context/wrap';
 import {fmArrayToObjectWithSpecialKey, fmSelectArr} from '~/utils/functions';
 import CreateCourseCalendar from './Calendar/CreateCourseCalendar';
@@ -208,10 +209,14 @@ const CreateCourse = () => {
 		scheduleList: [],
 	});
 	const debounceFetchInfoAvailableSchedule = useRef(null);
-	const TIMING = 500;
+	const TIMING = 800;
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
+		setIsLoading({
+			type: 'FETCH_DATA',
+			status: true,
+		});
 		try {
 			const [branch, studyTime, grade] = await Promise.all([
 				branchApi.getAll({pageIndex: 1, pageSize: 9999}),
@@ -238,6 +243,11 @@ const CreateCourse = () => {
 		} catch (error) {
 			console.log('fetchData - PromiseAll:', error);
 			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_DATA',
+				status: false,
+			});
 		}
 	};
 	useEffect(() => {
@@ -593,15 +603,13 @@ const CreateCourse = () => {
 			});
 		}
 	};
-	const onDebounceFetchInfoAvailableSchedule = (params) => {
+	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 1000, []);
+	const onDebounceFetchInfoAvailableSchedule = (params: ISchedule[]) => {
 		setIsLoading({
 			type: 'CHECK_SCHEDULE',
 			status: true,
 		});
-		clearTimeout(debounceFetchInfoAvailableSchedule.current);
-		debounceFetchInfoAvailableSchedule.current = setTimeout(() => {
-			fetchInfoAvailableSchedule(params);
-		}, TIMING);
+		onDebounceFetch(params);
 	};
 	const checkDuplicateStudyTimeInDay = (arr: ISchedule[], vl) => {
 		const scheduleSameStudyTime = arr.filter((s) => s.CaID === vl);
@@ -771,11 +779,6 @@ const CreateCourse = () => {
 	const onSelectDate = (vl) => {
 		setDateSelected(vl.resource.dateString);
 	};
-	const onSetDataModalCalendar = (obj: IDataModal) => {
-		const {scheduleList} = obj;
-		onDebounceFetchInfoAvailableSchedule(scheduleList);
-		setDataModalCalendar(obj);
-	};
 	const onToggleSchedule = (sch: ISchedule, type: number) => {
 		if (changeStatusSchedule(sch, type)) {
 			const newScheduleList = [...dataModalCalendar.scheduleList];
@@ -785,13 +788,20 @@ const CreateCourse = () => {
 			} else {
 				newScheduleList.push(sch);
 			}
-			onSetDataModalCalendar({
+			setDataModalCalendar({
 				...dataModalCalendar,
 				scheduleInDay: newScheduleList.length,
 				scheduleList: newScheduleList,
 			});
 		}
 	};
+	useEffect(() => {
+		const {scheduleList} = dataModalCalendar;
+		if (scheduleList.length) {
+			onDebounceFetchInfoAvailableSchedule(scheduleList);
+		}
+		return () => clearTimeout(debounceFetchInfoAvailableSchedule.current);
+	}, [dataModalCalendar]);
 	// -----------SAVE COURSE-----------
 
 	const getTitle = (arr: IOptionCommon[], vl) =>
@@ -995,7 +1005,7 @@ const CreateCourse = () => {
 							//
 							isLoaded={true}
 							//
-							handleSetDataModalCalendar={onSetDataModalCalendar}
+							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
 						>
 							<ScheduleList

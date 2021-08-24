@@ -61,8 +61,8 @@ const GroupNewsFeedFrom = (props) => {
             if(oldData) {
                 setValue("ID", oldData?.ID)
             }
+            fetchCourse();
         }
-        fetchCourse();
     }, [isVisibleModal]);
 
     return (

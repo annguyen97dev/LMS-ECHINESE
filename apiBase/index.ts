@@ -29,7 +29,7 @@ export { staffApi } from "./staff-manage/staff";
 export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
 
-export { exerciseApi } from "./exercise/exercise";
+export { exerciseGroupApi } from "./exercise/exerciseGroup";
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
 export { studentAdviseApi } from "./customer/student/student-advise";
@@ -63,3 +63,10 @@ export { newsFeedCommentReplyApi } from "./newsfeed/newsfeed-commentreply";
 export { userBranchApi } from "./newsfeed/user-branch";
 export { groupNewsFeedApi } from "./newsfeed/group-newsfeed";
 export { userGroupNewsFeedApi } from "./newsfeed/user-group-newsfeed";
+export { exerciseApi } from "./exercise/exercise";
+
+export {
+  staffOfTaskGroupApi,
+  taskApi,
+  taskGroupApi,
+} from "./staff-manage/task";

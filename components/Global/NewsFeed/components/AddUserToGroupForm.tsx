@@ -53,8 +53,8 @@ const AddUserToGroupForm = (props) => {
         if(isVisibleModal) {
             setValue("GroupNewsFeedID", GroupID);
             setValue("RoleID", 2);
+            fetchUser();
         }
-        fetchUser();
     }, [isVisibleModal, roleID])
     return (
         <>
@@ -85,7 +85,7 @@ const AddUserToGroupForm = (props) => {
                                 placeholder="Chọn thành viên"
                                 onChange={(value) => setRoleID(value)}
                             >
-                                {Roles.map((item, index) => (
+                                {Roles.filter(item => item.id != 1 && item.id != 5).map((item, index) => (
                                     <Option value={item.id}>{item.RoleName}</Option>
                                 ))}
                             </Select>

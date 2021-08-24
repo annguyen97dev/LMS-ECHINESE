@@ -14,7 +14,7 @@ import { data } from "~/lib/option/dataOption";
 let AnsID = 0;
 
 const MultipleForm = (props) => {
-  const { isSubmit, questionData, changeIsSubmit } = props;
+  const { isSubmit, questionData, changeIsSubmit, visible } = props;
   const { showNoti } = useWrap();
   const {
     reset,
@@ -25,11 +25,11 @@ const MultipleForm = (props) => {
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
   const [form] = Form.useForm();
-  const [questionDataForm, setQuestionDataForm] = useState(questionData);
+  const [questionDataForm, setQuestionDataForm] = useState(null);
   const [isResetEditor, setIsResetEditor] = useState(false);
   const [answerList, setAnswerList] = useState(questionData.ExerciseAnswer);
 
-  console.log("Question base: ", questionDataForm);
+  // console.log("Question in form: ", questionDataForm);
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
@@ -38,7 +38,6 @@ const MultipleForm = (props) => {
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
-    console.log("Value Editor Form: ", dataEditor);
     questionDataForm.Content = dataEditor;
     setQuestionDataForm({ ...questionDataForm });
   };
@@ -52,7 +51,6 @@ const MultipleForm = (props) => {
 
   // ON CHANGE IS CORRECT
   const onChange_isCorrect = (e, AnswerID) => {
-    console.log(`checked = ${e.target.checked}`);
     let checked = e.target.checked;
 
     // Tìm vị trí sau đó gán correct vào
@@ -75,24 +73,33 @@ const MultipleForm = (props) => {
 
   // SUBMIT FORM
   const handleSubmitQuestion = async () => {
+    console.log("DATA SUBMIT IN FORM: ", questionDataForm);
     let res = null;
+
     try {
       if (questionDataForm.ID) {
-        let cloneData = { ...questionDataForm };
+        let cloneData = JSON.parse(JSON.stringify(questionDataForm));
+
         cloneData.ExerciseAnswer.forEach((item, index) => {
           if (item.isAdd) {
             delete item.ID;
           }
         });
-
         res = await exerciseApi.update(cloneData);
       } else {
         res = await exerciseApi.add(questionDataForm);
       }
       if (res.status == 200) {
-        changeIsSubmit();
-        resetForm();
+        changeIsSubmit(questionDataForm.ID ? questionDataForm : res.data.data);
+        showNoti(
+          "success",
+          `${questionDataForm.ID ? "Cập nhật" : "Thêm"} Thành công`
+        );
+        if (!questionDataForm.ID) {
+          resetForm();
+        }
         setIsResetEditor(true);
+
         setTimeout(() => {
           setIsResetEditor(false);
         }, 500);
@@ -126,72 +133,67 @@ const MultipleForm = (props) => {
   };
 
   useEffect(() => {
-    console.log("Data submit: ", questionDataForm);
-    isSubmit &&
-      (handleSubmitQuestion(), console.log("DATA SUBMIT: ", questionDataForm));
+    isSubmit && handleSubmitQuestion();
   }, [isSubmit]);
 
-  // useEffect(() => {
-  //   if (!questionData.ID) {
-  //     setQuestionDataForm({
-  //       ...questionDataForm,
-  //       ExerciseAnswer: [],
-  //     });
-  //   }
-  // }, [questionData]);
+  useEffect(() => {
+    visible ? setQuestionDataForm(questionData) : setQuestionDataForm(null);
+  }, [visible]);
 
   return (
     <div className="form-create-question">
-      <Form form={form} layout="vertical" onFinish={onSubmit}>
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-12">
-              <Form.Item name="Question" label="Câu hỏi">
-                <Editor
-                  handleChange={(value) => getDataEditor(value)}
-                  isReset={isResetEditor}
-                  questionContent={questionDataForm?.Content}
-                  questionData={questionDataForm}
-                />
-              </Form.Item>
+      {visible && questionDataForm && (
+        <Form form={form} layout="vertical" onFinish={onSubmit}>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-12">
+                <Form.Item name="Question" label="Câu hỏi">
+                  <Editor
+                    handleChange={(value) => getDataEditor(value)}
+                    isReset={isResetEditor}
+                    questionContent={questionDataForm?.Content}
+                    questionData={questionDataForm}
+                  />
+                </Form.Item>
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-12 mb-4">
-              <p className="style-label">Đáp án</p>
-              <button className="btn btn-warning" onClick={handleAddAnswer}>
-                Thêm đáp án
-              </button>
-            </div>
-            {questionData?.ExerciseAnswer?.map(
-              (item, index) =>
-                item.Enable && (
-                  <div className="col-md-6 col-12" key={index}>
-                    <div className="row-ans">
-                      <Checkbox
-                        checked={item.isTrue}
-                        onChange={(e) => onChange_isCorrect(e, item.ID)}
-                      ></Checkbox>
-                      <Form.Item>
-                        <Input
-                          value={item.AnswerContent}
-                          className="style-input"
-                          onChange={(e) => onChange_text(e, item.ID)}
-                        ></Input>
-                      </Form.Item>
-                      <button
-                        className="delete-ans"
-                        onClick={() => deleteAnswerItem(item.ID)}
-                      >
-                        <CloseOutlined />
-                      </button>
+            <div className="row">
+              <div className="col-12 mb-4">
+                <p className="style-label">Đáp án</p>
+                <button className="btn btn-warning" onClick={handleAddAnswer}>
+                  Thêm đáp án
+                </button>
+              </div>
+              {questionData?.ExerciseAnswer?.map(
+                (item, index) =>
+                  item.Enable && (
+                    <div className="col-md-6 col-12" key={index}>
+                      <div className="row-ans">
+                        <Checkbox
+                          checked={item.isTrue}
+                          onChange={(e) => onChange_isCorrect(e, item.ID)}
+                        ></Checkbox>
+                        <Form.Item>
+                          <Input
+                            value={item.AnswerContent}
+                            className="style-input"
+                            onChange={(e) => onChange_text(e, item.ID)}
+                          ></Input>
+                        </Form.Item>
+                        <button
+                          className="delete-ans"
+                          onClick={() => deleteAnswerItem(item.ID)}
+                        >
+                          <CloseOutlined />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )
-            )}
+                  )
+              )}
+            </div>
           </div>
-        </div>
-      </Form>
+        </Form>
+      )}
     </div>
   );
 };
