@@ -272,13 +272,13 @@ export const dataMenu = [
             Text: "Học viên sắp thi",
             Icon: "",
           },
-          {
-            ItemType: "single",
-            Key: "/customer/report/report-customer-result",
-            Route: "/customer/report/report-customer-result",
-            Text: "Kết quả thi thực tế",
-            Icon: "",
-          },
+          // {
+          //   ItemType: "single",
+          //   Key: "/customer/report/report-customer-result",
+          //   Route: "/customer/report/report-customer-result",
+          //   Text: "Kết quả thi thực tế",
+          //   Icon: "",
+          // },
         ],
       },
       {

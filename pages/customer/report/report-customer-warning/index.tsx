@@ -7,7 +7,6 @@ import { dataService } from "lib/customer/dataCustomer";
 import Link from "next/link";
 import { ExpandBoxWarning } from "~/components/Elements/ExpandBox";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";

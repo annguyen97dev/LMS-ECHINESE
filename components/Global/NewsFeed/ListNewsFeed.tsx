@@ -1,12 +1,13 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Popover, Button, Input, Modal, Form, Tooltip, Select, Image } from 'antd';
-import { ThumbsUp, MessageCircle, MoreHorizontal, Users, Send , Home, Navigation, EyeOff, Trash2, Edit2, AlertTriangle } from "react-feather";
+import { ThumbsUp, MessageCircle, MoreHorizontal, Users, Send , Home, Navigation, EyeOff, Trash2, Edit2, AlertTriangle, PlayCircle } from "react-feather";
 import { FileImageFilled, GroupOutlined, TeamOutlined } from "@ant-design/icons";
 import UploadMutipleFile from "./components/UploadMutipleFile";
 import { useForm } from "react-hook-form";
 import moment from "moment";
 import { newsFeedLikeApi, newsFeedCommentApi, newsFeedCommentReplyApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import FsLightbox from 'fslightbox-react';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -513,10 +514,9 @@ const ListNewsFeed = (props) => {
         const [totalLike, setTotalLike] = useState(0);
         const [totalComment, setTotalComment] = useState(0);
         const [listComment, setListComment] = useState<INewsFeedComment[]>([]);
-        const [visible, setVisible] = useState(false);
+        const [liked, setLiked] = useState(false);
         const [toggler, setToggler] = useState(false);
 
-        const [liked, setLiked] = useState(false);
         const handleShowComments = () => {
             setShowComments(!showComments);
         }
@@ -549,7 +549,7 @@ const ListNewsFeed = (props) => {
                 }
             } catch (error) {
                 console.log("Lỗi", error.message);
-            }
+            } 
         }
 
         const getTotalComment = async () => {
@@ -575,7 +575,7 @@ const ListNewsFeed = (props) => {
                     console.log("Không có dữ liệu");
                 }
                 if(res.status == 200) {
-                    getTotalLike();
+                    // getTotalLike();
                     // checkedLike();
                 }
             } catch (error) {
@@ -619,191 +619,221 @@ const ListNewsFeed = (props) => {
             return res;
         }
 
-        // console.log("Data comment: ", listComment);
-
         useEffect(() => {
-            if(!isLoading.status) {
-                if(data.data?.isLike) {
-                    getTotalLike();
+            if(!isLoading.status && isLoading.type == "GET_LIST") {
+                setTotalLike(data.data?.LikeCount);
+                setTotalComment(data.data?.CommentCount);
+                if(data.data?.isLike == true) {
+                    console.log("check like count");
                     checkedLike();
                 }
-                if(data.data?.isComment) {
-                    getTotalComment();
-                }
             }
-        }, []);
+        }, [isLoading]);
 
         return (
-        <li className="item-nf">
-            <div className="newsfeed">
-                <div className="newsfeed-header">
-                    <div className="info-current-user">
-                        <div className="avatar">
-                            <img
-                                src={
-                                data.data?.Avatar
-                                    ? data.data?.Avatar
-                                    : "/images/user.jpg"
-                                }
-                                alt=""
-                            />
-                        </div>
-                        <div className="name-user">
-                            <div className="name">
-                                <a data-text={data.data?.FullNameUnicode} onClick={_onSearch}>{data.data?.FullNameUnicode}</a>
-                                <span className="share-point"><Navigation/></span>
-                                {data.data?.GroupNewsFeedName 
-                                ? 
-                                (
-                                <ul>
-                                    <li 
-                                        value={data.data?.GroupNewsFeedID} 
-                                        onClick={e => inGroupFunc(e)}>
-                                            {data.data?.GroupNewsFeedName}
-                                    </li>
-                                </ul>
-                                ) 
-                                : (
-                                    <ul>
-                                        {data.data?.NewsFeedBranch.map((item, index) => (
-                                            <li 
-                                                key={index} 
-                                                className="item-branch"
-                                                value={item.BranchID} 
-                                                onClick={e => inTeamFunc(e)}
-                                            >
-                                                    {item.BranchName}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                            <span className="newsfeed-time">{moment(data.data?.CreatedOn).format("DD/MM/YY HH:mm")}</span>
-                        </div>
-                    </div>
-                    <div className="newsfeed-more">
-                        <Popover content={content(data.data)} trigger="focus" placement="bottomRight">
-                            <button className="btn-more">
-                                <MoreHorizontal />
-                            </button>
-                        </Popover>
-                    </div>
-                </div>
-                <div className="newsfeed-content">
-                    <pre>{data.data?.Content}</pre>
-                </div>
-                {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length > 0 && (
-                <div className="newsfeed-images">
-                    {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length > 2 ? (
-                        <div className="more-than-3-images">
-                        {data.data?.NewsFeedFile.filter((item, idx) => idx < 2 && item.Type == 2).map((item, index) => (
-                            <Image
-                                preview={{ visible: false }}
-                                width={"50%"}
-                                src={item.NameFile}
-                                onClick={() => setVisible(true)}
-                                key={index}
-                            />
-                        ))}
-                            <div className="preview-total" onClick={() => setVisible(true)}>
-                                + {Object.keys(data.data?.NewsFeedFile).length - 2}
-                            </div>
-                        </div>
-                    ) : (
-                        <>
-                        {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length == 1 ? (
-                            <div className="one-image">
-                            {data.data?.NewsFeedFile.filter((item, idx) => item.Type == 2).map((item, index) => (
-                                <Image
-                                    preview={{ visible: false }}
-                                    width={"100%"}
-                                    src={item.NameFile}
-                                    onClick={() => setVisible(true)}
-                                    key={index}
+            <li className="item-nf">
+                <div className="newsfeed">
+                    <div className="newsfeed-header">
+                        <div className="info-current-user">
+                            <div className="avatar">
+                                <img
+                                    src={
+                                    data.data?.Avatar
+                                        ? data.data?.Avatar
+                                        : "/images/user.jpg"
+                                    }
+                                    alt=""
                                 />
-                            ))}
+                            </div>
+                            <div className="name-user">
+                                <div className="name">
+                                    <a data-text={data.data?.FullNameUnicode} onClick={_onSearch}>{data.data?.FullNameUnicode}</a>
+                                    <span className="share-point"><Navigation/></span>
+                                    {data.data?.GroupNewsFeedName 
+                                    ? 
+                                    (
+                                    <ul>
+                                        <li 
+                                            value={data.data?.GroupNewsFeedID} 
+                                            onClick={e => inGroupFunc(e)}>
+                                                {data.data?.GroupNewsFeedName}
+                                        </li>
+                                    </ul>
+                                    ) 
+                                    : (
+                                        <ul>
+                                            {data.data?.NewsFeedBranch.map((item, index) => (
+                                                <li 
+                                                    key={index} 
+                                                    className="item-branch"
+                                                    value={item.BranchID} 
+                                                    onClick={e => inTeamFunc(e)}
+                                                >
+                                                        {item.BranchName}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                                <span className="newsfeed-time">{moment(data.data?.CreatedOn).format("DD/MM/YY HH:mm")}</span>
+                            </div>
+                        </div>
+                        <div className="newsfeed-more">
+                            <Popover content={content(data.data)} trigger="focus" placement="bottomRight">
+                                <button className="btn-more">
+                                    <MoreHorizontal />
+                                </button>
+                            </Popover>
+                        </div>
+                    </div>
+                    <div className={data.data?.TypeFile == 1 ? "newsfeed-content type-1" : "newsfeed-content"}>
+                        {data.data?.TypeFile == 1 ? (
+                            <div 
+                                className="newsfeed-background" 
+                                style={{backgroundImage: `url(${data.data?.NewsFeedFile[0].NameFile})`}}
+                            >
+                                <pre>{data.data?.Content}</pre>
                             </div>
                         ) : (
-                            <div className="two-images">
-                            {data.data?.NewsFeedFile.filter((item, idx) => item.Type == 2).map((item, index) => (
-                                <Image
-                                    preview={{ visible: false }}
-                                    width={"50%"}
-                                    src={item.NameFile}
-                                    onClick={() => setVisible(true)}
-                                    key={index}
-                                />
-                            ))}
-                            </div>
+                            <pre>{data.data?.Content}</pre>
                         )}
-
-                        </>
-                    )}
-                    <div style={{ display: 'none' }}>
-                        <Image.PreviewGroup preview={{ visible, onVisibleChange: vis => setVisible(vis) }}>
-                        {data.data?.NewsFeedFile.filter((item) => item.Type == 2).map((item, index) => (
-                            <Image src={item.NameFile} key={index} />
+                    </div>
+                    {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length > 0 && (
+                    <div className="newsfeed-images">
+                        {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length > 2 ? (
+                            <div className="more-than-3-images">
+                                <div className="list-images">
+                                {data.data?.NewsFeedFile.filter((item, idx) => idx < 2 && item.Type == 2).map((item, index) => (
+                                    <div 
+                                        className={item.Type == 2 ? "item-file image" : "item-file video"} 
+                                        onClick={() => setToggler(!toggler)}
+                                        key={index}
+                                    >
+                                    <img
+                                        src={item.Type == 2 ? item.NameFile : item.Thumnail}
+                                    />
+                                        <div className="icon-video">
+                                            <PlayCircle />
+                                        </div>
+                                    </div> 
+                                ))}
+                                </div>
+                                <div className="preview-total" onClick={() => setToggler(!toggler)}>
+                                    + {Object.keys(data.data?.NewsFeedFile).length - 2}
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                            {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 2)).length == 1 ? (
+                                <div className="one-image">
+                                {data.data?.NewsFeedFile.filter((item, idx) => item.Type == 2).map((item, index) => (
+                                    <div 
+                                        className={item.Type == 2 ? "item-file image" : "item-file video"} 
+                                        onClick={() => setToggler(!toggler)}
+                                        key={index}
+                                    >
+                                        <img
+                                            src={item.Type == 2 ? item.NameFile : item.Thumnail}
+                                        />
+                                        <div className="icon-video">
+                                            <PlayCircle />
+                                        </div>
+                                    </div>
+                                ))}
+                                </div>
+                            ) : (
+                                <div className="two-images">
+                                {data.data?.NewsFeedFile.filter((item, idx) => item.Type == 2).map((item, index) => (
+                                    <div 
+                                        className={item.Type == 2 ? "item-file image" : "item-file video"} 
+                                        onClick={() => setToggler(!toggler)}
+                                        key={index}
+                                    >
+                                        <img
+                                            src={item.Type == 2 ? item.NameFile : item.Thumnail}
+                                        />
+                                        <div className="icon-video">
+                                            <PlayCircle />
+                                        </div>
+                                    </div>
+                                ))}
+                                </div>
+                            )}
+    
+                            </>
+                        )}
+                        <FsLightbox
+                            toggler={toggler}
+                            sources={data.data?.NewsFeedFile
+                                .filter(item => item.Type != 1 && item.Type != 3)
+                                .map(item => item.NameFile)}
+                        />
+                    </div>
+                    ) }
+                    {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 3)).length > 0 && (
+                    <div className="newsfeed-audio">
+                        {data.data?.NewsFeedFile.filter((item) => item.Type == 3).map((item, index) => (
+                            <audio className="audio-tag" controls key={index}>
+                                <source src={item.NameFile} type="audio/mpeg" />
+                            </audio>
                         ))}
-                        </Image.PreviewGroup>
+                    </div>
+                    )}
+                    <div className="newsfeed-total">
+                        {liked && totalLike > 0 ? (
+                            <>
+                            {liked && totalLike == 1 ? (
+                                <p><ThumbsUp color="#0571e5"/>Bạn</p>
+                            ) : (
+                                <p><ThumbsUp color="#0571e5"/>{liked ? `Bạn và ${totalLike - 1} người khác` : totalLike - 1}</p>
+                            )}
+                            </>
+                        ) : (
+                            <>
+                            {liked ? (<p><ThumbsUp color="#0571e5"/>Bạn</p>) : <></>}
+                            </>
+                        )}
+                        {totalComment > 0 && (
+                            <p className="total-comments" onClick={() => setShowComments(!showComments)}>{totalComment} Bình luận</p>
+                        )}
+                    </div>
+                    <div className="newsfeed-action">
+                        <div className="action">
+                            <button 
+                                className={liked ? "btn active" : "btn"} 
+                                onClick={() => likeNewsFeed(data.data?.ID)}>
+                                <ThumbsUp />
+                                <span>Like</span>
+                            </button>
+                        </div>
+                        <div className="action">
+                            <button className="btn" onClick={handleShowComments}>
+                                <MessageCircle />
+                                <span>Bình luận</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div className={showComments ? "newsfeed-comments" : "hide"}>
+                        <CommentAction
+                            getTotalComment={getTotalComment} 
+                            reply={false} 
+                            id={data.data?.ID} 
+                            commentNewsFeed={(data) => commentNewsFeed(data)}
+                        />
+                        {totalComment > 0 && (
+                            <ul className="list-comments">
+                                {listComment?.map((item, index) => (
+                                    <Comments 
+                                        key={index} 
+                                        dataCommentIndex={item}
+                                        commentReplyNewsFeed={(data) => commentReplyNewsFeed(data)}
+                                    />
+                                ))}
+                            </ul>
+                        )}
                     </div>
                 </div>
-                ) }
-                {Object.keys(data.data?.NewsFeedFile.filter((item) => item.Type == 3)).length > 0 && (
-                <div className="newsfeed-audio">
-                    {data.data?.NewsFeedFile.filter((item) => item.Type == 3).map((item, index) => (
-                        <audio className="audio-tag" controls key={index}>
-                            <source src={item.NameFile} type="audio/mpeg" />
-                        </audio>
-                    ))}
-                </div>
-                )}
-                <div className="newsfeed-lightbox">
-                </div>
-                <div className="newsfeed-total">
-                    {totalLike > 0 && (
-                        <p><ThumbsUp color="#0571e5"/> {totalLike}</p>
-                    )}
-                    {totalComment > 0 && (
-                        <p className="total-comments" onClick={() => setShowComments(!showComments)}>{totalComment} Bình luận</p>
-                    )}
-                </div>
-                <div className="newsfeed-action">
-                    <div className="action">
-                        <button 
-                            className={liked ? "btn btn-light active" : "btn btn-light"} 
-                            onClick={() => likeNewsFeed(data.data?.ID)}>
-                            <ThumbsUp />
-                            <span>Like</span>
-                        </button>
-                    </div>
-                    <div className="action">
-                        <button className="btn btn-light" onClick={handleShowComments}>
-                            <MessageCircle />
-                            <span>Bình luận</span>
-                        </button>
-                    </div>
-                </div>
-                <div className={showComments ? "newsfeed-comments" : "hide"}>
-                    <CommentAction
-                        getTotalComment={getTotalComment} 
-                        reply={false} 
-                        id={data.data?.ID} 
-                        commentNewsFeed={(data) => commentNewsFeed(data)}
-                    />
-                    {totalComment > 0 && (
-                        <ul className="list-comments">
-                            {listComment?.map((item, index) => (
-                                <Comments 
-                                    key={index} 
-                                    dataCommentIndex={item}
-                                    commentReplyNewsFeed={(data) => commentReplyNewsFeed(data)}
-                                />
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            </div>
-        </li>
+            </li>
         )
     }
 

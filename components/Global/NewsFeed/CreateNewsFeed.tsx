@@ -1,11 +1,12 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Image, Users, Send, Home } from "react-feather";
-import { useWrap } from "~/context/wrap";
 import { Form, Modal, Button, Input, Tooltip, Upload, Popover, Select, Spin } from 'antd';
 import { FileImageFilled, GroupOutlined, TeamOutlined } from "@ant-design/icons";
 import { PlusOutlined } from '@ant-design/icons';
 import UploadMutipleFile from "./components/UploadMutipleFile";
+import { backgroundNewsFeedApi } from "~/apiBase";
 import { useForm } from "react-hook-form";
+import { useWrap } from "~/context/wrap";
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -14,7 +15,10 @@ const CreateNewsFeed = (props) => {
     const [isOpenUploadFile, setIsOpenUploadFile] = useState(false);
     const [visibleSelectBranch, setVisibleSelectBranch] = useState(false);
     const [chooseBranch, setChooseBranch] = useState('team');
-    const [fileList, setFileList] = useState([]);
+    const [nameFile, setNameFile] = useState('');
+    const [backgroundNF, setBackgroundNF] = useState<IBackgroundNewsFeed[]>([]);
+    const [listBackgroundNF, setListBackgroundNF] = useState(false);
+    const { showNoti } = useWrap();
 
     const [form] = Form.useForm();
 
@@ -36,6 +40,7 @@ const CreateNewsFeed = (props) => {
                 setValue("BranchList", ""),
                 setValue("GroupNewsFeedID", ""),
                 setValue("NewsFeedFile", "");
+                setValue("TypeFile", 0);
           });
     });
 
@@ -64,7 +69,13 @@ const CreateNewsFeed = (props) => {
 
     const openUploadFile = () => {
         setIsOpenUploadFile(!isOpenUploadFile);
+        setListBackgroundNF(false);
     };
+
+    const onSetListBG = () => {
+        setListBackgroundNF(!listBackgroundNF);
+        setIsOpenUploadFile(false);
+    }
 
     const setChooseBranchFunc = (data) => {
         setChooseBranch(data);
@@ -73,6 +84,19 @@ const CreateNewsFeed = (props) => {
         }
         if(data == 'group') {
             setValue("BranchList", null) 
+        }
+    }
+
+    const fetchBackgroundNewsFeed = async () => {
+        try {
+            let res = await backgroundNewsFeedApi.getAll();
+            if(res.status == 200) {
+                setBackgroundNF(res.data.data)
+            } else {
+                showNoti("danger", res.data.message);
+            }
+        } catch (error) {
+            showNoti("danger", error.message);
         }
     }
 
@@ -87,7 +111,28 @@ const CreateNewsFeed = (props) => {
                 setValue("GroupNewsFeedID", null)
             }
         }
-    })
+    }, []);
+
+    useEffect(() => {
+        if(listBackgroundNF) {
+            setValue("TypeFile", 1);
+            setValue("NewsFeedFile", [{
+                Type: 1,
+                NameFile: nameFile
+            }]);
+        } else if(isOpenUploadFile) {
+            setValue("TypeFile", 2);
+        } else {
+            setValue("TypeFile", 0);
+            setValue("NewsFeedFile", [])
+        }
+    }, [listBackgroundNF, isOpenUploadFile, nameFile])
+
+    useEffect(() => {
+        if(isVisibleModal) {
+            fetchBackgroundNewsFeed();
+        }
+    }, [isVisibleModal]);
 
     return (
         <>
@@ -156,17 +201,57 @@ const CreateNewsFeed = (props) => {
                             </div>
                         </div>
                     </div>
+                        {listBackgroundNF ? (
+                        <div className="row have-bg">
+                            <div className="bg" style={{backgroundImage: `url(${nameFile})`}}>
+                            <Form.Item 
+                                name="Nội dung"
+                                >
+                                <TextArea
+                                    placeholder="Bạn đang nghĩ gì ?"
+                                    autoSize
+                                    className="text-area-nf" 
+                                    onChange={(e) => setValue("Content", e.target.value)}
+                                    maxLength={190}
+                                />
+                            </Form.Item>
+                            </div>
+                        </div>
+                        ) : (
+                            <div className="row">
+                            <Form.Item 
+                                name="Nội dung"
+                                >
+                                <TextArea
+                                    placeholder="Bạn đang nghĩ gì ?"
+                                    autoSize
+                                    className="text-area-nf" 
+                                    onChange={(e) => setValue("Content", e.target.value)}  
+                                />
+                            </Form.Item>
+                            </div>
+                        )}
+
                     <div className="row">
-                        <Form.Item 
-                            name="Nội dung"
-                            >
-                        <TextArea
-                            placeholder="Bạn đang nghĩ gì ?"
-                            rows={4}
-                            className="text-area-nf" 
-                            onChange={(e) => setValue("Content", e.target.value)}  
-                        />
-                        </Form.Item>
+                        <div className="col-12">
+                            <div className="select-background-nf">
+                                <div className={listBackgroundNF ? "btn-bg-nf active" : "btn-bg-nf"} onClick={onSetListBG}>
+                                    <img src="/images/icon-background-newsfeed.png" alt="icon" />
+                                </div>
+                                <ul className={listBackgroundNF ? "list-bg-nf" : "hide"}>
+                                    {backgroundNF && backgroundNF
+                                        .map((item, index) => (
+                                            <li 
+                                                key={index}
+                                                style={{backgroundImage: `url(${item.FileName})`}}
+                                                data-filename={item.FileName}
+                                                onClick={(e) => setNameFile(e.currentTarget.dataset.filename)}
+                                                className={nameFile == item.FileName ? "item-bg-nf active" : "item-bg-nf"}
+                                            />
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div className={isOpenUploadFile ? "row" : "hide"}>
                         <div className="col-12">
@@ -315,7 +400,7 @@ const CreateNewsFeed = (props) => {
                     </div>
                     <div className="row ">
                         <div className="col-12">
-                            <button type="submit" className="btn btn-primary w-100" onClick={onSubmit}>
+                            <button type="submit" className="btn btn-primary w-100">
                             Đăng
                             {props.isLoading.type == "ADD" && props.isLoading.status && (
                                 <Spin className="loading-base" />
