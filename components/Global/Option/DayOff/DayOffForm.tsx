@@ -85,14 +85,19 @@ const DayOffForm = (props) => {
 				onCancel={closeModal}
 				footer={null}
 			>
-				<div className="container-fluid">
+				<div>
 					<Form
 						layout="vertical"
 						onFinish={form.handleSubmit(dayOffSwitchFunc)}
 					>
 						<div className="row">
 							<div className="col-12">
-								<DateField form={form} name="DayOff" label="Day off" />
+								<DateField
+									form={form}
+									name="DayOff"
+									label="Day off"
+									placeholder="Nhập ngày nghỉ"
+								/>
 							</div>
 						</div>
 						<div className="row">
@@ -102,6 +107,7 @@ const DayOffForm = (props) => {
 									name="DayOffName"
 									label="Note"
 									rows={2}
+									placeholder="Nhập ghi chú"
 								/>
 							</div>
 						</div>

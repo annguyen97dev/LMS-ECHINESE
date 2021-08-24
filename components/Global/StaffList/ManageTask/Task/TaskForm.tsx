@@ -5,11 +5,11 @@ import React, {useEffect, useState} from 'react';
 import {FilePlus, RotateCcw, UserMinus, UserPlus} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import CheckboxField from '~/components/FormControl/CheckboxField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import {optionCommonPropTypes} from '~/utils/proptypes';
-import TaskDelete from './TaskDelete';
 
 TaskForm.propTypes = {
 	isLoading: PropTypes.shape({
@@ -139,7 +139,7 @@ function TaskForm(props) {
 
 	const checkHandleDeleteTask = (idx: number) => {
 		if (!handleDeleteTask) return;
-		handleDeleteTask(idx);
+		return handleDeleteTask(idx);
 	};
 
 	const checkHandleActionOfStaff = (
@@ -269,7 +269,7 @@ function TaskForm(props) {
 				}}
 				footer={null}
 			>
-				<div className="container-fluid">
+				<div>
 					<Form
 						key="0"
 						layout="vertical"
@@ -412,9 +412,8 @@ function TaskForm(props) {
 																''
 															)}
 															{item.DoneTask ? (
-																<TaskDelete
-																	handleDeleteTask={checkHandleDeleteTask}
-																	index={idx}
+																<DeleteTableRow
+																	handleDelete={checkHandleDeleteTask(idx)}
 																/>
 															) : isAuthorization() === 'Accept' ? (
 																<Tooltip title="Cập nhật công việc">

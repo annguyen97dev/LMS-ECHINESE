@@ -21,6 +21,7 @@ const PowerList = (props) => {
 			pagination={{
 				onChange: checkGetPagination,
 				total: totalPage,
+				size: 'small',
 			}}
 			// 0 sắp diễn ra, 1 đang diễn ra, 2 đã đóng
 			//       AcademicName: "Nguyễn Phi Hùng"

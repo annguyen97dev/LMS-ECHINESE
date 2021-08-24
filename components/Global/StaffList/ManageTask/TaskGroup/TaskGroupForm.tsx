@@ -85,7 +85,7 @@ const TaskGroupForm = (props) => {
 				onCancel={closeModal}
 				footer={null}
 			>
-				<div className="container-fluid">
+				<div>
 					<Form
 						key="2"
 						layout="vertical"
@@ -113,7 +113,12 @@ const TaskGroupForm = (props) => {
 						</div>
 						<div className="row">
 							<div className="col-12">
-								<DateField form={form} name="Deadline" label="Thời hạn" />
+								<DateField
+									form={form}
+									name="Deadline"
+									label="Thời hạn"
+									placeholder="Chọn ngày"
+								/>
 							</div>
 						</div>
 						<div className="row ">

@@ -208,8 +208,6 @@ const CreateCourse = () => {
 		scheduleInDay: 0,
 		scheduleList: [],
 	});
-	const debounceFetchInfoAvailableSchedule = useRef(null);
-	const TIMING = 800;
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
@@ -224,7 +222,8 @@ const CreateCourse = () => {
 				gradeApi.getAll({selectAll: true}),
 			]);
 			// BRANCH
-			const newBranchList = fmSelectArr(branch.data.data, 'BranchName', 'ID');
+			const branchListEnable = branch.data.data.filter((b) => b.Enable);
+			const newBranchList = fmSelectArr(branchListEnable, 'BranchName', 'ID');
 			// STUDY TIME
 			const newStudyTimeList = fmSelectArr(studyTime.data.data, 'Name', 'ID', [
 				'Time',
@@ -800,7 +799,6 @@ const CreateCourse = () => {
 		if (scheduleList.length) {
 			onDebounceFetchInfoAvailableSchedule(scheduleList);
 		}
-		return () => clearTimeout(debounceFetchInfoAvailableSchedule.current);
 	}, [dataModalCalendar]);
 	// -----------SAVE COURSE-----------
 

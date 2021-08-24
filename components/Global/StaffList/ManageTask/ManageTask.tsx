@@ -6,6 +6,7 @@ import {
 	taskGroupApi,
 	userInformationApi,
 } from '~/apiBase';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import SortBox from '~/components/Elements/SortBox';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
@@ -15,7 +16,6 @@ import {useWrap} from '~/context/wrap';
 import {fmSelectArr, mathRound} from '~/utils/functions';
 import StaffOfTaskGroupForm from './StaffOfTaskGroup/StaffOfTaskGroupForm';
 import TaskForm from './Task/TaskForm';
-import TaskGroupDelete from './TaskGroup/TaskGroupDelete';
 import TaskGroupFilterDate from './TaskGroup/TaskGroupFilterDate';
 import TaskGroupForm from './TaskGroup/TaskGroupForm';
 
@@ -34,6 +34,7 @@ const ManageTask = () => {
 	);
 	const [taskList, setTaskList] = useState<ITask[]>([]);
 	const [optionTaskList, setOptionTaskList] = useState<IOptionCommon[]>([]);
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -153,6 +154,7 @@ const ManageTask = () => {
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
+		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
 			pageSize: refValue.current.pageSize,
@@ -160,6 +162,7 @@ const ManageTask = () => {
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
+		setActiveColumnSearch(dataIndex);
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -230,47 +233,49 @@ const ManageTask = () => {
 		}
 	};
 	// DELETE
-	const onDeleteTaskGroup = async (idx: number) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const delObj = taskGroupList[idx];
-			const {ID, TaskGroupName, Note, Deadline} = delObj;
-			const newDelObj = {
-				ID,
-				TaskGroupName,
-				Note,
-				Deadline,
-				Enable: false,
-			};
-			const res = await taskGroupApi.delete(newDelObj);
-			res.status === 200 && showNoti('success', res.data.message);
-			if (taskGroupList.length === 1) {
-				filters.pageIndex === 1
-					? (setFilters({
-							...listFieldInit,
-							...refValue.current,
-							pageIndex: 1,
-					  }),
-					  setTaskGroupList([]))
-					: setFilters({
-							...filters,
-							...refValue.current,
-							pageIndex: filters.pageIndex - 1,
-					  });
-				return;
-			}
-			fetchGroupTask();
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeleteTaskGroup = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = taskGroupList[idx];
+				const {ID, TaskGroupName, Note, Deadline} = delObj;
+				const newDelObj = {
+					ID,
+					TaskGroupName,
+					Note,
+					Deadline,
+					Enable: false,
+				};
+				const res = await taskGroupApi.delete(newDelObj);
+				res.status === 200 && showNoti('success', res.data.message);
+				if (taskGroupList.length === 1) {
+					filters.pageIndex === 1
+						? (setFilters({
+								...listFieldInit,
+								...refValue.current,
+								pageIndex: 1,
+						  }),
+						  setTaskGroupList([]))
+						: setFilters({
+								...filters,
+								...refValue.current,
+								pageIndex: filters.pageIndex - 1,
+						  });
+					return;
+				}
+				fetchGroupTask();
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
 	};
 	const fetchGroupTask = async () => {
 		setIsLoading({
@@ -461,32 +466,34 @@ const ManageTask = () => {
 		}
 		return res;
 	};
-	const onDeleteStaffOfTaskGroup = async (idx: number) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const delObj = staffOfTaskGroup[idx];
-			const newDelObj = {
-				ID: delObj.ID,
-				Enable: false,
-			};
-			const res = await staffOfTaskGroupApi.delete(newDelObj);
-			if (res.status === 200) {
-				showNoti('success', res.data.message);
-				const newStaffOfTaskGroup = [...staffOfTaskGroup];
-				newStaffOfTaskGroup.splice(idx, 1);
-				setStaffOfTaskGroup(newStaffOfTaskGroup);
-			}
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeleteStaffOfTaskGroup = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = staffOfTaskGroup[idx];
+				const newDelObj = {
+					ID: delObj.ID,
+					Enable: false,
+				};
+				const res = await staffOfTaskGroupApi.delete(newDelObj);
+				if (res.status === 200) {
+					showNoti('success', res.data.message);
+					const newStaffOfTaskGroup = [...staffOfTaskGroup];
+					newStaffOfTaskGroup.splice(idx, 1);
+					setStaffOfTaskGroup(newStaffOfTaskGroup);
+				}
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
 	};
 	// ----------TASK----------
 	const fetchTask = async (TaskGroupID: number) => {
@@ -649,32 +656,34 @@ const ManageTask = () => {
 		return res;
 	};
 	const onDebounceActionOfStaff = useDebounce(onUpdateTask, 500, []);
-	const onDeleteTask = async (idx: number) => {
-		setIsLoading({
-			type: 'FETCH_TASK',
-			status: true,
-		});
-		try {
-			const delObj = taskList[idx];
-			const newDelObj = {
-				ID: delObj.ID,
-				Enable: false,
-			};
-			const res = await taskApi.delete(newDelObj);
-			if (res.status === 200) {
-				showNoti('success', res.data.message);
-				const newTaskList = [...taskList];
-				newTaskList.splice(idx, 1);
-				setTaskList(newTaskList);
-			}
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeleteTask = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'FETCH_TASK',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = taskList[idx];
+				const newDelObj = {
+					ID: delObj.ID,
+					Enable: false,
+				};
+				const res = await taskApi.delete(newDelObj);
+				if (res.status === 200) {
+					showNoti('success', res.data.message);
+					const newTaskList = [...taskList];
+					newTaskList.splice(idx, 1);
+					setTaskList(newTaskList);
+				}
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'FETCH_TASK',
+					status: false,
+				});
+			}
+		};
 	};
 	// ----------COLUMN----------
 
@@ -683,6 +692,8 @@ const ManageTask = () => {
 			title: 'Nhóm công việc',
 			dataIndex: 'TaskGroupName',
 			...FilterColumn('TaskGroupName', onSearch, onResetSearch, 'text'),
+			className:
+				activeColumnSearch === 'TaskGroupName' ? 'active-column-search' : '',
 		},
 		{
 			title: 'Ghi chú',
@@ -746,9 +757,9 @@ const ManageTask = () => {
 								indexUpdateObj={idx}
 								handleUpdateTaskGroup={onUpdateTaskGroup}
 							/>
-							<TaskGroupDelete
-								handleDeleteTaskGroup={onDeleteTaskGroup}
-								index={idx}
+							<DeleteTableRow
+								handleDelete={onDeleteTaskGroup(idx)}
+								text="nhóm công việc"
 							/>
 						</>
 					)}

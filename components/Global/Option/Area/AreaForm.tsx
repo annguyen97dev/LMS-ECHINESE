@@ -81,7 +81,7 @@ const AreaForm = (props) => {
 				onCancel={closeModal}
 				footer={null}
 			>
-				<div className="container-fluid">
+				<div>
 					<Form layout="vertical" onFinish={form.handleSubmit(areaSwitchFunc)}>
 						<div className="row">
 							<div className="col-12">
@@ -89,6 +89,7 @@ const AreaForm = (props) => {
 									form={form}
 									name="AreaName"
 									label="Tên tỉnh/thành phố"
+									placeholder="Nhập tên tỉnh/thành phố"
 								/>
 							</div>
 						</div>
