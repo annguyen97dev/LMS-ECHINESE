@@ -297,7 +297,7 @@ const Programs = () => {
   // ---------------- COLUMN --------------------
   const columns = [
     {
-      title: "Khóa học",
+      title: "Khối học",
       dataIndex: "GradeName",
 
       render: (text) => {
