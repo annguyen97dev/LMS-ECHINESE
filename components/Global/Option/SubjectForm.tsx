@@ -36,6 +36,8 @@ const SubjectForm = React.memo((props: any) => {
   // FUNCTION SELECT
   const onChangeSelect = (name) => (value) => {};
 
+  console.log("DATA PROGRAM: ", dataProgram);
+
   useEffect(() => {
     if (isModalVisible) {
       if (programID) {
@@ -83,7 +85,7 @@ const SubjectForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title="Tạo trung tâm"
+        title={rowID ? "Sửa môn học" : "Tạo môn học"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}

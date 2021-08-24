@@ -74,7 +74,20 @@ const EditorSummernote = (props) => {
     offset: null,
   });
 
+  console.log("Propety: ", propetyEditor);
+
   const onChange = (content) => {
+    console.log("Content editor: ", content);
+
+    let tagP = document.querySelectorAll(".note-editable p");
+    console.log("TAG P: ", tagP);
+
+    tagP.forEach((item) => {
+      item.addEventListener("click", (e) => {
+        onFocus(e);
+      });
+    });
+
     getDataEditor(content);
     setValueEditor(content);
   };
@@ -88,9 +101,11 @@ const EditorSummernote = (props) => {
     if (document.caretRangeFromPoint) {
       range = document.caretRangeFromPoint(e.clientX, e.clientY);
       textNode = range.startContainer;
+      console.log("Range 1: ", range);
       offset = range.startOffset;
     } else if (document.caretPositionFromPoint) {
       range = document.caretPositionFromPoint(e.clientX, e.clientY);
+      console.log("Text node 2: ", textNode);
       textNode = range.offsetNode;
       offset = range.offset;
     } else {
@@ -110,11 +125,9 @@ const EditorSummernote = (props) => {
     // console.log("newValue: ", newValue);
     // setValueEditor(newValue);
     if (propetyEditor.textNode && propetyEditor.textNode.nodeType == 3) {
-      let replacement = propetyEditor.textNode.splitText(propetyEditor.offset);
-      propetyEditor.textNode.parentNode.insertBefore(
-        replacement,
-        "<input class='space-editor'>"
-      );
+      // let replacement = propetyEditor.textNode.splitText(propetyEditor.offset);
+      // let inputE = document.createElement("input");
+      // propetyEditor.textNode.parentNode.insertBefore(inputE, replacement);
     }
   };
 
@@ -149,6 +162,11 @@ const EditorSummernote = (props) => {
     isReset && ReactSummernote.reset();
   }, [isReset]);
 
+  // useEffect(() => {
+  //   let tagP = document.querySelectorAll(".note-editable p");
+  //   console.log("TAG P: ", tagP);
+  // }, [valueEditor]);
+
   return (
     <div className="wrap-editor">
       <button className="btn-editor" onClick={handleAddSpace}>
@@ -157,7 +175,7 @@ const EditorSummernote = (props) => {
       <ReactSummernote
         value={valueEditor}
         children={ReactHtmlParser(valueEditor)}
-        onFocus={onFocus}
+        // onFocus={onFocus}
         options={{
           lang: "vn",
           height: 220,
