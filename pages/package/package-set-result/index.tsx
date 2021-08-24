@@ -40,7 +40,7 @@ const PackageSetResult = () => {
       dataIndex: "ExamTopicName",
     },
     {
-      title: "Mức độ",
+      title: "Level",
       dataIndex: "SetPackageLevel",
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
