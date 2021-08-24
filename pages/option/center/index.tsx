@@ -106,7 +106,7 @@ const Center = () => {
       try {
         const res = await areaApi.getAll({
           pageIndex: 1,
-          pageSize: Number.MAX_SAFE_INTEGER,
+          pageSize: 9999,
         });
         res.status == 200 && setDataArea(res.data.data);
       } catch (err) {

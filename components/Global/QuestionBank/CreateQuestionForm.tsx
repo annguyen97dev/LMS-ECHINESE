@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Drawer, Form, Select, Input, Radio, Spin } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
-import ChoiceForm from "./QuestionType/ChoiceForm";
-import MultipleForm from "./QuestionType/MultipleForm";
-import GroupForm from "./GroupForm";
+import ChoiceForm from "./QuestionFormType/ChoiceForm";
+import MultipleForm from "./QuestionFormType/MultipleForm";
+import GroupForm from "./QuestionFormType/GroupForm";
 import {
   FormOutlined,
   DeleteOutlined,
   AppstoreAddOutlined,
 } from "@ant-design/icons";
+import WrittingForm from "./QuestionFormType/WrittingForm";
 
 const CreateQuestionForm = (props) => {
   const {
@@ -122,6 +123,16 @@ const CreateQuestionForm = (props) => {
           />
         );
         break;
+      case 6:
+        return (
+          <WrittingForm
+            isGroup={isGroup}
+            visible={visible}
+            questionData={questionData}
+            isSubmit={isSubmit}
+            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+          />
+        );
       default:
         return <p>Vui lòng chọn dạng câu hỏi</p>;
         break;
