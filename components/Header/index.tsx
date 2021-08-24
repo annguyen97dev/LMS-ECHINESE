@@ -187,7 +187,7 @@ export default function Header({
           <img className="logo-img" src="/images/logo-final.jpg"></img>
         </Link>
 
-        <p style={{ display: !isOpen ? "block" : "none" }}>M</p>
+        <p style={{ display: !isOpen ? "block" : "none" }}>E</p>
       </div>
       <div className={`app-header-inner ${!isOpen && "close-app"}`}>
         <div className="right">

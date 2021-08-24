@@ -1,10 +1,10 @@
 export const dataTypeGroup = [
-  {
-    Type: 0,
-    Number: "13",
-    TypeName: "Tất cả",
-    Images: "",
-  },
+  // {
+  //   Type: 0,
+  //   Number: "13",
+  //   TypeName: "Tất cả",
+  //   Images: "",
+  // },
 
   {
     Type: 1,
@@ -30,12 +30,12 @@ export const dataTypeGroup = [
     TypeName: "Điền từ",
     Images: "/images/typetext.png",
   },
-  {
-    Type: 6,
-    Number: "0",
-    TypeName: "Tự luận",
-    Images: "/images/compose.png",
-  },
+  // {
+  //   Type: 6,
+  //   Number: "0",
+  //   TypeName: "Tự luận",
+  //   Images: "/images/compose.png",
+  // },
   {
     Type: 2,
     Number: "0",
@@ -56,6 +56,12 @@ export const dataTypeSingle = [
     Number: "22",
     TypeName: "Lựa chọn nhiều",
     Images: "/images/checkbox.png",
+  },
+  {
+    Type: 6,
+    Number: "0",
+    TypeName: "Tự luận",
+    Images: "/images/compose.png",
   },
 ];
 

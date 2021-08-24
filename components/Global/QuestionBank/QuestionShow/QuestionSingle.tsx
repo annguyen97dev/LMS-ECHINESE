@@ -2,27 +2,27 @@ import React, { useEffect, useState } from "react";
 import { Radio, Tooltip, Skeleton, Popconfirm } from "antd";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
-import EditQuestionForm from "./EditQuestionForm";
+
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
   htmlparser2,
 } from "react-html-parser";
-import { useWrap } from "~/context/wrap";
 import { exerciseApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
 
-const QuestionMultiple = (props: any) => {
+const QuestionSingle = (props: any) => {
   const {
-    isGroup,
     listQuestion,
     loadingQuestion,
     onFetchData,
     onRemoveData,
+    isGroup,
     onEditData,
     listAlphabet,
   } = props;
   const [value, setValue] = React.useState(1);
-  const [dataListQuestion, setDataListQuestion] = useState(listQuestion);
+  const [dataListQuestion, setDataListQuestion] = useState(null);
   const { showNoti } = useWrap();
   const [visible, setVisible] = useState({
     id: null,
@@ -31,11 +31,23 @@ const QuestionMultiple = (props: any) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [loadingInGroup, setLoadingInGroup] = useState(false);
 
+  // console.log("List Question: ", listQuestion);
+
   const onChange = (e) => {
     e.preventDefault();
-    console.log("radio checked", e.target.value);
-
     // setValue(e.target.value);
+  };
+
+  // ON EDIT
+  const onEdit = (dataEdit) => {
+    if (!isGroup.status) {
+      onEditData(dataEdit);
+    } else {
+      let index = dataListQuestion.findIndex((item) => item.ID == dataEdit.ID);
+      dataListQuestion.splice(index, 1, dataEdit);
+
+      setDataListQuestion([...dataListQuestion]);
+    }
   };
 
   const deleteQuestionItem = (quesID) => {
@@ -61,7 +73,7 @@ const QuestionMultiple = (props: any) => {
           ...visible,
           status: false,
         });
-        onRemoveData(quesItem.ID);
+        onRemoveData(quesItem);
         showNoti("success", "Xóa thành công");
       }
     } catch (error) {
@@ -78,7 +90,6 @@ const QuestionMultiple = (props: any) => {
     });
   };
 
-  // Lấy data theo group id
   const getQuestionInGroup = async () => {
     setLoadingInGroup(true);
     try {
@@ -138,7 +149,7 @@ const QuestionMultiple = (props: any) => {
             <CreateQuestionForm
               questionData={item}
               onFetchData={onFetchData}
-              onEditData={(data) => onEditData(data)}
+              onEditData={(dataEdit) => onEdit(dataEdit)}
             />
             <Popconfirm
               title="Bạn có chắc muốn xóa?"
@@ -157,6 +168,7 @@ const QuestionMultiple = (props: any) => {
           </div>
         </div>
       ))}
+
       {isGroup?.status && loadingInGroup ? (
         <div>
           <Skeleton />
@@ -177,4 +189,4 @@ const QuestionMultiple = (props: any) => {
   );
 };
 
-export default QuestionMultiple;
+export default QuestionSingle;
