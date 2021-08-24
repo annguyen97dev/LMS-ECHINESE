@@ -8,9 +8,9 @@ import { dataTypeGroup, dataTypeSingle } from "~/lib/question-bank/dataBoxType";
 import { data } from "~/lib/option/dataOption2";
 import SelectFilterBox from "~/components/Elements/SelectFilterBox";
 import LayoutBase from "~/components/LayoutBase";
-import QuestionSingle from "~/components/Global/QuestionBank/QuestionSingle";
-import QuestionMultiple from "~/components/Global/QuestionBank/QuestionMultiple";
-import QuestionWrite from "~/components/Global/QuestionBank/QuestionWrite";
+import QuestionSingle from "~/components/Global/QuestionBank/QuestionShow/QuestionSingle";
+import QuestionMultiple from "~/components/Global/QuestionBank/QuestionShow/QuestionMultiple";
+import QuestionWrite from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
 import {
   programApi,
   subjectApi,
@@ -20,6 +20,7 @@ import {
 import { useWrap } from "~/context/wrap";
 import { questionObj } from "~/lib/TypeData";
 import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
+import QuestionWritting from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
 
 const { Option, OptGroup } = Select;
 
@@ -58,6 +59,79 @@ const QuestionCreate = () => {
   });
   const [valueSubject, setValueSubject] = useState("Chọn môn học");
   const [dataGroup, setDataGroup] = useState([]);
+
+  // Phân loại dạng câu hỏi để trả ra danh sách
+  const returnQuestionType = () => {
+    console.log("Type is: ", todoApi.Type);
+    switch (todoApi.Type) {
+      /** Q uesion Single */
+      case 1:
+        return (
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
+            onFetchData={onFetchData}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionSingle
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataSource}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
+        );
+        break;
+      case 4:
+        return (
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
+            onFetchData={onFetchData}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionMultiple
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataSource}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
+        );
+        break;
+      case 6:
+        return (
+          <QuestionWritting
+            listAlphabet={listAlphabet}
+            isGroup={isGroup}
+            loadingQuestion={loadingQuestion}
+            listQuestion={dataSource}
+            onFetchData={onFetchData}
+            onEditData={(data) => onEditData(data)}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+          />
+        );
+      default:
+        return (
+          <p className="text-center">
+            <b>Danh sách còn trống</b>
+          </p>
+        );
+        break;
+    }
+  };
 
   // GET DATA SOURCE - DATA EXERCISE
   const getDataSource = async () => {
@@ -146,10 +220,13 @@ const QuestionCreate = () => {
     switch (Type) {
       case 4:
         questionData.ExerciseAnswer = [];
-        setQuestionData({ ...questionData });
+        // setQuestionData({ ...questionData });
         break;
       case 1:
         questionData.ExerciseAnswer = questionObj.ExerciseAnswer;
+        break;
+      case 6:
+        questionData.ExerciseAnswer = [];
       default:
         break;
     }
@@ -374,66 +451,6 @@ const QuestionCreate = () => {
     setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 });
   };
 
-  // Phân loại dạng câu hỏi để trả ra danh sách
-  const returnQuestionType = () => {
-    switch (todoApi.Type) {
-      /** Q uesion Single */
-      case 1:
-        return (
-          <GroupWrap
-            isGroup={isGroup}
-            listQuestion={dataGroup}
-            onFetchData={onFetchData}
-            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
-            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
-            onEditData={(data) => onEditData(data)}
-            onAddData={(data) => onAddData(data)}
-          >
-            <QuestionSingle
-              listAlphabet={listAlphabet}
-              isGroup={isGroup}
-              loadingQuestion={loadingQuestion}
-              listQuestion={dataSource}
-              onFetchData={onFetchData}
-              onEditData={(data) => onEditData(data)}
-              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
-            />
-          </GroupWrap>
-        );
-        break;
-      case 4:
-        return (
-          <GroupWrap
-            isGroup={isGroup}
-            listQuestion={dataGroup}
-            onFetchData={onFetchData}
-            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
-            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
-            onEditData={(data) => onEditData(data)}
-            onAddData={(data) => onAddData(data)}
-          >
-            <QuestionMultiple
-              listAlphabet={listAlphabet}
-              isGroup={isGroup}
-              loadingQuestion={loadingQuestion}
-              listQuestion={dataSource}
-              onFetchData={onFetchData}
-              onEditData={(data) => onEditData(data)}
-              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
-            />
-          </GroupWrap>
-        );
-        break;
-      default:
-        return (
-          <p className="text-center">
-            <b>Danh sách còn trống</b>
-          </p>
-        );
-        break;
-    }
-  };
-
   // SCROLL TO TOP
   const scrollToTop = () => {
     boxEl.current.scrollTo(0, 0);
@@ -627,7 +644,7 @@ const QuestionCreate = () => {
                   showTypeQuetion.status ? "active" : "nun-active"
                 }`}
               >
-                {questionData.ExerciseGroupID == 1
+                {isGroup.status
                   ? dataTypeGroup?.map((item, index) => (
                       <div className="col-md-12">
                         <div className="box-type-question">
@@ -648,7 +665,7 @@ const QuestionCreate = () => {
                               />
                             </div>
                             <div className="type-detail">
-                              <h5 className="number">{item.Number}</h5>
+                              {/* <h5 className="number">{item.Number}</h5> */}
                               <div className="p text">{item.TypeName}</div>
                             </div>
                           </a>
@@ -675,7 +692,7 @@ const QuestionCreate = () => {
                               />
                             </div>
                             <div className="type-detail">
-                              <h5 className="number">{item.Number}</h5>
+                              {/* <h5 className="number">{item.Number}</h5> */}
                               <div className="p text">{item.TypeName}</div>
                             </div>
                           </a>

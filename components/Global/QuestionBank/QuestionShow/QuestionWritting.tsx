@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Radio, Tooltip, Skeleton, Popconfirm } from "antd";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
-import EditQuestionForm from "./EditQuestionForm";
+
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
@@ -11,7 +11,7 @@ import ReactHtmlParser, {
 import { exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 
-const QuestionSingle = (props: any) => {
+const QuestionWritting = (props: any) => {
   const {
     listQuestion,
     loadingQuestion,
@@ -108,15 +108,13 @@ const QuestionSingle = (props: any) => {
   };
 
   useEffect(() => {
-    !isGroup.status
-      ? setDataListQuestion(listQuestion)
-      : isGroup.id && getQuestionInGroup();
+    setDataListQuestion(listQuestion);
   }, [listQuestion]);
 
-  useEffect(() => {
-    isGroup.status && setDataListQuestion([]);
-    isGroup.status && isGroup.id && getQuestionInGroup();
-  }, [isGroup]);
+  // useEffect(() => {
+  //   isGroup.status && setDataListQuestion([]);
+  //   isGroup.status && isGroup.id && getQuestionInGroup();
+  // }, [isGroup]);
 
   return (
     <>
@@ -126,23 +124,6 @@ const QuestionSingle = (props: any) => {
             <div className="box-title">
               <span className="title-ques">Câu hỏi {index + 1}</span>
               <div className="title-text">{ReactHtmlParser(item.Content)}</div>
-            </div>
-            <div className="box-answer">
-              <div className="question-single question-wrap w-100">
-                {item.ExerciseAnswer?.map((ans, i) => (
-                  <Radio
-                    checked={ans.isTrue}
-                    key={i}
-                    className="d-block"
-                    value={ans.ID}
-                    onChange={onChange}
-                    disabled={ans.isTrue ? false : true}
-                  >
-                    <span className="tick">{listAlphabet[i]}</span>
-                    <span className="text">{ans.AnswerContent}</span>
-                  </Radio>
-                ))}
-              </div>
             </div>
           </div>
           <div className="box-action">
@@ -169,7 +150,7 @@ const QuestionSingle = (props: any) => {
         </div>
       ))}
 
-      {isGroup?.status && loadingInGroup ? (
+      {/* {isGroup?.status && loadingInGroup ? (
         <div>
           <Skeleton />
         </div>
@@ -184,9 +165,9 @@ const QuestionSingle = (props: any) => {
         <div>
           <Skeleton />
         </div>
-      )}
+      )} */}
     </>
   );
 };
 
-export default QuestionSingle;
+export default QuestionWritting;

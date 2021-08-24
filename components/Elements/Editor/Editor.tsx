@@ -68,9 +68,54 @@ import "bootstrap/js/src/tooltip";
 
 const EditorSummernote = (props) => {
   const { getDataEditor, isReset, questionContent } = props;
+  const [valueEditor, setValueEditor] = useState(questionContent);
+  const [propetyEditor, setPropetyEditor] = useState({
+    textNode: null,
+    offset: null,
+  });
 
   const onChange = (content) => {
     getDataEditor(content);
+    setValueEditor(content);
+  };
+
+  const onFocus = (e) => {
+    console.log("E is: ", e);
+    let range;
+    let textNode;
+    let offset;
+
+    if (document.caretRangeFromPoint) {
+      range = document.caretRangeFromPoint(e.clientX, e.clientY);
+      textNode = range.startContainer;
+      offset = range.startOffset;
+    } else if (document.caretPositionFromPoint) {
+      range = document.caretPositionFromPoint(e.clientX, e.clientY);
+      textNode = range.offsetNode;
+      offset = range.offset;
+    } else {
+      console.log("Không hỗ trợ");
+      return;
+    }
+
+    setPropetyEditor({
+      textNode: textNode,
+      offset: offset,
+    });
+  };
+
+  const handleAddSpace = () => {
+    // let inputSpace = "<input class='space-editor'>";
+    // let newValue = valueEditor + inputSpace;
+    // console.log("newValue: ", newValue);
+    // setValueEditor(newValue);
+    if (propetyEditor.textNode && propetyEditor.textNode.nodeType == 3) {
+      let replacement = propetyEditor.textNode.splitText(propetyEditor.offset);
+      propetyEditor.textNode.parentNode.insertBefore(
+        replacement,
+        "<input class='space-editor'>"
+      );
+    }
   };
 
   const onImageUpload = async (fileList) => {
@@ -84,14 +129,35 @@ const EditorSummernote = (props) => {
     }
   };
 
+  // var HelloButton = function (context) {
+  //   var ui = ReactSummernote.ui;
+
+  //   // create button
+  //   var button = ui.button({
+  //     contents: '<i class="fa fa-child"/> Hello',
+  //     tooltip: "hello",
+  //     click: function () {
+  //       // invoke insertText method with 'hello' on editor module.
+  //       context.invoke("editor.insertText", "hello");
+  //     },
+  //   });
+
+  //   return button.render(); // return button as jquery object
+  // };
+
   useEffect(() => {
     isReset && ReactSummernote.reset();
   }, [isReset]);
 
   return (
-    <>
+    <div className="wrap-editor">
+      <button className="btn-editor" onClick={handleAddSpace}>
+        Thêm input
+      </button>
       <ReactSummernote
-        children={ReactHtmlParser(questionContent)}
+        value={valueEditor}
+        children={ReactHtmlParser(valueEditor)}
+        onFocus={onFocus}
         options={{
           lang: "vn",
           height: 220,
@@ -109,7 +175,7 @@ const EditorSummernote = (props) => {
         onChange={onChange}
         onImageUpload={onImageUpload}
       />
-    </>
+    </div>
   );
 };
 
