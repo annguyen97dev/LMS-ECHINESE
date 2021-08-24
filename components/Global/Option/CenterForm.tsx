@@ -1,12 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import {
-  Modal,
-  Form,
-  Input,
-  Spin,
-  Select,
-  Tooltip,
-} from "antd";
+import { Modal, Form, Input, Spin, Select, Tooltip } from "antd";
 import { useForm } from "react-hook-form";
 import { districtApi } from "~/apiBase";
 
@@ -220,7 +213,7 @@ const CenterForm = React.memo((props: any) => {
               <div className="col-md-6 col-12">
                 <Form.Item
                   name="AreaID"
-                  label="Vùng"
+                  label="Tỉnh"
                   rules={[
                     { required: true, message: "Bạn không được để trống" },
                   ]}

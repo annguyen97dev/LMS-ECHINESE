@@ -515,7 +515,9 @@ const QuestionCreate = () => {
               <div className="title-question-bank">
                 <h3 className="title-big">
                   <Bookmark />{" "}
-                  {!isGroup ? "Danh sách câu hỏi" : "Danh sách nhóm câu hỏi"}
+                  {!isGroup.status
+                    ? "Danh sách câu hỏi"
+                    : "Danh sách nhóm câu hỏi"}
                 </h3>
                 {/* <p className="text-lesson">
                   <span className="font-weight-black">Môn học:</span>
