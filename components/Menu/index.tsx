@@ -462,7 +462,7 @@ const MenuDefault = ({
       ></div>
       <div
         className={`menu-child  ${
-          !isOpen && `close  ${isHover.status ? "hover-open" : ""} `
+          !isOpen && `close-app  ${isHover.status ? "hover-open" : ""} `
         }`}
       >
         <div className="app-header-logo">

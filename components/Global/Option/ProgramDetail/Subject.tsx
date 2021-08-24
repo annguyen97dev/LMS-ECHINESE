@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PowerTable from "~/components/PowerTable";
 import { useRouter } from "next/router";
 import { useWrap } from "~/context/wrap";
 import { subjectApi, programApi } from "~/apiBase";
 import CurriculumForm from "~/components/Global/Option/CurriculumForm";
 import SubjectForm from "../SubjectForm";
-import { CheckCircle } from "react-feather";
+import { CheckCircle, Info } from "react-feather";
+import { Table, Tooltip } from "antd";
+import ExpandTable from "~/components/ExpandTable";
+import PointColumn from "./PointColumn/PointColumn";
 
 let pageIndex = 1;
 
@@ -53,7 +56,8 @@ const Subject = () => {
   const [indexRow, setIndexRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [todoApi, setTodoApi] = useState(listTodoApi);
-
+  const [subjectID, setSubjectID] = useState(null);
+  const [activeRow, setActiveRow] = useState([]);
   // GET DATA SOURCE
   const getDataSource = async () => {
     setIsLoading({
@@ -253,6 +257,8 @@ const Subject = () => {
     getDataProgram();
   }, []);
 
+  console.log("DATA program bên này: ", dataProgram);
+
   const columns = [
     {
       title: "Môn học",
@@ -276,6 +282,7 @@ const Subject = () => {
       render: (text, data, index) => (
         <>
           <SubjectForm
+            dataProgram={dataProgram}
             getIndex={() => setIndexRow(index)}
             index={index}
             rowData={data}
@@ -288,9 +295,22 @@ const Subject = () => {
     },
   ];
 
+  const expandableObj = {
+    expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
+    expandedRowKeys: activeRow,
+    onExpand: (expanded, record) => {
+      if (expanded) {
+        const idx = dataSource.findIndex((d) => d.ID === record.ID).toString();
+        setActiveRow([idx]);
+        setSubjectID(record.ID);
+      } else {
+        setActiveRow([]);
+      }
+    },
+  };
   return (
     <div>
-      <PowerTable
+      <ExpandTable
         currentPage={currentPage}
         totalPage={totalPage && totalPage}
         getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -311,6 +331,7 @@ const Subject = () => {
           // </div>
           "Môn học"
         }
+        expandable={expandableObj}
       />
     </div>
   );

@@ -1,3 +1,60 @@
 .ck-editor__editable_inline {
   min-height: 180px !important;
 }
+
+.summernote-style {
+  // .note-editable {
+  //   height: 200px !important;
+  // }
+  .note-btn {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5;
+  }
+  // .btn i {
+  //   font-size: 1rem;
+  // }
+}
+
+.note-modal {
+  h4.modal-title {
+    display: none;
+  }
+}
+
+.form-create-question {
+  .style-label {
+    font-weight: 500;
+  }
+  .row-ans {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+
+    .ant-checkbox-wrapper {
+      height: 36px;
+      margin-right: 10px;
+      margin-top: -3px;
+      line-height: 0;
+
+      .ant-checkbox {
+        height: 100%;
+
+        .ant-checkbox-inner {
+          border-radius: 0.375rem;
+          height: 100%;
+          width: 34px;
+          &::after {
+            left: 29%;
+            width: 8.714286px;
+            height: 15.142857px;
+          }
+        }
+      }
+    }
+
+    .ant-form-item {
+      width: calc(100% - 46px);
+    }
+  }
+}

@@ -3,6 +3,10 @@ import PowerTable from "~/components/PowerTable";
 import SortBox from "~/components/Elements/SortBox";
 import { dataService } from "lib/customer/dataCustomer";
 import FilterColumn from "~/components/Tables/FilterColumn";
+<<<<<<< HEAD
+=======
+import FilterTable from "~/components/Global/CourseList/FilterTable";
+>>>>>>> master
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";

@@ -5,7 +5,7 @@ import TitlePage from '~/components/Elements/TitlePage';
 import CourseListFilterForm from '~/components/Global/CourseList/CourseListFilterForm';
 import PowerList from '~/components/Global/CourseList/PowerList';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/helpers';
+import {fmSelectArr} from '~/utils/functions';
 import CourseListUpdate from './CourseListUpdate';
 
 const statusList = [
@@ -73,7 +73,7 @@ const CourseList = () => {
 		});
 	};
 	// ACTION SEARCH
-	const onFilterCourseList = (obj) => {
+	const onFilter = (obj) => {
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -151,6 +151,10 @@ const CourseList = () => {
 
 	// FETCH DATA FOR UPDATE FORM
 	const fetchDataForUpdateForm = async (BranchID) => {
+		setIsLoading({
+			type: 'FETCH_DATA',
+			status: true,
+		});
 		try {
 			const res = await Promise.all([
 				staffApi.getAll({RoleID: 7, BranchID: BranchID}),
@@ -189,6 +193,11 @@ const CourseList = () => {
 				);
 		} catch (error) {
 			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_DATA',
+				status: false,
+			});
 		}
 	};
 	// UPATE COURSE
@@ -229,8 +238,8 @@ const CourseList = () => {
 								<div className="list-action-table">
 									<CourseListFilterForm
 										optionList={optionListForFilter}
-										handleFilterCourseList={onFilterCourseList}
-										handleResetFilterCourseList={onResetSearch}
+										handleFilter={onFilter}
+										handleResetFilter={onResetSearch}
 									/>
 								</div>
 							}

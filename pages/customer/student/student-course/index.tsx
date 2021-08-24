@@ -2,20 +2,19 @@ import { Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { Info } from "react-feather";
+import { Eye, Info } from "react-feather";
 import { branchApi, courseApi } from "~/apiBase";
 import { courseStudentApi } from "~/apiBase/customer/student/course-student";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
 import ExpandTable from "~/components/ExpandTable";
-import ChangeCourse from "~/components/Global/Customer/Student/ChangeCourse";
+import ChangeCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ChangeCourseForm";
 import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
 import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
-import ReserveCourse from "~/components/Global/Customer/Student/ReserveCourse";
 import LayoutBase from "~/components/LayoutBase";
-import PowerTable from "~/components/PowerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
+import ReserveCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ReserveCourseForm";
 
 const CourseStudent = () => {
   const onSearch = (data) => {
@@ -70,49 +69,43 @@ const CourseStudent = () => {
       title: "Cam kết ",
       dataIndex: "Commitment",
     },
-    // {
-    //   render: (data) => (
-    //     <Fragment>
-    //       <ParentsForm
-    //         parentsDetail={data}
-    //         parentsID={data.UserInformationID}
-    //         reloadData={(firstPage) => {
-    //           getDataParents(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
 
-    //       <Link
-    //         href={{
-    //           pathname: "/customer/parents/detail/[slug]",
-    //           query: { slug: `${data.UserInformationID}` },
-    //         }}
-    //       >
-    //         <Tooltip title="Xem học viên liên kết">
-    //           <button className="btn btn-icon">
-    //             <Info />
-    //           </button>
-    //         </Tooltip>
-    //       </Link>
-
-    //       <ParentsDelete
-    //         parentsID={data.UserInformationID}
-    //         reloadData={(firstPage) => {
-    //           getDataParents(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
-    //     </Fragment>
-    //   ),
-    // },
     {
-      render: () => (
+      render: (data) => (
         <Fragment>
-          <ChangeCourse />
+          <Link
+            href={{
+              pathname:
+                "/customer/student/student-course/student-detail/[slug]",
+              query: { slug: data.UserInformationID },
+            }}
+          >
+            <Tooltip title="Xem chi tiết">
+              <button className="btn btn-icon">
+                <Eye />
+              </button>
+            </Tooltip>
+          </Link>
 
-          <ReserveCourse />
+          <ChangeCourseForm
+            infoDetail={data}
+            infoId={data.ID}
+            reloadData={(firstPage) => {
+              getDataCourseStudent(firstPage);
+            }}
+            currentPage={currentPage}
+          />
 
-          <RefundCourse />
+          <ReserveCourseForm
+            infoDetail={data}
+            infoId={data.ID}
+            reloadData={(firstPage) => {
+              getDataCourseStudent(firstPage);
+            }}
+            currentPage={currentPage}
+          />
+
+          {/* <RefundCourse /> */}
         </Fragment>
       ),
     },
@@ -169,6 +162,23 @@ const CourseStudent = () => {
       value: null,
     },
     {
+      name: "Combo",
+      title: "Chọn gói",
+      col: "col-12",
+      type: "select",
+      optionList: [
+        {
+          value: true,
+          title: "Gói combo",
+        },
+        {
+          value: false,
+          title: "Gói lẻ",
+        },
+      ],
+      value: null,
+    },
+    {
       name: "date-range",
       title: "Ngày tạo",
       col: "col-12",
@@ -186,6 +196,7 @@ const CourseStudent = () => {
       toDate: null,
       BranchID: null,
       CourseID: null,
+      Combo: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;
@@ -312,7 +323,7 @@ const CourseStudent = () => {
           // infoIndex={index}
         />
       </Fragment>
-    )
+    );
   };
 
   return (

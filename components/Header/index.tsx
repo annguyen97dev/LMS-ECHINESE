@@ -179,7 +179,7 @@ export default function Header({
     <header className={`app-header ${openMenuMobile ? "mobile" : ""}`}>
       <div
         className={`app-header-logo ${
-          !isOpen ? "close" : countOpen > 0 ? "open" : "open-no-ani"
+          !isOpen ? "close-app" : countOpen > 0 ? "open" : "open-no-ani"
         }`}
       >
         <Link href="/dashboard">
@@ -187,9 +187,9 @@ export default function Header({
           <img className="logo-img" src="/images/logo-final.jpg"></img>
         </Link>
 
-        <p style={{ display: !isOpen ? "block" : "none" }}>M</p>
+        <p style={{ display: !isOpen ? "block" : "none" }}>E</p>
       </div>
-      <div className={`app-header-inner ${!isOpen && "close"}`}>
+      <div className={`app-header-inner ${!isOpen && "close-app"}`}>
         <div className="right">
           <div className="col-button" onClick={() => isOpenMenu()}>
             <div className="box-menu">

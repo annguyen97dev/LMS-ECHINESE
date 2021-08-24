@@ -8,7 +8,7 @@ import Link from "next/link";
 import TestCustomerForm from "~/components/Global/Customer/Service/TestCustomerForm";
 import { ExpandBoxService } from "~/components/Elements/ExpandBox";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import LayoutBase from "~/components/LayoutBase";
 import { useWrap } from "~/context/wrap";
 import { testCustomerApi, branchApi, studentApi } from "~/apiBase";

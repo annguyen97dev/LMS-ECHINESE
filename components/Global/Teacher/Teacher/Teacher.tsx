@@ -88,7 +88,7 @@ const Teacher = () => {
 		},
 	];
 	// FILTER
-	const onFilterTeacherJobDate = (obj) => {
+	const onFilter = (obj) => {
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -340,11 +340,12 @@ const Teacher = () => {
 			res.status === 200 && showNoti('success', res.data.message);
 			if (teacherList.length === 1) {
 				filters.pageIndex === 1
-					? setFilters({
+					? (setFilters({
 							...listFieldInit,
 							...refValue.current,
 							pageIndex: 1,
-					  })
+					  }),
+					  setTeacherList([]))
 					: setFilters({
 							...filters,
 							...refValue.current,
@@ -422,7 +423,7 @@ const Teacher = () => {
 							query: {slug: _.UserInformationID},
 						}}
 					>
-						<Tooltip title="Xem phòng">
+						<Tooltip title="Xem giáo viên">
 							<a className="btn btn-icon">
 								<Info />
 							</a>
@@ -486,7 +487,8 @@ const Teacher = () => {
 				Extra={
 					<div className="extra-table">
 						<TeacherFilterForm
-							handleFilterTeacherJobDate={onFilterTeacherJobDate}
+							handleFilter={onFilter}
+							handleResetFilter={onResetSearch}
 						/>
 						<SortBox handleSort={onSort} dataOption={sortOptionList} />
 					</div>

@@ -8,7 +8,7 @@ import Link from "next/link";
 
 import React, { useState } from "react";
 
-import CourseListContent from "~/components/Global/CourseList/CourseListContent";
+// import CourseListContent from "~/components/Global/CourseList/CourseListContent";
 import FilterTable from "~/components/Global/CourseListReport/FilterTable";
 import PowerTable from "~/components/PowerTable";
 import { table } from "console";

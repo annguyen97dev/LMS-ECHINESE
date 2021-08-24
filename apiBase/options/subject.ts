@@ -7,7 +7,7 @@ class SubjectApi {
     });
 
   getWithID = (ID: number) =>
-    instance.get<IApiResult<ISubject[]>>(`/api/Subject/${ID}`);
+    instance.get<IApiResultData<ISubject>>(`/api/Subject/${ID}`);
 
   add = (data: ISubject) => instance.post("/api/Subject", data, {});
 

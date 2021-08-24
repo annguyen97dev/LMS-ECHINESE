@@ -5,7 +5,7 @@ import SortBox from "~/components/Elements/SortBox";
 import { dataService } from "lib/customer/dataCustomer";
 import PaymentService from "~/components/Global/Customer/Service/PaymentService";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";

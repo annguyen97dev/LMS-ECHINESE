@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { RotateCcw, ArrowDownCircle } from "react-feather";
 import { InboxOutlined } from "@ant-design/icons";
-import TinyMCE from "~/components/TinyMCE";
+// import TinyMCE from "~/components/TinyMCE";
 const ExamForm = (props) => {
   const { Dragger } = Upload;
   const draggerProps = {
@@ -91,9 +91,7 @@ const ExamForm = (props) => {
             </div>
             {/*  */}
             <div className="row">
-              <Form.Item label="Content">
-                <TinyMCE />
-              </Form.Item>
+              <Form.Item label="Content">{/* <TinyMCE /> */}</Form.Item>
             </div>
             {/*  */}
             <div className="row ">

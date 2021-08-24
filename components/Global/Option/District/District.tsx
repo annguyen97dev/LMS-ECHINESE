@@ -5,7 +5,7 @@ import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/helpers';
+import {fmSelectArr} from '~/utils/functions';
 import DistrictDelete from './DistrictDelete';
 import DistrictForm from './DistrictForm';
 
@@ -235,11 +235,12 @@ const District = () => {
 			res.status === 200 && showNoti('success', res.data.message);
 			if (districtList.length === 1) {
 				filters.pageIndex === 1
-					? setFilters({
+					? (setFilters({
 							...listFieldInit,
 							...refValue.current,
 							pageIndex: 1,
-					  })
+					  }),
+					  setDistrictList([]))
 					: setFilters({
 							...filters,
 							...refValue.current,

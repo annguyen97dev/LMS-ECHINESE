@@ -132,7 +132,7 @@ const CurriculumDetail = (props) => {
       }
     });
 
-    console.log("Value is: ", value);
+    // console.log("Value is: ", value);
     return value;
   };
 
