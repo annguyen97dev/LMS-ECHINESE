@@ -86,7 +86,12 @@ function CheckOneTeacher(props) {
 		});
 	};
 	const handleResetFilter = () => {
-		form.reset({...defaultValuesInit});
+		form.reset({
+			BranchID: null,
+			TeacherID: null,
+			StartTime: undefined,
+			EndTime: undefined,
+		});
 	};
 	const content = (
 		<div className={`wrap-filter small`}>

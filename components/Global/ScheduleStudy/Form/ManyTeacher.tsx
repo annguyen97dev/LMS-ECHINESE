@@ -94,7 +94,13 @@ function CheckManyEmptyTeacher(props) {
 		});
 	};
 	const handleResetFilter = () => {
-		form.reset({...defaultValuesInit});
+		form.reset({
+			BranchID: null,
+			TeacherID: undefined,
+			StudyTimeID: undefined,
+			StartTime: undefined,
+			EndTime: undefined,
+		});
 	};
 	const content = (
 		<div className={`wrap-filter small`}>

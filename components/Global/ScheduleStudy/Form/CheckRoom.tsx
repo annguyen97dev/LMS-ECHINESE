@@ -86,7 +86,12 @@ function CheckRoom(props) {
 		});
 	};
 	const handleResetFilter = () => {
-		form.reset({...defaultValuesInit});
+		form.reset({
+			BranchID: null,
+			RoomID: null,
+			StartTime: undefined,
+			EndTime: undefined,
+		});
 	};
 
 	const content = (

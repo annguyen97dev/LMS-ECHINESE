@@ -28,6 +28,7 @@ const StaffSalary = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
 	let pageIndex = 1;
 
@@ -169,13 +170,15 @@ const StaffSalary = () => {
 	};
 
 	// PAGINATION
-	const getPagination = (pageNumber: number) => {
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
 		  ...todoApi,
 		//   ...listFieldSearch,
 		  pageIndex: pageIndex,
+		  pageSize: pageSize
 		});
 	};
 
@@ -238,6 +241,7 @@ const StaffSalary = () => {
 
 	// HANDLE RESET
 	const handleReset = () => {
+		setActiveColumnSearch('');
 		setTodoApi({
 			...listTodoApi,
 			pageIndex: 1,
@@ -280,6 +284,7 @@ const StaffSalary = () => {
 			title: 'Họ và tên', 
 			dataIndex: 'FullName', 
 			...FilterColumn('FullName', onSearch, handleReset, "text"),
+			className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
 			render: (text) => { return <p className="font-weight-black">{text}</p> }
 		},
 		// {
@@ -358,7 +363,7 @@ const StaffSalary = () => {
 				loading={isLoading}
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
-				getPagination={(pageNumber: number) => getPagination(pageNumber)}
+				getPagination={getPagination}
 				addClass="basic-header"
 				TitlePage="Staff salary"
 				TitleCard={

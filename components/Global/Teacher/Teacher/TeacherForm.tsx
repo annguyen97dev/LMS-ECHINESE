@@ -90,7 +90,7 @@ const TeacherForm = (props) => {
 		handleFetchBranch(value);
 	};
 
-	const dayOffSwitchFunc = (data) => {
+	const teacherSwitchFunc = (data) => {
 		switch (isUpdate) {
 			case true:
 				if (!handleUpdateTeacher) return;
@@ -105,7 +105,6 @@ const TeacherForm = (props) => {
 				handleCreateTeacher(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
-						// form.reset({...defaultValuesInit});
 					}
 				});
 				break;
@@ -133,10 +132,10 @@ const TeacherForm = (props) => {
 				onCancel={closeModal}
 				footer={null}
 			>
-				<div className="container-fluid">
+				<div>
 					<Form
 						layout="vertical"
-						onFinish={form.handleSubmit(dayOffSwitchFunc)}
+						onFinish={form.handleSubmit(teacherSwitchFunc)}
 					>
 						<div className="row">
 							<div className="col-md-6 col-12">
@@ -146,13 +145,20 @@ const TeacherForm = (props) => {
 									label="Tỉnh/thành phố"
 									optionList={optionAreaList}
 									onChangeSelect={checkHandleFetchBranch}
+									placeholder="Chọn tỉnh/thành phố"
 								/>
 								<InputTextField
 									form={form}
 									name="FullNameUnicode"
 									label="Họ và tên"
+									placeholder="Nhập họ và tên"
 								/>
-								<InputTextField form={form} name="Email" label="Email" />
+								<InputTextField
+									form={form}
+									name="Email"
+									label="Email"
+									placeholder="Nhập email"
+								/>
 							</div>
 							<div className="col-md-6 col-12">
 								<SelectField
@@ -162,18 +168,30 @@ const TeacherForm = (props) => {
 									mode="multiple"
 									optionList={optionBranchList}
 									isLoading={loadingFetchBranch}
+									placeholder="Chọn trung tâm"
 								/>
 								<InputTextField
 									form={form}
 									name="Mobile"
 									label="Số điện thoại"
+									placeholder="Nhập số điện thoại"
 								/>
-								<DateField form={form} name="Jobdate" label="Ngày nhận việc" />
+								<DateField
+									form={form}
+									name="Jobdate"
+									label="Ngày nhận việc"
+									placeholder="Chọn ngày nhận việc"
+								/>
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField form={form} name="Address" label="Địa chỉ" />
+								<InputTextField
+									form={form}
+									name="Address"
+									label="Địa chỉ"
+									placeholder="Nhập địa chỉ"
+								/>
 							</div>
 						</div>
 						<div className="row mt-3">

@@ -5,6 +5,7 @@ import { Roles } from "~/lib/roles/listRoles";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 import ReactHtmlParser from "react-html-parser";
+import EditorBase from "~/components/Elements/EditorBase";
 
 const NotificationForm = React.memo((props: any) => {
   const { Option } = Select;
@@ -39,9 +40,10 @@ const NotificationForm = React.memo((props: any) => {
     });
   });
 
-  const onChangeTinyMCE = (value) => {
-    setValue("NotificationContent", value);
-  };
+  const changeContractContent = (value) => {
+    // console.log(value);
+		setValue("NotificationContent", value);
+	};
 
   useEffect(() => {
     if (isModalVisible) {
@@ -172,6 +174,9 @@ const NotificationForm = React.memo((props: any) => {
             </div>
             {/*  */}
             <Form.Item label="Nội dung thông báo" name="Nội dung thông báo">
+              <EditorBase 
+                handleChangeDataEditor={changeContractContent}
+              />
               {/* <TinyMCE onChangeTinyMCE={(value) => onChangeTinyMCE(value)}/> */}
             </Form.Item>
             <div className="row ">

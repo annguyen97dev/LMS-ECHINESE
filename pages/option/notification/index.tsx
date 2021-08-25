@@ -1,19 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { data } from "../../../lib/option/dataOption2";
 import NotificationForm from "~/components/Global/Option/NotificationForm";
 import ExpandTable from "~/components/ExpandTable";
 import { CheckCircle } from "react-feather";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterDateColumn from "~/components/Tables/FilterDateColumn";
-import SortBox from "~/components/Elements/SortBox";
-import FilterTable from "~/components/Global/CourseList/FilterTable";
 import LayoutBase from "~/components/LayoutBase";
-
 import { useWrap } from "~/context/wrap";
 import { notificationApi, branchApi } from "~/apiBase";
-import { Tag, Tooltip, Switch, Input, Button, Space } from "antd";
-import { AlertTriangle, X } from "react-feather";
-import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
 import ReactHtmlParser from "react-html-parser";
 
@@ -175,15 +166,17 @@ const Notification = () => {
   };
 
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      //   ...listFieldSearch,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
 
   // HANDLE RESET
   const handleReset = () => {
@@ -273,7 +266,7 @@ const Notification = () => {
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
-      getPagination={(pageNumber: number) => getPagination(pageNumber)}
+      getPagination={getPagination}
       addClass="basic-header"
       TitlePage="Notification List"
       expandable={{

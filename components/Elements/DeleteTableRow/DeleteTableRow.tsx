@@ -4,20 +4,20 @@ import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {AlertTriangle, X} from 'react-feather';
 
-const PointColumnDelete = (props) => {
-	const {handleDeletePointColumn, index} = props;
+const DeleteTableRow = (props) => {
+	const {handleDelete, text} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
-	const checkHandleDeletePointColumn = () => {
-		if (!handleDeletePointColumn) return;
-		if (index < 0) return;
-		handleDeletePointColumn(index);
+	const checkHandleDelete = () => {
+		if (!handleDelete) return;
+		handleDelete();
 		setIsModalVisible(false);
 	};
 	return (
 		<>
 			<Tooltip title="Xóa">
 				<button
+					type="button"
 					className="btn btn-icon delete"
 					onClick={() => {
 						setIsModalVisible(true);
@@ -29,19 +29,20 @@ const PointColumnDelete = (props) => {
 			<Modal
 				title={<AlertTriangle color="red" />}
 				visible={isModalVisible}
-				onOk={() => checkHandleDeletePointColumn()}
+				onOk={() => checkHandleDelete()}
 				onCancel={() => setIsModalVisible(false)}
 			>
-				<p className="text-confirm">Bạn có chắc muốn xóa?</p>
+				<p className="text-confirm">Bạn có chắc muốn xóa {text}?</p>
 			</Modal>
 		</>
 	);
 };
-PointColumnDelete.propTypes = {
-	handleDeletePointColumn: PropTypes.func,
-	index: PropTypes.number.isRequired,
+DeleteTableRow.propTypes = {
+	handleDelete: PropTypes.func,
+	text: PropTypes.string,
 };
-PointColumnDelete.defaultProps = {
-	handleDeletePointColumn: null,
+DeleteTableRow.defaultProps = {
+	handleDelete: null,
+	text: '',
 };
-export default PointColumnDelete;
+export default DeleteTableRow;

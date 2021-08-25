@@ -3,11 +3,13 @@
 		margin-bottom: 10px;
 
 		.action {
+			width: 15%;
 			> span {
 				display: inline-block;
 			}
 		}
 		.info {
+			width: 85%;
 		}
 		.info-item {
 			margin-left: 16px;

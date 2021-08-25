@@ -824,6 +824,10 @@ textarea.ant-input {
 }
 
 .wrap-table {
+  .active-column-search {
+    font-weight: 500;
+    color: $primary-color;
+  }
   .ant-table-wrapper {
     tr.ant-table-expanded-row > td,
     tr.ant-table-expanded-row:hover > td {
@@ -2114,14 +2118,17 @@ hr {
   position: relative;
 
   .space-editor {
+    height: 29px;
+    width: 100px;
     border: none;
     border-radius: 5px;
     background: #e9e9e9;
-    height: 29px;
     display: inline-block;
+    margin: 0 5px;
 
     &:focus {
       border: none;
+      outline: none;
     }
   }
 

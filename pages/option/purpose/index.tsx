@@ -29,6 +29,7 @@ const Purpose = () => {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
   let pageIndex = 1;
 
@@ -148,14 +149,17 @@ const Purpose = () => {
   };
 
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
 
   // ON SEARCH
   const compareField = (valueSearch, dataIndex) => {
@@ -216,6 +220,7 @@ const Purpose = () => {
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -242,6 +247,7 @@ const Purpose = () => {
       title: "Mục đích học",
       dataIndex: "PurposesName",
       ...FilterColumn("PurposesName", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
       render: (text) => {
         return <p className="font-weight-black">{text}</p>;
       },
@@ -309,7 +315,7 @@ const Purpose = () => {
         loading={isLoading}
         currentPage={currentPage}
         totalPage={totalPage && totalPage}
-        getPagination={(pageNumber: number) => getPagination(pageNumber)}
+        getPagination={getPagination}
         addClass="basic-header"
         TitlePage="PURPOSES list"
         TitleCard={
