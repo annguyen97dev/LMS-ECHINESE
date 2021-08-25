@@ -1,15 +1,17 @@
 //  ---------EXPORT TO ARRAY FOR SELECT FIELD---------
 export const fmSelectArr = (
-	arr: Array<object>,
+	arr: Array<{[key: string]: any}>,
 	title: string,
 	value: string,
 	options = []
 ) =>
-	arr.map((x) => ({
-		title: x[title],
-		value: x[value],
-		options: options.reduce((obj, o) => ({...obj, [o]: x[o]}), {}),
-	}));
+	arr
+		.filter((x) => (x.Enable === false ? false : x))
+		.map((x) => ({
+			title: x[title],
+			value: x[value],
+			options: options.reduce((obj, o) => ({...obj, [o]: x[o]}), {}),
+		}));
 export const clearOptionsDuplicate = (arr: IOptionCommon[]) => {
 	return arr.reduce((newArr, o) => {
 		if (!newArr.some((o2) => o2.value === o.value)) {
@@ -24,8 +26,8 @@ export const fmArrayToObjectWithSpecialKey = (arr, key) => {
 		return newObj;
 	}, {});
 };
-export const numberWithCommas = (x) => {
-	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+export const numberWithCommas = (number, commas = '.') => {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, commas);
 };
 export const mathRound = (number) => {
 	return Math.round(number * 100) / 100;

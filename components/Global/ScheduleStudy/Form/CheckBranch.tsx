@@ -76,7 +76,11 @@ function CheckBranch(props) {
 		});
 	};
 	const handleResetFilter = () => {
-		form.reset({...defaultValuesInit});
+		form.reset({
+			BranchID: null,
+			StartTime: undefined,
+			EndTime: undefined,
+		});
 	};
 
 	const content = (

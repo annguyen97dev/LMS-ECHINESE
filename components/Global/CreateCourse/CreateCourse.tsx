@@ -222,8 +222,7 @@ const CreateCourse = () => {
 				gradeApi.getAll({selectAll: true}),
 			]);
 			// BRANCH
-			const branchListEnable = branch.data.data.filter((b) => b.Enable);
-			const newBranchList = fmSelectArr(branchListEnable, 'BranchName', 'ID');
+			const newBranchList = fmSelectArr(branch.data.data, 'BranchName', 'ID');
 			// STUDY TIME
 			const newStudyTimeList = fmSelectArr(studyTime.data.data, 'Name', 'ID', [
 				'Time',

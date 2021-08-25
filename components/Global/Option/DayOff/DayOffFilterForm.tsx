@@ -45,7 +45,10 @@ const DayOffFilterForm = (props) => {
 		if (!handleResetFilter) return;
 		handleResetFilter();
 		funcShowFilter();
-		form.reset({...defaultValuesInit});
+		form.reset({
+			fromDate: undefined,
+			toDate: undefined,
+		});
 	};
 	const content = (
 		<div className={`wrap-filter small`}>

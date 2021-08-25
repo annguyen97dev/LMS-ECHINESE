@@ -378,7 +378,7 @@ function TaskForm(props) {
 													</span>
 												</div>
 												{isAuthorization(item.StaffID) === 'Accept' ? (
-													<div className="action d-flex align-items-center">
+													<div className="action d-flex align-items-center justify-content-end">
 														<span className="action-item">
 															{!item.DoneTask ? (
 																<Tooltip
