@@ -6,7 +6,7 @@ import {programDetailPointColumnApi} from '~/apiBase';
 import {Card} from 'antd';
 import PowerTable from '~/components/PowerTable';
 import PointColumnForm from './PointColumnForm';
-import PointColumnDelete from './PointColumnDelete';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 
 PointColumn.propTypes = {
 	SubjectID: PropTypes.number,
@@ -114,34 +114,36 @@ function PointColumn(props) {
 		}
 	};
 	// DELETE
-	const onDeletePointColumn = async (idx: number) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const delObj = pointColumnList[idx];
-			const newDelObj = {
-				ID: delObj.ID,
-				Enable: false,
-			};
-			const res = await programDetailPointColumnApi.delete(newDelObj);
-			if (res.status === 200) {
-				if (pointColumnList.length === 1) {
-					setPointColumnList([]);
-					showNoti('success', 'Thành công');
-					return;
-				}
-				fetchPointColumnList();
-			}
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeletePointColumn = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = pointColumnList[idx];
+				const newDelObj = {
+					ID: delObj.ID,
+					Enable: false,
+				};
+				const res = await programDetailPointColumnApi.delete(newDelObj);
+				if (res.status === 200) {
+					if (pointColumnList.length === 1) {
+						setPointColumnList([]);
+						showNoti('success', 'Thành công');
+						return;
+					}
+					fetchPointColumnList();
+				}
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
 	};
 
 	useEffect(() => {
@@ -163,10 +165,7 @@ function PointColumn(props) {
 						updateObj={value}
 						optionType={optionType}
 					/>
-					<PointColumnDelete
-						handleDeletePointColumn={onDeletePointColumn}
-						index={idx}
-					/>
+					<DeleteTableRow handleDelete={onDeletePointColumn(idx)} />
 				</div>
 			),
 		},

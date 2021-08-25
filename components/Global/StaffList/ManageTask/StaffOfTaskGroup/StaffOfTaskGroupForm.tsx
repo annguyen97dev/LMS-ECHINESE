@@ -5,6 +5,7 @@ import React, {useEffect, useState} from 'react';
 import {UserPlus} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import CheckboxField from '~/components/FormControl/CheckboxField';
 import SelectField from '~/components/FormControl/SelectField';
 import {optionCommonPropTypes} from '~/utils/proptypes';
@@ -118,7 +119,7 @@ function StaffOfTaskGroupForm(props) {
 
 	const checkHandleDeleteStaffOfTaskGroup = (idx: number) => {
 		if (!handleDeleteStaffOfTaskGroup) return;
-		handleDeleteStaffOfTaskGroup(idx);
+		return handleDeleteStaffOfTaskGroup(idx);
 	};
 
 	useEffect(() => {
@@ -139,9 +140,8 @@ function StaffOfTaskGroupForm(props) {
 			align: 'center' as 'center',
 			render: (value: IStaffOfTaskGroup, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
-					<StaffOfTaskGroupDelete
-						handleDeleteStaffOfTaskGroup={checkHandleDeleteStaffOfTaskGroup}
-						index={idx}
+					<DeleteTableRow
+						handleDelete={checkHandleDeleteStaffOfTaskGroup(idx)}
 					/>
 				</div>
 			),
@@ -161,7 +161,7 @@ function StaffOfTaskGroupForm(props) {
 				footer={null}
 				className="staff-task-group-modal"
 			>
-				<div className="container-fluid">
+				<div>
 					<Form
 						key="1"
 						layout="vertical"
