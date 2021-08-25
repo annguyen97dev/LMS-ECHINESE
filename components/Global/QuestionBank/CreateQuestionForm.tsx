@@ -11,6 +11,7 @@ import {
   AppstoreAddOutlined,
 } from "@ant-design/icons";
 import WrittingForm from "./QuestionFormType/WrittingForm";
+import GroupFormWritting from "./QuestionFormType/GroupFormWritting";
 
 const CreateQuestionForm = (props) => {
   const {
@@ -76,14 +77,29 @@ const CreateQuestionForm = (props) => {
     // console.log("Group ID là gì: ", groupID);
 
     if (type) {
-      return (
-        <GroupForm
-          visible={visible}
-          questionData={questionData}
-          isSubmit={isSubmit}
-          changeIsSubmit={onSuccessSubmit}
-        />
-      );
+      switch (type) {
+        case 3:
+          return (
+            <GroupFormWritting
+              visible={visible}
+              questionData={questionData}
+              isSubmit={isSubmit}
+              changeIsSubmit={onSuccessSubmit}
+            />
+          );
+          break;
+
+        default:
+          return (
+            <GroupForm
+              visible={visible}
+              questionData={questionData}
+              isSubmit={isSubmit}
+              changeIsSubmit={onSuccessSubmit}
+            />
+          );
+          break;
+      }
     } else {
       if (!isGroup?.status) {
         renderFormSingle();

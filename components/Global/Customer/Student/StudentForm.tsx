@@ -61,7 +61,7 @@ const optionGender = [
 
 const StudentForm = (props) => {
   const { dataRow, listDataForm, _handleSubmit, index } = props;
-  console.log("lst", dataRow);
+
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -74,7 +74,7 @@ const StudentForm = (props) => {
   });
   const [listData, setListData] = useState<listData>(listDataForm);
   const [valueEmail, setValueEmail] = useState();
-
+  console.log("list data Form", listData);
   // ------------- ADD data to list --------------
 
   const makeNewData = (data, name) => {
@@ -164,11 +164,15 @@ const StudentForm = (props) => {
         case "DistrictID":
           res = await districtApi.getAll({
             AreaID: ID,
+            pageIndex: 1,
+            pageSize: 9999,
           });
           break;
         case "WardID":
           res = await wardApi.getAll({
             DistrictID: ID,
+            pageIndex: 1,
+            pageSize: 9999,
           });
           break;
         default:
@@ -226,6 +230,9 @@ const StudentForm = (props) => {
     SourceInformationID: null, //int id nguồn
     ParentsOf: null, //int id phụ huynh
     CounselorsID: null,
+    AppointmentDate: null,
+    ExamAppointmentTime: null,
+    ExamAppointmentNote: null,
   };
 
   (function returnSchemaFunc() {
@@ -255,7 +262,11 @@ const StudentForm = (props) => {
           break;
         case "Branch":
           returnSchema[key] = yup.array().required("Bạn không được để trống");
-
+        case "AppointmentDate":
+          returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          break;
+        case "ExamAppointmentTime":
+          returnSchema[key] = yup.mixed().required("Bạn không được để trống");
           break;
         default:
           // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
@@ -274,6 +285,8 @@ const StudentForm = (props) => {
   // ----------- SUBMI FORM ------------
   const onSubmit = async (data: any) => {
     data.Branch = data.Branch.toString();
+
+    console.log("DATA SUBMIT: ", data);
 
     setIsLoading({
       type: "ADD_DATA",
@@ -308,7 +321,6 @@ const StudentForm = (props) => {
 
   // Search Email to compare with data
   const searchValue = async () => {
-    console.log("Value Email: ", valueEmail);
     setIsLoading({
       type: "SEARCH_EMAIL",
       status: true,
@@ -336,9 +348,12 @@ const StudentForm = (props) => {
     let arrBranch = [];
     let cloneRowData = { ...data };
     cloneRowData.Branch.forEach((item, index) => {
-      arrBranch.push(item.ID);
+      arrBranch.push(item.ID.toString());
     });
     cloneRowData.Branch = arrBranch;
+
+    console.log("CloneRow: ", cloneRowData);
+
     form.reset(cloneRowData);
     cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
     cloneRowData.DistrictID && getDataWithID(cloneRowData.DistrictID, "WardID");
@@ -435,21 +450,19 @@ const StudentForm = (props) => {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <InputTextField form={form} name="CMND" label="Số CMND" />
                 </div>
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <InputTextField
                     form={form}
                     name="CMNDRegister"
                     label="Nơi cấp CMND"
                   />
                 </div>
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <DateField form={form} name="CMNDDate" label="Ngày cấp" />
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -458,6 +471,8 @@ const StudentForm = (props) => {
                     optionList={optionGender}
                   />
                 </div>
+              </div>
+              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -535,12 +550,10 @@ const StudentForm = (props) => {
                   />
                 </div>
               </div>
-
-              {/*  */}
-              {/** ==== Khác  ====*/}
+              {/** Hẹn Test */}
               <div className="row">
                 <div className="col-12">
-                  <Divider orientation="center">Khác</Divider>
+                  <Divider orientation="center">Hẹn test</Divider>
                 </div>
               </div>
               <div className="row">
@@ -554,6 +567,37 @@ const StudentForm = (props) => {
                   />
                 </div>
                 <div className="col-md-6 col-12">
+                  <InputTextField
+                    placeholder="VD: 10h"
+                    form={form}
+                    name="ExamAppointmentTime"
+                    label="Giờ hẹn test"
+                  />
+                </div>
+                <div className="col-md-6 col-12">
+                  <DateField
+                    form={form}
+                    name="AppointmentDate"
+                    label="Ngày hẹn test"
+                  />
+                </div>
+                <div className="col-md-6 col-12">
+                  <TextAreaField
+                    name="ExamAppointmentNote"
+                    label="Ghi chú"
+                    form={form}
+                  />
+                </div>
+              </div>
+              {/*  */}
+              {/** ==== Khác  ====*/}
+              <div className="row">
+                <div className="col-12">
+                  <Divider orientation="center">Khác</Divider>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
                     name="AcademicPurposesID"
@@ -561,9 +605,6 @@ const StudentForm = (props) => {
                     optionList={listData.Purposes}
                   />
                 </div>
-              </div>
-
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -580,10 +621,6 @@ const StudentForm = (props) => {
                     optionList={listData.SourceInformation}
                   />
                 </div>
-              </div>
-
-              {/*  */}
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <TextAreaField
                     name="Extension"
