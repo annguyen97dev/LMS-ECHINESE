@@ -17,7 +17,6 @@ import ScheduleItem from '~/components/Global/CreateCourse/Schedule/ScheduleItem
 import ScheduleList from '~/components/Global/CreateCourse/Schedule/ScheduleList';
 import TitlePage from '~/components/TitlePage';
 import {useDebounce} from '~/context/useDebounce';
-import {useThrottle} from '~/context/useThrottle';
 import {useWrap} from '~/context/wrap';
 import {
 	clearOptionsDuplicate,

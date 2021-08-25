@@ -5,11 +5,11 @@ import React, {useEffect, useState} from 'react';
 import {FilePlus, RotateCcw, UserMinus, UserPlus} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import CheckboxField from '~/components/FormControl/CheckboxField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import {optionCommonPropTypes} from '~/utils/proptypes';
-import TaskDelete from './TaskDelete';
 
 TaskForm.propTypes = {
 	isLoading: PropTypes.shape({
@@ -139,7 +139,7 @@ function TaskForm(props) {
 
 	const checkHandleDeleteTask = (idx: number) => {
 		if (!handleDeleteTask) return;
-		handleDeleteTask(idx);
+		return handleDeleteTask(idx);
 	};
 
 	const checkHandleActionOfStaff = (
@@ -151,12 +151,19 @@ function TaskForm(props) {
 	};
 
 	const checkHandleUpdateTask = (
-		obj: {ID: number; StaffID: number},
+		obj: {
+			ID: number;
+			WorkContent: string;
+			isAddStaff: boolean;
+			RoleID: number;
+			StaffID: number;
+			OldStaffID: number;
+		},
 		idx: number
 	) => {
-		if (!handleUpdateTask) return;
-		handleUpdateTask(obj, idx).then((res) => {
-			if (res?.status === 200) {
+		if (!handleSubmit) return;
+		handleSubmit(obj, idx).then((res) => {
+			if (res) {
 				form.reset({...defaultValuesInit});
 				setShowMoreField(false);
 				setIsUpdateWorkContent({
@@ -168,7 +175,12 @@ function TaskForm(props) {
 		});
 	};
 
-	const checkHandleSubmit = (data) => {
+	const checkHandleSubmit = (data: {
+		WorkContent: string;
+		isAddStaff: boolean;
+		RoleID: number;
+		StaffID: number;
+	}) => {
 		if (!handleSubmit) return;
 		handleSubmit(data).then((res) => {
 			if (res) {
@@ -178,10 +190,19 @@ function TaskForm(props) {
 		});
 	};
 
-	const taskSubmitSwitch = (data) => {
+	const taskSubmitSwitch = (data: {
+		WorkContent: string;
+		isAddStaff: boolean;
+		RoleID: number;
+		StaffID: number;
+	}) => {
 		if (isUpdateWorkContent.status) {
 			checkHandleUpdateTask(
-				{...data, ID: isUpdateWorkContent.item.ID},
+				{
+					...data,
+					ID: isUpdateWorkContent.item.ID,
+					OldStaffID: isUpdateWorkContent.item.StaffID,
+				},
 				isUpdateWorkContent.idx
 			);
 		} else {
@@ -248,7 +269,7 @@ function TaskForm(props) {
 				}}
 				footer={null}
 			>
-				<div className="container-fluid">
+				<div>
 					<Form
 						key="0"
 						layout="vertical"
@@ -315,7 +336,7 @@ function TaskForm(props) {
 										: ''
 								}`}
 							>
-								<Form.Item label="Danh sách task">
+								<Form.Item label="Danh sách công việc">
 									<div className="ant-checkbox-group">
 										{taskList.map((item: ITask, idx) => (
 											<div
@@ -357,7 +378,7 @@ function TaskForm(props) {
 													</span>
 												</div>
 												{isAuthorization(item.StaffID) === 'Accept' ? (
-													<div className="action d-flex align-items-center">
+													<div className="action d-flex align-items-center justify-content-end">
 														<span className="action-item">
 															{!item.DoneTask ? (
 																<Tooltip
@@ -391,9 +412,8 @@ function TaskForm(props) {
 																''
 															)}
 															{item.DoneTask ? (
-																<TaskDelete
-																	handleDeleteTask={checkHandleDeleteTask}
-																	index={idx}
+																<DeleteTableRow
+																	handleDelete={checkHandleDeleteTask(idx)}
 																/>
 															) : isAuthorization() === 'Accept' ? (
 																<Tooltip title="Cập nhật công việc">

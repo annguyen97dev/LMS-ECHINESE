@@ -111,14 +111,19 @@ const PointColumnForm = (props) => {
 				onCancel={closeModal}
 				footer={null}
 			>
-				<div className="container-fluid">
+				<div>
 					<Form
 						layout="vertical"
 						onFinish={form.handleSubmit(pointColumnSwitchFunc)}
 					>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField form={form} name="Name" label="Tên kì thi" />
+								<InputTextField
+									form={form}
+									name="Name"
+									label="Tên kỳ thi"
+									placeholder="Nhập tên kỳ thi"
+								/>
 							</div>
 						</div>
 						<div className="row">
@@ -130,6 +135,7 @@ const PointColumnForm = (props) => {
 									optionList={optionType}
 									onChangeSelect={checkHandleChangeType}
 									disabled={isUpdate && true}
+									placeholder="Chọn loại"
 								/>
 							</div>
 						</div>
@@ -140,6 +146,7 @@ const PointColumnForm = (props) => {
 									name="Coefficient"
 									label="Hệ số"
 									disabled={isDisabled}
+									placeholder="Nhập hệ số"
 								/>
 							</div>
 						</div>

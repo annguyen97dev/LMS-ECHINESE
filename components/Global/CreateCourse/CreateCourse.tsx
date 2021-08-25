@@ -208,8 +208,6 @@ const CreateCourse = () => {
 		scheduleInDay: 0,
 		scheduleList: [],
 	});
-	const debounceFetchInfoAvailableSchedule = useRef(null);
-	const TIMING = 800;
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
@@ -800,7 +798,6 @@ const CreateCourse = () => {
 		if (scheduleList.length) {
 			onDebounceFetchInfoAvailableSchedule(scheduleList);
 		}
-		return () => clearTimeout(debounceFetchInfoAvailableSchedule.current);
 	}, [dataModalCalendar]);
 	// -----------SAVE COURSE-----------
 

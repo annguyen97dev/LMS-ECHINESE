@@ -1,11 +1,11 @@
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {areaApi} from '~/apiBase';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import AreaDelete from './AreaDelete';
 import AreaForm from './AreaForm';
 
 const Area = () => {
@@ -16,6 +16,7 @@ const Area = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
 	// FILTER
 	const listFieldInit = {
@@ -78,6 +79,7 @@ const Area = () => {
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
+		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
 			pageSize: refValue.current.pageSize,
@@ -85,6 +87,7 @@ const Area = () => {
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
+		setActiveColumnSearch(dataIndex);
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -106,10 +109,6 @@ const Area = () => {
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				// setFilters({
-				// 	...listFieldInit,
-				// 	...refValue.current,
-				// });
 				showNoti('danger', 'Không tìm thấy');
 			}
 		} catch (error) {
@@ -176,42 +175,44 @@ const Area = () => {
 		return res;
 	};
 	// DELETE
-	const onDeleteArea = async (idx: number) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const delObj = areaList[idx];
-			const res = await areaApi.delete({
-				...delObj,
-				Enable: false,
-			});
-			res.status === 200 && showNoti('success', res.data.message);
-			if (areaList.length === 1) {
-				filters.pageIndex === 1
-					? (setFilters({
-							...listFieldInit,
-							...refValue.current,
-							pageIndex: 1,
-					  }),
-					  setAreaList([]))
-					: setFilters({
-							...filters,
-							...refValue.current,
-							pageIndex: filters.pageIndex - 1,
-					  });
-				return;
-			}
-			fetchAreaList();
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeleteArea = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = areaList[idx];
+				const res = await areaApi.delete({
+					...delObj,
+					Enable: false,
+				});
+				res.status === 200 && showNoti('success', res.data.message);
+				if (areaList.length === 1) {
+					filters.pageIndex === 1
+						? (setFilters({
+								...listFieldInit,
+								...refValue.current,
+								pageIndex: 1,
+						  }),
+						  setAreaList([]))
+						: setFilters({
+								...filters,
+								...refValue.current,
+								pageIndex: filters.pageIndex - 1,
+						  });
+					return;
+				}
+				fetchAreaList();
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
 	};
 	// COLUMN FOR TABLE
 	const columns = [
@@ -223,6 +224,8 @@ const Area = () => {
 			title: 'Tên tỉnh/thành phố',
 			dataIndex: 'AreaName',
 			...FilterColumn('AreaName', onSearch, onResetSearch, 'text'),
+			className:
+				activeColumnSearch === 'AreaName' ? 'active-column-search' : '',
 		},
 		{
 			title: 'Ngày khởi tạo',
@@ -244,7 +247,7 @@ const Area = () => {
 						indexUpdateObj={idx}
 						handleUpdateArea={onUpdateArea}
 					/>
-					<AreaDelete handleDeleteArea={onDeleteArea} index={idx} />
+					<DeleteTableRow handleDelete={onDeleteArea(idx)} />
 				</div>
 			),
 		},

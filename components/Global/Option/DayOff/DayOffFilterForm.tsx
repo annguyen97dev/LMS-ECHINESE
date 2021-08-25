@@ -45,7 +45,10 @@ const DayOffFilterForm = (props) => {
 		if (!handleResetFilter) return;
 		handleResetFilter();
 		funcShowFilter();
-		form.reset({...defaultValuesInit});
+		form.reset({
+			fromDate: undefined,
+			toDate: undefined,
+		});
 	};
 	const content = (
 		<div className={`wrap-filter small`}>
@@ -55,10 +58,20 @@ const DayOffFilterForm = (props) => {
 			>
 				<div className="row">
 					<div className="col-md-12">
-						<DateField form={form} name="fromDate" label="Ngày khởi tạo từ" />
+						<DateField
+							form={form}
+							name="fromDate"
+							label="Ngày khởi tạo từ"
+							placeholder="Chọn ngày"
+						/>
 					</div>
 					<div className="col-md-12">
-						<DateField form={form} name="toDate" label="Đến ngày" />
+						<DateField
+							form={form}
+							name="toDate"
+							label="Đến ngày"
+							placeholder="Chọn ngày"
+						/>
 					</div>
 					<div className="col-md-12 mt-3">
 						<button
