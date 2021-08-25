@@ -263,7 +263,7 @@ const CreateCourse = () => {
 				BranchID: id,
 			};
 			const [user, room] = await Promise.all([
-				userInformationApi.getAllParams(params),
+				userInformationApi.getAllParams({...params, RoleID: 7}),
 				roomApi.getAll(params),
 			]);
 			// USER INFORMATION
@@ -284,8 +284,14 @@ const CreateCourse = () => {
 			}
 			// ROOM
 			if (room.status === 200) {
-				const newRoomList = fmSelectArr(room.data.data, 'RoomCode', 'RoomID');
-				rs.roomList = newRoomList;
+				const newRoomList = fmSelectArr(room.data.data, 'RoomName', 'RoomID', [
+					'RoomCode',
+				]);
+				const newRoomListFmName = newRoomList.map((r) => ({
+					...r,
+					title: `${r.options.RoomCode} - ${r.title}`,
+				}));
+				rs.roomList = newRoomListFmName;
 			}
 			if (room.status === 204) {
 				rs.roomList = [];
