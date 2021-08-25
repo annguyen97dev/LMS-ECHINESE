@@ -64,6 +64,7 @@ export { userBranchApi } from "./newsfeed/user-branch";
 export { groupNewsFeedApi } from "./newsfeed/group-newsfeed";
 export { userGroupNewsFeedApi } from "./newsfeed/user-group-newsfeed";
 export { exerciseApi } from "./exercise/exercise";
+export { consultationStatusApi } from "./options/consultation-status";
 
 export {
   staffOfTaskGroupApi,

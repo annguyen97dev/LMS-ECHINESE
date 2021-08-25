@@ -10,6 +10,7 @@ import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
 import { id } from "date-fns/locale";
+import TimePickerField from "~/components/FormControl/TimePickerField";
 
 let returnSchema = {};
 let schema = null;
@@ -104,6 +105,7 @@ const TestCustomerForm = (props) => {
             <div className="row">
               <div className="col-md-6 col-12">
                 <SelectField
+                  disabled={true}
                   form={form}
                   name="UserInformationID"
                   label="Học viên"
@@ -129,7 +131,7 @@ const TestCustomerForm = (props) => {
                 />
               </div>
               <div className="col-md-6 col-12">
-                <InputTextField form={form} name="Time" label="Giờ hẹn" />
+                <TimePickerField form={form} name="Time" label="Giờ hẹn" />
               </div>
             </div>
             {/*  */}

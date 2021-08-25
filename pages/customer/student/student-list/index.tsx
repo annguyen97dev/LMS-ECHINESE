@@ -193,6 +193,7 @@ const StudentData = () => {
   const [indexRow, setIndexRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [todoApi, setTodoApi] = useState(listTodoApi);
+  const [loadingForm, setLoadingForm] = useState(true);
 
   // FOR STUDENT FORM
   // ------------- ADD data to list --------------
@@ -285,9 +286,15 @@ const StudentData = () => {
               pageIndex: 1,
               pageSize: 99999,
               RoleID: 6,
+              StatusID: 0,
+              Enable: true,
             });
           } else {
-            res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+            res = await item.api.getAll({
+              pageIndex: 1,
+              pageSize: 99999,
+              Enable: true,
+            });
           }
 
           res.status == 200 && getDataTolist(res.data.data, item.name);
@@ -428,6 +435,20 @@ const StudentData = () => {
     setCurrentPage(1), resetListFieldSearch();
   };
 
+  const checkEmptyData = () => {
+    let count = 0;
+    let res = false;
+    Object.keys(listDataForm).forEach(function (key) {
+      if (listDataForm[key].length == 0) {
+        count++;
+      }
+    });
+    if (count < 3) {
+      res = true;
+    }
+    return res;
+  };
+
   // -------------- GET PAGE_NUMBER -----------------
   const getPagination = (pageNumber: number) => {
     pageIndex = pageNumber;
@@ -453,13 +474,10 @@ const StudentData = () => {
   const expandedRowRender = (data, index) => {
     return (
       <>
-        {/* <Card title="Thông tin cá nhân">
-          <InfoCusCard />
-        </Card> */}
         <StudentForm
           index={index}
           dataRow={data}
-          listDataForm={listDataForm}
+          listDataForm={checkEmptyData && listDataForm}
           _handleSubmit={(dataSubmit, index) => {
             let newDataSource = [...dataSource];
             newDataSource.splice(index, 1, {

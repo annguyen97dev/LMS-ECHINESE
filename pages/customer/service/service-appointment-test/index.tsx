@@ -215,9 +215,15 @@ export default function AppointmentServiceTest() {
               pageIndex: 1,
               pageSize: 99999,
               RoleID: 6,
+              StatusID: 0,
+              Enable: true,
             });
           } else {
-            res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+            res = await item.api.getAll({
+              pageIndex: 1,
+              pageSize: 99999,
+              Enable: true,
+            });
           }
 
           res.status == 200 && getDataTolist(res.data.data, item.name);
