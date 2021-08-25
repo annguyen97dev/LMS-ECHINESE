@@ -351,7 +351,7 @@ export const dataMenu = [
 
   {
     MenuName: "tab-document",
-    MenuTitle: "Document List",
+    MenuTitle: "Thư viện",
     MenuKey: "/document-list",
     MenuItem: [
       {
