@@ -63,9 +63,7 @@ export { newsFeedCommentReplyApi } from "./newsfeed/newsfeed-commentreply";
 export { userBranchApi } from "./newsfeed/user-branch";
 export { groupNewsFeedApi } from "./newsfeed/group-newsfeed";
 export { userGroupNewsFeedApi } from "./newsfeed/user-group-newsfeed";
-<<<<<<< HEAD
 export { backgroundNewsFeedApi } from "./newsfeed/background-newsfeed";
-=======
 export { exerciseApi } from "./exercise/exercise";
 
 export {
@@ -73,4 +71,3 @@ export {
   taskApi,
   taskGroupApi,
 } from "./staff-manage/task";
->>>>>>> master
