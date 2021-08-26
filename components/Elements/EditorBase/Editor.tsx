@@ -1,3 +1,4 @@
+import {message} from 'antd';
 import 'bootstrap/js/src/dropdown';
 import 'bootstrap/js/src/modal';
 import 'bootstrap/js/src/tooltip';
@@ -46,13 +47,24 @@ function EditorBaseSummerNote(props) {
 
 	const handleUploadImage = async (fileList) => {
 		try {
+			const validType = ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp'];
+			if (!validType.includes(fileList[0].type)) {
+				showNoti(
+					'danger',
+					`${fileList[0].name} không đúng định dạng (jpg | jpeg | png | bmp).`
+				);
+				return;
+			}
 			let res = await studentApi.uploadImage(fileList[0]);
 			if (res.status === 200) {
 				ReactSummernote.insertImage(res.data.data);
 			}
 		} catch (error) {
 			error?.status === 400 &&
-				showNoti('danger', 'Ảnh không đúng định dạng jpg | jpeg | png | bmp.');
+				showNoti(
+					'danger',
+					'Ảnh không đúng định dạng (jpg | jpeg | png | bmp).'
+				);
 			console.log('handleUploadImage', error);
 		}
 	};
