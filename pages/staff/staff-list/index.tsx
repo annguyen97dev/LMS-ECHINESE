@@ -239,7 +239,7 @@ const StaffList = () => {
     },
     {
       name: "RoleID",
-      title: "Vị trí",
+      title: "Chức vụ",
       col: "col-md-6 col-12",
       type: "select",
       optionList: dataRoles,

@@ -50,20 +50,20 @@ function index(props: any) {
     <>
       <div className={styles.container}>
         <div className={styles.wrapBox}>
-          <div className={styles.imgLogin}>
-            <img src="/images/symbol-login.png" alt="" />
-          </div>
+          {/* <div className={styles.imgLogin}>
+            <img src="/images/symbol-login.jpg" alt="" />
+          </div> */}
           <div className={styles.wrapForm}>
             <form
               onSubmit={handleSubmit(_Submit)}
               className={`${styles.loginForm}`}
             >
               <div className={styles.loginFormImg}>
-                <img src="/images/icon-mona.png" alt="" />
+                <img src="/images/logo.jpg" alt="" />
               </div>
               <h6 className={styles.title}>Đăng nhập</h6>
 
-              <div className={styles.boxSocial}>
+              {/* <div className={styles.boxSocial}>
                 <ul>
                   <li>
                     <a href="">
@@ -85,7 +85,7 @@ function index(props: any) {
 
               <div className={styles.noteLogin}>
                 <p>Hoặc đăng nhập với tên đăng nhập</p>
-              </div>
+              </div> */}
 
               <input
                 name="csrfToken"
@@ -124,10 +124,10 @@ function index(props: any) {
                     <span> </span>Nhớ mật khẩu
                   </label>
                 </div> */}
-
+                {/* 
                 <div className={styles.forgetPass}>
                   <a>Quên mật khẩu?</a>
-                </div>
+                </div> */}
               </div>
 
               <div className="position-relative">
@@ -138,12 +138,12 @@ function index(props: any) {
                 </div>
               </div>
 
-              <div className={styles.boxSignup}>
+              {/* <div className={styles.boxSignup}>
                 Bạn chưa có tài khoản?{" "}
                 <a href="" onClick={moveToSignUp}>
                   Đăng kí
                 </a>
-              </div>
+              </div> */}
             </form>
           </div>
         </div>
