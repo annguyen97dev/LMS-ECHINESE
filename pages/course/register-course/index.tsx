@@ -27,35 +27,31 @@ import RegCourseBuy from "~/components/Global/RegisterCourse/RegCourseInfo";
 import RegCoursePayment from "~/components/Global/RegisterCourse/RegCoursePayment";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
-import {
-  branchApi,
-  programApi,
-  studyTimeApi,
-  userInformationApi,
-} from "~/apiBase";
+import { branchApi, programApi, studentApi, studyTimeApi } from "~/apiBase";
 import moment from "moment";
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
 
 const RegisterCourse = (props: any) => {
   const { Option } = Select;
-  const { TextArea } = Input;
   const [option, setOption] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const { examServicesId, reloadData, examServicesDetail, currentPage } = props;
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
   const { setValue } = useForm();
-  const [userAll, setUserAll] = useState<IUserinformation[]>();
-  const [userDetail, setUserDetail] = useState<IUserinformation>();
+  const [userAll, setUserAll] = useState<IStudent[]>();
+  const [userDetail, setUserDetail] = useState<IStudent>();
   const [branch, setBranch] = useState<IBranch[]>();
   const [program, setProgram] = useState<IProgram[]>();
   const [studyTime, setStudyTime] = useState<IStudyTime[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchDataUser = () => {
     (async () => {
       try {
-        const res = await userInformationApi.getAll();
+        const res = await studentApi.getAll({
+          pageIndex: 1,
+          pageSize: 99999,
+        });
         //@ts-ignore
         res.status == 200 && setUserAll(res.data.data);
       } catch (err) {
@@ -67,7 +63,11 @@ const RegisterCourse = (props: any) => {
   const fetchDataSelectList = () => {
     (async () => {
       try {
-        const _branch = await branchApi.getAll({ selectAll: true });
+        const _branch = await branchApi.getAll({
+          pageIndex: 1,
+          pageSize: 99999,
+          Enable: true,
+        });
         const _program = await programApi.getAll({ selectAll: true });
         const _studyTime = await studyTimeApi.getAll({ selectAll: true });
         _branch.status == 200 && setBranch(_branch.data.data);
@@ -84,20 +84,21 @@ const RegisterCourse = (props: any) => {
     fetchDataSelectList();
   }, []);
 
-  console.log(option);
-
   const onChange = (value) => {
     setOption(value);
   };
 
   const handleChangeUser = (value) => {
+    setIsLoading(true);
     (async () => {
       try {
-        const _detail = await userInformationApi.getByID(value);
+        const _detail = await studentApi.getWithID(value);
         //@ts-ignore
         _detail.status == 200 && setUserDetail(_detail.data.data);
       } catch (err) {
         showNoti("danger", err.message);
+      } finally {
+        setIsLoading(false);
       }
     })();
   };
@@ -130,10 +131,10 @@ const RegisterCourse = (props: any) => {
                       className="style-input w-100"
                       placeholder="Đăng ký học"
                     >
-                      <Option value={1}>Đăng ký học</Option>
+                      <Option value={1}>Đăng ký đợt thi</Option>
                       <Option value={4}>Hẹn đăng ký</Option>
-                      <Option value={2}>Mua dịch vụ</Option>
-                      <Option value={3}>Thanh toán</Option>
+                      {/* <Option value={2}>Mua dịch vụ</Option>
+                      <Option value={3}>Thanh toán</Option> */}
                     </Select>
                   </Form.Item>
                 </div>
@@ -145,210 +146,231 @@ const RegisterCourse = (props: any) => {
               </div>
               {/*  */}
               {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item
-                    name="UserInformationID"
-                    label="Email"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng điền đủ thông tin!",
-                      },
-                    ]}
-                  >
-                    <Select
-                      className="style-input"
-                      showSearch
-                      optionFilterProp="children"
-                      onChange={(value) => handleChangeUser(value)}
+              <Spin spinning={isLoading}>
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item
+                      name="UserInformationID"
+                      label="Email"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng điền đủ thông tin!",
+                        },
+                      ]}
                     >
-                      {userAll?.map((item, index) => (
-                        <Option key={index} value={item.UserInformationID}>
-                          {item.Email}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                </div>
+                      <Select
+                        className="style-input"
+                        showSearch
+                        optionFilterProp="children"
+                        onChange={(value) => handleChangeUser(value)}
+                      >
+                        {userAll?.map((item, index) => (
+                          <Option key={index} value={item.UserInformationID}>
+                            {item.Email}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </div>
 
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Họ và tên">
-                    <Input
-                      disabled
-                      value={userDetail ? userDetail.FullNameUnicode : ""}
-                      className="style-input"
-                    />
-                  </Form.Item>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Họ và tên">
+                      <Input
+                        value={userDetail ? userDetail.FullNameUnicode : ""}
+                        className="style-input"
+                        readOnly={true}
+                      />
+                    </Form.Item>
+                  </div>
                 </div>
-              </div>
+                {/*  */}
+                {/*  */}
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Ngày sinh">
+                      <Input
+                        readOnly={true}
+                        className="style-input"
+                        value={
+                          userDetail
+                            ? moment(userDetail.DOB).format("DD/MM/YYYY")
+                            : ""
+                        }
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="SĐT">
+                      <Input
+                        readOnly={true}
+                        value={userDetail ? userDetail.Mobile : ""}
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                {/*  */}
+                {/*  */}
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Tỉnh/Thành phố">
+                      <Input
+                        readOnly={true}
+                        className="style-input"
+                        value={userDetail ? userDetail.AreaName : ""}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Quận/Huyện">
+                      <Input
+                        readOnly={true}
+                        value={userDetail ? userDetail.DistrictName : ""}
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                {/*  */}
+                {/*  */}
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Phường xã">
+                      <Input
+                        readOnly={true}
+                        value={userDetail ? userDetail.WardName : ""}
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Địa chỉ - Mô tả">
+                      <Input
+                        readOnly={true}
+                        value={
+                          userDetail
+                            ? `${userDetail.HouseNumber} ${userDetail.Address}`
+                            : ""
+                        }
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                {/*  */}
+                {/*  */}
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="CMND">
+                      <Input
+                        readOnly={true}
+                        value={userDetail ? userDetail.CMND : ""}
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Nơi cấp">
+                      <Input
+                        readOnly={true}
+                        value={userDetail ? userDetail.CMNDRegister : ""}
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                {/*  */}
+                {/*  */}
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Ngày cấp">
+                      <Input
+                        readOnly={true}
+                        value={
+                          userDetail
+                            ? moment(userDetail.CMNDDate).format("DD/MM/YYYY")
+                            : ""
+                        }
+                        className="style-input"
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Công việc">
+                      <Input
+                        readOnly={true}
+                        className="style-input"
+                        value={userDetail ? userDetail.JobName : ""}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                {/*  */}
+                {/*  */}
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Người nhà, liên hệ">
+                      <Input
+                        className="style-input"
+                        readOnly={true}
+                        value={userDetail ? userDetail.ParentsNameOf : ""}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Tư vấn viên">
+                      <Input
+                        className="style-input"
+                        readOnly={true}
+                        //@ts-ignore
+                        value={userDetail ? userDetail.CounselorsName : ""}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                {/*  */}
+                {/*  */}
+                <div className="row">
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Nguồn khách">
+                      <Input
+                        readOnly={true}
+                        className="style-input"
+                        value={
+                          userDetail ? userDetail.SourceInformationName : ""
+                        }
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <Form.Item label="Mục đích học">
+                      <Input
+                        readOnly={true}
+                        className="style-input"
+                        value={
+                          userDetail ? userDetail.AcademicPurposesName : ""
+                        }
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+              </Spin>
+
               {/*  */}
               {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Ngày sinh">
-                    <Input
-                      disabled
-                      className="style-input"
-                      value={
-                        userDetail
-                          ? moment(userDetail.DOB).format("DD/MM/YYYY")
-                          : ""
-                      }
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="SĐT">
-                    <Input
-                      disabled
-                      value={userDetail ? userDetail.Mobile : ""}
-                      className="style-input"
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Tỉnh/Thành phố">
-                    <Input disabled className="style-input" />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Quận/Huyện">
-                    <Input
-                      disabled
-                      value={userDetail ? userDetail.DistrictName : ""}
-                      className="style-input"
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Phường xã">
-                    <Input
-                      disabled
-                      value={userDetail ? userDetail.WardName : ""}
-                      className="style-input"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Địa chỉ">
-                    <Input
-                      disabled
-                      value={
-                        userDetail
-                          ? `${userDetail.HouseNumber} ${userDetail.Address}`
-                          : ""
-                      }
-                      className="style-input"
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="CMND">
-                    <Input
-                      disabled
-                      value={userDetail ? userDetail.CMND : ""}
-                      className="style-input"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Nơi cấp">
-                    <Input
-                      disabled
-                      value={userDetail ? userDetail.CMNDRegister : ""}
-                      className="style-input"
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Ngày cấp">
-                    <Input
-                      disabled
-                      value={
-                        userDetail
-                          ? moment(userDetail.CMNDDate).format("DD/MM/YYYY")
-                          : ""
-                      }
-                      className="style-input"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Công việc">
-                    <Input disabled className="style-input" />
-                  </Form.Item>
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Nơi công tác">
-                    <Input className="style-input" disabled />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Người nhà, liên hệ">
-                    <Input className="style-input" disabled />
-                  </Form.Item>
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Đầu vào">
-                    <Input className="style-input" disabled />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Mục tiêu">
-                    <Input className="style-input" disabled />
-                  </Form.Item>
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Thời gian thi">
-                    <Input
-                      className="style-input"
-                      placeholder="dd/mm/yyyy"
-                      disabled
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-md-6 col-12">
-                  <Form.Item label="Mục đích học">
-                    <Input className="style-input" disabled />
-                  </Form.Item>
-                </div>
-              </div>
+
               {/*  */}
               {/*  */}
             </Card>
           </div>
           <div className="col-6">
-            {option == 1 && <RegCourseInfo />}
-            {option == 4 && (
+            {option == 1 && (
+              <RegCourseInfo
+                userID={userDetail ? userDetail.UserInformationID : null}
+              />
+            )}
+            {/* {option == 4 && (
               <Card title="Thông tin đăng kí">
                 <div className="row">
                   <div className="col-12">
@@ -440,9 +462,9 @@ const RegisterCourse = (props: any) => {
                   </div>
                 </div>
               </Card>
-            )}
-            {option == 2 && <RegCourseBuy />}
-            {option == 3 && <RegCoursePayment />}
+            )} */}
+            {/* {option == 2 && <RegCourseBuy />}
+            {option == 3 && <RegCoursePayment />} */}
           </div>
         </div>
       </Form>

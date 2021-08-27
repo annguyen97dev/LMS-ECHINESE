@@ -51,21 +51,7 @@ const DocumentCourse = (props: any) => {
 
   return (
     <div>
-      <Card
-        title="Tài liệu"
-        extra={
-          <>
-            <button className="btn btn-success" style={{ marginRight: "10px" }}>
-              <File size={15} />
-              <span className="tab-title">Thêm tài liệu</span>
-            </button>
-            <button className="btn btn-warning" style={{ marginRight: "10px" }}>
-              <Folder size={15} />
-              <span className="tab-title">Thêm giáo trình</span>
-            </button>
-          </>
-        }
-      >
+      <Card title="Tài liệu">
         <Spin spinning={isLoading}>
           <div className="row">
             <div className="col-3">

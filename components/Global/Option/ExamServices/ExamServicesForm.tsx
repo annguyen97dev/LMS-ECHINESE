@@ -73,7 +73,11 @@ const ExamServicesForm = React.memo((props: any) => {
       }
     } else {
       try {
-        let res = await examServiceApi.add({ ...data, Enable: true });
+        let res = await examServiceApi.add({
+          ...data,
+          Enable: true,
+          TimeExam: moment(data.TimeExam).format("LT"),
+        });
         afterSubmit(res?.data.message);
         reloadData(1);
         form.resetFields();
@@ -187,7 +191,9 @@ const ExamServicesForm = React.memo((props: any) => {
                   <TimePicker
                     format="HH:mm"
                     className="style-input"
-                    onChange={(value) => setValue("TimeExam", value)}
+                    onChange={(value) =>
+                      setValue("TimeExam", moment(value).format("LT"))
+                    }
                   />
                 </Form.Item>
               </div>
