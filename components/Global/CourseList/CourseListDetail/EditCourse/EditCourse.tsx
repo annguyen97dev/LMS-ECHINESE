@@ -23,6 +23,7 @@ import {
 	fmArrayToObjectWithSpecialKey,
 	fmSelectArr,
 } from '~/utils/functions';
+import AvailableScheduleForm from './AvailableScheduleForm';
 import CreateNewScheduleForm from './CreateNewScheduleForm';
 
 // Setup the localizer by providing the moment (or globalize) Object
@@ -100,7 +101,17 @@ const EditCourse = (props) => {
 		scheduleList: [],
 	});
 	// EDIT
-	const [isLoaded, setIsLoaded] = useState(false);
+	const [isShowSaveBtnGroup, setIsShowSaveBtnGroup] = useState(false);
+	const [
+		optionListForGetAvailableSchedule,
+		setOptionListForGetAvailableSchedule,
+	] = useState<{
+		studyTimes: IOptionCommon[];
+		rooms: IOptionCommon[];
+	}>({
+		rooms: [],
+		studyTimes: [],
+	});
 	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>(
 		[]
 	);
@@ -628,47 +639,43 @@ const EditCourse = (props) => {
 		return res;
 	};
 	// -----------EDIT COURSE-----------
-	const fetchCourseToEdit = async () => {
+	const fetchCourseDetail = async () => {
+		setIsLoading({
+			type: 'FETCH_COURSE',
+			status: true,
+		});
 		try {
-			await Promise.all([
-				courseDetailApi.getAll({CourseID: courseID}),
-				courseDetailAvailableDayApi.getAll(courseID),
-			])
-				.then(([scheduleList, dayList]) => {
-					if (scheduleList.status === 200 && dayList.status === 200) {
-						const newScheduleList = scheduleList.data.data.map((sch) => ({
-							...sch,
-							Date: moment(sch.StartTime).format('YYYY/MM/DD'),
-						}));
-						stoneScheduleListToFindDifference.current = newScheduleList;
+			const res = await courseDetailApi.getAll({CourseID: courseID});
+			if (res.status === 200) {
+				const newScheduleList = res.data.data.map((sch) => ({
+					...sch,
+					Date: moment(sch.StartTime).format('YYYY/MM/DD'),
+				}));
+				stoneScheduleListToFindDifference.current = newScheduleList;
 
-						const newScheduleListFm = fmArrayToObjectWithSpecialKey(
-							newScheduleList,
-							'Date'
-						);
+				const studyTimesFm = fmSelectArr(res.data.studyTimes, 'name', 'id', [
+					'select',
+				]);
+				const roomsFm = fmSelectArr(res.data.rooms, 'name', 'id', ['select']);
 
-						const dayListFm = dayList.data.data.map((d) => {
-							const fmDay = moment(d.Day).format('YYYY/MM/DD');
-							return {
-								...d,
-								Day: fmDay,
-								Limit: newScheduleListFm[fmDay]?.length + d.Limit || d.Limit,
-							};
-						});
+				setOptionListForGetAvailableSchedule({
+					rooms: roomsFm,
+					studyTimes: studyTimesFm,
+				});
 
-						setScheduleList({
-							available: [],
-							unavailable: newScheduleList,
-						});
-						setCalendarList(dayListFm);
-						showNoti('success', 'Thành công');
-						setIsLoaded(true);
-						return true;
-					}
-				})
-				.catch((err) => console.log('fetchCourseToEdit', err.message));
+				setScheduleList({
+					available: [],
+					unavailable: newScheduleList,
+				});
+				showNoti('success', 'Thành công');
+			}
 		} catch (error) {
 			showNoti('error', error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_COURSE',
+				status: false,
+			});
 		}
 	};
 	const fetchSubject = async () => {
@@ -723,6 +730,46 @@ const EditCourse = (props) => {
 			console.log('fetchStudyTime', error.message);
 		}
 	};
+	const fetchAvailableSchedule = async (data: {
+		RoomID: number[];
+		StudyTimeID: number[];
+	}) => {
+		setIsShowSaveBtnGroup(false);
+		setIsLoading({
+			type: 'FETCH_SCHEDULE',
+			status: true,
+		});
+		try {
+			const res = await courseDetailAvailableDayApi.getAll({
+				Room: data.RoomID.join(','),
+				StudyTime: data.StudyTimeID.join(','),
+				CourseID: courseID,
+			});
+			if (res.status === 200) {
+				const newScheduleListFm = fmArrayToObjectWithSpecialKey(
+					stoneScheduleListToFindDifference.current,
+					'Date'
+				);
+				const dayListFm = res.data.data.map((d) => {
+					const fmDay = moment(d.Day).format('YYYY/MM/DD');
+					return {
+						...d,
+						Day: fmDay,
+						Limit: newScheduleListFm[fmDay]?.length + d.Limit || d.Limit,
+					};
+				});
+				setIsShowSaveBtnGroup(true);
+				setIsLoading({
+					type: 'FETCH_SCHEDULE',
+					status: false,
+				});
+				setCalendarList(dayListFm);
+				return true;
+			}
+		} catch (error) {
+			showNoti('error', error.message);
+		}
+	};
 	const onCreateSchedule = (obj: {SubjectID: number; StudyDay: number}) => {
 		setIsLoading({
 			type: 'CREATE_SCHEDULE',
@@ -774,38 +821,47 @@ const EditCourse = (props) => {
 		if (isMounted) {
 			fetchSubject();
 			fetchStudyTime();
-			fetchCourseToEdit();
+			fetchCourseDetail();
 		}
 		return () => {
 			isMounted = false;
 		};
 	}, []);
 	return (
-		<div className="create-course">
+		<div className="create-course edit-course">
 			<TitlePage title="Cập nhật khóa học" />
 			<div className="row">
 				<div className="col-md-8 col-12">
 					<Card
 						title="Sắp xếp lịch học"
 						extra={
-							<div className="btn-page-course">
-								{isLoaded && (
-									<>
-										<CreateNewScheduleForm
-											isLoading={isLoading}
-											optionSubjectList={optionSubjectList}
-											handleOnCreateSchedule={onCreateSchedule}
-										/>
-										<SaveCreateCourse
-											isEdit={true}
-											isLoading={isLoading}
-											scheduleShow={scheduleShow}
-											handleSaveCourse={onSaveCourse}
-											handleFetchDataToSave={onFetchDataToSave}
-										/>
-									</>
-								)}
-							</div>
+							<>
+								<div className="btn-page-course">
+									<AvailableScheduleForm
+										isLoading={isLoading}
+										handleGetAvailableSchedule={fetchAvailableSchedule}
+										optionListForGetAvailableSchedule={
+											optionListForGetAvailableSchedule
+										}
+									/>
+									{isShowSaveBtnGroup && (
+										<>
+											<CreateNewScheduleForm
+												isLoading={isLoading}
+												optionSubjectList={optionSubjectList}
+												handleOnCreateSchedule={onCreateSchedule}
+											/>
+											<SaveCreateCourse
+												isEdit={true}
+												isLoading={isLoading}
+												scheduleShow={scheduleShow}
+												handleSaveCourse={onSaveCourse}
+												handleFetchDataToSave={onFetchDataToSave}
+											/>
+										</>
+									)}
+								</div>
+							</>
 						}
 					>
 						<CreateCourseCalendar
@@ -813,7 +869,11 @@ const EditCourse = (props) => {
 							handleSelectDate={onSelectDate}
 							dateSelected={dateSelected}
 							//
-							isLoaded={isLoaded}
+							isLoaded={
+								isLoading.type === 'FETCH_SCHEDULE' && isLoading.status
+									? false
+									: true
+							}
 							//
 							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}

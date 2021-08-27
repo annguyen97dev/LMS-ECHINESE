@@ -1,11 +1,11 @@
 import {instance} from '../instance';
 
-const url = '/api/LoadAvailableDate/';
+const url = '/api/AvailableDate/';
 export const courseDetailAvailableDayApi = {
 	// Lấy tất cả data
-	getAll(ID) {
-		return instance.get<IApiResultData<ICourseDetailAvailableDay[]>>(
-			`${url}${ID}`
-		);
+	getAll(params) {
+		return instance.get<IApiResultData<ICourseDetailAvailableDay[]>>(url, {
+			params,
+		});
 	},
 };
