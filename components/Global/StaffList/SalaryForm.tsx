@@ -174,7 +174,7 @@ const SalaryForm = (props) => {
               <SelectField
                 form={formSalary}
                 name="Style"
-                label="Nguồn khách"
+                label="Kiểu tính lương"
                 optionList={[
                   {
                     title: "Tính lương theo tháng",

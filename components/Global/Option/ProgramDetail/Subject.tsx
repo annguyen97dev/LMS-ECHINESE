@@ -72,7 +72,7 @@ const Subject = () => {
         if (res.data.data.length > 0) {
           setDataSource(res.data.data);
           setTotalPage(res.data.totalRow);
-          showNoti("success", "Tải môn học thành công");
+          // showNoti("success", "Tải môn học thành công");
         } else {
           showNoti("danger", "Không có dữ liệu");
         }

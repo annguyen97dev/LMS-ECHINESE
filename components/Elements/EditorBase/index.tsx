@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 const DynamicComponentWithNoSSR = dynamic(() => import('./Editor'), {
 	ssr: false,
@@ -9,27 +9,40 @@ const DynamicComponentWithNoSSR = dynamic(() => import('./Editor'), {
 EditorBase.propTypes = {
 	isReset: PropTypes.bool,
 	content: PropTypes.string,
+	height: PropTypes.number,
 	handleChangeDataEditor: PropTypes.func,
-	handleOnImageUpload: PropTypes.func,
+	// PROP TYPES FOR CUSTOM FIELD. CAN SKIP
+	customFieldProps: PropTypes.shape({
+		name: PropTypes.string.isRequired,
+		onBlur: PropTypes.func.isRequired,
+		onChange: PropTypes.func.isRequired,
+		innerRef: PropTypes.oneOfType([
+			PropTypes.func,
+			PropTypes.shape({current: PropTypes.any}),
+		]).isRequired,
+		value: PropTypes.string.isRequired,
+	}),
 };
 
 EditorBase.defaultProps = {
 	isReset: false,
 	content: '',
+	height: 600,
 	handleChangeDataEditor: null,
-	handleOnImageUpload: null,
 };
 
 function EditorBase(props) {
-	const {handleChangeDataEditor, handleOnImageUpload, isReset, content} = props;
+	const {isReset, content, height, handleChangeDataEditor, customFieldProps} =
+		props;
 
 	return (
 		<div className="summernote-style">
 			<DynamicComponentWithNoSSR
-				handleOnImageUpload={handleOnImageUpload}
-				handleChangeDataEditor={handleChangeDataEditor}
 				isReset={isReset}
 				content={content}
+				height={height}
+				handleChangeDataEditor={handleChangeDataEditor}
+				customFieldProps={customFieldProps}
 			/>
 		</div>
 	);

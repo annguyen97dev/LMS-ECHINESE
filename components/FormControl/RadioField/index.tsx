@@ -1,20 +1,21 @@
-import {Form, Input} from 'antd';
+import {Form, Radio} from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {Controller} from 'react-hook-form';
 
-const InputTextField = (props) => {
+const RadioField = (props) => {
 	const {
 		form,
 		name,
 		label,
-		placeholder,
 		disabled,
-		handleChange,
 		style,
 		className,
-		allowClear,
-		handleFormatCurrency,
+		size,
+		radioList,
+		radioType,
+		radioButtonStyle,
+		handleChange,
 	} = props;
 
 	const {errors} = form.formState;
@@ -37,19 +38,16 @@ const InputTextField = (props) => {
 				name={name}
 				control={form.control}
 				render={({field}) => (
-					<Input
+					<Radio.Group
 						{...field}
-						className="style-input"
-						allowClear={allowClear}
-						placeholder={placeholder}
 						disabled={disabled}
+						size={size}
+						options={radioList}
+						optionType={radioType}
+						buttonStyle={radioButtonStyle}
 						onChange={(e) => {
 							checkHandleChange(e.target.value);
-							if (handleFormatCurrency) {
-								field.onChange(handleFormatCurrency(e.target.value));
-							} else {
-								field.onChange(e.target.value);
-							}
+							field.onChange(e.target.value);
 						}}
 					/>
 				)}
@@ -62,26 +60,40 @@ const InputTextField = (props) => {
 		</Form.Item>
 	);
 };
-InputTextField.propTypes = {
+RadioField.propTypes = {
 	form: PropTypes.object.isRequired,
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
-	placeholder: PropTypes.string,
 	disabled: PropTypes.bool,
-	handleChange: PropTypes.func,
-	handleFormatCurrency: PropTypes.func,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
-	allowClear: PropTypes.bool,
+	size: PropTypes.oneOf(['', 'small', 'middle', 'large']),
+	radioList: PropTypes.arrayOf(
+		PropTypes.shape({
+			label: PropTypes.oneOfType([
+				PropTypes.string.isRequired,
+				PropTypes.number.isRequired,
+			]),
+			value: PropTypes.oneOfType([
+				PropTypes.string.isRequired,
+				PropTypes.number.isRequired,
+			]),
+			disabled: PropTypes.bool,
+		})
+	),
+	radioType: PropTypes.oneOf(['default', 'button']),
+	radioButtonStyle: PropTypes.oneOf(['outline', 'solid']),
+	handleChange: PropTypes.func,
 };
-InputTextField.defaultProps = {
+RadioField.defaultProps = {
 	label: '',
-	placeholder: '',
 	disabled: false,
-	handleChange: null,
-	handleFormatCurrency: null,
 	style: {},
 	className: '',
-	allowClear: true,
+	size: '',
+	radioList: [],
+	radioType: 'default',
+	radioButtonStyle: 'outline',
+	handleChange: null,
 };
-export default InputTextField;
+export default RadioField;

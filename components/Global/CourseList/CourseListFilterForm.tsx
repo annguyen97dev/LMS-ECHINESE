@@ -40,7 +40,6 @@ const CourseListFilterForm = (props) => {
 		if (!handleFilter) return;
 		handleFilter(objVl);
 		funcShowFilter();
-		form.reset({...defaultValuesInit});
 	};
 	const checkHandleResetFilter = () => {
 		if (!handleResetFilter) return;

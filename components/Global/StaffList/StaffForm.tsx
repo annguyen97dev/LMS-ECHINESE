@@ -50,7 +50,7 @@ const optionGender = [
     title: "Nam",
   },
   {
-    value: 0,
+    value: 2,
     title: "Khác",
   },
 ];
@@ -84,6 +84,8 @@ const StaffForm = (props) => {
   const [statusAdd, setStatusAdd] = useState("add-staff");
   const [dataStaff, setDataStaff] = useState(null);
   const [submitSalary, setSubmitSalary] = useState(true);
+
+  // console.log("Row Data: ", rowData);
 
   const makeNewData = (data, name) => {
     let newData = null;
@@ -173,11 +175,15 @@ const StaffForm = (props) => {
         case "DistrictID":
           res = await districtApi.getAll({
             AreaID: ID,
+            pageIndex: 1,
+            pageSize: 9999,
           });
           break;
         case "WardID":
           res = await wardApi.getAll({
             DistrictID: ID,
+            pageIndex: 1,
+            pageSize: 9999,
           });
           break;
         // case "Branch":
@@ -247,6 +253,7 @@ const StaffForm = (props) => {
     Extension: null, //giới thiệu thêm
     Branch: undefined, //string : id của trung tâm - LƯU Ý NẾU TỪ 2 TRUNG TÂM TRỞ LÊN THÌ NHẬP(ID,ID,ID)
     RoleID: null, //int mã công việc
+    StatusID: null,
   };
 
   (function returnSchemaFunc() {
@@ -259,18 +266,18 @@ const StaffForm = (props) => {
             .email("Email nhập sai cú pháp")
             .required("Bạn không được để trống");
           break;
-        case "Mobile":
-          returnSchema[key] = yup
-            .number()
-            .typeError("SDT phải là số")
-            .required("Bạn không được để trống");
-          break;
-        case "CMND":
-          returnSchema[key] = yup
-            .number()
-            .typeError("CMND phải là số")
-            .required("Bạn không được để trống");
-          break;
+        // case "Mobile":
+        //   returnSchema[key] = yup
+        //     .number()
+        //     .typeError("SDT phải là số")
+        //     .required("Bạn không được để trống");
+        //   break;
+        // case "CMND":
+        //   returnSchema[key] = yup
+        //     .number()
+        //     .typeError("CMND phải là số")
+        //     .required("Bạn không được để trống");
+        //   break;
         case "CounselorsID":
           returnSchema[key] = yup.mixed().required("Bạn không được để trống");
           break;
@@ -348,6 +355,8 @@ const StaffForm = (props) => {
         //   UserInformationID: rowData.UserInformationID,
         //   FullNameUnicode: rowData.FullNameUnicode,
         // });
+      } else {
+        form.setValue("StatusID", 0);
       }
     }
   }, [isModalVisible]);
@@ -472,21 +481,25 @@ const StaffForm = (props) => {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <InputTextField form={form} name="CMND" label="Số CMND" />
                 </div>
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <InputTextField
                     form={form}
                     name="CMNDRegister"
                     label="Nơi cấp CMND"
                   />
                 </div>
-                <div className="col-md-4 col-12">
-                  <DateField form={form} name="CMNDDate" label="Ngày cấp" />
-                </div>
               </div>
               <div className="row">
+                <div className="col-md-6 col-12">
+                  <DateField
+                    form={form}
+                    name="CMNDDate"
+                    label="Ngày cấp CMND"
+                  />
+                </div>
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -504,6 +517,24 @@ const StaffForm = (props) => {
                     onChangeSelect={
                       (value) => handleChange_Role(value) // Select Area to load District
                     }
+                  />
+                </div>
+                <div className="col-md-6 col-12">
+                  <SelectField
+                    disabled={!rowID && true}
+                    form={form}
+                    name="StatusID"
+                    label="Trạng thái hoạt động"
+                    optionList={[
+                      {
+                        value: 0,
+                        title: "Hoạt động",
+                      },
+                      {
+                        value: 1,
+                        title: "Khóa",
+                      },
+                    ]}
                   />
                 </div>
               </div>

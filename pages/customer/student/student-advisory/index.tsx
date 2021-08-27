@@ -9,6 +9,7 @@ import {
   sourceInfomationApi,
   areaApi,
   staffApi,
+  consultationStatusApi,
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import StudentAdviseForm from "~/components/Global/Customer/Student/StudentAdviseForm";
@@ -69,6 +70,7 @@ interface listDataForm {
   Area: Array<optionObj>;
   SourceInformation: Array<optionObj>;
   Counselors: Array<optionObj>;
+  ConsultationStatus: Array<optionObj>;
 }
 
 const listApi = [
@@ -87,6 +89,11 @@ const listApi = [
     text: "Tư vấn viên",
     name: "Counselors",
   },
+  {
+    api: consultationStatusApi,
+    text: "Tình trạng tư vấn",
+    name: "ConsultationStatus",
+  },
 ];
 
 export default function StudentAdvisory() {
@@ -94,6 +101,7 @@ export default function StudentAdvisory() {
     Area: [],
     SourceInformation: [],
     Counselors: [],
+    ConsultationStatus: [],
   });
 
   // ------ BASE USESTATE TABLE -------
@@ -172,6 +180,13 @@ export default function StudentAdvisory() {
         }));
         setDataFunc("CounselorsID", newData);
         break;
+      case "ConsultationStatus":
+        newData = data.map((item) => ({
+          title: item.Name,
+          value: item.ID,
+        }));
+        setDataFunc("CustomerConsultationStatusID", newData);
+        break;
       default:
         break;
     }
@@ -201,9 +216,15 @@ export default function StudentAdvisory() {
               pageIndex: 1,
               pageSize: 99999,
               RoleID: 6,
+              Enable: true,
+              StatusID: 0,
             });
           } else {
-            res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+            res = await item.api.getAll({
+              pageIndex: 1,
+              pageSize: 99999,
+              Enable: true,
+            });
           }
 
           res.status == 200 && getDataTolist(res.data.data, item.name);
@@ -272,7 +293,7 @@ export default function StudentAdvisory() {
             ...dataSubmit,
             AreaName: listDataForm.Area.find(
               (item) => item.value == dataSubmit.AreaID
-            ).title,
+            )?.title,
           });
           setDataSource(newDataSource);
           showNoti("success", res.data.message);
@@ -300,6 +321,20 @@ export default function StudentAdvisory() {
       }
     }
 
+    return res;
+  };
+
+  const checkEmptyData = () => {
+    let count = 0;
+    let res = false;
+    Object.keys(listDataForm).forEach(function (key) {
+      if (listDataForm[key].length == 0) {
+        count++;
+      }
+    });
+    if (count < 1) {
+      res = true;
+    }
     return res;
   };
 
@@ -430,8 +465,10 @@ export default function StudentAdvisory() {
       render: (ID) =>
         ID == 1 ? (
           <span className="tag red">Chưa tư vấn</span>
+        ) : ID == 2 ? (
+          <span className="tag green">Thành công</span>
         ) : (
-          <span className="tag green">Đã tư vấn</span>
+          <span className="tag blue-weight">Khách bận</span>
         ),
     },
     {
@@ -478,7 +515,7 @@ export default function StudentAdvisory() {
       TitlePage="Học viên cần tư vấn"
       TitleCard={
         <StudentAdviseForm
-          listData={listDataForm}
+          listData={checkEmptyData && listDataForm}
           isLoading={isLoading}
           _onSubmit={(data: any) => _onSubmit(data)}
         />

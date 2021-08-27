@@ -1,13 +1,15 @@
-import { DatePicker, Form } from "antd";
+import { DatePicker, Form, TimePicker } from "antd";
 import moment from "moment";
 import PropTypes from "prop-types";
 import React from "react";
 import { Controller } from "react-hook-form";
 
-const DateField = (props) => {
+const TimePickerField = (props) => {
   const { form, name, label, placeholder, disabled, style, className } = props;
   const { errors } = form.formState;
   const hasError = errors[name];
+
+  const format = "HH:mm";
 
   return (
     <Form.Item
@@ -21,18 +23,24 @@ const DateField = (props) => {
         name={name}
         control={form.control}
         render={({ field }) => {
-          const checkValue = field.value ? moment(field.value) : undefined;
+          const checkValue = field.value
+            ? (console.log("Value time is: ", field.value),
+              moment(field.value, format))
+            : undefined;
           return (
-            <DatePicker
+            <TimePicker
               {...field}
               className="style-input"
               style={{ width: "100%" }}
               placeholder={placeholder}
               disabled={disabled}
               allowClear={true}
-              format="DD/MM/YYYY"
+              format={format}
               value={checkValue}
-              onChange={(date) => field.onChange(date?.format("YYYY/MM/DD"))}
+              onSelect={(time) => (
+                console.log("time is: ", time),
+                field.onChange(time?.format(format))
+              )}
             />
           );
         }}
@@ -46,7 +54,7 @@ const DateField = (props) => {
   );
 };
 
-DateField.propTypes = {
+TimePickerField.propTypes = {
   form: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
@@ -55,7 +63,7 @@ DateField.propTypes = {
   style: PropTypes.shape({}),
   className: PropTypes.string,
 };
-DateField.defaultProps = {
+TimePickerField.defaultProps = {
   label: "",
   placeholder: "",
   disabled: false,
@@ -63,4 +71,4 @@ DateField.defaultProps = {
   className: "",
 };
 
-export default DateField;
+export default TimePickerField;
