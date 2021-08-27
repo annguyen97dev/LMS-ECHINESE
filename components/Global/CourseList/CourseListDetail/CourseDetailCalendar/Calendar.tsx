@@ -1,26 +1,79 @@
-import {Popover, Spin} from 'antd';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {Button, Popover, Spin} from 'antd';
+import Form from 'antd/lib/form/Form';
+import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import {Calendar, momentLocalizer} from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import {useForm} from 'react-hook-form';
+import * as yup from 'yup';
+import InputTextField from '~/components/FormControl/InputTextField';
+import UploadFileField from '~/components/FormControl/UploadFileField';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
 
 const CDCalendar = (props) => {
-	const now = new Date();
-	const {eventList, isLoaded} = props;
-	const [firstEventStartTime, setFirstEventStartTime] = useState(now);
-	const styleEvent = ({event}) => {
+	const {
+		isLoading,
+		isUploadDocument,
+		eventList,
+		isLoaded,
+		handleUploadDocument,
+	} = props;
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [courseScheduleID, setCourseScheduleID] = useState(0);
+	const openModal = () => setIsModalVisible(true);
+	const closeModal = () => setIsModalVisible(false);
+	const schema = yup.object().shape({
+		CourseScheduleID: yup.number().required('Bạn không được để trống'),
+		File: yup.mixed().nullable().required('Bạn không được để trống'),
+	});
+
+	const defaultValuesInit = {
+		CourseScheduleID: 0,
+		File: null,
+	};
+
+	const form = useForm({
+		defaultValues: defaultValuesInit,
+		resolver: yupResolver(schema),
+	});
+
+	useEffect(() => {
+		if (!isModalVisible) {
+			form.reset({...defaultValuesInit});
+		}
+		if (!courseScheduleID) return;
+		form.setValue('CourseScheduleID', courseScheduleID);
+	}, [isModalVisible]);
+
+	const checkHandleUploadDocument = (data) => {
+		if (!handleUploadDocument) return;
+		handleUploadDocument(data).then((res) => {
+			if (res && res.status === 200) {
+				closeModal();
+				form.reset({...defaultValuesInit});
+			}
+		});
+	};
+	const middlewareUploadImage = (ID) => {
+		setCourseScheduleID(+ID);
+		openModal();
+	};
+	const styleEvent = ({event}, idx) => {
 		const {
+			ID,
 			CourseID,
 			RoomName,
 			BranchName,
 			TeacherName,
 			SubjectName,
+			LinkDocument,
 			//
-			studyTime,
-		} = event.resource;
+			StudyTimeName,
+		}: ICourseDetailSchedule = event.resource;
 		const content = (
 			<div className="course-dt-event-info">
 				<ul>
@@ -36,12 +89,33 @@ const CDCalendar = (props) => {
 					<li>
 						<span>Trung tâm:</span> {BranchName}
 					</li>
+					<li>
+						<span>Tài liệu: </span>
+						{LinkDocument ? (
+							<a href={LinkDocument} target="_blank" download>
+								<i>Click to download</i>
+							</a>
+						) : (
+							'Trống'
+						)}
+					</li>
+					{isUploadDocument && (
+						<li>
+							<Button
+								size="middle"
+								className="mt-3 btn-warning w-100"
+								onClick={() => middlewareUploadImage(ID)}
+							>
+								Thêm tài liệu
+							</Button>
+						</li>
+					)}
 				</ul>
 			</div>
 		);
 		return (
 			<Popover
-				title={`Ca: ${studyTime}`}
+				title={`Ca: ${StudyTimeName}`}
 				content={content}
 				placement="rightTop"
 				trigger={
@@ -49,7 +123,7 @@ const CDCalendar = (props) => {
 				}
 			>
 				<div className="course-dt-event">
-					<div className="time">Ca: {studyTime}</div>
+					<div className="time">Ca: {StudyTimeName}</div>
 				</div>
 			</Popover>
 		);
@@ -61,12 +135,13 @@ const CDCalendar = (props) => {
 			BranchName,
 			TeacherName,
 			SubjectName,
+			LinkDocument,
 			//
-			studyTime,
-		} = event.resource;
+			StudyTimeName,
+		}: ICourseDetailSchedule = event.resource;
 		return (
 			<div className="course-dt-event">
-				<div className="time">Ca: {studyTime}</div>
+				<div className="time">Ca: {StudyTimeName}</div>
 				<div className="course-dt-event-info">
 					<ul>
 						<li>
@@ -81,6 +156,16 @@ const CDCalendar = (props) => {
 						<li>
 							<span>Trung tâm:</span> {BranchName}
 						</li>
+						<li>
+							<span>Tài liệu: </span>
+							{LinkDocument ? (
+								<a href={LinkDocument} target="_blank" download>
+									<i>Click to download</i>
+								</a>
+							) : (
+								'Trống'
+							)}
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -88,14 +173,16 @@ const CDCalendar = (props) => {
 	};
 	const styleDay = ({event}) => {
 		const {
+			ID,
 			CourseID,
 			RoomName,
 			BranchName,
 			TeacherName,
 			SubjectName,
+			LinkDocument,
 			//
-			studyTime,
-		} = event.resource;
+			StudyTimeName,
+		}: ICourseDetailSchedule = event.resource;
 		const content = (
 			<div className="course-dt-event-info">
 				<ul>
@@ -111,12 +198,33 @@ const CDCalendar = (props) => {
 					<li>
 						<span>Trung tâm:</span> {BranchName}
 					</li>
+					<li>
+						<span>Tài liệu: </span>
+						{LinkDocument ? (
+							<a href={LinkDocument} target="_blank" download>
+								<i>Click to download</i>
+							</a>
+						) : (
+							'Trống'
+						)}
+					</li>
+					{isUploadDocument && (
+						<li>
+							<Button
+								size="middle"
+								className="mt-3 btn-warning w-100"
+								onClick={() => middlewareUploadImage(ID)}
+							>
+								Thêm tài liệu
+							</Button>
+						</li>
+					)}
 				</ul>
 			</div>
 		);
 		return (
 			<Popover
-				title={`Ca: ${studyTime}`}
+				title={`Ca: ${StudyTimeName}`}
 				content={content}
 				placement="bottomLeft"
 				trigger={
@@ -124,15 +232,11 @@ const CDCalendar = (props) => {
 				}
 			>
 				<div className="course-dt-event">
-					<div className="time">Ca: {studyTime}</div>
+					<div className="time">Ca: {StudyTimeName}</div>
 				</div>
 			</Popover>
 		);
 	};
-	useEffect(() => {
-		eventList.length && setFirstEventStartTime(eventList[0]?.start);
-	}, [eventList]);
-
 	return (
 		<div
 			className={`wrap-calendar ${!isLoaded ? 'wrap-calendar-loading' : ''}`}
@@ -145,7 +249,6 @@ const CDCalendar = (props) => {
 				endAccessor="end"
 				style={{minHeight: 600}}
 				popup
-				defaultDate={moment(firstEventStartTime).toDate()}
 				defaultView="month"
 				showMultiDayTimes={false}
 				formats={{
@@ -177,10 +280,64 @@ const CDCalendar = (props) => {
 				messages={{}}
 			/>
 			<Spin className="calendar-loading" size="large" />
+			{isUploadDocument && (
+				<Modal
+					title="Thêm tài liệu cho buổi học"
+					visible={isModalVisible}
+					footer={null}
+					onCancel={closeModal}
+					width={400}
+				>
+					<div className="wrap-form">
+						<Form
+							layout="vertical"
+							onFinish={form.handleSubmit(checkHandleUploadDocument)}
+						>
+							<div className="row">
+								<div className="col-md-12 col-12">
+									<InputTextField
+										form={form}
+										name="CourseScheduleID"
+										label="Mã buổi học"
+										disabled={true}
+									/>
+								</div>
+								<div className="col-md-12 col-12">
+									<UploadFileField
+										form={form}
+										name="File"
+										label="Tài liệu buổi học"
+									/>
+								</div>
+								<div
+									className="col-md-12 col-12 mt-3"
+									style={{textAlign: 'center'}}
+								>
+									<button
+										type="submit"
+										className="btn btn-primary"
+										disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+									>
+										Thêm tài liệu
+										{isLoading.type == 'ADD_DATA' && isLoading.status && (
+											<Spin className="loading-base" />
+										)}
+									</button>
+								</div>
+							</div>
+						</Form>
+					</div>
+				</Modal>
+			)}
 		</div>
 	);
 };
 CDCalendar.propTypes = {
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
+	isUploadDocument: PropTypes.bool,
 	eventList: PropTypes.arrayOf(
 		PropTypes.shape({
 			id: PropTypes.number.isRequired,
@@ -194,14 +351,18 @@ CDCalendar.propTypes = {
 				TeacherName: PropTypes.string,
 				SubjectName: PropTypes.string,
 				//
-				studyTime: PropTypes.string,
+				StudyTimeName: PropTypes.string,
 			}),
 		})
 	).isRequired,
 	isLoaded: PropTypes.bool,
+	handleUploadDocument: PropTypes.func,
 };
 CDCalendar.defaultProps = {
+	isLoading: {type: '', status: false},
+	isUploadDocument: false,
 	eventList: [],
 	isLoaded: false,
+	handleUploadDocument: null,
 };
 export default CDCalendar;

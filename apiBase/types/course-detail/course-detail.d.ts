@@ -17,4 +17,5 @@ type ICourseDetailSchedule = {
 	SubjectName: string;
 	CurriculumID: number;
 	isValid?: boolean;
+	LinkDocument?: string;
 };

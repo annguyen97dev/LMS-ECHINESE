@@ -228,6 +228,7 @@ const ScheduleStudy = () => {
 				SubjectName,
 				StartTime,
 				EndTime,
+				LinkDocument,
 			} = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
@@ -235,17 +236,19 @@ const ScheduleStudy = () => {
 
 			return {
 				id: +ID,
-				title: CourseName,
+				title: '',
 				start: moment(StartTime).toDate(),
 				end: moment(EndTime).toDate(),
 				resource: {
+					ID,
 					CourseID,
 					RoomName,
 					BranchName,
 					TeacherName,
 					SubjectName,
+					LinkDocument,
 					//
-					studyTime,
+					StudyTimeName: studyTime,
 				},
 			};
 		});
