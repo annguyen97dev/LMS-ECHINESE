@@ -67,7 +67,7 @@ const StudentForm = (props) => {
   const url = router.pathname;
 
   const [isStudentDetail, setIsStudentDetail] = useState(
-    url.includes("student-list")
+    url.includes("student-list") || url.includes("student-detail")
   );
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
@@ -307,8 +307,12 @@ const StudentForm = (props) => {
     let res = null;
     try {
       if (data.UserInformationID) {
-        res = await studentApi.update(data);
-        res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
+        if (isSearch) {
+          res = await studentApi.add(data);
+        } else {
+          res = await studentApi.update(data);
+          res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
+        }
       } else {
         res = await studentApi.add(data);
       }
@@ -580,7 +584,7 @@ const StudentForm = (props) => {
               <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
-                    mode={dataRow || isSearch ? "multiple" : ""}
+                    mode={dataRow ? "multiple" : ""}
                     form={form}
                     name="Branch"
                     label="Tên trung tâm"

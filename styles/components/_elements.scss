@@ -1242,9 +1242,9 @@ hr {
           &:nth-child(1) {
             border-top-left-radius: 0.575rem !important;
           }
-          &:nth-child(2) {
-            border-top-left-radius: 0 !important;
-          }
+          // &:nth-child(2) {
+          //   border-top-left-radius: 0 !important;
+          // }
           &:last-child {
             border-top-right-radius: 0.575rem !important;
           }

@@ -482,9 +482,16 @@ const StudentData = () => {
             let newDataSource = [...dataSource];
             newDataSource.splice(index, 1, {
               ...dataSubmit,
-              AreaName: listDataForm.Area.find(
-                (item) => item.value == dataSubmit.AreaID
-              ).title,
+              AreaName:
+                dataSubmit.AreaID &&
+                listDataForm.Area.find(
+                  (item) => item.value == dataSubmit.AreaID
+                ).title,
+              SourceInformationName:
+                dataSubmit.SourceInformationID &&
+                listDataForm.SourceInformation.find(
+                  (item) => item.value == dataSubmit.SourceInformationID
+                ).title,
             });
             console.log("NEW DATA: ", newDataSource);
             setDataSource(newDataSource);

@@ -187,8 +187,12 @@ const Grade = () => {
       }
     });
 
+    console.log("new list: ", newList);
     return newList;
   };
+
+  console.log("Todo API: ", todoApi);
+  console.log("list search: ", listFieldSearch);
 
   const onSearch = (valueSearch, dataIndex) => {
     let clearKey = checkField(valueSearch, dataIndex);
@@ -222,7 +226,7 @@ const Grade = () => {
     setCurrentPage(pageNumber);
     setTodoApi({
       ...todoApi,
-      ...listFieldSearch,
+      // ...listFieldSearch,
       pageIndex: pageIndex,
     });
   };

@@ -9,6 +9,8 @@ const TimePickerField = (props) => {
   const { errors } = form.formState;
   const hasError = errors[name];
 
+  const format = "HH:mm";
+
   return (
     <Form.Item
       style={style}
@@ -22,7 +24,8 @@ const TimePickerField = (props) => {
         control={form.control}
         render={({ field }) => {
           const checkValue = field.value
-            ? moment(field.value, "HH:mm")
+            ? (console.log("Value time is: ", field.value),
+              moment(field.value, format))
             : undefined;
           return (
             <TimePicker
@@ -32,9 +35,12 @@ const TimePickerField = (props) => {
               placeholder={placeholder}
               disabled={disabled}
               allowClear={true}
-              format="HH:mm"
+              format={format}
               value={checkValue}
-              onChange={(time) => field.onChange(time.format("HH:mm"))}
+              onSelect={(time) => (
+                console.log("time is: ", time),
+                field.onChange(time?.format(format))
+              )}
             />
           );
         }}
