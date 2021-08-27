@@ -96,8 +96,8 @@ const NotificationForm = React.memo((props: any) => {
                 </Form.Item>
               </div>
               <div className="col-4">
-                <Form.Item label="Send email" name="Send email">
-                  <Switch onChange={onChange} />
+                <Form.Item label="Send email">
+                  <Switch onChange={onChange} checked={sendMail}/>
                 </Form.Item>
               </div>
             </div>
@@ -173,11 +173,12 @@ const NotificationForm = React.memo((props: any) => {
               </div>
             </div>
             {/*  */}
-            <Form.Item label="Nội dung thông báo" name="Nội dung thông báo">
-              <EditorBase 
-                handleChangeDataEditor={changeContractContent}
-              />
-              {/* <TinyMCE onChangeTinyMCE={(value) => onChangeTinyMCE(value)}/> */}
+            <Form.Item label="Nội dung thông báo">
+              <div className="textarea-editor">
+                <EditorBase 
+                  handleChangeDataEditor={changeContractContent}
+                />
+              </div>
             </Form.Item>
             <div className="row ">
               <div className="col-12">

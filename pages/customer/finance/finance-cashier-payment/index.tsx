@@ -2,13 +2,9 @@ import React, { useEffect, useState } from "react";
 import PowerTable from "~/components/PowerTable";
 import { Image, Tooltip } from "antd";
 import SortBox from "~/components/Elements/SortBox";
-import { dataService } from "lib/customer/dataCustomer";
 import ConsultantForm from "~/components/Global/Customer/Finance/ConsultantForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
-// import FilterTable from "~/components/Global/CourseList/FilterTable";
-import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import { ShoppingCart } from "react-feather";
-import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import Link from "next/link";
 import LayoutBase from "~/components/LayoutBase";
 import { voucherApi, branchApi } from "~/apiBase";
@@ -27,6 +23,7 @@ export default function FinancePayment() {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [dataFilter, setDataFilter] = useState([
     {
       name: "BranchID",
@@ -191,6 +188,7 @@ export default function FinancePayment() {
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -214,14 +212,17 @@ export default function FinancePayment() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -265,6 +266,7 @@ export default function FinancePayment() {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {
@@ -342,7 +344,7 @@ export default function FinancePayment() {
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
-      getPagination={(pageNumber: number) => getPagination(pageNumber)}
+      getPagination={getPagination}
       addClass="basic-header"
       TitlePage="Danh sách phiếu chi"
       // TitleCard={<StudyTimeForm showAdd={true} />}

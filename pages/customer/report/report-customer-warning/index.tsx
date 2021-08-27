@@ -7,12 +7,7 @@ import { dataService } from "lib/customer/dataCustomer";
 import Link from "next/link";
 import { ExpandBoxWarning } from "~/components/Elements/ExpandBox";
 import FilterColumn from "~/components/Tables/FilterColumn";
-<<<<<<< HEAD
-=======
-import FilterTable from "~/components/Global/CourseList/FilterTable";
->>>>>>> master
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
-import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";
 import { warningApi } from "~/apiBase";
 import moment from "moment";
@@ -30,6 +25,7 @@ export default function ReportWarning() {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [dataFilter, setDataFilter] = useState([
     {
       name: "date-range",
@@ -141,6 +137,7 @@ export default function ReportWarning() {
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -164,14 +161,17 @@ export default function ReportWarning() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -195,7 +195,7 @@ export default function ReportWarning() {
     {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
-      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {
@@ -253,7 +253,7 @@ export default function ReportWarning() {
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
-      getPagination={(pageNumber: number) => getPagination(pageNumber)}
+      getPagination={getPagination}
       addClass="basic-header"
       TitlePage="Danh sách học viên bị cảnh báo"
       // TitleCard={<StudyTimeForm showAdd={true} />}

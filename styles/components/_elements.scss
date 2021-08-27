@@ -436,6 +436,12 @@ textarea.ant-input {
   border-radius: 0.375rem !important;
   // height: auto !important;
 }
+.textarea-editor {
+  position: relative;
+  .note-editable {
+    height: 290px !important;
+  }
+}
 .style-input {
   .ant-select-selection-item-remove {
     user-select: none;
@@ -2109,7 +2115,6 @@ hr {
   position: absolute;
   top: 0;
   right: 0;
-  transform: translate(-102px, 209px);
   z-index: 99;
   font-weight: 500;
 }

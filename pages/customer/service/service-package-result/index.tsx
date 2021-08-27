@@ -3,20 +3,12 @@ import PowerTable from "~/components/PowerTable";
 import SortBox from "~/components/Elements/SortBox";
 import { dataService } from "lib/customer/dataCustomer";
 import FilterColumn from "~/components/Tables/FilterColumn";
-<<<<<<< HEAD
-=======
-import FilterTable from "~/components/Global/CourseList/FilterTable";
->>>>>>> master
-import FilterDateColumn from "~/components/Tables/FilterDateColumn";
-import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";
 import { serviceCustomerExamResultApi } from "~/apiBase";
 import ServiceCustomerExamResult from "~/components/Global/Customer/Service/ServiceCustomerExamResult";
 import moment from "moment";
 import { useWrap } from "~/context/wrap";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
-import { Tooltip } from "antd";
-import { Eye, AlertTriangle, X, Edit } from "react-feather";
 
 CustomerServiceResult.layout = LayoutBase;
 export default function CustomerServiceResult() {
@@ -29,6 +21,7 @@ export default function CustomerServiceResult() {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [dataFilter, setDataFilter] = useState([
     {
       name: "date-range",
@@ -139,6 +132,7 @@ export default function CustomerServiceResult() {
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -162,14 +156,17 @@ export default function CustomerServiceResult() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -213,7 +210,7 @@ export default function CustomerServiceResult() {
     {
       title: "Họ và tên",
       dataIndex: "FullNameUnicode",
-      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {
@@ -318,7 +315,7 @@ export default function CustomerServiceResult() {
         loading={isLoading}
         currentPage={currentPage}
         totalPage={totalPage && totalPage}
-        getPagination={(pageNumber: number) => getPagination(pageNumber)}
+        getPagination={getPagination}
         addClass="basic-header"
         TitlePage="Danh sách kết quả đợt thi"
         // TitleCard={<StudyTimeForm showAdd={true} isLoading={isLoading}/>}
