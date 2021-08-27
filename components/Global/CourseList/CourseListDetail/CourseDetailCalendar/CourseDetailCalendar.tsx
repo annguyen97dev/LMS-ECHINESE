@@ -34,7 +34,7 @@ const CourseDetailCalendar = () => {
 
 			return {
 				id: +ID,
-				title: CourseName,
+				title: '',
 				start: moment(StartTime).toDate(),
 				end: moment(EndTime).toDate(),
 				resource: {

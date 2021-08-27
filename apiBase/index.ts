@@ -1,4 +1,3 @@
-import { testCustomerPointApi } from "./customer/service/test-customer-point";
 export { areaApi } from "./options/area";
 export { branchApi } from "./options/branch";
 export { contractApi } from "./options/contract";

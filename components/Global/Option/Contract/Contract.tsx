@@ -1,5 +1,4 @@
-// import { Editor } from "@tinymce/tinymce-react";
-import {Button, Card, Spin} from 'antd';
+import {Card, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {contractApi} from '~/apiBase/options/contract';
 import EditorBase from '~/components/Elements/EditorBase';
