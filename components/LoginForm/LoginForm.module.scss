@@ -13,7 +13,8 @@
 }
 
 .wrapBox {
-  width: 70%;
+  max-width: 90%;
+  width: 560px;
   height: auto;
   margin: 0 auto;
   display: -webkit-flex;
@@ -26,9 +27,9 @@
 .wrapForm {
   display: flex;
   align-items: center;
-  width: 50%;
+  width: 100%;
   height: 100%;
-  padding: 0 60px;
+  padding: 20px 60px;
   background: white;
   border-radius: 0.575rem;
   @media screen and (max-width: 1000px) {
@@ -57,7 +58,7 @@
   }
   // background-image: linear-gradient(
   //   to right top,
-  //   #0086da,
+  //   #dd4768,
   //   #188fdf,
   //   #2999e3,
   //   #38a2e7,
@@ -91,7 +92,7 @@
 
   .title {
     font-size: 25px;
-    color: #0086da;
+    color: #d94c6b;
     text-align: center;
   }
 
@@ -125,7 +126,7 @@
 
     &:focus {
       outline: 0;
-      border-bottom: 1px solid #0086da;
+      border-bottom: 1px solid #dd4768;
       transition: 0.3s;
     }
 
@@ -158,7 +159,7 @@
   button[type="submit"],
   input[type="submit"] {
     cursor: pointer;
-    background: #0086da;
+    background: #dd4768;
     color: white;
     text-transform: uppercase;
     border: none;
@@ -173,7 +174,7 @@
 
   button[type="submit"]:hover,
   input[type="submit"]:hover {
-    background: #0073bb;
+    background: #d23c5d;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
       rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
     transition: 0.3s;
@@ -252,12 +253,12 @@
   text-align: center;
   margin-bottom: 20px;
 
-  @media screen and (max-width: 600px) {
-    display: none;
+  img {
+    width: 180px;
   }
 
-  img {
-    width: 100px;
+  @media screen and (max-width: 600px) {
+    width: 140px;
   }
 }
 
@@ -357,8 +358,8 @@
     &:checked {
       + label {
         span {
-          border: 1px solid #0086da;
-          background-color: #0086da;
+          border: 1px solid #dd4768;
+          background-color: #dd4768;
           transform: scale(1.1); // enlarge the box
 
           &:after {
@@ -377,7 +378,7 @@
         &:hover {
           // copy the states for onMouseOver to avoid flickering
           span {
-            background-color: #0086da;
+            background-color: #dd4768;
             transform: scale(1.1); // enlarge the box
 
             &:after {
@@ -457,7 +458,7 @@
         box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
 
         &:hover {
-          background: #0086da0a;
+          background: #dd47680a;
         }
       }
 
@@ -506,9 +507,6 @@
 }
 
 @media screen and (max-width: 1600px) {
-  .wrapBox {
-    width: 90%;
-  }
   .loginForm {
     padding: 20px 30px;
   }

@@ -58,7 +58,7 @@ const CurriculumDetail = (props) => {
         if (res.data.data.length > 0) {
           setDataSource(res.data.data);
           setTotalPage(res.data.totalRow);
-          showNoti("success", "Thành công");
+          // showNoti("success", "Thành công");
         } else {
           showNoti("danger", "Không có dữ liệu");
         }

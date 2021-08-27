@@ -97,7 +97,7 @@ const CreateCourseCalendar = (props) => {
 				endAccessor="end"
 				style={{minHeight: 600}}
 				popup={true}
-				views={['month', 'week']}
+				views={['month']}
 				defaultView="month"
 				showMultiDayTimes={true}
 				eventPropGetter={customEventPropGetter}

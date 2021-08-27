@@ -105,18 +105,21 @@ const CustomerDetail = () => {
           title: item.AreaName,
           value: item.AreaID,
         }));
+
         break;
       case "DistrictID":
         newData = data.map((item) => ({
           title: item.DistrictName,
           value: item.ID,
         }));
+
         break;
       case "WardID":
         newData = data.map((item) => ({
           title: item.WardName,
           value: item.ID,
         }));
+
         break;
       case "Branch":
         newData = data.map((item) => ({
@@ -130,19 +133,24 @@ const CustomerDetail = () => {
           title: item.JobName,
           value: item.JobID,
         }));
+
         break;
       case "Purposes":
         newData = data.map((item) => ({
           title: item.PurposesName,
           value: item.PurposesID,
         }));
+
         break;
+
       case "Parent":
         newData = data.map((item) => ({
           title: item.FullNameUnicode,
           value: item.UserInformationID,
         }));
+
         break;
+
       case "SourceInformation":
         newData = data.map((item) => ({
           title: item.SourceInformationName,
@@ -155,6 +163,7 @@ const CustomerDetail = () => {
           title: item.FullNameUnicode,
           value: item.UserInformationID,
         }));
+
         break;
       default:
         break;
@@ -174,6 +183,20 @@ const CustomerDetail = () => {
     setListDataForm({ ...listDataForm });
   };
 
+  const checkEmptyData = () => {
+    let count = 0;
+    let res = false;
+    Object.keys(listDataForm).forEach(function (key) {
+      if (listDataForm[key].length == 0) {
+        count++;
+      }
+    });
+    if (count < 3) {
+      res = true;
+    }
+    return res;
+  };
+
   // ----------- GET DATA SOURCE ---------------
   const getDataStudentForm = (arrApi) => {
     arrApi.forEach((item, index) => {
@@ -183,11 +206,17 @@ const CustomerDetail = () => {
           if (item.name == "Counselors") {
             res = await item.api.getAll({
               pageIndex: 1,
-              pageSize: 99999,
+              pageSize: 9999,
               RoleID: 6,
+              StatusID: 0,
+              Enable: true,
             });
           } else {
-            res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+            res = await item.api.getAll({
+              pageIndex: 1,
+              pageSize: 99999,
+              Enable: true,
+            });
           }
 
           res.status == 200 && getDataTolist(res.data.data, item.name);
@@ -197,6 +226,8 @@ const CustomerDetail = () => {
         } catch (error) {
           showNoti("danger", error.message);
         } finally {
+          let rs = checkEmptyData();
+          rs && setIsLoading(false);
         }
       })();
     });
@@ -213,7 +244,6 @@ const CustomerDetail = () => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
-      setIsLoading(false);
     }
   };
 
@@ -227,7 +257,12 @@ const CustomerDetail = () => {
       <Spin />
     </div>
   ) : (
-    dataRow && <StudentForm listDataForm={listDataForm} dataRow={dataRow} />
+    dataRow && (
+      <StudentForm
+        listDataForm={checkEmptyData && listDataForm}
+        dataRow={dataRow}
+      />
+    )
   );
 };
 CustomerDetail.layout = LayoutBase;

@@ -8,6 +8,11 @@ class ConsultationStatusApi {
       params: Params,
     });
 
+  getAll = (Params: any) =>
+    instance.get<IApiResultData<IConsultationStatus[]>>(url, {
+      params: Params,
+    });
+
   getDetail = (id: number) =>
     instance.get<IApiResultData<IConsultationStatus>>(`${url}/${id}`);
 

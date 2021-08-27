@@ -80,7 +80,7 @@ const EditorSummernote = (props) => {
   const [position, setPosition] = useState(null);
   const [isAdd, setIsAdd] = useState(false);
 
-  // console.log("Propety: ", propetyEditor);
+  console.log("Propety: ", propetyEditor);
 
   // console.log("Position is: ", position);
 
@@ -90,18 +90,22 @@ const EditorSummernote = (props) => {
     let range = null;
 
     console.log("E: ", e);
-    console.log("Length char: ", e.currentTarget.innerText.length);
-    let lengthChar = e.currentTarget.innerText.length;
+    // console.log("Length char: ", e.currentTarget.innerText.length);
+    // let lengthChar = e.currentTarget.innerText.length;
 
     keys = keys + e.key;
-
     setKeyEditor(keys);
-    // let newOffset = propetyEditor.offset + lengthChar;
-    // setPropetyEditor({ ...propetyEditor, offset: newOffset });
+    setPropetyEditor({
+      textNode: null,
+      offset: null,
+    });
   };
+
+  console.log("is ADD: ", isAdd);
 
   const onChange = (content) => {
     setIsFocus(false);
+    setIsAdd(false);
 
     getDataEditor(content);
     setValueEditor(content);
@@ -109,7 +113,8 @@ const EditorSummernote = (props) => {
 
   const onFocus = (e) => {
     setIsFocus(true);
-    console.log("E is: ", e);
+    setIsAdd(false);
+    // console.log("E is: ", e);
     let range;
     let textNode;
     let offset;
@@ -140,6 +145,8 @@ const EditorSummernote = (props) => {
       let replacement = propetyEditor.textNode.splitText(propetyEditor.offset);
       let inputE = document.createElement("input");
       inputE.className = "space-editor";
+
+      console.log("replacement: ", replacement);
 
       propetyEditor.textNode.parentNode.insertBefore(inputE, replacement);
       setPropetyEditor({ ...propetyEditor });
@@ -177,7 +184,7 @@ const EditorSummernote = (props) => {
 
     // forloop and find the indexof text
     tagP.forEach((item) => {
-      console.log("item: ", item.textContent);
+      // console.log("item: ", item.textContent);
       item.addEventListener("click", (e) => {
         onFocus(e);
         keys = "";
@@ -185,7 +192,6 @@ const EditorSummernote = (props) => {
       });
       // console.log("Key bên ngoài: ", keyEditor);
       if (item.textContent.includes(keys)) {
-        console.log("Chạy vô đây");
         setPosition(item.textContent.indexOf(keys) + keys.length);
       }
     });
@@ -193,12 +199,19 @@ const EditorSummernote = (props) => {
 
   useEffect(() => {
     if (isAdd) {
+      console.log("Keys is: ", keys);
       let tagP = document.querySelectorAll(".note-editable p");
       tagP.forEach((item) => {
+        console.log("item.content: ", item);
         if (item.textContent.includes(keys)) {
+          console.log("Item is: ", item);
+          console.log("Position is: ", position);
           let arrStr = item.textContent.split("");
+
+          console.log("Arr Str: ", arrStr);
+
           arrStr[position] = "<input class='space-editor'>";
-          item.textContent = arrStr.toString();
+          item.innerHTML = arrStr.join("");
         }
       });
     }

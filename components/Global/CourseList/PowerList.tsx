@@ -103,7 +103,7 @@ const PowerList = (props) => {
 								</ul>
 								<ul className="list-hor">
 									<li>
-										Offday: <span>{TotalDays}</span>
+										Number of school days: <span>{TotalDays}</span>
 									</li>
 									<li>
 										Opening:{' '}
