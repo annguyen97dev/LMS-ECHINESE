@@ -28,6 +28,8 @@ import {
   parentsApi,
   staffApi,
 } from "~/apiBase";
+import TimePickerField from "~/components/FormControl/TimePickerField";
+import { useRouter } from "next/router";
 
 let returnSchema = {};
 let schema = null;
@@ -61,7 +63,12 @@ const optionGender = [
 
 const StudentForm = (props) => {
   const { dataRow, listDataForm, _handleSubmit, index } = props;
+  const router = useRouter();
+  const url = router.pathname;
 
+  const [isStudentDetail, setIsStudentDetail] = useState(
+    url.includes("student-list") || url.includes("student-detail")
+  );
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -74,7 +81,10 @@ const StudentForm = (props) => {
   });
   const [listData, setListData] = useState<listData>(listDataForm);
   const [valueEmail, setValueEmail] = useState();
-  console.log("list data Form", listData);
+  const [isSearch, setIsSearch] = useState(false);
+
+  console.log("List DATA: ", listDataForm);
+
   // ------------- ADD data to list --------------
 
   const makeNewData = (data, name) => {
@@ -194,8 +204,6 @@ const StudentForm = (props) => {
 
   // ----- HANDLE CHANGE - AREA ----------
   const handleChange_select = (value, name) => {
-    console.log("Value is: ", value);
-
     if (name == "DistrictID") {
       form.setValue("WardID", null);
 
@@ -263,10 +271,14 @@ const StudentForm = (props) => {
         case "Branch":
           returnSchema[key] = yup.array().required("Bạn không được để trống");
         case "AppointmentDate":
-          returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          if (!dataRow) {
+            returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          }
           break;
         case "ExamAppointmentTime":
-          returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          if (!dataRow) {
+            returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          }
           break;
         default:
           // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
@@ -295,8 +307,12 @@ const StudentForm = (props) => {
     let res = null;
     try {
       if (data.UserInformationID) {
-        res = await studentApi.update(data);
-        res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
+        if (isSearch) {
+          res = await studentApi.add(data);
+        } else {
+          res = await studentApi.update(data);
+          res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
+        }
       } else {
         res = await studentApi.add(data);
       }
@@ -308,7 +324,9 @@ const StudentForm = (props) => {
             ? "Cập nhật học viên thành công"
             : "Tạo học viên thành công"
         ),
-        !dataRow && (form.reset(defaultValuesInit), setImageUrl("")));
+        !dataRow &&
+          !isSearch &&
+          (form.reset(defaultValuesInit), setImageUrl("")));
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -330,10 +348,13 @@ const StudentForm = (props) => {
 
       res?.status == 200 &&
         (showNoti("success", "Tìm kiếm thành công"),
-        handleDataRow(res.data.data[0]));
+        handleDataRow(res.data.data[0]),
+        setIsSearch(true));
       res?.status == 204 &&
         (showNoti("danger", "Không tìm thấy email"),
-        form.reset(defaultValuesInit));
+        form.reset(defaultValuesInit),
+        setIsSearch(false),
+        setImageUrl(""));
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -348,7 +369,7 @@ const StudentForm = (props) => {
     let arrBranch = [];
     let cloneRowData = { ...data };
     cloneRowData.Branch.forEach((item, index) => {
-      arrBranch.push(item.ID.toString());
+      arrBranch.push(item.ID);
     });
     cloneRowData.Branch = arrBranch;
 
@@ -363,6 +384,7 @@ const StudentForm = (props) => {
   useEffect(() => {
     if (dataRow) {
       handleDataRow(dataRow);
+
       // let arrBranch = [];
       // let cloneRowData = { ...dataRow };
       // cloneRowData.Branch.forEach((item, index) => {
@@ -408,21 +430,24 @@ const StudentForm = (props) => {
                       label="Email"
                       handleChange={(value) => setValueEmail(value)}
                     />
-                    <button
-                      type="button"
-                      className="btn-search"
-                      onClick={searchValue}
-                    >
-                      {isLoading.type == "SEARCH_EMAIL" && isLoading.status ? (
-                        <Spin
-                          indicator={
-                            <LoadingOutlined style={{ fontSize: 16 }} spin />
-                          }
-                        />
-                      ) : (
-                        <SearchOutlined />
-                      )}
-                    </button>
+                    {!dataRow && (
+                      <button
+                        type="button"
+                        className="btn-search"
+                        onClick={searchValue}
+                      >
+                        {isLoading.type == "SEARCH_EMAIL" &&
+                        isLoading.status ? (
+                          <Spin
+                            indicator={
+                              <LoadingOutlined style={{ fontSize: 16 }} spin />
+                            }
+                          />
+                        ) : (
+                          <SearchOutlined />
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -559,7 +584,7 @@ const StudentForm = (props) => {
               <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
-                    mode="multiple"
+                    mode={dataRow ? "multiple" : ""}
                     form={form}
                     name="Branch"
                     label="Tên trung tâm"
@@ -567,8 +592,8 @@ const StudentForm = (props) => {
                   />
                 </div>
                 <div className="col-md-6 col-12">
-                  <InputTextField
-                    placeholder="VD: 10h"
+                  <TimePickerField
+                    disabled={isStudentDetail && true}
                     form={form}
                     name="ExamAppointmentTime"
                     label="Giờ hẹn test"
@@ -576,6 +601,7 @@ const StudentForm = (props) => {
                 </div>
                 <div className="col-md-6 col-12">
                   <DateField
+                    disabled={isStudentDetail && true}
                     form={form}
                     name="AppointmentDate"
                     label="Ngày hẹn test"
@@ -583,6 +609,7 @@ const StudentForm = (props) => {
                 </div>
                 <div className="col-md-6 col-12">
                   <TextAreaField
+                    disabled={isStudentDetail && true}
                     name="ExamAppointmentNote"
                     label="Ghi chú"
                     form={form}

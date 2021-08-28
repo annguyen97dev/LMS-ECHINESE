@@ -11,43 +11,46 @@ import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
 import { id } from "date-fns/locale";
 import TimePickerField from "~/components/FormControl/TimePickerField";
+import InputMoneyField from "~/components/FormControl/InputMoneyField";
 
 let returnSchema = {};
 let schema = null;
 
-const TestCustomerForm = (props) => {
+const TestCustomerPointForm = (props) => {
   const { TextArea } = Input;
   const { Option } = Select;
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading, rowID, _onSubmit, getIndex, index, rowData, listData } =
-    props;
+  const {
+    isLoading,
+    rowID,
+    _onSubmit,
+    getIndex,
+    index,
+    rowData,
+    listData,
+    teacherList,
+  } = props;
 
   const { showNoti } = useWrap();
 
   // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
-    BranchID: null, //int
-    UserInformationID: null,
-    AppointmentDate: null, //số điện thoại
-    Time: "", //
-    Note: null, //int ID nguồn khách
+    ExamAppointmentID: null,
+    ListeningPoint: null,
+    SpeakingPoint: null,
+    ReadingPoint: null,
+    WritingPoint: null,
+    VocabPoint: null,
+    MaxTuitionOfStudent: null,
+    Note: null,
+    TeacherID: null,
   };
 
   (function returnSchemaFunc() {
     returnSchema = { ...defaultValuesInit };
     Object.keys(returnSchema).forEach(function (key) {
       switch (key) {
-        case "Email":
-          returnSchema[key] = yup
-            .string()
-            .email("Email nhập sai cú pháp")
-            .required("Bạn không được để trống");
-          break;
-
         default:
-          if (key !== "Note") {
-            returnSchema[key] = yup.mixed().required("Bạn không được để trống");
-          }
           break;
       }
     });
@@ -62,6 +65,11 @@ const TestCustomerForm = (props) => {
 
   // SUBMI FORM
   const onSubmit = (data: any) => {
+    console.log("Data Submit 1: ", data);
+    data.MaxTuitionOfStudent = parseFloat(
+      data.MaxTuitionOfStudent.replace(/,/g, "")
+    );
+    console.log("Data Submit 2: ", data);
     let res = _onSubmit(data);
 
     res.then(function (rs: any) {
@@ -74,14 +82,23 @@ const TestCustomerForm = (props) => {
   useEffect(() => {
     if (isModalVisible) {
       if (rowData) {
+        if (rowData.MaxTuitionOfStudent) {
+          let money = rowData.MaxTuitionOfStudent.toString();
+          rowData.MaxTuitionOfStudent = parseInt(
+            money.replace(/\,/g, ""),
+            10
+          ).toLocaleString();
+        }
+
         form.reset(rowData);
+        form.setValue("ExamAppointmentID", rowID);
       }
     }
   }, [isModalVisible]);
 
   return (
     <>
-      <Tooltip title="Cập nhật lịch hẹn test">
+      <Tooltip title="Cập nhật">
         <button
           className="btn btn-icon edit"
           onClick={() => {
@@ -94,7 +111,7 @@ const TestCustomerForm = (props) => {
       </Tooltip>
 
       <Modal
-        title="Thông tin hẹn test"
+        title="Bảng điểm test"
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -104,34 +121,61 @@ const TestCustomerForm = (props) => {
             {/*  */}
             <div className="row">
               <div className="col-md-6 col-12">
-                <SelectField
-                  disabled={true}
+                <InputTextField
                   form={form}
-                  name="UserInformationID"
-                  label="Học viên"
-                  optionList={listData.Student}
+                  name="ListeningPoint"
+                  label="Listening"
                 />
               </div>
               <div className="col-md-6 col-12">
-                <SelectField
+                <InputTextField
                   form={form}
-                  name="BranchID"
-                  label="Trung tâm"
-                  optionList={listData.Branch}
+                  name="SpeakingPoint"
+                  label="Speaking"
                 />
               </div>
             </div>
             {/*  */}
             <div className="row">
               <div className="col-md-6 col-12">
-                <DateField
+                <InputTextField
                   form={form}
-                  name="AppointmentDate"
-                  label="Ngày hẹn"
+                  name="ReadingPoint"
+                  label="Reading"
                 />
               </div>
               <div className="col-md-6 col-12">
-                <TimePickerField form={form} name="Time" label="Giờ hẹn" />
+                <InputTextField
+                  form={form}
+                  name="WritingPoint"
+                  label="Writing"
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="VocabPoint"
+                  label="Vocabulary"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <InputMoneyField
+                  form={form}
+                  name="MaxTuitionOfStudent"
+                  label="Học phí tối đa"
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-12 col-12">
+                <SelectField
+                  form={form}
+                  name="TeacherID"
+                  label="Giáo viên"
+                  optionList={teacherList}
+                />
               </div>
             </div>
             {/*  */}
@@ -163,4 +207,4 @@ const TestCustomerForm = (props) => {
   );
 };
 
-export default TestCustomerForm;
+export default TestCustomerPointForm;

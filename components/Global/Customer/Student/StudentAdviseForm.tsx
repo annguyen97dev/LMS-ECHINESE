@@ -20,6 +20,8 @@ const StudentAdviseForm = React.memo((props: any) => {
 
   const { showNoti } = useWrap();
 
+  console.log("LIST DATA: ", listData);
+
   // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
     AreaID: null, //int
@@ -27,6 +29,7 @@ const StudentAdviseForm = React.memo((props: any) => {
     Number: null, //số điện thoại
     Email: "", //
     SourceInformationID: null, //int ID nguồn khách
+    CustomerConsultationStatusID: null, // tình trạng tư vấn
   };
 
   (function returnSchemaFunc() {
@@ -56,6 +59,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 
   // SUBMI FORM
   const onSubmit = (data: any, e) => {
+    console.log("DATA submit: ", data);
     let res = _onSubmit(data);
 
     res.then(function (rs: any) {
@@ -69,6 +73,8 @@ const StudentAdviseForm = React.memo((props: any) => {
     if (isModalVisible) {
       if (rowData) {
         form.reset(rowData);
+      } else {
+        form.setValue("CustomerConsultationStatusID", 1);
       }
     }
   }, [isModalVisible]);
@@ -143,6 +149,16 @@ const StudentAdviseForm = React.memo((props: any) => {
                   name="SourceInformationID"
                   label="Nguồn khách"
                   optionList={listData.SourceInformation}
+                />
+              </div>
+
+              <div className="col-md-12 col-12">
+                <SelectField
+                  disabled={!rowID && true}
+                  form={form}
+                  name="CustomerConsultationStatusID"
+                  label="Tình trạng tư vấn"
+                  optionList={listData.ConsultationStatus}
                 />
               </div>
             </div>

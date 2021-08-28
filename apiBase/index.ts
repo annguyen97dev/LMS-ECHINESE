@@ -67,3 +67,5 @@ export {exerciseApi} from './exercise/exercise';
 export {packageApi} from './package/package';
 export {staffOfTaskGroupApi, taskApi, taskGroupApi} from './staff-manage/task';
 export {documentScheduleApi} from './course-detail/document-schedule';
+export {consultationStatusApi} from './options/consultation-status';
+export {testCustomerPointApi} from './customer/service/test-customer-point';

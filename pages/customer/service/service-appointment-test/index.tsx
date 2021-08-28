@@ -14,6 +14,7 @@ import { useWrap } from "~/context/wrap";
 import { testCustomerApi, branchApi, studentApi } from "~/apiBase";
 import moment from "moment";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
+import TestCustomerPoint from "./TestCustomerPoint";
 
 let pageIndex = 1;
 
@@ -215,9 +216,15 @@ export default function AppointmentServiceTest() {
               pageIndex: 1,
               pageSize: 99999,
               RoleID: 6,
+              StatusID: 0,
+              Enable: true,
             });
           } else {
-            res = await item.api.getAll({ pageIndex: 1, pageSize: 99999 });
+            res = await item.api.getAll({
+              pageIndex: 1,
+              pageSize: 99999,
+              Enable: true,
+            });
           }
 
           res.status == 200 && getDataTolist(res.data.data, item.name);
@@ -355,7 +362,6 @@ export default function AppointmentServiceTest() {
   const checkField = (valueSearch, dataIndex) => {
     let newList = { ...listFieldSearch };
     Object.keys(newList).forEach(function (key) {
-      console.log("key: ", key);
       if (key != dataIndex) {
         if (key != "pageIndex") {
           newList[key] = null;
@@ -374,7 +380,6 @@ export default function AppointmentServiceTest() {
     setTodoApi({
       ...todoApi,
       ...clearKey,
-      ...listFieldFilter,
     });
   };
 
@@ -399,9 +404,10 @@ export default function AppointmentServiceTest() {
   const getPagination = (pageNumber: number) => {
     pageIndex = pageNumber;
     setCurrentPage(pageNumber);
+    console.log("Todoapi: ", todoApi);
     setTodoApi({
       ...todoApi,
-      ...listFieldSearch,
+      // ...listFieldSearch,
       pageIndex: pageIndex,
     });
   };
@@ -416,8 +422,10 @@ export default function AppointmentServiceTest() {
   }, []);
 
   const expandedRowRender = (record) => {
-    return record.Note ? record.Note : "Không có ghi chú";
+    // return record.Note ? record.Note : "Không có ghi chú";
+    return <TestCustomerPoint ID={record.ID} />;
   };
+
   const columns = [
     {
       title: "Học viên",
@@ -486,19 +494,6 @@ export default function AppointmentServiceTest() {
             isLoading={isLoading}
             _onSubmit={(data: any) => _onSubmit(data)}
           />
-          <Link
-            href={{
-              pathname:
-                "/customer/service/service-appointment-test/student-detail/[slug]",
-              query: { slug: data.UserInformationID },
-            }}
-          >
-            <Tooltip title="Xem chi tiết">
-              <button className="btn btn-icon view">
-                <Eye />
-              </button>
-            </Tooltip>
-          </Link>
         </>
       ),
     },
