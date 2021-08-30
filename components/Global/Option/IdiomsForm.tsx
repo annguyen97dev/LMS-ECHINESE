@@ -100,6 +100,10 @@ const IdiomsForm = React.memo((props: any) => {
                     { required: true, message: "Vui lòng điền đủ thông tin!" },
                   ]}
                 >
+                  <EditorBase
+                    content={idiomsDetail ? idiomsDetail.Idioms : ""}
+                    handleChangeDataEditor={(value) => setIdiomsInput(value)}
+                  />
                   {/* <EditorBase
                     handleChange={(value) => setIdiomsInput(value)}
                     onChange={(value) => {
