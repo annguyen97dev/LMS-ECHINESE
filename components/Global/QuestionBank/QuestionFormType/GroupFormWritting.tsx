@@ -24,38 +24,11 @@ const GroupFormWritting = (props) => {
   const [linkUpload, setLinkUpload] = useState(null);
   const [loadingUpload, setLoadingUpload] = useState(false);
 
-  console.log("question data: ", questionData);
-
-  // const propsFile = {
-  //   name: "file",
-  //   // action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-  //   headers: {
-  //     authorization: "authorization-text",
-  //   },
-  //   async onChange(info) {
-  //     console.log("Info File upload: ", info);
-  //     try {
-  //       let res = await exerciseGroupApi.UploadAudio(info.file);
-  //       if(res.status == 200) {
-  //         showNoti("success", "Upload file thành công");
-  //       }
-  //     } catch (error) {
-
-  //     }
-  //     // if (info.file.status !== "uploading") {
-  //     //   console.log(info.file, info.fileList);
-  //     // }
-  //     // if (info.file.status === "done") {
-  //     //   message.success(`${info.file.name} file uploaded successfully`);
-  //     // } else if (info.file.status === "error") {
-  //     //   message.error(`${info.file.name} file upload failed.`);
-  //     // }
-  //   },
-  // };
+  console.log("Question Data: ", questionData);
 
   // Upload file audio
   const onchange_UploadFile = async (info) => {
-    console.log("Info File upload: ", info);
+    // console.log("Info File upload: ", info);
     if (info.file.status === "uploading") {
       setLoadingUpload(true);
       return;
@@ -76,12 +49,12 @@ const GroupFormWritting = (props) => {
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
-    console.log("DATA SUBMIT: ", data);
+    // console.log("DATA SUBMIT: ", data);
   });
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
-    console.log("Value Editor Form: ", dataEditor);
+    // console.log("Value Editor Form: ", dataEditor);
     questionDataForm.Content = dataEditor;
     setQuestionDataForm({ ...questionDataForm });
   };
@@ -96,9 +69,7 @@ const GroupFormWritting = (props) => {
     setQuestionDataForm({ ...questionDataForm });
   };
 
-  const addQuestion = () => {
-    console.log("add question");
-  };
+  const addQuestion = () => {};
 
   // ON CHANGE IS CORRECT
   // const onChange_isCorrect = (e, AnswerID) => {
@@ -166,7 +137,7 @@ const GroupFormWritting = (props) => {
   };
 
   useEffect(() => {
-    console.log("DATA SUBMIT: ", questionDataForm);
+    // console.log("DATA SUBMIT: ", questionDataForm);
     isSubmit && handleSubmitQuestion();
   }, [isSubmit]);
 

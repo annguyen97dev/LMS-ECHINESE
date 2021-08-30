@@ -1,9 +1,8 @@
-import {Spin} from 'antd';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 import React, {useEffect, useState} from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import {courseDetailApi} from '~/apiBase';
+import {courseDetailApi, documentScheduleApi} from '~/apiBase';
 import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
 import CDCalendar from './Calendar';
@@ -14,6 +13,10 @@ const CourseDetailCalendar = () => {
 	const {showNoti} = useWrap();
 	const [calendarList, setCalendarList] = useState<ICourseDetailSchedule[]>([]);
 	const [isLoaded, setIsLoaded] = useState(false);
+	const [isLoading, setIsLoading] = useState({
+		type: '',
+		status: false,
+	});
 	// -----------CALENDAR-----------
 	const calendarDateFormat = (calendarArr: ICourseDetailSchedule[]) => {
 		const rs = calendarArr.map((c, idx) => {
@@ -27,6 +30,7 @@ const CourseDetailCalendar = () => {
 				SubjectName,
 				StartTime,
 				EndTime,
+				LinkDocument,
 			} = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
@@ -38,13 +42,15 @@ const CourseDetailCalendar = () => {
 				start: moment(StartTime).toDate(),
 				end: moment(EndTime).toDate(),
 				resource: {
+					ID,
 					CourseID,
 					RoomName,
 					BranchName,
 					TeacherName,
 					SubjectName,
+					LinkDocument,
 					//
-					studyTime,
+					StudyTimeName: studyTime,
 				},
 			};
 		});
@@ -67,12 +73,50 @@ const CourseDetailCalendar = () => {
 		fetchCalendarList();
 	}, []);
 
+	const onUploadDocument = async (data: {
+		CourseScheduleID: number;
+		File: File;
+	}) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		try {
+			let formData = new FormData();
+			Object.keys(data).forEach((key) => formData.append(key, data[key]));
+			const res = await documentScheduleApi.add(formData);
+			if (res.status === 200) {
+				const newCalendarList = [...calendarList];
+				const idx = newCalendarList.findIndex(
+					(c) => c.ID === data.CourseScheduleID
+				);
+				newCalendarList.splice(idx, 1, {
+					...newCalendarList[idx],
+					LinkDocument: res.data.data.LinkDocument,
+				});
+				setCalendarList(newCalendarList);
+				showNoti('success', res.data.message);
+			}
+			return res;
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
+	};
+
 	return (
 		<>
 			<TitlePage title="Chi tiết khóa học" />
 			<CDCalendar
+				isLoading={isLoading}
+				isUploadDocument={true}
 				isLoaded={isLoaded}
 				eventList={calendarDateFormat(calendarList)}
+				handleUploadDocument={onUploadDocument}
 			/>
 		</>
 	);

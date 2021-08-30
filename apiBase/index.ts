@@ -29,6 +29,9 @@ export { staffApi } from "./staff-manage/staff";
 export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
 
+export { consultationStatusApi } from "./options/consultation-status";
+export { testCustomerPointApi } from "./customer/service/test-customer-point";
+
 export { exerciseGroupApi } from "./exercise/exerciseGroup";
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
@@ -64,10 +67,10 @@ export { userBranchApi } from "./newsfeed/user-branch";
 export { groupNewsFeedApi } from "./newsfeed/group-newsfeed";
 export { userGroupNewsFeedApi } from "./newsfeed/user-group-newsfeed";
 export { exerciseApi } from "./exercise/exercise";
-export { consultationStatusApi } from "./options/consultation-status";
-export { testCustomerPointApi } from "./customer/service/test-customer-point";
+export { packageApi } from "./package/package";
 export {
   staffOfTaskGroupApi,
   taskApi,
   taskGroupApi,
 } from "./staff-manage/task";
+export { documentScheduleApi } from "./course-detail/document-schedule";

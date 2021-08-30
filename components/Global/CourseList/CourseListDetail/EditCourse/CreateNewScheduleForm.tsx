@@ -64,7 +64,7 @@ function CreateNewScheduleForm(props) {
 	return (
 		<>
 			<button type="button" className="btn btn-warning" onClick={showModal}>
-				Create New Schedule
+				Tạo buổi học
 			</button>
 			<Modal
 				width="350px"

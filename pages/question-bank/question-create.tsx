@@ -62,7 +62,7 @@ const QuestionCreate = () => {
 
   // Phân loại dạng câu hỏi để trả ra danh sách
   const returnQuestionType = () => {
-    console.log("Type is: ", todoApi.Type);
+    // console.log("Type is: ", todoApi.Type);
     switch (todoApi.Type) {
       /** Q uesion Single */
       case 1:
@@ -226,7 +226,7 @@ const QuestionCreate = () => {
         questionData.ExerciseAnswer = questionObj.ExerciseAnswer;
         break;
       case 6:
-        questionData.ExerciseAnswer = [];
+        questionData.ExerciseList = [];
       default:
         break;
     }
