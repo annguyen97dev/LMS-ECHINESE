@@ -1,54 +1,3 @@
-// import React from "react";
-// import ReactDOM from "react-dom";
-
-// import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-// import Base64UploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter";
-
-// // import "./styles.css";
-
-// // https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/react.html
-
-// /* import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
-// import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
-// import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic";
-// import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph"; */
-
-// /* const editorConfiguration = {
-//   plugins: [Essentials, Bold, Italic, Paragraph],
-//   toolbar: ["bold", "italic"]
-// }; */
-
-// function Editor(props) {
-//   const { getDataEditor } = props;
-
-//   return (
-//     <div className="App">
-//       <CKEditor
-//         editor={ClassicEditor}
-//         data=""
-//         onReady={(editor) => {
-//           // You can store the "editor" and use when it is needed.
-//           console.log("Editor is ready to use!", editor);
-//         }}
-//         onChange={(event, editor) => {
-//           const data = editor.getData();
-//           getDataEditor(data);
-//           console.log({ event, editor, data });
-//         }}
-//         onBlur={(event, editor) => {
-//           console.log("Blur.", editor);
-//         }}
-//         onFocus={(event, editor) => {
-//           console.log("Focus.", editor);
-//         }}
-//       />
-//     </div>
-//   );
-// }
-
-// export default Editor;
-
 import React, { Component, useEffect, useState } from "react";
 import ReactSummernote from "react-summernote";
 import "react-summernote/dist/react-summernote.css"; // import styles
@@ -64,9 +13,12 @@ import ReactHtmlParser, {
 import "bootstrap/js/src/modal";
 import "bootstrap/js/src/dropdown";
 import "bootstrap/js/src/tooltip";
+import { format } from "path";
 // import "bootstrap/dist/css/bootstrap.css";
 
-let keys = "";
+// let keys = "";
+let arrKey = [];
+let countEnter = 0;
 
 const EditorSummernote = (props) => {
   const { getDataEditor, isReset, questionContent, addQuestion } = props;
@@ -76,33 +28,88 @@ const EditorSummernote = (props) => {
     offset: null,
   });
   const [isFocus, setIsFocus] = useState(false);
-  const [keyEditor, setKeyEditor] = useState("");
+  const [keyEditor, setKeyEditor] = useState({
+    id: null,
+    key: "",
+  });
   const [position, setPosition] = useState(null);
   const [isAdd, setIsAdd] = useState(false);
+  const [listID, setListID] = useState([]);
+  const [listInput, setListInput] = useState([]);
 
-  console.log("Propety: ", propetyEditor);
-
+  // console.log("Propety: ", propetyEditor);
+  // console.log("Value editor: ", valueEditor);
+  // console.log("Count Enter: ", countEnter);
   // console.log("Position is: ", position);
+  // console.log("Key Editor: ", keyEditor);
 
-  // console.log("Keyyyyy: ", keyEditor);
+  const formatKey = (e) => {
+    switch (e.keyCode) {
+      // case 32:
+      //   arrKey.push("&nbsp");
+      //   break;
+      case 8: // backspace
+        arrKey.splice(arrKey.length - 1, 1);
+        if (arrKey.length == 0) {
+          countEnter--;
+          if (countEnter < 0) {
+            countEnter = 0;
+            arrKey = [];
+          }
+        }
+        break;
+      case 13: // enter
+        countEnter++;
+        arrKey = [];
+        break;
+      default:
+        if (e.keyCode !== 32) {
+          arrKey.push(e.key);
+        }
+        break;
+    }
 
-  const onKeyUp = (e) => {
-    let range = null;
+    // Remove backspace khỏi mảng
+    let newArr = arrKey.filter((item) => item !== "Backspace");
 
-    console.log("E: ", e);
-    // console.log("Length char: ", e.currentTarget.innerText.length);
-    // let lengthChar = e.currentTarget.innerText.length;
+    // console.log("NewArr: ", newArr);
 
-    keys = keys + e.key;
-    setKeyEditor(keys);
+    return newArr;
+  };
+
+  // ON KEY UP
+  const onKeyDown = (e) => {
+    // console.log("E KEY UP: ", e);
+    let node = null;
+    let id = null;
+
+    // Get id of element
+    if (e.currentTarget.childNodes.length > 0) {
+      node = e.currentTarget.childNodes[countEnter];
+      if (e.currentTarget.childNodes.length == 1) {
+        node.id = countEnter;
+      }
+      id = node.id;
+    }
+
+    // Get array character
+    let arrChar = formatKey(e);
+
+    // Get key and set state
+    let key = arrChar.join("");
+    setKeyEditor({
+      id: id,
+      key: key,
+    });
+
+    // Reset propety editor
     setPropetyEditor({
       textNode: null,
       offset: null,
     });
   };
 
-  console.log("is ADD: ", isAdd);
-
+  // ON CHANGE
   const onChange = (content) => {
     setIsFocus(false);
     setIsAdd(false);
@@ -111,10 +118,12 @@ const EditorSummernote = (props) => {
     setValueEditor(content);
   };
 
+  // ON FOCUS
   const onFocus = (e) => {
+    countEnter = e.target.id;
     setIsFocus(true);
     setIsAdd(false);
-    // console.log("E is: ", e);
+
     let range;
     let textNode;
     let offset;
@@ -140,30 +149,35 @@ const EditorSummernote = (props) => {
     });
   };
 
+  // Thao tác click add input vào đoạn văn
   const handleAddSpace = () => {
+    // On add space
     const onAddSpace = () => {
       let replacement = propetyEditor.textNode.splitText(propetyEditor.offset);
       let inputE = document.createElement("input");
       inputE.className = "space-editor";
 
-      console.log("replacement: ", replacement);
-
       propetyEditor.textNode.parentNode.insertBefore(inputE, replacement);
       setPropetyEditor({ ...propetyEditor });
-
-      // handle add question
-      addQuestion();
     };
+    // ---------------------//
 
     if (!isFocus) {
       setIsAdd(true);
+      // setKeyEditor({
+      //   id: "",
+      //   key: "",
+      // });
     } else {
       if (propetyEditor.textNode && propetyEditor.textNode.nodeType == 3) {
         onAddSpace();
       }
     }
+    // handle add question in form (props)
+    addQuestion();
   };
 
+  // UPLOAD IMAGES
   const onImageUpload = async (fileList) => {
     try {
       let res = await studentApi.uploadImage(fileList[0]);
@@ -175,43 +189,117 @@ const EditorSummernote = (props) => {
     }
   };
 
+  // CREATE RANDOM ID
+  const randomID = () => {
+    let rID = null;
+
+    // Check exist id
+    if (listID.length > 0) {
+      for (let i = 0; i < 1000; i++) {
+        rID = Math.floor(Math.random() * 100 + 1);
+        if (listID.includes(rID)) {
+          continue;
+        } else {
+          listID.push(rID);
+          setListID([...listID]);
+          break;
+        }
+      }
+    } else {
+      rID = Math.floor(Math.random() * 100 + 1);
+      listID.push(rID);
+      setListID([...listID]);
+    }
+
+    return rID;
+  };
+
+  // HANDLE RESET
   useEffect(() => {
     isReset && ReactSummernote.reset();
   }, [isReset]);
 
+  // HANDLE ENTER
+  useEffect(() => {
+    setTimeout(() => {
+      let tagP = document.querySelectorAll(".note-editable p"); // Get node element in editor
+      let nodeP = tagP.item(countEnter);
+
+      // let rID = randomID();
+      if (nodeP.hasAttribute("id")) {
+        if (countEnter > 0) {
+          let nodePBefore = tagP.item(countEnter - 1);
+          if (nodeP.id == nodePBefore.id) {
+            nodeP.id = countEnter.toString();
+          }
+        }
+      } else {
+        nodeP.id = countEnter.toString();
+      }
+    }, 200);
+  }, [countEnter]);
+
+  // HANDLE CLICK AND HOVER
   useEffect(() => {
     let tagP = document.querySelectorAll(".note-editable p"); // Get node element in editor
 
-    // forloop and find the indexof text
-    tagP.forEach((item) => {
-      // console.log("item: ", item.textContent);
+    tagP.forEach((item, index) => {
+      // ON CLICK HTML NODE
       item.addEventListener("click", (e) => {
         onFocus(e);
-        keys = "";
+        setKeyEditor({
+          id: "",
+          key: "",
+        });
+        // keys = "";
+        arrKey = [];
         return false;
       });
-      // console.log("Key bên ngoài: ", keyEditor);
-      if (item.textContent.includes(keys)) {
-        setPosition(item.textContent.indexOf(keys) + keys.length);
+
+      // ON HOVER HTML NODE
+      item.addEventListener("mouseover", (e) => {
+        let id = item.id;
+        countEnter = parseInt(id);
+      });
+
+      if (item.textContent.includes(keyEditor.key)) {
+        setPosition(
+          item.textContent.indexOf(keyEditor.key) + keyEditor.key.length + 1
+        );
       }
     });
-  }, [valueEditor, keyEditor]);
+  }, [valueEditor]);
 
+  // HANDLE ADD INPUT
   useEffect(() => {
+    let inputID = null;
     if (isAdd) {
-      console.log("Keys is: ", keys);
+      // console.log("keyEditor is: ", keyEditor);
       let tagP = document.querySelectorAll(".note-editable p");
       tagP.forEach((item) => {
-        console.log("item.content: ", item);
-        if (item.textContent.includes(keys)) {
-          console.log("Item is: ", item);
-          console.log("Position is: ", position);
-          let arrStr = item.textContent.split("");
+        // console.log("Content is: ", item.innerHTML);
+        if (
+          item.textContent.includes(keyEditor.key) &&
+          item.id === keyEditor.id
+        ) {
+          let content = item.innerHTML;
 
-          console.log("Arr Str: ", arrStr);
+          // Check add set id for input
+          if (listInput.length == 0) {
+            inputID = 0;
+          } else {
+            inputID = listInput.length;
+          }
+          listInput.push(inputID);
+          setListID([...listInput]);
+          // --------------------- //
 
-          arrStr[position] = "<input class='space-editor'>";
-          item.innerHTML = arrStr.join("");
+          content = content.replace(
+            keyEditor.key,
+            keyEditor.key + `<input id="${inputID}" class='space-editor'>`
+          );
+          // console.log("New Content is: ", content);
+          item.innerHTML = content;
         }
       });
     }
@@ -241,7 +329,7 @@ const EditorSummernote = (props) => {
           ],
         }}
         onChange={(content) => onChange(content)}
-        onKeyUp={onKeyUp}
+        onKeyDown={onKeyDown}
         onImageUpload={onImageUpload}
       />
     </div>

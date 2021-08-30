@@ -208,7 +208,7 @@ const Curriculum = () => {
     setCurrentPage(pageNumber);
     setTodoApi({
       ...todoApi,
-      ...listFieldSearch,
+      // ...listFieldSearch,
       pageIndex: pageIndex,
     });
   };

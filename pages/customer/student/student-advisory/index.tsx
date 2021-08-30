@@ -294,6 +294,11 @@ export default function StudentAdvisory() {
             AreaName: listDataForm.Area.find(
               (item) => item.value == dataSubmit.AreaID
             )?.title,
+            SourceInformationName:
+              dataSubmit.SourceInformationID &&
+              listDataForm.SourceInformation.find(
+                (item) => item.value == dataSubmit.SourceInformationID
+              ).title,
           });
           setDataSource(newDataSource);
           showNoti("success", res.data.message);
@@ -416,7 +421,7 @@ export default function StudentAdvisory() {
     setCurrentPage(pageNumber);
     setTodoApi({
       ...todoApi,
-      ...listFieldSearch,
+      // ...listFieldSearch,
       pageIndex: pageIndex,
     });
   };

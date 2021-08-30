@@ -29,6 +29,10 @@ export {staffApi} from './staff-manage/staff';
 export {notificationApi} from './options/notification';
 export {rulesApi} from './options/rules';
 
+export {examTopicApi} from './exam/exam-topic';
+export {consultationStatusApi} from './options/consultation-status';
+export {testCustomerPointApi} from './customer/service/test-customer-point';
+
 export {exerciseGroupApi} from './exercise/exerciseGroup';
 export {checkRoomApi} from './course/check-room';
 export {checkTeacherApi} from './course/check-teacher';
@@ -67,6 +71,3 @@ export {exerciseApi} from './exercise/exercise';
 export {packageApi} from './package/package';
 export {staffOfTaskGroupApi, taskApi, taskGroupApi} from './staff-manage/task';
 export {documentScheduleApi} from './course-detail/document-schedule';
-export {consultationStatusApi} from './options/consultation-status';
-export {testCustomerPointApi} from './customer/service/test-customer-point';
-export {examTopicApi} from './exam/exam-topic';

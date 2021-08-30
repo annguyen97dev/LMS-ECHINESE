@@ -16,6 +16,7 @@ type questionObj = {
   Type: number;
   TypeName: string;
   ExerciseAnswer: Array<answerObj>;
+  ExerciseList: any;
 };
 
 export const questionObj = {
@@ -29,6 +30,7 @@ export const questionObj = {
   LinkAudio: "",
   Type: 0,
   TypeName: "",
+  ExerciseList: [],
   ExerciseAnswer: [
     {
       ID: 1,

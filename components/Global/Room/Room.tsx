@@ -90,7 +90,7 @@ const Room = () => {
           let newDataSource = [...roomData];
           newDataSource.splice(indexRow, 1, dataSubmit);
           setRoomData(newDataSource);
-          showNoti("success", res.data.message);
+          // showNoti("success", res.data.message);
         }
       } catch (error) {
         showNoti("danger", error.message);
@@ -195,7 +195,7 @@ const Room = () => {
     setCurrentPage(pageNumber);
     setTodoApi({
       ...todoApi,
-      ...listFieldSearch,
+      // ...listFieldSearch,
       pageIndex: pageIndex,
     });
   };
