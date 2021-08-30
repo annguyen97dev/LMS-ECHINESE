@@ -3,6 +3,7 @@ import {Form, Upload} from 'antd';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import {Controller} from 'react-hook-form';
+import {useWrap} from '~/context/wrap';
 
 interface RcFile extends File {
 	uid: string;
@@ -45,7 +46,7 @@ const UploadImageField = (props) => {
 		handleUploadMultipleImage,
 		imageList,
 	} = props;
-	const [fileList, setFileList] = useState<
+	const [imageListForUploadField, setImageListForUploadField] = useState<
 		{
 			uid: string;
 			name: string;
@@ -53,17 +54,21 @@ const UploadImageField = (props) => {
 		}[]
 	>([]);
 	const [loadingImage, setLoadingImage] = useState(false);
-	const [imgUrl, setImgUrl] = useState();
-
+	const {showNoti} = useWrap();
 	const {errors} = form.formState;
 	const hasError = errors[name];
 
 	// THIS FUNCTION IS STILL UNDER CONSTRUCTION
 	const checkHandleUploadMultipleImage = async (file: IFile[]) => {
-		console.log('THIS FUNCTION IS STILL UNDER CONSTRUCTION', file);
 		if (!handleUploadMultipleImage) return;
 		handleUploadMultipleImage();
 	};
+
+	useEffect(() => {
+		// MULTI UPLOAD IMAGE NEED ARRAY IMAGE
+		isUploadList && setImageListForUploadField(imageList);
+	}, [imageList]);
+
 	const checkHandleUploadImage = async (file: IFile) => {
 		if (!handleUploadImage) return;
 		if (file.status === 'uploading') {
@@ -71,12 +76,15 @@ const UploadImageField = (props) => {
 			return;
 		}
 		try {
-			const res = await handleUploadImage(file.originFileObj);
-			return res;
+			if (file.status === 'done') {
+				const res = await handleUploadImage(file.originFileObj);
+				return res;
+			}
 		} finally {
 			setLoadingImage(false);
 		}
 	};
+
 	const switchUploadImage = (obj: IFileList) => {
 		if (isUploadList) {
 			return checkHandleUploadMultipleImage(obj.fileList);
@@ -85,31 +93,22 @@ const UploadImageField = (props) => {
 		}
 	};
 
-	useEffect(() => {
-		// MULTI UPLOAD IMAGE NEED ARRAY IMAGE
-		isUploadList && setFileList(imageList);
-	}, [imageList]);
-
-	const onPreview = async (file) => {
-		let src = file.url;
-		if (!src) {
-			src = await new Promise((resolve) => {
-				const reader = new FileReader();
-				reader.readAsDataURL(file.originFileObj);
-				reader.onload = () => resolve(reader.result);
-			});
-			setImgUrl(src);
+	const beforeUpload = (file: IFile) => {
+		const validTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp'];
+		const isValidType = validTypeList.includes(file.type);
+		if (!isValidType) {
+			showNoti(
+				'danger',
+				`${file.name} không đúng định dạng (jpg | jpeg | png | bmp).`
+			);
 		}
+		return isValidType;
 	};
 
 	const UploadButton = (props) => {
 		return (
 			<>
-				<div
-					className={`bg-upload ${imgUrl && 'have-img'} ${
-						loadingImage && 'loading'
-					}`}
-				>
+				<div className={`bg-upload  ${loadingImage && 'loading'}`}>
 					{loadingImage ? <LoadingOutlined /> : <PlusOutlined />}
 				</div>
 			</>
@@ -131,15 +130,17 @@ const UploadImageField = (props) => {
 					return (
 						<Upload
 							{...field}
-							fileList={fileList}
 							listType="picture-card"
 							className="avatar-uploader"
 							disabled={disabled}
+							//
+							fileList={imageListForUploadField}
 							showUploadList={isUploadList}
 							multiple={isUploadList}
+							//
+							beforeUpload={beforeUpload}
 							onChange={(obj) => {
-								setFileList(obj.fileList);
-								onPreview(obj.file);
+								setImageListForUploadField(obj.fileList);
 								switchUploadImage(obj).then((res) => {
 									if (res && res.status === 200)
 										if (isUploadList) {
@@ -151,13 +152,13 @@ const UploadImageField = (props) => {
 						>
 							{!isUploadList && (
 								<img
-									src={imgUrl || field.value}
+									src={field.value}
 									alt="avatar"
 									style={{
 										width: '100%',
 										height: '100%',
 										objectFit: 'cover',
-										display: imgUrl || field.value ? 'block' : 'none',
+										display: field.value ? 'block' : 'none',
 									}}
 								/>
 							)}
