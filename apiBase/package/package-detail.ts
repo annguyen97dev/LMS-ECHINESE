@@ -1,19 +1,19 @@
-import { instance } from "~/apiBase/instance";
+import {instance} from '~/apiBase/instance';
 
-const url = "/api/SetPackageDetail";
+const url = '/api/SetPackageDetail';
 
 class PackageDetailApi {
-  getAll = (Params: any) =>
-    instance.get<IApiResultData<ISetPackageDetail[]>>(url, {
-      params: Params,
-    });
+	getAll = (Params: any) =>
+		instance.get<IApiResultData<ISetPackageDetail[]>>(url, {
+			params: Params,
+		});
 
-  getDetail = (id: number) =>
-    instance.get<IApiResultData<ISetPackageDetail>>(`${url}/${id}`);
+	getDetail = (id: number) =>
+		instance.get<IApiResultData<ISetPackageDetail>>(`${url}/${id}`);
 
-  add = (data: ISetPackageDetail) => instance.post(url, data);
+	add = (data) => instance.post(url, data);
 
-  update = (data: ISetPackageDetail) => instance.put(url, data, {});
+	update = (data: ISetPackageDetail) => instance.put(url, data, {});
 }
 
 export const packageDetailApi = new PackageDetailApi();
