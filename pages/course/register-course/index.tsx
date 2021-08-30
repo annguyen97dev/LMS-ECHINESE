@@ -1,35 +1,13 @@
 import React, { Fragment, useEffect, useState } from "react";
-import PowerTable from "~/components/PowerTable";
-import { data } from "../../../lib/option/dataOption2";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterDateColumn from "~/components/Tables/FilterDateColumn";
-import SortBox from "~/components/Elements/SortBox";
 import LayoutBase from "~/components/LayoutBase";
-import { Copy, Power } from "react-feather";
-import TitlePage from "~/components/Elements/TitlePage";
-import SelectField from "~/components/FormControl/SelectField";
-import InputTextField from "~/components/FormControl/InputTextField";
-import {
-  Modal,
-  Form,
-  Input,
-  Button,
-  Divider,
-  Tooltip,
-  Select,
-  Card,
-  Switch,
-  Spin,
-} from "antd";
-import RegInfo from "~/components/Global/RegisterCourse/RegCourseBuy";
-import RegCourseInfo from "~/components/Global/RegisterCourse/RegCourseBuy";
-import RegCourseBuy from "~/components/Global/RegisterCourse/RegCourseInfo";
-import RegCoursePayment from "~/components/Global/RegisterCourse/RegCoursePayment";
+import { Form, Input, Select, Card, Switch, Spin } from "antd";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 import { branchApi, programApi, studentApi, studyTimeApi } from "~/apiBase";
 import moment from "moment";
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
+import StudentExamOfServices from "~/components/Global/RegisterCourse/StudentExamOfServices";
+import { studentExamServicesApi } from "~/apiBase/customer/student/student-exam-services";
 
 const RegisterCourse = (props: any) => {
   const { Option } = Select;
@@ -37,7 +15,6 @@ const RegisterCourse = (props: any) => {
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
-  const { setValue } = useForm();
   const [userAll, setUserAll] = useState<IStudent[]>();
   const [userDetail, setUserDetail] = useState<IStudent>();
   const [branch, setBranch] = useState<IBranch[]>();
@@ -106,14 +83,30 @@ const RegisterCourse = (props: any) => {
   const onSubmit = async (data: any) => {
     console.log(data);
     setLoading(true);
-    try {
-      let res = await courseRegistrationApi.add(data);
-      showNoti("success", res?.data.message);
-      setLoading(false);
-      form.resetFields();
-    } catch (error) {
-      showNoti("danger", error.message);
-      setLoading(false);
+    if (option == 1) {
+      try {
+        let res = await studentExamServicesApi.add({
+          ...data,
+          UserInformationID: userDetail.UserInformationID,
+        });
+        showNoti("success", res?.data.message);
+        setLoading(false);
+        form.resetFields();
+      } catch (error) {
+        showNoti("danger", error.message);
+        setLoading(false);
+      }
+    }
+    if (option == 4) {
+      try {
+        let res = await courseRegistrationApi.add(data);
+        showNoti("success", res?.data.message);
+        setLoading(false);
+        form.resetFields();
+      } catch (error) {
+        showNoti("danger", error.message);
+        setLoading(false);
+      }
     }
   };
 
@@ -133,8 +126,6 @@ const RegisterCourse = (props: any) => {
                     >
                       <Option value={1}>Đăng ký đợt thi</Option>
                       <Option value={4}>Hẹn đăng ký</Option>
-                      {/* <Option value={2}>Mua dịch vụ</Option>
-                      <Option value={3}>Thanh toán</Option> */}
                     </Select>
                   </Form.Item>
                 </div>
@@ -366,11 +357,11 @@ const RegisterCourse = (props: any) => {
           </div>
           <div className="col-6">
             {option == 1 && (
-              <RegCourseInfo
+              <StudentExamOfServices
                 userID={userDetail ? userDetail.UserInformationID : null}
               />
             )}
-            {/* {option == 4 && (
+            {option == 4 && (
               <Card title="Thông tin đăng kí">
                 <div className="row">
                   <div className="col-12">
@@ -462,7 +453,7 @@ const RegisterCourse = (props: any) => {
                   </div>
                 </div>
               </Card>
-            )} */}
+            )}
             {/* {option == 2 && <RegCourseBuy />}
             {option == 3 && <RegCoursePayment />} */}
           </div>
