@@ -241,7 +241,6 @@ const StudyTime = () => {
     setCurrentPage(pageNumber);
     setTodoApi({
       ...todoApi,
-
       pageIndex: pageIndex,
     });
   };
