@@ -95,8 +95,6 @@ const CourseStudent = () => {
             }}
             currentPage={currentPage}
           />
-
-          {/* <RefundCourse /> */}
         </Fragment>
       ),
     },
