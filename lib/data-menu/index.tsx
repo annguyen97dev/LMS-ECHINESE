@@ -185,6 +185,13 @@ export const dataMenu = [
 						Text: 'HV cần tư vấn',
 						Icon: '',
 					},
+					{
+						ItemType: 'single',
+						Key: '/package/package-payment',
+						Route: '/package/package-payment',
+						Text: 'Danh sách học viên mua gói',
+						Icon: '',
+					},
 				],
 			},
 			{

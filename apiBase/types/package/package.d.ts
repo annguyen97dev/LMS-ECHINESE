@@ -6,4 +6,5 @@ type IPackage = IBaseApi<{
 	Type: number;
 	TypeName: string;
 	Price: number;
+	Description: string;
 }>;

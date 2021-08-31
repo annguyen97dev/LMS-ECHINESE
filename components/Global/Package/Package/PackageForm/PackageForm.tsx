@@ -5,9 +5,9 @@ import React, {useEffect, useState} from 'react';
 import {RotateCcw} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import EditorField from '~/components/FormControl/EditorField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import RadioField from '~/components/FormControl/RadioField';
+import TextAreaField from '~/components/FormControl/TextAreaField';
 import UploadImageField from '~/components/FormControl/UploadImageField';
 import {numberWithCommas} from '~/utils/functions';
 
@@ -203,11 +203,12 @@ function PackageForm(props) {
 							</div>
 
 							<div className="col-md-12 col-12">
-								<EditorField
+								<TextAreaField
 									form={form}
 									name="Description"
 									label="Mô tả"
-									height={200}
+									placeholder="Nhập mô tả"
+									rows={5}
 								/>
 							</div>
 							<div
