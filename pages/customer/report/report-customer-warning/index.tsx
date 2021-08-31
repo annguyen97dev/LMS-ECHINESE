@@ -91,6 +91,7 @@ export default function ReportWarning() {
         let res = await warningApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -133,6 +134,7 @@ export default function ReportWarning() {
       ...todoApi,
       ...clearKey,
     });
+    setCurrentPage(pageIndex)
   };
 
   // HANDLE RESET
@@ -195,6 +197,7 @@ export default function ReportWarning() {
     {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
+      ...FilterColumn('FullNameUnicode', onSearch, handleReset, "text"),
       className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },

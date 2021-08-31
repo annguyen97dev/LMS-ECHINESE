@@ -75,6 +75,7 @@ const Notification = () => {
         let res = await notificationApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           if (res.data.data.length < 1) {

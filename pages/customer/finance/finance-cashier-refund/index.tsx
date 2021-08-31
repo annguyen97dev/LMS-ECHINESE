@@ -134,6 +134,7 @@ export default function FinanceRefund() {
         let res = await refundsApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -205,6 +206,8 @@ export default function FinanceRefund() {
       ...todoApi,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex)
   };
 
   // HANDLE RESET

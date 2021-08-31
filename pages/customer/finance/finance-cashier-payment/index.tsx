@@ -112,6 +112,7 @@ export default function FinancePayment() {
         let res = await voucherApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -184,6 +185,8 @@ export default function FinancePayment() {
       ...todoApi,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex)
   };
 
   // HANDLE RESET

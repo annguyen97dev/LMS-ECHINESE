@@ -144,6 +144,7 @@ export default function FinanceInvoice() {
         let res = await branchApi.getAll({ selectAll: true });
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataBranch(res.data.data);
@@ -187,6 +188,8 @@ export default function FinanceInvoice() {
       ...todoApi,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex);
   };
 
   // HANDLE RESET

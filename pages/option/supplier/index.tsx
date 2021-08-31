@@ -106,6 +106,7 @@ const SupplierList = () => {
         let res = await supplierApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -212,6 +213,8 @@ const SupplierList = () => {
       pageIndex: 1,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex);
   };
 
   // DELETE

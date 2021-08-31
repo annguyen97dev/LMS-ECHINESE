@@ -186,6 +186,8 @@ const CustomerSupplier = () => {
       pageIndex: 1,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex)
   };
 
   // HANDLE RESET

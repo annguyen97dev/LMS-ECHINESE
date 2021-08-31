@@ -81,6 +81,7 @@ const StaffSalary = () => {
 			let res = await staffSalaryApi.getAll(todoApi);
 			if(res.status == 204) {
 				showNoti("danger", "Không có dữ liệu");
+				handleReset();
 			}
 			if(res.status == 200){
 				setDataTable(res.data.data);
@@ -205,6 +206,8 @@ const StaffSalary = () => {
 			pageIndex: 1,
 			...clearKey,
 		});
+
+		setCurrentPage(pageIndex);
 	};
 
 	// DELETE

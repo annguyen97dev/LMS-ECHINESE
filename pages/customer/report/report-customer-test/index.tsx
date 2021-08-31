@@ -89,6 +89,7 @@ export default function ReportTest() {
 			let res = await examComingSoonApi.getAll(todoApi);
 			if (res.status == 204) {
 				showNoti("danger", "Không có dữ liệu");
+				handleReset();
 			}
 			if(res.status == 200){
 				setDataTable(res.data.data);
@@ -131,6 +132,8 @@ export default function ReportTest() {
 			...todoApi,
 			...clearKey,
 		});
+
+		setCurrentPage(pageIndex);
 	};
 
   	// HANDLE RESET
