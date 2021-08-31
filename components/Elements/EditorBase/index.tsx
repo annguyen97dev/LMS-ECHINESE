@@ -21,6 +21,7 @@ EditorBase.propTypes = {
 			PropTypes.shape({current: PropTypes.any}),
 		]).isRequired,
 		value: PropTypes.string.isRequired,
+		disabled: PropTypes.bool.isRequired,
 	}),
 };
 

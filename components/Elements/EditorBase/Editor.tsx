@@ -1,4 +1,3 @@
-import {message} from 'antd';
 import 'bootstrap/js/src/dropdown';
 import 'bootstrap/js/src/modal';
 import 'bootstrap/js/src/tooltip';
@@ -26,6 +25,7 @@ EditorBaseSummerNote.propTypes = {
 			PropTypes.shape({current: PropTypes.any}),
 		]).isRequired,
 		value: PropTypes.string.isRequired,
+		disabled: PropTypes.bool.isRequired,
 	}),
 };
 

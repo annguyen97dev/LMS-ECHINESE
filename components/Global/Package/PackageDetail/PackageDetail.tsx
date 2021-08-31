@@ -287,7 +287,7 @@ const PackageDetail = () => {
 									return (
 										<List.Item>
 											<div className="wrap-set">
-												<div className="tag-free">
+												<div className="tag-free non-bg">
 													{
 														<DeleteTableRow
 															handleDelete={onDeletePackageDetail(idx)}
