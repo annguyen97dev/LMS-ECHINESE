@@ -1,8 +1,8 @@
-import {EditOutlined} from '@ant-design/icons';
 import {Image, Switch, Tooltip} from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React, {useEffect, useRef, useState} from 'react';
+import {Info} from 'react-feather';
 import {packageApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
@@ -397,11 +397,11 @@ function Package() {
 							query: {slug: packageItem.ID},
 						}}
 					>
-						<a className="btn btn-icon edit">
-							<Tooltip title="Chi tiết">
-								<EditOutlined />
-							</Tooltip>
-						</a>
+						<Tooltip title="Chi tiết">
+							<a className="btn btn-icon">
+								<Info />
+							</a>
+						</Tooltip>
 					</Link>
 					<PackageForm
 						isLoading={isLoading}

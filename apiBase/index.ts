@@ -29,6 +29,7 @@ export { staffApi } from "./staff-manage/staff";
 export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
 
+export { examTopicApi } from "./exam/exam-topic";
 export { consultationStatusApi } from "./options/consultation-status";
 export { testCustomerPointApi } from "./customer/service/test-customer-point";
 

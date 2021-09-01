@@ -1,8 +1,13 @@
 type ISetPackageDetail = IBaseApi<{
-  ID: number;
-  SetPackageID: number;
-  SetPackageName: string;
-  ExamTopicID: number;
-  ExamTopicName: string;
-  SetPackageLevel: number;
+	ID: number;
+	SetPackageID: number;
+	SetPackageName: string;
+	ExamTopicID: number;
+	ExamTopicName: string;
+	SetPackageLevel: number;
+	Type: number;
+	TypeName: string;
+	SubjectID: number;
+	SubjectName: string;
+	Time: number;
 }>;

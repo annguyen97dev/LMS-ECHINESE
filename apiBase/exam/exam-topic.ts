@@ -1,16 +1,16 @@
 import {instance} from '../instance';
 
-const url = '/api/SetPackage/';
-export const packageApi = {
+const url = '/api/ExamTopic/';
+export const examTopicApi = {
 	// Lấy tất cả data
 	getAll(params) {
-		return instance.get<IApiResultData<IPackage[]>>(url, {
+		return instance.get<IApiResultData<IExamTopic[]>>(url, {
 			params,
 		});
 	},
 	// Lấy theo ID
 	getByID(ID) {
-		return instance.get<IApiResultData<IPackage>>(`${url}${ID}`);
+		return instance.get<IApiResultData<IExamTopic>>(`${url}${ID}`);
 	},
 	// Thêm mới data
 	add(data) {
@@ -23,9 +23,5 @@ export const packageApi = {
 	// Xóa data
 	delete(data) {
 		return instance.put(url, data);
-	},
-	// Xóa data
-	uploadImg(data) {
-		return instance.post('api/SetPackageUpLoad', data);
 	},
 };

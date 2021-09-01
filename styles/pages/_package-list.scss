@@ -1,17 +1,40 @@
 .package-list-table {
-  table {
-    .ant-table-cell {
-      svg.icon-check {
-        color: #10ca93;
-      }
-    }
-    th,
-    td {
-      padding-left: 15px !important;
-    }
+	table {
+		.ant-table-cell {
+			svg.icon-check {
+				color: #10ca93;
+			}
+		}
+		th,
+		td {
+			padding-left: 15px !important;
+		}
 
-    .text-no-ques {
-      color: rgb(102, 14, 14);
-    }
-  }
+		.text-no-ques {
+			color: rgb(102, 14, 14);
+		}
+	}
+}
+
+/* PACKAGE DETAIL */
+.package-detail-list.package-detail-list {
+	.wrap-set {
+		padding-right: 120px;
+		margin-bottom: 0;
+		.set-list li {
+			display: block;
+		}
+		.tag-free {
+			background: none;
+			padding: 0;
+		}
+		.btn-icon.delete {
+			margin: 0;
+			padding: 4px 6px;
+			background: linear-gradient(to right, #ff4b2b, #ff416c);
+			svg {
+				color: #fff;
+			}
+		}
+	}
 }

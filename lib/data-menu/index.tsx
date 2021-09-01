@@ -358,7 +358,7 @@ export const dataMenu = [
 
   {
     MenuName: "tab-document",
-    MenuTitle: "Thư viện",
+    MenuTitle: "Document List",
     MenuKey: "/document-list",
     MenuItem: [
       {
@@ -520,13 +520,13 @@ export const dataMenu = [
         Text: "Quản lí gói bài",
         Icon: "",
       },
-      {
-        ItemType: "single",
-        Key: "/package/package-create",
-        Route: "/package/package-create",
-        Text: "Tạo gói mới",
-        Icon: "",
-      },
+      // {
+      //   ItemType: "single",
+      //   Key: "/package/package-create",
+      //   Route: "/package/package-create",
+      //   Text: "Tạo gói mới",
+      //   Icon: "",
+      // },
       {
         ItemType: "single",
         Key: "/package/topic-list",
@@ -539,13 +539,6 @@ export const dataMenu = [
         Key: "/package/examiner-list",
         Route: "/package/examiner-list",
         Text: "Danh sách chấm gói bài",
-        Icon: "",
-      },
-      {
-        ItemType: "single",
-        Key: "/package/package-set-result",
-        Route: "/package/package-set-result",
-        Text: "Kết quả gói bài",
         Icon: "",
       },
       {
