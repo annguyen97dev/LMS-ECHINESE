@@ -32,6 +32,7 @@ export default function CustomerServiceExam() {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [dataFilter, setDataFilter] = useState([
     {
       name: "ServiceID",
@@ -209,6 +210,7 @@ export default function CustomerServiceExam() {
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -232,14 +234,17 @@ export default function CustomerServiceExam() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -279,6 +284,7 @@ export default function CustomerServiceExam() {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {
@@ -374,7 +380,7 @@ export default function CustomerServiceExam() {
         loading={isLoading}
         currentPage={currentPage}
         totalPage={totalPage && totalPage}
-        getPagination={(pageNumber: number) => getPagination(pageNumber)}
+        getPagination={getPagination}
         addClass="basic-header"
         TitlePage="Danh sách đăng kí đi thi"
         dataSource={dataTable}

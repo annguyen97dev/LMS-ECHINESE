@@ -30,6 +30,7 @@ const ServiceList = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
 	let pageIndex = 1;
 
@@ -196,15 +197,17 @@ const ServiceList = () => {
 	};
 
 	// PAGINATION
-	const getPagination = (pageNumber: number) => {
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
 		  ...todoApi,
 		//   ...listFieldSearch,
 		  pageIndex: pageIndex,
+		  pageSize: pageSize
 		});
-	  };
+	};
 
 	// ON SEARCH
 	const compareField = (valueSearch, dataIndex) => {
@@ -265,6 +268,7 @@ const ServiceList = () => {
 
 	// HANDLE RESET
 	const handleReset = () => {
+		setActiveColumnSearch('');
 		setTodoApi({
 			...listTodoApi,
 			pageIndex: 1,
@@ -304,6 +308,7 @@ const ServiceList = () => {
       title: "Dịch vụ",
       dataIndex: "ServiceName",
       ...FilterColumn("ServiceName", onSearch, handleReset, "text"),
+	  className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
       render: (text) => { return <p className="font-weight-black">{text}</p> }
     },
     { title: "Thông tin dịch vụ", dataIndex: "DescribeService" },
@@ -339,19 +344,19 @@ const ServiceList = () => {
             dataSupplier={dataSupplier}
           />
           <Tooltip title="Xóa">
-						<button
-							className="btn btn-icon delete"
-							onClick={() => {
-								setIsModalVisible(true);
-								setDataDelete({
-									ID: record.ID,
-									Enable: false,
-								});
-							}}
-						>
-							<X />
-						</button>
-					</Tooltip>
+				<button
+					className="btn btn-icon delete"
+					onClick={() => {
+						setIsModalVisible(true);
+						setDataDelete({
+							ID: record.ID,
+							Enable: false,
+						});
+					}}
+				>
+					<X />
+				</button>
+			</Tooltip>
         </>
       ),
     },
@@ -365,45 +370,45 @@ const ServiceList = () => {
 
   return (
     <Fragment>
-      <Modal
-				title={<AlertTriangle color="red" />}
-				visible={isModalVisible}
-				onOk={() => handleDelele()}
-				onCancel={() => setIsModalVisible(false)}
-			>
+      	<Modal
+			title={<AlertTriangle color="red" />}
+			visible={isModalVisible}
+			onOk={() => handleDelele()}
+			onCancel={() => setIsModalVisible(false)}
+		>
 				<span className="text-confirm">Bạn có chắc chắn muốn xóa không ?</span>
-			</Modal>
-      <PowerTable
-        loading={isLoading}
-        currentPage={currentPage}
-		totalPage={totalPage && totalPage}
-		getPagination={(pageNumber: number) => getPagination(pageNumber)}
-        addClass="basic-header"
-        TitlePage="Services List"
-        TitleCard={
-          <ServiceForm
-            showAdd={true}
-            isLoading={isLoading}
-            _onSubmit={(data: any) => _onSubmit(data)}
-            dataStaff={dataStaff}
-            dataSupplier={dataSupplier}
-          />
-        }
-        dataSource={dataTable}
-        columns={columns}
-        Extra={
-          <div className="extra-table">
-            <FilterServicesTable
-              _onFilter={(value: any) => _onFilterTable(value)}
-			  _onHandleReset={handleReset}
-            />
-            <SortBox 
-                handleSort={(value) => handleSort(value)}
-                dataOption={dataOption}
-            />
-          </div>
-        }
-      />
+		</Modal>
+		<PowerTable
+			loading={isLoading}
+			currentPage={currentPage}
+			totalPage={totalPage && totalPage}
+			getPagination={getPagination}
+			addClass="basic-header"
+			TitlePage="Services List"
+			TitleCard={
+				<ServiceForm
+				showAdd={true}
+				isLoading={isLoading}
+				_onSubmit={(data: any) => _onSubmit(data)}
+				dataStaff={dataStaff}
+				dataSupplier={dataSupplier}
+				/>
+		}
+			dataSource={dataTable}
+			columns={columns}
+			Extra={
+				<div className="extra-table">
+				<FilterServicesTable
+					_onFilter={(value: any) => _onFilterTable(value)}
+					_onHandleReset={handleReset}
+				/>
+				<SortBox 
+					handleSort={(value) => handleSort(value)}
+					dataOption={dataOption}
+				/>
+				</div>
+			}
+		/>
     </Fragment>
   );
 };
