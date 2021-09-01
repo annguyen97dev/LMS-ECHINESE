@@ -227,6 +227,7 @@ const CreateQuestionForm = (props) => {
   //   renderButton();
   // }, [isGroup]);
 
+  // console.log("question data in create: ", questionData);
   return (
     <>
       {renderButton()}
@@ -237,7 +238,7 @@ const CreateQuestionForm = (props) => {
         closable={false}
         onClose={onClose}
         visible={visible}
-        width={900}
+        width={questionData.Type == 3 ? 1300 : 800}
         footer={
           <div className="text-center">
             <button className="btn btn-light mr-2" onClick={onClose}>

@@ -6,15 +6,24 @@ const DynamicComponentWithNoSSR = dynamic(() => import("./Editor"), {
 });
 
 const Editor = (props) => {
-  const { handleChange, isReset, questionContent, addQuestion } = props;
+  const {
+    handleChange,
+    handleDelete,
+    isReset,
+    questionContent,
+    addQuestion,
+    deleteAllQuestion,
+  } = props;
 
   return (
     <div className="summernote-style">
       <DynamicComponentWithNoSSR
-        addQuestion={() => addQuestion()}
-        getDataEditor={(value) => handleChange(value)}
+        addQuestion={(inputID) => addQuestion(inputID)}
+        getDataEditor={(value) => handleChange(value)} // Get content with string type
+        handleDelete={(quesID: number) => handleDelete(quesID)} // Get id of space is deleted
         isReset={isReset}
         questionContent={questionContent}
+        deleteAllQuestion={deleteAllQuestion}
       />
     </div>
   );

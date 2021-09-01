@@ -23,7 +23,7 @@ import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
 import QuestionWritting from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
 
 const { Option, OptGroup } = Select;
-
+let isOpenTypeQuestion = false;
 const listTodoApi = {
   pageSize: 10,
   pageIndex: 1,
@@ -55,7 +55,7 @@ const QuestionCreate = () => {
   const [loadingQuestion, setLoadingQuestion] = useState(false);
   const [isGroup, setIsGroup] = useState({
     id: null,
-    status: false,
+    status: null,
   });
   const [valueSubject, setValueSubject] = useState("Chọn môn học");
   const [dataGroup, setDataGroup] = useState([]);
@@ -225,7 +225,7 @@ const QuestionCreate = () => {
       case 1:
         questionData.ExerciseAnswer = questionObj.ExerciseAnswer;
         break;
-      case 6:
+      case 3:
         questionData.ExerciseList = [];
       default:
         break;
@@ -254,12 +254,13 @@ const QuestionCreate = () => {
     });
   };
 
-  console.log("Question Data: ", questionData);
+  // console.log("Question Data bên ngoài: ", questionData);
 
   // HANDLE CHANGE SELECT - THAO TÁC VỚI CÁC SELECT
   const handleChange_select = (selectName, option) => {
     setDataSource([]);
     setDataGroup([]);
+
     switch (selectName) {
       // -- Chọn chương trình
       case "program":
@@ -279,6 +280,7 @@ const QuestionCreate = () => {
       // -- Chọn loại câu hỏi đơn hay nhóm
       case "type-question-group":
         // questionData.ExerciseGroupID = option.value;
+        isOpenTypeQuestion = true;
         if (option.value == 0) {
           setIsGroup({
             id: null,
@@ -336,7 +338,8 @@ const QuestionCreate = () => {
       if (
         questionData.ExerciseGroupID !== null &&
         questionData.SubjectID !== null &&
-        questionData.Level !== null
+        questionData.Level !== null &&
+        isOpenTypeQuestion == true
       ) {
         setShowTypeQuestion({
           ...showTypeQuetion,
@@ -507,7 +510,7 @@ const QuestionCreate = () => {
       <div className="row">
         <div className="col-md-12"></div>
       </div>
-      <div className="row mt-3">
+      <div className="row">
         <div className="col-md-8 col-12">
           <Card
             className="card-detail-question"
@@ -648,7 +651,7 @@ const QuestionCreate = () => {
               >
                 {isGroup.status
                   ? dataTypeGroup?.map((item, index) => (
-                      <div className="col-md-12">
+                      <div className="col-md-12" key={index}>
                         <div className="box-type-question">
                           <a
                             href="#"
@@ -675,7 +678,7 @@ const QuestionCreate = () => {
                       </div>
                     ))
                   : dataTypeSingle?.map((item, index) => (
-                      <div className="col-md-12">
+                      <div className="col-md-12" key={index}>
                         <div className="box-type-question">
                           <a
                             href="#"
