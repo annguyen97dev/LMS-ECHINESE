@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 const DynamicComponentWithNoSSR = dynamic(() => import("./Editor"), {
@@ -6,12 +6,15 @@ const DynamicComponentWithNoSSR = dynamic(() => import("./Editor"), {
 });
 
 const Editor = (props) => {
-  const { handleChange } = props;
+  const { handleChange, isReset, questionContent, addQuestion } = props;
 
   return (
-    <div>
+    <div className="summernote-style">
       <DynamicComponentWithNoSSR
+        addQuestion={() => addQuestion()}
         getDataEditor={(value) => handleChange(value)}
+        isReset={isReset}
+        questionContent={questionContent}
       />
     </div>
   );

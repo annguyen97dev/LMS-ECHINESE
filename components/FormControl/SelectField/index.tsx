@@ -14,6 +14,8 @@ const SelectField = (props) => {
     mode,
     onChangeSelect,
     isLoading,
+    style,
+    className,
   } = props;
   const { Option } = Select;
   const { errors } = form.formState;
@@ -25,8 +27,9 @@ const SelectField = (props) => {
 
   return (
     <Form.Item
+      style={style}
       label={label}
-      className={`${
+      className={`${className} ${
         hasError ? "ant-form-item-with-help ant-form-item-has-error" : ""
       }`}
     >
@@ -85,6 +88,8 @@ SelectField.propTypes = {
   mode: PropTypes.string,
   onChangeSelect: PropTypes.func,
   isLoading: PropTypes.bool,
+  style: PropTypes.shape({}),
+  className: PropTypes.string,
 };
 SelectField.defaultProps = {
   optionList: [],
@@ -94,5 +99,7 @@ SelectField.defaultProps = {
   onChangeSelect: null,
   mode: "",
   isLoading: false,
+  style: {},
+  className: "",
 };
 export default SelectField;

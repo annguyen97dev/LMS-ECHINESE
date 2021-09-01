@@ -7,7 +7,7 @@ import Link from "next/link";
 import SortBox from "~/components/Elements/SortBox";
 import ConsultantForm from "~/components/Global/Customer/Finance/ConsultantForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";
@@ -26,6 +26,7 @@ export default function FinanceInvoice() {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [dataFilter, setDataFilter] = useState([
     {
       name: "BranchID",
@@ -143,6 +144,7 @@ export default function FinanceInvoice() {
         let res = await branchApi.getAll({ selectAll: true });
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataBranch(res.data.data);
@@ -186,10 +188,13 @@ export default function FinanceInvoice() {
       ...todoApi,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex);
   };
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -213,14 +218,17 @@ export default function FinanceInvoice() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -255,16 +263,16 @@ export default function FinanceInvoice() {
     return res;
   };
   const columns = [
-    { 
-      title: "Trung tâm", 
-      dataIndex: "BranchName", 
-      // ...FilterColumn("center") 
-
+    {
+      title: "Trung tâm",
+      dataIndex: "BranchName",
+      // ...FilterColumn("center")
     },
     {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {
@@ -286,8 +294,8 @@ export default function FinanceInvoice() {
     },
     {
       title: "Lý do",
-      dataIndex: "Reason",
-      // ...FilterColumn("fnReasonPayment"),
+      dataIndex: "fnReason",
+
       render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
@@ -341,7 +349,7 @@ export default function FinanceInvoice() {
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
-      getPagination={(pageNumber: number) => getPagination(pageNumber)}
+      getPagination={getPagination}
       addClass="basic-header"
       TitlePage="Danh sách phiếu thu"
       // TitleCard={<StudyTimeForm showAdd={true} />}

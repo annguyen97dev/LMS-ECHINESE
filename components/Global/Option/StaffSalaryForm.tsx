@@ -20,6 +20,7 @@ const StaffSalaryForm = (props) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [role, setRole] = useState(false);
 
   const { showNoti } = useWrap();
 
@@ -31,10 +32,22 @@ const StaffSalaryForm = (props) => {
   } = useForm();
   // const { showNoti } = useWrap();
 
+  const setValueStaff = (value, data) => {
+    setValue("UserInformationID", value);
+    if(data.role == 2) {
+      setValue("Style", 1);
+      setRole(true);
+    } else {
+      setRole(false);
+    }
+  }
+
   const onSubmit = handleSubmit((data: any) => {
     if (typeof data.Salary == "string") {
       data.Salary = Number(data.Salary.replace(/\$\s?|(,*)/g, ""));
     }
+
+    // console.log("Data Submit: ", data);
 
     let res = props._onSubmit(data);
     res.then(function (rs: any) {
@@ -49,6 +62,7 @@ const StaffSalaryForm = (props) => {
           setValue(key, props.rowData[key]);
         });
       }
+      // console.log(props.dataStaff);
     }
   }, [isModalVisible]);
 
@@ -121,13 +135,14 @@ const StaffSalaryForm = (props) => {
                       className="style-input"
                       placeholder="Chọn nhân viên"
                       allowClear={true}
-                      onChange={(value) => setValue("UserInformationID", value)}
+                      onChange={(value, role) => setValueStaff(value, role)}
                     >
                       {props.dataStaff &&
                         props.dataStaff.map((row) => (
                           <Option
                             key={row.UserInformationID}
                             value={row.UserInformationID}
+                            role={row.RoleID}
                           >
                             {row.FullNameUnicode}
                           </Option>
@@ -151,24 +166,45 @@ const StaffSalaryForm = (props) => {
             {/*  */}
             <div className="row">
               <div className="col-12">
-                <Form.Item
-                  label="Loại"
-                  name="Salary Type"
-                  rules={[
-                    { required: true, message: "Bạn không được để trống" },
-                  ]}
-                  initialValue={props.rowData?.StyleName}
-                >
-                  <Select
-                    className="style-input"
-                    placeholder="Salary Type"
-                    allowClear={true}
-                    onChange={(value) => setValue("Style", value)}
+                {role == false ? (
+                  <Form.Item
+                    label="Loại"
+                    name="Salary Type"
+                    rules={[
+                      { required: true, message: "Bạn không được để trống" },
+                    ]}
+                    initialValue={props.rowData?.StyleName}
                   >
-                    <Option value="1">Tính lương theo tháng</Option>
-                    <Option value="2">Tính lương theo giờ</Option>
-                  </Select>
-                </Form.Item>
+                    <Select
+                      className="style-input"
+                      placeholder="Salary Type"
+                      allowClear={true}
+                      onChange={(value) => setValue("Style", value)}
+                    >
+                      <Option value="1">Tính lương theo tháng</Option>
+                      <Option value="2">Tính lương theo giờ</Option>
+                    </Select>
+                  </Form.Item>
+                ) : (
+                  <Form.Item
+                    label="Loại"
+                    name="Salary Type default"
+                    rules={[
+                      { required: true, message: "Bạn không được để trống" },
+                    ]}
+                    initialValue="Tính lương theo tháng"
+                  >
+                    <Select
+                      className="style-input"
+                      placeholder="Salary Type"
+                      allowClear={true}
+                      disabled
+                    >
+                      <Option value="1">Tính lương theo tháng</Option>
+                    </Select>
+                  </Form.Item>
+                )}
+
               </div>
             </div>
             {/*  */}

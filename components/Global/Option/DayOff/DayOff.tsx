@@ -1,12 +1,12 @@
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {dayOffApi} from '~/apiBase';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import SortBox from '~/components/Elements/SortBox';
 import DayOffForm from '~/components/Global/Option/DayOff/DayOffForm';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import DayOffDelete from './DayOffDelete';
 import DayOffFilterForm from './DayOffFilterForm';
 
 const DayOff = () => {
@@ -17,6 +17,7 @@ const DayOff = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -71,7 +72,7 @@ const DayOff = () => {
 		},
 	];
 	// FILTER
-	const onFilterDayOff = (obj) => {
+	const onFilter = (obj) => {
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -107,6 +108,7 @@ const DayOff = () => {
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
+		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
 			pageSize: refValue.current.pageSize,
@@ -114,6 +116,7 @@ const DayOff = () => {
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
+		setActiveColumnSearch(dataIndex);
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -137,10 +140,6 @@ const DayOff = () => {
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				// setFilters({
-				// 	...listFieldInit,
-				// 	...refValue.current,
-				// });
 				showNoti('danger', 'Không tìm thấy');
 			}
 		} catch (error) {
@@ -207,41 +206,44 @@ const DayOff = () => {
 		}
 	};
 	// DELETE
-	const onDeleteDayOff = async (idx: number) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const delObj = dayOffList[idx];
-			const res = await dayOffApi.delete({
-				...delObj,
-				Enable: false,
-			});
-			res.status === 200 && showNoti('success', res.data.message);
-			if (dayOffList.length === 1) {
-				filters.pageIndex === 1
-					? setFilters({
-							...listFieldInit,
-							...refValue.current,
-							pageIndex: 1,
-					  })
-					: setFilters({
-							...filters,
-							...refValue.current,
-							pageIndex: filters.pageIndex - 1,
-					  });
-				return;
-			}
-			fetchDayOffList();
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeleteDayOff = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = dayOffList[idx];
+				const res = await dayOffApi.delete({
+					...delObj,
+					Enable: false,
+				});
+				res.status === 200 && showNoti('success', res.data.message);
+				if (dayOffList.length === 1) {
+					filters.pageIndex === 1
+						? (setFilters({
+								...listFieldInit,
+								...refValue.current,
+								pageIndex: 1,
+						  }),
+						  setDayOffList([]))
+						: setFilters({
+								...filters,
+								...refValue.current,
+								pageIndex: filters.pageIndex - 1,
+						  });
+					return;
+				}
+				fetchDayOffList();
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
 	};
 	// COLUMN FOR TABLE
 	const columns = [
@@ -250,11 +252,14 @@ const DayOff = () => {
 			dataIndex: 'DayOff',
 			...FilterColumn('DayOff', onSearch, onResetSearch, 'date'),
 			render: (date) => moment(date).format('DD/MM/YYYY'),
+			className: activeColumnSearch === 'DayOff' ? 'active-column-search' : '',
 		},
 		{
 			title: 'Ghi chú',
 			dataIndex: 'DayOffName',
 			...FilterColumn('DayOffName', onSearch, onResetSearch, 'text'),
+			className:
+				activeColumnSearch === 'DayOffName' ? 'active-column-search' : '',
 		},
 		{
 			title: 'Ngày khởi tạo',
@@ -277,7 +282,7 @@ const DayOff = () => {
 						indexUpdateObj={idx}
 						handleUpdateDayOff={onUpdateDayOff}
 					/>
-					<DayOffDelete handleDeleteDayOff={onDeleteDayOff} index={idx} />
+					<DeleteTableRow handleDelete={onDeleteDayOff(idx)} />
 				</div>
 			),
 		},
@@ -302,7 +307,10 @@ const DayOff = () => {
 			columns={columns}
 			Extra={
 				<div className="extra-table">
-					<DayOffFilterForm handleFilterDayOff={onFilterDayOff} />
+					<DayOffFilterForm
+						handleFilter={onFilter}
+						handleResetFilter={onResetSearch}
+					/>
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

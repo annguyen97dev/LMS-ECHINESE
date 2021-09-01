@@ -9,6 +9,7 @@ import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
 import ParentsDelete from "~/components/Global/Customer/ParentsList/ParentsDelete";
 import ParentsForm from "~/components/Global/Customer/ParentsList/ParentsForm";
+import CourseReserveIntoCourse from "~/components/Global/Customer/Student/CourseReserve/CourseReserveIntoCourse";
 import RegCancel from "~/components/Global/Customer/Student/RegCancel";
 import RegInfo from "~/components/Global/Customer/Student/RegInfo";
 import ReserveChangeCourse from "~/components/Global/Customer/Student/ReserveChangeCourse";
@@ -26,7 +27,7 @@ const StudentCourseReserve = () => {
   const columns = [
     {
       title: "Học viên",
-      dataIndex: "CourseOfStudentID",
+      dataIndex: "FullNameUnicode",
       render: (text) => <p className="font-weight-blue">{text}</p>,
     },
     {
@@ -61,52 +62,21 @@ const StudentCourseReserve = () => {
       dataIndex: "StatusName",
       render: (status) => <>{<span className="tag green">{status}</span>}</>,
     },
+
     {
-      title: "",
-      render: () => (
-        <>
-          <RegInfo />
-          <ReserveChangeCourse />
-          <RegCancel />
-        </>
+      render: (data) => (
+        <Fragment>
+          <CourseReserveIntoCourse
+            infoDetail={data}
+            infoId={data.ID}
+            reloadData={(firstPage) => {
+              getDataCourseReserve(firstPage);
+            }}
+            currentPage={currentPage}
+          />
+        </Fragment>
       ),
     },
-
-    // {
-    //   render: (data) => (
-    //     <Fragment>
-    //       <ParentsForm
-    //         parentsDetail={data}
-    //         parentsID={data.UserInformationID}
-    //         reloadData={(firstPage) => {
-    //           getDataParents(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
-
-    //       <Link
-    //         href={{
-    //           pathname: "/customer/parents/detail/[slug]",
-    //           query: { slug: `${data.UserInformationID}` },
-    //         }}
-    //       >
-    //         <Tooltip title="Xem học viên liên kết">
-    //           <button className="btn btn-icon">
-    //             <Info />
-    //           </button>
-    //         </Tooltip>
-    //       </Link>
-
-    //       <ParentsDelete
-    //         parentsID={data.UserInformationID}
-    //         reloadData={(firstPage) => {
-    //           getDataParents(firstPage);
-    //         }}
-    //         currentPage={currentPage}
-    //       />
-    //     </Fragment>
-    //   ),
-    // },
   ];
   const [currentPage, setCurrentPage] = useState(1);
 

@@ -6,6 +6,7 @@ import {UserCheck} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
 const CourseListUpdate = (props) => {
 	const {
@@ -51,6 +52,20 @@ const CourseListUpdate = (props) => {
 		}
 	}, [courseObj]);
 
+	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
+	useEffect(() => {
+		let {AcademicUID, TeacherLeaderUID} = courseObj;
+		const {academicList, teacherLeadList} = optionList;
+		if (academicList.length && teacherLeadList.length) {
+			if (!academicList.some((o) => o.value === AcademicUID)) {
+				form.setValue('AcademicUID', 0);
+			}
+			if (!teacherLeadList.some((o) => o.value === TeacherLeaderUID)) {
+				form.setValue('TeacherLeaderUID', 0);
+			}
+		}
+	}, [courseObj, optionList]);
+
 	const checkHandleFetchDataForUpdateForm = ({BranchID}) => {
 		if (!handleFetchDataForUpdateForm) return;
 		handleFetchDataForUpdateForm(BranchID);
@@ -90,12 +105,14 @@ const CourseListUpdate = (props) => {
 							name="AcademicUID"
 							label="Academic Officer:"
 							optionList={optionList.academicList}
+							isLoading={isLoading.type == 'FETCH_DATA' && isLoading.status}
 						/>
 						<SelectField
 							form={form}
 							name="TeacherLeaderUID"
 							label="Teacher Leader:"
 							optionList={optionList.teacherLeadList}
+							isLoading={isLoading.type == 'FETCH_DATA' && isLoading.status}
 						/>
 						<button
 							type="submit"
@@ -114,22 +131,16 @@ const CourseListUpdate = (props) => {
 	);
 };
 
-const propTypesOption = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 CourseListUpdate.propTypes = {
 	handleOnUpdateCourse: PropTypes.func,
 	handleFetchDataForUpdateForm: PropTypes.func,
 	courseObj: PropTypes.shape({
-		ID: PropTypes.number.isRequired,
-		BranchID: PropTypes.number.isRequired,
+		AcademicUID: PropTypes.number.isRequired,
+		TeacherLeaderUID: PropTypes.number.isRequired,
 	}),
 	optionList: PropTypes.shape({
-		teacherLeadList: propTypesOption,
-		academicList: propTypesOption,
+		teacherLeadList: optionCommonPropTypes,
+		academicList: optionCommonPropTypes,
 	}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
@@ -139,8 +150,14 @@ CourseListUpdate.propTypes = {
 CourseListUpdate.defaultProps = {
 	handleOnUpdateCourse: null,
 	handleFetchDataForUpdateForm: null,
-	courseObj: null,
-	optionList: {},
+	courseObj: {
+		AcademicUID: 0,
+		TeacherLeaderUID: 0,
+	},
+	optionList: {
+		teacherLeadList: [],
+		academicList: [],
+	},
 	isLoading: {type: '', status: false},
 };
 export default CourseListUpdate;

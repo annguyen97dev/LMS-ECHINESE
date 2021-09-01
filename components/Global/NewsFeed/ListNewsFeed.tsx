@@ -36,6 +36,7 @@ import {
   newsFeedCommentReplyApi,
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import FsLightbox from "fslightbox-react";
 
 const { TextArea } = Input;
 const { Option } = Select;

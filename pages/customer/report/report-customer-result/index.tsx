@@ -3,7 +3,6 @@ import PowerTable from "~/components/PowerTable";
 import SortBox from "~/components/Elements/SortBox";
 import { dataService } from "lib/customer/dataCustomer";
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";
 import LayoutBase from "~/components/LayoutBase";
@@ -77,7 +76,7 @@ export default function CustomerServiceResult() {
       columns={columns}
       Extra={
         <div className="extra-table">
-          <FilterTable />
+          {/* <FilterTable /> */}
 
           <SortBox dataOption={dataService} />
         </div>

@@ -9,7 +9,7 @@ import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 
 const DayOffFilterForm = (props) => {
-	const {handleFilterDayOff} = props;
+	const {handleFilter, handleResetFilter} = props;
 
 	const [showFilter, showFilterSet] = useState(false);
 
@@ -17,20 +17,15 @@ const DayOffFilterForm = (props) => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
 	const schema = yup.object().shape({
-		fromDate: yup
-			.date()
-			.max(
-				yup.ref('toDate'),
-				({max}) => `Ngày bắt đầu cần trước ${moment(max).format('DD-MM-YYYY')}`
-			)
-			.required('Bạn không được bỏ trống'),
+		fromDate: yup.date().required('Bạn không được để trống'),
 		toDate: yup
 			.date()
-			.min(
-				yup.ref('fromDate'),
-				({min}) => `Ngày kết thúc cần sau ${moment(min).format('DD-MM-YYYY')}`
-			)
-			.required('Bạn không được bỏ trống'),
+			.required('Bạn không được để trống')
+			.when(
+				'fromDate',
+				(startDate, schema) =>
+					startDate && schema.min(startDate, `Ngày không hợp lệ`)
+			),
 	});
 
 	const defaultValuesInit = {
@@ -42,9 +37,18 @@ const DayOffFilterForm = (props) => {
 		resolver: yupResolver(schema),
 	});
 	const checkHandleFilterDayOff = (createdBy) => {
-		if (!handleFilterDayOff) return;
-		handleFilterDayOff(createdBy);
+		if (!handleFilter) return;
+		handleFilter(createdBy);
 		funcShowFilter();
+	};
+	const checkHandleResetFilterDayOff = () => {
+		if (!handleResetFilter) return;
+		handleResetFilter();
+		funcShowFilter();
+		form.reset({
+			fromDate: undefined,
+			toDate: undefined,
+		});
 	};
 	const content = (
 		<div className={`wrap-filter small`}>
@@ -54,10 +58,20 @@ const DayOffFilterForm = (props) => {
 			>
 				<div className="row">
 					<div className="col-md-12">
-						<DateField form={form} name="fromDate" label="Ngày khởi tạo từ" />
+						<DateField
+							form={form}
+							name="fromDate"
+							label="Ngày khởi tạo từ"
+							placeholder="Chọn ngày"
+						/>
 					</div>
 					<div className="col-md-12">
-						<DateField form={form} name="toDate" label="Đến ngày" />
+						<DateField
+							form={form}
+							name="toDate"
+							label="Đến ngày"
+							placeholder="Chọn ngày"
+						/>
 					</div>
 					<div className="col-md-12 mt-3">
 						<button
@@ -69,6 +83,13 @@ const DayOffFilterForm = (props) => {
 							{/* {isLoading.type === 'FILTER_CREATED' && isLoading.status && (
 								<Spin className="loading-base" />
 							)} */}
+						</button>
+						<button
+							type="button"
+							className="light btn btn-secondary"
+							onClick={checkHandleResetFilterDayOff}
+						>
+							Reset
 						</button>
 					</div>
 				</div>
@@ -96,9 +117,11 @@ const DayOffFilterForm = (props) => {
 	);
 };
 DayOffFilterForm.propTypes = {
-	handleFilterDayOff: PropTypes.func,
+	handleFilter: PropTypes.func,
+	handleResetFilter: PropTypes.func,
 };
 DayOffFilterForm.defaultProps = {
-	handleFilterDayOff: null,
+	handleFilter: null,
+	handleResetFilter: null,
 };
 export default DayOffFilterForm;

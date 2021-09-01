@@ -1,11 +1,13 @@
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Collapse} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 const {Panel} = Collapse;
 
 //   scheduleObj = {
@@ -33,10 +35,20 @@ const ScheduleItem = (props) => {
 		isLoading,
 		isUpdate,
 		//
-		optionForScheduleList,
+		optionRoomAndTeacherForADay,
 		optionStudyTime,
 	} = props;
-	const {ID, eventName, Tiet, CaID} = scheduleObj;
+	const {
+		ID,
+		eventName,
+		Tiet,
+		CaID,
+		// EDIT
+		Date,
+		TeacherName,
+		RoomName,
+		SubjectName,
+	} = scheduleObj;
 
 	const defaultValuesInit = {
 		RoomID: 0,
@@ -77,24 +89,26 @@ const ScheduleItem = (props) => {
 		form.setValue('TeacherID', 0);
 	};
 
-	useEffect(() => {
-		let {ID, RoomID, TeacherID} = scheduleObj;
-		const {optionRoomList, optionTeacherList} = optionForScheduleList;
-		if (optionRoomList.length > 1 && optionTeacherList.length > 1) {
-			if (!optionRoomList.some((o) => o.value === RoomID)) {
-				form.setValue('RoomID', 0);
-				checkHandleChangeValueSchedule(ID, 'RoomID', 0);
-			}
-			if (!optionTeacherList.some((o) => o.value === TeacherID)) {
-				form.setValue('TeacherID', 0);
-				checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
-			}
-		}
-	}, [optionForScheduleList]);
+	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
+	// useEffect(() => {
+	// 	let {ID, RoomID, TeacherID} = scheduleObj;
+	// 	const {optionRoomList, optionTeacherList} = optionRoomAndTeacherForADay;
+	// 	if (optionRoomList.length && optionTeacherList.length) {
+	// 		if (!optionRoomList.some((o) => o.value === RoomID)) {
+	// 			form.setValue('RoomID', 0);
+	// 			checkHandleChangeValueSchedule(ID, 'RoomID', 0);
+	// 		}
+	// 		if (!optionTeacherList.some((o) => o.value === TeacherID)) {
+	// 			form.setValue('TeacherID', 0);
+	// 			checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
+	// 		}
+	// 	}
+	// }, [optionRoomAndTeacherForADay]);
 
+	// SET VALUE TO INPUT IF HAVE DATA
 	useEffect(() => {
-		let {RoomID, TeacherID, CaID} = scheduleObj;
-		form.setValue('StudyTimeID', CaID);
+		let {RoomID, TeacherID, CaID, StudyTimeID} = scheduleObj;
+		form.setValue('StudyTimeID', CaID || StudyTimeID);
 		form.setValue('RoomID', RoomID || 0);
 		form.setValue('TeacherID', TeacherID || 0);
 		form.clearErrors();
@@ -108,20 +122,23 @@ const ScheduleItem = (props) => {
 					<Checkbox
 						onChange={() => {
 							if (isUpdate) {
-								// remove schedule to unavailable list
+								// remove schedule from unavailable list
 								// add schedule to available list
 								checkHandleChangeStatusSchedule(scheduleObj, 2);
 							} else {
-								// remove schedule to available list
+								// remove schedule from available list
 								// add schedule to unavailable list
 								checkHandleChangeStatusSchedule(scheduleObj, 1);
 							}
 						}}
 						checked={isUpdate}
 					/>
-					<p className="title">{eventName}</p>
+					<p className="title">
+						{eventName ||
+							`${moment(Date).format('DD/MM')} - ${TeacherName} - ${RoomName}`}
+					</p>
 					<ul className="info-course-list">
-						<li>{Tiet.CurriculumsDetailName}</li>
+						<li>{Tiet?.CurriculumsDetailName || SubjectName}</li>
 					</ul>
 				</div>
 			}
@@ -136,7 +153,7 @@ const ScheduleItem = (props) => {
 								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
 							}
 							placeholder="Chọn phòng"
-							optionList={optionForScheduleList.optionRoomList}
+							optionList={optionRoomAndTeacherForADay.optionRoomList}
 							onChangeSelect={(value) => {
 								checkHandleChangeValueSchedule(ID, 'RoomID', value);
 							}}
@@ -162,7 +179,7 @@ const ScheduleItem = (props) => {
 								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
 							}
 							placeholder="Chọn giáo viên"
-							optionList={optionForScheduleList.optionTeacherList}
+							optionList={optionRoomAndTeacherForADay.optionTeacherList}
 							onChangeSelect={(value) => {
 								checkHandleChangeValueSchedule(ID, 'TeacherID', value);
 							}}
@@ -173,28 +190,39 @@ const ScheduleItem = (props) => {
 		</Panel>
 	);
 };
-const optionPropTypes = PropTypes.arrayOf(
-	PropTypes.shape({
-		title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-	})
-);
 ScheduleItem.propTypes = {
 	handleChangeValueSchedule: PropTypes.func,
 	handleChangeStatusSchedule: PropTypes.func,
 	//
-	scheduleObj: PropTypes.shape({}),
+	scheduleObj: PropTypes.shape({
+		ID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+		eventName: PropTypes.string,
+		Tiet: PropTypes.shape({
+			CurriculumsDetailID: PropTypes.number,
+			CurriculumsDetailName: PropTypes.string,
+			SubjectID: PropTypes.number,
+		}),
+		TeacherID: PropTypes.number,
+		TeacherName: PropTypes.string,
+		CaID: PropTypes.number,
+		CaName: PropTypes.string,
+		RoomID: PropTypes.number,
+		RoomName: PropTypes.string,
+		StudyTimeID: PropTypes.number,
+		SubjectName: PropTypes.string,
+		Date: PropTypes.string,
+	}),
 	isUpdate: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
 	//
-	optionForScheduleList: PropTypes.shape({
-		optionRoomList: optionPropTypes,
-		optionTeacherList: optionPropTypes,
+	optionRoomAndTeacherForADay: PropTypes.shape({
+		optionRoomList: optionCommonPropTypes,
+		optionTeacherList: optionCommonPropTypes,
 	}),
-	optionStudyTime: optionPropTypes,
+	optionStudyTime: optionCommonPropTypes,
 };
 ScheduleItem.defaultProps = {
 	handleChangeValueSchedule: null,
@@ -205,7 +233,7 @@ ScheduleItem.defaultProps = {
 	isLoading: {type: '', status: false},
 	positionInScheduleList: null,
 	//
-	optionForScheduleList: {
+	optionRoomAndTeacherForADay: {
 		optionRoomList: [],
 		optionTeacherList: [],
 	},

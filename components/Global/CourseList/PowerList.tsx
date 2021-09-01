@@ -21,6 +21,7 @@ const PowerList = (props) => {
 			pagination={{
 				onChange: checkGetPagination,
 				total: totalPage,
+				size: 'small',
 			}}
 			// 0 sắp diễn ra, 1 đang diễn ra, 2 đã đóng
 			//       AcademicName: "Nguyễn Phi Hùng"
@@ -102,7 +103,7 @@ const PowerList = (props) => {
 								</ul>
 								<ul className="list-hor">
 									<li>
-										Offday: <span>{TotalDays}</span>
+										Number of school days: <span>{TotalDays}</span>
 									</li>
 									<li>
 										Opening:{' '}

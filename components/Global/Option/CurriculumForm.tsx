@@ -93,7 +93,7 @@ const CurriculumForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title="Tạo trung tâm"
+        title={rowID ? "Sửa giáo trình" : "Tạo giáo trình"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -171,7 +171,7 @@ const CurriculumForm = React.memo((props: any) => {
                   ]}
                 >
                   <Input
-                    placeholder=""
+                    placeholder="số phút(VD: 120)"
                     className="style-input"
                     onChange={(e) => setValue("TimeOfLesson", e.target.value)}
                   />

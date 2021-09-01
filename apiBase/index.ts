@@ -29,6 +29,7 @@ export { staffApi } from "./staff-manage/staff";
 export { notificationApi } from "./options/notification";
 export { rulesApi } from "./options/rules";
 
+export { exerciseGroupApi } from "./exercise/exerciseGroup";
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
 export { studentAdviseApi } from "./customer/student/student-advise";
@@ -37,6 +38,8 @@ export { userApi } from "./user/user";
 export { examComingSoonApi } from "./customer/student/exam-coming-soon";
 export { warningApi } from "./customer/student/warning";
 export { courseApi } from "./course/course";
+export { courseDetailApi } from "./course-detail/course-detail";
+export { studentListInCourseApi } from "./course-detail/student-list";
 export { studentChangeApi } from "./customer/student/student-change";
 export { studentChangeCourseApi } from "./customer/student/student-change-course";
 export { serviceCustomerExamApi } from "./customer/service/service-customer-exam";
@@ -46,14 +49,26 @@ export { contractCustomerListApi } from "./customer/contract/contract-customer-l
 export { voucherApi } from "./customer/finance/finance-cashier-payment";
 export { invoiceApi } from "./customer/finance/finance-cashier-invoice";
 export { examAppointmentResultApi } from "./customer/student/exam-appointment-result";
+export { checkBranchScheduleStudy } from "./schedule/check-branch-schedule";
+export { checkTeacherScheduleStudy } from "./schedule/check-teacher-schedule";
+export { programDetailPointColumnApi } from "./options/program-detail-point-column";
 export { courseStudentApi } from "./customer/student/course-student";
 export { rollUpApi } from "./course/rollup";
 export { courseOfStudentPriceApi } from "./course/course-of-student-price";
 export { configApi } from "./options/config";
 export { newsFeedApi } from "./newsfeed/newsfeed";
 export { newsFeedLikeApi } from "./newsfeed/newsfeed-like";
-export { newsFeedCommentApi } from "./newsfeed/newsfeed-comment"
-export { newsFeedCommentReplyApi } from "./newsfeed/newsfeed-commentreply"
+export { newsFeedCommentApi } from "./newsfeed/newsfeed-comment";
+export { newsFeedCommentReplyApi } from "./newsfeed/newsfeed-commentreply";
 export { userBranchApi } from "./newsfeed/user-branch";
 export { groupNewsFeedApi } from "./newsfeed/group-newsfeed";
 export { userGroupNewsFeedApi } from "./newsfeed/user-group-newsfeed";
+export { backgroundNewsFeedApi } from "./newsfeed/background-newsfeed";
+export { exerciseApi } from "./exercise/exercise";
+export { consultationStatusApi } from "./options/consultation-status";
+export { testCustomerPointApi } from "./customer/service/test-customer-point";
+export {
+  staffOfTaskGroupApi,
+  taskApi,
+  taskGroupApi,
+} from "./staff-manage/task";

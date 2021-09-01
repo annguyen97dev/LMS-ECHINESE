@@ -73,7 +73,7 @@ const Curriculum = () => {
         if (res.data.data.length > 0) {
           setDataSource(res.data.data);
           setTotalPage(res.data.totalRow);
-          showNoti("success", "Tải giáo trình thành công");
+          // showNoti("success", "Tải giáo trình thành công");
         } else {
           showNoti("danger", "Không có dữ liệu");
         }
@@ -106,11 +106,12 @@ const Curriculum = () => {
   // ---------------- GET DATA SUBJECT -------------
 
   const getDataSubject = async () => {
+    console.log("Chạy vô đây");
     try {
       let res = await subjectApi.getAll({
         ProgramID: programID,
         pageIndex: 1,
-        pageSize: Number.MAX_SAFE_INTEGER,
+        pageSize: 9999,
       });
 
       if (res.status == 200) {
@@ -156,6 +157,7 @@ const Curriculum = () => {
           newDataSource.splice(indexRow, 1, dataSubmit);
           setDataSource(newDataSource);
           showNoti("success", res.data.message);
+          getDataSubject();
         }
       } catch (error) {
         console.log("error: ", error);
@@ -169,7 +171,7 @@ const Curriculum = () => {
     } else {
       try {
         res = await curriculumApi.add(dataSubmit);
-        res?.status == 200 && afterPost(res.data.message);
+        res?.status == 200 && (afterPost(res.data.message), getDataSubject());
       } catch (error) {
         showNoti("danger", error.message);
       } finally {
@@ -263,7 +265,7 @@ const Curriculum = () => {
       key: "action",
       render: (text, data, index) => (
         <>
-          <Link
+          {/* <Link
             href={{
               pathname: "/option/program/curriculum-detail/[slug]",
               query: { slug: data.ID },
@@ -274,7 +276,7 @@ const Curriculum = () => {
                 <Info />
               </button>
             </Tooltip>
-          </Link>
+          </Link> */}
           <CurriculumForm
             getIndex={() => setIndexRow(index)}
             index={index}
@@ -327,7 +329,9 @@ const Curriculum = () => {
         columns={columns}
         Extra={"Giáo trình"}
         expandable={{ expandedRowRender }}
-        handleExpand={(record: any) => setCurriculumID(record.ID)}
+        handleExpand={(record: any) => (
+          setCurriculumID(record.ID), getDataSubject()
+        )}
       />
     </div>
   );

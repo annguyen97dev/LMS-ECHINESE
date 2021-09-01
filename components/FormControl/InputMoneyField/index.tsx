@@ -1,10 +1,19 @@
 import { Form, Input } from "antd";
+import PropTypes from "prop-types";
 import React from "react";
 import { Controller } from "react-hook-form";
-import PropTypes from "prop-types";
 
 const InputMoneyField = (props) => {
-  const { form, name, label, placeholder, disabled, handleChange } = props;
+  const {
+    form,
+    name,
+    label,
+    placeholder,
+    disabled,
+    handleChange,
+    style,
+    className,
+  } = props;
 
   const { errors } = form.formState;
   const hasError = errors[name];
@@ -31,8 +40,9 @@ const InputMoneyField = (props) => {
 
   return (
     <Form.Item
+      style={style}
       label={label}
-      className={`${
+      className={`${className} ${
         hasError ? "ant-form-item-with-help ant-form-item-has-error" : ""
       }`}
     >
@@ -47,7 +57,8 @@ const InputMoneyField = (props) => {
             placeholder={placeholder}
             disabled={disabled}
             onChange={(e) => {
-              let value = parseInt(e.target.value.replace(/\,/g, ""), 10);
+              let convertValue = e.target.value.toString();
+              let value = parseInt(convertValue.replace(/\,/g, ""), 10);
 
               if (!isNaN(value)) {
                 field.onChange(value.toLocaleString());
@@ -74,10 +85,15 @@ InputMoneyField.propTypes = {
   placeholder: PropTypes.string,
   disabled: PropTypes.bool,
   handleChange: PropTypes.func,
+  style: PropTypes.shape({}),
+  className: PropTypes.string,
 };
 InputMoneyField.defaultProps = {
   label: "",
   placeholder: "",
   disabled: false,
+  handleChange: null,
+  style: {},
+  className: "",
 };
 export default InputMoneyField;

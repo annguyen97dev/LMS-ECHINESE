@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Input, Select, Spin, Tooltip } from "antd";
-import { Info } from "react-feather";
+import { Info, RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -10,6 +10,7 @@ import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
 import { id } from "date-fns/locale";
+import TimePickerField from "~/components/FormControl/TimePickerField";
 
 let returnSchema = {};
 let schema = null;
@@ -80,15 +81,15 @@ const TestCustomerForm = (props) => {
 
   return (
     <>
-      <Tooltip title="Thông tin lịch hẹn test">
+      <Tooltip title="Cập nhật lịch hẹn test">
         <button
-          className="btn btn-icon"
+          className="btn btn-icon edit"
           onClick={() => {
             setIsModalVisible(true);
             getIndex(index);
           }}
         >
-          <Info />
+          <RotateCcw />
         </button>
       </Tooltip>
 
@@ -104,6 +105,7 @@ const TestCustomerForm = (props) => {
             <div className="row">
               <div className="col-md-6 col-12">
                 <SelectField
+                  disabled={true}
                   form={form}
                   name="UserInformationID"
                   label="Học viên"
@@ -129,7 +131,7 @@ const TestCustomerForm = (props) => {
                 />
               </div>
               <div className="col-md-6 col-12">
-                <InputTextField form={form} name="Time" label="Giờ hẹn" />
+                <TimePickerField form={form} name="Time" label="Giờ hẹn" />
               </div>
             </div>
             {/*  */}

@@ -1,12 +1,12 @@
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {areaApi, districtApi} from '~/apiBase';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/helpers';
-import DistrictDelete from './DistrictDelete';
+import {fmSelectArr} from '~/utils/functions';
 import DistrictForm from './DistrictForm';
 
 const District = () => {
@@ -18,6 +18,7 @@ const District = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
 	const [areaList, setAreaList] = useState([]);
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -25,6 +26,7 @@ const District = () => {
 		sort: -1,
 		sortType: false,
 		AreaName: '',
+		AreaID: null,
 		DistrictName: '',
 	};
 	let refValue = useRef({
@@ -96,6 +98,7 @@ const District = () => {
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
+		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
 			pageSize: refValue.current.pageSize,
@@ -103,6 +106,7 @@ const District = () => {
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
+		setActiveColumnSearch(dataIndex);
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -124,10 +128,6 @@ const District = () => {
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				// setFilters({
-				// 	...listFieldInit,
-				// 	...refValue.current,
-				// });
 				showNoti('danger', 'Không tìm thấy');
 			}
 		} catch (error) {
@@ -152,7 +152,7 @@ const District = () => {
 				selectall: true,
 			});
 			if (res.status === 200) {
-				const newAreaList = fmSelectArr(res.data.data, 'AreaName', ',AreaID');
+				const newAreaList = fmSelectArr(res.data.data, 'AreaName', 'AreaID');
 				setAreaList(newAreaList);
 			}
 		} catch (error) {
@@ -221,53 +221,59 @@ const District = () => {
 		return res;
 	};
 	// DELETE
-	const onDeleteDistrict = async (idx: number) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const delObj = districtList[idx];
-			const res = await districtApi.delete({
-				...delObj,
-				Enable: false,
-			});
-			res.status === 200 && showNoti('success', res.data.message);
-			if (districtList.length === 1) {
-				filters.pageIndex === 1
-					? setFilters({
-							...listFieldInit,
-							...refValue.current,
-							pageIndex: 1,
-					  })
-					: setFilters({
-							...filters,
-							...refValue.current,
-							pageIndex: filters.pageIndex - 1,
-					  });
-				return;
-			}
-			fetchDistrictList();
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeleteDistrict = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = districtList[idx];
+				const res = await districtApi.delete({
+					...delObj,
+					Enable: false,
+				});
+				res.status === 200 && showNoti('success', res.data.message);
+				if (districtList.length === 1) {
+					filters.pageIndex === 1
+						? (setFilters({
+								...listFieldInit,
+								...refValue.current,
+								pageIndex: 1,
+						  }),
+						  setDistrictList([]))
+						: setFilters({
+								...filters,
+								...refValue.current,
+								pageIndex: filters.pageIndex - 1,
+						  });
+					return;
+				}
+				fetchDistrictList();
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
 	};
 	// COLUMN FOR TABLE
 	const columns = [
 		{
 			title: 'Tên tỉnh/thành phố',
 			dataIndex: 'AreaName',
-			...FilterColumn('AreaName', onSearch, onResetSearch, 'text'),
+			...FilterColumn('AreaID', onSearch, onResetSearch, 'select', areaList),
+			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : '',
 		},
 		{
 			title: 'Tên quận',
 			dataIndex: 'DistrictName',
 			...FilterColumn('DistrictName', onSearch, onResetSearch, 'text'),
+			className:
+				activeColumnSearch === 'DistrictName' ? 'active-column-search' : '',
 		},
 		{
 			title: 'Ngày khởi tạo',
@@ -291,7 +297,7 @@ const District = () => {
 						indexUpdateObj={idx}
 						handleUpdateDistrict={onUpdateDistrict}
 					/>
-					<DistrictDelete handleDeleteDistrict={onDeleteDistrict} index={idx} />
+					<DeleteTableRow handleDelete={onDeleteDistrict(idx)} />
 				</div>
 			),
 		},

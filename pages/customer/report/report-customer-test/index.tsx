@@ -33,6 +33,7 @@ export default function ReportTest() {
 		value: null,
 		},
 	])
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
 	let pageIndex = 1;
 
@@ -88,6 +89,7 @@ export default function ReportTest() {
 			let res = await examComingSoonApi.getAll(todoApi);
 			if (res.status == 204) {
 				showNoti("danger", "Không có dữ liệu");
+				handleReset();
 			}
 			if(res.status == 200){
 				setDataTable(res.data.data);
@@ -130,10 +132,13 @@ export default function ReportTest() {
 			...todoApi,
 			...clearKey,
 		});
+
+		setCurrentPage(pageIndex);
 	};
 
   	// HANDLE RESET
 	const handleReset = () => {
+		setActiveColumnSearch('');
 		setTodoApi({
 			...listTodoApi,
 			pageIndex: 1,
@@ -157,12 +162,15 @@ export default function ReportTest() {
 		setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
 	};
 	// PAGINATION
-	const getPagination = (pageNumber: number) => {
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
-			...todoApi,
-			pageIndex: pageIndex,
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
 		});
 	};
 	// HANDLE SORT
@@ -188,6 +196,7 @@ export default function ReportTest() {
 		title: "Họ và tên",
 		dataIndex: "FullNameUnicode",
 		...FilterColumn('FullNameUnicode', onSearch, handleReset, "text"),
+		className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
 		render: (a) => <p className="font-weight-blue">{a}</p>,
 		},
 		{ title: "SĐT", dataIndex: "Mobile"},
@@ -237,7 +246,7 @@ export default function ReportTest() {
       loading={isLoading}
 	  currentPage={currentPage}
 	  totalPage={totalPage && totalPage}
-	  getPagination={(pageNumber: number) => getPagination(pageNumber)}
+	  getPagination={getPagination}
       addClass="basic-header"
       TitlePage="Danh sách học viên sắp thi"
       dataSource={dataTable}

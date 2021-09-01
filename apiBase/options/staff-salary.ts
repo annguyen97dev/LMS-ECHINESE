@@ -15,6 +15,9 @@ class StaffSalary {
   // Thêm mới data
   add = (data: IStaffSalary) => instance.post("/api/Salary", data);
 
+  // Thêm mới data no type
+  addData = (data) => instance.post("/api/Salary", data);
+
   // Cập nhật data
   update = (data: any) => instance.put("/api/Salary", data, {});
 }

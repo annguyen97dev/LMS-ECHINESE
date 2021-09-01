@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Upload } from "antd";
+import { Upload, Form } from "antd";
 import { useWrap } from "~/context/wrap";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { newsFeedApi } from "~/apiBase";
 import ImgCrop from 'antd-img-crop';
+import Modal from "antd/lib/modal/Modal";
+import UploadThumb from "./UploadThumb";
+import { useForm } from "react-hook-form";
+
 const UploadMutipleFile = (props) => {
   const { getValue, imagesOld } = props;
   const { showNoti } = useWrap();
   const [fileList, setFileList] = useState([]);
   const [list, setList] = useState([]);
+  const [visible, setVisible] = useState(false);
+  // const [thumbnail, setThumbnail] = useState("");
+  const [currentFile, setCurrentFile] = useState();
+  const [form] = Form.useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting, errors, isSubmitted },
+  } = useForm();
 
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -29,19 +43,26 @@ const UploadMutipleFile = (props) => {
     imgWindow.document.write(image.outerHTML);
   };
 
-  const beforeUpload = async (file) => {
+  const beforeUpload = (file) => {
     console.log("File: ", file);
     let typeFile;
     if(file.type.includes("image")) {
       typeFile = 2;
+      uploadFIle(typeFile, file, "")
     }
     if(file.type.includes("audio")) {
       typeFile = 3;
+      uploadFIle(typeFile, file, "")
     }
     if(file.type.includes("video")) {
       typeFile = 4;
+      setCurrentFile(file);
+      setVisible(true);
     }
-    // console.log(typeFile);
+
+  }
+
+  const uploadFIle = async (typeFile, file, thumbnail) => {
     let object = {};
     try {
       let res = await newsFeedApi.uploadFile(file);
@@ -51,6 +72,7 @@ const UploadMutipleFile = (props) => {
           Type: typeFile,
           NameFile: res.data.data,
           uid: file.uid,
+          Thumnail: thumbnail
         }
         setList([...list, object]);
       }
@@ -83,6 +105,12 @@ const UploadMutipleFile = (props) => {
     setFileList([...fileList, object]);
   }
 
+  const onSubmit = handleSubmit((data) => {
+    uploadFIle(4, currentFile, data.Thumnail);
+    setVisible(false);
+    form.resetFields();
+  })
+
   useEffect(() => {
     if(imagesOld) {
       setDefaultFileList(imagesOld);
@@ -105,6 +133,36 @@ const UploadMutipleFile = (props) => {
           {fileList.length < 5 && '+ Upload'}
           {getValue(list)}
         </Upload>
+        <Modal
+          title="Thêm thumbnail"
+          visible={visible}
+          onCancel={() => setVisible(false)}
+          footer={null}
+        >
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
+            <div className="row">
+              <div className="col-12">
+                <Form.Item 
+                  label="Thumbnail" 
+                  name="Thumbnail"
+                >
+                    <UploadThumb 
+                      getValue={(value) => setValue("Thumnail", value)}
+                    />
+                </Form.Item>
+              </div>
+            </div>
+            <div className="row ">
+              <div className="col-12">
+                <button type="submit" className="btn btn-primary w-100">
+                  Lưu
+                  {/* {props.isLoading.type == "ADD_DATA" &&
+                    props.isLoading.status && <Spin className="loading-base" />} */}
+                </button>
+              </div>
+            </div>
+          </Form>
+        </Modal>
       {/* </ImgCrop> */}
     </>
   );

@@ -1,6 +1,10 @@
 // QUESTION CREATE
 .question-create {
   .question-list {
+    .ant-collapse-header {
+      color: #4e4e4d;
+      font-weight: 500;
+    }
     .ant-divider-horizontal.ant-divider-with-text-left::before {
       width: 0%;
     }
@@ -39,6 +43,10 @@
           margin-bottom: 0;
           font-weight: 500;
           color: rgb(95, 95, 95);
+
+          p {
+            margin-bottom: 0;
+          }
         }
       }
 
@@ -120,7 +128,7 @@
   }
 
   .title-big {
-    font-size: 18px;
+    font-size: 16px;
     color: #d86e00;
     display: flex;
     align-items: center;
@@ -256,7 +264,7 @@
 
   .ant-card-body {
     // height: calc(100vh - 206px);
-    height: calc(100vh - 228px);
+    height: calc(100vh - 217px);
     padding-right: 10px;
 
     @include max-media(800px) {
@@ -264,6 +272,10 @@
     }
 
     .question-list {
+      .ant-radio-disabled + span {
+        color: black;
+      }
+
       &.active {
         height: 100%;
         overflow: auto;
@@ -326,7 +338,7 @@
   &.active {
     display: block;
     animation: show_box 0.5s forwards;
-    height: calc(100vh - 271px);
+    height: calc(100vh - 292px);
     overflow: auto;
 
     &::-webkit-scrollbar-track {
@@ -365,6 +377,7 @@
     }
 
     &:hover {
+      text-decoration: none;
       background: #ceefff;
       color: inherit;
     }
@@ -456,5 +469,169 @@
   label {
     margin-bottom: 15px;
     margin-right: 0;
+  }
+}
+
+.row-ans {
+  .delete-ans {
+    height: 36px;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 7px;
+    border: none;
+    background: transparent;
+
+    svg {
+      font-size: 15px;
+      color: #c32f2f;
+      &:hover {
+        color: #9a1212;
+      }
+    }
+  }
+}
+
+.function-group-item {
+  width: 145px;
+
+  .wrap-btn {
+    padding: 7px 5px;
+    background: white;
+    transition: 0.3s;
+
+    &:hover {
+      background: #f7f7f7;
+      transition: 0.3s;
+    }
+  }
+
+  .btn {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+
+    .anticon {
+      margin-right: 10px;
+    }
+  }
+}
+
+.wrap-content-drawer {
+  width: 100%;
+  height: 100%;
+  display: block;
+  text-decoration: none;
+  cursor: text;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.lms-collapse {
+  width: 100%;
+  height: auto;
+  .collapse-item {
+    width: 100%;
+    background: white;
+
+    &__header {
+      position: relative;
+      height: 40px;
+      padding: 10px 15px;
+      background: #f5f5f5;
+      color: black;
+      border-bottom: 1px solid #dbdbdb;
+      // border-top-left-radius: 5px;
+      // border-top-right-radius: 5px;
+
+      .btn-icon {
+        position: absolute;
+        right: 0px;
+        top: 0;
+        height: 100%;
+        line-height: 18px;
+        padding: 0px 10px;
+
+        &:focus {
+          box-shadow: none !important;
+          border: none;
+        }
+      }
+
+      .btn-function {
+        position: absolute;
+        padding: 0 13px;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 100%;
+        border: 0;
+        border-right: 1px solid #dbdbdb;
+        line-height: 0;
+
+        svg {
+          font-size: 12px;
+          color: #6a6a6a;
+        }
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+
+        .title {
+          width: 80%;
+          margin-left: 40px;
+          font-weight: 500;
+          color: #383838;
+        }
+      }
+    }
+
+    &__body {
+      display: none;
+      overflow: hidden;
+
+      .body-content {
+        padding: 15px;
+      }
+
+      &.none {
+        display: none;
+      }
+
+      &.active {
+        display: block;
+        overflow: unset;
+        animation: onShowCollapse forwards 0.3s;
+      }
+
+      &.un-active {
+        display: none;
+        overflow: hidden;
+        animation: onHideCollapse forwards 0.3s;
+      }
+
+      @keyframes onShowCollapse {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes onHideCollapse {
+        0% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+    }
   }
 }

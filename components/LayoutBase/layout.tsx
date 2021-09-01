@@ -239,7 +239,7 @@ function Layout({
         funcMenuMobile={funcMenuMobile}
       />
       <main className="app-main">
-        <div className={`app-content ${!isOpen && "close"}`}>
+        <div className={`app-content ${!isOpen && "close-app"}`}>
           <div className="wrap-breadcrumb">
             <Breadcrumb>
               {pathString?.map(

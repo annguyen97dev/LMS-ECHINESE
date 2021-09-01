@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PowerTable from "~/components/PowerTable";
 
 import FilterColumn from "~/components/Tables/FilterColumn";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import SortBox from "~/components/Elements/SortBox";
 import { Switch } from "antd";
 import StudyTimeForm from "~/components/Global/Option/StudyTimeForm";

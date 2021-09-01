@@ -1,322 +1,505 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { Popover, Card, Tooltip, Select, Spin } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
-import { type } from "os";
-import { dataBoxType } from "~/lib/question-bank/dataBoxType";
+import { dataTypeGroup, dataTypeSingle } from "~/lib/question-bank/dataBoxType";
 import { data } from "~/lib/option/dataOption2";
 import SelectFilterBox from "~/components/Elements/SelectFilterBox";
 import LayoutBase from "~/components/LayoutBase";
-import QuestionSingle from "~/components/Global/QuestionBank/QuestionSingle";
-import QuestionMultiple from "~/components/Global/QuestionBank/QuestionMultiple";
-import QuestionWrite from "~/components/Global/QuestionBank/QuestionWrite";
+import QuestionSingle from "~/components/Global/QuestionBank/QuestionShow/QuestionSingle";
+import QuestionMultiple from "~/components/Global/QuestionBank/QuestionShow/QuestionMultiple";
+import QuestionWrite from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
+import {
+  programApi,
+  subjectApi,
+  exerciseApi,
+  exerciseGroupApi,
+} from "~/apiBase";
+import { useWrap } from "~/context/wrap";
+import { questionObj } from "~/lib/TypeData";
+import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
+import QuestionWritting from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
+
 const { Option, OptGroup } = Select;
-const content = (
-  <div className="question-bank-info">
-    <ul className="list">
-      <li className="list-item">
-        <span className="list-title">Môn học:</span>
-        <span className="list-text">English</span>
-      </li>
-      <li className="list-item">
-        <span className="list-title">Loại môn học:</span>
-        <span className="list-text">Phát âm</span>
-      </li>
-      <li className="list-item">
-        <span className="list-title">Loại câu hỏi:</span>
-        <span className="list-text">Câu hỏi nhóm</span>
-      </li>
-      <li className="list-item">
-        <span className="list-title">Mức độ:</span>
-        <span className="list-text">Rất khó</span>
-      </li>
-      <li className="list-item mb-0">
-        <span className="list-title">Học kỳ:</span>
-        <span className="list-text">học kỳ II</span>
-      </li>
-      <li className="list-item mb-0">
-        <span className="list-title">File:</span>
-        <span className="list-text">không có</span>
-      </li>
-    </ul>
-  </div>
-);
 
-const dataLesson = [
-  {
-    LessonName: "Ngoại ngữ",
-    Value: "language",
-    LessonChild: [
-      {
-        LessonName: "Tiếng Anh",
-        Value: "english",
-      },
-      {
-        LessonName: "Tiếng Pháp",
-        Value: "France",
-      },
-    ],
-  },
-  {
-    LessonName: "Ngữ văn",
-    Value: "nv",
-    LessonChild: [],
-  },
-  {
-    LessonName: "Toán",
-    Value: "match",
-    LessonChild: [],
-  },
-];
-
-const dataQuestion = [
-  {
-    TypeQues: "",
-    TextQues:
-      "Jack's father is a farmer, he 55 years old and he work in ... company",
-    AnswerList: [
-      {
-        TextAns: "Đáp án",
-        Correct: true,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-    ],
-  },
-  {
-    TypeQues: "",
-    TextQues:
-      "Jack's father is a farmer, he 55 years old and he work in ... company",
-    AnswerList: [
-      {
-        TextAns: "Đáp án",
-        Correct: true,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-    ],
-  },
-  {
-    TypeQues: "",
-    TextQues:
-      "Jack's father is a farmer, he 55 years old and he work in ... company",
-    AnswerList: [
-      {
-        TextAns: "Đáp án",
-        Correct: true,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-    ],
-  },
-  {
-    TypeQues: "",
-    TextQues:
-      "Jack's father is a farmer, he 55 years old and he work in ... company",
-    AnswerList: [
-      {
-        TextAns: "Đáp án",
-        Correct: true,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-    ],
-  },
-  {
-    TypeQues: "",
-    TextQues:
-      "Jack's father is a farmer, he 55 years old and he work in ... company",
-    AnswerList: [
-      {
-        TextAns: "Đáp án",
-        Correct: true,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-    ],
-  },
-  {
-    TypeQues: "",
-    TextQues:
-      "Jack's father is a farmer, he 55 years old and he work in ... company",
-    AnswerList: [
-      {
-        TextAns: "Đáp án",
-        Correct: true,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-    ],
-  },
-  {
-    TypeQues: "",
-    TextQues:
-      "Jack's father is a farmer, he 55 years old and he work in ... company",
-    AnswerList: [
-      {
-        TextAns: "Đáp án",
-        Correct: true,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-      {
-        TextAns: "Đáp án",
-        Correct: false,
-      },
-    ],
-  },
-];
-
-type initialState = {
-  boxActive: string;
-  showBoxType: boolean;
-  typeQuestion: string;
-  course: string;
+const listTodoApi = {
+  pageSize: 10,
+  pageIndex: 1,
+  SubjectID: null,
+  Type: null,
+  Level: null,
+  ExerciseGroupID: null,
+  ExamTopicType: null,
 };
 
-type state = {
-  boxActive: string;
-  showBoxType: boolean;
-  typeQuestion: string;
-  course: string;
-};
-
-type action = {
-  type: string;
-  tab: string;
-  isShow: boolean;
-  questionType: string;
-};
-
-const initialState: initialState = {
-  boxActive: "all", // Dạng câu hỏi 1 hay nhiều, map, ...
-  typeQuestion: "single", // Câu hỏi đơn hoặc nhóm
-  showBoxType: true, // xác định mới vào mở hay chưa
-  course: "", // chọn khóa học
-};
-
-const reducer = (state: state, action: action) => {
-  switch (action.type) {
-    case "changeTab":
-      return { ...state, boxActive: action.tab };
-    case "showBoxType":
-      return { ...state, showBoxType: action.isShow };
-    case "showQuestionType":
-      return { ...state, showQuestionType: action.questionType };
-    default:
-      throw new Error();
-  }
-};
+const listAlphabet = ["A", "B", "C", "D", "F", "G"];
 
 const QuestionCreate = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [isLoading, isLoadingSet] = useState(false);
+  const { showNoti } = useWrap();
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataProgram, setDataProgram] = useState<IProgram[]>(null);
+  const [dataSubject, setDataSubject] = useState<ISubject[]>(null);
+  const [loadingSelect, setLoadingSelect] = useState(false);
+  const [questionData, setQuestionData] = useState(questionObj);
+  const [showListQuestion, setShowListQuestion] = useState(false);
+  const [showTypeQuetion, setShowTypeQuestion] = useState({
+    type: null,
+    status: false,
+  });
+  const [todoApi, setTodoApi] = useState(listTodoApi);
+  const [dataSource, setDataSource] = useState([]);
+  const boxEl = useRef(null);
+  const [totalPageIndex, setTotalPageIndex] = useState(0);
+  const [loadingQuestion, setLoadingQuestion] = useState(false);
+  const [isGroup, setIsGroup] = useState({
+    id: null,
+    status: false,
+  });
+  const [valueSubject, setValueSubject] = useState("Chọn môn học");
+  const [dataGroup, setDataGroup] = useState([]);
 
-  console.log("STATE is: ", state);
-
-  const changeBoxType = (e: any, TabName: string) => {
-    e.preventDefault();
-    dispatch({
-      type: "changeTab",
-      tab: TabName,
-      isShow: state.showBoxType,
-      questionType: state.typeQuestion,
-    });
+  // Phân loại dạng câu hỏi để trả ra danh sách
+  const returnQuestionType = () => {
+    console.log("Type is: ", todoApi.Type);
+    switch (todoApi.Type) {
+      /** Q uesion Single */
+      case 1:
+        return (
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
+            onFetchData={onFetchData}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionSingle
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataSource}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
+        );
+        break;
+      case 4:
+        return (
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
+            onFetchData={onFetchData}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionMultiple
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataSource}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
+        );
+        break;
+      case 6:
+        return (
+          <QuestionWritting
+            listAlphabet={listAlphabet}
+            isGroup={isGroup}
+            loadingQuestion={loadingQuestion}
+            listQuestion={dataSource}
+            onFetchData={onFetchData}
+            onEditData={(data) => onEditData(data)}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+          />
+        );
+      default:
+        return (
+          <p className="text-center">
+            <b>Danh sách còn trống</b>
+          </p>
+        );
+        break;
+    }
   };
 
-  const handleChange_selectLesson = (value) => {
-    console.log(`selected ${value}`);
+  // GET DATA SOURCE - DATA EXERCISE
+  const getDataSource = async () => {
+    let res = null;
+    try {
+      if (!isGroup.status) {
+        res = await exerciseApi.getAll({ ...todoApi, ExerciseGroupID: 0 });
+      } else {
+        res = await exerciseGroupApi.getAll(todoApi);
+      }
 
-    !state.showBoxType &&
-      dispatch({
-        type: "showBoxType",
-        tab: "",
-        isShow: true,
-        questionType: state.typeQuestion,
+      if (res.status == 200) {
+        // Xét coi này câu hỏi nhóm hay đơn
+        if (!isGroup.status) {
+          let cloneData = [...dataSource];
+          res.data.data.forEach((item, index) => {
+            cloneData.push(item);
+          });
+
+          setDataSource([...cloneData]);
+        } else {
+          let cloneData = [...dataGroup];
+          res.data.data.forEach((item, index) => {
+            cloneData.push(item);
+          });
+
+          setDataGroup([...cloneData]);
+        }
+
+        todoApi.pageIndex == 1 && showNoti("success", "Thành công");
+        !showListQuestion && setShowListQuestion(true);
+
+        // Tính phân trang
+        let totalPage = Math.ceil(res.data.totalRow / 10);
+        setTotalPageIndex(totalPage);
+      }
+
+      res.status == 204 &&
+        (showNoti("danger", "Không có dữ liệu"), setShowListQuestion(true));
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading(false);
+      loadingQuestion && setLoadingQuestion(false);
+    }
+  };
+
+  // GET DATA PROGRAM
+  const getDataProgram = async () => {
+    try {
+      let res = await programApi.getAll({ pageIndex: 1, pageSize: 999999 });
+      res.status == 200 && setDataProgram(res.data.data);
+      res.status == 204 && showNoti("danger", "Chương trình không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+    }
+  };
+
+  // GET DATA SUBJECT
+  const getDataSubject = async (id) => {
+    setLoadingSelect(true);
+    try {
+      let res = await subjectApi.getAll({
+        pageIndex: 1,
+        pageSize: 999999,
+        ProgramID: id,
       });
-    isLoadingSet(true);
-
-    setTimeout(() => {
-      isLoadingSet(false);
-    }, 1000);
+      res.status == 200 && setDataSubject(res.data.data);
+      res.status == 204 && showNoti("danger", "Môn học không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setLoadingSelect(false);
+    }
   };
 
-  const handleChange_selectType = (value) => {
-    dispatch({
-      type: "showQuestionType",
-      tab: "",
-      isShow: true,
-      questionType: state.typeQuestion,
+  // CHỌN DẠNG CÂU HỎI (CHOICE, MULTIPLE,...)
+  const changeBoxType = (e: any, Type: number, TypeName: string) => {
+    e.preventDefault();
+
+    questionData.Type = Type;
+    questionData.TypeName = TypeName;
+
+    // Kiểm dạng câu hỏi gì để thay đổi list answer
+    switch (Type) {
+      case 4:
+        questionData.ExerciseAnswer = [];
+        // setQuestionData({ ...questionData });
+        break;
+      case 1:
+        questionData.ExerciseAnswer = questionObj.ExerciseAnswer;
+        break;
+      case 6:
+        questionData.ExerciseAnswer = [];
+      default:
+        break;
+    }
+
+    // Add value vào data chung
+    setQuestionData({ ...questionData });
+
+    // Active
+    setShowTypeQuestion({
+      ...showTypeQuetion,
+      type: Type,
+    });
+
+    // Show danh sách câu hỏi bên cạnh
+    setIsLoading(true);
+    !showListQuestion && setShowListQuestion(true);
+    setDataSource([]);
+    setDataGroup([]);
+    setTodoApi({
+      ...todoApi,
+      Type: Type,
+      SubjectID: questionData.SubjectID,
+      Level: questionData.Level,
+      pageIndex: 1,
     });
   };
+
+  console.log("Question Data: ", questionData);
+
+  // HANDLE CHANGE SELECT - THAO TÁC VỚI CÁC SELECT
+  const handleChange_select = (selectName, option) => {
+    setDataSource([]);
+    setDataGroup([]);
+    switch (selectName) {
+      // -- Chọn chương trình
+      case "program":
+        getDataSubject(option.value);
+        setDataSubject(null);
+        setValueSubject("Chọn môn học");
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            pageIndex: 1,
+            SubjectID: null,
+          }));
+
+        break;
+
+      // -- Chọn loại câu hỏi đơn hay nhóm
+      case "type-question-group":
+        // questionData.ExerciseGroupID = option.value;
+        if (option.value == 0) {
+          setIsGroup({
+            id: null,
+            status: false,
+          });
+        } else {
+          setIsGroup({
+            ...isGroup,
+            status: true,
+          });
+        }
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            pageIndex: 1,
+          }));
+
+        break;
+
+      // -- Chọn môn học
+      case "subject":
+        questionData.SubjectID = option.value;
+        questionData.SubjectName = option.children;
+        setValueSubject(option.value);
+
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            SubjectID: option.value,
+            pageIndex: 1,
+          }));
+
+        break;
+
+      // -- Chọn level (Dễ, trung bình, khó)
+      case "level":
+        questionData.Level = option.value;
+        questionData.LevelName = option.children;
+        showListQuestion &&
+          (setIsLoading(true),
+          setTodoApi({
+            ...todoApi,
+            Level: option.value,
+          }));
+        break;
+      default:
+        break;
+    }
+    setQuestionData({ ...questionData });
+
+    // kiểm tra mới vào đã chọn đầy đủ 4 trường hay chưa rồi mới show danh sách dạng câu hỏi
+    if (!showTypeQuetion.status) {
+      if (
+        questionData.ExerciseGroupID !== null &&
+        questionData.SubjectID !== null &&
+        questionData.Level !== null
+      ) {
+        setShowTypeQuestion({
+          ...showTypeQuetion,
+          status: true,
+        });
+      }
+    }
+  };
+
+  // ON ADD NEW DATA
+  const addDataGroup = (dataAdd) => {
+    dataGroup.splice(0, 0, dataAdd);
+    setDataGroup([...dataGroup]);
+  };
+
+  const addDataSingle = (dataAdd) => {
+    dataSource.splice(0, 0, dataAdd);
+    setDataSource([...dataSource]);
+  };
+
+  const onAddData = (dataAdd) => {
+    console.log("DATA add outside: ", dataAdd);
+    console.log("Is group outside: ", isGroup);
+
+    if (!isGroup.status) {
+      addDataSingle(dataAdd);
+    } else {
+      if (dataAdd.ExerciseGroupID) {
+        addDataSingle(dataAdd);
+      } else {
+        addDataGroup(dataAdd);
+      }
+    }
+    questionData.Content = "";
+    setQuestionData({ ...questionData });
+  };
+
+  console.log("DATA SOURCE: ", dataSource);
+  console.log("DATA GROUP: ", dataGroup);
+
+  // ON EDIT DATA
+
+  const editDataGroup = (dataEdit) => {
+    let index = dataGroup.findIndex((item) => item.ID == dataEdit.ID);
+    dataGroup.splice(index, 1, dataEdit);
+
+    setDataGroup([...dataGroup]);
+  };
+
+  const editDataSingle = (dataEdit) => {
+    if (dataEdit.Type == 4) {
+      let newAnswerList = dataEdit.ExerciseAnswer.filter(
+        (item) => item.Enable !== false
+      );
+      dataEdit.ExerciseAnswer = newAnswerList;
+    }
+
+    let index = dataSource.findIndex((item) => item.ID == dataEdit.ID);
+    dataSource.splice(index, 1, dataEdit);
+
+    setDataSource([...dataSource]);
+  };
+
+  const onEditData = (dataEdit) => {
+    console.log("DATA edit outside ", dataEdit);
+    console.log("Is group outside: ", isGroup);
+
+    if (!isGroup.status) {
+      console.log("Chạy vô đây");
+      // Nếu là dạng câu hỏi nhiều đáp án thì phải xóa nó đi
+      editDataSingle(dataEdit);
+    } else {
+      if (dataEdit.ExerciseGroupID) {
+        editDataSingle(dataEdit);
+      } else {
+        editDataGroup(dataEdit);
+      }
+    }
+
+    questionData.Content = "";
+    setQuestionData({ ...questionData });
+  };
+
+  // ON REMOVE DATA
+  const removeDataSingle = (dataRemove) => {
+    let quesIndex = dataSource.findIndex((item) => item.ID == dataRemove.ID);
+    dataSource.splice(quesIndex, 1);
+    setDataSource([...dataSource]);
+  };
+
+  const removeDataGroup = (dataRemove) => {
+    let quesIndex = dataGroup.findIndex((item) => item.ID == dataRemove.ID);
+    dataGroup.splice(quesIndex, 1);
+    setDataGroup([...dataGroup]);
+  };
+
+  const onRemoveData = (dataRemove) => {
+    if (!isGroup.status) {
+      removeDataSingle(dataRemove);
+    } else {
+      if (dataRemove.ExerciseGroupID) {
+        removeDataSingle(dataRemove);
+      } else {
+        removeDataGroup(dataRemove);
+      }
+    }
+  };
+
+  // ON FETCH DATA
+  const onFetchData = () => {
+    scrollToTop(), setIsLoading(true), setDataSource([]), setDataGroup([]);
+    setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 });
+  };
+
+  // SCROLL TO TOP
+  const scrollToTop = () => {
+    boxEl.current.scrollTo(0, 0);
+  };
+
+  // ON SCROLL
+  const onScroll = () => {
+    const scrollHeight = boxEl.current.scrollHeight;
+    const offsetHeight = boxEl.current.offsetHeight;
+    const scrollTop = boxEl.current.scrollTop;
+
+    // console.log("Height: ", scrollHeight - offsetHeight);
+    // console.log("Scroll: ", scrollTop);
+
+    if (scrollTop > scrollHeight - offsetHeight - 40) {
+      if (todoApi.pageIndex < totalPageIndex) {
+        setLoadingQuestion(true);
+
+        if (scrollTop > 0 && loadingQuestion == false) {
+          setTodoApi({
+            ...todoApi,
+            pageIndex: todoApi.pageIndex + 1,
+          });
+        }
+      }
+    }
+  };
+
+  // console.log("DATA exercise: ", dataSource);
+
+  useEffect(() => {
+    getDataProgram(); // Lấy data chương trình
+  }, []);
+
+  useEffect(() => {
+    if (questionData.Type !== 0) {
+      getDataSource();
+    }
+    questionData.Content = "";
+    switch (questionData.Type) {
+      case 4:
+        questionData.ExerciseAnswer = [];
+        break;
+
+      default:
+        break;
+    }
+    setQuestionData({ ...questionData });
+  }, [todoApi]);
 
   return (
     <div className="question-create">
@@ -331,20 +514,30 @@ const QuestionCreate = () => {
             title={
               <div className="title-question-bank">
                 <h3 className="title-big">
-                  <Bookmark /> Danh sách câu hỏi
+                  <Bookmark />{" "}
+                  {!isGroup.status
+                    ? "Danh sách câu hỏi"
+                    : "Danh sách nhóm câu hỏi"}
                 </h3>
-                <p className="text-lesson">
+                {/* <p className="text-lesson">
                   <span className="font-weight-black">Môn học:</span>
-                  <span>Tiếng anh</span>
-                </p>
+                  <span>{questionData?.SubjectName}</span>
+                </p> */}
               </div>
             }
-            extra={<CreateQuestionForm isEdit={false} />}
+            extra={
+              <CreateQuestionForm
+                questionData={questionData}
+                onFetchData={onFetchData}
+                isGroup={isGroup}
+                onAddData={(data) => onAddData(data)}
+              />
+            }
           >
-            {!state.showBoxType ? (
+            {!showListQuestion ? (
               <>
                 <p className="font-weight-blue text-center">
-                  Vui lòng chọn môn học
+                  Vui lòng chọn môn học và dạng câu hỏi
                 </p>
                 <div className="img-load">
                   <img src="/images/study-min.jpg" alt="" />
@@ -356,107 +549,158 @@ const QuestionCreate = () => {
               </div>
             ) : (
               <div
-                className={`question-list ${state.showBoxType ? "active" : ""}`}
+                className={`question-list active`}
+                ref={boxEl}
+                onScroll={onScroll}
               >
-                {/** Q uesion Single */}
-                <QuestionSingle />
-                {/** Quesion Multiple */}
-                <QuestionMultiple />
-                {/** Question Write */}
-                <QuestionWrite />
+                {returnQuestionType()}
               </div>
             )}
           </Card>
         </div>
         <div className="col-md-4 col-12">
           <Card className="card-box-type">
-            <div className={`row ${state.showBoxType ? "mb-2" : ""}`}>
+            <div className={`row ${showTypeQuetion ? "mb-2" : ""}`}>
+              {/** CHỌN CHƯƠNG TRÌNH */}
+              <div className="col-md-6 col-12 ">
+                <div className="item-select">
+                  <Select
+                    className="style-input"
+                    defaultValue="Chọn chương trình"
+                    style={{ width: "100%" }}
+                    onChange={(value, option) =>
+                      handleChange_select("program", option)
+                    }
+                  >
+                    {dataProgram?.map((item, index) => (
+                      <Option key={index} value={item.ID}>
+                        {item.ProgramName}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
               {/** CHỌN MÔN HỌC */}
               <div className="col-md-6 col-12 ">
                 <div className="item-select">
                   {/* <p className="font-weight-black mb-2">Chọn môn học</p> */}
                   <Select
+                    loading={loadingSelect}
                     className="style-input"
                     defaultValue="Chọn môn học"
+                    value={valueSubject}
                     style={{ width: "100%" }}
-                    onChange={handleChange_selectLesson}
+                    onChange={(value, option) =>
+                      handleChange_select("subject", option)
+                    }
                   >
-                    {dataLesson?.map((item, index) =>
-                      item.LessonChild?.length > 0 ? (
-                        <OptGroup label={item.LessonName}>
-                          {item.LessonChild?.map((lesson, index) => (
-                            <Option value={lesson.Value}>
-                              {lesson.LessonName}
-                            </Option>
-                          ))}
-                        </OptGroup>
-                      ) : (
-                        <Option value={item.Value}>{item.LessonName}</Option>
-                      )
-                    )}
-                  </Select>
-                </div>
-              </div>
-
-              {/** LOẠI MÔN HỌC  */}
-              <div className="col-md-6 col-12">
-                <div className="item-select">
-                  {/* <p className="font-weight-black mb-2">Loại môn học</p> */}
-                  <Select
-                    className="style-input"
-                    defaultValue="Chọn loại môn học"
-                    style={{ width: "100%" }}
-                    // onChange={handleChange_selectType}
-                  >
-                    <Option value="1">Phát âm</Option>
-                    <Option value="2">Ngữ pháp</Option>
+                    {dataSubject?.map((item, index) => (
+                      <Option key={index} value={item.ID}>
+                        {item.SubjectName}
+                      </Option>
+                    ))}
                   </Select>
                 </div>
               </div>
 
               {/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
-              <div className="col-md-12 col-12 mt-3">
+              <div className="col-md-6 col-12 mt-3">
                 <div className="item-select">
                   {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
                   <Select
                     className="style-input"
                     defaultValue="Chọn loại câu hỏi"
                     style={{ width: "100%" }}
-                    onChange={handleChange_selectType}
+                    onChange={(value, option) =>
+                      handleChange_select("type-question-group", option)
+                    }
                   >
-                    <Option value="single">Câu hỏi đơn</Option>
-                    <Option value="group">Câu hỏi nhóm</Option>
+                    <Option value={0}>Câu hỏi đơn</Option>
+                    <Option value={1}>Câu hỏi nhóm</Option>
+                  </Select>
+                </div>
+              </div>
+
+              {/** MỨC ĐỘ  */}
+              <div className="col-md-6 col-12 mt-3">
+                <div className="item-select">
+                  {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
+                  <Select
+                    className="style-input"
+                    defaultValue="Chọn mức độ"
+                    style={{ width: "100%" }}
+                    onChange={(value, option) =>
+                      handleChange_select("level", option)
+                    }
+                  >
+                    <Option value={1}>Dễ</Option>
+                    <Option value={2}>Trung bình</Option>
+                    <Option value={3}>Khó</Option>
                   </Select>
                 </div>
               </div>
             </div>
             <div className="row">
               <div
-                className={`wrap-type-question ${
-                  state.showBoxType ? "active" : "nun-active"
+                className={`wrap-type-question w-100 ${
+                  showTypeQuetion.status ? "active" : "nun-active"
                 }`}
               >
-                {dataBoxType?.map((item, index) => (
-                  <div className="col-md-12">
-                    <div className="box-type-question">
-                      <a
-                        href="#"
-                        onClick={(e) => changeBoxType(e, item.TabName)}
-                        className={
-                          item.TabName === state.boxActive ? "active" : ""
-                        }
-                      >
-                        <div className="type-img">
-                          <img src={item.Images} alt="" className="img-inner" />
+                {isGroup.status
+                  ? dataTypeGroup?.map((item, index) => (
+                      <div className="col-md-12">
+                        <div className="box-type-question">
+                          <a
+                            href="#"
+                            onClick={(e) =>
+                              changeBoxType(e, item.Type, item.TypeName)
+                            }
+                            className={
+                              item.Type === showTypeQuetion.type ? "active" : ""
+                            }
+                          >
+                            <div className="type-img">
+                              <img
+                                src={item.Images}
+                                alt=""
+                                className="img-inner"
+                              />
+                            </div>
+                            <div className="type-detail">
+                              {/* <h5 className="number">{item.Number}</h5> */}
+                              <div className="p text">{item.TypeName}</div>
+                            </div>
+                          </a>
                         </div>
-                        <div className="type-detail">
-                          <h5 className="number">{item.Number}</h5>
-                          <div className="p text">{item.TypeName}</div>
+                      </div>
+                    ))
+                  : dataTypeSingle?.map((item, index) => (
+                      <div className="col-md-12">
+                        <div className="box-type-question">
+                          <a
+                            href="#"
+                            onClick={(e) =>
+                              changeBoxType(e, item.Type, item.TypeName)
+                            }
+                            className={
+                              item.Type === showTypeQuetion.type ? "active" : ""
+                            }
+                          >
+                            <div className="type-img">
+                              <img
+                                src={item.Images}
+                                alt=""
+                                className="img-inner"
+                              />
+                            </div>
+                            <div className="type-detail">
+                              {/* <h5 className="number">{item.Number}</h5> */}
+                              <div className="p text">{item.TypeName}</div>
+                            </div>
+                          </a>
                         </div>
-                      </a>
-                    </div>
-                  </div>
-                ))}
+                      </div>
+                    ))}
               </div>
             </div>
           </Card>

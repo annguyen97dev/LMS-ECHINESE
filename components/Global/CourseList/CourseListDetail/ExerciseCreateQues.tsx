@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
 import { Edit2, UserCheck } from "react-feather";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 
 const ExerciseCreateQues = () => {
   const { Option } = Select;
@@ -43,7 +43,7 @@ const ExerciseCreateQues = () => {
               <Select className="style-input"></Select>
             </Form.Item>
 
-            <Form.Item label="Question">
+            {/* <Form.Item label="Question">
               <Editor
                 apiKey="la1igo0sfogafdrl7wrj7w9j1mghl7txxke654lgzvkt86im"
                 init={{
@@ -54,7 +54,7 @@ const ExerciseCreateQues = () => {
                     "undo redo | bold italic | alignleft aligncenter alignright | code",
                 }}
               />
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item className="mb-1">
               <button className="btn btn-primary w-100">Submit</button>

@@ -10,12 +10,12 @@ import {
 	teacherApi,
 	userInformationApi,
 } from '~/apiBase';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
 import StaffSalaryForm from '../../Option/StaffSalaryForm';
-import TeacherDelete from './TeacherDelete';
 import TeacherFilterForm from './TeacherFilterForm';
 import TeacherForm from './TeacherForm';
 
@@ -30,6 +30,7 @@ const Teacher = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti} = useWrap();
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -88,7 +89,7 @@ const Teacher = () => {
 		},
 	];
 	// FILTER
-	const onFilterTeacherJobDate = (obj) => {
+	const onFilter = (obj) => {
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -124,6 +125,7 @@ const Teacher = () => {
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
+		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
 			pageSize: refValue.current.pageSize,
@@ -131,6 +133,7 @@ const Teacher = () => {
 	};
 	// ACTION SEARCH
 	const onSearch = (valueSearch, dataIndex) => {
+		setActiveColumnSearch(dataIndex);
 		setFilters({
 			...listFieldInit,
 			...refValue.current,
@@ -195,10 +198,6 @@ const Teacher = () => {
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				// setFilters({
-				//   ...listFieldInit,
-				//   ...refValue.current,
-				// });
 				showNoti('danger', 'Không tìm thấy');
 			}
 		} catch (error) {
@@ -324,43 +323,46 @@ const Teacher = () => {
 		}
 	};
 	// DELETE
-	const onDeleteTeacher = async (idx: number) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const delObj = teacherList[idx];
-			const newDelObj = {
-				...delObj,
-				Branch: delObj['Branch'].map((o) => o.ID).join(','),
-				Enable: false,
-			};
-			const res = await teacherApi.delete(newDelObj);
-			res.status === 200 && showNoti('success', res.data.message);
-			if (teacherList.length === 1) {
-				filters.pageIndex === 1
-					? setFilters({
-							...listFieldInit,
-							...refValue.current,
-							pageIndex: 1,
-					  })
-					: setFilters({
-							...filters,
-							...refValue.current,
-							pageIndex: filters.pageIndex - 1,
-					  });
-				return;
-			}
-			fetchTeacherList();
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
+	const onDeleteTeacher = (idx: number) => {
+		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: true,
 			});
-		}
+			try {
+				const delObj = teacherList[idx];
+				const newDelObj = {
+					...delObj,
+					Branch: delObj['Branch'].map((o) => o.ID).join(','),
+					Enable: false,
+				};
+				const res = await teacherApi.delete(newDelObj);
+				res.status === 200 && showNoti('success', res.data.message);
+				if (teacherList.length === 1) {
+					filters.pageIndex === 1
+						? (setFilters({
+								...listFieldInit,
+								...refValue.current,
+								pageIndex: 1,
+						  }),
+						  setTeacherList([]))
+						: setFilters({
+								...filters,
+								...refValue.current,
+								pageIndex: filters.pageIndex - 1,
+						  });
+					return;
+				}
+				fetchTeacherList();
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
 	};
 
 	const columns = [
@@ -368,12 +370,14 @@ const Teacher = () => {
 			title: 'Tỉnh/Thành phố',
 			dataIndex: 'AreaName',
 			...FilterColumn('AreaID', onSearch, onResetSearch, 'select', areaList),
+			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : '',
 		},
 		{
 			title: 'Họ và tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>,
+			className:
+				activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
 		},
 		{
 			title: 'SĐT',
@@ -382,7 +386,6 @@ const Teacher = () => {
 		{
 			title: 'Email',
 			dataIndex: 'Email',
-			render: (text) => <p className="font-weight-black">{text}</p>,
 		},
 		{
 			title: 'Ngày nhận việc',
@@ -422,16 +425,11 @@ const Teacher = () => {
 							query: {slug: _.UserInformationID},
 						}}
 					>
-						<Tooltip title="Xem phòng">
+						<Tooltip title="Xem giáo viên">
 							<a className="btn btn-icon">
 								<Info />
 							</a>
 						</Tooltip>
-						{/* <a className="btn btn-icon">
-							<Tooltip title="Chi tiết">
-								<Eye />
-							</Tooltip>
-						</a> */}
 					</Link>
 					<TeacherForm
 						isLoading={isLoading}
@@ -445,7 +443,10 @@ const Teacher = () => {
 						handleFetchBranch={fetchBranchByAreaId}
 						loadingFetchBranch={loadingFetchBranch}
 					/>
-					<TeacherDelete handleDeleteTeacher={onDeleteTeacher} index={idx} />
+					<DeleteTableRow
+						handleDelete={onDeleteTeacher(idx)}
+						text="giáo viên"
+					/>
 				</div>
 			),
 		},
@@ -471,7 +472,6 @@ const Teacher = () => {
 				columns={columns}
 				dataSource={teacherList}
 				TitlePage="Danh sách giáo viên"
-				// TitleCard={<ModalAdd />}
 				TitleCard={
 					<TeacherForm
 						isClearForm={isClearForm}
@@ -486,7 +486,8 @@ const Teacher = () => {
 				Extra={
 					<div className="extra-table">
 						<TeacherFilterForm
-							handleFilterTeacherJobDate={onFilterTeacherJobDate}
+							handleFilter={onFilter}
+							handleResetFilter={onResetSearch}
 						/>
 						<SortBox handleSort={onSort} dataOption={sortOptionList} />
 					</div>

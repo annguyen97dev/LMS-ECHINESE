@@ -1,26 +1,40 @@
-import { Table, Tooltip } from "antd";
+//@ts-nocheck
+import { Descriptions, Table, Tooltip } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import React, { Fragment, useEffect, useState } from "react";
-import { AlertTriangle, X } from "react-feather";
-import { jobApi } from "~/apiBase";
 import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student-price";
-import PowerTable from "~/components/PowerTable";
+import NestedTable from "~/components/Elements/NestedTable";
 import { useWrap } from "~/context/wrap";
 
 const CourseOfStudentExpand = (props) => {
   const { infoID } = props;
-
-  const [detail, setDetail] = useState([]);
+  const [isLoading, setIsLoading] = useState({
+    type: "",
+    status: false,
+  });
+  const [detail, setDetail] = useState<ICourseOfStudentPrice>([]);
   const { showNoti } = useWrap();
+  const [totalPage, setTotalPage] = useState(1);
 
   const fetchDetailInfo = async () => {
+    setIsLoading({
+      type: "GET_ALL",
+      status: true,
+    });
     try {
       let res = await courseStudentPriceApi.getDetail(infoID);
-      console.log("res", res.data.data);
-      //@ts-ignore
-      res.status == 200 && setDetail(res.data.data);
+      if (res.status == 200) {
+        let arr = [];
+        arr.push(res.data.data);
+        setDetail(arr);
+      }
     } catch (err) {
       showNoti("danger", err.message);
+    } finally {
+      setIsLoading({
+        type: "GET_ALL",
+        status: false,
+      });
     }
   };
 
@@ -30,33 +44,36 @@ const CourseOfStudentExpand = (props) => {
 
   const columns = [
     {
-      title: "Trung tâm thanh toán",
-      dataIndex: "PayBranchName",
-    },
-    {
       title: "Giá tiền",
       dataIndex: "Price",
+      render: (text) => <p>{Intl.NumberFormat("en-US").format(text)}</p>,
     },
     {
-      title: "Đã giảm",
+      title: "Giảm giá",
       dataIndex: "Reduced",
+      render: (text) => <p>{Intl.NumberFormat("en-US").format(text)}</p>,
     },
     {
-      title: "Đã thanh toán",
+      title: "Đã đóng",
       dataIndex: "Paid",
+      render: (text) => <p>{Intl.NumberFormat("en-US").format(text)}</p>,
     },
     {
       title: "Còn lại",
       dataIndex: "MoneyInDebt",
+      render: (text) => <p>{Intl.NumberFormat("en-US").format(text)}</p>,
     },
   ];
 
-  console.log(detail);
-
   return (
-    <Fragment>
-      <PowerTable columns={columns} dataSource={detail} />
-    </Fragment>
+    <div className="container-fluid">
+      <NestedTable
+        loading={isLoading}
+        addClass="basic-header"
+        dataSource={detail}
+        columns={columns}
+      />
+    </div>
   );
 };
 

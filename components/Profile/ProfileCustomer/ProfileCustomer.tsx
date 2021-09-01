@@ -24,14 +24,14 @@ const ProfileCustomer = (props) => {
   const [isLoading, setIsLoading] = useState({
     type: null,
     status: false,
-  })
-  const [info, setInfo] = useState<IStudent[]>([]);
+  });
+  const [info, setInfo] = useState<IStudent>();
 
   const getInfoCustomer = async () => {
     setIsLoading({
       type: "GET_INFO",
-      status: true
-    })
+      status: true,
+    });
     try {
       let res = await studentApi.getWithID(id);
       res.status == 200 && setInfo(res.data.data);
@@ -40,10 +40,10 @@ const ProfileCustomer = (props) => {
     } finally {
       setIsLoading({
         type: "GET_INFO",
-        status: false
-      })
+        status: false,
+      });
     }
-  }
+  };
 
   useEffect(() => {
     getInfoCustomer();
@@ -95,19 +95,19 @@ const ProfileCustomer = (props) => {
           <Card className="space-top-card">
             <Tabs type="card">
               <TabPane tab="Test Info" key="2" className="profile-tabs">
-                <InfoTestCard id={id}/>
+                <InfoTestCard id={id} />
               </TabPane>
               <TabPane tab="Course Joined" key="3" className="profile-tabs">
                 <InfoCourseCard id={id} />
               </TabPane>
               <TabPane tab="Payment History" key="4" className="profile-tabs">
-                <InfoPaymentCard id={id}/>
+                <InfoPaymentCard id={id} />
               </TabPane>
               <TabPane tab="Change History" key="5" className="profile-tabs">
                 <InfoChangeCard />
               </TabPane>
               <TabPane tab="Test result" key="6" className="profile-tabs">
-                <InfoTestResultCard id={id}/>
+                <InfoTestResultCard id={id} />
               </TabPane>
               <TabPane tab="Other" key="7" className="profile-tabs">
                 <InfoOtherCard />

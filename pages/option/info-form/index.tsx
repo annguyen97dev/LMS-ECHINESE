@@ -4,7 +4,7 @@ import { data } from "../../../lib/option/dataOption2";
 import InfoForm from "~/components/Global/Option/InfoForm";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import SortBox from "~/components/Elements/SortBox";
-import FilterTable from "~/components/Global/CourseList/FitlerTable";
+import FilterTable from "~/components/Global/CourseList/FilterTable";
 import LayoutBase from "~/components/LayoutBase";
 const InfoFormList = () => {
   const columns = [

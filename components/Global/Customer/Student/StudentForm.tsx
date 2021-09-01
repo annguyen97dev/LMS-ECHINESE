@@ -28,6 +28,8 @@ import {
   parentsApi,
   staffApi,
 } from "~/apiBase";
+import TimePickerField from "~/components/FormControl/TimePickerField";
+import { useRouter } from "next/router";
 
 let returnSchema = {};
 let schema = null;
@@ -61,7 +63,12 @@ const optionGender = [
 
 const StudentForm = (props) => {
   const { dataRow, listDataForm, _handleSubmit, index } = props;
-  console.log("lst", dataRow);
+  const router = useRouter();
+  const url = router.pathname;
+
+  const [isStudentDetail, setIsStudentDetail] = useState(
+    url.includes("student-list") || url.includes("student-detail")
+  );
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -74,6 +81,9 @@ const StudentForm = (props) => {
   });
   const [listData, setListData] = useState<listData>(listDataForm);
   const [valueEmail, setValueEmail] = useState();
+  const [isSearch, setIsSearch] = useState(false);
+
+  console.log("List DATA: ", listDataForm);
 
   // ------------- ADD data to list --------------
 
@@ -164,11 +174,15 @@ const StudentForm = (props) => {
         case "DistrictID":
           res = await districtApi.getAll({
             AreaID: ID,
+            pageIndex: 1,
+            pageSize: 9999,
           });
           break;
         case "WardID":
           res = await wardApi.getAll({
             DistrictID: ID,
+            pageIndex: 1,
+            pageSize: 9999,
           });
           break;
         default:
@@ -190,8 +204,6 @@ const StudentForm = (props) => {
 
   // ----- HANDLE CHANGE - AREA ----------
   const handleChange_select = (value, name) => {
-    console.log("Value is: ", value);
-
     if (name == "DistrictID") {
       form.setValue("WardID", null);
 
@@ -226,6 +238,9 @@ const StudentForm = (props) => {
     SourceInformationID: null, //int id nguồn
     ParentsOf: null, //int id phụ huynh
     CounselorsID: null,
+    AppointmentDate: null,
+    ExamAppointmentTime: null,
+    ExamAppointmentNote: null,
   };
 
   (function returnSchemaFunc() {
@@ -255,7 +270,15 @@ const StudentForm = (props) => {
           break;
         case "Branch":
           returnSchema[key] = yup.array().required("Bạn không được để trống");
-
+        case "AppointmentDate":
+          if (!dataRow) {
+            returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          }
+          break;
+        case "ExamAppointmentTime":
+          if (!dataRow) {
+            returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          }
           break;
         default:
           // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
@@ -275,6 +298,8 @@ const StudentForm = (props) => {
   const onSubmit = async (data: any) => {
     data.Branch = data.Branch.toString();
 
+    console.log("DATA SUBMIT: ", data);
+
     setIsLoading({
       type: "ADD_DATA",
       status: true,
@@ -282,8 +307,12 @@ const StudentForm = (props) => {
     let res = null;
     try {
       if (data.UserInformationID) {
-        res = await studentApi.update(data);
-        res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
+        if (isSearch) {
+          res = await studentApi.add(data);
+        } else {
+          res = await studentApi.update(data);
+          res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
+        }
       } else {
         res = await studentApi.add(data);
       }
@@ -295,7 +324,9 @@ const StudentForm = (props) => {
             ? "Cập nhật học viên thành công"
             : "Tạo học viên thành công"
         ),
-        !dataRow && (form.reset(defaultValuesInit), setImageUrl("")));
+        !dataRow &&
+          !isSearch &&
+          (form.reset(defaultValuesInit), setImageUrl("")));
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -308,7 +339,6 @@ const StudentForm = (props) => {
 
   // Search Email to compare with data
   const searchValue = async () => {
-    console.log("Value Email: ", valueEmail);
     setIsLoading({
       type: "SEARCH_EMAIL",
       status: true,
@@ -318,10 +348,13 @@ const StudentForm = (props) => {
 
       res?.status == 200 &&
         (showNoti("success", "Tìm kiếm thành công"),
-        handleDataRow(res.data.data[0]));
+        handleDataRow(res.data.data[0]),
+        setIsSearch(true));
       res?.status == 204 &&
         (showNoti("danger", "Không tìm thấy email"),
-        form.reset(defaultValuesInit));
+        form.reset(defaultValuesInit),
+        setIsSearch(false),
+        setImageUrl(""));
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -339,6 +372,9 @@ const StudentForm = (props) => {
       arrBranch.push(item.ID);
     });
     cloneRowData.Branch = arrBranch;
+
+    console.log("CloneRow: ", cloneRowData);
+
     form.reset(cloneRowData);
     cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
     cloneRowData.DistrictID && getDataWithID(cloneRowData.DistrictID, "WardID");
@@ -348,6 +384,7 @@ const StudentForm = (props) => {
   useEffect(() => {
     if (dataRow) {
       handleDataRow(dataRow);
+
       // let arrBranch = [];
       // let cloneRowData = { ...dataRow };
       // cloneRowData.Branch.forEach((item, index) => {
@@ -393,21 +430,24 @@ const StudentForm = (props) => {
                       label="Email"
                       handleChange={(value) => setValueEmail(value)}
                     />
-                    <button
-                      type="button"
-                      className="btn-search"
-                      onClick={searchValue}
-                    >
-                      {isLoading.type == "SEARCH_EMAIL" && isLoading.status ? (
-                        <Spin
-                          indicator={
-                            <LoadingOutlined style={{ fontSize: 16 }} spin />
-                          }
-                        />
-                      ) : (
-                        <SearchOutlined />
-                      )}
-                    </button>
+                    {!dataRow && (
+                      <button
+                        type="button"
+                        className="btn-search"
+                        onClick={searchValue}
+                      >
+                        {isLoading.type == "SEARCH_EMAIL" &&
+                        isLoading.status ? (
+                          <Spin
+                            indicator={
+                              <LoadingOutlined style={{ fontSize: 16 }} spin />
+                            }
+                          />
+                        ) : (
+                          <SearchOutlined />
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -435,21 +475,19 @@ const StudentForm = (props) => {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <InputTextField form={form} name="CMND" label="Số CMND" />
                 </div>
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <InputTextField
                     form={form}
                     name="CMNDRegister"
                     label="Nơi cấp CMND"
                   />
                 </div>
-                <div className="col-md-4 col-12">
+                <div className="col-md-6 col-12">
                   <DateField form={form} name="CMNDDate" label="Ngày cấp" />
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -458,6 +496,8 @@ const StudentForm = (props) => {
                     optionList={optionGender}
                   />
                 </div>
+              </div>
+              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -535,7 +575,47 @@ const StudentForm = (props) => {
                   />
                 </div>
               </div>
-
+              {/** Hẹn Test */}
+              <div className="row">
+                <div className="col-12">
+                  <Divider orientation="center">Hẹn test</Divider>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6 col-12">
+                  <SelectField
+                    mode={dataRow ? "multiple" : ""}
+                    form={form}
+                    name="Branch"
+                    label="Tên trung tâm"
+                    optionList={listData.Branch}
+                  />
+                </div>
+                <div className="col-md-6 col-12">
+                  <TimePickerField
+                    disabled={isStudentDetail && true}
+                    form={form}
+                    name="ExamAppointmentTime"
+                    label="Giờ hẹn test"
+                  />
+                </div>
+                <div className="col-md-6 col-12">
+                  <DateField
+                    disabled={isStudentDetail && true}
+                    form={form}
+                    name="AppointmentDate"
+                    label="Ngày hẹn test"
+                  />
+                </div>
+                <div className="col-md-6 col-12">
+                  <TextAreaField
+                    disabled={isStudentDetail && true}
+                    name="ExamAppointmentNote"
+                    label="Ghi chú"
+                    form={form}
+                  />
+                </div>
+              </div>
               {/*  */}
               {/** ==== Khác  ====*/}
               <div className="row">
@@ -546,24 +626,12 @@ const StudentForm = (props) => {
               <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
-                    mode="multiple"
-                    form={form}
-                    name="Branch"
-                    label="Tên trung tâm"
-                    optionList={listData.Branch}
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <SelectField
                     form={form}
                     name="AcademicPurposesID"
                     label="Mục đích học"
                     optionList={listData.Purposes}
                   />
                 </div>
-              </div>
-
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -580,10 +648,6 @@ const StudentForm = (props) => {
                     optionList={listData.SourceInformation}
                   />
                 </div>
-              </div>
-
-              {/*  */}
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <TextAreaField
                     name="Extension"

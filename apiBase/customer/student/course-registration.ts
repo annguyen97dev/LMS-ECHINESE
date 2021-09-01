@@ -14,6 +14,10 @@ class CourseRegistrationApi {
   add = (data: ICourseRegistration) => instance.post(url, data);
 
   update = (data: ICourseRegistration) => instance.put(url, data, {});
+
+  // chuyển học viên vào khóa
+  intoCourse = (data: ICourseRegistrationIntoCourse) =>
+    instance.post("/api/InsertCourse", data);
 }
 
 export const courseRegistrationApi = new CourseRegistrationApi();
