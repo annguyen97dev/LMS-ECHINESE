@@ -19,6 +19,7 @@ import moment from "moment";
 const SupplierList = () => {
   const [dataTable, setDataTable] = useState<ISupplier[]>([]);
   const [dataStaffManage, setDataStaffManage] = useState([]);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [dataDelete, setDataDelete] = useState({
     ID: null,
     Enable: null,
@@ -105,6 +106,7 @@ const SupplierList = () => {
         let res = await supplierApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -176,14 +178,17 @@ const SupplierList = () => {
   };
 
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
 
   // ON SEARCH
   const compareField = (valueSearch, dataIndex) => {
@@ -208,6 +213,8 @@ const SupplierList = () => {
       pageIndex: 1,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex);
   };
 
   // DELETE
@@ -244,6 +251,7 @@ const SupplierList = () => {
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -282,6 +290,7 @@ const SupplierList = () => {
       title: "Nhà cung cấp (NCC)",
       dataIndex: "SupplierName",
       ...FilterColumn("SupplierName", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
       render: (text) => {
         return <p className="font-weight-black">{text}</p>;
       },
@@ -363,7 +372,7 @@ const SupplierList = () => {
         loading={isLoading}
         currentPage={currentPage}
         totalPage={totalPage && totalPage}
-        getPagination={(pageNumber: number) => getPagination(pageNumber)}
+        getPagination={getPagination}
         addClass="basic-header"
         TitlePage="Supplier List"
         TitleCard={

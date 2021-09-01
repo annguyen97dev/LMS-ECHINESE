@@ -26,6 +26,7 @@ export default function FinanceInvoice() {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [dataFilter, setDataFilter] = useState([
     {
       name: "BranchID",
@@ -143,6 +144,7 @@ export default function FinanceInvoice() {
         let res = await branchApi.getAll({ selectAll: true });
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataBranch(res.data.data);
@@ -186,10 +188,13 @@ export default function FinanceInvoice() {
       ...todoApi,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex);
   };
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -213,14 +218,17 @@ export default function FinanceInvoice() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -261,14 +269,10 @@ export default function FinanceInvoice() {
       // ...FilterColumn("center")
     },
     {
-      title: "Trung tâm",
-      dataIndex: "BranchName",
-      // ...FilterColumn("center")
-    },
-    {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {
@@ -287,25 +291,6 @@ export default function FinanceInvoice() {
           </p>
         );
       },
-    },
-    {
-      title: "Lý do",
-      dataIndex: "Reason",
-      // ...FilterColumn("fnReasonPayment"),
-    },
-    { title: "Trung tâm", dataIndex: "center" },
-    {
-      title: "Học viên",
-      dataIndex: "nameStudent",
-
-      render: (a) => <p className="font-weight-blue">{a}</p>,
-    },
-    { title: "Số điện thoại", dataIndex: "tel" },
-    {
-      title: "Số tiền",
-      dataIndex: "cost",
-
-      render: (a) => <p className="font-weight-black">{a}</p>,
     },
     {
       title: "Lý do",
@@ -364,7 +349,7 @@ export default function FinanceInvoice() {
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
-      getPagination={(pageNumber: number) => getPagination(pageNumber)}
+      getPagination={getPagination}
       addClass="basic-header"
       TitlePage="Danh sách phiếu thu"
       // TitleCard={<StudyTimeForm showAdd={true} />}

@@ -17,6 +17,7 @@ import { RotateCcw } from "react-feather";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 // import TinyMCE from "~/components/TinyMCE";
+import EditorBase from "~/components/Elements/EditorBase";
 const { Panel } = Collapse;
 
 const ConfigVoucherInvoiceForm = (props) => {
@@ -46,9 +47,14 @@ const ConfigVoucherInvoiceForm = (props) => {
     });
   });
 
-  const onChangeTinyMCE = (value) => {
-    setValue("NotificationContent", value);
-  };
+  // const onChangeTinyMCE = (value) => {
+  //   setValue("NotificationContent", value);
+  // };
+
+  const changeContractContent = (value) => {
+    // console.log(value);
+		setValue("NotificationContent", value);
+	};
 
   useEffect(() => {
     if (isModalVisible) {
@@ -116,18 +122,17 @@ const ConfigVoucherInvoiceForm = (props) => {
                 </Form.Item>
               </div>
             </div>
-            {/* <div className="row">
-              <div className="col-12">
-                <Form.Item 
-                    label="Nội dung" 
-                    name="Nội dung"
-                >
-                    <TinyMCE initialValue={props.rowData?.ConfigContent} onChangeTinyMCE={(value) => setValue("ConfigContent", value)}/>
-                </Form.Item>
-              </div>
-            </div>
             <div className="row">
-                <div className="col-12">
+              <div className="col-12">
+                  <div className="textarea-editor">
+                    <Form.Item 
+                      label="Nội dung" 
+                      name="Nội dung"
+                    >
+                      <EditorBase 
+                        handleChangeDataEditor={changeContractContent}
+                      />
+                    </Form.Item>
                     <Popover
                         content={
                             <>
@@ -151,8 +156,9 @@ const ConfigVoucherInvoiceForm = (props) => {
                     >
                         <a className="btn-code-editor" type="primary">Mã hướng dẫn</a>
                     </Popover>
-                </div>
-            </div> */}
+                  </div>
+              </div>
+            </div>
             <div className="row ">
               <div className="col-12">
                 <button type="submit" className="btn btn-primary w-100">

@@ -29,6 +29,7 @@ const FileExtension = (props: any) => {
         res.status == 200 && setDocument(res.data.data);
         if (res.status == 204) {
           showNoti("danger", "Không tìm thấy dữ liệu!");
+          setDocument(null);
         }
       } catch (error) {
         showNoti("danger", error.message);
@@ -48,29 +49,37 @@ const FileExtension = (props: any) => {
         <div className="pb-3 font-weight-black">Tài liệu</div>
         <Spin spinning={isLoading}>
           <div className="row">
-            {document.map((doc) => (
-              <div className="col-12 col-md-4">
-                <div className="file-man-box">
-                  <div className="file-img-box">
-                    <img
-                      src="https://coderthemes.com/highdmin/layouts/assets/images/file_icons/doc.svg"
-                      alt="icon"
-                    />
-                  </div>
+            {document != null ? (
+              document.map((doc) => (
+                <div className="col-12 col-md-4">
+                  <div className="file-man-box">
+                    <div className="file-img-box">
+                      <img
+                        src="https://coderthemes.com/highdmin/layouts/assets/images/file_icons/doc.svg"
+                        alt="icon"
+                      />
+                    </div>
 
-                  <a href={doc.DocumentLink} className="file-download">
-                    <i className="fa fa-download"></i>
-                  </a>
+                    <a href={doc.DocumentLink} className="file-download">
+                      <i className="fa fa-download"></i>
+                    </a>
 
-                  <div className="file-man-title">
-                    <h5 className="mb-0 text-overflow">{doc.DocumentName}</h5>
-                    <p className="mb-0">
-                      <small>0.0 kb</small>
-                    </p>
+                    <div className="file-man-title">
+                      <div className="mb-0 text-overflow">
+                        {doc.DocumentName}
+                      </div>
+                      <p className="mb-0">
+                        <small>&nbsp;</small>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="font-light-red">
+                Không tìm thấy tài liệu trong giáo trình này!
+              </p>
+            )}
           </div>
         </Spin>
 

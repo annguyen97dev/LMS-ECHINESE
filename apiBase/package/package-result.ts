@@ -14,6 +14,10 @@ class PackageResultApi {
   add = (data: ISetPackageResult) => instance.post(url, data);
 
   update = (data: ISetPackageResult) => instance.put(url, data, {});
+
+  // tự động chia đều giáo viên chấm bài
+
+  updateTeacher = () => instance.put("/api/UpdateTeacherOfSetPackageResult");
 }
 
 export const packageResultApi = new PackageResultApi();

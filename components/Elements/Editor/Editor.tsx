@@ -19,9 +19,17 @@ import { format } from "path";
 // let keys = "";
 let arrKey = [];
 let countEnter = 0;
+let cloneOffset = 0;
 
 const EditorSummernote = (props) => {
-  const { getDataEditor, isReset, questionContent, addQuestion } = props;
+  const {
+    getDataEditor,
+    isReset,
+    questionContent,
+    addQuestion,
+    handleDelete,
+    deleteAllQuestion,
+  } = props;
   const [valueEditor, setValueEditor] = useState(questionContent);
   const [propetyEditor, setPropetyEditor] = useState({
     textNode: null,
@@ -34,19 +42,23 @@ const EditorSummernote = (props) => {
   });
   const [position, setPosition] = useState(null);
   const [isAdd, setIsAdd] = useState(false);
-  const [listID, setListID] = useState([]);
+  const [reloadContent, setReloadContent] = useState(false);
+  // const [listID, setListID] = useState([]);
   const [listInput, setListInput] = useState([]);
 
-  // console.log("Propety: ", propetyEditor);
+  console.log("Propety: ", propetyEditor);
   // console.log("Value editor: ", valueEditor);
   // console.log("Count Enter: ", countEnter);
   // console.log("Position is: ", position);
   // console.log("Key Editor: ", keyEditor);
+  // console.log("List Input: ", listInput);
+  // console.log("Is Focus: ", isFocus);
+  console.log("Position: ", position);
 
   const formatKey = (e) => {
     switch (e.keyCode) {
       // case 32:
-      //   arrKey.push("&nbsp");
+      //   arrKey.push("&nbsp;");
       //   break;
       case 8: // backspace
         arrKey.splice(arrKey.length - 1, 1);
@@ -57,29 +69,54 @@ const EditorSummernote = (props) => {
             arrKey = [];
           }
         }
+
+        cloneOffset--;
+        console.log("clone offset: ", cloneOffset);
+
+        // let offset = propetyEditor.offset;
+        // console.log("offset này: ", offset);
+        // offset--;
+
+        setPropetyEditor({
+          ...propetyEditor,
+        });
         break;
       case 13: // enter
         countEnter++;
         arrKey = [];
         break;
       default:
-        if (e.keyCode !== 32) {
-          arrKey.push(e.key);
-        }
+        arrKey.push(e.key);
         break;
     }
+
+    console.log("Arr Key: ", arrKey);
 
     // Remove backspace khỏi mảng
     let newArr = arrKey.filter((item) => item !== "Backspace");
 
-    // console.log("NewArr: ", newArr);
+    // Bóc tách và xóa backspace
+    for (let i = 0; i < 10; i++) {
+      if (newArr[newArr.length - 1] == " ") {
+        newArr.splice(newArr.length - 1, 1);
+      } else {
+        break;
+      }
+    }
+    for (let i = 0; i < 5; i++) {
+      if (newArr[0] == " ") {
+        newArr.splice(0, 1);
+      } else {
+        break;
+      }
+    }
 
     return newArr;
   };
 
   // ON KEY UP
   const onKeyDown = (e) => {
-    // console.log("E KEY UP: ", e);
+    console.log("E KEY UP: ", e);
     let node = null;
     let id = null;
 
@@ -103,10 +140,10 @@ const EditorSummernote = (props) => {
     });
 
     // Reset propety editor
-    setPropetyEditor({
-      textNode: null,
-      offset: null,
-    });
+    // setPropetyEditor({
+    //   textNode: null,
+    //   offset: null,
+    // });
   };
 
   // ON CHANGE
@@ -116,6 +153,8 @@ const EditorSummernote = (props) => {
 
     getDataEditor(content);
     setValueEditor(content);
+
+    // console.log("Content nha: ", content);
   };
 
   // ON FOCUS
@@ -139,7 +178,7 @@ const EditorSummernote = (props) => {
       textNode = range.offsetNode;
       offset = range.offset;
     } else {
-      console.log("Không hỗ trợ caretPositionFromPoint");
+      console.log("Not support caretPositionFromPoint");
       return;
     }
 
@@ -147,34 +186,42 @@ const EditorSummernote = (props) => {
       textNode: textNode,
       offset: offset,
     });
+    cloneOffset = offset;
   };
 
   // Thao tác click add input vào đoạn văn
   const handleAddSpace = () => {
     // On add space
     const onAddSpace = () => {
+      let inputID = createInputID();
+
+      // Check add set id for input
       let replacement = propetyEditor.textNode.splitText(propetyEditor.offset);
       let inputE = document.createElement("input");
       inputE.className = "space-editor";
+      inputE.id = inputID.toString();
+      // inputE.value = `(${(inputID + 1).toString()})`;
+      inputE.setAttribute("value", `(${(inputID + 1).toString()})`);
 
       propetyEditor.textNode.parentNode.insertBefore(inputE, replacement);
       setPropetyEditor({ ...propetyEditor });
+      addQuestion(inputID);
+
+      // Reload Content
+      setReloadContent(true);
+      setTimeout(() => {
+        setReloadContent(false);
+      }, 200);
     };
     // ---------------------//
 
     if (!isFocus) {
       setIsAdd(true);
-      // setKeyEditor({
-      //   id: "",
-      //   key: "",
-      // });
     } else {
       if (propetyEditor.textNode && propetyEditor.textNode.nodeType == 3) {
         onAddSpace();
       }
     }
-    // handle add question in form (props)
-    addQuestion();
   };
 
   // UPLOAD IMAGES
@@ -189,29 +236,20 @@ const EditorSummernote = (props) => {
     }
   };
 
-  // CREATE RANDOM ID
-  const randomID = () => {
-    let rID = null;
-
-    // Check exist id
-    if (listID.length > 0) {
-      for (let i = 0; i < 1000; i++) {
-        rID = Math.floor(Math.random() * 100 + 1);
-        if (listID.includes(rID)) {
-          continue;
-        } else {
-          listID.push(rID);
-          setListID([...listID]);
-          break;
-        }
-      }
+  // create input ID
+  const createInputID = () => {
+    let inputID = null;
+    // Check add set id for input
+    if (listInput.length == 0) {
+      inputID = 0;
     } else {
-      rID = Math.floor(Math.random() * 100 + 1);
-      listID.push(rID);
-      setListID([...listID]);
+      inputID = listInput[listInput.length - 1] + 1;
     }
 
-    return rID;
+    listInput.push(inputID);
+    setListInput([...listInput]);
+
+    return inputID;
   };
 
   // HANDLE RESET
@@ -219,22 +257,29 @@ const EditorSummernote = (props) => {
     isReset && ReactSummernote.reset();
   }, [isReset]);
 
-  // HANDLE ENTER
+  // HANDLE ENTER ADD ID
   useEffect(() => {
     setTimeout(() => {
       let tagP = document.querySelectorAll(".note-editable p"); // Get node element in editor
       let nodeP = tagP.item(countEnter);
 
-      // let rID = randomID();
-      if (nodeP.hasAttribute("id")) {
-        if (countEnter > 0) {
-          let nodePBefore = tagP.item(countEnter - 1);
-          if (nodeP.id == nodePBefore.id) {
-            nodeP.id = countEnter.toString();
+      if (nodeP) {
+        if (nodeP.hasAttribute("id")) {
+          if (countEnter > 0) {
+            let nodePBefore = tagP.item(countEnter - 1);
+            if (nodeP.id == nodePBefore.id) {
+              nodeP.id = countEnter.toString();
+            }
           }
+        } else {
+          if (countEnter > 0) {
+            let nodePBefore = tagP.item(countEnter - 1);
+            if (nodePBefore && !nodePBefore.hasAttribute("id")) {
+              nodePBefore.id = (countEnter - 1).toString();
+            }
+          }
+          nodeP.id = countEnter.toString();
         }
-      } else {
-        nodeP.id = countEnter.toString();
       }
     }, 200);
   }, [countEnter]);
@@ -242,68 +287,144 @@ const EditorSummernote = (props) => {
   // HANDLE CLICK AND HOVER
   useEffect(() => {
     let tagP = document.querySelectorAll(".note-editable p"); // Get node element in editor
+    let spaceEditor = document.querySelectorAll(".space-editor");
 
-    tagP.forEach((item, index) => {
-      // ON CLICK HTML NODE
-      item.addEventListener("click", (e) => {
-        onFocus(e);
-        setKeyEditor({
-          id: "",
-          key: "",
-        });
-        // keys = "";
-        arrKey = [];
-        return false;
+    // Check space is deleted
+    let newList = [];
+    if (spaceEditor) {
+      spaceEditor.forEach((item) => {
+        item.id && newList.push(item.id);
       });
+    }
 
-      // ON HOVER HTML NODE
-      item.addEventListener("mouseover", (e) => {
-        let id = item.id;
-        countEnter = parseInt(id);
-      });
-
-      if (item.textContent.includes(keyEditor.key)) {
-        setPosition(
-          item.textContent.indexOf(keyEditor.key) + keyEditor.key.length + 1
-        );
+    if (listInput.length > 0) {
+      let difID = listInput.filter((x) => !newList.includes(x.toString()));
+      // console.log("New List: ", newList);
+      // console.log("Input list: ", listInput);
+      // console.log("difID: ", difID);
+      if (difID.length > 0) {
+        handleDelete(difID[0]);
+        // let indexID = listInput.findIndex((x) => x === difID[0]);
+        let indexID = listInput.indexOf(difID[0]);
+        listInput.splice(indexID, 1);
+        setListInput([...listInput]);
       }
-    });
+    }
+    // Check delete all
+    if (valueEditor === "<p><br></p>" || valueEditor === '<p id="0"><br></p>') {
+      setListInput([]);
+      countEnter = 0;
+      arrKey = [];
+      deleteAllQuestion();
+      setKeyEditor({
+        id: null,
+        key: "",
+      });
+    }
+
+    if (tagP.length > 0) {
+      tagP.forEach((item, index) => {
+        // CHECK IF HAVE "SPAN" IN TAG P
+        if (item.children.length > 0) {
+          let node = item.children[0];
+          if (node && node.nodeName == "SPAN") {
+            item.innerHTML = node.innerHTML;
+          }
+        }
+
+        // ON CLICK HTML NODE
+        item.addEventListener("click", (e) => {
+          onFocus(e);
+          setKeyEditor({
+            id: "",
+            key: "",
+          });
+          // keys = "";
+          arrKey = [];
+          return false;
+        });
+
+        // ON HOVER HTML NODE
+        item.addEventListener("mouseover", (e) => {
+          if (isFocus) {
+            if (item.id) {
+              let id = item.id;
+              countEnter = parseInt(id);
+            }
+          }
+        });
+      });
+    }
   }, [valueEditor]);
 
   // HANDLE ADD INPUT
   useEffect(() => {
-    let inputID = null;
     if (isAdd) {
-      // console.log("keyEditor is: ", keyEditor);
+      let inputID = createInputID();
+      // Check add set id for input
+      // if (listInput.length == 0) {
+      //   inputID = 0;
+      // } else {
+      //   inputID = listInput[listInput.length - 1] + 1;
+      //   console.log("kiểm tra: ", listInput[listInput.length - 1]);
+      // }
+
+      // listInput.push(inputID);
+
+      // setListInput([...listInput]);
+      // --------------------- //
+
+      let editable = document.querySelectorAll(".note-editable");
       let tagP = document.querySelectorAll(".note-editable p");
-      tagP.forEach((item) => {
-        // console.log("Content is: ", item.innerHTML);
-        if (
-          item.textContent.includes(keyEditor.key) &&
-          item.id === keyEditor.id
-        ) {
-          let content = item.innerHTML;
 
-          // Check add set id for input
-          if (listInput.length == 0) {
-            inputID = 0;
-          } else {
-            inputID = listInput.length;
+      // Sau khi backspace tất cả thì mất phần tử <p> => check xem nếu ko tồn tại thì add space thẳng trong editor và ngược lại
+      if (tagP.length == 0) {
+        let content = editable[0].innerHTML;
+        content = content.replace(
+          keyEditor.key,
+          keyEditor.key +
+            `<input id="${inputID}" class='space-editor' value="(${
+              inputID + 1
+            })">`
+        );
+        editable[0].innerHTML = content;
+      } else {
+        tagP.forEach((item) => {
+          if (
+            item.textContent.includes(keyEditor.key) &&
+            item.id === keyEditor.id
+          ) {
+            let content = item.innerHTML;
+
+            content = content.replace(
+              keyEditor.key,
+              keyEditor.key +
+                `<input id="${inputID}" class='space-editor' value="(${
+                  inputID + 1
+                })">`
+            );
+            item.innerHTML = content;
           }
-          listInput.push(inputID);
-          setListID([...listInput]);
-          // --------------------- //
+        });
+      }
 
-          content = content.replace(
-            keyEditor.key,
-            keyEditor.key + `<input id="${inputID}" class='space-editor'>`
-          );
-          // console.log("New Content is: ", content);
-          item.innerHTML = content;
-        }
-      });
+      // Reset content
+      setReloadContent(true);
+      setTimeout(() => {
+        setReloadContent(false);
+      }, 200);
+      // handle add question in form (props)
+      addQuestion(inputID);
     }
   }, [isAdd]);
+
+  useEffect(() => {
+    if (reloadContent) {
+      let allContentNode = document.querySelectorAll(".note-editable");
+      let allContent = allContentNode[0].innerHTML;
+      getDataEditor(allContent);
+    }
+  }, [reloadContent]);
 
   return (
     <div className="wrap-editor">

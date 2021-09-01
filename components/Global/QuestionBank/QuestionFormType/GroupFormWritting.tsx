@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
-import { Form, Upload, Spin, Button } from "antd";
+import { Form, Upload, Spin, Button, Input } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { exerciseGroupApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, CloseOutlined } from "@ant-design/icons";
+
+let AnsID = 0;
+let QuesID = -1;
 
 const GroupFormWritting = (props) => {
   const { isSubmit, questionData, changeIsSubmit, visible } = props;
@@ -24,7 +27,7 @@ const GroupFormWritting = (props) => {
   const [linkUpload, setLinkUpload] = useState(null);
   const [loadingUpload, setLoadingUpload] = useState(false);
 
-  console.log("Question Data: ", questionData);
+  console.log("Question Data Form: ", questionData);
 
   // Upload file audio
   const onchange_UploadFile = async (info) => {
@@ -54,7 +57,7 @@ const GroupFormWritting = (props) => {
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
-    // console.log("Value Editor Form: ", dataEditor);
+    console.log("Value Editor Form: ", dataEditor);
     questionDataForm.Content = dataEditor;
     setQuestionDataForm({ ...questionDataForm });
   };
@@ -69,71 +72,154 @@ const GroupFormWritting = (props) => {
     setQuestionDataForm({ ...questionDataForm });
   };
 
-  const addQuestion = () => {};
+  // HANDLE DELETE ALL QUESTION
+  const deleteAllQuestion = () => {
+    questionDataForm.ExerciseList.splice(
+      0,
+      questionDataForm.ExerciseList.length
+    );
+    setQuestionDataForm({ ...questionDataForm });
+  };
 
-  // ON CHANGE IS CORRECT
-  // const onChange_isCorrect = (e, AnswerID) => {
-  //   console.log(`checked = ${e.target.checked}`);
-  //   let checked = e.target.checked;
+  // HANDLE DELETE QUESTION
+  const deleteQuestion = (QuestionID) => {
+    console.log("Question ID cần xóa: ", QuestionID);
+    let QuestionIndex = questionDataForm.ExerciseList.findIndex(
+      (item) => item.ID == QuestionID
+    );
 
-  //   // Xóa các isTrue còn lại (vì là câu hỏi chọn 1 đáp án)
-  //   questionData.ExerciseAnswer.forEach((item) => {
-  //     item.isTrue = false;
-  //   });
+    questionDataForm.ExerciseList.splice(QuestionIndex, 1);
+    setQuestionDataForm({ ...questionDataForm });
+  };
 
-  //   // Tìm vị trí sau đó gán correct vào
-  //   let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
-  //     (item) => item.ID == AnswerID
-  //   );
-  //   questionDataForm.ExerciseAnswer[AnswerIndex].isTrue = checked;
-  //   setQuestionDataForm({ ...questionDataForm });
-  // };
+  // HANDLE ADD QUESTION
+  const addQuestion = (inputID) => {
+    AnsID++;
+    let objAns = {
+      ID: inputID,
+      Content: "",
+      ExerciseGroupID: questionDataForm.ID,
+      SubjectID: questionDataForm.SubjectID,
+      SubjectName: questionDataForm.SubjectName,
+      DescribeAnswer: "",
+      Level: questionDataForm.Level,
+      LevelName: questionDataForm.LevelName,
+      LinkAudio: null,
+      Type: questionDataForm.Type,
+      TypeName: questionDataForm.TypeName,
+      ExerciseAnswer: [
+        {
+          ID: AnsID,
+          AnswerContent: "",
+          isTrue: false,
+          Enable: true,
+          isAdd: true,
+        },
+      ],
+    };
+    questionDataForm.ExerciseList.push(objAns);
+    setQuestionDataForm({ ...questionDataForm });
+  };
 
-  // ON CHANGE TEXT
-  // const onChange_text = (e, AnswerID) => {
-  //   let text = e.target.value;
-  //   let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
-  //     (item) => item.ID == AnswerID
-  //   );
-  //   questionDataForm.ExerciseAnswer[AnswerIndex].AnswerContent = text;
-  //   setQuestionDataForm({ ...questionDataForm });
-  // };
+  // ====== HANDLE ADD ANSWER ======
+  const handleAddAnswer = (questionID: number) => {
+    AnsID++;
+    questionDataForm.ExerciseList.every((item) => {
+      if (item.ID == questionID) {
+        item.ExerciseAnswer.push({
+          ID: AnsID,
+          AnswerContent: "",
+          isTrue: false,
+          Enable: true,
+          isAdd: true,
+        });
+        return false;
+      }
+      return true;
+    });
+
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
+  // ====== ON CHANGE TEXT ======
+  const onChange_text = (e: any, AnswerID: number, QuestionID) => {
+    // - Get value
+    let text = e.target.value;
+
+    // - Get question index
+    let QuestionIndex = questionDataForm.ExerciseList.findIndex(
+      (item) => item.ID == QuestionID
+    );
+
+    // - Get answer index
+    let AnswerIndex = questionDataForm.ExerciseList[
+      QuestionIndex
+    ].ExerciseAnswer.findIndex((item) => item.ID == AnswerID);
+
+    // - add text
+    questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
+      AnswerIndex
+    ].AnswerContent = text;
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
+  // ====== DELETE ANSWER ======
+  const deleteAnswerItem = (AnswerID: number, QuestionID: number) => {
+    // - Get question index
+    let QuestionIndex = questionDataForm.ExerciseList.findIndex(
+      (item) => item.ID == QuestionID
+    );
+
+    // - Get answer index
+    let AnswerIndex = questionDataForm.ExerciseList[
+      QuestionIndex
+    ].ExerciseAnswer.findIndex((item) => item.ID == AnswerID);
+
+    // answerList.splice(AnswerIndex, 1);
+    questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
+      AnswerIndex
+    ].Enable = false;
+
+    // setAnswerList([...answerList]);
+    setQuestionDataForm({ ...questionDataForm });
+  };
 
   // SUBMIT FORM
   const handleSubmitQuestion = async () => {
+    console.log("DataSubmit: ", questionDataForm);
     let res = null;
-    let newData = {
-      Content: questionDataForm.Content,
-      SubjectID: questionDataForm.SubjectID,
-      Level: questionDataForm.Level,
-      Type: questionDataForm.Type,
-    };
+    // let newData = {
+    //   Content: questionDataForm.Content,
+    //   SubjectID: questionDataForm.SubjectID,
+    //   Level: questionDataForm.Level,
+    //   Type: questionDataForm.Type,
+    // };
 
-    try {
-      if (questionDataForm.ID) {
-        res = await exerciseGroupApi.update({
-          ...newData,
-          ID: questionDataForm.ID,
-        });
-      } else {
-        res = await exerciseGroupApi.add(newData);
-      }
-      if (res.status == 200) {
-        changeIsSubmit(questionDataForm.ID ? questionDataForm : res.data.data);
-        showNoti(
-          "success",
-          `${questionDataForm.ID ? "Cập nhật" : "Thêm"} Thành công`
-        );
-        if (!questionDataForm.ID) {
-          resetForm();
-        }
-        setIsResetEditor(true);
+    // try {
+    //   if (questionDataForm.ID) {
+    //     res = await exerciseGroupApi.update({
+    //       ...newData,
+    //       ID: questionDataForm.ID,
+    //     });
+    //   } else {
+    //     res = await exerciseGroupApi.add(newData);
+    //   }
+    //   if (res.status == 200) {
+    //     changeIsSubmit(questionDataForm.ID ? questionDataForm : res.data.data);
+    //     showNoti(
+    //       "success",
+    //       `${questionDataForm.ID ? "Cập nhật" : "Thêm"} Thành công`
+    //     );
+    //     if (!questionDataForm.ID) {
+    //       resetForm();
+    //     }
+    //     setIsResetEditor(true);
 
-        setTimeout(() => {
-          setIsResetEditor(false);
-        }, 500);
-      }
-    } catch (error) {}
+    //     setTimeout(() => {
+    //       setIsResetEditor(false);
+    //     }, 500);
+    //   }
+    // } catch (error) {}
   };
 
   useEffect(() => {
@@ -151,14 +237,16 @@ const GroupFormWritting = (props) => {
         <Form form={form} layout="vertical" onFinish={onSubmit}>
           <div className="container-fluid">
             <div className="row">
-              <div className="col-12">
+              <div className="col-md-6 col-12">
                 <Form.Item name="Question" label="Nội dung">
                   <Editor
-                    handleChange={(value) => getDataEditor(value)}
+                    deleteAllQuestion={deleteAllQuestion}
+                    handleDelete={(quesID: number) => deleteQuestion(quesID)}
+                    handleChange={(value: string) => getDataEditor(value)}
                     isReset={isResetEditor}
                     questionContent={questionDataForm?.Content}
                     questionData={questionDataForm}
-                    addQuestion={() => addQuestion()}
+                    addQuestion={(inputID: number) => addQuestion(inputID)}
                   />
                 </Form.Item>
                 <Form.Item label="Tải lên link Audio">
@@ -174,6 +262,61 @@ const GroupFormWritting = (props) => {
                     </div>
                   </Upload>
                 </Form.Item>
+              </div>
+              <div
+                className="col-md-6 col-12"
+                style={{ borderLeft: "2px dotted #dbdbdb" }}
+              >
+                <p
+                  className="style-label"
+                  style={{ textDecoration: "underline" }}
+                >
+                  Đáp án
+                </p>
+                {questionData?.ExerciseList?.map((itemQues, index) => (
+                  <div key={index}>
+                    <p
+                      className="mt-4"
+                      style={{ fontWeight: 500, color: "#525252" }}
+                    >
+                      Câu ({itemQues.ID + 1})
+                    </p>
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => handleAddAnswer(itemQues.ID)}
+                    >
+                      Thêm đáp án
+                    </button>
+                    <div className="row">
+                      {itemQues.ExerciseAnswer?.map(
+                        (itemAns, index) =>
+                          itemAns.Enable && (
+                            <div className="col-md-6 col-12" key={index}>
+                              <div className="row-ans mt-3">
+                                <Form.Item>
+                                  <Input
+                                    value={itemAns.AnswerContent}
+                                    className="style-input"
+                                    onChange={(e) =>
+                                      onChange_text(e, itemAns.ID, itemQues.ID)
+                                    }
+                                  ></Input>
+                                </Form.Item>
+                                <button
+                                  className="delete-ans"
+                                  onClick={() =>
+                                    deleteAnswerItem(itemAns.ID, itemQues.ID)
+                                  }
+                                >
+                                  <CloseOutlined />
+                                </button>
+                              </div>
+                            </div>
+                          )
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

@@ -22,6 +22,7 @@ const DocumentList = (props) => {
         let res = await documentCategoryApi.getAll({
           pageIndex: 1,
           pageSize: 99999,
+          CurriculumnID: 0,
         });
         //@ts-ignore
         res.status == 200 && setCategoryDoc(res.data.data);
@@ -42,15 +43,11 @@ const DocumentList = (props) => {
 
   return (
     <div className="h-100">
-      <Card title="Document course" className="h-100">
+      <Card title="Tài liệu" className="h-100">
         <div className="row">
           <div className="col-3">
             <div className="pb-3 font-weight-black">Giáo trình</div>
-
-            <Menu
-              // defaultSelectedKeys={["1"]}
-              mode="vertical"
-            >
+            <Menu mode="vertical">
               {categoryDoc.map((cate) => (
                 <Menu.Item
                   key={cate.CategoryName}

@@ -5,6 +5,7 @@ import { Roles } from "~/lib/roles/listRoles";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 import ReactHtmlParser from "react-html-parser";
+import EditorBase from "~/components/Elements/EditorBase";
 
 const NotificationForm = React.memo((props: any) => {
   const { Option } = Select;
@@ -39,9 +40,10 @@ const NotificationForm = React.memo((props: any) => {
     });
   });
 
-  const onChangeTinyMCE = (value) => {
-    setValue("NotificationContent", value);
-  };
+  const changeContractContent = (value) => {
+    // console.log(value);
+		setValue("NotificationContent", value);
+	};
 
   useEffect(() => {
     if (isModalVisible) {
@@ -94,8 +96,8 @@ const NotificationForm = React.memo((props: any) => {
                 </Form.Item>
               </div>
               <div className="col-4">
-                <Form.Item label="Send email" name="Send email">
-                  <Switch onChange={onChange} />
+                <Form.Item label="Send email">
+                  <Switch onChange={onChange} checked={sendMail}/>
                 </Form.Item>
               </div>
             </div>
@@ -171,8 +173,12 @@ const NotificationForm = React.memo((props: any) => {
               </div>
             </div>
             {/*  */}
-            <Form.Item label="Nội dung thông báo" name="Nội dung thông báo">
-              {/* <TinyMCE onChangeTinyMCE={(value) => onChangeTinyMCE(value)}/> */}
+            <Form.Item label="Nội dung thông báo">
+              <div className="textarea-editor">
+                <EditorBase 
+                  handleChangeDataEditor={changeContractContent}
+                />
+              </div>
             </Form.Item>
             <div className="row ">
               <div className="col-12">

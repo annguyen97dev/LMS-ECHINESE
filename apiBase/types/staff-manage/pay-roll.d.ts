@@ -1,4 +1,4 @@
-type IStaff = IBaseApi<{
+type IPayRoll = IBaseApi<{
   ID: number;
   UserInformationID: number;
   FullNameUnicode: string;

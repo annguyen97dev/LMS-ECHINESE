@@ -72,3 +72,4 @@ export {packageApi} from './package/package';
 export {staffOfTaskGroupApi, taskApi, taskGroupApi} from './staff-manage/task';
 export {documentScheduleApi} from './course-detail/document-schedule';
 export {packageStudentApi} from './package/package-student';
+export {backgroundNewsFeedApi} from './newsfeed/background-newsfeed';

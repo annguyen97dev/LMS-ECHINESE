@@ -83,7 +83,7 @@ const ReserveCourseForm = React.memo((props: any) => {
                 >
                   <Input
                     className="style-input"
-                    disabled
+                    readOnly={true}
                     defaultValue={infoDetail.FullNameUnicode}
                   />
                 </Form.Item>

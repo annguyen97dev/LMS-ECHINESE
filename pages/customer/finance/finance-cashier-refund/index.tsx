@@ -24,6 +24,7 @@ export default function FinanceRefund() {
     type: "",
     status: false,
   });
+  const [activeColumnSearch, setActiveColumnSearch] = useState('');
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [dataFilter, setDataFilter] = useState([
@@ -133,6 +134,7 @@ export default function FinanceRefund() {
         let res = await refundsApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          handleReset();
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -204,10 +206,13 @@ export default function FinanceRefund() {
       ...todoApi,
       ...clearKey,
     });
+
+    setCurrentPage(pageIndex)
   };
 
   // HANDLE RESET
   const handleReset = () => {
+    setActiveColumnSearch('');
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -231,14 +236,17 @@ export default function FinanceRefund() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      pageIndex: pageIndex,
-    });
-  };
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+		  ...todoApi,
+		//   ...listFieldSearch,
+		  pageIndex: pageIndex,
+		  pageSize: pageSize
+		});
+	};
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -283,6 +291,7 @@ export default function FinanceRefund() {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     // {
@@ -349,7 +358,7 @@ export default function FinanceRefund() {
       loading={isLoading}
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
-      getPagination={(pageNumber: number) => getPagination(pageNumber)}
+      getPagination={getPagination}
       addClass="basic-header"
       TitlePage="Danh sách yêu cầu hoàn tiền"
       dataSource={dataTable}

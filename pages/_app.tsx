@@ -75,7 +75,7 @@ export default function App({ Component, pageProps }) {
       <AuthProvider session={pageProps.session}>
         <WrapProvider>
           <Layout>
-            <Component {...pageProps} />
+              <Component {...pageProps} />
           </Layout>
         </WrapProvider>
       </AuthProvider>

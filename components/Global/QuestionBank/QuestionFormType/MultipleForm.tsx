@@ -71,6 +71,31 @@ const MultipleForm = (props) => {
     setQuestionDataForm({ ...questionDataForm });
   };
 
+  // HANLDE ADD ANSWER
+  const handleAddAnswer = () => {
+    AnsID++;
+    questionDataForm.ExerciseAnswer.push({
+      ID: AnsID,
+      AnswerContent: "",
+      isTrue: false,
+      Enable: true,
+      isAdd: true,
+    });
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
+  // HANDLE DELETE ANSWER ITEM
+  const deleteAnswerItem = async (AnswerID) => {
+    let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
+      (item) => item.ID == AnswerID
+    );
+    // answerList.splice(AnswerIndex, 1);
+    questionDataForm.ExerciseAnswer[AnswerIndex].Enable = false;
+
+    // setAnswerList([...answerList]);
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
   // SUBMIT FORM
   const handleSubmitQuestion = async () => {
     console.log("DATA SUBMIT IN FORM: ", questionDataForm);
@@ -105,31 +130,6 @@ const MultipleForm = (props) => {
         }, 500);
       }
     } catch (error) {}
-  };
-
-  // HANLDE ADD ANSWER
-  const handleAddAnswer = () => {
-    AnsID++;
-    questionDataForm.ExerciseAnswer.push({
-      ID: AnsID,
-      AnswerContent: "",
-      isTrue: false,
-      Enable: true,
-      isAdd: true,
-    });
-    setQuestionDataForm({ ...questionDataForm });
-  };
-
-  // HANDLE DELETE ANSWER ITEM
-  const deleteAnswerItem = async (AnswerID) => {
-    let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
-      (item) => item.ID == AnswerID
-    );
-    // answerList.splice(AnswerIndex, 1);
-    questionDataForm.ExerciseAnswer[AnswerIndex].Enable = false;
-
-    // setAnswerList([...answerList]);
-    setQuestionDataForm({ ...questionDataForm });
   };
 
   useEffect(() => {
