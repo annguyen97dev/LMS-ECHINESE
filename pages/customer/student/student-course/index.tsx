@@ -57,15 +57,6 @@ const CourseStudent = () => {
       ),
     },
     {
-      title: "Kết quả thi",
-      dataIndex: "Examresult",
-      render: (type) => (
-        <Fragment>
-          {type == "" ? <div>Chưa có</div> : <span>{type}</span>}
-        </Fragment>
-      ),
-    },
-    {
       title: "Cam kết ",
       dataIndex: "Commitment",
     },
@@ -104,8 +95,6 @@ const CourseStudent = () => {
             }}
             currentPage={currentPage}
           />
-
-          {/* <RefundCourse /> */}
         </Fragment>
       ),
     },

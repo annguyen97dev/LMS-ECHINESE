@@ -358,7 +358,7 @@ export const dataMenu = [
 
   {
     MenuName: "tab-document",
-    MenuTitle: "Document List",
+    MenuTitle: "Thư viện",
     MenuKey: "/document-list",
     MenuItem: [
       {
@@ -539,6 +539,13 @@ export const dataMenu = [
         Key: "/package/examiner-list",
         Route: "/package/examiner-list",
         Text: "Danh sách chấm gói bài",
+        Icon: "",
+      },
+      {
+        ItemType: "single",
+        Key: "/package/package-set-result",
+        Route: "/package/package-set-result",
+        Text: "Kết quả gói bài",
         Icon: "",
       },
       {

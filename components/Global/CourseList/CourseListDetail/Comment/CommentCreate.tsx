@@ -67,7 +67,6 @@ const CommentCreate = React.memo((props: any) => {
                   ]}
                 >
                   <TextArea
-                    className="style-input"
                     onChange={(e) => setValue("Note", e.target.value)}
                     allowClear={true}
                   />

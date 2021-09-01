@@ -4,6 +4,7 @@ import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
 import { idiomsApi } from "~/apiBase/options/idioms";
+import EditorBase from "~/components/Elements/EditorBase";
 
 const IdiomsForm = React.memo((props: any) => {
   const { idiomsId, reloadData, idiomsDetail, currentPage } = props;
@@ -12,6 +13,8 @@ const IdiomsForm = React.memo((props: any) => {
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
+  const [idiomsInput, setIdiomsInput] = useState();
+  const [isReset, setIsReset] = useState(false);
 
   const onSubmit = async (data: any) => {
     setLoading(true);
@@ -29,10 +32,15 @@ const IdiomsForm = React.memo((props: any) => {
       }
     } else {
       try {
-        let res = await idiomsApi.add({ ...data, Enable: true });
+        let res = await idiomsApi.add({
+          ...data,
+          Enable: true,
+          Idioms: idiomsInput,
+        });
         afterSubmit(res?.data.message);
         reloadData(1);
-        form.resetFields();
+        setIdiomsInput(null);
+        setIsReset(true);
       } catch (error) {
         showNoti("danger", error.message);
         setLoading(false);
@@ -77,7 +85,7 @@ const IdiomsForm = React.memo((props: any) => {
       )}
 
       <Modal
-        title={<>{idiomsId ? "Thêm mới" : "Cập nhật"}</>}
+        title={<>{idiomsId ? "Cập nhật" : "Thêm mới"}</>}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -87,17 +95,23 @@ const IdiomsForm = React.memo((props: any) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item
-                  name="Idioms"
                   label="Câu thành ngữ"
                   rules={[
                     { required: true, message: "Vui lòng điền đủ thông tin!" },
                   ]}
                 >
-                  <Input
-                    className="style-input"
-                    onChange={(e) => setValue("Idioms", e.target.value)}
-                    allowClear={true}
+                  <EditorBase
+                    content={idiomsDetail ? idiomsDetail.Idioms : ""}
+                    handleChangeDataEditor={(value) => setIdiomsInput(value)}
                   />
+                  {/* <EditorBase
+                    handleChange={(value) => setIdiomsInput(value)}
+                    onChange={(value) => {
+                      setValue("Idioms", value.target.value);
+                    }}
+                    isReset={isReset}
+                    questionContent={idiomsDetail ? idiomsDetail.Idioms : ""}
+                  /> */}
                 </Form.Item>
               </div>
             </div>
