@@ -21,9 +21,9 @@ function PaymentMethodsContent(props) {
 				style={{fontStyle: 'italic', fontWeight: 500}}
 			>
 				{paymentMethodsType === 1
-					? 'Quy trình thanh toán chuyển khoản'
-					: paymentMethodsType === 2
 					? 'Quy trình thanh toán tiền mặt'
+					: paymentMethodsType === 2
+					? 'Quy trình thanh toán chuyển khoản'
 					: null}
 			</a>
 			<Modal
@@ -42,6 +42,35 @@ function PaymentMethodsContent(props) {
 				}
 			>
 				{paymentMethodsType === 1 ? (
+					<>
+						<h6>
+							Trường Nhật Ngữ Tâm Việt xin thông báo về quy trình thanh toán
+							tiền mặt như sau:
+						</h6>
+						<div className="mg-t-20">
+							<p>
+								Sau khi tạo phiên thanh toán, quý khách vui lòng đến phòng tài
+								chính trường với đại chỉ{' '}
+								<span className="text-info">323/226 Lý Thường Kiệt P8 TB </span>{' '}
+								để thanh toán và được cấp User và Mật khẩu để đăng nhập vào
+								(các) Khóa học/Gói bài/Dịch vụ đã đăng ký.
+							</p>
+							<p>
+								Nếu cần tư vấn thêm, Quý khách vui lòng liên hệ lại chúng tôi
+								theo Thông tin liên hệ{' '}
+								<span className="text-info">SĐT: 0936-230-247</span> hoặc{' '}
+								<span className="text-info">Email: echinese.vn@gmail.com</span>{' '}
+								để được hỗ trợ kịp thời.
+							</p>
+							<p>Chân thành cảm ơn.</p>
+							<p>
+								Lưu ý: Quý khách nhấn nút{' '}
+								<span className="text-info">Thanh Toán</span> để tạo phiên thanh
+								toán.
+							</p>
+						</div>
+					</>
+				) : paymentMethodsType === 2 ? (
 					<>
 						<h6>
 							Trường Nhật Ngữ Tâm Việt xin thông báo về quy trình thanh toán
@@ -105,35 +134,6 @@ function PaymentMethodsContent(props) {
 							<p>Chân thành cảm ơn.</p>
 							<p>
 								Lưu ý: Sau khi chuyển khoản, Quý khách nhấn nút{' '}
-								<span className="text-info">Thanh Toán</span> để tạo phiên thanh
-								toán.
-							</p>
-						</div>
-					</>
-				) : paymentMethodsType === 2 ? (
-					<>
-						<h6>
-							Trường Nhật Ngữ Tâm Việt xin thông báo về quy trình thanh toán
-							tiền mặt như sau:
-						</h6>
-						<div className="mg-t-20">
-							<p>
-								Sau khi tạo phiên thanh toán, quý khách vui lòng đến phòng tài
-								chính trường với đại chỉ{' '}
-								<span className="text-info">323/226 Lý Thường Kiệt P8 TB </span>{' '}
-								để thanh toán và được cấp User và Mật khẩu để đăng nhập vào
-								(các) Khóa học/Gói bài/Dịch vụ đã đăng ký.
-							</p>
-							<p>
-								Nếu cần tư vấn thêm, Quý khách vui lòng liên hệ lại chúng tôi
-								theo Thông tin liên hệ{' '}
-								<span className="text-info">SĐT: 0936-230-247</span> hoặc{' '}
-								<span className="text-info">Email: echinese.vn@gmail.com</span>{' '}
-								để được hỗ trợ kịp thời.
-							</p>
-							<p>Chân thành cảm ơn.</p>
-							<p>
-								Lưu ý: Quý khách nhấn nút{' '}
 								<span className="text-info">Thanh Toán</span> để tạo phiên thanh
 								toán.
 							</p>

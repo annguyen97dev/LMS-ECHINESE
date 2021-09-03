@@ -169,8 +169,8 @@ function PackageStoreForm(props) {
 											label="Hình thức thanh toán"
 											style={{marginBottom: 4}}
 											radioList={[
-												{label: 'Chuyển khoản', value: 1},
-												{label: 'Tiền mặt', value: 2},
+												{label: 'Tiền mặt', value: 1},
+												{label: 'Chuyển khoản', value: 2},
 											]}
 											handleChange={(PaymentMethodsID: number) => {
 												setPaymentMethodsType(PaymentMethodsID);
