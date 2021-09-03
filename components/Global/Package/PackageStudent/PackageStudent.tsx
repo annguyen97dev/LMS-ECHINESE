@@ -1,19 +1,21 @@
 import {Card, Image, List} from 'antd';
+import Link from 'next/link';
 import React, {useEffect, useRef, useState} from 'react';
 import {packageApi, packageStudentApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import TitlePage from '~/components/Elements/TitlePage';
 import {useWrap} from '~/context/wrap';
 import {numberWithCommas} from '~/utils/functions';
-import PackageStoreFilterForm from './PackageStoreFilterForm/PackageStoreFilterForm';
-import PackageStoreForm from './PackageStoreForm/PackageStoreForm';
+import PackageStudentFilterForm from './PackageStudentFilterForm';
 
-const PackageStore = () => {
+const PackageStudent = () => {
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
 	});
-	const [storePackage, setStorePackage] = useState<IPackage[]>([]);
+	const [packageOfStudentList, setPackageOfStudentList] = useState<IPackage[]>(
+		[]
+	);
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti, userInformation} = useWrap();
 	// FILTER
@@ -147,7 +149,7 @@ const PackageStore = () => {
 		});
 	};
 	// GET DATA IN FIRST TIME
-	const fetchPackageList = async () => {
+	const fetchPackageOfStudent = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true,
@@ -165,13 +167,22 @@ const PackageStore = () => {
 			const billList: IPackageStudent[] = res[1].data.data;
 
 			if (res[0].status === 200 && res[1].status === 200) {
-				// ONLY SHOW PACKAGE STUDENT NOT BUY
-				const getOnlyPackageNotBut = packageList.filter(
-					(p) => p.Enable && !billList.some((b) => b.SetPackageID === p.ID)
+				// ONLY SHOW PACKAGE STUDENT BOUGHT
+				const getOnlyPackageBought = packageList.filter(
+					(p) => p.Enable && billList.some((b) => b.SetPackageID === p.ID)
 				);
-				if (getOnlyPackageNotBut.length) {
-					setStorePackage(getOnlyPackageNotBut);
-					setTotalPage(getOnlyPackageNotBut.length);
+				const newPackageListWithApproval = getOnlyPackageBought.map((p) => {
+					return {
+						...p,
+						Approval: billList.find((b) => b.SetPackageID === p.ID).Approval,
+						ApprovalName: billList.find((b) => b.SetPackageID === p.ID)
+							.ApprovalName,
+					};
+				});
+
+				if (newPackageListWithApproval.length) {
+					setPackageOfStudentList(newPackageListWithApproval);
+					setTotalPage(newPackageListWithApproval.length);
 				} else {
 					showNoti('danger', 'Không tìm thấy');
 				}
@@ -188,61 +199,20 @@ const PackageStore = () => {
 		}
 	};
 	useEffect(() => {
-		fetchPackageList();
+		fetchPackageOfStudent();
 	}, [filters, userInformation]);
 
-	const onSubmit = async (data: {
-		ID: number;
-		Price: string;
-		PaymentMethodsID: number;
-		Note: string;
-	}) => {
-		setIsLoading({
-			type: 'ADD_DATA',
-			status: true,
-		});
-		try {
-			const {ID, Price, PaymentMethodsID, Note} = data;
-			const newPackageStudent = {
-				StudentID: userInformation.UserInformationID,
-				SetPackageID: ID,
-				Paid:
-					Price === 'Miễn phí'
-						? 0
-						: parseInt(Price.toString().replace(/\D/g, '')),
-				PaymentMethodsID,
-				Note,
-			};
-			const res = await packageStudentApi.add(newPackageStudent);
-			if (res.status === 200) {
-				showNoti('success', res.data.message);
-				if (storePackage.length === 1) {
-					filters.pageIndex === 1 && setStorePackage([]);
-					return;
-				}
-				fetchPackageList();
-			}
-			return res;
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
-			setIsLoading({
-				type: 'ADD_DATA',
-				status: false,
-			});
-		}
-	};
 	return (
 		<>
 			<div className="row package-set package-detail-list">
 				<div className="col-12">
-					<TitlePage title="Cửa hàng" />
+					<TitlePage title="Danh sách gói bài học viên" />
 					<div className="wrap-table">
 						<Card
 							className="package-set-wrap"
 							title={
 								<div className="extra-table">
-									<PackageStoreFilterForm
+									<PackageStudentFilterForm
 										handleFilter={onFilter}
 										handleResetFilter={onResetSearch}
 										optionListForFilter={{
@@ -262,7 +232,7 @@ const PackageStore = () => {
 									size: 'small',
 								}}
 								itemLayout="horizontal"
-								dataSource={storePackage}
+								dataSource={packageOfStudentList}
 								renderItem={(item: IPackage, idx) => {
 									const {
 										ID,
@@ -273,6 +243,8 @@ const PackageStore = () => {
 										TypeName,
 										Price,
 										Description,
+										Approval,
+										ApprovalName,
 									} = item;
 									return (
 										<List.Item>
@@ -281,16 +253,52 @@ const PackageStore = () => {
 													<div className="tag-free">{TypeName}</div>
 												)}
 												<div className="wrap-set-avatar">
-													<Image
-														width="100%"
-														height="100%"
-														src={Avatar}
-														title="Ảnh bìa gói bài tập"
-														alt="Ảnh bìa gói bài tập"
-													/>
+													{(Approval === 1 || Approval === 2) && (
+														<Image
+															width="100%"
+															height="100%"
+															preview={false}
+															src={Avatar}
+															title="Ảnh bìa gói bài tập"
+															alt="Ảnh bìa gói bài tập"
+														/>
+													)}
+													{Approval === 3 && (
+														<Link
+															href={{
+																pathname:
+																	'/package/package-student/package-student-detail/[slug]',
+																query: {slug: ID},
+															}}
+														>
+															<a>
+																<Image
+																	width="100%"
+																	height="100%"
+																	preview={false}
+																	src={Avatar}
+																	title="Ảnh bìa gói bài tập"
+																	alt="Ảnh bìa gói bài tập"
+																/>
+															</a>
+														</Link>
+													)}
 												</div>
 												<div className="wrap-set-content">
-													<h6 className="set-title">{Name}</h6>
+													<h6 className="set-title">
+														{(Approval === 1 || Approval === 2) && Name}
+														{Approval === 3 && (
+															<Link
+																href={{
+																	pathname:
+																		'/package/package-student/package-student-detail/[slug]',
+																	query: {slug: ID},
+																}}
+															>
+																<a>{Name}</a>
+															</Link>
+														)}
+													</h6>
 													<ul className="set-list">
 														<li>
 															Level:<span>HSK {Level}</span>
@@ -303,19 +311,27 @@ const PackageStore = () => {
 														</li>
 													</ul>
 													<div className="set-btn">
-														{Type === 1 ? (
-															<PackageStoreForm
-																isAddPackageFree={true}
-																isLoading={isLoading}
-																packageItem={item}
-																handleSubmit={onSubmit}
-															/>
-														) : (
-															<PackageStoreForm
-																isLoading={isLoading}
-																packageItem={item}
-																handleSubmit={onSubmit}
-															/>
+														{(Approval === 1 || Approval === 2) && (
+															<button
+																type="button"
+																className="btn btn-secondary"
+																disabled={true}
+															>
+																{ApprovalName}
+															</button>
+														)}
+														{Approval === 3 && (
+															<Link
+																href={{
+																	pathname:
+																		'/package/package-student/package-student-detail/[slug]',
+																	query: {slug: ID},
+																}}
+															>
+																<a className="btn btn-warning">
+																	Chi tiết gói bài
+																</a>
+															</Link>
 														)}
 													</div>
 												</div>
@@ -332,4 +348,4 @@ const PackageStore = () => {
 	);
 };
 
-export default PackageStore;
+export default PackageStudent;

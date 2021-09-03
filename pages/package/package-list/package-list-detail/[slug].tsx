@@ -1,8 +1,8 @@
 import React from 'react';
-import PackageDetailList from '~/components/Global/Package/PackageDetail/PackageDetail';
+import PackageDetail from '~/components/Global/Package/PackageDetail/PackageDetail';
 import LayoutBase from '~/components/LayoutBase';
 
-const PackageDetailListPage = () => <PackageDetailList />;
+const PackageDetailPage = () => <PackageDetail />;
 
-PackageDetailListPage.layout = LayoutBase;
-export default PackageDetailListPage;
+PackageDetailPage.layout = LayoutBase;
+export default PackageDetailPage;

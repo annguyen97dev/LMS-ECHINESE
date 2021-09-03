@@ -15,26 +15,3 @@
 		}
 	}
 }
-
-/* PACKAGE DETAIL */
-.package-detail-list.package-detail-list {
-	.wrap-set {
-		padding-right: 120px;
-		margin-bottom: 0;
-		.set-list li {
-			display: block;
-		}
-		.tag-free.non-bg {
-			background: none;
-			padding: 0;
-		}
-		.btn-icon.delete {
-			margin: 0;
-			padding: 4px 6px;
-			background: linear-gradient(to right, #ff4b2b, #ff416c);
-			svg {
-				color: #fff;
-			}
-		}
-	}
-}
