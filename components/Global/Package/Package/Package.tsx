@@ -40,6 +40,10 @@ function Package() {
 		sortType: false,
 	});
 	const [filters, setFilters] = useState(listFieldInit);
+	const paymentMethodOptionList = [
+		{label: 'Miễn phí', value: 1},
+		{label: 'Cao cấp', value: 2},
+	];
 	const typeOptionList = [
 		{
 			value: 1,
@@ -409,6 +413,7 @@ function Package() {
 						updateObj={packageItem}
 						handleUploadImage={onUploadImage}
 						handleUpdatePackage={onUpdatePackage(idx)}
+						paymentMethodOptionList={paymentMethodOptionList}
 					/>
 				</>
 			),
@@ -437,6 +442,7 @@ function Package() {
 						isLoading={isLoading}
 						handleUploadImage={onUploadImage}
 						handleCreatePackage={onCreatePackage}
+						paymentMethodOptionList={paymentMethodOptionList}
 					/>
 				}
 			/>

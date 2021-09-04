@@ -10,6 +10,7 @@ import RadioField from '~/components/FormControl/RadioField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
 import UploadImageField from '~/components/FormControl/UploadImageField';
 import {numberWithCommas} from '~/utils/functions';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
 PackageForm.propTypes = {
 	isUpdate: PropTypes.bool,
@@ -21,6 +22,7 @@ PackageForm.propTypes = {
 	handleUploadImage: PropTypes.func,
 	handleCreatePackage: PropTypes.func,
 	handleUpdatePackage: PropTypes.func,
+	paymentMethodOptionList: optionCommonPropTypes,
 };
 PackageForm.defaultProps = {
 	isUpdate: false,
@@ -29,6 +31,7 @@ PackageForm.defaultProps = {
 	handleUploadImage: null,
 	handleCreatePackage: null,
 	handleUpdatePackage: null,
+	paymentMethodOptionList: [],
 };
 
 function PackageForm(props) {
@@ -39,6 +42,7 @@ function PackageForm(props) {
 		handleUploadImage,
 		handleCreatePackage,
 		handleUpdatePackage,
+		paymentMethodOptionList,
 	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [showMoreField, setShowMoreField] = useState(false);
@@ -179,10 +183,7 @@ function PackageForm(props) {
 									form={form}
 									name="Type"
 									label="Chọn loại gói"
-									radioList={[
-										{label: 'Miễn phí', value: 1},
-										{label: 'Cao cấp', value: 2},
-									]}
+									radioList={paymentMethodOptionList}
 									handleChange={(typeID: number) => {
 										typeID === 2
 											? setShowMoreField(true)

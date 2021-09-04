@@ -1,0 +1,54 @@
+.exam-review {
+	position: relative;
+	max-width: 70%;
+	margin: auto;
+	.ant-card-head-title {
+		text-align: center;
+	}
+	@include max-media(1199px) {
+		max-width: 80%;
+	}
+	@include max-media(767px) {
+		max-width: 100%;
+	}
+}
+.exam-review-item {
+	text-align: center;
+	&.span-1 {
+		width: 50%;
+	}
+	&.span-2 {
+		width: calc(100% / 3);
+	}
+	&.span-3 {
+		width: 100%;
+	}
+	&.wrap {
+		padding: 12px 0 0;
+		> .title {
+			margin-bottom: 12px;
+		}
+	}
+	&:last-of-type {
+		border-radius: 0 0 0.575rem 0.575rem;
+		padding-bottom: 44px;
+	}
+	.title {
+		font-weight: 500;
+		margin-bottom: 0;
+		white-space: nowrap;
+	}
+	.desc {
+		margin-bottom: 0;
+		font-size: 16px;
+	}
+	@include max-media(767px) {
+		padding: 12px;
+	}
+}
+.exam-review-btn {
+	position: absolute;
+	left: 50%;
+	bottom: -20px;
+	transform: translateX(-50%);
+}

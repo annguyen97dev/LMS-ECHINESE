@@ -11,4 +11,5 @@ type IExamTopic = IBaseApi<{
 	DifficultExercise: number;
 	NormalExercise: number;
 	EasyExercise: number;
+	Description: string;
 }>;
