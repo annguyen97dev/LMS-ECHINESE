@@ -14,7 +14,6 @@ const CourseOfStudentExpand = (props) => {
   });
   const [detail, setDetail] = useState<ICourseOfStudentPrice>([]);
   const { showNoti } = useWrap();
-  const [totalPage, setTotalPage] = useState(1);
 
   const fetchDetailInfo = async () => {
     setIsLoading({

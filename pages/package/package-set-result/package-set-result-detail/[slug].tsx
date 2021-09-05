@@ -5,6 +5,7 @@ import { packageResultDetailApi } from "~/apiBase/package/package-result-detail"
 import LayoutBase from "~/components/LayoutBase";
 import { useWrap } from "~/context/wrap";
 import TitlePage from "~/components/Elements/TitlePage";
+import router from "next/router";
 
 const PackageSetDetailResult = (props: any) => {
   const [detailResult, setDetailResult] = useState<ISetPackageResultDetail[]>(
@@ -12,37 +13,40 @@ const PackageSetDetailResult = (props: any) => {
   );
   const boxEl = useRef(null);
 
+  const paramsDefault = {
+    pageSize: 10,
+    pageIndex: 1,
+    SetPackageResultID: parseInt(router.query.slug as string),
+  };
+  const [params, setParams] = useState(paramsDefault);
+
+  const [totalPageIndex, setTotalPageIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+
   const { showNoti } = useWrap();
   const listAlphabet = ["A", "B", "C", "D", "F", "G", "H", "I", "J"];
+
   const onScroll = () => {
     const scrollHeight = boxEl.current.scrollHeight;
     const offsetHeight = boxEl.current.offsetHeight;
     const scrollTop = boxEl.current.scrollTop;
-
-    // console.log("Height: ", scrollHeight - offsetHeight);
-    // console.log("Scroll: ", scrollTop);
-
-    // if (scrollTop > scrollHeight - offsetHeight - 40) {
-    //   if (todoApi.pageIndex < totalPageIndex) {
-    //     setLoadingQuestion(true);
-    //     if (scrollTop > 0 && loadingQuestion == false) {
-    //       setTodoApi({
-    //         ...todoApi,
-    //         pageIndex: todoApi.pageIndex + 1,
-    //       });
-    //     }
-    //   }
-    // }
+    if (scrollTop > scrollHeight - offsetHeight - 40) {
+      if (paramsDefault.pageIndex < totalPageIndex) {
+        setLoading(true);
+        if (scrollTop > 0 && loading == false) {
+          setParams({
+            ...params,
+            pageIndex: params.pageIndex + 1,
+          });
+        }
+      }
+    }
   };
 
   const getDataSetPackageResult = () => {
     (async () => {
       try {
-        let res = await packageResultDetailApi.getAll({
-          pageSize: 9999,
-          pageIndex: 1,
-          SetPackageResultID: 9,
-        });
+        let res = await packageResultDetailApi.getAll(params);
         //@ts-ignore
         res.status == 200 && setDetailResult(res.data.data);
         if (res.status == 204) {
@@ -76,13 +80,13 @@ const PackageSetDetailResult = (props: any) => {
         }
       >
         <div className="question-list active" ref={boxEl} onScroll={onScroll}>
-          {detailResult.map((data) => (
+          {detailResult.map((data, index) => (
             <Fragment>
               {data.SetPackageExerciseStudent.map((question, idx) => (
                 <div className="question-item" key={idx}>
                   <div className="box-detail">
                     <div className="box-title">
-                      <span className="title-ques">Câu hỏi {idx + 1}</span>
+                      <span className="title-ques">{data.Content}</span>
                       <div className="title-text">{question.Content}</div>
                     </div>
 

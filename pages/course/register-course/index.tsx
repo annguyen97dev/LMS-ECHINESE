@@ -8,6 +8,10 @@ import moment from "moment";
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
 import StudentExamOfServices from "~/components/Global/RegisterCourse/StudentExamOfServices";
 import { studentExamServicesApi } from "~/apiBase/customer/student/student-exam-services";
+import RegOpenClass from "~/components/Global/RegisterCourse/RegOpenClass";
+import RegCoursePayment from "~/components/Global/RegisterCourse/RegCoursePayment";
+import RegCourse from "~/components/Global/RegisterCourse/RegCourse";
+import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student-price";
 
 const RegisterCourse = (props: any) => {
   const { Option } = Select;
@@ -17,10 +21,8 @@ const RegisterCourse = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [userAll, setUserAll] = useState<IStudent[]>();
   const [userDetail, setUserDetail] = useState<IStudent>();
-  const [branch, setBranch] = useState<IBranch[]>();
-  const [program, setProgram] = useState<IProgram[]>();
-  const [studyTime, setStudyTime] = useState<IStudyTime[]>();
   const [isLoading, setIsLoading] = useState(false);
+  const [isContract, setIsContract] = useState(false);
 
   const fetchDataUser = () => {
     (async () => {
@@ -37,28 +39,8 @@ const RegisterCourse = (props: any) => {
     })();
   };
 
-  const fetchDataSelectList = () => {
-    (async () => {
-      try {
-        const _branch = await branchApi.getAll({
-          pageIndex: 1,
-          pageSize: 99999,
-          Enable: true,
-        });
-        const _program = await programApi.getAll({ selectAll: true });
-        const _studyTime = await studyTimeApi.getAll({ selectAll: true });
-        _branch.status == 200 && setBranch(_branch.data.data);
-        _program.status == 200 && setProgram(_program.data.data);
-        _studyTime.status == 200 && setStudyTime(_studyTime.data.data);
-      } catch (err) {
-        showNoti("danger", err.message);
-      }
-    })();
-  };
-
   useEffect(() => {
     fetchDataUser();
-    fetchDataSelectList();
   }, []);
 
   const onChange = (value) => {
@@ -81,7 +63,6 @@ const RegisterCourse = (props: any) => {
   };
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     setLoading(true);
     if (option == 1) {
       try {
@@ -97,9 +78,23 @@ const RegisterCourse = (props: any) => {
         setLoading(false);
       }
     }
-    if (option == 4) {
+    if (option == 2) {
       try {
         let res = await courseRegistrationApi.add(data);
+        showNoti("success", res?.data.message);
+        setLoading(false);
+        form.resetFields();
+      } catch (error) {
+        showNoti("danger", error.message);
+        setLoading(false);
+      }
+    }
+    if (option == 3) {
+      try {
+        let res = await courseStudentPriceApi.add({
+          ...data,
+          isContract: isContract,
+        });
         showNoti("success", res?.data.message);
         setLoading(false);
         form.resetFields();
@@ -125,13 +120,15 @@ const RegisterCourse = (props: any) => {
                       placeholder="Đăng ký học"
                     >
                       <Option value={1}>Đăng ký đợt thi</Option>
-                      <Option value={4}>Hẹn đăng ký</Option>
+                      <Option value={2}>Đăng ký mở lớp</Option>
+                      <Option value={3}>Đăng ký khóa học</Option>
+                      <Option value={4}>Thanh toán</Option>
                     </Select>
                   </Form.Item>
                 </div>
                 <div className="col-md-6 col-12">
                   <Form.Item label="Có hơp đồng">
-                    <Switch defaultChecked />
+                    <Switch onChange={(value) => setIsContract(value)} />
                   </Form.Item>
                 </div>
               </div>
@@ -347,115 +344,32 @@ const RegisterCourse = (props: any) => {
                   </div>
                 </div>
               </Spin>
-
-              {/*  */}
-              {/*  */}
-
-              {/*  */}
-              {/*  */}
             </Card>
           </div>
           <div className="col-6">
             {option == 1 && (
               <StudentExamOfServices
                 userID={userDetail ? userDetail.UserInformationID : null}
+                loading={loading}
+              />
+            )}
+            {option == 2 && (
+              <RegOpenClass
+                userID={userDetail ? userDetail.UserInformationID : null}
+                loading={loading}
+              />
+            )}
+            {option == 3 && (
+              <RegCourse
+                userID={userDetail ? userDetail.UserInformationID : null}
+                loading={loading}
               />
             )}
             {option == 4 && (
-              <Card title="Thông tin đăng kí">
-                <div className="row">
-                  <div className="col-12">
-                    <Form.Item
-                      name="BranchID"
-                      label="Trung tâm mong muốn"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng điền đủ thông tin!",
-                        },
-                      ]}
-                    >
-                      <Select
-                        className="style-input"
-                        showSearch
-                        optionFilterProp="children"
-                      >
-                        {branch?.map((item, index) => (
-                          <Option key={index} value={item.ID}>
-                            {item.BranchName}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-12">
-                    <Form.Item
-                      name="ProgramID"
-                      label="Chương trình mong muốn"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng điền đủ thông tin!",
-                        },
-                      ]}
-                    >
-                      <Select
-                        className="style-input"
-                        showSearch
-                        optionFilterProp="children"
-                      >
-                        {program?.map((item, index) => (
-                          <Option key={index} value={item.ID}>
-                            {item.ProgramName}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-12">
-                    <Form.Item
-                      name="StudyTimeID"
-                      label="Ca học mong muốn"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng điền đủ thông tin!",
-                        },
-                      ]}
-                    >
-                      <Select
-                        className="style-input"
-                        showSearch
-                        optionFilterProp="children"
-                      >
-                        {studyTime?.map((item, index) => (
-                          <Option key={index} value={item.ID}>
-                            {item.Name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-12 text-center text-left-mobile">
-                    <button type="submit" className="btn btn-primary">
-                      Xác nhận
-                      {loading == true && <Spin className="loading-base" />}
-                    </button>
-                  </div>
-                </div>
-              </Card>
+              <RegCoursePayment
+                userID={userDetail ? userDetail.UserInformationID : null}
+              />
             )}
-            {/* {option == 2 && <RegCourseBuy />}
-            {option == 3 && <RegCoursePayment />} */}
           </div>
         </div>
       </Form>
