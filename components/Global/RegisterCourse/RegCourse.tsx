@@ -27,9 +27,12 @@ const RegCourse = React.memo((props: any) => {
   const [discount, setDiscount] = useState<IDiscount[]>();
   const { showNoti } = useWrap();
   const [form] = Form.useForm();
-  const [detail, setDetail] = useState<IExamServices>();
-  const [isLoading, setIsLoading] = useState(false);
   const { setValue } = useForm();
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [debt, setDebt] = useState(0);
+  const [discountPrice, setDiscountPrice] = useState(0);
+  const [paid, setPaid] = useState(0);
+  const [discountStyle, setDiscountStyle] = useState(1);
 
   const fetchDataSelectList = () => {
     (async () => {
@@ -43,12 +46,23 @@ const RegCourse = React.memo((props: any) => {
           pageIndex: 1,
           pageSize: 99999,
         });
+        _branch.status == 200 && setBranch(_branch.data.data);
+        _course.status == 200 && setCourse(_course.data.data);
+      } catch (err) {
+        showNoti("danger", err.message);
+      }
+    })();
+  };
+
+  const fetchDataDiscount = () => {
+    (async () => {
+      try {
         const _discount = await discountApi.getAll({
           pageIndex: 1,
           pageSize: 99999,
+          Status: 2,
+          Style: discountStyle,
         });
-        _branch.status == 200 && setBranch(_branch.data.data);
-        _course.status == 200 && setCourse(_course.data.data);
         _discount.status == 200 && setDiscount(_discount.data.data);
       } catch (err) {
         showNoti("danger", err.message);
@@ -60,21 +74,69 @@ const RegCourse = React.memo((props: any) => {
     fetchDataSelectList();
   }, []);
 
+  useEffect(() => {
+    fetchDataDiscount();
+  }, [discountStyle]);
+
   const handleChangeCourse = (value) => {
-    console.log(value);
-    // setIsLoading(true);
-    // (async () => {
-    //   try {
-    //     const _detail = await examServiceApi.getDetail(value);
-    //     //@ts-ignore
-    //     _detail.status == 200 && setDetail(_detail.data.data);
-    //   } catch (err) {
-    //     showNoti("danger", err.message);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // })();
+    if (value.length > 1) {
+      setDiscountStyle(2);
+    } else {
+      setDiscountStyle(1);
+    }
+    let _price = [];
+    for (let i = 0; i < course.length; i++) {
+      for (let j = 0; j < value.length; j++) {
+        if (course[i].ID == value[j]) {
+          _price.push(course[i].Price);
+        }
+      }
+    }
+    function sumArray(arr) {
+      let sum = 0;
+      arr.forEach(function (value) {
+        sum += value;
+      });
+
+      return sum;
+    }
+    setTotalPrice(sumArray(_price));
   };
+
+  const handleMoneyLeft = (value) => {
+    setPaid(value);
+  };
+
+  const handleDiscount = (value) => {
+    let _dc = [];
+    for (let i = 0; i < discount.length; i++) {
+      if (discount[i].DiscountCode == value) {
+        _dc.push(discount[i]);
+      }
+    }
+
+    if (_dc[0].DiscountType == 1) {
+      setDiscountPrice(_dc[0].Discount);
+    }
+
+    if (_dc[0].DiscountType == 2) {
+      if (_dc[0].MaxDiscountPrice < (totalPrice * _dc[0].Discount) / 100) {
+        showNoti(
+          "warning",
+          `Số tiền được giảm tối đa là ${Intl.NumberFormat("ja-JP").format(
+            _dc[0].MaxDiscountPrice
+          )} VNĐ`
+        );
+        setDiscountPrice(_dc[0].MaxDiscountPrice);
+      } else {
+        setDiscountPrice((totalPrice * _dc[0].Discount) / 100);
+      }
+    }
+  };
+
+  useEffect(() => {
+    setDebt(totalPrice - (paid + discountPrice));
+  }, [totalPrice, paid, discountPrice]);
 
   return (
     <Card title="Đăng ký khóa học">
@@ -94,6 +156,7 @@ const RegCourse = React.memo((props: any) => {
               className="style-input"
               showSearch
               optionFilterProp="children"
+              allowClear={true}
             >
               {branch?.map((item, index) => (
                 <Option key={index} value={item.ID}>
@@ -119,7 +182,6 @@ const RegCourse = React.memo((props: any) => {
           >
             <Select
               mode="multiple"
-            //   className="style-input"
               showSearch
               optionFilterProp="children"
               onChange={(value) => handleChangeCourse(value)}
@@ -135,12 +197,48 @@ const RegCourse = React.memo((props: any) => {
       </div>
 
       <div className="row">
-        <div className="col-12">
+        <div className="col-md-6 col-12">
+          <Form.Item label="Tổng giá tiền">
+            <Input
+              value={
+                totalPrice ? Intl.NumberFormat("ja-JP").format(totalPrice) : 0
+              }
+              className="style-input"
+              readOnly={true}
+            />
+          </Form.Item>
+        </div>
+        <div className="col-md-6 col-12">
+          <Form.Item
+            name="PaymentMethodsID"
+            label="Hình thức thanh toán"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng điền đủ thông tin!",
+              },
+            ]}
+          >
+            <Select className="style-input" allowClear={true}>
+              {PaymentMethod?.map((item, index) => (
+                <Option key={index} value={item.id}>
+                  {item.Name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-6 col-12">
           <Form.Item name="DiscountCode" label="Mã giảm giá">
             <Select
+              allowClear={true}
               className="style-input"
               showSearch
               optionFilterProp="children"
+              onChange={(value) => handleDiscount(value)}
             >
               {discount?.map((item, index) => (
                 <Option key={index} value={item.DiscountCode}>
@@ -148,6 +246,15 @@ const RegCourse = React.memo((props: any) => {
                 </Option>
               ))}
             </Select>
+          </Form.Item>
+        </div>
+        <div className="col-md-6 col-12">
+          <Form.Item label="Số tiền được giảm">
+            <Input
+              value={Intl.NumberFormat("ja-JP").format(discountPrice)}
+              className="style-input"
+              readOnly={true}
+            />
           </Form.Item>
         </div>
       </div>
@@ -166,29 +273,20 @@ const RegCourse = React.memo((props: any) => {
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-              onChange={(value) => setValue("Paid", value)}
+              onChange={(value) => {
+                setValue("Paid", value);
+                handleMoneyLeft(value);
+              }}
             />
           </Form.Item>
         </div>
-
         <div className="col-md-6 col-12">
-          <Form.Item
-            name="PaymentMethodsID"
-            label="Hình thức thanh toán"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng điền đủ thông tin!",
-              },
-            ]}
-          >
-            <Select className="style-input">
-              {PaymentMethod?.map((item, index) => (
-                <Option key={index} value={item.id}>
-                  {item.Name}
-                </Option>
-              ))}
-            </Select>
+          <Form.Item label="Số tiền còn lại">
+            <Input
+              value={Intl.NumberFormat("ja-JP").format(debt)}
+              className="style-input"
+              readOnly={true}
+            />
           </Form.Item>
         </div>
       </div>
@@ -209,6 +307,7 @@ const RegCourse = React.memo((props: any) => {
               className="style-input"
               showSearch
               optionFilterProp="children"
+              allowClear={true}
             >
               {branch?.map((item, index) => (
                 <Option key={index} value={item.ID}>
@@ -218,7 +317,6 @@ const RegCourse = React.memo((props: any) => {
             </Select>
           </Form.Item>
         </div>
-
         <div className="col-md-6 col-12">
           <Form.Item
             name="PayDate"
@@ -226,6 +324,7 @@ const RegCourse = React.memo((props: any) => {
             rules={[{ required: true, message: "Vui lòng điền đủ thông tin!" }]}
           >
             <DatePicker
+              allowClear={true}
               className="style-input"
               onChange={(e) => setValue("PayDate", e)}
             />

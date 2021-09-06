@@ -78,6 +78,7 @@ const RegisterCourse = (props: any) => {
         setLoading(false);
       }
     }
+
     if (option == 2) {
       try {
         let res = await courseRegistrationApi.add(data);
@@ -89,7 +90,14 @@ const RegisterCourse = (props: any) => {
         setLoading(false);
       }
     }
+
     if (option == 3) {
+      if (typeof data.Course != "undefined") {
+        data.Course = data.Course.toString();
+      } else {
+        data.Course = "";
+      }
+
       try {
         let res = await courseStudentPriceApi.add({
           ...data,
@@ -128,7 +136,10 @@ const RegisterCourse = (props: any) => {
                 </div>
                 <div className="col-md-6 col-12">
                   <Form.Item label="Có hơp đồng">
-                    <Switch onChange={(value) => setIsContract(value)} />
+                    <Switch
+                      onChange={(value) => setIsContract(value)}
+                      disabled={option != 3 ? true : false}
+                    />
                   </Form.Item>
                 </div>
               </div>
