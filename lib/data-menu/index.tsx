@@ -298,7 +298,7 @@ export const dataMenu = [
 						ItemType: 'single',
 						Key: '/customer/finance/finance-customer-debts',
 						Route: '/customer/finance/finance-customer-debts',
-						Text: 'Nợ học phí',
+						Text: 'Thông tin thanh toán',
 						Icon: '',
 					},
 					{
