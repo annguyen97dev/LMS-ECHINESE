@@ -64,7 +64,7 @@ function PackageDetailForm(props) {
 		handleSubmit(data).then((res) => {
 			if (res?.status === 200) {
 				closeModal();
-				form.reset({...defaultValuesInit});
+				form.reset({Name: packageInfo.Name, ExamTopicID: null});
 			}
 		});
 	};

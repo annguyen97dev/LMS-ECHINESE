@@ -185,6 +185,13 @@ export const dataMenu = [
             Text: "HV cần tư vấn",
             Icon: "",
           },
+          {
+            ItemType: "single",
+            Key: "/package/package-payment",
+            Route: "/package/package-payment",
+            Text: "Danh sách học viên mua gói",
+            Icon: "",
+          },
         ],
       },
       {
@@ -291,7 +298,7 @@ export const dataMenu = [
             ItemType: "single",
             Key: "/customer/finance/finance-customer-debts",
             Route: "/customer/finance/finance-customer-debts",
-            Text: "Nợ học phí",
+            Text: "Thông tin thanh toán",
             Icon: "",
           },
           {
@@ -520,6 +527,13 @@ export const dataMenu = [
         Text: "Quản lí gói bài",
         Icon: "",
       },
+      {
+        ItemType: "single",
+        Key: "/package/package-student",
+        Route: "/package/package-student",
+        Text: "Danh sách gói bài học viên",
+        Icon: "",
+      },
       // {
       //   ItemType: "single",
       //   Key: "/package/package-create",
@@ -539,13 +553,6 @@ export const dataMenu = [
         Key: "/package/examiner-list",
         Route: "/package/examiner-list",
         Text: "Danh sách chấm gói bài",
-        Icon: "",
-      },
-      {
-        ItemType: "single",
-        Key: "/package/package-set-result",
-        Route: "/package/package-set-result",
-        Text: "Kết quả gói bài",
         Icon: "",
       },
       {

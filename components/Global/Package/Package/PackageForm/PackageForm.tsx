@@ -5,11 +5,12 @@ import React, {useEffect, useState} from 'react';
 import {RotateCcw} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import EditorField from '~/components/FormControl/EditorField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import RadioField from '~/components/FormControl/RadioField';
+import TextAreaField from '~/components/FormControl/TextAreaField';
 import UploadImageField from '~/components/FormControl/UploadImageField';
 import {numberWithCommas} from '~/utils/functions';
+import {optionCommonPropTypes} from '~/utils/proptypes';
 
 PackageForm.propTypes = {
 	isUpdate: PropTypes.bool,
@@ -21,6 +22,7 @@ PackageForm.propTypes = {
 	handleUploadImage: PropTypes.func,
 	handleCreatePackage: PropTypes.func,
 	handleUpdatePackage: PropTypes.func,
+	paymentMethodOptionList: optionCommonPropTypes,
 };
 PackageForm.defaultProps = {
 	isUpdate: false,
@@ -29,6 +31,7 @@ PackageForm.defaultProps = {
 	handleUploadImage: null,
 	handleCreatePackage: null,
 	handleUpdatePackage: null,
+	paymentMethodOptionList: [],
 };
 
 function PackageForm(props) {
@@ -39,6 +42,7 @@ function PackageForm(props) {
 		handleUploadImage,
 		handleCreatePackage,
 		handleUpdatePackage,
+		paymentMethodOptionList,
 	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [showMoreField, setShowMoreField] = useState(false);
@@ -179,10 +183,7 @@ function PackageForm(props) {
 									form={form}
 									name="Type"
 									label="Chọn loại gói"
-									radioList={[
-										{label: 'Miễn phí', value: 1},
-										{label: 'Cao cấp', value: 2},
-									]}
+									radioList={paymentMethodOptionList}
 									handleChange={(typeID: number) => {
 										typeID === 2
 											? setShowMoreField(true)
@@ -203,11 +204,12 @@ function PackageForm(props) {
 							</div>
 
 							<div className="col-md-12 col-12">
-								<EditorField
+								<TextAreaField
 									form={form}
 									name="Description"
 									label="Mô tả"
-									height={200}
+									placeholder="Nhập mô tả"
+									rows={5}
 								/>
 							</div>
 							<div

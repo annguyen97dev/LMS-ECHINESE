@@ -1,12 +1,12 @@
-import {Card, List} from 'antd';
+import {Tooltip} from 'antd';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import React, {useEffect, useRef, useState} from 'react';
+import {Info} from 'react-feather';
 import {examTopicApi, packageApi} from '~/apiBase';
 import {packageDetailApi} from '~/apiBase/package/package-detail';
 import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
-import SortBox from '~/components/Elements/SortBox';
-import TitlePage from '~/components/Elements/TitlePage';
+import PowerTable from '~/components/PowerTable';
 import {useWrap} from '~/context/wrap';
 import {fmSelectArr} from '~/utils/functions';
 import PackageDetailForm from './PackageDetailForm/PackageDetailForm';
@@ -31,37 +31,14 @@ const PackageDetail = () => {
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
-		sortType: false,
 
 		SetPackageID: ID,
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
-		sortType: false,
 	});
 	const [filters, setFilters] = useState(listFieldInit);
-	// SORT OPTION
-	const sortOptionList = [
-		{
-			dataSort: {
-				sort: 0,
-				sortType: true,
-			},
-			value: 1,
-			text: 'Level tăng dần',
-		},
-		{
-			dataSort: {
-				sort: 0,
-				sortType: false,
-			},
-			value: 2,
-			text: 'Level giảm dần',
-		},
-	];
 	// PAGINATION
 	const getPagination = (pageIndex: number) => {
 		refValue.current = {
@@ -71,18 +48,6 @@ const PackageDetail = () => {
 		setFilters({
 			...filters,
 			pageIndex,
-		});
-	};
-	// SORT
-	const onSort = (option) => {
-		refValue.current = {
-			...refValue.current,
-			sort: option.title.sort,
-			sortType: option.title.sortType,
-		};
-		setFilters({
-			...listFieldInit,
-			...refValue.current,
 		});
 	};
 	// RESET SEARCH
@@ -238,107 +203,71 @@ const PackageDetail = () => {
 			}
 		};
 	};
-
+	const columns = [
+		{
+			title: 'Tên đề thi',
+			dataIndex: 'ExamTopicName',
+		},
+		{
+			title: 'Môn',
+			dataIndex: 'SubjectName',
+		},
+		{
+			title: 'Level',
+			dataIndex: 'SetPackageLevel',
+			render: (SetPackageLevel) => `HSK ${SetPackageLevel}`,
+		},
+		{
+			title: 'Thời gian',
+			dataIndex: 'Time',
+			render: (time) => `${time} phút`,
+		},
+		{
+			title: 'Hình thức',
+			dataIndex: 'TypeName',
+		},
+		{
+			align: 'center',
+			render: (packageItem: ISetPackageDetail, record, idx) => (
+				<>
+					<Link
+						href={{
+							pathname: '/exam/exam-review/[slug]',
+							query: {slug: packageItem.ExamTopicID},
+						}}
+					>
+						<Tooltip title="Chi tiết đề thi">
+							<a className="btn btn-icon">
+								<Info />
+							</a>
+						</Tooltip>
+					</Link>
+					<DeleteTableRow handleDelete={onDeletePackageDetail(idx)} />
+				</>
+			),
+		},
+	];
 	return (
 		<>
-			<div className="row package-set package-detail-list">
-				<div className="col-12">
-					<TitlePage title="Chi tiết gói bài" />
-					<div className="wrap-table">
-						<Card
-							className="package-set-wrap"
-							title={
-								<div className="extra-table">
-									<SortBox dataOption={sortOptionList} handleSort={onSort} />
-								</div>
-							}
-							extra={
-								<PackageDetailForm
-									isLoading={isLoading}
-									packageInfo={packageInfo}
-									optionExamTopicList={optionExamTopicList}
-									handleSubmit={onCreatePackageDetail}
-								/>
-							}
-						>
-							<List
-								loading={isLoading?.type === 'GET_ALL' && isLoading?.status}
-								pagination={{
-									onChange: getPagination,
-									total: totalPage,
-									size: 'small',
-								}}
-								itemLayout="horizontal"
-								dataSource={packageDetailList}
-								renderItem={(item: ISetPackageDetail, idx) => {
-									const {
-										ID,
-										SetPackageID,
-										SetPackageLevel,
-										SetPackageName,
-										ExamTopicID,
-										ExamTopicName,
-										Type,
-										TypeName,
-										SubjectID,
-										SubjectName,
-										Time,
-									} = item;
-									return (
-										<List.Item>
-											<div className="wrap-set">
-												<div className="tag-free">
-													{
-														<DeleteTableRow
-															handleDelete={onDeletePackageDetail(idx)}
-														/>
-													}
-												</div>
-												<div className="wrap-set-content">
-													<h6 className="set-title">
-														<Link
-															href={{
-																// pathname:
-																// 	'/package/package-list/package-list-detail/[slug]',
-																pathname: '/package/package-list',
-																// query: {slug: ID},
-															}}
-														>
-															<a>{ExamTopicName}</a>
-														</Link>
-													</h6>
-													<ul className="set-list mb-3">
-														<li>
-															Môn: <span>{SubjectName}</span>
-														</li>
-														<li>
-															Thời gian: <span>{Time} phút</span>
-														</li>
-														<li>
-															Hình thức: <span>{TypeName}</span>
-														</li>
-													</ul>
-
-													<div className="set-btn">
-														<Link
-															href={{
-																pathname: '/package/package-set/type/[slug]',
-																query: {slug: 2},
-															}}
-														>
-															<a className="btn btn-warning">Chi tiết đề thi</a>
-														</Link>
-													</div>
-												</div>
-											</div>
-										</List.Item>
-									);
-								}}
-							/>
-						</Card>
-					</div>
-				</div>
-			</div>
+			<PowerTable
+				currentPage={filters.pageIndex}
+				totalPage={totalPage}
+				getPagination={getPagination}
+				loading={isLoading}
+				Size="package-list-table"
+				addClass="basic-header"
+				dataSource={packageDetailList}
+				columns={columns}
+				TitlePage="Danh sách gói bài tập"
+				TitleCard={
+					<PackageDetailForm
+						isLoading={isLoading}
+						packageInfo={packageInfo}
+						optionExamTopicList={optionExamTopicList}
+						handleSubmit={onCreatePackageDetail}
+					/>
+				}
+			/>
 		</>
 	);
 };
