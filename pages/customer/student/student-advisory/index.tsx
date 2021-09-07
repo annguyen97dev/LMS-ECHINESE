@@ -16,6 +16,9 @@ import StudentAdviseForm from "~/components/Global/Customer/Student/StudentAdvis
 import { data } from "~/lib/dashboard/data";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import PowerTable from "~/components/PowerTable";
+import Link from "next/link";
+import { Tooltip } from "antd";
+import { CalendarOutlined } from "@ant-design/icons";
 
 let pageIndex = 1;
 
@@ -483,30 +486,29 @@ export default function StudentAdvisory() {
 
     {
       title: "",
-      render: (text, data, index) => (
-        // <Link
-        //   href={{
-        //     pathname:
-        //       "/customer/student/student-advisory/student-detail/[slug]",
-        //     query: { slug: 2 },
-        //   }}
-        // >
-        //   <Tooltip title="Xem chi tiết">
-        //     <button className="btn btn-icon view">
-        //       <Eye />
-        //     </button>
-        //   </Tooltip>
-        // </Link>
-        <StudentAdviseForm
-          getIndex={() => setIndexRow(index)}
-          index={index}
-          rowData={data}
-          rowID={data.ID}
-          listData={listDataForm}
-          isLoading={isLoading}
-          _onSubmit={(data: any) => _onSubmit(data)}
-        />
-      ),
+      render: (text, data, index) =>
+        dataSource[index].CustomerConsultationStatusID == 2 && (
+          <Link
+            href={{
+              pathname: "/customer/service/service-info-student/",
+            }}
+          >
+            <Tooltip title="Xem chi tiết">
+              <button className="btn btn-icon view">
+                <CalendarOutlined />
+              </button>
+            </Tooltip>
+          </Link>
+        ),
+      // <StudentAdviseForm
+      //   getIndex={() => setIndexRow(index)}
+      //   index={index}
+      //   rowData={data}
+      //   rowID={data.ID}
+      //   listData={listDataForm}
+      //   isLoading={isLoading}
+      //   _onSubmit={(data: any) => _onSubmit(data)}
+      // />
     },
   ];
 

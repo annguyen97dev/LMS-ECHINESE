@@ -156,9 +156,10 @@ const TestCustomerPoint = (props) => {
           let newDataSource = [...dataSource];
           newDataSource.splice(indexRow, 1, {
             ...dataSubmit,
-            TeacherName: dataTeacher.find(
-              (item) => item.value == dataSubmit.TeacherID
-            ).title,
+            TeacherName: dataSubmit.TeacherID
+              ? dataTeacher.find((item) => item.value == dataSubmit.TeacherID)
+                  .title
+              : "",
           });
           setDataSource(newDataSource);
           showNoti("success", "Cập nhật thành công");

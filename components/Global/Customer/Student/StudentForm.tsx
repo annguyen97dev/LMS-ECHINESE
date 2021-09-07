@@ -298,7 +298,7 @@ const StudentForm = (props) => {
   const onSubmit = async (data: any) => {
     data.Branch = data.Branch.toString();
 
-    console.log("DATA SUBMIT: ", data);
+    // console.log("DATA SUBMIT: ", data);
 
     setIsLoading({
       type: "ADD_DATA",
@@ -578,7 +578,9 @@ const StudentForm = (props) => {
               {/** Hẹn Test */}
               <div className="row">
                 <div className="col-12">
-                  <Divider orientation="center">Hẹn test</Divider>
+                  <Divider orientation="center">
+                    {isStudentDetail ? "Trung tâm" : "Hẹn test"}
+                  </Divider>
                 </div>
               </div>
               <div className="row">
@@ -591,30 +593,34 @@ const StudentForm = (props) => {
                     optionList={listData.Branch}
                   />
                 </div>
-                <div className="col-md-6 col-12">
-                  <TimePickerField
-                    disabled={isStudentDetail && true}
-                    form={form}
-                    name="ExamAppointmentTime"
-                    label="Giờ hẹn test"
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <DateField
-                    disabled={isStudentDetail && true}
-                    form={form}
-                    name="AppointmentDate"
-                    label="Ngày hẹn test"
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <TextAreaField
-                    disabled={isStudentDetail && true}
-                    name="ExamAppointmentNote"
-                    label="Ghi chú"
-                    form={form}
-                  />
-                </div>
+                {!isStudentDetail && (
+                  <>
+                    <div className="col-md-6 col-12">
+                      <TimePickerField
+                        disabled={isStudentDetail && true}
+                        form={form}
+                        name="ExamAppointmentTime"
+                        label="Giờ hẹn test"
+                      />
+                    </div>
+                    <div className="col-md-6 col-12">
+                      <DateField
+                        disabled={isStudentDetail && true}
+                        form={form}
+                        name="AppointmentDate"
+                        label="Ngày hẹn test"
+                      />
+                    </div>
+                    <div className="col-md-6 col-12">
+                      <TextAreaField
+                        disabled={isStudentDetail && true}
+                        name="ExamAppointmentNote"
+                        label="Ghi chú"
+                        form={form}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
               {/*  */}
               {/** ==== Khác  ====*/}
