@@ -493,7 +493,7 @@ export default function StudentAdvisory() {
               pathname: "/customer/service/service-info-student/",
             }}
           >
-            <Tooltip title="Xem chi tiết">
+            <Tooltip title="Hẹn test">
               <button className="btn btn-icon view">
                 <CalendarOutlined />
               </button>
