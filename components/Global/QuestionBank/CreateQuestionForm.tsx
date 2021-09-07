@@ -11,7 +11,8 @@ import {
   AppstoreAddOutlined,
 } from "@ant-design/icons";
 import WrittingForm from "./QuestionFormType/WrittingForm";
-import GroupFormWritting from "./QuestionFormType/GroupFormWritting";
+import GroupFormTyping from "./QuestionFormType/TypingForm";
+import TypingForm from "./QuestionFormType/TypingForm";
 
 const CreateQuestionForm = (props) => {
   const {
@@ -30,7 +31,7 @@ const CreateQuestionForm = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [titleForm, setTitleForm] = useState("");
   const [questionDataForm, setQuestionDataForm] = useState(questionData);
-
+  console.log("question Data in create: ", questionData);
   const showDrawer = () => {
     setVisible(true);
   };
@@ -47,14 +48,19 @@ const CreateQuestionForm = (props) => {
 
   const onSuccessSubmit = (data) => {
     console.log("question submit in create: ", data);
-    console.log("question Data in create: ", questionData);
-    isSubmit &&
-      (setIsSubmit(false),
-      setIsLoading(false),
-      console.log("Check ID: ", questionData.ID),
-      // onFetchData(),
-      questionData.ID ? onEditData(data) : onAddData(data),
-      setVisible(false));
+
+    if (isSubmit) {
+      setIsSubmit(false);
+      setIsLoading(false);
+
+      if (data.ExerciseList?.length == 0) {
+        questionData.ID ? onEditData(data) : onAddData(data);
+      } else {
+        onEditData(data);
+      }
+
+      setVisible(false);
+    }
   };
 
   // ON EDIT GROUP ITEM
@@ -78,16 +84,16 @@ const CreateQuestionForm = (props) => {
 
     if (type) {
       switch (type) {
-        case 3:
-          return (
-            <GroupFormWritting
-              visible={visible}
-              questionData={questionData}
-              isSubmit={isSubmit}
-              changeIsSubmit={onSuccessSubmit}
-            />
-          );
-          break;
+        // case 3:
+        //   return (
+        //     <TypingForm
+        //       visible={visible}
+        //       questionData={questionData}
+        //       isSubmit={isSubmit}
+        //       changeIsSubmit={onSuccessSubmit}
+        //     />
+        //   );
+        //   break;
 
         default:
           return (
@@ -149,6 +155,18 @@ const CreateQuestionForm = (props) => {
             changeIsSubmit={(data: any) => onSuccessSubmit(data)}
           />
         );
+        break;
+      case 3:
+        return (
+          <TypingForm
+            isGroup={isGroup}
+            visible={visible}
+            questionData={questionData}
+            isSubmit={isSubmit}
+            changeIsSubmit={onSuccessSubmit}
+          />
+        );
+        break;
       default:
         return <p>Vui lòng chọn dạng câu hỏi</p>;
         break;
@@ -188,7 +206,7 @@ const CreateQuestionForm = (props) => {
         );
       } else {
         return (
-          <button className="btn btn-icon" onClick={showDrawer}>
+          <button className="btn btn-icon edit" onClick={showDrawer}>
             <Edit />
           </button>
         );
@@ -205,7 +223,7 @@ const CreateQuestionForm = (props) => {
           return (
             <button className="btn btn-icon add" onClick={onAddDataToGroup}>
               <AppstoreAddOutlined />
-              Thêm câu hỏi
+              {questionData.Type == 3 ? "Thêm/sửa câu hỏi" : "Thêm câu hỏi"}
             </button>
           );
         } else {
@@ -238,7 +256,7 @@ const CreateQuestionForm = (props) => {
         closable={false}
         onClose={onClose}
         visible={visible}
-        width={questionData.Type == 3 ? 1300 : 800}
+        width={!isGroup?.status && questionData.Type == 3 ? 1300 : 800}
         footer={
           <div className="text-center">
             <button className="btn btn-light mr-2" onClick={onClose}>
@@ -257,6 +275,12 @@ const CreateQuestionForm = (props) => {
         }
       >
         {!isGroup?.status ? renderFormSingle() : renderFormGroup()}
+        {/* <GroupFormTyping
+          visible={visible}
+          questionData={questionData}
+          isSubmit={isSubmit}
+          changeIsSubmit={onSuccessSubmit}
+        /> */}
       </Drawer>
     </>
   );

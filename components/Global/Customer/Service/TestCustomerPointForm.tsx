@@ -65,10 +65,18 @@ const TestCustomerPointForm = (props) => {
 
   // SUBMI FORM
   const onSubmit = (data: any) => {
-    console.log("Data Submit 1: ", data);
-    data.MaxTuitionOfStudent = parseFloat(
-      data.MaxTuitionOfStudent.replace(/,/g, "")
-    );
+    if (data.MaxTuitionOfStudent) {
+      data.MaxTuitionOfStudent = parseFloat(
+        data.MaxTuitionOfStudent.replace(/,/g, "")
+      );
+    }
+
+    data.ListeningPoint = parseInt(data.ListeningPoint);
+    data.SpeakingPoint = parseInt(data.SpeakingPoint);
+    data.ReadingPoint = parseInt(data.ReadingPoint);
+    data.WritingPoint = parseInt(data.WritingPoint);
+    data.VocabPoint = parseInt(data.VocabPoint);
+
     console.log("Data Submit 2: ", data);
     let res = _onSubmit(data);
 

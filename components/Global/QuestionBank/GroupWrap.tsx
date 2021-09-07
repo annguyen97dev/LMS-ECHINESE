@@ -96,7 +96,7 @@ const GroupWrap = (props) => {
     }
   };
 
-  const returnNewData = (item) => {
+  const returnNewData = (groupID, item) => {
     let cloneItem = JSON.parse(JSON.stringify(item));
     delete cloneItem.ID;
     cloneItem.Content = "";
@@ -132,6 +132,10 @@ const GroupWrap = (props) => {
       case 4:
         cloneItem.ExerciseAnswer = [];
         break;
+      case 3:
+        cloneItem.Content = item.Content;
+
+        break;
       default:
         break;
     }
@@ -163,14 +167,8 @@ const GroupWrap = (props) => {
   const contentMenu = (groupID, item) => {
     return (
       <div className="function-group-item">
+        {/** Fix group */}
         <div className="wrap-btn">
-          {/* <button
-            className="btn btn-icon edit"
-            onClick={(e) => onEditGroupItem(e, item)}
-          >
-            <FormOutlined />
-            Sửa nhóm
-          </button> */}
           <CreateQuestionForm
             isGroup={isGroup}
             questionData={item}
@@ -179,6 +177,7 @@ const GroupWrap = (props) => {
             onEditData={(data) => onEditData(data)}
           />
         </div>
+        {/** Delete group */}
         <div className="wrap-btn">
           <button
             className="btn btn-icon delete"
@@ -192,10 +191,11 @@ const GroupWrap = (props) => {
             Xóa nhóm
           </button>
         </div>
+        {/** Add more question */}
         <div className="wrap-btn">
           <CreateQuestionForm
             isGroup={{ status: false, id: groupID }}
-            questionData={returnNewData(item)}
+            questionData={returnNewData(groupID, item)}
             onFetchData={onFetchData}
             handlePopover={() => onChangePopover(item.ID)}
             onEditData={(data) => onEditData(data)}
@@ -237,48 +237,58 @@ const GroupWrap = (props) => {
 
       {isGroup.status ? (
         <div className="lms-collapse">
-          {listQuestion?.map((item, index) => (
-            <div
-              data-click="trigger-collapse"
-              className="collapse-item"
-              key={index}
-            >
-              <div className="collapse-item__header">
-                <button
-                  className="btn-function"
-                  onClick={(e) => onShowCollapse(item.ID)}
-                >
-                  {item.ID == activeKey ? <DownOutlined /> : <RightOutlined />}
-                </button>
-                <Popover
-                  content={contentMenu(item.ID, item)}
-                  trigger="click"
-                  visible={item.ID == visible.id && visible.status}
-                  onVisibleChange={() => onChangePopover(item.ID)}
-                >
-                  <button
-                    className="btn btn-icon menu"
-                    onClick={(e) => showMenu(e)}
-                  >
-                    <MoreOutlined />
-                  </button>
-                </Popover>
-                <div className="header-content">
-                  <div className="title">Nhóm {index + 1}</div>
-                </div>
-              </div>
+          {listQuestion?.length == 0 ? (
+            <p className="text-center">
+              <b>Danh sách còn trống</b>
+            </p>
+          ) : (
+            listQuestion?.map((item, index) => (
               <div
-                className={`collapse-item__body ${
-                  activeKey == null ? "d-none" : ""
-                } ${item.ID == activeKey ? "active" : "un-active"} `}
+                data-click="trigger-collapse"
+                className="collapse-item"
+                key={index}
               >
-                <div className="body-content">
-                  {ReactHtmlParser(item.Content)}
-                  {children}
+                <div className="collapse-item__header">
+                  <button
+                    className="btn-function"
+                    onClick={(e) => onShowCollapse(item.ID)}
+                  >
+                    {item.ID == activeKey ? (
+                      <DownOutlined />
+                    ) : (
+                      <RightOutlined />
+                    )}
+                  </button>
+                  <Popover
+                    content={contentMenu(item.ID, item)}
+                    trigger="click"
+                    visible={item.ID == visible.id && visible.status}
+                    onVisibleChange={() => onChangePopover(item.ID)}
+                  >
+                    <button
+                      className="btn btn-icon menu"
+                      onClick={(e) => showMenu(e)}
+                    >
+                      <MoreOutlined />
+                    </button>
+                  </Popover>
+                  <div className="header-content">
+                    <div className="title">Nhóm {index + 1}</div>
+                  </div>
+                </div>
+                <div
+                  className={`collapse-item__body ${
+                    activeKey == null ? "d-none" : ""
+                  } ${item.ID == activeKey ? "active" : "un-active"} `}
+                >
+                  <div className="body-content">
+                    {ReactHtmlParser(item.Content)}
+                    {children}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       ) : (
         <>{children}</>

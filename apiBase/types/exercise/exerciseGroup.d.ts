@@ -10,4 +10,6 @@ type IExerciseGroup = IBaseApi<{
   Type: number;
   TypeName: string;
   Enable: boolean;
+  ExerciseList: any;
+  Paragraph: string;
 }>;
