@@ -184,7 +184,10 @@ export default function Header({
       >
         <Link href="/dashboard">
           {/* <a style={{ display: !isOpen ? "none" : "block" }}>Mona Media</a> */}
-          <img className="logo-img" src="/images/logo-final.jpg"></img>
+          <a href="#">
+            {" "}
+            <img className="logo-img" src="/images/logo-final.jpg"></img>
+          </a>
         </Link>
 
         <p style={{ display: !isOpen ? "block" : "none" }}>E</p>
