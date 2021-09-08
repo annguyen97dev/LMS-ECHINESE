@@ -98,8 +98,13 @@ const TypingForm = (props) => {
     );
 
     dataExercise.splice(ExerciseIndex, 1);
+
     if (questionDataForm.ExerciseList[QuestionIndex]) {
-      questionDataForm.ExerciseList[QuestionIndex].Enable = false;
+      if (questionDataForm.ExerciseList[QuestionIndex].isAdd) {
+        questionDataForm.ExerciseList.splice(QuestionIndex, 1);
+      } else {
+        questionDataForm.ExerciseList[QuestionIndex].Enable = false;
+      }
     } else {
       showNoti("danger", "Câu hỏi không tồn tại");
     }
@@ -332,107 +337,113 @@ const TypingForm = (props) => {
           <Spin />
         </div>
       ) : (
-        <Form form={form} layout="vertical" onFinish={onSubmit}>
-          <div className="container-fluid">
-            <div className="row">
-              <div className="col-md-6 col-12">
-                <Form.Item name="Question" label="Nội dung">
-                  <Editor
-                    exerciseList={dataExercise}
-                    deleteAllQuestion={deleteAllQuestion}
-                    deleteSingleQuestion={(quesID: number) =>
-                      deleteSingleQuestion(quesID)
-                    }
-                    handleChange={(value: string) => getDataEditor(value)}
-                    isReset={isResetEditor}
-                    questionContent={questionDataForm?.Paragraph}
-                    questionData={questionDataForm}
-                    addQuestion={(inputID: number) => addQuestion(inputID)}
-                  />
-                </Form.Item>
-                <Form.Item label="Tải lên link Audio">
-                  {/* <input
+        visible && (
+          <Form form={form} layout="vertical" onFinish={onSubmit}>
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col-md-6 col-12">
+                  <Form.Item name="Question" label="Nội dung">
+                    <Editor
+                      exerciseList={dataExercise}
+                      deleteAllQuestion={deleteAllQuestion}
+                      deleteSingleQuestion={(quesID: number) =>
+                        deleteSingleQuestion(quesID)
+                      }
+                      handleChange={(value: string) => getDataEditor(value)}
+                      isReset={isResetEditor}
+                      questionContent={questionDataForm?.Paragraph}
+                      questionData={questionDataForm}
+                      addQuestion={(inputID: number) => addQuestion(inputID)}
+                      visible={visible}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tải lên link Audio">
+                    {/* <input
                 type="file"
                 onChange={(info) => onchange_UploadFile(info)}
               ></input>
               {loadingUpload ? <Spin /> : linkUpload && linkUpload} */}
-                  <Upload onChange={onchange_UploadFile} showUploadList={false}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    <div className="d-block">
-                      {loadingUpload ? <Spin /> : linkUpload && linkUpload}
-                    </div>
-                  </Upload>
-                </Form.Item>
-              </div>
-              <div
-                className="col-md-6 col-12"
-                style={{ borderLeft: "2px dotted #dbdbdb" }}
-              >
-                <p
-                  className="style-label"
-                  style={{ textDecoration: "underline" }}
+                    <Upload
+                      onChange={onchange_UploadFile}
+                      showUploadList={false}
+                    >
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                      <div className="d-block">
+                        {loadingUpload ? <Spin /> : linkUpload && linkUpload}
+                      </div>
+                    </Upload>
+                  </Form.Item>
+                </div>
+                <div
+                  className="col-md-6 col-12"
+                  style={{ borderLeft: "2px dotted #dbdbdb" }}
                 >
-                  Đáp án
-                </p>
-                {questionDataForm?.ExerciseList?.map(
-                  (itemQues, index) =>
-                    itemQues.Enable && (
-                      <div key={index}>
-                        <p
-                          className="mt-4"
-                          style={{ fontWeight: 500, color: "#525252" }}
-                        >
-                          {returnIndexQuestion(itemQues)}
-                          {/* {`Câu (${index + 1})`} */}
-                        </p>
-                        <button
-                          className="btn btn-warning"
-                          onClick={() => handleAddAnswer(itemQues.inputID)}
-                        >
-                          Thêm đáp án
-                        </button>
-                        <div className="row">
-                          {itemQues.ExerciseAnswer?.map(
-                            (itemAns, index) =>
-                              itemAns.Enable && (
-                                <div className="col-md-6 col-12" key={index}>
-                                  <div className="row-ans mt-3">
-                                    <Form.Item className="mb-0">
-                                      <Input
-                                        value={itemAns.AnswerContent}
-                                        className="style-input"
-                                        onChange={(e) =>
-                                          onChange_text(
-                                            e,
+                  <p
+                    className="style-label"
+                    style={{ textDecoration: "underline" }}
+                  >
+                    Đáp án
+                  </p>
+                  {questionDataForm?.ExerciseList?.map(
+                    (itemQues, index) =>
+                      itemQues.Enable && (
+                        <div key={index}>
+                          <p
+                            className="mt-4"
+                            style={{ fontWeight: 500, color: "#525252" }}
+                          >
+                            {returnIndexQuestion(itemQues)}
+                            {/* {`Câu (${index + 1})`} */}
+                          </p>
+                          <button
+                            className="btn btn-warning"
+                            onClick={() => handleAddAnswer(itemQues.inputID)}
+                          >
+                            Thêm đáp án
+                          </button>
+                          <div className="row">
+                            {itemQues.ExerciseAnswer?.map(
+                              (itemAns, index) =>
+                                itemAns.Enable && (
+                                  <div className="col-md-6 col-12" key={index}>
+                                    <div className="row-ans mt-3">
+                                      <Form.Item className="mb-0">
+                                        <Input
+                                          value={itemAns.AnswerContent}
+                                          className="style-input"
+                                          onChange={(e) =>
+                                            onChange_text(
+                                              e,
+                                              itemAns.ID,
+                                              itemQues.inputID
+                                            )
+                                          }
+                                        ></Input>
+                                      </Form.Item>
+                                      <button
+                                        className="delete-ans"
+                                        onClick={() =>
+                                          deleteAnswerItem(
                                             itemAns.ID,
                                             itemQues.inputID
                                           )
                                         }
-                                      ></Input>
-                                    </Form.Item>
-                                    <button
-                                      className="delete-ans"
-                                      onClick={() =>
-                                        deleteAnswerItem(
-                                          itemAns.ID,
-                                          itemQues.inputID
-                                        )
-                                      }
-                                    >
-                                      <CloseOutlined />
-                                    </button>
+                                      >
+                                        <CloseOutlined />
+                                      </button>
+                                    </div>
                                   </div>
-                                </div>
-                              )
-                          )}
+                                )
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )
-                )}
+                      )
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </Form>
+          </Form>
+        )
       )}
     </div>
   );
