@@ -22,6 +22,7 @@ import {
 
 import { Eye } from "react-feather";
 import InputMoneyField from "~/components/FormControl/InputMoneyField";
+import { parse } from "path";
 
 let returnSchemaSalary = {};
 let schemaSalary = null;
@@ -102,7 +103,7 @@ const SalaryForm = (props) => {
   const onSubmitFormSalary = async (data: any) => {
     console.log("Submit salary: ", data);
     let cloneDataSubmit = {
-      Salary: data.Salary,
+      Salary: parseFloat(data.Salary.replace(/,/g, "")),
       UserInformationID: data.UserInformationID,
       Style: data.Style, //1 lương theo tháng , 2 lương theo giờ
     };
@@ -126,30 +127,19 @@ const SalaryForm = (props) => {
         status: false,
       });
     }
-
-    // let res = onSubmitSalary(cloneDataSubmit);
-
-    // res.then(function (rs: any) {
-    //   if (rs) {
-    //     if (rs.status == 200) {
-    //       setIsModalVisible(false);
-    //       statusAdd = "add-staff";
-    //     }
-    //   }
-    // });
   };
 
-  //   useEffect(() => {
-  //     if (submitSalary) {
-  //       formSalary.handleSubmit(onSubmitFormSalary);
-  //     }
-  //   }, [submitSalary]);
+  // const formatMoney = (value) => {
+  //   value = parseInt(value);
+  //   // formSalary.setValue("Salary", value)
+  // };
 
   useEffect(() => {
     if (dataStaff) {
       formSalary.reset({
         UserInformationID: dataStaff.UserInformationID,
         FullNameUnicode: dataStaff.FullNameUnicode,
+        Style: 1,
       });
     }
   }, [dataStaff]);
@@ -172,6 +162,7 @@ const SalaryForm = (props) => {
             </div>
             <div className="col-12">
               <SelectField
+                disabled={true}
                 form={formSalary}
                 name="Style"
                 label="Kiểu tính lương"
@@ -179,10 +170,6 @@ const SalaryForm = (props) => {
                   {
                     title: "Tính lương theo tháng",
                     value: 1,
-                  },
-                  {
-                    title: "Tính lương theo giờ",
-                    value: 2,
                   },
                 ]}
               />

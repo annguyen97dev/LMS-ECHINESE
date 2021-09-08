@@ -486,29 +486,34 @@ export default function StudentAdvisory() {
 
     {
       title: "",
-      render: (text, data, index) =>
-        dataSource[index].CustomerConsultationStatusID == 2 && (
-          <Link
-            href={{
-              pathname: "/customer/service/service-info-student/",
-            }}
-          >
-            <Tooltip title="Hẹn test">
-              <button className="btn btn-icon view">
-                <CalendarOutlined />
-              </button>
-            </Tooltip>
-          </Link>
-        ),
-      // <StudentAdviseForm
-      //   getIndex={() => setIndexRow(index)}
-      //   index={index}
-      //   rowData={data}
-      //   rowID={data.ID}
-      //   listData={listDataForm}
-      //   isLoading={isLoading}
-      //   _onSubmit={(data: any) => _onSubmit(data)}
-      // />
+      render: (text, data, index) => {
+        return (
+          <>
+            <StudentAdviseForm
+              getIndex={() => setIndexRow(index)}
+              index={index}
+              rowData={data}
+              rowID={data.ID}
+              listData={listDataForm}
+              isLoading={isLoading}
+              _onSubmit={(data: any) => _onSubmit(data)}
+            />
+            {dataSource[index].CustomerConsultationStatusID == 2 && (
+              <Link
+                href={{
+                  pathname: "/customer/service/service-info-student/",
+                }}
+              >
+                <Tooltip title="Hẹn test">
+                  <button className="btn btn-icon view">
+                    <CalendarOutlined />
+                  </button>
+                </Tooltip>
+              </Link>
+            )}
+          </>
+        );
+      },
     },
   ];
 

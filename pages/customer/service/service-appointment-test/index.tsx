@@ -473,9 +473,11 @@ export default function AppointmentServiceTest() {
         return (
           <>
             {apmReg == 1 ? (
-              <span className="tag green">Đã đăng kí</span>
+              <span className="tag blue">Chưa đăng kí khóa học</span>
+            ) : apmReg == 2 ? (
+              <span className="tag green">Đã đăng kí khóa học</span>
             ) : (
-              <span className="tag red">Chưa làm bài test</span>
+              <span className="tag red">Chưa test</span>
             )}
           </>
         );

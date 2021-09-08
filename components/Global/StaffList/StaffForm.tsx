@@ -20,7 +20,7 @@ import {
   AimOutlined,
 } from "@ant-design/icons";
 
-import { Eye } from "react-feather";
+import { RotateCcw } from "react-feather";
 import SalaryForm from "./SalaryForm";
 
 type LayoutType = Parameters<typeof Form>[0]["layout"];
@@ -254,6 +254,7 @@ const StaffForm = (props) => {
     Branch: undefined, //string : id của trung tâm - LƯU Ý NẾU TỪ 2 TRUNG TÂM TRỞ LÊN THÌ NHẬP(ID,ID,ID)
     RoleID: null, //int mã công việc
     StatusID: null,
+    Password: null,
   };
 
   (function returnSchemaFunc() {
@@ -361,14 +362,12 @@ const StaffForm = (props) => {
     }
   }, [isModalVisible]);
 
-  console.log("status add: ", statusAdd);
-
   return (
     <>
       {rowID ? (
-        <button className="btn btn-icon" onClick={showModal}>
-          <Tooltip title="Chi tiết">
-            <Eye />
+        <button className="btn btn-icon edit" onClick={showModal}>
+          <Tooltip title="Cập nhật">
+            <RotateCcw />
           </Tooltip>
         </button>
       ) : (
@@ -381,7 +380,9 @@ const StaffForm = (props) => {
         style={{ top: 20 }}
         title={
           statusAdd == "add-staff"
-            ? "Tạo mới nhân viên"
+            ? rowID
+              ? "Cập nhật nhân viên"
+              : "Tạo mới nhân viên"
             : "Thêm lương cho nhân viên"
         }
         visible={isModalVisible}
@@ -537,6 +538,15 @@ const StaffForm = (props) => {
                     ]}
                   />
                 </div>
+                {rowID && (
+                  <div className="col-md-6 col-12">
+                    <InputTextField
+                      form={form}
+                      name="Password"
+                      label="Mật khẩu"
+                    />
+                  </div>
+                )}
               </div>
               {/*  */}
               {/*  */}

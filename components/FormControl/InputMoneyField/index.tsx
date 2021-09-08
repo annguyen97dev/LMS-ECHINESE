@@ -59,6 +59,12 @@ const InputMoneyField = (props) => {
             onChange={(e) => {
               let convertValue = e.target.value.toString();
               let value = parseInt(convertValue.replace(/\,/g, ""), 10);
+              // let value = new Intl.NumberFormat("vi-VN", {
+              //   style: "currency",
+              //   currency: "VND",
+              // }).format(parseInt(e.target.value));
+              // value = value.replace(" ₫", "");
+              // let newValue = parseFloat(value);
 
               if (!isNaN(value)) {
                 field.onChange(value.toLocaleString());

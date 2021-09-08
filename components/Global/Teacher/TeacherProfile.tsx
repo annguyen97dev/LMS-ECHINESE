@@ -24,13 +24,13 @@ import { useWrap } from "~/context/wrap";
 import PowerTable from "~/components/PowerTable";
 import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 
-import moment from 'moment';
+import moment from "moment";
 import { string } from "yup";
 import ExpandTable from "~/components/ExpandTable";
 import { faLeaf } from "@fortawesome/free-solid-svg-icons";
 
 const { RangePicker } = DatePicker;
-const dateFormat = 'YYYY/MM/DD';
+const dateFormat = "YYYY/MM/DD";
 
 const { TabPane } = Tabs;
 
@@ -54,18 +54,25 @@ const TeacherProfile = (props) => {
     formState: { isSubmitting, errors, isSubmitted },
   } = useForm();
   const { showNoti } = useWrap();
-  
+
   // --- GET DATA USER
   // let dataUser = null;
   // if (props.dataUser) {
   //   dataUser = props.dataUser;
   // }
-  const { dataUser, isLoading, updateTeacherID, userID, dataSubject, updateTeacherForSubject } = props;
+  const {
+    dataUser,
+    isLoading,
+    updateTeacherID,
+    userID,
+    dataSubject,
+    updateTeacherForSubject,
+  } = props;
   const { Option } = Select;
-  
+
   const onSubmit = handleSubmit((data) => {
     console.log("Data submit:", data);
-    if(Object.keys(data).length === 1) {
+    if (Object.keys(data).length === 1) {
       showNoti("danger", "Bạn chưa chỉnh sửa");
     } else {
       let res = updateTeacherID(data);
@@ -79,57 +86,60 @@ const TeacherProfile = (props) => {
     const columns = [];
     const data = [
       {
-        Subject: 'Subject'
-      }
-    ]
+        Subject: "Subject",
+      },
+    ];
 
-    for(let i = 0; i < Object.keys(record.Subject).length; i++) {
+    for (let i = 0; i < Object.keys(record.Subject).length; i++) {
       columns.push({
         key: record.Subject[i].SubjectID,
         title: record.Subject[i].SubjectName,
         dataIndex: "Subject",
-        render: () => <Checkbox value={record.Subject[i].SubjectID} checked={record.Subject[i].IsSelected ? true : false} onChange={onChangeCheckBox} />
-      })
+        render: () => (
+          <Checkbox
+            value={record.Subject[i].SubjectID}
+            checked={record.Subject[i].IsSelected ? true : false}
+            onChange={onChangeCheckBox}
+          />
+        ),
+      });
     }
 
     const onChangeCheckBox = (e) => {
       // console.log(`checked = ${e.target.value}`);
       const data = {
         UserInformationID: userID,
-        SubjectID: e.target.value
-      }
-      console.log("Data submit:",data);
+        SubjectID: e.target.value,
+      };
+      console.log("Data submit:", data);
       let res = updateTeacherForSubject(data);
       res.then(function (rs: any) {
         rs && rs.status == 200;
       });
-    }
+    };
 
-    if(Object.keys(record.Subject).length) {
+    if (Object.keys(record.Subject).length) {
       return (
         <div className="mini-table">
-          <Table 
+          <Table
             columns={columns}
             dataSource={data}
             pagination={false}
             className="tb-expand"
           />
         </div>
-      )
+      );
     } else {
-      return (
-        <p>Chưa có môn học</p>
-      )
+      return <p>Chưa có môn học</p>;
     }
-
-  }
+  };
 
   useEffect(() => {
-      setValue("UserInformationID", userID);
-      console.log("Data Subject", dataSubject);
+    setValue("UserInformationID", userID);
+    console.log("Data Subject", dataSubject);
   }, []);
 
-  if(isLoading.status == true) {
+  if (isLoading.status == true) {
     return (
       <>
         <Card className="space-top-card text-center">
@@ -148,10 +158,11 @@ const TeacherProfile = (props) => {
                   <Form form={form} layout="vertical" onFinish={onSubmit}>
                     <div className="row">
                       <div className="col-md-4 col-12">
-                        <Form.Item 
-                          label="Họ và tên" 
-                          name="họ và tên" 
-                          initialValue={dataUser?.FullNameUnicode}>
+                        <Form.Item
+                          label="Họ và tên"
+                          name="họ và tên"
+                          initialValue={dataUser?.FullNameUnicode}
+                        >
                           <Input
                             className="style-input"
                             size="large"
@@ -162,10 +173,11 @@ const TeacherProfile = (props) => {
                         </Form.Item>
                       </div>
                       <div className="col-md-4 col-12">
-                        <Form.Item 
-                          label="Giới tính" 
-                          name="Giới tính" 
-                          initialValue={dataUser?.Gender == 0 ? "Nữ" : "Nam"}>
+                        <Form.Item
+                          label="Giới tính"
+                          name="Giới tính"
+                          initialValue={dataUser?.Gender == 0 ? "Nữ" : "Nam"}
+                        >
                           <Select
                             className="style-input"
                             size="large"
@@ -177,26 +189,28 @@ const TeacherProfile = (props) => {
                         </Form.Item>
                       </div>
                       <div className="col-md-4 col-12">
-                        <Form.Item 
+                        <Form.Item
                           label="Ngày sinh"
                           name="DOB"
                           initialValue={moment(dataUser?.DOB)}
                         >
-                            <DatePicker
-                              className="style-input"
-                              format={dateFormat}
-                              onChange={(date, dateString) => setValue("DOB", dateString)}
-                            >
-                            </DatePicker>
+                          <DatePicker
+                            className="style-input"
+                            format={dateFormat}
+                            onChange={(date, dateString) =>
+                              setValue("DOB", dateString)
+                            }
+                          ></DatePicker>
                         </Form.Item>
                       </div>
                     </div>
                     <div className="row">
                       <div className="col-md-6 col-12">
-                        <Form.Item 
-                          label="Địa chỉ email" 
-                          name="Địa chỉ email" 
-                          initialValue={dataUser?.Email}>
+                        <Form.Item
+                          label="Địa chỉ email"
+                          name="Địa chỉ email"
+                          initialValue={dataUser?.Email}
+                        >
                           <Input
                             className="style-input"
                             size="large"
@@ -205,10 +219,11 @@ const TeacherProfile = (props) => {
                         </Form.Item>
                       </div>
                       <div className="col-md-6 col-12">
-                        <Form.Item 
-                          label="Số điện thoại" 
-                          name="Số điện thoại" 
-                          initialValue={dataUser?.Mobile}>
+                        <Form.Item
+                          label="Số điện thoại"
+                          name="Số điện thoại"
+                          initialValue={dataUser?.Mobile}
+                        >
                           <Input
                             className="style-input"
                             size="large"
@@ -219,14 +234,17 @@ const TeacherProfile = (props) => {
                     </div>
                     <div className="row">
                       <div className="col-12">
-                        <Form.Item 
-                          label="Địa chỉ" 
-                          name="Địa chỉ" 
-                          initialValue={dataUser?.Address}>
+                        <Form.Item
+                          label="Địa chỉ"
+                          name="Địa chỉ"
+                          initialValue={dataUser?.Address}
+                        >
                           <Input
                             className="style-input"
                             size="large"
-                            onChange={(e) => setValue("Address", e.target.value)}
+                            onChange={(e) =>
+                              setValue("Address", e.target.value)
+                            }
                           />
                         </Form.Item>
                       </div>
@@ -275,22 +293,23 @@ const TeacherProfile = (props) => {
               </div>
             </TabPane>
             <TabPane tab="Thông tin lớp học" key="2">
-                <div className="row justify-content-center">
-                  <div className="col-md-8 col-12">
-                    <div className="wrap-table table-expand">
-                      <Table 
-                        dataSource={dataSubject}
-                        columns={columns}
-                        size="middle"
-                        scroll={{ x: 600 }}
-                        expandable={{
-                          expandedRowRender: (record) => expandedRowRender(record),
-                        }}
-                        pagination={false}
-                      />  
-                    </div>
+              <div className="row justify-content-center">
+                <div className="col-md-8 col-12">
+                  <div className="wrap-table table-expand">
+                    <Table
+                      dataSource={dataSubject}
+                      columns={columns}
+                      size="middle"
+                      scroll={{ x: 600 }}
+                      expandable={{
+                        expandedRowRender: (record) =>
+                          expandedRowRender(record),
+                      }}
+                      pagination={false}
+                    />
                   </div>
                 </div>
+              </div>
             </TabPane>
           </Tabs>
         </Card>
