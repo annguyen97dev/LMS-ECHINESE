@@ -167,7 +167,7 @@ const QuestionTyping = (props: any) => {
             <div className="paragraph mb-3">
               {ReactHtmlParser(dataListQuestion?.Paragraph)}
             </div>
-            {/* <div className="box-action">
+            <div className="box-action">
               <CreateQuestionForm
                 isGroup={{ status: false, id: dataListQuestion?.ID }}
                 questionData={dataListQuestion}
@@ -175,7 +175,7 @@ const QuestionTyping = (props: any) => {
                 onEditData={(data) => onEditData(data)}
               />
 
-              <Popconfirm
+              {/* <Popconfirm
             title="Bạn có chắc muốn xóa?"
             visible={dataListQuestion.ID == visible.id && visible.status}
             onConfirm={() => handleOk(dataListQuestion)}
@@ -188,8 +188,8 @@ const QuestionTyping = (props: any) => {
             >
               <Trash2 />
             </button>
-          </Popconfirm>
-            </div> */}
+          </Popconfirm> */}
+            </div>
           </>
         )}
       </div>
