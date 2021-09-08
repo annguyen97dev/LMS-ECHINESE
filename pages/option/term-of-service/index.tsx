@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Card, Button, Spin } from "antd";
-// import { Editor } from "@tinymce/tinymce-react";
+import EditorBase from "~/components/Elements/EditorBase";
 import TitlePage from "~/components/TitlePage";
 import LayoutBase from "~/components/LayoutBase";
 
@@ -28,8 +28,8 @@ const TermOfService = () => {
       showNoti("danger", error.message);
     }
   };
-  const changeContractContent = (e) => {
-    setDataContent(e.target.getContent());
+  const changeContractContent = (value) => {
+    setDataContent(value);
   };
   const updateData = async () => {
     if (!dataContent) {
@@ -59,22 +59,11 @@ const TermOfService = () => {
     <div className="row">
       <div className="col-12">
         <TitlePage title="Contract Detail" />
-      </div>
-      <Card>
-        <div className="col-12">
-          {/* <Editor
-						apiKey="la1igo0sfogafdrl7wrj7w9j1mghl7txxke654lgzvkt86im"
-						initialValue={data?.RulesContent}
-						init={{
-							height: 700,
-							branding: false,
-							plugins: 'link image code',
-							toolbar:
-								'undo redo | bold italic | alignleft aligncenter alignright | code',
-						}}
-						onChange={changeContractContent}
-					/> */}
-        </div>
+        <Card>
+          <EditorBase 
+            handleChangeDataEditor={changeContractContent}
+            content={data?.RulesContent}
+          />
         <div className="row pt-3">
           <div className="col-12 d-flex justify-content-center">
             <div style={{ paddingRight: 5 }}>
@@ -86,6 +75,7 @@ const TermOfService = () => {
           </div>
         </div>
       </Card>
+      </div>
     </div>
   );
 };

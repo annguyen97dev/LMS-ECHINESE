@@ -2,20 +2,14 @@ import { Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { Info } from "react-feather";
+import { Info, Move } from "react-feather";
 import { areaApi, branchApi, parentsApi, programApi } from "~/apiBase";
 import { courseReserveApi } from "~/apiBase/customer/student/course-reserve";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
-import ParentsDelete from "~/components/Global/Customer/ParentsList/ParentsDelete";
-import ParentsForm from "~/components/Global/Customer/ParentsList/ParentsForm";
 import CourseReserveIntoCourse from "~/components/Global/Customer/Student/CourseReserve/CourseReserveIntoCourse";
-import RegCancel from "~/components/Global/Customer/Student/RegCancel";
-import RegInfo from "~/components/Global/Customer/Student/RegInfo";
-import ReserveChangeCourse from "~/components/Global/Customer/Student/ReserveChangeCourse";
 import LayoutBase from "~/components/LayoutBase";
 import PowerTable from "~/components/PowerTable";
-import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
 
 const StudentCourseReserve = () => {
@@ -59,21 +53,33 @@ const StudentCourseReserve = () => {
     },
     {
       title: "Trạng thái",
-      dataIndex: "StatusName",
-      render: (status) => <>{<span className="tag green">{status}</span>}</>,
+      dataIndex: "StatusID",
+      render: (status) => (
+        <>
+          {status == 1 && <span className="tag yellow">Đang bảo lưu</span>}
+          {status == 2 && <span className="tag blue">Đã hoàn tiền</span>}
+          {status == 3 && (
+            <span className="tag green">Đã chuyễn vào khóa mới</span>
+          )}
+          {status == 4 && <span className="tag red">Hết hạn bảo lưu</span>}
+        </>
+      ),
     },
-
     {
       render: (data) => (
         <Fragment>
-          <CourseReserveIntoCourse
-            infoDetail={data}
-            infoId={data.ID}
-            reloadData={(firstPage) => {
-              getDataCourseReserve(firstPage);
-            }}
-            currentPage={currentPage}
-          />
+          {data.StatusID == 3 ? (
+            <></>
+          ) : (
+            <CourseReserveIntoCourse
+              infoDetail={data}
+              infoId={data.ID}
+              reloadData={(firstPage) => {
+                getDataCourseReserve(firstPage);
+              }}
+              currentPage={currentPage}
+            />
+          )}
         </Fragment>
       ),
     },

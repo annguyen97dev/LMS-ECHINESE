@@ -8,6 +8,10 @@ export const packageApi = {
 			params,
 		});
 	},
+	// Lấy theo ID
+	getByID(ID) {
+		return instance.get<IApiResultData<IPackage>>(`${url}${ID}`);
+	},
 	// Thêm mới data
 	add(data) {
 		return instance.post(url, data);

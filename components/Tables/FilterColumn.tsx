@@ -82,6 +82,7 @@ const FilterColumn = (
 						style={{marginBottom: 8, display: 'block'}}
 						placeholder={`Search ${dataIndex}`}
 						optionFilterProp="children"
+						showSearch={true}
 					>
 						{optionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>

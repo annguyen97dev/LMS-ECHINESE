@@ -27,6 +27,7 @@ import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
 import { paymentMethodApi } from "~/apiBase/options/payment-method";
 import { courseReserveApi } from "~/apiBase/customer/student/course-reserve";
+import { PaymentMethod } from "~/lib/payment-method/payment-method";
 
 const CourseReserveIntoCourse = React.memo((props: any) => {
   const { Option } = Select;
@@ -66,18 +67,6 @@ const CourseReserveIntoCourse = React.memo((props: any) => {
         showNoti("danger", err.message);
       } finally {
         setIsLoading(false);
-      }
-    })();
-  };
-
-  const fetchDataPaymentMethod = () => {
-    (async () => {
-      try {
-        const _paymentMethod = await paymentMethodApi.getAll({});
-        _paymentMethod.status == 200 &&
-          setPaymentMethod(_paymentMethod.data.data);
-      } catch (err) {
-        showNoti("danger", err.message);
       }
     })();
   };
@@ -147,7 +136,6 @@ const CourseReserveIntoCourse = React.memo((props: any) => {
     if (isModalVisible) {
       fetchDataCourse();
       fetchDataPrice();
-      fetchDataPaymentMethod();
     }
   }, [isModalVisible]);
 
@@ -314,8 +302,8 @@ const CourseReserveIntoCourse = React.memo((props: any) => {
                       className="w-100 style-input"
                       placeholder="Chọn hình thức thanh toán"
                     >
-                      {paymentMethod?.map((item, index) => (
-                        <Option key={index} value={item.ID}>
+                      {PaymentMethod?.map((item, index) => (
+                        <Option key={index} value={item.id}>
                           {item.Name}
                         </Option>
                       ))}
@@ -326,16 +314,7 @@ const CourseReserveIntoCourse = React.memo((props: any) => {
 
               <div className="row">
                 <div className="col-12">
-                  <Form.Item
-                    name="PayDate"
-                    label="Ngày thu tiếp theo"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng điền đủ thông tin!",
-                      },
-                    ]}
-                  >
+                  <Form.Item name="PayDate" label="Ngày thu tiếp theo">
                     <DatePicker
                       className="style-input w-100"
                       onChange={(e) => setValue("PayDate", e)}
@@ -348,7 +327,6 @@ const CourseReserveIntoCourse = React.memo((props: any) => {
                 <div className="col-12">
                   <Form.Item name="Note" label="Cam kết">
                     <TextArea
-                      className="style-input w-100"
                       onChange={(e) => setValue("Commitment", e.target.value)}
                       allowClear={true}
                     />

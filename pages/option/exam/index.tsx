@@ -54,7 +54,6 @@ const ExamServices = () => {
     {
       title: "Thời gian thi",
       dataIndex: "TimeExam",
-      render: (value) => moment(value).format("LT"),
     },
     { title: "Số thí sinh", dataIndex: "Amount" },
     {

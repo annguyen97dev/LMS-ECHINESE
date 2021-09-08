@@ -1,0 +1,51 @@
+.finance-course-name {
+	width: 250px;
+	@include text-truncate;
+}
+
+// REFUND VIEW
+.request-refund-form {
+}
+.refund-branch {
+	position: relative;
+	margin-bottom: 24px;
+	&-item {
+		display: flex;
+		.info {
+			width: calc(100% - 16px);
+			margin-top: -2px;
+			padding-left: 4px;
+		}
+		.name {
+			font-weight: 500;
+			margin-bottom: 4px;
+		}
+		.list {
+			padding-left: 0;
+			margin-bottom: 0;
+			list-style-type: none;
+			display: flex;
+			li {
+				font-weight: 500;
+				&:nth-child(n + 2) {
+					margin-left: 12px;
+				}
+			}
+			span {
+				font-weight: normal;
+				margin-left: 4px;
+			}
+		}
+		&:nth-child(n + 2) {
+			margin-top: 12px;
+		}
+	}
+	.custom-loading-icon {
+		.ant-spin-dot-item.ant-spin-dot-item {
+			background: $primary-color;
+		}
+	}
+	&.ant-form-item-with-help {
+		margin-bottom: 0;
+	}
+}

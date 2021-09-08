@@ -5,6 +5,7 @@ import {cloneElement, useState} from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import CourseListUpdate from './CourseListUpdate';
+import {numberWithCommas} from '~/utils/functions';
 const PowerList = (props) => {
 	const {dataSource, isLoading, totalPage, getPagination, children} = props;
 	const checkGetPagination = (page) => {
@@ -59,7 +60,7 @@ const PowerList = (props) => {
 				EndDay,
 				TotalStudents,
 				BranchID,
-			}) => (
+			}: ICourse) => (
 				<List.Item
 					extra={cloneElement(children, {
 						courseObj: {ID, BranchID, AcademicUID, TeacherLeaderUID},
@@ -93,12 +94,7 @@ const PowerList = (props) => {
 									</li>
 									<li>
 										<span>Price: </span>{' '}
-										<span>
-											{Price.toLocaleString('it-IT', {
-												style: 'currency',
-												currency: 'VND',
-											})}
-										</span>
+										<span>{numberWithCommas(Price)} VNĐ</span>
 									</li>
 								</ul>
 								<ul className="list-hor">

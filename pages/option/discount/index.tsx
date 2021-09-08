@@ -17,7 +17,6 @@ import Modal from "antd/lib/modal/Modal";
 import moment from "moment";
 
 const Discount = () => {
-
 	const [dataTable, setDataTable] = useState<IDiscount[]>([]);
 	const [dataDelete, setDataDelete]  = useState({
 		ID: null,
@@ -31,6 +30,7 @@ const Discount = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
 	let pageIndex = 1;
 
@@ -150,12 +150,15 @@ const Discount = () => {
 	};
 
 	// PAGINATION
-	const getPagination = (pageNumber: number) => {
+	const getPagination = (pageNumber: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
 		  ...todoApi,
+		//   ...listFieldSearch,
 		  pageIndex: pageIndex,
+		  pageSize: pageSize
 		});
 	};
 
@@ -219,6 +222,7 @@ const Discount = () => {
 
 	// HANDLE RESET
 	const handleReset = () => {
+		setActiveColumnSearch('');
 		setTodoApi({
 			...listTodoApi,
 			pageIndex: 1,
@@ -258,6 +262,7 @@ const Discount = () => {
 			title: 'Mã khuyến mãi',
 			dataIndex: 'DiscountCode',
 			...FilterColumn('DiscountCode', onSearch, handleReset, 'text'),
+			className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
 			render: (code) => <span className="tag green">{code}</span>,
 		},
 		{
@@ -352,7 +357,7 @@ const Discount = () => {
 					loading={isLoading}
 					currentPage={currentPage}
 					totalPage={totalPage && totalPage}
-					getPagination={(pageNumber: number) => getPagination(pageNumber)}
+					getPagination={getPagination}
 					addClass="basic-header"
 					TitleCard={
 						<DiscountForm 

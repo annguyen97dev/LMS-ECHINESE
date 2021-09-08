@@ -30,6 +30,7 @@ const EditorField = (props) => {
 								onChange: field.onChange,
 								innerRef: field.ref,
 								value: field.value,
+								disabled: disabled,
 							}}
 						/>
 					);

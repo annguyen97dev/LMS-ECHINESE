@@ -1,4 +1,4 @@
-import { Tooltip } from "antd";
+import { Switch, Tooltip } from "antd";
 import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
@@ -12,6 +12,8 @@ import { useWrap } from "~/context/wrap";
 import { packageResultApi } from "~/apiBase/package/package-result";
 import { packageDetailApi } from "~/apiBase/package/package-detail";
 import PackageResultExpand from "~/components/Global/Package/PackageResult/PackageResultExpand";
+import PackageResultUpdateTeacher from "~/components/Global/Package/PackageResult/PackageResultUpdateTeacher";
+import { Info } from "react-feather";
 
 const PackageSetResult = () => {
   const onSearch = (data) => {
@@ -39,7 +41,7 @@ const PackageSetResult = () => {
       dataIndex: "ExamTopicName",
     },
     {
-      title: "Mức độ",
+      title: "Level",
       dataIndex: "SetPackageLevel",
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
@@ -62,6 +64,62 @@ const PackageSetResult = () => {
         </Fragment>
       ),
     },
+    {
+      title: "Yêu cầu chấm bài",
+      render: (data) => (
+        <Fragment>
+          {data.ExamTopicType == 2 ? (
+            <Switch
+              checkedChildren="Có"
+              unCheckedChildren="Không"
+              checked={data.isFixPaid}
+              size="default"
+              onChange={async (check: boolean) => {
+                setIsLoading({
+                  type: "GET_ALL",
+                  status: true,
+                });
+                try {
+                  let res = await packageResultApi.update({
+                    ...data,
+                    isFixPaid: check,
+                  });
+                  res.status == 200 &&
+                    setParams({ ...params, pageIndex: currentPage }),
+                    showNoti("success", res.data.message);
+                } catch (error) {
+                  showNoti("danger", error.message);
+                } finally {
+                  setIsLoading({
+                    type: "GET_ALL",
+                    status: false,
+                  });
+                }
+              }}
+            />
+          ) : (
+            <p className="font-light-black">Trắc nghiệm được chấm tự động</p>
+          )}
+        </Fragment>
+      ),
+    },
+    {
+      render: (data) => (
+        <Link
+          href={{
+            pathname:
+              "/package/package-set-result/package-set-result-detail/[slug]",
+            query: { slug: `${data.ID}` },
+          }}
+        >
+          <Tooltip title="Kết quả gói bài chi tiết">
+            <button className="btn btn-icon">
+              <Info />
+            </button>
+          </Tooltip>
+        </Link>
+      ),
+    },
   ];
   const [currentPage, setCurrentPage] = useState(1);
   const [itemDetail, setItemDetail] = useState();
@@ -77,6 +135,7 @@ const PackageSetResult = () => {
     SetPackageDetailID: null,
     isDone: null,
     StudentName: null,
+    ExamTopicType: null,
   };
 
   const sortOption = [
@@ -131,6 +190,23 @@ const PackageSetResult = () => {
       value: null,
     },
     {
+      name: "ExamTopicType",
+      title: "Hình thức",
+      col: "col-12",
+      type: "select",
+      optionList: [
+        {
+          value: 1,
+          title: "Trắc nghiệm",
+        },
+        {
+          value: 2,
+          title: "Tự luận",
+        },
+      ],
+      value: null,
+    },
+    {
       name: "date-range",
       title: "Ngày tạo",
       col: "col-12",
@@ -150,6 +226,7 @@ const PackageSetResult = () => {
       SetPackageDetailID: null,
       isDone: null,
       StudentName: null,
+      ExamTopicType: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;
@@ -276,7 +353,7 @@ const PackageSetResult = () => {
   const expandedRowRender = (data, index) => {
     return (
       <Fragment>
-        <PackageResultExpand info={data} infoIndex={index} />
+        <PackageResultExpand infoID={data.ID} />
       </Fragment>
     );
   };
@@ -291,6 +368,16 @@ const PackageSetResult = () => {
       TitlePage="KẾT QUẢ GÓI BÀI"
       dataSource={packageSetResult}
       columns={columns}
+      TitleCard={
+        <>
+          <PackageResultUpdateTeacher
+            reloadData={(firstPage) => {
+              setCurrentPage(1);
+              getDataSetPackageResult(firstPage);
+            }}
+          />
+        </>
+      }
       Extra={
         <div className="extra-table">
           <FilterBase

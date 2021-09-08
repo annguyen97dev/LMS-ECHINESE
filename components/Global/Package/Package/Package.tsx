@@ -1,8 +1,8 @@
-import {EditOutlined} from '@ant-design/icons';
 import {Image, Switch, Tooltip} from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React, {useEffect, useRef, useState} from 'react';
+import {Info} from 'react-feather';
 import {packageApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
@@ -40,6 +40,10 @@ function Package() {
 		sortType: false,
 	});
 	const [filters, setFilters] = useState(listFieldInit);
+	const paymentMethodOptionList = [
+		{label: 'Miễn phí', value: 1},
+		{label: 'Cao cấp', value: 2},
+	];
 	const typeOptionList = [
 		{
 			value: 1,
@@ -397,11 +401,11 @@ function Package() {
 							query: {slug: packageItem.ID},
 						}}
 					>
-						<a className="btn btn-icon edit">
-							<Tooltip title="Chi tiết">
-								<EditOutlined />
-							</Tooltip>
-						</a>
+						<Tooltip title="Chi tiết">
+							<a className="btn btn-icon">
+								<Info />
+							</a>
+						</Tooltip>
 					</Link>
 					<PackageForm
 						isLoading={isLoading}
@@ -409,6 +413,7 @@ function Package() {
 						updateObj={packageItem}
 						handleUploadImage={onUploadImage}
 						handleUpdatePackage={onUpdatePackage(idx)}
+						paymentMethodOptionList={paymentMethodOptionList}
 					/>
 				</>
 			),
@@ -437,6 +442,7 @@ function Package() {
 						isLoading={isLoading}
 						handleUploadImage={onUploadImage}
 						handleCreatePackage={onCreatePackage}
+						paymentMethodOptionList={paymentMethodOptionList}
 					/>
 				}
 			/>

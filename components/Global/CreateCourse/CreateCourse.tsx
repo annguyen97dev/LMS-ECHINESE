@@ -12,9 +12,9 @@ import {
 	lessonApi,
 	programApi,
 	roomApi,
+	staffApi,
 	studyDayApi,
 	studyTimeApi,
-	userInformationApi,
 } from '~/apiBase';
 import CreateCourseForm from '~/components/Global/CreateCourse/CreateCourseForm/CreateCourseForm';
 import SaveCreateCourse from '~/components/Global/CreateCourse/SaveCreateCourse';
@@ -263,7 +263,7 @@ const CreateCourse = () => {
 				BranchID: id,
 			};
 			const [user, room] = await Promise.all([
-				userInformationApi.getAllParams({...params, RoleID: 7}),
+				staffApi.getAll({...params, RoleID: 7}),
 				roomApi.getAll(params),
 			]);
 			// USER INFORMATION
