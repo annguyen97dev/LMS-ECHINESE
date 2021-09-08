@@ -1,21 +1,14 @@
-import { Tooltip } from "antd";
-import moment from "moment";
-import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
-import { Eye, Info } from "react-feather";
-import { branchApi, courseApi } from "~/apiBase";
-import { courseStudentApi } from "~/apiBase/customer/student/course-student";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
 import ExpandTable from "~/components/ExpandTable";
-import ChangeCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ChangeCourseForm";
-import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
-import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
+
 import LayoutBase from "~/components/LayoutBase";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
 import { Roles } from "~/lib/roles/listRoles";
 import { payRollApi } from "~/apiBase/staff-manage/pay-roll";
+import PowerTable from "~/components/PowerTable";
 
 const SalaryReview = () => {
   const onSearch = (data) => {
@@ -32,7 +25,7 @@ const SalaryReview = () => {
   };
   const columns = [
     {
-      title: "Học viên",
+      title: "Nhân viên",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
       render: (text) => <p className="font-weight-blue">{text}</p>,
@@ -254,7 +247,7 @@ const SalaryReview = () => {
   }, [params]);
 
   return (
-    <ExpandTable
+    <PowerTable
       currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
@@ -263,6 +256,14 @@ const SalaryReview = () => {
       TitlePage="Duyệt lương office"
       dataSource={payRoll}
       columns={columns}
+      // TitleCard={
+      //   <JobForm
+      //     reloadData={(firstPage) => {
+      //       setCurrentPage(1);
+      //       getDataJob(firstPage);
+      //     }}
+      //   />
+      // }
       Extra={
         <div className="extra-table">
           <FilterBase

@@ -1,5 +1,4 @@
 import { Tooltip } from "antd";
-import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
 import { Eye, Info } from "react-feather";
@@ -7,14 +6,12 @@ import { branchApi, courseApi } from "~/apiBase";
 import { courseStudentApi } from "~/apiBase/customer/student/course-student";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
-import ExpandTable from "~/components/ExpandTable";
 import ChangeCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ChangeCourseForm";
-import CourseOfStudentExpand from "~/components/Global/Customer/Student/CourseOfStudent/CourseOfStudentExpand";
-import RefundCourse from "~/components/Global/Customer/Student/RefundCourse";
 import LayoutBase from "~/components/LayoutBase";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
 import ReserveCourseForm from "~/components/Global/Customer/Student/CourseOfStudent/ReserveCourseForm";
+import PowerTable from "~/components/PowerTable";
 
 const CourseStudent = () => {
   const onSearch = (data) => {
@@ -100,7 +97,6 @@ const CourseStudent = () => {
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemDetail, setItemDetail] = useState();
 
   const listParamsDefault = {
     pageSize: 10,
@@ -304,19 +300,8 @@ const CourseStudent = () => {
     getDataCourseStudent(currentPage);
   }, [params]);
 
-  const expandedRowRender = (data, index) => {
-    return (
-      <Fragment>
-        <CourseOfStudentExpand
-          infoID={data.CourseOfStudentPriceID}
-          // infoIndex={index}
-        />
-      </Fragment>
-    );
-  };
-
   return (
-    <ExpandTable
+    <PowerTable
       currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
@@ -339,8 +324,6 @@ const CourseStudent = () => {
           />
         </div>
       }
-      handleExpand={(data) => setItemDetail(data)}
-      expandable={{ expandedRowRender }}
     />
   );
 };

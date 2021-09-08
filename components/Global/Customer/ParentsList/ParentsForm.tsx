@@ -95,7 +95,12 @@ const ParentsForm = React.memo((props: any) => {
   }, []);
 
   const onSubmit = async (data: any) => {
-    console.log(data);
+    if (typeof data.Course != "undefined") {
+      data.Course = data.Course.toString();
+    } else {
+      data.Course = "";
+    }
+
     setLoading(true);
     if (parentsID) {
       try {
@@ -131,14 +136,19 @@ const ParentsForm = React.memo((props: any) => {
 
   useEffect(() => {
     if (parentsDetail) {
+      let arrBranch = [];
+      parentsDetail.Branch.forEach((item, index) => {
+        arrBranch.push(item.ID);
+      });
+      console.log(arrBranch);
       form.setFieldsValue({
         ...parentsDetail,
-        BrandName: null,
+        Branch: arrBranch,
         DOB: null,
         CMNDDate: null,
       });
     }
-  }, [isModalVisible]);
+  }, [parentsDetail]);
 
   return (
     <>
@@ -187,6 +197,7 @@ const ParentsForm = React.memo((props: any) => {
                   ]}
                 >
                   <Select
+                    mode="multiple"
                     className="w-100 style-input"
                     placeholder="Chọn trung tâm"
                     showSearch

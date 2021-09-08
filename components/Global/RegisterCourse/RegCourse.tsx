@@ -33,6 +33,8 @@ const RegCourse = React.memo((props: any) => {
   const [discountPrice, setDiscountPrice] = useState(0);
   const [paid, setPaid] = useState(0);
   const [discountStyle, setDiscountStyle] = useState(1);
+  const [branchID, setBranchID] = useState(0);
+  const [loadingCourse, setLoadingCourse] = useState(false);
 
   const fetchDataSelectList = () => {
     (async () => {
@@ -42,14 +44,32 @@ const RegCourse = React.memo((props: any) => {
           pageSize: 99999,
           Enable: true,
         });
+        _branch.status == 200 && setBranch(_branch.data.data);
+      } catch (err) {
+        showNoti("danger", err.message);
+      }
+    })();
+  };
+
+  const fetchDataCourse = () => {
+    setLoadingCourse(true);
+    (async () => {
+      try {
         const _course = await courseApi.getAll({
           pageIndex: 1,
           pageSize: 99999,
+          isEnd: false,
+          BranchID: branchID,
         });
-        _branch.status == 200 && setBranch(_branch.data.data);
         _course.status == 200 && setCourse(_course.data.data);
+        if (_course.status == 204) {
+          showNoti("warning", "Trung tâm đang chọn hiện chưa có khóa học!!");
+          setCourse(null);
+        }
       } catch (err) {
         showNoti("danger", err.message);
+      } finally {
+        setLoadingCourse(false);
       }
     })();
   };
@@ -77,6 +97,10 @@ const RegCourse = React.memo((props: any) => {
   useEffect(() => {
     fetchDataDiscount();
   }, [discountStyle]);
+
+  useEffect(() => {
+    fetchDataCourse();
+  }, [branchID]);
 
   const handleChangeCourse = (value) => {
     if (value.length > 1) {
@@ -157,6 +181,9 @@ const RegCourse = React.memo((props: any) => {
               showSearch
               optionFilterProp="children"
               allowClear={true}
+              onChange={(value: any) => {
+                setBranchID(value);
+              }}
             >
               {branch?.map((item, index) => (
                 <Option key={index} value={item.ID}>
@@ -167,34 +194,35 @@ const RegCourse = React.memo((props: any) => {
           </Form.Item>
         </div>
       </div>
-
-      <div className="row">
-        <div className="col-12">
-          <Form.Item
-            name="Course"
-            label="Khóa học"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng điền đủ thông tin!",
-              },
-            ]}
-          >
-            <Select
-              mode="multiple"
-              showSearch
-              optionFilterProp="children"
-              onChange={(value) => handleChangeCourse(value)}
+      <Spin spinning={loadingCourse}>
+        <div className="row">
+          <div className="col-12">
+            <Form.Item
+              name="Course"
+              label="Khóa học"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng điền đủ thông tin!",
+                },
+              ]}
             >
-              {course?.map((item, index) => (
-                <Option key={index} value={item.ID}>
-                  {item.CourseName}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+              <Select
+                mode="multiple"
+                showSearch
+                optionFilterProp="children"
+                onChange={(value) => handleChangeCourse(value)}
+              >
+                {course?.map((item, index) => (
+                  <Option key={index} value={item.ID}>
+                    {item.CourseName}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
         </div>
-      </div>
+      </Spin>
 
       <div className="row">
         <div className="col-md-6 col-12">

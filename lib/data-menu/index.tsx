@@ -469,7 +469,13 @@ export const dataMenu = [
           // add more
         ],
       },
-
+      {
+        ItemType: "single",
+        Key: "/staff/salary-review",
+        Route: "/staff/salary-review",
+        Text: "Bảng lương nhân viên",
+        Icon: "",
+      },
       {
         ItemType: "sub-menu",
         Key: "sub-list-staff-child-3",
@@ -481,13 +487,6 @@ export const dataMenu = [
             Key: "/staff/campaign-sales",
             Route: "/staff/campaign-sales",
             Text: "Chiến dịch sale",
-            Icon: "",
-          },
-          {
-            ItemType: "single",
-            Key: "/staff/salary-review",
-            Route: "/staff/salary-review",
-            Text: "Duyệt lương office",
             Icon: "",
           },
           {
@@ -553,6 +552,13 @@ export const dataMenu = [
         Key: "/package/examiner-list",
         Route: "/package/examiner-list",
         Text: "Danh sách chấm gói bài",
+        Icon: "",
+      },
+      {
+        ItemType: "single",
+        Key: "/package/package-set-result/",
+        Route: "/package/package-set-result/",
+        Text: "Kết quả gói bài",
         Icon: "",
       },
       {

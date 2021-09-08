@@ -14,6 +14,12 @@ class PayRollApi {
   add = (data: IPayRoll) => instance.post(url, data);
 
   update = (data: IPayRoll) => instance.put(url, data, {});
+
+  closingSalarDate = () =>
+    instance.get<IApiResultData<IClosingSalarDate[]>>("/api/ClosingSalarDate");
+
+  changClosingSalarDate = (data: IClosingSalarDate) =>
+    instance.put("/api/ClosingSalarDate", data, {});
 }
 
 export const payRollApi = new PayRollApi();
