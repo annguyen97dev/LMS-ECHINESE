@@ -21,6 +21,7 @@ import { useWrap } from "~/context/wrap";
 import { questionObj } from "~/lib/TypeData";
 import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
 import QuestionWritting from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
+import QuestionTyping from "~/components/Global/QuestionBank/QuestionShow/QuestionTyping";
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -34,7 +35,21 @@ const listTodoApi = {
   ExamTopicType: null,
 };
 
-const listAlphabet = ["A", "B", "C", "D", "F", "G"];
+const listAlphabet = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+];
 
 const QuestionCreate = () => {
   const { showNoti } = useWrap();
@@ -59,12 +74,14 @@ const QuestionCreate = () => {
   });
   const [valueSubject, setValueSubject] = useState("Chọn môn học");
   const [dataGroup, setDataGroup] = useState([]);
+  const [dataExercise, setDataExercise] = useState();
 
   // Phân loại dạng câu hỏi để trả ra danh sách
   const returnQuestionType = () => {
     // console.log("Type is: ", todoApi.Type);
+
     switch (todoApi.Type) {
-      /** Q uesion Single */
+      /** Quesion Single */
       case 1:
         return (
           <GroupWrap
@@ -88,6 +105,7 @@ const QuestionCreate = () => {
           </GroupWrap>
         );
         break;
+      /** Quesion Multiple */
       case 4:
         return (
           <GroupWrap
@@ -111,6 +129,7 @@ const QuestionCreate = () => {
           </GroupWrap>
         );
         break;
+      /** Quesion Writting */
       case 6:
         return (
           <QuestionWritting
@@ -123,6 +142,30 @@ const QuestionCreate = () => {
             onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
           />
         );
+        break;
+      case 3:
+        return (
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
+            onFetchData={onFetchData}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionTyping
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataExercise}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
+        );
+        break;
       default:
         return (
           <p className="text-center">
@@ -225,8 +268,8 @@ const QuestionCreate = () => {
       case 1:
         questionData.ExerciseAnswer = questionObj.ExerciseAnswer;
         break;
-      case 3:
-        questionData.ExerciseList = [];
+      // case 3:
+      //   questionData.ExerciseList = [];
       default:
         break;
     }
@@ -382,10 +425,15 @@ const QuestionCreate = () => {
 
   // ON EDIT DATA
 
+  // console.log("Data Exercise: ", dataExercise);
+
   const editDataGroup = (dataEdit) => {
     let index = dataGroup.findIndex((item) => item.ID == dataEdit.ID);
     dataGroup.splice(index, 1, dataEdit);
 
+    // let exerciseList = [...dataEdit.ExerciseList];
+
+    setDataExercise(dataEdit);
     setDataGroup([...dataGroup]);
   };
 
@@ -522,6 +570,17 @@ const QuestionCreate = () => {
                     ? "Danh sách câu hỏi"
                     : "Danh sách nhóm câu hỏi"}
                 </h3>
+                <p
+                  style={{
+                    paddingLeft: "30px",
+                    fontSize: "13px",
+                    marginBottom: "0",
+                    fontWeight: 500,
+                    color: "#777777",
+                  }}
+                >
+                  {questionData.TypeName}
+                </p>
                 {/* <p className="text-lesson">
                   <span className="font-weight-black">Môn học:</span>
                   <span>{questionData?.SubjectName}</span>

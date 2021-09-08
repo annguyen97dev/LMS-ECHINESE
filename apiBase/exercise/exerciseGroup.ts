@@ -6,6 +6,10 @@ class ExerciseGroupApi {
   getAll = (params) =>
     instance.get<IApiResultData<IExerciseGroup[]>>(url, { params });
 
+  // Lấy 1 data
+  getWithID = (ID) =>
+    instance.get<IApiResultData<IExerciseGroup>>(`${url}/${ID}`);
+
   // Thêm mới data
   add(data) {
     return instance.post(url, data);

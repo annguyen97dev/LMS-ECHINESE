@@ -13,6 +13,7 @@ import { packageResultApi } from "~/apiBase/package/package-result";
 import { packageDetailApi } from "~/apiBase/package/package-detail";
 import PackageResultExpand from "~/components/Global/Package/PackageResult/PackageResultExpand";
 import PackageResultUpdateTeacher from "~/components/Global/Package/PackageResult/PackageResultUpdateTeacher";
+import { Info } from "react-feather";
 
 const PackageSetResult = () => {
   const onSearch = (data) => {
@@ -100,6 +101,23 @@ const PackageSetResult = () => {
             <p className="font-light-black">Trắc nghiệm được chấm tự động</p>
           )}
         </Fragment>
+      ),
+    },
+    {
+      render: (data) => (
+        <Link
+          href={{
+            pathname:
+              "/package/package-set-result/package-set-result-detail/[slug]",
+            query: { slug: `${data.ID}` },
+          }}
+        >
+          <Tooltip title="Kết quả gói bài chi tiết">
+            <button className="btn btn-icon">
+              <Info />
+            </button>
+          </Tooltip>
+        </Link>
       ),
     },
   ];

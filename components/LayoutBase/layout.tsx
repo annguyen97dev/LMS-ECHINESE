@@ -194,6 +194,9 @@ function Layout({
     if (nameRouter === "") {
       if (getRouter.search("detail") > 0) {
         nameRouter = "Chi tiết";
+        if (getRouter.includes("course-list-detail")) {
+          nameRouter = "Tên khóa học";
+        }
       } else {
         nameRouter = "";
       }

@@ -27,7 +27,6 @@ const StudentExamOfServices = React.memo((props: any) => {
   const [form] = Form.useForm();
   const [detail, setDetail] = useState<IExamServices>();
   const [isLoading, setIsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { setValue } = useForm();
 
   const fetchDataSelectList = () => {
@@ -74,26 +73,8 @@ const StudentExamOfServices = React.memo((props: any) => {
     })();
   };
 
-  const onSubmitForm = async (data: any) => {
-    console.log({ ...data, UserInformationID: props.userID });
-    // setLoading(true);
-    // try {
-    //   let res = await studentExamServicesApi.add({
-    //     ...data,
-    //     UserInformationID: props.userID,
-    //   });
-    //   showNoti("success", res?.data.message);
-    //   setLoading(false);
-    //   // form.resetFields();
-    // } catch (error) {
-    //   showNoti("danger", error.message);
-    //   setLoading(false);
-    // }
-  };
-
   return (
     <Card title="Học viên đăng ký đợt thi">
-      {/* <Form form={form} layout="vertical" onFinish={onSubmitForm}> */}
       <div className="row">
         <div className="col-12">
           <Form.Item
@@ -282,11 +263,10 @@ const StudentExamOfServices = React.memo((props: any) => {
         <div className="col-12 text-center text-left-mobile">
           <button type="submit" className="btn btn-primary">
             Xác nhận
-            {loading == true && <Spin className="loading-base" />}
+            {props.loading == true && <Spin className="loading-base" />}
           </button>
         </div>
       </div>
-      {/* </Form> */}
     </Card>
   );
 });
