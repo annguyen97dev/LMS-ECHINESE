@@ -8,7 +8,6 @@ import {
 	branchApi,
 	districtApi,
 	staffSalaryApi,
-	studentApi,
 	teacherApi,
 	userInformationApi,
 	wardApi,
@@ -314,23 +313,6 @@ const Teacher = () => {
 		}
 		return res;
 	};
-	const onUploadImage = async (file) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			const res = await studentApi.uploadImage(file);
-			return res;
-		} catch (error) {
-			showNoti('danger', error.Message);
-		} finally {
-			setIsLoading({
-				type: 'GET_ALL',
-				status: false,
-			});
-		}
-	};
 	// CREATE
 	const onCreateTeacher = async (data: any) => {
 		setIsLoading({
@@ -523,7 +505,6 @@ const Teacher = () => {
 						optionStatusList={optionStatusList}
 						optionGenderList={optionGenderList}
 						optionAreaSystemList={optionAreaSystemList}
-						handleUploadImage={onUploadImage}
 						handleFetchDistrict={fetchDistrictByAreaID}
 						handleFetchWard={fetchWardByDistrictID}
 						optionBranchList={branchList}

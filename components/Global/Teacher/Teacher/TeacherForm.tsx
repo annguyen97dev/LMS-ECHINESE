@@ -1,5 +1,10 @@
+import {
+	DeploymentUnitOutlined,
+	MailOutlined,
+	WhatsAppOutlined,
+} from '@ant-design/icons';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip, Divider} from 'antd';
+import {Divider, Form, Modal, Spin, Tooltip} from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
@@ -7,16 +12,11 @@ import {RotateCcw} from 'react-feather';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
-import InputTextField from '~/components/FormControl/InputTextField';
 import InputPassField from '~/components/FormControl/InputPassField';
+import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
 import {optionCommonPropTypes} from '~/utils/proptypes';
-import UploadImageField from '~/components/FormControl/UploadImageField';
-import {
-	DeploymentUnitOutlined,
-	MailOutlined,
-	WhatsAppOutlined,
-} from '@ant-design/icons';
 
 const TeacherForm = (props) => {
 	const {
@@ -32,7 +32,6 @@ const TeacherForm = (props) => {
 		optionStatusList,
 		optionGenderList,
 		optionAreaSystemList,
-		handleUploadImage,
 		handleFetchDistrict,
 		handleFetchWard,
 		optionBranchList,
@@ -149,10 +148,6 @@ const TeacherForm = (props) => {
 		form.setValue('WardID', null);
 		handleFetchWard(value);
 	};
-	const checkHandleUploadImage = (file) => {
-		if (!handleUploadImage) return;
-		return handleUploadImage(file);
-	};
 
 	const teacherSwitchFunc = (data) => {
 		switch (isUpdate) {
@@ -226,11 +221,10 @@ const TeacherForm = (props) => {
 								<div className="col-12">
 									<div className="info-modal">
 										<div className="info-modal-avatar">
-											<UploadImageField
+											<UploadAvatarField
 												style={{marginBottom: 0}}
 												form={form}
 												name="Avatar"
-												handleUploadImage={checkHandleUploadImage}
 											/>
 										</div>
 										<div className="info-modal-content">
@@ -542,7 +536,6 @@ TeacherForm.propTypes = {
 		districtList: optionCommonPropTypes,
 		wardList: optionCommonPropTypes,
 	}),
-	handleUploadImage: PropTypes.func,
 	handleFetchDistrict: PropTypes.func,
 	handleFetchWard: PropTypes.func,
 	optionBranchList: optionCommonPropTypes,
@@ -563,7 +556,6 @@ TeacherForm.defaultProps = {
 		districtList: [],
 		wardList: [],
 	},
-	handleUploadImage: null,
 	handleFetchDistrict: null,
 	handleFetchWard: null,
 	optionBranchList: [],
