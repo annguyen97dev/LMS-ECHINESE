@@ -215,7 +215,9 @@ const RegCourse = React.memo((props: any) => {
               >
                 {course?.map((item, index) => (
                   <Option key={index} value={item.ID}>
-                    {item.CourseName}
+                    {item.DonePercent
+                      ? item.DonePercent % -item.CourseName
+                      : item.CourseName}
                   </Option>
                 ))}
               </Select>
