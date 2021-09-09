@@ -9,6 +9,9 @@ import { useWrap } from "~/context/wrap";
 import { Roles } from "~/lib/roles/listRoles";
 import { payRollApi } from "~/apiBase/staff-manage/pay-roll";
 import PowerTable from "~/components/PowerTable";
+import { Input, Spin, Form } from "antd";
+import { useForm } from "react-hook-form";
+import { month, year } from "~/lib/month-year";
 
 const SalaryReview = () => {
   const onSearch = (data) => {
@@ -42,11 +45,21 @@ const SalaryReview = () => {
     {
       title: "Loại lương",
       dataIndex: "styleName",
+      render: (type) => (
+        <Fragment>
+          {type == "Lương theo tháng" && (
+            <span className="tag blue">{type}</span>
+          )}
+          {type == "Lương theo giờ" && (
+            <span className="tag green">{type}</span>
+          )}
+        </Fragment>
+      ),
     },
     {
       title: "Lương tháng",
       render: (text) => (
-        <p>
+        <p className="font-weight-blue">
           {text.Month}-{text.Year}
         </p>
       ),
@@ -63,21 +76,6 @@ const SalaryReview = () => {
         <p className="font-weight-blue">
           {Intl.NumberFormat("en-US").format(text)}
         </p>
-      ),
-    },
-
-    {
-      render: (data) => (
-        <Fragment>
-          {/* <ChangeCourseForm
-            infoDetail={data}
-            infoId={data.ID}
-            reloadData={(firstPage) => {
-              getDataCourseStudent(firstPage);
-            }}
-            currentPage={currentPage}
-          /> */}
-        </Fragment>
       ),
     },
   ];
@@ -100,17 +98,51 @@ const SalaryReview = () => {
   const sortOption = [
     {
       dataSort: {
-        sortType: null,
+        sort: 0,
+        sortType: true,
       },
       value: 1,
-      text: "Mới cập nhật",
+      text: "Tên tăng dần",
     },
     {
       dataSort: {
-        sortType: true,
+        sort: 0,
+        sortType: false,
       },
       value: 2,
-      text: "Từ dưới lên",
+      text: "Tên giảm dần",
+    },
+    {
+      dataSort: {
+        sort: 1,
+        sortType: true,
+      },
+      value: 3,
+      text: "Số giờ dạy tăng dần",
+    },
+    {
+      dataSort: {
+        sort: 1,
+        sortType: false,
+      },
+      value: 4,
+      text: "Số giờ dạy giảm dần",
+    },
+    {
+      dataSort: {
+        sort: 2,
+        sortType: true,
+      },
+      value: 5,
+      text: "Tổng lương tăng dần",
+    },
+    {
+      dataSort: {
+        sort: 2,
+        sortType: false,
+      },
+      value: 6,
+      text: "Tổng lương giảm dần",
     },
   ];
 
@@ -124,29 +156,45 @@ const SalaryReview = () => {
       value: null,
     },
     {
+      name: "Month",
+      title: "Tháng",
+      col: "col-md-6 col-12",
+      type: "select",
+      optionList: month,
+      value: null,
+    },
+    {
+      name: "Year",
+      title: "Năm",
+      col: "col-md-6 col-12",
+      type: "select",
+      optionList: year,
+      value: null,
+    },
+    {
+      name: "Style",
+      title: "Loại lương",
+      col: "col-12",
+      type: "select",
+      optionList: [
+        {
+          value: 1,
+          title: "Lương theo tháng",
+        },
+        {
+          value: 2,
+          title: "Lương theo giờ",
+        },
+      ],
+      value: null,
+    },
+    {
       name: "date-range",
       title: "Ngày tạo",
       col: "col-12",
       type: "date-range",
       value: null,
     },
-    // {
-    //   name: "Combo",
-    //   title: "Chọn gói",
-    //   col: "col-12",
-    //   type: "select",
-    //   optionList: [
-    //     {
-    //       value: true,
-    //       title: "Gói combo",
-    //     },
-    //     {
-    //       value: false,
-    //       title: "Gói lẻ",
-    //     },
-    //   ],
-    //   value: null,
-    // },
   ]);
 
   const handleFilter = (listFilter) => {
@@ -157,6 +205,9 @@ const SalaryReview = () => {
       fromDate: null,
       toDate: null,
       RoleID: null,
+      Style: null,
+      Month: null,
+      Year: null,
     };
     listFilter.forEach((item, index) => {
       let key = item.name;
@@ -184,6 +235,9 @@ const SalaryReview = () => {
     type: "GET_ALL",
     status: false,
   });
+
+  const [loadingSalaryDate, setLoadingSalaryDate] = useState(false);
+  const [salaryDate, setSalaryDate] = useState();
 
   const setDataFunc = (name, data) => {
     dataFilter.every((item, index) => {
@@ -242,9 +296,51 @@ const SalaryReview = () => {
     })();
   };
 
+  const getDataSalaryDate = () => {
+    setLoadingSalaryDate(true);
+    (async () => {
+      try {
+        let res = await payRollApi.closingSalarDate();
+        //@ts-ignore
+        res.status == 200 && setSalaryDate(res.data.data.Date);
+        if (res.status == 204) {
+          showNoti("danger", "Không tìm thấy dữ liệu ngày tính lương!");
+        }
+      } catch (error) {
+        showNoti("danger", error.message);
+      } finally {
+        setLoadingSalaryDate(false);
+      }
+    })();
+  };
+
+  useEffect(() => {
+    getDataSalaryDate();
+  }, []);
+
+  const handleChangeSalaryDate = (value: any) => {
+    setLoadingSalaryDate(true);
+    let date = { Date: value };
+    (async () => {
+      try {
+        //@ts-ignore
+        let res = await payRollApi.changClosingSalarDate(date);
+        showNoti("success", "Cập nhật ngày tính lương thành công!!");
+        setLoadingSalaryDate(false);
+        getDataSalaryDate();
+      } catch (error) {
+        showNoti("danger", error.message);
+      } finally {
+        setLoadingSalaryDate(false);
+      }
+    })();
+  };
+
   useEffect(() => {
     getDataPayRoll(currentPage);
   }, [params]);
+
+  console.log(salaryDate);
 
   return (
     <PowerTable
@@ -256,14 +352,24 @@ const SalaryReview = () => {
       TitlePage="Duyệt lương office"
       dataSource={payRoll}
       columns={columns}
-      // TitleCard={
-      //   <JobForm
-      //     reloadData={(firstPage) => {
-      //       setCurrentPage(1);
-      //       getDataJob(firstPage);
-      //     }}
-      //   />
-      // }
+      TitleCard={
+        <div className="d-flex align-items-center justify-content-end ">
+          <div className="font-weight-black">Ngày tính lương: </div>
+          <Spin spinning={loadingSalaryDate}>
+            <div className="d-flex justify-content-start pl-2">
+              <Input
+                className="style-input w-50"
+                allowClear={true}
+                onChange={(value: any) => setSalaryDate(value.target.value)}
+                value={salaryDate}
+                onPressEnter={(value: any) =>
+                  handleChangeSalaryDate(value.target.value)
+                }
+              />
+            </div>
+          </Spin>
+        </div>
+      }
       Extra={
         <div className="extra-table">
           <FilterBase
