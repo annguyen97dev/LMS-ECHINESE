@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Collapse, Popover, Modal } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import { Collapse, Popover, Modal, Spin } from "antd";
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
@@ -19,6 +19,7 @@ import CreateQuestionForm from "./CreateQuestionForm";
 
 import { exerciseApi, exerciseGroupApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import { link } from "fs";
 
 const GroupWrap = (props) => {
   const {
@@ -45,6 +46,12 @@ const GroupWrap = (props) => {
   });
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [deleteID, setDeleteID] = useState(null);
+  const [linkAudio, setLinkAudio] = useState(listQuestion);
+  const audioRef = useRef(null);
+  const [loadingAudio, setLoadingAudio] = useState(false);
+
+  console.log("List question in group: ", listQuestion);
+  console.log("Link audio: ", linkAudio);
 
   // ACTION TABLE
   const showModalConfirm = (e) => {
@@ -103,7 +110,7 @@ const GroupWrap = (props) => {
     cloneItem.ExerciseGroupID = item.ID;
 
     switch (item.Type) {
-      // Trường hợp chọn 1 đáp án
+      // Choice
       case 1:
         cloneItem.ExerciseAnswer = [
           {
@@ -128,13 +135,15 @@ const GroupWrap = (props) => {
           },
         ];
         break;
-      // Trường hợp chọn nhiều đáp án
+      // Multiple
       case 4:
         cloneItem.ExerciseAnswer = [];
+
         break;
+      // Typing
       case 3:
         cloneItem.Content = item.Content;
-
+        cloneItem.ID = groupID;
         break;
       default:
         break;
@@ -142,26 +151,6 @@ const GroupWrap = (props) => {
 
     return cloneItem;
   };
-
-  // const onEditGroupItem = (e, item) => {
-  //   e.stopPropagation();
-  //   setVisible({
-  //     id: item.ID,
-  //     status: false,
-  //   });
-  //   setOpenForm({
-  //     status: true,
-  //     data: item,
-  //   });
-  //   setTimeout(() => {
-  //     setOpenForm({
-  //       ...openForm,
-  //       status: false,
-  //     });
-  //   }, 500);
-  // };
-
-  // DELETE GROUP ITEM
 
   // CONTENT POPOVER
   const contentMenu = (groupID, item) => {
@@ -206,24 +195,17 @@ const GroupWrap = (props) => {
     );
   };
 
+  useEffect(() => {
+    setLoadingAudio(true);
+    setTimeout(() => {
+      setLoadingAudio(false);
+    }, 200);
+
+    setLinkAudio(listQuestion);
+  }, [listQuestion]);
+
   return (
     <>
-      {/* {listQuestion.map((item) => (
-        <EditGroupForm
-          isGroup={isGroup}
-          openForm={openForm}
-          onFetchData={onFetchData}
-          questionData={item}
-        />
-      ))} */}
-
-      {/* {openForm && (
-        <EditGroupForm
-          isGroup={isGroup}
-          openForm={openForm}
-          onFetchData={onFetchData}
-        />
-      )} */}
       <Modal
         title="Chú ý"
         visible={isModalVisible}
@@ -281,9 +263,43 @@ const GroupWrap = (props) => {
                     activeKey == null ? "d-none" : ""
                   } ${item.ID == activeKey ? "active" : "un-active"} `}
                 >
-                  <div className="body-content">
-                    {ReactHtmlParser(item.Content)}
-                    {children}
+                  <div className="body-content w-100 d-block">
+                    <div className="group-content">
+                      <div className="file-audio mb-3">
+                        {!loadingAudio ? (
+                          linkAudio[index].LinkAudio !== "" && (
+                            <audio controls ref={audioRef}>
+                              <source
+                                src={linkAudio[index].LinkAudio}
+                                type="audio/mpeg"
+                              />
+                            </audio>
+                          )
+                        ) : (
+                          <div className="d-flex align-items-center">
+                            <Spin />
+                            <span
+                              style={{
+                                marginLeft: "5px",
+                                fontStyle: "italic",
+                                fontSize: "13px",
+                              }}
+                            >
+                              Loading audio...
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="introduce mb-1">
+                        {ReactHtmlParser(item.Introduce)}
+                      </div>
+                      <div className="content">
+                        {ReactHtmlParser(item.Content)}
+                      </div>
+                    </div>
+                    <div className="group-content-question mt-3">
+                      {children}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -293,41 +309,6 @@ const GroupWrap = (props) => {
       ) : (
         <>{children}</>
       )}
-
-      {/* {isGroup.status ? (
-        <Collapse
-          activeKey={activeKey}
-          onChange={callback}
-          destroyInactivePanel={false}
-        >
-          {listQuestion?.map((item, index) => (
-            <Panel
-              header={"Group " + (index + 1)}
-              key={item.ID}
-              extra={
-                <Popover
-                  content={contentMenu(item.ID, item)}
-                  trigger="click"
-                  visible={item.ID == visible.id && visible.status}
-                  onVisibleChange={() => onChangePopover(item.ID)}
-                >
-                  <button
-                    className="btn btn-icon menu"
-                    onClick={(e) => showMenu(e)}
-                  >
-                    <MoreOutlined />
-                  </button>
-                </Popover>
-              }
-            >
-              <p>{ReactHtmlParser(item.Content)}</p>
-              {children}
-            </Panel>
-          ))}
-        </Collapse>
-      ) : (
-        <>{children}</>
-      )} */}
     </>
   );
 };

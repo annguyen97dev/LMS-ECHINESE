@@ -76,6 +76,8 @@ const QuestionCreate = () => {
   const [dataGroup, setDataGroup] = useState([]);
   const [dataExercise, setDataExercise] = useState();
 
+  console.log("Is Group outside: ", isGroup);
+
   // Phân loại dạng câu hỏi để trả ra danh sách
   const returnQuestionType = () => {
     // console.log("Type is: ", todoApi.Type);
@@ -205,15 +207,23 @@ const QuestionCreate = () => {
         }
 
         todoApi.pageIndex == 1 && showNoti("success", "Thành công");
-        !showListQuestion && setShowListQuestion(true);
+        // !showListQuestion && setShowListQuestion(true);
 
         // Tính phân trang
         let totalPage = Math.ceil(res.data.totalRow / 10);
         setTotalPageIndex(totalPage);
       }
 
-      res.status == 204 &&
-        (showNoti("danger", "Không có dữ liệu"), setShowListQuestion(true));
+      if (res.status == 204) {
+        showNoti("danger", "Không có dữ liệu");
+        if (!isGroup.status) {
+          if (todoApi.Type == 3) {
+            setShowListQuestion(false);
+          }
+        } else {
+          setShowListQuestion(true);
+        }
+      }
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -317,7 +327,11 @@ const QuestionCreate = () => {
             pageIndex: 1,
             SubjectID: null,
           }));
-
+        setShowTypeQuestion({
+          type: null,
+          status: false,
+        });
+        setShowListQuestion(false);
         break;
 
       // -- Chọn loại câu hỏi đơn hay nhóm
@@ -420,8 +434,8 @@ const QuestionCreate = () => {
     setQuestionData({ ...questionData });
   };
 
-  console.log("DATA SOURCE: ", dataSource);
-  console.log("DATA GROUP: ", dataGroup);
+  // console.log("DATA SOURCE: ", dataSource);
+  // console.log("DATA GROUP: ", dataGroup);
 
   // ON EDIT DATA
 
@@ -478,10 +492,18 @@ const QuestionCreate = () => {
     setDataSource([...dataSource]);
   };
 
+  console.log("Data Exercise outside: ", dataExercise);
+
   const removeDataGroup = (dataRemove) => {
-    let quesIndex = dataGroup.findIndex((item) => item.ID == dataRemove.ID);
-    dataGroup.splice(quesIndex, 1);
-    setDataGroup([...dataGroup]);
+    console.log("Data remove outside: ", dataRemove);
+    if (dataRemove.isDeleteExercise) {
+      console.log("Coi có chạy vô không");
+      setDataExercise(dataRemove);
+    } else {
+      let quesIndex = dataGroup.findIndex((item) => item.ID == dataRemove.ID);
+      dataGroup.splice(quesIndex, 1);
+      setDataGroup([...dataGroup]);
+    }
   };
 
   const onRemoveData = (dataRemove) => {

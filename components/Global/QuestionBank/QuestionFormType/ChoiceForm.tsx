@@ -5,6 +5,7 @@ import { Form, Input, Checkbox } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { exerciseApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
+import EditorSimple from "~/components/Elements/EditorSimple";
 
 // let returnSchema = {};
 // let schema = null;
@@ -137,7 +138,7 @@ const ChoiceForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item name="Question" label="Câu hỏi">
-                  <Editor
+                  <EditorSimple
                     visible={visible}
                     handleChange={(value) => getDataEditor(value)}
                     isReset={isResetEditor}

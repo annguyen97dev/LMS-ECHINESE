@@ -376,7 +376,7 @@ const EditorSummernote = (props) => {
       editor[0].childNodes.forEach((item, index) => {
         let node = editor[0].children[index];
         // console.log("node là: ", node);
-        if (node.innerHTML !== "<br>" && node.innerHTML !== " ") {
+        if (node?.innerHTML !== "<br>" && node?.innerHTML !== " ") {
           isEmpty = false;
         }
       });

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
-import { Form, Upload, Spin, Button, Input } from "antd";
+import { Form, Upload, Spin, Button, Input, Tooltip } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { exerciseGroupApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 import { UploadOutlined, CloseOutlined } from "@ant-design/icons";
-import index from "~/components/LoginForm";
-import { Item } from "rc-menu";
+import { Plus } from "react-feather";
 
 let AnsID = 0;
 let QuesID = -1;
@@ -188,6 +187,7 @@ const TypingForm = (props) => {
     questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
       AnswerIndex
     ].AnswerContent = text;
+
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -215,47 +215,34 @@ const TypingForm = (props) => {
   // SUBMIT FORM
   const handleSubmitQuestion = async () => {
     let res = null;
-    // let newData = {
-    //   Content: questionDataForm.Content,
-    //   SubjectID: questionDataForm.SubjectID,
-    //   Level: questionDataForm.Level,
-    //   Type: questionDataForm.Type,
-    // };
+
     let newData = JSON.parse(JSON.stringify(questionDataForm));
 
-    try {
-      newData.ExerciseList.forEach((item, index) => {
-        // if (item.isAdd) {
-        //   delete item.ID;
-        // }
-        item.ExerciseAnswer.forEach((ans, ind) => {
-          if (ans.isAdd) {
-            delete ans.ID;
-          }
-        });
+    // custom data
+    newData.ExerciseList.forEach((item, index) => {
+      item.ExerciseAnswer.forEach((ans, ind) => {
+        if (ans.isAdd) {
+          delete ans.ID;
+        }
       });
-      if (questionDataForm.ExerciseGroupID) {
-        newData.ID = questionDataForm.ExerciseGroupID;
-      }
+    });
+    if (questionDataForm.ExerciseGroupID) {
+      newData.ID = questionDataForm.ExerciseGroupID;
+    }
 
-      newData.ExerciseGroupID = null;
+    newData.ExerciseGroupID = null;
+    console.log("DataSubmit: ", newData);
+    // ----------
 
-      console.log("DataSubmit: ", newData);
+    try {
       res = await exerciseGroupApi.update(newData);
 
       if (res.status == 200) {
-        changeIsSubmit(newData);
-        showNoti("success", `Thành công`);
-        if (!questionDataForm.ID) {
-          resetForm();
-        }
-        setIsResetEditor(true);
-
-        setTimeout(() => {
-          setIsResetEditor(false);
-        }, 500);
+        setReloadContent(true);
       }
-    } catch (error) {}
+    } catch (error) {
+      showNoti("danger", error);
+    }
   };
 
   //RETURN INDEX QUESTION - Trả về thứ tự của từng câu hỏi
@@ -319,7 +306,10 @@ const TypingForm = (props) => {
   };
 
   useEffect(() => {
-    isSubmit && handleSubmitQuestion();
+    if (isSubmit) {
+      handleSubmitQuestion();
+      return;
+    }
   }, [isSubmit]);
 
   useEffect(() => {
@@ -329,6 +319,35 @@ const TypingForm = (props) => {
       dataGroupDetail();
     }
   }, [visible]);
+
+  useEffect(() => {
+    if (reloadContent) {
+      (async function loadData() {
+        try {
+          let res = await exerciseGroupApi.getWithID(questionDataForm.ID);
+
+          if (res.status == 200) {
+            changeIsSubmit(res.data.data);
+            showNoti("success", `Thành công`);
+            if (!questionDataForm.ID) {
+              resetForm();
+            }
+            setIsResetEditor(true);
+
+            setTimeout(() => {
+              setIsResetEditor(false);
+            }, 500);
+          }
+
+          res.status == 204 && showNoti("danger", "Không có dữ liệu");
+        } catch (error) {
+          showNoti("danger", error);
+        } finally {
+          setReloadContent(false);
+        }
+      })();
+    }
+  }, [reloadContent]);
 
   return (
     <div className="form-create-question">
@@ -395,12 +414,15 @@ const TypingForm = (props) => {
                             {returnIndexQuestion(itemQues)}
                             {/* {`Câu (${index + 1})`} */}
                           </p>
-                          <button
-                            className="btn btn-warning"
-                            onClick={() => handleAddAnswer(itemQues.inputID)}
-                          >
-                            Thêm đáp án
-                          </button>
+                          <Tooltip title="Thêm đáp án">
+                            <button
+                              className="btn-add-answer"
+                              onClick={() => handleAddAnswer(itemQues.inputID)}
+                            >
+                              <Plus />
+                            </button>
+                          </Tooltip>
+
                           <div className="row">
                             {itemQues.ExerciseAnswer?.map(
                               (itemAns, index) =>

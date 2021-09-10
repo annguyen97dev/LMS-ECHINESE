@@ -23,15 +23,16 @@ const CreateQuestionForm = (props) => {
     onEditData,
     onAddData,
   } = props;
-  // console.log("props", props);
-  // console.log("QuestionData Drawer: ", questionData);
+
+  // console.log("Is Group in create: ", isGroup);
+  console.log("question Data in create: ", questionData);
 
   const [visible, setVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [titleForm, setTitleForm] = useState("");
   const [questionDataForm, setQuestionDataForm] = useState(questionData);
-  console.log("question Data in create: ", questionData);
+
   const showDrawer = () => {
     setVisible(true);
   };
@@ -52,12 +53,12 @@ const CreateQuestionForm = (props) => {
     if (isSubmit) {
       setIsSubmit(false);
       setIsLoading(false);
-
-      if (data.ExerciseList?.length == 0) {
-        questionData.ID ? onEditData(data) : onAddData(data);
-      } else {
-        onEditData(data);
-      }
+      // if (data.ExerciseList) {
+      //   !isGroup.status ? onEditData(data) : onAddData(data);
+      // } else {
+      //   questionData.ID ? onEditData(data) : onAddData(data);
+      // }
+      questionData.ID ? onEditData(data) : onAddData(data);
 
       setVisible(false);
     }
@@ -205,11 +206,20 @@ const CreateQuestionForm = (props) => {
           </button>
         );
       } else {
-        return (
-          <button className="btn btn-icon edit" onClick={showDrawer}>
-            <Edit />
-          </button>
-        );
+        if (questionData.ExerciseList) {
+          return (
+            <button className="btn btn-icon add" onClick={onAddDataToGroup}>
+              <AppstoreAddOutlined />
+              {questionData.Type == 3 ? "Thêm/sửa câu hỏi" : "Thêm câu hỏi"}
+            </button>
+          );
+        } else {
+          return (
+            <button className="btn btn-icon edit" onClick={showDrawer}>
+              <Edit />
+            </button>
+          );
+        }
       }
     } else {
       if (isGroup?.status) {
@@ -238,7 +248,10 @@ const CreateQuestionForm = (props) => {
   };
 
   useEffect(() => {
-    visible && renderTitleForm();
+    if (visible) {
+      renderTitleForm();
+      return;
+    }
   }, [visible]);
 
   // useEffect(() => {
@@ -260,7 +273,7 @@ const CreateQuestionForm = (props) => {
         footer={
           <div className="text-center">
             <button className="btn btn-light mr-2" onClick={onClose}>
-              Đóng
+              Hủy tác vụ
             </button>
             {questionData?.Type !== 0 && (
               <button

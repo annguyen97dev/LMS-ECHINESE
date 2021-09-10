@@ -138,6 +138,7 @@ const QuestionWritting = (props: any) => {
                 questionData={item}
                 onFetchData={onFetchData}
                 onEditData={(dataEdit) => onEdit(dataEdit)}
+                isGroup={{ status: false, id: null }}
               />
               <Popconfirm
                 title="Bạn có chắc muốn xóa?"

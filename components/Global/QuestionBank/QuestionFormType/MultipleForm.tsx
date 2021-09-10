@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
-import { Form, Input, Checkbox } from "antd";
+import { Form, Input, Checkbox, Tooltip } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { exerciseApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 import { CloseOutlined } from "@ant-design/icons";
 import { data } from "~/lib/option/dataOption";
+import { Plus } from "react-feather";
+import EditorSimple from "~/components/Elements/EditorSimple";
 
 // let returnSchema = {};
 // let schema = null;
@@ -148,7 +150,7 @@ const MultipleForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item name="Question" label="Câu hỏi">
-                  <Editor
+                  <EditorSimple
                     handleChange={(value) => getDataEditor(value)}
                     isReset={isResetEditor}
                     questionContent={questionDataForm?.Content}
@@ -160,9 +162,11 @@ const MultipleForm = (props) => {
             <div className="row">
               <div className="col-12 mb-4">
                 <p className="style-label">Đáp án</p>
-                <button className="btn btn-warning" onClick={handleAddAnswer}>
-                  Thêm đáp án
-                </button>
+                <Tooltip title="Thêm đáp án">
+                  <button className="btn-add-answer" onClick={handleAddAnswer}>
+                    <Plus />
+                  </button>
+                </Tooltip>
               </div>
               {questionData?.ExerciseAnswer?.map(
                 (item, index) =>

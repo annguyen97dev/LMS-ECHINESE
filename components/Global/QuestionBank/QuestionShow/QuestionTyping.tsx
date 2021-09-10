@@ -34,7 +34,7 @@ const QuestionTyping = (props: any) => {
   const [dataExercise, setDataExercise] = useState([]);
   const [showContent, setShowContent] = useState(false);
 
-  // console.log("List Question: ", listQuestion);
+  console.log("List Question: ", listQuestion);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -66,11 +66,22 @@ const QuestionTyping = (props: any) => {
   };
 
   // Chấp nhận xóa câu hỏi
-  const handleOk = async (quesItem) => {
+  const handleOk = async (data) => {
     setConfirmLoading(true);
-    quesItem.Enable = false;
+
+    let quesItem = JSON.parse(JSON.stringify(dataListQuestion));
+
+    quesItem?.ExerciseList?.forEach((item) => {
+      item.Enable = false;
+    });
+    quesItem.isDeleteExercise = true;
+    quesItem.Paragraph = "<p><br></p>";
+    quesItem.ExerciseGroupID = null;
+
+    console.log("Question Item delete: ", quesItem);
+
     try {
-      let res = await exerciseApi.update(quesItem);
+      let res = await exerciseGroupApi.update(quesItem);
       if (res.status == 200) {
         setVisible({
           ...visible,
@@ -130,6 +141,7 @@ const QuestionTyping = (props: any) => {
     let preventLoop = false;
     data.ExerciseList.length == 0 && setShowContent(false);
     data.ExerciseList.forEach((item, index) => {
+      console.log("Item là: ", item);
       if (item.Enable) {
         if (!preventLoop) {
           setShowContent(true);
@@ -138,13 +150,17 @@ const QuestionTyping = (props: any) => {
       }
     });
 
+    console.log("Prevent loop là: ", preventLoop);
+
     if (!preventLoop) {
       setShowContent(false);
     }
   };
 
   useEffect(() => {
+    console.log("Change list question 111");
     if (listQuestion) {
+      console.log("Change list question");
       checkShowContent(listQuestion);
       let filterExerciseList = listQuestion?.ExerciseList.filter(
         (item) => item.Enable !== false
@@ -157,6 +173,9 @@ const QuestionTyping = (props: any) => {
   useEffect(() => {
     isGroup.status && setDataListQuestion([]);
     isGroup.status && isGroup.id && getQuestionInGroup();
+    if (!isGroup) {
+      return;
+    }
   }, [isGroup]);
 
   return (
@@ -168,27 +187,27 @@ const QuestionTyping = (props: any) => {
               {ReactHtmlParser(dataListQuestion?.Paragraph)}
             </div>
             <div className="box-action">
-              <CreateQuestionForm
+              {/* <CreateQuestionForm
                 isGroup={{ status: false, id: dataListQuestion?.ID }}
                 questionData={dataListQuestion}
                 onFetchData={onFetchData}
                 onEditData={(data) => onEditData(data)}
-              />
+              /> */}
 
-              {/* <Popconfirm
-            title="Bạn có chắc muốn xóa?"
-            visible={dataListQuestion.ID == visible.id && visible.status}
-            onConfirm={() => handleOk(dataListQuestion)}
-            okButtonProps={{ loading: confirmLoading }}
-            onCancel={() => handleCancel(dataListQuestion.ID)}
-          >
-            <button
-              className="btn btn-icon delete"
-              onClick={() => deleteQuestionItem(dataListQuestion.ID)}
-            >
-              <Trash2 />
-            </button>
-          </Popconfirm> */}
+              <Popconfirm
+                title="Bạn có chắc muốn xóa?"
+                visible={dataListQuestion.ID == visible.id && visible.status}
+                onConfirm={() => handleOk(dataListQuestion)}
+                okButtonProps={{ loading: confirmLoading }}
+                onCancel={() => handleCancel(dataListQuestion.ID)}
+              >
+                <button
+                  className="btn btn-icon delete"
+                  onClick={() => deleteQuestionItem(dataListQuestion.ID)}
+                >
+                  <Trash2 />
+                </button>
+              </Popconfirm>
             </div>
           </>
         )}

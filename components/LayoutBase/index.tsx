@@ -25,7 +25,7 @@ const LayoutBase = ({ children }) => {
     },
   };
 
-  console.log("Session: ", session);
+  // console.log("Session: ", session);
 
   useEffect(() => {
     if (typeof session !== "undefined") {

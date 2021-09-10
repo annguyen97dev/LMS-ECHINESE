@@ -7,6 +7,7 @@ import { exerciseApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 import { CloseOutlined } from "@ant-design/icons";
 import { data } from "~/lib/option/dataOption";
+import EditorSimple from "~/components/Elements/EditorSimple";
 
 // let returnSchema = {};
 // let schema = null;
@@ -101,7 +102,7 @@ const WrittingForm = (props) => {
             <div className="row">
               <div className="col-12">
                 <Form.Item name="Question" label="Câu hỏi">
-                  <Editor
+                  <EditorSimple
                     handleChange={(value) => getDataEditor(value)}
                     isReset={isResetEditor}
                     questionContent={questionDataForm?.Content}

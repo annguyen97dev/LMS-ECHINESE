@@ -43,7 +43,7 @@
     }
   }
   .paragraph {
-    border-top: 2px dotted #d1d1d1;
+    // border-top: 2px dotted #d1d1d1;
     padding-top: 15px;
     p {
       margin-bottom: 5px;
@@ -662,6 +662,14 @@
 
       .body-content {
         padding: 15px;
+
+        .group-content {
+          border-bottom: 2px dotted #a0a0a0;
+
+          .content {
+            padding-bottom: 15px;
+          }
+        }
       }
 
       &.none {
@@ -698,5 +706,27 @@
         }
       }
     }
+  }
+}
+
+.btn-add-answer {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #ffd91d;
+  border-radius: 0.3rem;
+  transition: 0.3s;
+
+  &:hover {
+    background: #f1c900;
+    transition: 0.3s;
+  }
+
+  svg {
+    width: 17px;
+    color: #585858;
   }
 }

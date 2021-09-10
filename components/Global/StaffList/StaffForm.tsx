@@ -346,6 +346,8 @@ const StaffForm = (props) => {
           arrBranch.push(item.ID);
         });
         cloneRowData.Branch = arrBranch;
+        cloneRowData.Password = "";
+
         form.reset(cloneRowData);
         cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
         cloneRowData.DistrictID &&

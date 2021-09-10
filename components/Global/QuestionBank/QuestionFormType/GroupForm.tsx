@@ -6,6 +6,8 @@ import Editor from "~/components/Elements/Editor";
 import { exerciseGroupApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 import { UploadOutlined } from "@ant-design/icons";
+import UploadAudio from "~/components/Elements/UploadAudio";
+import EditorSimple from "~/components/Elements/EditorSimple";
 
 const GroupForm = (props) => {
   const { isSubmit, questionData, changeIsSubmit, visible } = props;
@@ -17,61 +19,18 @@ const GroupForm = (props) => {
   const [form] = Form.useForm();
   const [questionDataForm, setQuestionDataForm] = useState(questionData);
   const [isResetEditor, setIsResetEditor] = useState(false);
-  const [linkUpload, setLinkUpload] = useState(null);
-  const [loadingUpload, setLoadingUpload] = useState(false);
-
-  // const propsFile = {
-  //   name: "file",
-  //   // action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-  //   headers: {
-  //     authorization: "authorization-text",
-  //   },
-  //   async onChange(info) {
-  //     console.log("Info File upload: ", info);
-  //     try {
-  //       let res = await exerciseGroupApi.UploadAudio(info.file);
-  //       if(res.status == 200) {
-  //         showNoti("success", "Upload file thành công");
-  //       }
-  //     } catch (error) {
-
-  //     }
-  //     // if (info.file.status !== "uploading") {
-  //     //   console.log(info.file, info.fileList);
-  //     // }
-  //     // if (info.file.status === "done") {
-  //     //   message.success(`${info.file.name} file uploaded successfully`);
-  //     // } else if (info.file.status === "error") {
-  //     //   message.error(`${info.file.name} file upload failed.`);
-  //     // }
-  //   },
-  // };
-
-  // Upload file audio
-  const onchange_UploadFile = async (info) => {
-    console.log("Info File upload: ", info);
-    if (info.file.status === "uploading") {
-      setLoadingUpload(true);
-      return;
-    }
-    setLoadingUpload(true);
-    try {
-      let res = await exerciseGroupApi.UploadAudio(info.file.originFileObj);
-      if (res.status == 200) {
-        setLinkUpload(res.data.data);
-        showNoti("success", "Upload file thành công");
-      }
-    } catch (error) {
-      showNoti("danger", error);
-    } finally {
-      setLoadingUpload(false);
-    }
-  };
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
     console.log("DATA SUBMIT: ", data);
   });
+
+  // GET INTRODUCE EDITOR
+  const getIntroduceEditor = (dataEditor) => {
+    console.log("Introduce Editor Form: ", dataEditor);
+    questionDataForm.Introduce = dataEditor;
+    setQuestionDataForm({ ...questionDataForm });
+  };
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
@@ -126,6 +85,8 @@ const GroupForm = (props) => {
       SubjectID: questionDataForm.SubjectID,
       Level: questionDataForm.Level,
       Type: questionDataForm.Type,
+      LinkAudio: questionDataForm.LinkAudio,
+      Introduce: questionDataForm.Introduce,
     };
 
     try {
@@ -171,8 +132,16 @@ const GroupForm = (props) => {
           <div className="container-fluid">
             <div className="row">
               <div className="col-12">
+                <Form.Item name="Question" label="Giới thiệu">
+                  <EditorSimple
+                    handleChange={(value) => getIntroduceEditor(value)}
+                    isReset={isResetEditor}
+                    questionContent={questionDataForm?.Introduce}
+                    questionData={questionDataForm}
+                  />
+                </Form.Item>
                 <Form.Item name="Question" label="Nội dung">
-                  <Editor
+                  <EditorSimple
                     handleChange={(value) => getDataEditor(value)}
                     isReset={isResetEditor}
                     questionContent={questionDataForm?.Content}
@@ -180,17 +149,13 @@ const GroupForm = (props) => {
                   />
                 </Form.Item>
                 <Form.Item label="Tải lên link Audio">
-                  {/* <input
-                    type="file"
-                    onChange={(info) => onchange_UploadFile(info)}
-                  ></input>
-                  {loadingUpload ? <Spin /> : linkUpload && linkUpload} */}
-                  <Upload onChange={onchange_UploadFile} showUploadList={false}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    <div className="d-block">
-                      {loadingUpload ? <Spin /> : linkUpload && linkUpload}
-                    </div>
-                  </Upload>
+                  <UploadAudio
+                    getFile={(file) => {
+                      questionDataForm.LinkAudio = file;
+                      setQuestionDataForm({ ...questionDataForm });
+                    }}
+                    valueFile={questionDataForm?.LinkAudio}
+                  />
                 </Form.Item>
               </div>
             </div>
