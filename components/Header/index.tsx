@@ -231,7 +231,7 @@ export default function Header({
               </span>
               <span className="notification-number">5</span>
             </li> */}
-            <li className="select-center">
+            {/* <li className="select-center">
               <Select
                 className="style-input"
                 showSearch
@@ -248,7 +248,7 @@ export default function Header({
                 <Option value="center-2">Trung tâm Việt Hoa</Option>
                 <Option value="center-3">Mona Media</Option>
               </Select>
-            </li>
+            </li> */}
             {/* <li className="search">
               <Popover content={content_search} trigger="click">
                 <a className="search-icon">

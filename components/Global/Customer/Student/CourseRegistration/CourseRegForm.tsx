@@ -29,7 +29,7 @@ const CourseRegForm = React.memo((props: any) => {
   const { Option } = Select;
   const { TextArea } = Input;
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { infoId, reloadData, infoDetail, currentPage } = props;
+  const { infoId, reloadData, infoDetail, currentPage, listStudent } = props;
   const [form] = Form.useForm();
   const { showNoti } = useWrap();
   const [loading, setLoading] = useState(false);
@@ -102,19 +102,19 @@ const CourseRegForm = React.memo((props: any) => {
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    if (infoId) {
-      try {
-        let res = await courseRegistrationApi.intoCourse({
-          ...data,
-          ListCourseRegistration: [infoDetail.ID],
-          isContract: isContract,
-        });
-        reloadData(currentPage);
-        afterSubmit(res?.data.message);
-      } catch (error) {
-        showNoti("danger", error.message);
-        setLoading(false);
-      }
+    // if (infoId) {
+    // }
+    try {
+      let res = await courseRegistrationApi.intoCourse({
+        ...data,
+        ListCourseRegistration: listStudent,
+        isContract: isContract,
+      });
+      reloadData(currentPage);
+      afterSubmit(res?.data.message);
+    } catch (error) {
+      showNoti("danger", error.message);
+      setLoading(false);
     }
   };
 
@@ -122,6 +122,13 @@ const CourseRegForm = React.memo((props: any) => {
     showNoti("success", mes);
     setLoading(false);
     setIsModalVisible(false);
+  };
+
+  const returnNameCourse = (data) => {
+    let name = data.CourseName;
+    let percent = data.DonePercent.toString() + "% ";
+    name = percent + name;
+    return name;
   };
 
   useEffect(() => {
@@ -139,14 +146,15 @@ const CourseRegForm = React.memo((props: any) => {
   return (
     <>
       <button
-        className="btn btn-icon edit"
+        className="btn btn-warning"
         onClick={() => {
           setIsModalVisible(true);
         }}
       >
-        <Tooltip title="Chuyển học viên vào khóa học">
+        {/* <Tooltip title="Chuyển học viên vào khóa học">
           <Move />
-        </Tooltip>
+        </Tooltip> */}
+        Chuyển vào khóa
       </button>
       <Modal
         title="Chuyển học viên vào khóa học"
@@ -158,7 +166,7 @@ const CourseRegForm = React.memo((props: any) => {
           <Form form={form} layout="vertical" onFinish={onSubmit}>
             <Spin spinning={isLoading}>
               <div className="row">
-                <div className="col-8">
+                {/* <div className="col-8">
                   <Form.Item
                     // name="FullNameUnicode"
                     label="Học viên"
@@ -169,8 +177,8 @@ const CourseRegForm = React.memo((props: any) => {
                       value={infoDetail.FullNameUnicode}
                     />
                   </Form.Item>
-                </div>
-                <div className="col-4">
+                </div> */}
+                <div className="col-12">
                   <Form.Item name="isContract" label="Hợp đồng">
                     <Switch onChange={() => setIsContract(!isContract)} />
                   </Form.Item>
@@ -189,7 +197,8 @@ const CourseRegForm = React.memo((props: any) => {
                       >
                         {courseAfter?.map((item, index) => (
                           <Option key={index} value={item.ID}>
-                            {item.CourseName}
+                            {/* {item.CourseName} */}
+                            {returnNameCourse(item)}
                           </Option>
                         ))}
                       </Select>

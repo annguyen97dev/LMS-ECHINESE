@@ -13,8 +13,12 @@ import { useWrap } from "~/context/wrap";
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
 import CourseRegExpand from "~/components/Global/Customer/Student/CourseRegistration/CourseRegExpand";
 import CourseRegForm from "~/components/Global/Customer/Student/CourseRegistration/CourseRegForm";
+import { Checkbox } from "antd";
 
 const CourseRegistration = () => {
+  const [listStudent, setListStudent] = useState([]);
+  const [listChecked, setListChecked] = useState([]);
+
   const onSearch = (data) => {
     setCurrentPage(1);
     setParams({
@@ -27,6 +31,24 @@ const CourseRegistration = () => {
     setCurrentPage(1);
     setParams(listParamsDefault);
   };
+
+  function onChange(e, ID) {
+    const checked = e.target.checked;
+    // setIsChecked(true);
+
+    let indexStudent = listChecked.findIndex((item) => item.id == ID);
+    listChecked[indexStudent].checked = checked;
+
+    if (checked) {
+      listStudent.push(ID);
+    } else {
+      let index = listStudent.indexOf(ID);
+      listStudent.splice(index, 1);
+    }
+    setListStudent([...listStudent]);
+    setListChecked([...listChecked]);
+  }
+
   const columns = [
     {
       title: "Học viên",
@@ -40,7 +62,7 @@ const CourseRegistration = () => {
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
-      title: "Chuơng trình học",
+      title: "Chương trình học",
       dataIndex: "ProgramName",
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
@@ -49,17 +71,25 @@ const CourseRegistration = () => {
       dataIndex: "StudyTimeName",
     },
     {
-      render: (data) => (
-        <Fragment>
-          <CourseRegForm
-            infoDetail={data}
-            infoId={data.ID}
-            reloadData={(firstPage) => {
-              getDataCourseReg(firstPage);
-            }}
-            currentPage={currentPage}
-          />
-        </Fragment>
+      // render: (data) => (
+      //   <Fragment>
+      //     <CourseRegForm
+      //       infoDetail={data}
+      //       infoId={data.ID}
+      //       reloadData={(firstPage) => {
+      //         getDataCourseReg(firstPage);
+      //       }}
+      //       currentPage={currentPage}
+      //     />
+      //   </Fragment>
+      // ),
+      render: (text, data, index) => (
+        <Checkbox
+          checked={
+            data.ID == listChecked[index]?.id && listChecked[index].checked
+          }
+          onChange={(value) => onChange(value, data.ID)}
+        ></Checkbox>
       ),
     },
   ];
@@ -122,8 +152,6 @@ const CourseRegistration = () => {
   ]);
 
   const handleFilter = (listFilter) => {
-    console.log("List Filter when submit: ", listFilter);
-
     let newListFilter = {
       pageIndex: 1,
       fromDate: null,
@@ -230,7 +258,17 @@ const CourseRegistration = () => {
           pageIndex: page,
         });
         //@ts-ignore
-        res.status == 200 && setCourseReg(res.data.data);
+        if (res.status == 200) {
+          setCourseReg(res.data.data);
+          res.data.data.forEach((item) => {
+            listChecked.push({
+              id: item.ID,
+              checked: false,
+            });
+            setListChecked([...listChecked]);
+          });
+        }
+
         if (res.status == 204) {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
@@ -287,6 +325,17 @@ const CourseRegistration = () => {
             handleSort={(value) => handleSort(value)}
           />
         </div>
+      }
+      TitleCard={
+        <CourseRegForm
+          // infoDetail={data}
+          // infoId={data.ID}
+          listStudent={listStudent}
+          reloadData={(firstPage) => {
+            getDataCourseReg(firstPage);
+          }}
+          currentPage={currentPage}
+        />
       }
       handleExpand={(data) => setItemDetail(data)}
       expandable={{ expandedRowRender }}
