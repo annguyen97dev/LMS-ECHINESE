@@ -2028,7 +2028,24 @@ hr {
     }
   }
 }
-
+.info-modal {
+	display: flex;
+	flex-wrap: wrap;
+	&-avatar {
+		width: 112px;
+	}
+	&-content {
+		width: calc(100% - 112px);
+	}
+	@include max-media(599px) {
+		&-avatar {
+			width: 100%;
+		}
+		&-content {
+			width: 100%;
+		}
+	}
+}
 .box-info-modal {
   p {
     margin-bottom: 5px;

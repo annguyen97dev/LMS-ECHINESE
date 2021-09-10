@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import RadioField from '~/components/FormControl/RadioField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
-import UploadImageField from '~/components/FormControl/UploadImageField';
+import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
 import {numberWithCommas} from '~/utils/functions';
 import {optionCommonPropTypes} from '~/utils/proptypes';
 
@@ -19,7 +19,6 @@ PackageForm.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
 	}),
-	handleUploadImage: PropTypes.func,
 	handleCreatePackage: PropTypes.func,
 	handleUpdatePackage: PropTypes.func,
 	paymentMethodOptionList: optionCommonPropTypes,
@@ -28,7 +27,6 @@ PackageForm.defaultProps = {
 	isUpdate: false,
 	updateObj: {},
 	isLoading: {type: '', status: false},
-	handleUploadImage: null,
 	handleCreatePackage: null,
 	handleUpdatePackage: null,
 	paymentMethodOptionList: [],
@@ -39,7 +37,6 @@ function PackageForm(props) {
 		isUpdate,
 		isLoading,
 		updateObj,
-		handleUploadImage,
 		handleCreatePackage,
 		handleUpdatePackage,
 		paymentMethodOptionList,
@@ -92,11 +89,6 @@ function PackageForm(props) {
 			});
 		}
 	}, [updateObj]);
-
-	const checkHandleUploadImage = (file) => {
-		if (!handleUploadImage) return;
-		return handleUploadImage(file);
-	};
 
 	const packageListSwitchFunc = (data: {
 		Name: string;
@@ -171,11 +163,10 @@ function PackageForm(props) {
 								/>
 							</div>
 							<div className="col-md-6 col-12">
-								<UploadImageField
+								<UploadAvatarField
 									form={form}
 									name="Avatar"
 									label="Thumbnail"
-									handleUploadImage={checkHandleUploadImage}
 								/>
 							</div>
 							<div className="col-md-6 col-12">

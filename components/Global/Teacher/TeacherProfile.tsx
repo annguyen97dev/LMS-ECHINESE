@@ -1,33 +1,16 @@
-import React, { useState, useEffect } from "react";
 import {
-  Row,
-  Col,
-  Form,
   Card,
-  Divider,
-  Input,
-  Select,
-  DatePicker,
-  Button,
-  Avatar,
-  Upload,
-  Rate,
-  Table,
   Checkbox,
-  Tabs,
+  DatePicker,
+  Form,
+  Select,
   Spin,
-  List,
+  Table,
+  Tabs,
 } from "antd";
-import ImgCrop from "antd-img-crop";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
-import PowerTable from "~/components/PowerTable";
-import AvatarBase from "~/components/Elements/AvatarBase.tsx";
-
-import moment from "moment";
-import { string } from "yup";
-import ExpandTable from "~/components/ExpandTable";
-import { faLeaf } from "@fortawesome/free-solid-svg-icons";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -152,7 +135,7 @@ const TeacherProfile = (props) => {
       <>
         <Card className="space-top-card">
           <Tabs defaultActiveKey="1">
-            <TabPane tab="Tài khoản nhân viên" key="1">
+            {/* <TabPane tab="Tài khoản nhân viên" key="1">
               <div className="row justify-content-center">
                 <div className="col-md-8 col-12">
                   <Form form={form} layout="vertical" onFinish={onSubmit}>
@@ -249,26 +232,6 @@ const TeacherProfile = (props) => {
                         </Form.Item>
                       </div>
                     </div>
-                    {/* <div className="row">
-                      <div className="col-md-6 col-12">
-                        <Form.Item label="Tên tài khoản">
-                          <Input
-                            className="style-input"
-                            defaultValue={dataUser?.UserName}
-                            size="large"
-                          />
-                        </Form.Item>
-                      </div>
-                      <div className="col-md-6 col-12">
-                        <Form.Item label="Mật khẩu mới">
-                          <Input
-                            className="style-input"
-                            size="large"
-                            type="password"
-                          />
-                        </Form.Item>
-                      </div>
-                    </div> */}
                     <div className="row">
                       <div className="col-12">
                         <Form.Item label="Hình đại diện">
@@ -291,7 +254,7 @@ const TeacherProfile = (props) => {
                   </Form>
                 </div>
               </div>
-            </TabPane>
+            </TabPane> */}
             <TabPane tab="Thông tin lớp học" key="2">
               <div className="row justify-content-center">
                 <div className="col-md-8 col-12">
