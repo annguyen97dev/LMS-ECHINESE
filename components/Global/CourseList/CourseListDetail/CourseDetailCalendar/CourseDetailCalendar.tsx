@@ -75,20 +75,24 @@ const CourseDetailCalendar = () => {
 
 	const onUploadDocument = async (data: {
 		CourseScheduleID: number;
-		File: File;
+		File: Array<any>;
 	}) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true,
 		});
 		try {
-			let formData = new FormData();
-			Object.keys(data).forEach((key) => formData.append(key, data[key]));
+			const formData = new FormData();
+			const newData = {
+				...data,
+				File: data.File[0].originFileObj,
+			};
+			Object.keys(newData).forEach((key) => formData.append(key, newData[key]));
 			const res = await documentScheduleApi.add(formData);
 			if (res.status === 200) {
 				const newCalendarList = [...calendarList];
 				const idx = newCalendarList.findIndex(
-					(c) => c.ID === data.CourseScheduleID
+					(c) => c.ID === newData.CourseScheduleID
 				);
 				newCalendarList.splice(idx, 1, {
 					...newCalendarList[idx],
