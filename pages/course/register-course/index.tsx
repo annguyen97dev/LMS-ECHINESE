@@ -373,7 +373,6 @@ const RegisterCourse = (props: any) => {
             {option == 3 && (
               <RegCourse
                 userID={userDetail ? userDetail.UserInformationID : null}
-                loading={loading}
               />
             )}
             {option == 4 && (

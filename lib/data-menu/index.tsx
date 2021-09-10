@@ -564,6 +564,13 @@ export const dataMenu = [
       },
       {
         ItemType: "single",
+        Key: "/package/package-set-result/",
+        Route: "/package/package-set-result/",
+        Text: "Kết quả gói bài",
+        Icon: "",
+      },
+      {
+        ItemType: "single",
         Key: "/package/package-set",
         Route: "/package/package-set",
         Text: "Bộ sưu tập",

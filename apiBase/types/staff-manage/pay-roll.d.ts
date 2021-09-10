@@ -13,3 +13,8 @@ type IPayRoll = IBaseApi<{
   TeachingTime: number;
   TotalSalary: number;
 }>;
+
+type IClosingSalarDate = IBaseApi<{
+  ID: number;
+  Date: number;
+}>;
