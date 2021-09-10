@@ -355,19 +355,17 @@ const SalaryReview = () => {
       TitleCard={
         <div className="d-flex align-items-center justify-content-end ">
           <div className="font-weight-black">Ngày tính lương: </div>
-          <Spin spinning={loadingSalaryDate}>
-            <div className="d-flex justify-content-start pl-2">
-              <Input
-                className="style-input w-50"
-                allowClear={true}
-                onChange={(value: any) => setSalaryDate(value.target.value)}
-                value={salaryDate}
-                onPressEnter={(value: any) =>
-                  handleChangeSalaryDate(value.target.value)
-                }
-              />
-            </div>
-          </Spin>
+          <Input
+            style={{ width: "100px", marginLeft: "10px" }}
+            className="style-input"
+            allowClear={true}
+            onChange={(value: any) => setSalaryDate(value.target.value)}
+            value={salaryDate}
+            onPressEnter={(value: any) =>
+              handleChangeSalaryDate(value.target.value)
+            }
+          />
+          <Spin style={{ marginLeft: "10px" }} spinning={loadingSalaryDate} />
         </div>
       }
       Extra={

@@ -83,7 +83,7 @@ const CourseRegistration = () => {
       // ),
 
       render: (text, data, index) => (
-        <Fragment>
+        <div className="d-flex align-items-center">
           <Link
             href={{
               pathname:
@@ -99,12 +99,13 @@ const CourseRegistration = () => {
           </Link>
 
           <Checkbox
+            style={{ marginLeft: "5px" }}
             checked={
               data.ID == listChecked[index]?.id && listChecked[index].checked
             }
             onChange={(value) => onChange(value, data.ID)}
           ></Checkbox>
-        </Fragment>
+        </div>
       ),
     },
   ];

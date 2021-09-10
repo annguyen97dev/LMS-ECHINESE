@@ -162,6 +162,13 @@ const RegCourse = React.memo((props: any) => {
     setDebt(totalPrice - (paid + discountPrice));
   }, [totalPrice, paid, discountPrice]);
 
+  const returnNameCourse = (data) => {
+    let name = data.CourseName;
+    let percent = data.DonePercent.toString() + "% ";
+    name = percent + name;
+    return name;
+  };
+
   return (
     <Card title="Đăng ký khóa học">
       <div className="row">
@@ -215,9 +222,10 @@ const RegCourse = React.memo((props: any) => {
               >
                 {course?.map((item, index) => (
                   <Option key={index} value={item.ID}>
-                    {item.DonePercent
+                    {/* {item.DonePercent
                       ? item.DonePercent % -item.CourseName
-                      : item.CourseName}
+                      : item.CourseName} */}
+                    {returnNameCourse(item)}
                   </Option>
                 ))}
               </Select>
