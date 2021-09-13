@@ -12,7 +12,7 @@ import { exerciseApi, exerciseGroupApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import { data } from "~/lib/dashboard/data";
 
-const QuestionTyping = (props: any) => {
+const QuestionDrag = (props: any) => {
   const {
     listQuestion,
     loadingQuestion,
@@ -291,4 +291,4 @@ const QuestionTyping = (props: any) => {
   );
 };
 
-export default QuestionTyping;
+export default QuestionDrag;

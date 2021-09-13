@@ -10,7 +10,7 @@ import UploadAudio from "~/components/Elements/UploadAudio";
 import EditorSimple from "~/components/Elements/EditorSimple";
 
 const GroupForm = (props) => {
-  const { isSubmit, questionData, changeIsSubmit, visible } = props;
+  const { isSubmit, questionData, changeIsSubmit, visible, changeData } = props;
   const { showNoti } = useWrap();
   const {
     handleSubmit,
@@ -19,6 +19,10 @@ const GroupForm = (props) => {
   const [form] = Form.useForm();
   const [questionDataForm, setQuestionDataForm] = useState(questionData);
   const [isResetEditor, setIsResetEditor] = useState(false);
+  const [loadAtFirst, setLoadAtFirst] = useState(true);
+
+  console.log("question data Form: ", questionDataForm);
+  console.log("question data: ", questionData);
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
@@ -26,16 +30,19 @@ const GroupForm = (props) => {
   });
 
   // GET INTRODUCE EDITOR
-  const getIntroduceEditor = (dataEditor) => {
-    console.log("Introduce Editor Form: ", dataEditor);
-    questionDataForm.Introduce = dataEditor;
+  const getIntroduceEditor = (dataEditor: any) => {
+    if (questionDataForm) {
+      questionDataForm.Introduce = dataEditor;
+    }
     setQuestionDataForm({ ...questionDataForm });
   };
 
   // GET VALUE IN EDITOR
-  const getDataEditor = (dataEditor) => {
-    console.log("Value Editor Form: ", dataEditor);
-    questionDataForm.Content = dataEditor;
+  const getDataEditor = (dataEditor: any) => {
+    if (questionDataForm) {
+      console.log("Data content: ", dataEditor);
+      questionDataForm.Content = dataEditor;
+    }
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -48,34 +55,6 @@ const GroupForm = (props) => {
     });
     setQuestionDataForm({ ...questionDataForm });
   };
-
-  // ON CHANGE IS CORRECT
-  // const onChange_isCorrect = (e, AnswerID) => {
-  //   console.log(`checked = ${e.target.checked}`);
-  //   let checked = e.target.checked;
-
-  //   // Xóa các isTrue còn lại (vì là câu hỏi chọn 1 đáp án)
-  //   questionData.ExerciseAnswer.forEach((item) => {
-  //     item.isTrue = false;
-  //   });
-
-  //   // Tìm vị trí sau đó gán correct vào
-  //   let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
-  //     (item) => item.ID == AnswerID
-  //   );
-  //   questionDataForm.ExerciseAnswer[AnswerIndex].isTrue = checked;
-  //   setQuestionDataForm({ ...questionDataForm });
-  // };
-
-  // ON CHANGE TEXT
-  // const onChange_text = (e, AnswerID) => {
-  //   let text = e.target.value;
-  //   let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
-  //     (item) => item.ID == AnswerID
-  //   );
-  //   questionDataForm.ExerciseAnswer[AnswerIndex].AnswerContent = text;
-  //   setQuestionDataForm({ ...questionDataForm });
-  // };
 
   // SUBMIT FORM
   const handleSubmitQuestion = async () => {
@@ -117,13 +96,32 @@ const GroupForm = (props) => {
   };
 
   useEffect(() => {
-    console.log("DATA SUBMIT: ", questionDataForm);
     isSubmit && handleSubmitQuestion();
   }, [isSubmit]);
 
   useEffect(() => {
-    visible && setQuestionDataForm(questionData);
+    if (visible) {
+      if (!questionData.ID) {
+        questionData.Content = "";
+        questionData.Introduce = "";
+        questionData.LinkAudio = "";
+      }
+      setQuestionDataForm({ ...questionData });
+    } else {
+      setQuestionDataForm(null);
+      setLoadAtFirst(true);
+    }
   }, [visible]);
+
+  useEffect(() => {
+    console.log("chạy vô");
+    if (questionDataForm) {
+      if (!loadAtFirst) {
+        changeData && changeData();
+      }
+      setLoadAtFirst(false);
+    }
+  }, [questionDataForm]);
 
   return (
     <div className="form-create-question">

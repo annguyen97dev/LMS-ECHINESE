@@ -11,7 +11,7 @@ import { Plus } from "react-feather";
 let AnsID = 0;
 let QuesID = -1;
 
-const TypingForm = (props) => {
+const DragForm = (props) => {
   const { isSubmit, questionData, changeIsSubmit, visible } = props;
   const { showNoti } = useWrap();
   const {
@@ -409,14 +409,14 @@ const TypingForm = (props) => {
                             {returnIndexQuestion(itemQues)}
                             {/* {`Câu (${index + 1})`} */}
                           </p>
-                          <Tooltip title="Thêm đáp án">
+                          {/* <Tooltip title="Thêm đáp án">
                             <button
                               className="btn-add-answer"
                               onClick={() => handleAddAnswer(itemQues.inputID)}
                             >
                               <Plus />
                             </button>
-                          </Tooltip>
+                          </Tooltip> */}
 
                           <div className="row">
                             {itemQues.ExerciseAnswer?.map(
@@ -437,7 +437,7 @@ const TypingForm = (props) => {
                                           }
                                         ></Input>
                                       </Form.Item>
-                                      <button
+                                      {/* <button
                                         className="delete-ans"
                                         onClick={() =>
                                           deleteAnswerItem(
@@ -447,7 +447,7 @@ const TypingForm = (props) => {
                                         }
                                       >
                                         <CloseOutlined />
-                                      </button>
+                                      </button> */}
                                     </div>
                                   </div>
                                 )
@@ -466,4 +466,4 @@ const TypingForm = (props) => {
   );
 };
 
-export default TypingForm;
+export default DragForm;

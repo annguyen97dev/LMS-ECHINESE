@@ -6,12 +6,41 @@ import Editor from "~/components/Elements/Editor";
 import { exerciseApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 import EditorSimple from "~/components/Elements/EditorSimple";
+import UploadAudio from "~/components/Elements/UploadAudio";
 
-// let returnSchema = {};
-// let schema = null;
+const listAlphabet = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+];
 
 const ChoiceForm = (props) => {
-  const { isSubmit, questionData, changeIsSubmit, visible, isGroup } = props;
+  const {
+    isSubmit,
+    questionData,
+    changeIsSubmit,
+    visible,
+    isGroup,
+    changeData,
+  } = props;
   const { showNoti } = useWrap();
   const {
     formState: { isSubmitting, errors, isSubmitted },
@@ -19,12 +48,15 @@ const ChoiceForm = (props) => {
   const [form] = Form.useForm();
   const [questionDataForm, setQuestionDataForm] = useState(null);
   const [isResetEditor, setIsResetEditor] = useState(false);
+  const [loadAtFirst, setLoadAtFirst] = useState(true);
 
-  // console.log("Question in form: ", questionDataForm);
+  console.log("question in form: ", questionDataForm);
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
-    questionDataForm.Content = dataEditor;
+    if (questionDataForm) {
+      questionDataForm.Content = dataEditor;
+    }
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -99,36 +131,29 @@ const ChoiceForm = (props) => {
   }, [isSubmit]);
 
   useEffect(() => {
-    visible ? setQuestionDataForm(questionData) : setQuestionDataForm(null);
+    if (visible) {
+      if (!questionData.ID) {
+        questionData.Content = "";
+        questionData.ExerciseAnswer.forEach((item: any) => {
+          item.AnswerContent = "";
+          item.isTrue = false;
+        });
+      }
+      setQuestionDataForm(questionData);
+    } else {
+      setQuestionDataForm(null);
+      setLoadAtFirst(true);
+    }
   }, [visible]);
 
-  // useEffect(() => {
-  //   questionDataForm.ExerciseAnswer = [
-  //     {
-  //       ID: 1,
-  //       AnswerContent: "",
-  //       isTrue: false,
-  //     },
-  //     {
-  //       ID: 2,
-  //       AnswerContent: "",
-  //       isTrue: false,
-  //     },
-  //     {
-  //       ID: 3,
-  //       AnswerContent: "",
-  //       isTrue: false,
-  //     },
-  //     {
-  //       ID: 4,
-  //       AnswerContent: "",
-  //       isTrue: false,
-  //     },
-  //   ];
-  //   setQuestionDataForm([...questionDataForm]);
-  // }, [isGroup]);
-
-  // console.log
+  useEffect(() => {
+    if (questionDataForm) {
+      if (!loadAtFirst) {
+        changeData && changeData();
+      }
+      setLoadAtFirst(false);
+    }
+  }, [questionDataForm]);
 
   return (
     <div className="form-create-question">
@@ -142,8 +167,19 @@ const ChoiceForm = (props) => {
                     visible={visible}
                     handleChange={(value) => getDataEditor(value)}
                     isReset={isResetEditor}
-                    questionContent={questionData?.Content}
+                    questionContent={questionDataForm?.Content}
                     questionData={questionData}
+                  />
+                </Form.Item>
+              </div>
+              <div className="col-12">
+                <Form.Item label="File nghe">
+                  <UploadAudio
+                    getFile={(file) => {
+                      questionDataForm.LinkAudio = file;
+                      setQuestionDataForm({ ...questionDataForm });
+                    }}
+                    valueFile={questionDataForm?.LinkAudio}
                   />
                 </Form.Item>
               </div>
@@ -161,6 +197,7 @@ const ChoiceForm = (props) => {
                     ></Checkbox>
                     <Form.Item>
                       <Input
+                        placeholder={listAlphabet[index]}
                         value={item.AnswerContent}
                         className="style-input"
                         onChange={(e) => onChange_text(e, item.ID)}

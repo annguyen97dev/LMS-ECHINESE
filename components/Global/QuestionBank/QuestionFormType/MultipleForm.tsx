@@ -9,14 +9,39 @@ import { CloseOutlined } from "@ant-design/icons";
 import { data } from "~/lib/option/dataOption";
 import { Plus } from "react-feather";
 import EditorSimple from "~/components/Elements/EditorSimple";
+import UploadAudio from "~/components/Elements/UploadAudio";
 
 // let returnSchema = {};
 // let schema = null;
 
 let AnsID = 0;
 
+const listAlphabet = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+];
+
 const MultipleForm = (props) => {
-  const { isSubmit, questionData, changeIsSubmit, visible } = props;
+  const { isSubmit, questionData, changeIsSubmit, visible, changeData } = props;
   const { showNoti } = useWrap();
   const {
     reset,
@@ -30,8 +55,9 @@ const MultipleForm = (props) => {
   const [questionDataForm, setQuestionDataForm] = useState(null);
   const [isResetEditor, setIsResetEditor] = useState(false);
   const [answerList, setAnswerList] = useState(questionData.ExerciseAnswer);
+  const [loadAtFirst, setLoadAtFirst] = useState(true);
 
-  // console.log("Question in form: ", questionDataForm);
+  console.log("Question in form: ", questionDataForm);
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
@@ -40,7 +66,9 @@ const MultipleForm = (props) => {
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
-    questionDataForm.Content = dataEditor;
+    if (questionDataForm) {
+      questionDataForm.Content = dataEditor;
+    }
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -139,8 +167,25 @@ const MultipleForm = (props) => {
   }, [isSubmit]);
 
   useEffect(() => {
-    visible ? setQuestionDataForm(questionData) : setQuestionDataForm(null);
+    if (visible) {
+      if (!questionData.ID) {
+        questionData.ExerciseAnswer = [];
+      }
+      setQuestionDataForm({ ...questionData });
+    } else {
+      setQuestionDataForm(null);
+      setLoadAtFirst(true);
+    }
   }, [visible]);
+
+  useEffect(() => {
+    if (questionDataForm) {
+      if (!loadAtFirst) {
+        changeData && changeData();
+      }
+      setLoadAtFirst(false);
+    }
+  }, [questionDataForm]);
 
   return (
     <div className="form-create-question">
@@ -155,6 +200,17 @@ const MultipleForm = (props) => {
                     isReset={isResetEditor}
                     questionContent={questionDataForm?.Content}
                     questionData={questionDataForm}
+                  />
+                </Form.Item>
+              </div>
+              <div className="col-12">
+                <Form.Item label="File nghe">
+                  <UploadAudio
+                    getFile={(file) => {
+                      questionDataForm.LinkAudio = file;
+                      setQuestionDataForm({ ...questionDataForm });
+                    }}
+                    valueFile={questionDataForm?.LinkAudio}
                   />
                 </Form.Item>
               </div>
@@ -179,6 +235,7 @@ const MultipleForm = (props) => {
                         ></Checkbox>
                         <Form.Item>
                           <Input
+                            placeholder={listAlphabet[index]}
                             value={item.AnswerContent}
                             className="style-input"
                             onChange={(e) => onChange_text(e, item.ID)}

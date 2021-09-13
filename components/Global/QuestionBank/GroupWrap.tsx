@@ -49,9 +49,11 @@ const GroupWrap = (props) => {
   const [linkAudio, setLinkAudio] = useState(listQuestion);
   const audioRef = useRef(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
+  const [dataListQuestion, setDataListQuestion] = useState(null);
+  const [lengthData, setLengthData] = useState(0);
 
   console.log("List question in group: ", listQuestion);
-  console.log("Link audio: ", linkAudio);
+  console.log("active Key: ", activeKey);
 
   // ACTION TABLE
   const showModalConfirm = (e) => {
@@ -108,6 +110,7 @@ const GroupWrap = (props) => {
     delete cloneItem.ID;
     cloneItem.Content = "";
     cloneItem.ExerciseGroupID = item.ID;
+    cloneItem.LinkAudio = "";
 
     switch (item.Type) {
       // Choice
@@ -135,15 +138,24 @@ const GroupWrap = (props) => {
           },
         ];
         break;
+
       // Multiple
       case 4:
         cloneItem.ExerciseAnswer = [];
-
         break;
+
       // Typing
       case 3:
         cloneItem.Content = item.Content;
         cloneItem.ID = groupID;
+        cloneItem.LinkAudio = item.LinkAudio;
+        break;
+
+      // Drag;
+      case 2:
+        cloneItem.Content = item.Content;
+        cloneItem.ID = groupID;
+        cloneItem.LinkAudio = item.LinkAudio;
         break;
       default:
         break;
@@ -196,11 +208,23 @@ const GroupWrap = (props) => {
   };
 
   useEffect(() => {
+    // Check active item when add new data
+    if (dataListQuestion?.length > 0) {
+      if (listQuestion.length > lengthData) {
+        setActiveKey(listQuestion[0].ID);
+        getGroupID(listQuestion[0].ID);
+      }
+    }
+    setLengthData(listQuestion.length);
+
+    // Loading audio for change html audio (because the link not change when update state)
     setLoadingAudio(true);
     setTimeout(() => {
       setLoadingAudio(false);
-    }, 200);
+    }, 100);
 
+    // Make new data
+    setDataListQuestion(listQuestion);
     setLinkAudio(listQuestion);
   }, [listQuestion]);
 
@@ -219,12 +243,12 @@ const GroupWrap = (props) => {
 
       {isGroup.status ? (
         <div className="lms-collapse">
-          {listQuestion?.length == 0 ? (
+          {dataListQuestion?.length == 0 ? (
             <p className="text-center">
               <b>Danh sách còn trống</b>
             </p>
           ) : (
-            listQuestion?.map((item, index) => (
+            dataListQuestion?.map((item, index) => (
               <div
                 data-click="trigger-collapse"
                 className="collapse-item"
@@ -276,18 +300,7 @@ const GroupWrap = (props) => {
                             </audio>
                           )
                         ) : (
-                          <div className="d-flex align-items-center">
-                            <Spin />
-                            <span
-                              style={{
-                                marginLeft: "5px",
-                                fontStyle: "italic",
-                                fontSize: "13px",
-                              }}
-                            >
-                              Loading audio...
-                            </span>
-                          </div>
+                          <></>
                         )}
                       </div>
                       <div className="introduce mb-1">
@@ -298,7 +311,8 @@ const GroupWrap = (props) => {
                       </div>
                     </div>
                     <div className="group-content-question mt-3">
-                      {children}
+                      {/* {children} */}
+                      {React.cloneElement(children, { groupID: item.ID })}
                     </div>
                   </div>
                 </div>

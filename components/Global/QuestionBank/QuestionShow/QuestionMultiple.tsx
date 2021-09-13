@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Radio, Tooltip, Skeleton, Popconfirm } from "antd";
-import { Info, Bookmark, Edit, Trash2 } from "react-feather";
+import { Radio, Spin, Skeleton, Popconfirm } from "antd";
+import { Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
 
 import ReactHtmlParser, {
@@ -20,6 +20,7 @@ const QuestionMultiple = (props: any) => {
     onRemoveData,
     onEditData,
     listAlphabet,
+    groupID,
   } = props;
   const [value, setValue] = React.useState(1);
   const [dataListQuestion, setDataListQuestion] = useState(listQuestion);
@@ -30,6 +31,9 @@ const QuestionMultiple = (props: any) => {
   });
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [loadingInGroup, setLoadingInGroup] = useState(false);
+  const [loadingAudio, setLoadingAudio] = useState(false);
+  const [activeID, setActiveID] = useState(null);
+  const [lengthData, setLengthData] = useState(0);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -96,7 +100,51 @@ const QuestionMultiple = (props: any) => {
     }
   };
 
+  const onHover = (ID: number) => {
+    setActiveID(ID);
+  };
+
+  const returnAudio = (item) => {
+    const audioHTML = (item) => {
+      return (
+        <audio controls>
+          <source src={item.LinkAudio} type="audio/mpeg" />
+        </audio>
+      );
+    };
+
+    return (
+      <>
+        {!activeID ? (
+          item.LinkAudio !== "" && audioHTML(item)
+        ) : item.ID == activeID ? (
+          !loadingAudio ? (
+            item.LinkAudio !== "" && audioHTML(item)
+          ) : (
+            <></>
+          )
+        ) : (
+          item.LinkAudio !== "" && audioHTML(item)
+        )}
+      </>
+    );
+  };
+
   useEffect(() => {
+    // Check active item when add new data
+    if (dataListQuestion?.length > 0) {
+      if (listQuestion.length > lengthData) {
+        setActiveID(listQuestion[0].ID);
+      }
+    }
+    setLengthData(listQuestion.length);
+    // Loading audio for change html audio (because the link not change when update state)
+    setLoadingAudio(true);
+    setTimeout(() => {
+      setLoadingAudio(false);
+    }, 100);
+
+    // Check all situations between no group and have group
     !isGroup.status
       ? setDataListQuestion(listQuestion)
       : isGroup.id && getQuestionInGroup();
@@ -104,7 +152,10 @@ const QuestionMultiple = (props: any) => {
 
   useEffect(() => {
     isGroup.status && setDataListQuestion([]);
-    isGroup.status && isGroup.id && getQuestionInGroup();
+    isGroup.status &&
+      isGroup.id &&
+      isGroup.id === groupID &&
+      getQuestionInGroup();
   }, [isGroup]);
 
   return (
@@ -116,10 +167,15 @@ const QuestionMultiple = (props: any) => {
             </p>
           )
         : dataListQuestion?.map((item, index) => (
-            <div className="question-item" key={index}>
+            <div
+              className={`question-item ${item.ID == activeID ? "active" : ""}`}
+              key={index}
+              onMouseEnter={() => onHover(item.ID)}
+            >
               <div className="box-detail">
                 <div className="box-title">
                   <span className="title-ques">Câu hỏi {index + 1}</span>
+                  {returnAudio(item)}
                   <div className="title-text">
                     {ReactHtmlParser(item.Content)}
                   </div>
@@ -148,10 +204,11 @@ const QuestionMultiple = (props: any) => {
                   onFetchData={onFetchData}
                   onEditData={(data) => onEditData(data)}
                   isGroup={{ status: false, id: null }}
+                  getActiveID={(ID: any) => setActiveID(ID)}
                 />
                 <Popconfirm
                   title="Bạn có chắc muốn xóa?"
-                  visible={item.ID == visible.id && visible.status}
+                  // visible={item.ID == visible.id && visible.status}
                   onConfirm={() => handleOk(item)}
                   okButtonProps={{ loading: confirmLoading }}
                   onCancel={() => handleCancel(item.ID)}
