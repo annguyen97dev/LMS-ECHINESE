@@ -8,6 +8,7 @@ import { dataQuestion } from "~/lib/question-bank/dataBoxType";
 import { CloseOutlined } from "@ant-design/icons";
 import { data } from "~/lib/option/dataOption";
 import EditorSimple from "~/components/Elements/EditorSimple";
+import UploadAudio from "~/components/Elements/UploadAudio";
 
 // let returnSchema = {};
 // let schema = null;
@@ -15,7 +16,7 @@ import EditorSimple from "~/components/Elements/EditorSimple";
 let AnsID = 0;
 
 const WrittingForm = (props) => {
-  const { isSubmit, questionData, changeIsSubmit, visible } = props;
+  const { isSubmit, questionData, changeIsSubmit, visible, changeData } = props;
   const { showNoti } = useWrap();
   const {
     reset,
@@ -29,8 +30,7 @@ const WrittingForm = (props) => {
   const [questionDataForm, setQuestionDataForm] = useState(null);
   const [isResetEditor, setIsResetEditor] = useState(false);
   const [answerList, setAnswerList] = useState(questionData.ExerciseAnswer);
-
-  // console.log("Question in form: ", questionDataForm);
+  const [loadAtFirst, setLoadAtFirst] = useState(true);
 
   // SUBMI FORM
   const onSubmit = handleSubmit((data: any, e) => {
@@ -39,7 +39,9 @@ const WrittingForm = (props) => {
 
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
-    questionDataForm.Content = dataEditor;
+    if (questionDataForm) {
+      questionDataForm.Content = dataEditor;
+    }
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -52,7 +54,6 @@ const WrittingForm = (props) => {
 
   // SUBMIT FORM
   const handleSubmitQuestion = async () => {
-    console.log("DATA SUBMIT IN FORM: ", questionDataForm);
     let res = null;
 
     try {
@@ -91,8 +92,25 @@ const WrittingForm = (props) => {
   }, [isSubmit]);
 
   useEffect(() => {
-    visible ? setQuestionDataForm(questionData) : setQuestionDataForm(null);
+    if (visible) {
+      if (!questionData.ID) {
+        questionData.Content = "";
+      }
+      setQuestionDataForm({ ...questionData });
+    } else {
+      setQuestionDataForm(null);
+      setLoadAtFirst(true);
+    }
   }, [visible]);
+
+  useEffect(() => {
+    if (questionDataForm) {
+      if (!loadAtFirst) {
+        changeData && changeData();
+      }
+      setLoadAtFirst(false);
+    }
+  }, [questionDataForm]);
 
   return (
     <div className="form-create-question">
@@ -107,6 +125,17 @@ const WrittingForm = (props) => {
                     isReset={isResetEditor}
                     questionContent={questionDataForm?.Content}
                     questionData={questionDataForm}
+                  />
+                </Form.Item>
+              </div>
+              <div className="col-12">
+                <Form.Item label="File nghe">
+                  <UploadAudio
+                    getFile={(file) => {
+                      questionDataForm.LinkAudio = file;
+                      setQuestionDataForm({ ...questionDataForm });
+                    }}
+                    valueFile={questionDataForm?.LinkAudio}
                   />
                 </Form.Item>
               </div>

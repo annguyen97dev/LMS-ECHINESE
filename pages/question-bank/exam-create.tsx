@@ -62,7 +62,7 @@ const ExamCreate = () => {
     <div className="question-create">
       <TitlePage title="Tạo đề thi" />
 
-      <div className="row">
+      {/* <div className="row">
         <div className="col-md-9 col-12">
           {dataExam?.map(
             (exam, ind) =>
@@ -161,7 +161,8 @@ const ExamCreate = () => {
             </ul>
           </Card>
         </div>
-      </div>
+      </div> */}
+      <>Tính năng này chưa sử dụng được</>
     </div>
   );
 };

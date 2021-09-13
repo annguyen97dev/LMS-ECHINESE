@@ -1,5 +1,9 @@
 // QUESTION CREATE
 .question-create {
+  audio {
+    display: block;
+    margin: 10px 0;
+  }
   .detail-question-typing {
     display: flex;
     .paragraph {
@@ -82,21 +86,32 @@
 
     .question-item {
       position: relative;
-      padding: 20px 0px;
+      padding: 20px 10px;
       border: 1px dotted #e2e2e2;
       border-left: none;
       border-right: none;
       border-top: none;
+      transition: 0.3s;
 
-      &:first-child {
-        padding-top: 0;
+      &.active {
+        background: #fffaf3;
       }
+
+      &:hover {
+        background: #fffaf3;
+        transition: 0.3s;
+      }
+
+      // &:first-child {
+      //   padding-top: 0;
+      // }
 
       .box-detail {
         width: 90%;
       }
       .box-action {
-        width: 7%;
+        width: 10%;
+        text-align: center;
       }
 
       .box-title {
@@ -284,8 +299,9 @@
 
 .card-exam-bank {
   .ant-card-body {
-    padding: 24px;
-    padding-right: 5px;
+    // padding: 24px;
+    // padding-right: 5px;
+    padding: 5px 10px 0 15px;
     height: calc(100vh - 185px);
 
     .list-exam-bank {
@@ -537,25 +553,25 @@
   }
 }
 
-.row-ans {
-  .delete-ans {
-    height: 36px;
-    margin-left: 5px;
-    display: flex;
-    align-items: center;
-    padding: 0 7px;
-    border: none;
-    background: transparent;
+// .row-ans {
+//   .delete-ans {
+//     height: 36px;
+//     margin-left: 5px;
+//     display: flex;
+//     align-items: center;
+//     padding: 0 7px;
+//     border: none;
+//     background: transparent;
 
-    svg {
-      font-size: 15px;
-      color: #c32f2f;
-      &:hover {
-        color: #9a1212;
-      }
-    }
-  }
-}
+//     svg {
+//       font-size: 15px;
+//       color: #c32f2f;
+//       &:hover {
+//         color: #9a1212;
+//       }
+//     }
+//   }
+// }
 
 .function-group-item {
   width: 145px;
@@ -728,5 +744,23 @@
   svg {
     width: 17px;
     color: #585858;
+  }
+}
+
+.delete-ans {
+  height: 36px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
+  border: none;
+  background: transparent;
+
+  svg {
+    font-size: 15px;
+    color: #c32f2f;
+    &:hover {
+      color: #9a1212;
+    }
   }
 }

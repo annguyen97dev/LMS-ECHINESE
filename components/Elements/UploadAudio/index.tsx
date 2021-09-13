@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Form, Upload, Spin, Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Form, Upload, Spin, Button, Tooltip } from "antd";
+import { UploadOutlined, CloseOutlined } from "@ant-design/icons";
 import { useWrap } from "~/context/wrap";
 import { exerciseGroupApi } from "~/apiBase/";
 
 const UploadAudio = (props) => {
-  const { getFile, valueFile } = props;
+  const { getFile, valueFile, onDeleteAudio } = props;
   const [linkUpload, setLinkUpload] = useState(valueFile);
   const [loadingUpload, setLoadingUpload] = useState(false);
   const { showNoti } = useWrap();
@@ -38,12 +38,30 @@ const UploadAudio = (props) => {
       </Upload>
       <div className="d-block mt-3">
         {loadingUpload ? (
-          <Spin />
+          <div className="d-flex align-items-center">
+            <Spin />
+            <span
+              style={{
+                marginLeft: "5px",
+                fontStyle: "italic",
+                fontSize: "13px",
+              }}
+            >
+              Loading audio...
+            </span>
+          </div>
         ) : (
           linkUpload && (
-            <a href={linkUpload} target="_blank" style={{ color: "#3289c7" }}>
-              {linkUpload}
-            </a>
+            <div>
+              <audio controls>
+                <source src={linkUpload} type="audio/mpeg" />
+              </audio>
+              {/* <Tooltip title="Xóa audio">
+                <button className="delete-ans ms-3" onClick={deleteAudio}>
+                  <CloseOutlined />
+                </button>
+              </Tooltip> */}
+            </div>
           )
         )}
       </div>
