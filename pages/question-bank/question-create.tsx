@@ -22,6 +22,7 @@ import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
 import QuestionWritting from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
 import QuestionTyping from "~/components/Global/QuestionBank/QuestionShow/QuestionTyping";
 import QuestionDrag from "~/components/Global/QuestionBank/QuestionShow/QuestionDrag";
+import QuestionMap from "~/components/Global/QuestionBank/QuestionShow/QuestionMap";
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -151,6 +152,7 @@ const QuestionCreate = () => {
           />
         );
         break;
+      /** Quesion Typing */
       case 3:
         return (
           <GroupWrap
@@ -174,6 +176,7 @@ const QuestionCreate = () => {
           </GroupWrap>
         );
         break;
+      /** Quesion Drag */
       case 2:
         return (
           <GroupWrap
@@ -190,6 +193,30 @@ const QuestionCreate = () => {
               isGroup={isGroup}
               loadingQuestion={loadingQuestion}
               listQuestion={dataExercise}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
+        );
+        break;
+      /** Quesion Map */
+      case 5:
+        return (
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
+            onFetchData={onFetchData}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionMap
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataSource}
               onFetchData={onFetchData}
               onEditData={(data) => onEditData(data)}
               onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
@@ -235,7 +262,7 @@ const QuestionCreate = () => {
           setDataGroup([...cloneData]);
         }
 
-        todoApi.pageIndex == 1 && showNoti("success", "Thành công");
+        // todoApi.pageIndex == 1 && showNoti("success", "Thành công");
         // !showListQuestion && setShowListQuestion(true);
 
         // Tính phân trang
@@ -244,7 +271,7 @@ const QuestionCreate = () => {
       }
 
       if (res.status == 204) {
-        showNoti("danger", "Không có dữ liệu");
+        // showNoti("danger", "Không có dữ liệu");
         if (!isGroup.status) {
           if (todoApi.Type == 3) {
             setShowListQuestion(false);

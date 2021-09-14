@@ -139,6 +139,16 @@ const GroupWrap = (props) => {
         ];
         break;
 
+      // Map
+      case 5:
+        cloneItem.ExerciseAnswer = [
+          {
+            ID: 1,
+            AnswerContent: "",
+            isTrue: true,
+          },
+        ];
+        break;
       // Multiple
       case 4:
         cloneItem.ExerciseAnswer = [];

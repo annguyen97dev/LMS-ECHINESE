@@ -18,12 +18,12 @@ export const dataTypeGroup = [
     TypeName: "Lựa chọn nhiều",
     Images: "/images/checkbox.png",
   },
-  // {
-  //   Type: 5,
-  //   Number: "13",
-  //   TypeName: "Ghép đáp án",
-  //   Images: "/images/match.png",
-  // },
+  {
+    Type: 5,
+    Number: "13",
+    TypeName: "Ghép đáp án",
+    Images: "/images/match.png",
+  },
   {
     Type: 3,
     Number: "31",

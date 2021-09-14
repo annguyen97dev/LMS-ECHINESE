@@ -130,6 +130,18 @@ const QuestionMultiple = (props: any) => {
     );
   };
 
+  // Return alphabet
+  const returnAlphabet = (dataItem, AnsID) => {
+    let char = "";
+    let cloneListAnswer = dataItem.ExerciseAnswer.filter(
+      (item) => item.Enable !== false
+    );
+    let indexAnswer = cloneListAnswer.findIndex((item) => item.ID == AnsID);
+    char = listAlphabet[indexAnswer];
+
+    return char;
+  };
+
   useEffect(() => {
     // Check active item when add new data
     if (dataListQuestion?.length > 0) {
@@ -147,7 +159,7 @@ const QuestionMultiple = (props: any) => {
     // Check all situations between no group and have group
     !isGroup.status
       ? setDataListQuestion(listQuestion)
-      : isGroup.id && getQuestionInGroup();
+      : isGroup.id && isGroup.id === groupID && getQuestionInGroup();
   }, [listQuestion]);
 
   useEffect(() => {
@@ -191,7 +203,9 @@ const QuestionMultiple = (props: any) => {
                         onChange={onChange}
                         disabled={ans.isTrue ? false : true}
                       >
-                        <span className="tick">{listAlphabet[i]}</span>
+                        <span className="tick">
+                          {returnAlphabet(item, ans.ID)}
+                        </span>
                         <span className="text">{ans.AnswerContent}</span>
                       </Radio>
                     ))}
