@@ -33,6 +33,7 @@ const EditorSummernote = (props) => {
     deleteSingleQuestion,
     deleteAllQuestion,
     exerciseList,
+    visible,
   } = props;
   const [valueEditor, setValueEditor] = useState(questionContent);
   const [propetyEditor, setPropetyEditor] = useState({
@@ -49,7 +50,9 @@ const EditorSummernote = (props) => {
   const [reloadContent, setReloadContent] = useState(false);
   // const [listID, setListID] = useState([]);
   const [listInput, setListInput] = useState([]);
+  const [saveListInput, setSaveListInput] = useState([]);
   const [changePosition, setChangePosition] = useState(false);
+  const [saveID, setSaveID] = useState(null);
 
   // console.log("Propety: ", propetyEditor);
   // console.log("Value editor: ", valueEditor);
@@ -58,23 +61,19 @@ const EditorSummernote = (props) => {
   console.log("Key Editor: ", keyEditor);
   // console.log("List Input: ", listInput);
   // console.log("Is Focus: ", isFocus);
-  console.log("Index Char:  ", indexChar);
+  // console.log("Index Char:  ", indexChar);
   console.log("List input: ", listInput);
   // console.log("Text Replace: ", textReplace);
+  console.log("Save Id is: ", saveID);
 
   const formatKey = (e) => {
     switch (e.keyCode) {
-      // case 32:
-      //   arrKey.push("&nbsp;");
-      //   break;
+      case 16:
+        console.log("key 16");
+        arrKey.splice(arrKey.length - 1, 1);
+        break;
       case 8: // backspace
         arrKey.splice(arrKey.length - 1, 1);
-        // if (arrKey.length == 0) {
-        //   countEnter--;
-        //   if (countEnter < 0) {
-        //     countEnter = 0;
-        //   }
-        // }
 
         indexChar--;
         if (indexChar < 0) {
@@ -119,12 +118,14 @@ const EditorSummernote = (props) => {
       }
     }
 
+    console.log("New arr: ", newArr);
+
     return newArr;
   };
 
   // ON KEY UP
   const onKeyDown = (e) => {
-    // console.log("E KEY UP: ", e);
+    console.log("E KEY UP: ", e);
     let node = null;
     let id = null;
 
@@ -261,14 +262,19 @@ const EditorSummernote = (props) => {
     }
   };
 
-  // create input ID
+  // ======== CREATE INPUT ID ==========
   const createInputID = () => {
     let inputID = null;
     // Check add set id for input
     if (listInput.length == 0) {
-      inputID = 0;
+      if (saveID) {
+        inputID = saveID + 1;
+      } else {
+        inputID = 0;
+      }
     } else {
-      inputID = listInput[listInput.length - 1] + 1;
+      let max = Math.max(...listInput);
+      inputID = max + 1;
     }
 
     listInput.push(inputID);
@@ -283,41 +289,42 @@ const EditorSummernote = (props) => {
   }, [isReset]);
 
   // HANDLE BACKSPACE
-  useEffect(() => {
-    let tagP = document.querySelectorAll(".note-editable p");
-  }, [indexChar]);
+  // useEffect(() => {
+  //   let tagP = document.querySelectorAll(".note-editable p");
+  // }, [indexChar]);
 
   // HANDLE ENTER ADD ID
-  useEffect(() => {
-    indexChar = 0;
-    setTimeout(() => {
-      let tagP = document.querySelectorAll(".note-editable p"); // Get node element in editor
-      let nodeP = tagP.item(countEnter);
+  // useEffect(() => {
+  //   indexChar = 0;
+  //   setTimeout(() => {
+  //     let tagP = document.querySelectorAll(".note-editable p"); // Get node element in editor
+  //     let nodeP = tagP.item(countEnter);
 
-      if (nodeP) {
-        if (nodeP.hasAttribute("id")) {
-          if (countEnter > 0) {
-            let nodePBefore = tagP.item(countEnter - 1);
-            if (nodeP.id == nodePBefore.id) {
-              nodeP.id = countEnter.toString();
-            }
-          }
-        } else {
-          if (countEnter > 0) {
-            let nodePBefore = tagP.item(countEnter - 1);
-            if (nodePBefore && !nodePBefore.hasAttribute("id")) {
-              nodePBefore.id = (countEnter - 1).toString();
-            }
-          }
-          nodeP.id = countEnter.toString();
-        }
-      }
-    }, 200);
-  }, [countEnter]);
+  //     if (nodeP) {
+  //       if (nodeP.hasAttribute("id")) {
+  //         if (countEnter > 0) {
+  //           let nodePBefore = tagP.item(countEnter - 1);
+  //           if (nodeP.id == nodePBefore.id) {
+  //             nodeP.id = countEnter.toString();
+  //           }
+  //         }
+  //       } else {
+  //         if (countEnter > 0) {
+  //           let nodePBefore = tagP.item(countEnter - 1);
+  //           if (nodePBefore && !nodePBefore.hasAttribute("id")) {
+  //             nodePBefore.id = (countEnter - 1).toString();
+  //           }
+  //         }
+  //         nodeP.id = countEnter.toString();
+  //       }
+  //     }
+  //   }, 200);
+  // }, [countEnter]);
 
   // Function any handle delete
   const anyHandleDelete = () => {
     console.log("On delete all");
+
     setListInput([]);
     countEnter = 0;
     arrKey = [];
@@ -362,18 +369,19 @@ const EditorSummernote = (props) => {
     }
     // Check delete all
     if (editor[0].childNodes.length == 0) {
+      console.log("Delete all 1");
       anyHandleDelete();
     } else {
-      console.log("Xóa tất cả nhá");
       let isEmpty = true;
       editor[0].childNodes.forEach((item, index) => {
         let node = editor[0].children[index];
         // console.log("node là: ", node);
-        if (node.innerHTML !== "<br>" && node.innerHTML !== " ") {
+        if (node?.innerHTML !== "<br>" && node?.innerHTML !== " ") {
           isEmpty = false;
         }
       });
       if (isEmpty) {
+        console.log("Delete all 2");
         anyHandleDelete();
       }
       // if (editor[0].children.length == 1) {
@@ -386,9 +394,7 @@ const EditorSummernote = (props) => {
     if (tagP.length > 0) {
       tagP.forEach((item, index) => {
         // CHECK ITEM HAVE ID OR NOT => AND ADD ID FOR ITEM
-        if (!item.hasAttribute("id")) {
-          item.id = index.toString();
-        }
+        item.id = index.toString();
 
         // CHECK IF HAVE "SPAN" IN TAG P
         if (item.children.length > 0) {
@@ -480,7 +486,7 @@ const EditorSummernote = (props) => {
                   indexChar,
                   0,
                   `<input id="${inputID}" class='space-editor' placeholder="(${
-                    inputID + 1
+                    indexInput + 1
                   })">`
                 );
                 content = newContent.join("");
@@ -517,14 +523,17 @@ const EditorSummernote = (props) => {
     // console.log("Space Editor: ", spaceEditor);
 
     // Trường hợp các câu hỏi đã có id mới và cần làm mới lại
-    if (spaceEditor?.length > 0) {
-      spaceEditor.forEach((item, index) => {
-        let id = parseInt(item.id);
-        if (!listInput.includes(id)) {
-          listInput.push(id);
-          setListInput([...listInput]);
-        }
-      });
+    if (saveID == null) {
+      if (spaceEditor?.length > 0) {
+        spaceEditor.forEach((item, index) => {
+          let id = parseInt(item.id);
+          if (!listInput.includes(id)) {
+            listInput.push(id);
+            setListInput([...listInput]);
+            setSaveID(Math.max(...listInput));
+          }
+        });
+      }
     }
 
     if (reloadContent) {
@@ -565,6 +574,13 @@ const EditorSummernote = (props) => {
       setChangePosition(false);
     }
   }, [changePosition]);
+
+  useEffect(() => {
+    console.log("Visible is: ", visible);
+    if (!visible) {
+      ReactSummernote.reset(), setValueEditor("");
+    }
+  }, [visible]);
 
   return (
     <div className="wrap-editor">

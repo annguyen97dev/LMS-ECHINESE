@@ -1,20 +1,22 @@
 import { Tooltip } from "antd";
-import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
 import { branchApi, programApi } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
-import ExpandTable from "~/components/ExpandTable";
-
 import LayoutBase from "~/components/LayoutBase";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
-import CourseRegExpand from "~/components/Global/Customer/Student/CourseRegistration/CourseRegExpand";
 import CourseRegForm from "~/components/Global/Customer/Student/CourseRegistration/CourseRegForm";
+import { Checkbox } from "antd";
+import { Eye } from "react-feather";
+import PowerTable from "~/components/PowerTable";
 
 const CourseRegistration = () => {
+  const [listStudent, setListStudent] = useState([]);
+  const [listChecked, setListChecked] = useState([]);
+
   const onSearch = (data) => {
     setCurrentPage(1);
     setParams({
@@ -27,6 +29,24 @@ const CourseRegistration = () => {
     setCurrentPage(1);
     setParams(listParamsDefault);
   };
+
+  function onChange(e, ID) {
+    const checked = e.target.checked;
+    // setIsChecked(true);
+
+    let indexStudent = listChecked.findIndex((item) => item.id == ID);
+    listChecked[indexStudent].checked = checked;
+
+    if (checked) {
+      listStudent.push(ID);
+    } else {
+      let index = listStudent.indexOf(ID);
+      listStudent.splice(index, 1);
+    }
+    setListStudent([...listStudent]);
+    setListChecked([...listChecked]);
+  }
+
   const columns = [
     {
       title: "Học viên",
@@ -40,7 +60,7 @@ const CourseRegistration = () => {
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
     {
-      title: "Chuơng trình học",
+      title: "Chương trình học",
       dataIndex: "ProgramName",
       render: (text) => <p className="font-weight-black">{text}</p>,
     },
@@ -49,17 +69,43 @@ const CourseRegistration = () => {
       dataIndex: "StudyTimeName",
     },
     {
-      render: (data) => (
-        <Fragment>
-          <CourseRegForm
-            infoDetail={data}
-            infoId={data.ID}
-            reloadData={(firstPage) => {
-              getDataCourseReg(firstPage);
+      // render: (data) => (
+      //   <Fragment>
+      //     <CourseRegForm
+      //       infoDetail={data}
+      //       infoId={data.ID}
+      //       reloadData={(firstPage) => {
+      //         getDataCourseReg(firstPage);
+      //       }}
+      //       currentPage={currentPage}
+      //     />
+      //   </Fragment>
+      // ),
+
+      render: (text, data, index) => (
+        <div className="d-flex align-items-center">
+          <Link
+            href={{
+              pathname:
+                "/customer/student/student-appointment/student-detail/[slug]",
+              query: { slug: data.UserInformationID },
             }}
-            currentPage={currentPage}
-          />
-        </Fragment>
+          >
+            <Tooltip title="Xem chi tiết">
+              <button className="btn btn-icon">
+                <Eye />
+              </button>
+            </Tooltip>
+          </Link>
+
+          <Checkbox
+            style={{ marginLeft: "5px" }}
+            checked={
+              data.ID == listChecked[index]?.id && listChecked[index].checked
+            }
+            onChange={(value) => onChange(value, data.ID)}
+          ></Checkbox>
+        </div>
       ),
     },
   ];
@@ -122,8 +168,6 @@ const CourseRegistration = () => {
   ]);
 
   const handleFilter = (listFilter) => {
-    console.log("List Filter when submit: ", listFilter);
-
     let newListFilter = {
       pageIndex: 1,
       fromDate: null,
@@ -230,7 +274,17 @@ const CourseRegistration = () => {
           pageIndex: page,
         });
         //@ts-ignore
-        res.status == 200 && setCourseReg(res.data.data);
+        if (res.status == 200) {
+          setCourseReg(res.data.data);
+          res.data.data.forEach((item) => {
+            listChecked.push({
+              id: item.ID,
+              checked: false,
+            });
+            setListChecked([...listChecked]);
+          });
+        }
+
         if (res.status == 204) {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
@@ -251,21 +305,8 @@ const CourseRegistration = () => {
     getDataCourseReg(currentPage);
   }, [params]);
 
-  const [itemDetail, setItemDetail] = useState();
-
-  const expandedRowRender = (data, index) => {
-    return (
-      <Fragment>
-        <CourseRegExpand
-          infoID={data.UserInformationID}
-          // infoIndex={index}
-        />
-      </Fragment>
-    );
-  };
-
   return (
-    <ExpandTable
+    <PowerTable
       currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
@@ -288,8 +329,17 @@ const CourseRegistration = () => {
           />
         </div>
       }
-      handleExpand={(data) => setItemDetail(data)}
-      expandable={{ expandedRowRender }}
+      TitleCard={
+        <CourseRegForm
+          // infoDetail={data}
+          // infoId={data.ID}
+          listStudent={listStudent}
+          reloadData={(firstPage) => {
+            getDataCourseReg(firstPage);
+          }}
+          currentPage={currentPage}
+        />
+      }
     />
   );
 };

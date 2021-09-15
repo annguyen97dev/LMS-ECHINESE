@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Form, Select, Input, Radio, Spin } from "antd";
+import { Drawer, Form, Select, Input, Radio, Spin, Modal } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
 import ChoiceForm from "./QuestionFormType/ChoiceForm";
@@ -13,6 +13,7 @@ import {
 import WrittingForm from "./QuestionFormType/WrittingForm";
 import GroupFormTyping from "./QuestionFormType/TypingForm";
 import TypingForm from "./QuestionFormType/TypingForm";
+import DragForm from "./QuestionFormType/DragForm";
 
 const CreateQuestionForm = (props) => {
   const {
@@ -22,25 +23,51 @@ const CreateQuestionForm = (props) => {
     handlePopover,
     onEditData,
     onAddData,
+    getActiveID,
   } = props;
-  // console.log("props", props);
-  // console.log("QuestionData Drawer: ", questionData);
+
+  // console.log("Is Group in create: ", isGroup);
+  console.log("question Data in create: ", questionData);
 
   const [visible, setVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [titleForm, setTitleForm] = useState("");
   const [questionDataForm, setQuestionDataForm] = useState(questionData);
-  console.log("question Data in create: ", questionData);
+  const [changeData, setChangeData] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const showDrawer = () => {
     setVisible(true);
   };
 
+  console.log("CHANGE DATA: ", changeData);
+
   const onClose = (e) => {
-    setVisible(false);
     e.stopPropagation();
+
+    if (changeData) {
+      setIsModalVisible(true);
+    } else {
+      setVisible(false);
+      setChangeData(false);
+    }
   };
 
+  // ACTION TABLE
+
+  const handleClose = async (e) => {
+    e.stopPropagation();
+    setIsModalVisible(false);
+    setVisible(false);
+    setChangeData(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  // ON SUBMIT DATA
   const onSubmitData = () => {
     !isSubmit && setIsSubmit(true);
     setIsLoading(true);
@@ -52,12 +79,9 @@ const CreateQuestionForm = (props) => {
     if (isSubmit) {
       setIsSubmit(false);
       setIsLoading(false);
+      setChangeData(false);
 
-      if (data.ExerciseList?.length == 0) {
-        questionData.ID ? onEditData(data) : onAddData(data);
-      } else {
-        onEditData(data);
-      }
+      questionData.ID ? onEditData(data) : onAddData(data);
 
       setVisible(false);
     }
@@ -78,23 +102,9 @@ const CreateQuestionForm = (props) => {
   // RENDER FORM GROUP
   const renderFormGroup = () => {
     let type = questionData.Type;
-    // let groupID = questionData.ExerciseGroupID;
-
-    // console.log("Group ID là gì: ", groupID);
 
     if (type) {
       switch (type) {
-        // case 3:
-        //   return (
-        //     <TypingForm
-        //       visible={visible}
-        //       questionData={questionData}
-        //       isSubmit={isSubmit}
-        //       changeIsSubmit={onSuccessSubmit}
-        //     />
-        //   );
-        //   break;
-
         default:
           return (
             <GroupForm
@@ -102,6 +112,7 @@ const CreateQuestionForm = (props) => {
               questionData={questionData}
               isSubmit={isSubmit}
               changeIsSubmit={onSuccessSubmit}
+              changeData={() => !changeData && setChangeData(true)}
             />
           );
           break;
@@ -131,6 +142,7 @@ const CreateQuestionForm = (props) => {
             questionData={questionData}
             isSubmit={isSubmit}
             changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+            changeData={() => !changeData && setChangeData(true)}
           />
         );
         break;
@@ -142,6 +154,7 @@ const CreateQuestionForm = (props) => {
             questionData={questionData}
             isSubmit={isSubmit}
             changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+            changeData={() => !changeData && setChangeData(true)}
           />
         );
         break;
@@ -153,6 +166,7 @@ const CreateQuestionForm = (props) => {
             questionData={questionData}
             isSubmit={isSubmit}
             changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+            changeData={() => !changeData && setChangeData(true)}
           />
         );
         break;
@@ -164,6 +178,19 @@ const CreateQuestionForm = (props) => {
             questionData={questionData}
             isSubmit={isSubmit}
             changeIsSubmit={onSuccessSubmit}
+            changeData={() => !changeData && setChangeData(true)}
+          />
+        );
+        break;
+      case 2:
+        return (
+          <DragForm
+            isGroup={isGroup}
+            visible={visible}
+            questionData={questionData}
+            isSubmit={isSubmit}
+            changeIsSubmit={onSuccessSubmit}
+            changeData={() => !changeData && setChangeData(true)}
           />
         );
         break;
@@ -205,11 +232,22 @@ const CreateQuestionForm = (props) => {
           </button>
         );
       } else {
-        return (
-          <button className="btn btn-icon edit" onClick={showDrawer}>
-            <Edit />
-          </button>
-        );
+        if (questionData.ExerciseList) {
+          return (
+            <button className="btn btn-icon add" onClick={onAddDataToGroup}>
+              <AppstoreAddOutlined />
+              {questionData.Type == 3 || questionData.Type == 2
+                ? "Thêm/sửa câu hỏi"
+                : "Thêm câu hỏi"}
+            </button>
+          );
+        } else {
+          return (
+            <button className="btn btn-icon edit" onClick={showDrawer}>
+              <Edit />
+            </button>
+          );
+        }
       }
     } else {
       if (isGroup?.status) {
@@ -223,7 +261,9 @@ const CreateQuestionForm = (props) => {
           return (
             <button className="btn btn-icon add" onClick={onAddDataToGroup}>
               <AppstoreAddOutlined />
-              {questionData.Type == 3 ? "Thêm/sửa câu hỏi" : "Thêm câu hỏi"}
+              {questionData.Type == 3 || questionData.Type == 2
+                ? "Thêm/sửa câu hỏi"
+                : "Thêm câu hỏi"}
             </button>
           );
         } else {
@@ -238,7 +278,11 @@ const CreateQuestionForm = (props) => {
   };
 
   useEffect(() => {
-    visible && renderTitleForm();
+    if (visible) {
+      renderTitleForm();
+      getActiveID && getActiveID(questionData.ID);
+      return;
+    }
   }, [visible]);
 
   // useEffect(() => {
@@ -248,6 +292,17 @@ const CreateQuestionForm = (props) => {
   // console.log("question data in create: ", questionData);
   return (
     <>
+      <Modal
+        title="Chú ý"
+        visible={isModalVisible}
+        onOk={handleClose}
+        onCancel={handleCancel}
+      >
+        <p style={{ fontWeight: 500, color: "#292929" }}>
+          Dữ liệu này chưa được lưu lại. Bạn có muốn hủy tác vụ?
+        </p>
+      </Modal>
+
       {renderButton()}
 
       <Drawer
@@ -256,11 +311,15 @@ const CreateQuestionForm = (props) => {
         closable={false}
         onClose={onClose}
         visible={visible}
-        width={!isGroup?.status && questionData.Type == 3 ? 1300 : 800}
+        width={
+          (!isGroup?.status && questionData.Type == 3) || questionData.Type == 2
+            ? 1300
+            : 800
+        }
         footer={
           <div className="text-center">
             <button className="btn btn-light mr-2" onClick={onClose}>
-              Đóng
+              Hủy tác vụ
             </button>
             {questionData?.Type !== 0 && (
               <button

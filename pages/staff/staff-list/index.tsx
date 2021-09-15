@@ -671,7 +671,7 @@ const StaffList = () => {
       render: (status) => (
         <>
           {
-            <span className={`tag ${status == 0 ? "green" : "red"}`}>
+            <span className={`tag ${status == 0 ? "green" : "gray"}`}>
               {status == 0 ? "Hoạt động" : "Khóa"}
             </span>
           }

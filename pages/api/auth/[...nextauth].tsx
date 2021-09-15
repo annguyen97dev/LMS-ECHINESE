@@ -58,8 +58,8 @@ const options = {
         try {
           const rs = await login(credentials);
 
-          // console.log("CAN I SEE RS: ", rs);
-          console.log("DATA: ", rs.data);
+          console.log("CAN I SEE RS: ", rs);
+          // console.log("DATA: ", rs.data);
           return Promise.resolve(rs.data);
         } catch (error) {
           // return Promise.reject(new Error(JSON.stringify(error)));

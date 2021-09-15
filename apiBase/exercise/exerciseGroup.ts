@@ -25,7 +25,9 @@ class ExerciseGroupApi {
 
   // Upload file
   UploadAudio(data) {
-    return instance.post("/api/uploadfileExercise", data);
+    const formdata = new FormData();
+    formdata.append("file", data);
+    return instance.post("/api/uploadfileExercise", formdata);
   }
 }
 

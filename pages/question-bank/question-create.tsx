@@ -6,7 +6,6 @@ import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
 import { dataTypeGroup, dataTypeSingle } from "~/lib/question-bank/dataBoxType";
 import { data } from "~/lib/option/dataOption2";
-import SelectFilterBox from "~/components/Elements/SelectFilterBox";
 import LayoutBase from "~/components/LayoutBase";
 import QuestionSingle from "~/components/Global/QuestionBank/QuestionShow/QuestionSingle";
 import QuestionMultiple from "~/components/Global/QuestionBank/QuestionShow/QuestionMultiple";
@@ -22,6 +21,7 @@ import { questionObj } from "~/lib/TypeData";
 import GroupWrap from "~/components/Global/QuestionBank/GroupWrap";
 import QuestionWritting from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
 import QuestionTyping from "~/components/Global/QuestionBank/QuestionShow/QuestionTyping";
+import QuestionDrag from "~/components/Global/QuestionBank/QuestionShow/QuestionDrag";
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -49,6 +49,14 @@ const listAlphabet = [
   "L",
   "M",
   "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
 ];
 
 const QuestionCreate = () => {
@@ -166,6 +174,29 @@ const QuestionCreate = () => {
           </GroupWrap>
         );
         break;
+      case 2:
+        return (
+          <GroupWrap
+            isGroup={isGroup}
+            listQuestion={dataGroup}
+            onFetchData={onFetchData}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            getGroupID={(groupID) => setIsGroup({ ...isGroup, id: groupID })}
+            onEditData={(data) => onEditData(data)}
+            onAddData={(data) => onAddData(data)}
+          >
+            <QuestionDrag
+              listAlphabet={listAlphabet}
+              isGroup={isGroup}
+              loadingQuestion={loadingQuestion}
+              listQuestion={dataExercise}
+              onFetchData={onFetchData}
+              onEditData={(data) => onEditData(data)}
+              onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+            />
+          </GroupWrap>
+        );
+        break;
       default:
         return (
           <p className="text-center">
@@ -205,15 +236,23 @@ const QuestionCreate = () => {
         }
 
         todoApi.pageIndex == 1 && showNoti("success", "Thành công");
-        !showListQuestion && setShowListQuestion(true);
+        // !showListQuestion && setShowListQuestion(true);
 
         // Tính phân trang
         let totalPage = Math.ceil(res.data.totalRow / 10);
         setTotalPageIndex(totalPage);
       }
 
-      res.status == 204 &&
-        (showNoti("danger", "Không có dữ liệu"), setShowListQuestion(true));
+      if (res.status == 204) {
+        showNoti("danger", "Không có dữ liệu");
+        if (!isGroup.status) {
+          if (todoApi.Type == 3) {
+            setShowListQuestion(false);
+          }
+        } else {
+          setShowListQuestion(true);
+        }
+      }
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -317,7 +356,11 @@ const QuestionCreate = () => {
             pageIndex: 1,
             SubjectID: null,
           }));
-
+        setShowTypeQuestion({
+          type: null,
+          status: false,
+        });
+        setShowListQuestion(false);
         break;
 
       // -- Chọn loại câu hỏi đơn hay nhóm
@@ -405,7 +448,6 @@ const QuestionCreate = () => {
 
   const onAddData = (dataAdd) => {
     console.log("DATA add outside: ", dataAdd);
-    console.log("Is group outside: ", isGroup);
 
     if (!isGroup.status) {
       addDataSingle(dataAdd);
@@ -420,8 +462,8 @@ const QuestionCreate = () => {
     setQuestionData({ ...questionData });
   };
 
-  console.log("DATA SOURCE: ", dataSource);
-  console.log("DATA GROUP: ", dataGroup);
+  // console.log("DATA SOURCE: ", dataSource);
+  // console.log("DATA GROUP: ", dataGroup);
 
   // ON EDIT DATA
 
@@ -453,10 +495,8 @@ const QuestionCreate = () => {
 
   const onEditData = (dataEdit) => {
     console.log("DATA edit outside ", dataEdit);
-    console.log("Is group outside: ", isGroup);
 
     if (!isGroup.status) {
-      console.log("Chạy vô đây");
       // Nếu là dạng câu hỏi nhiều đáp án thì phải xóa nó đi
       editDataSingle(dataEdit);
     } else {
@@ -479,9 +519,14 @@ const QuestionCreate = () => {
   };
 
   const removeDataGroup = (dataRemove) => {
-    let quesIndex = dataGroup.findIndex((item) => item.ID == dataRemove.ID);
-    dataGroup.splice(quesIndex, 1);
-    setDataGroup([...dataGroup]);
+    console.log("Data remove outside: ", dataRemove);
+    if (dataRemove.isDeleteExercise) {
+      setDataExercise(dataRemove);
+    } else {
+      let quesIndex = dataGroup.findIndex((item) => item.ID == dataRemove);
+      dataGroup.splice(quesIndex, 1);
+      setDataGroup([...dataGroup]);
+    }
   };
 
   const onRemoveData = (dataRemove) => {

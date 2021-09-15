@@ -14,6 +14,7 @@ const Editor = (props) => {
     addQuestion,
     deleteAllQuestion,
     exerciseList,
+    visible,
   } = props;
 
   return (
@@ -26,6 +27,7 @@ const Editor = (props) => {
         deleteAllQuestion={deleteAllQuestion} // Delete all
         isReset={isReset}
         questionContent={questionContent}
+        visible={visible}
       />
     </div>
   );
