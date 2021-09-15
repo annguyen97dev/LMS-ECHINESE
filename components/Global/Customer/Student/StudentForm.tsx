@@ -83,8 +83,6 @@ const StudentForm = (props) => {
   const [valueEmail, setValueEmail] = useState();
   const [isSearch, setIsSearch] = useState(false);
 
-  console.log("List DATA: ", listDataForm);
-
   // ------------- ADD data to list --------------
 
   const makeNewData = (data, name) => {

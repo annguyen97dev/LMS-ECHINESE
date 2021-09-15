@@ -307,7 +307,7 @@
     // padding: 24px;
     // padding-right: 5px;
     padding: 5px 10px 0 15px;
-    height: calc(100vh - 185px);
+    height: calc(100vh - 201px);
 
     .list-exam-bank {
       height: 100%;
@@ -391,7 +391,6 @@
   .ant-card-body {
     // height: calc(100vh - 206px);
     height: calc(100vh - 215px);
-    padding-right: 10px;
 
     .question-list {
       height: 100%;
@@ -766,6 +765,53 @@
     color: #c32f2f;
     &:hover {
       color: #9a1212;
+    }
+  }
+}
+
+.exam-create {
+  .package-set {
+    position: relative;
+
+    .edit-exam {
+      position: absolute;
+      top: 15px;
+      right: 10px;
+      z-index: 99;
+    }
+  }
+  .package-set .wrap-set {
+    padding: 20px;
+  }
+  .package-set .wrap-set .set-title {
+    font-size: 17px;
+  }
+  .wrap-set-content {
+    .set-list {
+      border-left: 2px dotted #ffc107;
+      padding-left: 10px;
+      li {
+        display: block;
+        &.time {
+          color: #414141;
+        }
+      }
+    }
+    .box-title {
+      .set-title {
+        width: 85%;
+      }
+      .code {
+        // width: 100px;
+        // height: 28px;
+        // background: #dd4667;
+        // text-align: center;
+        // display: block;
+        line-height: 2;
+        border-radius: 0.3rem;
+        color: #424242;
+        font-weight: 500;
+      }
     }
   }
 }

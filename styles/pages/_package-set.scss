@@ -1,173 +1,173 @@
 .package-set {
-	.wrap-set {
-		padding: 12px;
-		border-radius: 0.575rem;
-		background: #effaff;
-		width: 100%;
-		position: relative;
-		overflow: hidden;
-		border: 1px solid #e7f3ff;
-		margin-bottom: 20px;
+  .wrap-set {
+    padding: 12px;
+    border-radius: 0.575rem;
+    background: #effaff;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e7f3ff;
+    margin-bottom: 20px;
 
-		.tag-free {
-			position: absolute;
-			top: 12px;
-			right: 12px;
-			background: #ff416c; /* fallback for old browsers */
-			background: -webkit-linear-gradient(
-				to right,
-				#ff4b2b,
-				#ff416c
-			); /* Chrome 10-25, Safari 5.1-6 */
-			background: linear-gradient(
-				to right,
-				#ff4b2b,
-				#ff416c
-			); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    .tag-free {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #ff416c; /* fallback for old browsers */
+      background: -webkit-linear-gradient(
+        to right,
+        #ff4b2b,
+        #ff416c
+      ); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(
+        to right,
+        #ff4b2b,
+        #ff416c
+      ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-			color: white;
-			padding: 4px 15px;
-			border-radius: 0.375rem;
-			font-weight: 500;
-			z-index: 3;
-		}
+      color: white;
+      padding: 4px 15px;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      z-index: 3;
+    }
 
-		&:hover {
-			&:after {
-				width: 100%;
-			}
-		}
+    &:hover {
+      &:after {
+        width: 100%;
+      }
+    }
 
-		&:after {
-			position: absolute;
-			content: '';
-			transition: all 0.3s ease;
-			z-index: 0;
-			background: #d7f2ff;
-			width: 0;
-			height: 100%;
-			left: 0;
-			top: 0;
-			transition: 0.3s width;
-		}
+    &:after {
+      position: absolute;
+      content: "";
+      transition: all 0.3s ease;
+      z-index: 0;
+      background: #e4f6ff;
+      width: 0;
+      height: 100%;
+      left: 0;
+      top: 0;
+      transition: 0.3s width;
+    }
 
-		.wrap-set-content {
-			position: relative;
-			z-index: 1;
-		}
+    .wrap-set-content {
+      position: relative;
+      z-index: 1;
+    }
 
-		@include max-media(800px) {
-			width: 100%;
-		}
+    @include max-media(800px) {
+      width: 100%;
+    }
 
-		.set-title {
-			font-size: 18px;
-			font-weight: 600;
-			color: rgb(0, 30, 71);
-			cursor: pointer;
-		}
+    .set-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: rgb(0, 30, 71);
+      cursor: pointer;
+    }
 
-		.set-list {
-			padding-left: 0;
-			margin-top: 10px;
-			margin-bottom: 20px;
-			li {
-				list-style-type: none;
-				display: inline-block;
-				margin-right: 20px;
+    .set-list {
+      padding-left: 0;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      li {
+        list-style-type: none;
+        display: inline-block;
+        margin-right: 20px;
 
-				&.price {
-					span {
-						color: #b12b1d;
-					}
-				}
+        &.price {
+          span {
+            color: #b12b1d;
+          }
+        }
 
-				&.status {
-					span {
-						color: #2b9e2b;
-					}
-				}
+        &.status {
+          span {
+            color: #2b9e2b;
+          }
+        }
 
-				span {
-					font-weight: 600;
-					margin-left: 8px;
-				}
-			}
-		}
-	}
+        span {
+          font-weight: 600;
+          margin-left: 8px;
+        }
+      }
+    }
+  }
 }
 
 .package-set-wrap {
-	width: 70%;
-	@include max-media(1280px) {
-		width: 100%;
-	}
+  width: 70%;
+  @include max-media(1280px) {
+    width: 100%;
+  }
 }
 
 /* PACKAGE DETAIL */
 .package-detail-list {
-	.wrap-set {
-		padding-right: 100px;
-		margin-bottom: 0;
-		.set-title {
-			cursor: auto;
-		}
-		.set-list li {
-			display: block;
-			margin-right: 0;
-		}
-		.tag-free.non-bg {
-			background: none;
-			padding: 0;
-		}
-		.btn-icon.delete {
-			margin: 0;
-			padding: 4px 6px;
-			background: linear-gradient(to right, #ff4b2b, #ff416c);
-			svg {
-				color: #fff;
-			}
-		}
-		@include max-media(767px) {
-			padding-right: 12px;
-		}
-	}
-	.wrap-set.d-flex {
-		flex-wrap: wrap;
-		.wrap-set-content {
-			padding-left: 0.875rem;
-			width: calc(100% - 200px);
-		}
-		@include max-media(767px) {
-			.wrap-set-avatar {
-				width: 100%;
-			}
-			.wrap-set-content {
-				padding-left: 0;
-				padding-top: 0.875rem;
-				width: 100%;
-			}
-		}
-	}
-	.wrap-set-avatar {
-		position: relative;
-		z-index: 1;
-		border-radius: inherit;
-		overflow: hidden;
-		width: 200px;
-		height: 200px;
-	}
-	.wrap-set-content {
-		display: flex;
-		flex-direction: column;
-		.set-btn {
-			margin-top: auto;
-		}
-	}
-	@include max-media(800px) {
-		.ant-card-head-wrapper .ant-card-head-title,
-		.ant-card-head-wrapper .ant-card-extra {
-			width: auto;
-		}
-	}
+  .wrap-set {
+    padding-right: 100px;
+    margin-bottom: 0;
+    .set-title {
+      cursor: auto;
+    }
+    .set-list li {
+      display: block;
+      margin-right: 0;
+    }
+    .tag-free.non-bg {
+      background: none;
+      padding: 0;
+    }
+    .btn-icon.delete {
+      margin: 0;
+      padding: 4px 6px;
+      background: linear-gradient(to right, #ff4b2b, #ff416c);
+      svg {
+        color: #fff;
+      }
+    }
+    @include max-media(767px) {
+      padding-right: 12px;
+    }
+  }
+  .wrap-set.d-flex {
+    flex-wrap: wrap;
+    .wrap-set-content {
+      padding-left: 0.875rem;
+      width: calc(100% - 200px);
+    }
+    @include max-media(767px) {
+      .wrap-set-avatar {
+        width: 100%;
+      }
+      .wrap-set-content {
+        padding-left: 0;
+        padding-top: 0.875rem;
+        width: 100%;
+      }
+    }
+  }
+  .wrap-set-avatar {
+    position: relative;
+    z-index: 1;
+    border-radius: inherit;
+    overflow: hidden;
+    width: 200px;
+    height: 200px;
+  }
+  .wrap-set-content {
+    display: flex;
+    flex-direction: column;
+    .set-btn {
+      margin-top: auto;
+    }
+  }
+  @include max-media(800px) {
+    .ant-card-head-wrapper .ant-card-head-title,
+    .ant-card-head-wrapper .ant-card-extra {
+      width: auto;
+    }
+  }
 }
