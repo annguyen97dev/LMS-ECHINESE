@@ -489,7 +489,7 @@ function CreateNewsFeed(props) {
 								<div className="select-color-nf">
 									<Popover
 										overlayClassName="select-color-nf-popover"
-										trigger="focus"
+										// trigger="focus"
 										content={
 											<div className="list-color-nf">
 												<SketchPicker
