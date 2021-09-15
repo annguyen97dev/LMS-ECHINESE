@@ -1,523 +1,1000 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import LayoutBase from "~/components/LayoutBase";
-import { useWrap } from "~/context/wrap";
-import moment from "moment";
-import { Checkbox, Row, Col, Tooltip, Spin, Card, Input, Skeleton, Empty, Form, Select, Drawer } from 'antd';
-import { MoreHorizontal } from "react-feather";
-import { signIn, signOut, useSession } from "next-auth/client";
-import { newsFeedApi, userBranchApi, groupNewsFeedApi } from "~/apiBase";
-import CreateNewsFeed from "~/components/Global/NewsFeed/CreateNewsFeed";
-import ListNewsFeed from "~/components/Global/NewsFeed/ListNewsFeed";
-import { Waypoint } from "react-waypoint";
-import GroupTagElement from "~/components/Global/NewsFeed/components/GroupTagElement";
-import GroupNewsFeedFrom from "~/components/Global/NewsFeed/components/GroupNewsFeedForm";
-import Link from "next/dist/client/link";
-const { Search } = Input;
-const { Option } = Select;
+import {Empty, Skeleton} from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
+import {Waypoint} from 'react-waypoint';
+import {
+	backgroundNewsFeedApi,
+	courseApi,
+	groupNewsFeedApi,
+	newsFeedApi,
+	newsFeedCommentApi,
+	newsFeedCommentReplyApi,
+	newsFeedLikeApi,
+	userBranchApi,
+	userGroupNewsFeedApi,
+	userInformationApi,
+} from '~/apiBase';
+import CreateNewsFeed from '~/components/Global/NewsFeed/CreateNewsFeed';
+import ListNewsFeed from '~/components/Global/NewsFeed/ListNewsFeed';
+import AddUserForm from '~/components/Global/NewsFeed/NewsFeedGroupComponents/AddUserForm';
+import BannerGroup from '~/components/Global/NewsFeed/NewsFeedGroupComponents/BannerGroup';
+import DeleteGroup from '~/components/Global/NewsFeed/NewsFeedGroupComponents/DeleteGroup';
+import GroupForm from '~/components/Global/NewsFeed/NewsFeedGroupComponents/GroupForm';
+import RemoveUser from '~/components/Global/NewsFeed/NewsFeedGroupComponents/RemoveUser';
+import DeleteNewsFeed from '~/components/Global/NewsFeed/NewsFeedItemComponents/DeleteNewsFeed';
+import NewsFeedItem from '~/components/Global/NewsFeed/NewsFeedItemComponents/NewsFeedItem';
+import SideBarNewsFeed from '~/components/Global/NewsFeed/SideBarNewsFeed';
+import LayoutBase from '~/components/LayoutBase';
+import {useWrap} from '~/context/wrap';
+import {Roles} from '~/lib/roles/listRoles';
+import {fmSelectArr} from '~/utils/functions';
 
+const initialNewsFeedList = [];
+const initialPageIndex = 1;
+type FiltersData = {
+	name: string;
+	idTeam: number;
+	idGroup: number;
+};
+type OptionList = {
+	teamOptionList: IOptionCommon[];
+	groupOptionList: IOptionCommon[];
+};
+type InfoGroup = {
+	info: IGroupNewsFeed;
+	userList: IUserGroupNewsFeed[];
+};
 const NewsFeed = () => {
-    const [session, loading] = useSession();
-    const [dataUser, setDataUser] = useState<IUser>();
-    const { showNoti } = useWrap();
-    const { titlePage, userInformation } = useWrap();
-    const [isLoading, setIsLoading] = useState({
-        type: null,
-        status: false
-    });
-    const [emptyNewsFeed, setEmptyNewsFeed] = useState(false);
+	const {showNoti, userInformation} = useWrap();
+	const [isLoading, setIsLoading] = useState({
+		type: '',
+		status: false,
+	});
+	const [newsFeedList, setNewsFeedList] = useState<INewsFeed[]>([]);
+	const [totalNewsFeed, setTotalNewsFeed] = useState(1);
+	const [emptyNewsFeed, setEmptyNewsFeed] = useState(false);
+	const [idListUserLiked, setIDListUserLiked] = useState<number[]>([]);
+	const [hasNextPage, setHasNextPage] = useState(true);
+	const [pageIndex, setPageIndex] = useState(1);
+	// STONE DATA TO FILTER NEWS FEED
+	const [filtersData, setFiltersData] = useState<FiltersData>({
+		name: null,
+		idTeam: null,
+		idGroup: null,
+	});
+	// OPTION LIST FOR CREATE NEWS FEED
+	const [optionList, setOptionList] = useState<OptionList>({
+		teamOptionList: [],
+		groupOptionList: [],
+	});
+	const [backgroundList, setBackgroundList] = useState<IBackgroundNewsFeed[]>(
+		[]
+	);
+	// GROUP
+	const [infoGroup, setInfoGroup] = useState<InfoGroup>({
+		info: null,
+		userList: [],
+	});
+	const [courseList, setCourseList] = useState<IOptionCommon[]>([]);
+	const [userOptionList, setUserOptionList] = useState<IOptionCommon[]>([]);
+	const roleOptionList = Roles.filter((r) => r.id !== 1 && r.id !== 5).map(
+		(r) => ({title: r.RoleName, value: r.id})
+	);
+	const roleMemberOptionList = [
+		{label: 'Thành viên', value: 2},
+		{label: 'Quản trị viên', value: 1},
+	];
+	// CHECK AUTHENTICATE
+	// 1: ADMIN - 5: MANAGER
+	const checkAuthorization = (newsFeedAuthor?: number) => {
+		if (!userInformation) return 'Ignore';
+		const role = userInformation['RoleID'];
+		const uid = userInformation.UserInformationID;
+		if (role === 1 || role === 5 || +newsFeedAuthor === +uid) {
+			return 'Accept';
+		}
+		return 'Ignore';
+	};
+	// RESET DATA BACK TO INIT
+	const reset = () => {
+		setNewsFeedList(initialNewsFeedList);
+		setPageIndex(initialPageIndex);
+	};
+	// --------------FETCH--------------
+	const fetchNewsFeedList = async () => {
+		setIsLoading({
+			type: 'GET_LIST',
+			status: true,
+		});
+		try {
+			const res = await newsFeedApi.getAll({
+				pageIndex: pageIndex,
+				pageSize: 5,
+				GroupNewsFeedID: filtersData.idGroup,
+				BranchID: filtersData.idTeam,
+				FullNameUnicode: filtersData.name,
+			});
+			if (res.status === 204) {
+				setEmptyNewsFeed(true);
+				setHasNextPage(false);
+				setTotalNewsFeed(0);
+			}
+			if (res.status === 200) {
+				setNewsFeedList([...newsFeedList, ...res.data.data]);
+				setEmptyNewsFeed(false);
+				setTotalNewsFeed(res.data.totalRow);
+				if (res.data.data.length < 5) {
+					setHasNextPage(false);
+				}
+			}
+		} catch (error) {
+			console.log('fetchNewsFeedList', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_LIST',
+				status: false,
+			});
+		}
+	};
+	useEffect(() => {
+		if (pageIndex === 1) {
+			fetchNewsFeedList();
+		}
+	}, [pageIndex, filtersData]);
 
-    const intialNewsFeed = [];
-    const intialPageIndex = 1;
+	const fetchOptionList = async () => {
+		try {
+			let [team, group] = await Promise.all([
+				userBranchApi.getAll({getbytokenID: true}),
+				groupNewsFeedApi.getAll({selectAll: true}),
+			]);
+			if (team.status === 200 && group.status === 200) {
+				const teamOptionList = fmSelectArr(
+					team.data.data,
+					'BranchName',
+					'BranchID'
+				);
+				const groupOptionList = fmSelectArr(group.data.data, 'Name', 'ID');
+				setOptionList({
+					teamOptionList,
+					groupOptionList,
+				});
+			} else {
+				setOptionList({
+					teamOptionList: [],
+					groupOptionList: [],
+				});
+			}
+		} catch (error) {
+			console.log('fetchOptionList', error.message);
+		}
+	};
+	useEffect(() => {
+		fetchOptionList();
+	}, []);
+	const fetchCourseList = async () => {
+		try {
+			if (checkAuthorization() === 'Ignore') return;
+			const res = await courseApi.getAll({selectAll: true});
+			if (res.status === 200) {
+				const fmCourseList = res.data.data.map((c) => ({
+					title: `${c.DonePercent}% - ${c.CourseName}`,
+					value: c.ID,
+				}));
+				setCourseList(fmCourseList);
+			}
+		} catch (error) {
+			console.log('fetchCourseList', error.message);
+		}
+	};
+	useEffect(() => {
+		fetchCourseList();
+	}, [userInformation]);
+	const checkFileType = (file: File) => {
+		const {type, name} = file;
+		if (type.includes('image')) {
+			return {
+				name,
+				type,
+				Type: 2, // key for api
+			};
+		}
+		if (type.includes('audio')) {
+			return {
+				name,
+				type,
+				Type: 3,
+			};
+		}
+		if (type.includes('video')) {
+			return {
+				name,
+				type,
+				Type: 4,
+			};
+		}
+		return {
+			name,
+			Type: 0,
+		};
+	};
+	const onUploadFile = async (fileList) => {
+		try {
+			let nextPost = 0;
+			const resArr = await Promise.all(
+				fileList.reduce((newArr, file, idx) => {
+					if (file.originFileObj) {
+						newArr.push(newsFeedApi.uploadFile(file.originFileObj));
+					} else {
+						nextPost = idx + 1;
+						newArr;
+					}
+					return newArr;
+				}, [])
+			);
+			const rs = resArr.map((r: any) => {
+				return {
+					uid: r.data.data,
+					url: r.data.data,
+					...checkFileType(fileList[nextPost]),
+				};
+			});
+			return rs;
+		} catch (error) {
+			console.log('onUploadFile', error);
+		}
+	};
+	// CREATE
+	const onCreateNewsFeed = async (data: {
+		Content: string;
+		TypeFile: number;
+		NewsFeedFile: {
+			name: string;
+			type: string;
+			Type?: number;
+			preview: string;
+			uid: string;
+			url: string;
+			//
+		}[];
+		BranchList: number[]; //TEAM
+		GroupNewsFeedID: number; //GROUP
+	}) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		try {
+			const {TypeFile, NewsFeedFile} = data;
+			const newData =
+				TypeFile && NewsFeedFile?.length
+					? {
+							...data,
+							NewsFeedFile: data.NewsFeedFile.map((f) => ({
+								Type: f.Type,
+								NameFile: f.url,
+								UID: f.uid,
+							})),
+					  }
+					: data;
+			const res = await newsFeedApi.add(newData);
+			if (res.status === 200) {
+				const newNewsFeedList = [res.data.data, ...newsFeedList];
+				setNewsFeedList(newNewsFeedList);
+				setTotalNewsFeed(newNewsFeedList.length);
+				showNoti('success', res.data.message);
+			}
+			return res;
+		} catch (error) {
+			console.log('onCreateNewsFeed', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
+	};
+	// EDIT
+	const onEditNewsFeed = (idx: number) => {
+		return async (data: {
+			Content: string;
+			Color: string;
+			TypeFile: number;
+			NewsFeedFile: {
+				ID?: number;
+				name: string;
+				type: string;
+				Type?: number;
+				preview?: string;
+				uid: string;
+				url: string;
+				Enable?: boolean;
+				//
+			}[];
+			BranchList: number[]; //TEAM
+			GroupNewsFeedID: number; //GROUP
+		}) => {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: true,
+			});
+			try {
+				const {TypeFile, NewsFeedFile} = data;
 
-    const [newsFeed, setNewsFeed] = useState<INewsFeed[]>(intialNewsFeed);
-    const [userBranch, setUserBranch] = useState<IUserBranch[]>([]);
-    const [groupNewsFeed, setGroupNewsFeed] = useState<IGroupNewsFeed[]>([]);
-    const [hasNextPage, setHasNextPage] = useState(true);
-    const [pageIndex, setPageIndex] = useState(1);
+				const {NewsFeedFile: oldNewsFeedFileList} = newsFeedList[idx];
 
-    const [inGroup, setInGroup] = useState(null);
-    const [inTeam, setInTeam] = useState(null);
-    const [searchName, setSearchName] = useState(null);
-    const [totalRow, setTotalRow] = useState(1);
+				let newFileUploadList = null;
+				console.log(data);
+				if (
+					TypeFile === 2 &&
+					oldNewsFeedFileList?.length &&
+					NewsFeedFile?.length
+				) {
+					newFileUploadList = [...oldNewsFeedFileList, ...NewsFeedFile].reduce(
+						(arr, f) => {
+							// CLEAR DUPLICATE OLD FILE
+							if (arr.some((newFile) => newFile.ID && newFile.ID === f.ID)) {
+								return arr;
+							}
+							if (
+								NewsFeedFile.some(
+									(fileForm) => fileForm.ID && fileForm.ID === f.ID
+								)
+							) {
+								arr.push(f);
+							} else if (!f.hasOwnProperty('ID')) {
+								// DO NOT HAVE PROPERTY ID => NEW FILE
+								arr.push({
+									...f,
+									Type: f.Type,
+									NameFile: f.url,
+									UID: f.uid,
+								});
+							} else {
+								// CAN NOT FIND ID FILE IN NEWS FEED FILE => FILE REMOVED
+								arr.push({
+									...f,
+									Enable: false,
+								});
+							}
+							return arr;
+						},
+						[]
+					);
+				}
+				if (TypeFile === 1 && NewsFeedFile?.length) {
+					newFileUploadList = NewsFeedFile;
+				}
 
-    const fetchListNewsFeed = async () => {
-        // if(!hasNextPage) return;
-        setIsLoading({
-            type: "GET_LIST",
-            status: true
-        });
-        try {
-            let res = await newsFeedApi.getAll({
-                            pageIndex: pageIndex, 
-                            pageSize: 5, 
-                            GroupNewsFeedID: inGroup, 
-                            BranchID: inTeam, 
-                            FullNameUnicode: searchName});
-            if(res.status == 204) {
-                showNoti("danger", "Không có dữ liệu");
-                setEmptyNewsFeed(true);
-                setTotalRow(0);
-            }
-            if(res.status == 200) {
-                setNewsFeed([...newsFeed, ...res.data.data]);
-                setTotalRow(res.data.totalRow);
-                setEmptyNewsFeed(false);
-                if(res.data.data.length < 5) {
-                    setHasNextPage(false);
-                }
-            }
-        } catch (error) {
-            showNoti("danger", error.message)
-        } finally {
-            setIsLoading({
-                type: "GET_LIST",
-                status: false
-            });
-        }
-    }
+				const newData = newFileUploadList
+					? {
+							...data,
+							NewsFeedFile: newFileUploadList,
+					  }
+					: data;
 
-    const fetchUserBranch = async () => {
-        try {
-            let res = await userBranchApi.getAll({getbytokenID: true});
-            if(res.status == 204) {
-                console.log("Không có dữ liệu");
-            }
-            if(res.status == 200) {
-                setUserBranch(res.data.data);
-            }
-        } catch (error) {
-            console.log("Lỗi UserBranch", error.message);
-        }
-    }
+				const res = await newsFeedApi.update(newData);
 
-    const fetchGroupNewsFeed = async () => {
-        try {
-            let res = await groupNewsFeedApi.getAll({selectAll: true});
-            if(res.status == 204) {
-                console.log("Không có dữ liệu");
-            }
-            if(res.status == 200) {
-                setGroupNewsFeed(res.data.data);
-            }
-        } catch (error) {
-            console.log("Lỗi UserBranch", error.message);
-        }
-    }
+				if (res.status === 200) {
+					const newNewsFeedList = [...newsFeedList];
+					newNewsFeedList.splice(idx, 1, res.data.data);
+					setNewsFeedList(newNewsFeedList);
+					showNoti('success', res.data.message);
+				}
+				return res;
+			} catch (error) {
+				console.log('onEditNewsFeed', error.message);
+			} finally {
+				setIsLoading({
+					type: 'ADD_DATA',
+					status: false,
+				});
+			}
+		};
+	};
+	// DELETE
+	const onDelete = (idx: number) => {
+		return async () => {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: true,
+			});
+			try {
+				const newNewsFeedList = [...newsFeedList];
+				const delObj = newNewsFeedList[idx];
+				const newDelObj = {
+					ID: delObj.ID,
+					Enable: false,
+				};
+				const res = await newsFeedApi.delete(newDelObj);
+				if (res.status === 200) {
+					newNewsFeedList.splice(idx, 1);
+					setNewsFeedList(newNewsFeedList);
+					setTotalNewsFeed(newNewsFeedList.length);
+					showNoti('success', res.data.message);
+				}
+			} catch (error) {
+				console.log('onDelete', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false,
+				});
+			}
+		};
+	};
+	const fetchBackgroundNewsFeed = async () => {
+		try {
+			const res = await backgroundNewsFeedApi.getAll();
+			if (res.status === 200) {
+				setBackgroundList(res.data.data);
+			}
+		} catch (error) {
+			console.log('fetchBackgroundNewsFeed', error.message);
+		}
+	};
+	// --------------FILTER--------------
+	const loadMore = () => {
+		// PAGE INDEX >= 2, OTHERWISE DUPLICATE CALL API
+		setPageIndex(pageIndex + 1);
+		if (pageIndex > 1) {
+			fetchNewsFeedList();
+		}
+	};
+	const onFilters = (field: string, value: string | number) => {
+		const newFilters: FiltersData = {
+			name: null,
+			idTeam: null,
+			idGroup: null,
+		};
+		newFilters[field] = value;
+		setFiltersData(newFilters);
+		reset();
+	};
+	useEffect(() => {
+		for (const key in filtersData) {
+			if (filtersData[key]) {
+				setHasNextPage(true);
+			}
+		}
+	}, [filtersData]);
+	// --------------LIKE--------------
+	const fetchNewsFeedUserLiked = async () => {
+		try {
+			if (!userInformation) return;
+			let res = await newsFeedLikeApi.getAll({
+				selectAll: true,
+				UserInformationID: userInformation.UserInformationID,
+			});
+			if (res.status === 200) {
+				const getNewsFeedIDList = res.data.data.map((n) => n.NewsFeedID);
+				setIDListUserLiked(getNewsFeedIDList);
+			}
+			if (res.status === 204) {
+				setIDListUserLiked([]);
+			}
+		} catch (error) {
+			console.log('fetchNewsFeedUserLiked', error.message);
+		}
+	};
+	useEffect(() => {
+		fetchNewsFeedUserLiked();
+	}, [userInformation]);
+	const stoLike = useRef(null);
+	const DELAY = 500;
+	const onUserLikeNewsFeed = (idx: number) => {
+		clearTimeout(stoLike.current);
+		return (NewsFeedID: number) => {
+			try {
+				// LIMIT USER FAST CLICK
+				stoLike.current = setTimeout(async () => {
+					const data = {
+						NewsFeedID,
+					};
+					let res = await newsFeedLikeApi.add(data);
+					if (res.status === 200) {
+						const newNewsFeedList = [...newsFeedList];
+						const newNewsFeed: INewsFeed = {
+							...newNewsFeedList[idx],
+						};
+						if (res.data.data.Enable) {
+							// WE NEED TO INCREMENT OR DECREMENT LIKE COUNT IN THE NEWS FEED LIST
+							newNewsFeedList.splice(idx, 1, {
+								...newNewsFeed,
+								LikeCount: ++newNewsFeedList[idx].LikeCount,
+							});
+							setIDListUserLiked([
+								...idListUserLiked,
+								res.data.data.NewsFeedID,
+							]);
+							setNewsFeedList(newNewsFeedList);
+						} else {
+							newNewsFeedList.splice(idx, 1, {
+								...newNewsFeed,
+								LikeCount: --newNewsFeedList[idx].LikeCount,
+							});
+							const newIDListUserLiked = idListUserLiked.filter(
+								(id) => id !== res.data.data.NewsFeedID
+							);
+							setIDListUserLiked(newIDListUserLiked);
+							setNewsFeedList(newNewsFeedList);
+						}
+					}
+				}, DELAY);
+			} catch (error) {
+				console.log('onUserLikeNewsFeed', error.message);
+			}
+		};
+	};
+	// --------------COMMENT--------------
+	const onComment = async (data: {
+		CommentContent: string;
+		NewsFeedID: number;
+	}) => {
+		setIsLoading({
+			type: 'ADD_COMMENT',
+			status: true,
+		});
+		try {
+			const res = await newsFeedCommentApi.add(data);
+			return res;
+		} catch (error) {
+			console.log('onComment', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_COMMENT',
+				status: false,
+			});
+		}
+	};
+	const fetchComment = async (NewsFeedID: number) => {
+		setIsLoading({
+			type: `FETCH_COMMENT_${NewsFeedID}`,
+			status: true,
+		});
+		try {
+			const res = await newsFeedCommentApi.getAll({
+				selectAll: true,
+				NewsFeedID,
+			});
+			return res;
+		} catch (error) {
+			console.log('fetchComment', error.message);
+		} finally {
+			setIsLoading({
+				type: `FETCH_COMMENT_${NewsFeedID}`,
+				status: false,
+			});
+		}
+	};
+	// --------------REPLY--------------
+	const onReplyComment = async (data) => {
+		setIsLoading({
+			type: 'ADD_COMMENT',
+			status: true,
+		});
+		try {
+			const res = await newsFeedCommentReplyApi.add(data);
+			return res;
+		} catch (error) {
+			console.log('onReplyComment', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_COMMENT',
+				status: false,
+			});
+		}
+	};
+	const fetchReplyComment = async (NewsFeedCommentID: number) => {
+		setIsLoading({
+			type: `FETCH_REPLY_COMMENT_${NewsFeedCommentID}`,
+			status: true,
+		});
+		try {
+			const res = await newsFeedCommentReplyApi.getAll({
+				selectAll: true,
+				NewsFeedCommentID,
+			});
+			return res;
+		} catch (error) {
+			console.log('fetchReplyComment', error.message);
+		} finally {
+			setIsLoading({
+				type: `FETCH_REPLY_COMMENT_${NewsFeedCommentID}`,
+				status: false,
+			});
+		}
+	};
+	// GROUP
+	const fetchInfoGroup = async (idGroup: number) => {
+		setIsLoading({
+			type: 'FETCH_INFO_GROUP',
+			status: true,
+		});
+		try {
+			let [info, userList] = await Promise.all([
+				groupNewsFeedApi.getByID(idGroup),
+				userGroupNewsFeedApi.getAll({
+					selectAll: true,
+					GroupNewsFeedID: idGroup,
+				}),
+			]);
+			if (info.status === 200 && userList.status === 200) {
+				setInfoGroup({
+					info: info.data.data,
+					userList: userList.data.data,
+				});
+			}
+		} catch (error) {
+			console.log('fetchInfoGroup', error.message);
+		} finally {
+			setIsLoading({type: 'FETCH_INFO_GROUP', status: false});
+		}
+	};
+	useEffect(() => {
+		if (filtersData.idGroup) {
+			fetchInfoGroup(filtersData.idGroup);
+		}
+	}, [filtersData.idGroup]);
 
-    const onSubmit = async (data) => {
-        setIsLoading({
-            type: "ADD",
-            status: true,
-        })
-        let res;
-        if(data.ID) {
-            try {
-                res = await newsFeedApi.update(data);
-                if(res.status == 200) {
-                    showNoti("success", "Update thành công");
-                    setNewsFeed(prev => prev.map(item => (item.ID == data.ID ? res.data.data : item)));
-                }
-                if(res.status == 204) {
-                    showNoti("danger", "Không có dữ liệu")
-                }
-            } catch (error) {
-                showNoti("danger", error.message)
-            } finally {
-                setIsLoading({
-                    type: "ADD",
-                    status: false,
-                })
-            }
-        } else {
-            try {
-                res = await newsFeedApi.add(data);
-                if(res.status == 200) {
-                    showNoti("success", "Đăng thành công");
-                    let obj = {...res.data.data}
-                    setNewsFeed([obj, ...newsFeed]);
-                }
-                if(res.status == 204) {
-                    showNoti("danger", "Không có dữ liệu")
-                }
-            } catch (error) {
-                showNoti("danger", error.message)
-            } finally {
-                setIsLoading({
-                    type: "ADD",
-                    status: false,
-                });
-            }
-        }
-        return res;
-    }
+	const onCreateGroup = async (data: {
+		Name: string;
+		CourseID: number;
+		BackGround: string;
+	}) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		try {
+			const res = await groupNewsFeedApi.add(data);
+			if (res.status === 200) {
+				const newGroup: IOptionCommon = {
+					title: res.data.data.Name,
+					value: res.data.data.ID,
+				};
+				const newGroupOptionList = [newGroup, ...optionList.groupOptionList];
+				setOptionList({...optionList, groupOptionList: newGroupOptionList});
+				showNoti('success', res.data.message);
+				return res;
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
+	};
+	const onUpdateGroup = async (data: IGroupNewsFeed) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		try {
+			const res = await groupNewsFeedApi.update(data);
 
-    const handleRemove = async (data) => {
-        setIsLoading({
-            type: "ADD",
-            status: true,
-        })
-        let res;
-        try {
-            res = await newsFeedApi.update(data);
-            if(res.status == 200) {
-                showNoti("success", "Update thành công");
-                const newArray = newsFeed.filter(item => item.ID != data.ID);
-                setNewsFeed(newArray);
-            }
-            if(res.status == 204) {
-                showNoti("danger", "Không có dữ liệu")
-            }
-        } catch (error) {
-            showNoti("danger", error.message)
-        } finally {
-            setIsLoading({
-                type: "ADD",
-                status: false,
-            })
-        }
-        return res;
-    }
+			if (res.status === 200) {
+				const newGroupOptionList = [...optionList.groupOptionList].map((t) => {
+					if (t.value === data.ID) {
+						return {
+							...t,
+							title: data.Name,
+						};
+					}
+					return t;
+				});
+				setOptionList({
+					...optionList,
+					groupOptionList: newGroupOptionList,
+				});
+				setInfoGroup({
+					...infoGroup,
+					info: data,
+				});
+				showNoti('success', res.data.message);
+				return res;
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
+	};
+	const onDeleteGroup = async () => {
+		try {
+			const data = {
+				ID: filtersData.idGroup,
+				Enable: false,
+			};
+			const res = await groupNewsFeedApi.update(data);
 
-    const onSubmitGroupNewsFeed = async (data) => {
-        console.log("Data submit: ", data);
-        setIsLoading({
-            type: "ADD",
-            status: true,
-        })
-        let res;
+			if (res.status === 200) {
+				const newGroupOptionList = [...optionList.groupOptionList].filter(
+					(g) => g.value !== filtersData.idGroup
+				);
+				reset();
+				setOptionList({
+					...optionList,
+					groupOptionList: newGroupOptionList,
+				});
+				setFiltersData({
+					name: null,
+					idTeam: null,
+					idGroup: null,
+				});
+			}
+		} catch (error) {
+			console.log('onDeleteGroup', error.message);
+		}
+	};
 
-        if(data.ID) {
-            try {
-                res = await groupNewsFeedApi.update(data);
-                if(res.status == 200) {
-                    showNoti("success", "Update thành công");
-                    fetchGroupNewsFeed();
-                }
-                if(res.status == 204) {
-                    showNoti("danger", "Không có dữ liệu")
-                }
-            } catch (error) {
-                showNoti("danger", error.message)
-            } finally {
-                setIsLoading({
-                    type: "ADD",
-                    status: false,
-                })
-            }
-        } else {
-            try {
-                res = await groupNewsFeedApi.add(data);
-                if(res.status == 200) {
-                    showNoti("success", "Thêm thành công");
-                    fetchGroupNewsFeed();
-                }
-                if(res.status == 204) {
-                    showNoti("danger", "Không có dữ liệu")
-                }
-            } catch (error) {
-                showNoti("danger", error.message)
-            } finally {
-                setIsLoading({
-                    type: "ADD",
-                    status: false,
-                })
-            }
-        }
+	// ADD USER TO GROUP
+	const fetchUserByRole = async (roleID: number) => {
+		setIsLoading({
+			type: 'FETCH_USER_IN_GROUP',
+			status: true,
+		});
+		try {
+			const res = await userInformationApi.getAllParams({
+				RoleID: roleID,
+				pageSize: 9999,
+			});
+			if (res.status === 200) {
+				const fmOptionList = fmSelectArr(
+					res.data.data,
+					'FullNameUnicode',
+					'UserInformationID'
+				);
+				setUserOptionList(fmOptionList);
+			}
+			if (res.status === 204) {
+				setUserOptionList([]);
+			}
+		} catch (error) {
+			console.log('fetchUserByRole', error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_USER_IN_GROUP',
+				status: false,
+			});
+		}
+	};
+	const addUserToGroup = async (data: {
+		RoleUser: number;
+		UserInformationID: number;
+		RoleID: number;
+	}) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		try {
+			const {UserInformationID, RoleID} = data;
+			const newData = {
+				GroupNewsFeedID: filtersData.idGroup,
+				UserInformationID,
+				RoleID,
+			};
+			const res = await userGroupNewsFeedApi.add(newData);
+			if (res.status === 200) {
+				const newUserList = [...infoGroup.userList, res.data.data];
+				setInfoGroup({
+					...infoGroup,
+					userList: newUserList,
+				});
+				showNoti('success', 'Thêm thành công');
+				return res;
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
+	};
 
-        return res;
-    }
+	const removeUser = async (idUser: number) => {
+		try {
+			const data = {
+				ID: idUser,
+				Enable: false,
+			};
+			const res = await userGroupNewsFeedApi.update(data);
+			if (res.status === 200) {
+				const newUserList = [...infoGroup.userList].filter(
+					(u) => u.ID !== idUser
+				);
+				setInfoGroup({
+					...infoGroup,
+					userList: newUserList,
+				});
+				showNoti('success', res.data.message);
+			}
+		} catch (error) {
+			console.log('onDeleteGroup', error.message);
+		}
+	};
 
-    function parseJwt(token) {
-        var base64Url = token.split(".")[1];
-        var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-        var jsonPayload = decodeURIComponent(
-          atob(base64)
-            .split("")
-            .map(function (c) {
-              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-            })
-            .join("")
-        );
-    
-        return JSON.parse(jsonPayload);
-    }
+	return (
+		<>
+			<div className="row wrap-newsfeed">
+				<div className="col-md-8 col-12">
+					<div className="list-newsfeed">
+						{filtersData.idGroup && (
+							<BannerGroup
+								infoGroup={infoGroup}
+								totalNewsFeed={totalNewsFeed}
+								//
+								bannerGroupActionListComponent={
+									checkAuthorization() === 'Accept' ? (
+										<ul className="more-list">
+											<li>
+												<GroupForm
+													isLoading={isLoading}
+													isUpdate={true}
+													dataUpdate={infoGroup.info}
+													courseList={courseList}
+													handleSubmit={onUpdateGroup}
+												/>
+											</li>
+											<li>
+												<AddUserForm
+													isLoading={isLoading}
+													roleOptionList={roleOptionList}
+													userOptionList={userOptionList}
+													roleMemberOptionList={roleMemberOptionList}
+													fetchUserByRole={fetchUserByRole}
+													handleSubmit={addUserToGroup}
+												/>
+											</li>
+											<li>
+												<RemoveUser
+													userList={infoGroup.userList}
+													handleDelete={removeUser}
+												/>
+											</li>
+											<li>
+												<DeleteGroup handleDelete={onDeleteGroup} />
+											</li>
+										</ul>
+									) : null
+								}
+							/>
+						)}
+						{/* 3 HỌC VIÊN - 4 PHỤ HUYNH */}
+						{!userInformation ||
+						userInformation['RoleID'] === 3 ||
+						userInformation['RoleID'] === 4 ? null : (
+							<CreateNewsFeed
+								isLoading={isLoading}
+								dataUser={userInformation}
+								handleUploadFile={onUploadFile}
+								handleSubmit={onCreateNewsFeed}
+								fetchBackgroundNewsFeed={fetchBackgroundNewsFeed}
+								backgroundList={backgroundList}
+								filtersData={filtersData}
+								optionList={optionList}
+							/>
+						)}
 
-    const reset = () => {
-        setNewsFeed(intialNewsFeed);
-        setPageIndex(intialPageIndex);
-        // console.log("reset");
-    }
-
-    const loadMore = () => {
-        setPageIndex(pageIndex + 1);
-        fetchListNewsFeed();
-    }
-
-    const onSearch = value => {
-        setInGroup(null);
-        setInTeam(null);
-        reset();
-        setSearchName(value);
-    };
-
-    const inGroupFunc = (e) => {
-        setInTeam(null);
-        setSearchName(null);
-        reset();
-        setInGroup(e.target.value);
-    }
-
-    const inTeamFunc = (e) => {
-        setInGroup(null);
-        setSearchName(null);
-        reset();
-        setInTeam(e.target.value);
-    }
-
-    const inGroupFuncMB = (value) => {
-        onClose();
-        setInTeam(null);
-        setSearchName(null);
-        reset();
-        setInGroup(value);
-    }
-
-    const inTeamFuncMB = (value) => {
-        onClose();
-        setInGroup(null);
-        setSearchName(null);
-        reset();
-        setInTeam(value);
-    }
-
-    const SideBar = () => {
-        return (
-            <>
-            <Card className="card-newsfeed" bordered={false}>
-                <p className="card-newsfeed__label font-weight-black">TÌM KIẾM</p>
-                <Search 
-                    className="style-input"
-                    placeholder={searchName != null ? searchName : "Nhập từ khóa"}
-                    allowClear 
-                    onSearch={onSearch}
-                    // defaultValue={searchName}
-                />
-            </Card>
-            <Card className="card-newsfeed" bordered={false}>
-                <p className="card-newsfeed__label font-weight-black">TRUNG TÂM</p>
-                <Select
-                    className="style-input list-group-nf__moblie"
-                    placeholder="Chọn trung tâm"
-                    onChange={(value) => inTeamFuncMB(value)}
-                >
-                    {userBranch && userBranch.map((item, index) => (
-                        <Option 
-                            key={index} 
-                            value={item.BranchID}
-                        >
-                            {item.BranchName}
-                        </Option>
-                    ))}
-                </Select>
-                <ul className="list-group-nf">
-                    {userBranch && userBranch.map((item, index) => (
-                        <li 
-                            className={inTeam == item.BranchID ? "active" : ""}
-                            key={index} 
-                            value={item.BranchID}
-                            onClick={e => inTeamFunc(e)}
-                        >
-                            {item.BranchName}
-                        </li>
-                    ))}
-                </ul>
-                <p className="card-newsfeed__label font-weight-black">NHÓM</p>
-                <Select
-                    className="style-input list-group-nf__moblie mb-0"
-                    placeholder="Chọn nhóm"
-                    onChange={(value) => inGroupFuncMB(value)}
-                >
-                    {groupNewsFeed && groupNewsFeed.map((item, index) => (
-                        <Option 
-                            key={index} 
-                            value={item.ID}
-                        >
-                            {item.Name}
-                        </Option>
-                    ))}
-                </Select>
-                <ul className="list-group-nf mb-0">
-                    {groupNewsFeed && groupNewsFeed.map((item, index) => (
-                        <li 
-                            className={inGroup == item.ID ? "active" : ""} 
-                            key={index} 
-                            value={item.ID}
-                            onClick={e => inGroupFunc(e)}
-                        >
-                            {item.Name}
-                        </li>
-                    ))}
-                </ul>
-                <GroupNewsFeedFrom 
-                        showAdd={true}
-                        isLoading={isLoading} 
-                        onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)}/>
-            </Card>
-            </>
-        )
-    }
-
-    const [visible, setVisible] = useState(false);
-    const showDrawer = () => {
-      setVisible(true);
-    };
-    const onClose = () => {
-      setVisible(false);
-    };
-
-    // console.log("Group: ", inGroup);
-    // console.log("Team: ", inTeam);
-    // console.log(newsFeed);
-
-    useEffect(() => {
-        if (session !== undefined) {
-            let token = session.accessToken;
-            if (userInformation) {
-              setDataUser(userInformation);
-            } else {
-              setDataUser(parseJwt(token));
-            }
-          }
-    }, [userInformation]);
-
-    useEffect(() => {
-        fetchGroupNewsFeed();
-        fetchUserBranch();
-    }, []);
-
-    useEffect(() => {
-        if(inGroup != null || inTeam != null || searchName != '') {
-            setHasNextPage(true)
-        }
-    }, [pageIndex, inGroup, inTeam, searchName]);
-
-    return (
-        <>  
-        <div className="row wrap-newsfeed">
-            {emptyNewsFeed == false ? (
-                <div className="col-md-8 col-12">
-                    <div className="list-newsfeed">
-                        {inGroup != null ? (
-                            <>
-                                <GroupTagElement onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)} dataUser={dataUser} totalRow={totalRow} inGroup={inGroup}/>
-                            </>
-                        ) : (<></>)}
-                        {session?.user ? (
-                            <>
-                            <CreateNewsFeed 
-                                inGroup={inGroup} 
-                                inTeam={inTeam} 
-                                dataUser={dataUser} 
-                                groupNewsFeed={groupNewsFeed} 
-                                userBranch={userBranch} 
-                                _onSubmit={(data) => onSubmit(data)}
-                                isLoading={isLoading}
-                            />
-                            <ListNewsFeed 
-                                onSearch={(value) => onSearch(value)} 
-                                dataUser={dataUser} 
-                                dataNewsFeed={newsFeed} 
-                                groupNewsFeed={groupNewsFeed} 
-                                userBranch={userBranch} 
-                                inGroup={inGroup} 
-                                inTeam={inTeam} 
-                                inGroupFunc={(e) => inGroupFunc(e)} 
-                                inTeamFunc={(e) => inTeamFunc(e)}
-                                _onSubmit={(data) => onSubmit(data)}
-                                _handleRemove={(data) => handleRemove(data)}
-                                isLoading={isLoading}
-                            />
-                            </>
-                        ) : (
-                            <>Bạn cần phải đăng nhập</>
-                        )}
-                        {hasNextPage &&(
-                            <Waypoint onEnter={loadMore}>
-                                <ul className="list-nf skeleton">
-                                    <li className="item-nf">
-                                        <div className="newsfeed">
-                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                            <Skeleton active paragraph={{ rows: 2 }}/>
-                                        </div>
-                                    </li>
-                                    <li className="item-nf">
-                                        <div className="newsfeed">
-                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                            <Skeleton active paragraph={{ rows: 2 }}/>
-                                        </div>
-                                    </li>
-                                    <li className="item-nf">
-                                        <div className="newsfeed">
-                                            <Skeleton avatar paragraph={{ rows: 0 }} active/>
-                                            <Skeleton active paragraph={{ rows: 2 }}/>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </Waypoint>
-                        )}
-                    </div>
-                </div>
-            ) : (
-                <div className="col-md-8 col-12">
-                    {inGroup != null ? (
-                        <>
-                            <GroupTagElement onSubmitGroupNewsFeed={(data) => onSubmitGroupNewsFeed(data)} dataUser={dataUser} totalRow={totalRow} inGroup={inGroup}/>
-                        </>
-                    ) : (<></>)}
-                    {session?.user ? (
-                        <>
-                        <CreateNewsFeed 
-                            inGroup={inGroup} 
-                            inTeam={inTeam} 
-                            dataUser={dataUser} 
-                            groupNewsFeed={groupNewsFeed} 
-                            userBranch={userBranch} 
-                            _onSubmit={(data) => onSubmit(data)}
-                            isLoading={isLoading}
-                        />
-                        <div className="mt-4"><Empty /></div>
-                        </>
-                    ) : (
-                        <>Bạn cần phải đăng nhập</>
-                    )}
-                </div>
-            )}
-            <div className="col-md-4 col-12">
-                <div className="sidebar-desktop">
-                    <SideBar />
-                </div>
-                <div className="sidebar-mobile">
-                    <Link href="/newsfeed">
-                        <a><p className="label-nf font-weight-black">NewsFeed</p></a>
-                    </Link>
-                    <button className="btn btn-light" onClick={showDrawer}>
-                        <MoreHorizontal/>
-                    </button>
-                    <Drawer
-                        placement="right"
-                        closable={false}
-                        onClose={onClose}
-                        visible={visible}
-                        className="drawer-newsfeed"
-                    >
-                        <SideBar/>
-                    </Drawer>
-                </div>
-            </div>
-        </div>
-        </>
-    )
-
-}
+						<ListNewsFeed>
+							{newsFeedList.map((item: INewsFeed, idx) => {
+								const isUserLiked = idListUserLiked.includes(item.ID);
+								return (
+									<NewsFeedItem
+										key={item.ID}
+										// FILTER
+										handleFilters={onFilters}
+										// LIKE HANDLE
+										isUserLiked={isUserLiked}
+										handleUserLikeNewsFeed={onUserLikeNewsFeed(idx)}
+										// COMMENT HANDLE
+										handleComment={onComment}
+										fetchComment={fetchComment}
+										// REPLY HANDLE
+										handleReplyComment={onReplyComment}
+										fetchReplyComment={fetchReplyComment}
+										// INFORMATION
+										item={item}
+										isLoading={isLoading}
+										userComment={userInformation}
+										// COMPONENT
+										moreActionComponent={
+											// ADMIN || MANAGER || AUTHOR CAN EDIT OR REMOVE
+											checkAuthorization(item.UserInformationID) ===
+											'Accept' ? (
+												<ul className="more-list">
+													{/* ONLY AUTHOR CAN EDIT POST  */}
+													{item.UserInformationID ===
+														userInformation?.UserInformationID && (
+														<li>
+															<CreateNewsFeed
+																key={item.ID}
+																isLoading={isLoading}
+																isUpdate={true}
+																itemUpdate={item}
+																dataUser={userInformation}
+																handleUploadFile={onUploadFile}
+																handleSubmit={onEditNewsFeed(idx)}
+																fetchBackgroundNewsFeed={
+																	fetchBackgroundNewsFeed
+																}
+																backgroundList={backgroundList}
+																optionList={optionList}
+															/>
+														</li>
+													)}
+													<li>
+														<DeleteNewsFeed
+															text="bảng tin này"
+															handleDelete={onDelete(idx)}
+														/>
+													</li>
+												</ul>
+											) : null
+										}
+									/>
+								);
+							})}
+						</ListNewsFeed>
+						{hasNextPage && (
+							<Waypoint onEnter={loadMore}>
+								<ul className="list-nf skeleton">
+									<li className="item-nf">
+										<div className="newsfeed">
+											<Skeleton avatar paragraph={{rows: 0}} active />
+											<Skeleton active paragraph={{rows: 2}} />
+										</div>
+									</li>
+									<li className="item-nf">
+										<div className="newsfeed">
+											<Skeleton avatar paragraph={{rows: 0}} active />
+											<Skeleton active paragraph={{rows: 2}} />
+										</div>
+									</li>
+									<li className="item-nf">
+										<div className="newsfeed">
+											<Skeleton avatar paragraph={{rows: 0}} active />
+											<Skeleton active paragraph={{rows: 2}} />
+										</div>
+									</li>
+								</ul>
+							</Waypoint>
+						)}
+					</div>
+					{emptyNewsFeed && (
+						<div className="mt-4">
+							<Empty />
+						</div>
+					)}
+				</div>
+				<div className="col-md-4 col-12">
+					<SideBarNewsFeed
+						optionList={optionList}
+						filtersData={filtersData}
+						handleFilters={onFilters}
+						// CREATE GROUP
+						groupFormComponent={
+							// ADMIN || MANAGER CAN CREATE NEW GROUP
+							checkAuthorization() === 'Accept' ? (
+								<GroupForm
+									isLoading={isLoading}
+									courseList={courseList}
+									handleSubmit={onCreateGroup}
+								/>
+							) : null
+						}
+					/>
+				</div>
+			</div>
+		</>
+	);
+};
 NewsFeed.layout = LayoutBase;
 export default NewsFeed;
