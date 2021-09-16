@@ -1,49 +1,17 @@
 import React, { useRef, useState, useEffect } from "react";
 
-import { Popover, Card, Spin, Skeleton, Select, Button, Modal } from "antd";
+import { Popover, Card, Spin, Skeleton, Select, Modal } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
-import { Info, Bookmark, Trash2 } from "react-feather";
-
+import { Bookmark, Trash2 } from "react-feather";
+import { AudioOutlined } from "@ant-design/icons";
 import CreateExamForm from "~/components/Global/QuestionBank/CreateExamForm";
-import { dataExam } from "~/lib/question-bank/dataExam";
 import LayoutBase from "~/components/LayoutBase";
 import Link from "next/link";
 import { examTopicApi, programApi, subjectApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { data } from "~/lib/option/dataOption2";
+import SearchBox from "~/components/Elements/SearchBox";
 
 const { Option, OptGroup } = Select;
-
-const content = (
-  <div className="question-bank-info">
-    <ul className="list">
-      <li className="list-item">
-        <span className="list-title">Môn học:</span>
-        <span className="list-text">English</span>
-      </li>
-      <li className="list-item">
-        <span className="list-title">Loại môn học:</span>
-        <span className="list-text">Phát âm</span>
-      </li>
-      <li className="list-item">
-        <span className="list-title">Loại câu hỏi:</span>
-        <span className="list-text">Câu hỏi nhóm</span>
-      </li>
-      <li className="list-item">
-        <span className="list-title">Mức độ:</span>
-        <span className="list-text">Rất khó</span>
-      </li>
-      <li className="list-item mb-0">
-        <span className="list-title">Học kỳ:</span>
-        <span className="list-text">học kỳ II</span>
-      </li>
-      <li className="list-item mb-0">
-        <span className="list-title">Thời gian:</span>
-        <span className="list-text">60 phút</span>
-      </li>
-    </ul>
-  </div>
-);
 
 type dataOject = {
   title: string;
@@ -116,6 +84,7 @@ const ExamCreate = (props) => {
     pageSize: 10,
     SubjectID: null,
     Type: null,
+    Code: null,
   };
   const [todoApi, setTodoApi] = useState(listTodoApi);
   const [dataProgram, setDataProgram] = useState<dataOject[]>([]);
@@ -207,23 +176,34 @@ const ExamCreate = (props) => {
   const handleSelect_Subject = (value) => {
     setValueSubject(value);
 
-    setIsLoading(true);
-    scrollToTop(), setIsLoading(true), setDataExam([]);
+    reloadData();
     setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10, SubjectID: value });
   };
 
   // SELECT TYPE
   const handleSelect_Type = (value) => {
-    setIsLoading(true);
-    scrollToTop(), setIsLoading(true), setDataExam([]);
+    reloadData();
     setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10, Type: value });
   };
 
   // ON FETCH DATA
   const onFetchData = () => {
-    setIsLoading(true);
-    scrollToTop(), setIsLoading(true), setDataExam([]);
+    reloadData();
     setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10 });
+  };
+
+  // RELOAD DATA
+  const reloadData = () => {
+    scrollToTop(), setIsLoading(true), setDataExam([]);
+  };
+
+  // ON SEARCH
+  const handleSearch = (value) => {
+    reloadData();
+    setTodoApi({
+      ...listTodoApi,
+      Code: value,
+    });
   };
 
   // SCROLL TO TOP
@@ -277,6 +257,14 @@ const ExamCreate = (props) => {
             extra={<CreateExamForm onFetchData={() => onFetchData()} />}
           >
             <div className="question-list" ref={boxEl} onScroll={onScroll}>
+              <div className="row mb-3">
+                <div className="col-12">
+                  <SearchBox
+                    placeholder={"Tìm theo mã đề thi"}
+                    handleSearch={(value) => handleSearch(value)}
+                  />
+                </div>
+              </div>
               {isLoading ? (
                 <div className="text-center p-2">
                   <Spin />
@@ -324,8 +312,7 @@ const ExamCreate = (props) => {
                             <div className="set-btn">
                               <Link
                                 href={{
-                                  pathname:
-                                    "/question-bank/exam-create/exam-detail",
+                                  pathname: "/question-bank/exam-detail/[slug]",
                                   query: { slug: item.ID },
                                 }}
                               >

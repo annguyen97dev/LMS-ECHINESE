@@ -166,9 +166,15 @@ const CreateExamForm = (props) => {
 
   return (
     <>
-      <button className="btn btn-icon edit" onClick={showDrawer}>
-        {dataItem?.ID ? <Edit /> : "Tạo đề thi"}
-      </button>
+      {dataItem?.ID ? (
+        <button className="btn btn-icon edit" onClick={showDrawer}>
+          <Edit />
+        </button>
+      ) : (
+        <button className="btn btn-success" onClick={showDrawer}>
+          Tạo đề thi
+        </button>
+      )}
 
       <Drawer
         title={props.isEdit ? "Form sửa đề thi" : "Form tạo đề thi"}
