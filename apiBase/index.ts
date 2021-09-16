@@ -73,3 +73,5 @@ export {staffOfTaskGroupApi, taskApi, taskGroupApi} from './staff-manage/task';
 export {documentScheduleApi} from './course-detail/document-schedule';
 export {packageStudentApi} from './package/package-student';
 export {backgroundNewsFeedApi} from './newsfeed/background-newsfeed';
+export {studyDayOnlineApi} from './course-online/study-day';
+export {lessonOnlineApi} from './course-online/lesson';
