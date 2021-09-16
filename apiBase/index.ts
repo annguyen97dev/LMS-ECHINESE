@@ -33,6 +33,7 @@ export { examTopicApi } from "./exam/exam-topic";
 export { consultationStatusApi } from "./options/consultation-status";
 export { testCustomerPointApi } from "./customer/service/test-customer-point";
 
+export { examDetailApi } from "./exam-detail/exam-detail";
 export { exerciseGroupApi } from "./exercise/exerciseGroup";
 export { checkRoomApi } from "./course/check-room";
 export { checkTeacherApi } from "./course/check-teacher";
@@ -77,5 +78,6 @@ export {
 export { documentScheduleApi } from "./course-detail/document-schedule";
 export { packageStudentApi } from "./package/package-student";
 export { backgroundNewsFeedApi } from "./newsfeed/background-newsfeed";
-
-export { examDetailApi } from "./exam-detail/exam-detail";
+export { studyDayOnlineApi } from "./course-online/study-day";
+export { lessonOnlineApi } from "./course-online/lesson";
+export { courseOnlineDetailAvailableDayApi } from "./course-online-detail/available-day";

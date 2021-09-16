@@ -667,7 +667,6 @@ const EditCourse = (props) => {
 					available: [],
 					unavailable: newScheduleList,
 				});
-				showNoti('success', 'Thành công');
 			}
 		} catch (error) {
 			showNoti('error', error.message);
@@ -765,6 +764,9 @@ const EditCourse = (props) => {
 				});
 				setCalendarList(dayListFm);
 				return true;
+			}
+			if (res.status === 204) {
+				showNoti('danger', 'Không có ca trống');
 			}
 		} catch (error) {
 			showNoti('error', error.message);

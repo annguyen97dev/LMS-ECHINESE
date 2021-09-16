@@ -1,4 +1,4 @@
 type IBackgroundNewsFeed = IBaseApi<{
-    ID: number,
-    FileName: string
+	ID: number;
+	FileName: string;
 }>;

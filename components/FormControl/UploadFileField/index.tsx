@@ -256,7 +256,7 @@ const UploadFileField = (props) => {
 								)}
 							</Upload>
 							<Modal
-								key={Math.floor(Math.random() * 1000)}
+								key={Math.floor(Math.random() * 130698)}
 								title="Xem trước"
 								visible={previewVisible}
 								footer={null}

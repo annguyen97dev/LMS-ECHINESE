@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {useRouter} from 'next/router';
+import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {courseDetailApi, documentScheduleApi} from '~/apiBase';
@@ -7,9 +7,15 @@ import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
 import CDCalendar from './Calendar';
 
-const CourseDetailCalendar = () => {
-	const router = useRouter();
-	const {slug: ID} = router.query;
+CourseDetailCalendar.propTypes = {
+	courseID: PropTypes.number,
+};
+CourseDetailCalendar.defaultProps = {
+	courseID: 0,
+};
+
+function CourseDetailCalendar(props) {
+	const {courseID: ID} = props;
 	const {showNoti} = useWrap();
 	const [calendarList, setCalendarList] = useState<ICourseDetailSchedule[]>([]);
 	const [isLoaded, setIsLoaded] = useState(false);
@@ -62,7 +68,9 @@ const CourseDetailCalendar = () => {
 			if (res.status === 200) {
 				setCalendarList(res.data.data);
 				setIsLoaded(true);
-				showNoti('success', res.data.message);
+			}
+			if (res.status === 204) {
+				showNoti('danger', 'Danh sách trống');
 			}
 		} catch (error) {
 			showNoti('error', error.message);
@@ -124,5 +132,5 @@ const CourseDetailCalendar = () => {
 			/>
 		</>
 	);
-};
+}
 export default CourseDetailCalendar;

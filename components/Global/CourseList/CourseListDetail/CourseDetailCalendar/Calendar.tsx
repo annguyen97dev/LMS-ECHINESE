@@ -84,9 +84,11 @@ const CDCalendar = (props) => {
 					<li>
 						<span>Môn:</span> {SubjectName}
 					</li>
-					<li>
-						<span>Phòng:</span> {RoomName}
-					</li>
+					{RoomName && (
+						<li>
+							<span>Phòng:</span> {RoomName}
+						</li>
+					)}
 					<li>
 						<span>GV:</span> {TeacherName}
 					</li>
@@ -151,9 +153,11 @@ const CDCalendar = (props) => {
 						<li>
 							<span>Môn:</span> {SubjectName}
 						</li>
-						<li>
-							<span>Phòng:</span> {RoomName}
-						</li>
+						{RoomName && (
+							<li>
+								<span>Phòng:</span> {RoomName}
+							</li>
+						)}
 						<li>
 							<span>GV:</span> {TeacherName}
 						</li>
@@ -194,9 +198,11 @@ const CDCalendar = (props) => {
 					<li>
 						<span>Môn:</span> {SubjectName}
 					</li>
-					<li>
-						<span>Phòng:</span> {RoomName}
-					</li>
+					{RoomName && (
+						<li>
+							<span>Phòng:</span> {RoomName}
+						</li>
+					)}
 					<li>
 						<span>GV:</span> {TeacherName}
 					</li>
