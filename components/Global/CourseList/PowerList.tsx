@@ -59,6 +59,8 @@ const PowerList = (props) => {
 				StartDay,
 				EndDay,
 				TotalStudents,
+				TypeCourse,
+				TypeCourseName,
 				BranchID,
 			}: ICourse) => (
 				<List.Item
@@ -67,13 +69,12 @@ const PowerList = (props) => {
 					})}
 				>
 					<List.Item.Meta
-						// className="course-list-item"
 						avatar={checkStatus(Status, StatusName)}
 						title={
 							<Link
 								href={{
 									pathname: '/course/course-list/course-list-detail/[slug]',
-									query: {slug: ID},
+									query: {slug: ID, type: TypeCourse},
 								}}
 							>
 								<a>{CourseName}</a>
@@ -91,6 +92,9 @@ const PowerList = (props) => {
 									</li>
 									<li>
 										<span>Giáo viên: </span> <span>{TeacherName}</span>
+									</li>
+									<li>
+										<span>Hình thức: </span> <span>{TypeCourseName}</span>
 									</li>
 									<li>
 										<span>Học phí: </span>{' '}
