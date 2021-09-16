@@ -3,18 +3,20 @@ import moment from 'moment';
 import {useRouter} from 'next/router';
 import React, {useEffect, useRef, useState} from 'react';
 import {
-	checkRoomApi,
 	checkTeacherApi,
 	courseDetailApi,
+	courseOnlineDetailAvailableDayApi,
 	studyTimeApi,
 	subjectApi,
 } from '~/apiBase';
-import {courseDetailAvailableDayApi} from '~/apiBase/course-detail/available-day';
 import CreateCourseCalendar from '~/components/Global/CreateCourse/Calendar/CreateCourseCalendar';
-import SaveCreateCourse from '~/components/Global/CreateCourse/SaveCreateCourse';
 import Schedule from '~/components/Global/CreateCourse/Schedule/Schedule';
-import ScheduleItem from '~/components/Global/CreateCourse/Schedule/ScheduleItem';
 import ScheduleList from '~/components/Global/CreateCourse/Schedule/ScheduleList';
+import SaveCreateCourseOnline from '~/components/Global/CreateCourseOnline/SaveCreateCourseOnline';
+import {
+	default as ScheduleItem,
+	default as ScheduleOnlineItem,
+} from '~/components/Global/CreateCourseOnline/ScheduleOnline/ScheduleOnlineItem';
 import TitlePage from '~/components/TitlePage';
 import {useDebounce} from '~/context/useDebounce';
 import {useWrap} from '~/context/wrap';
@@ -23,8 +25,8 @@ import {
 	fmArrayToObjectWithSpecialKey,
 	fmSelectArr,
 } from '~/utils/functions';
-import AvailableScheduleForm from './AvailableScheduleForm';
-import CreateNewScheduleForm from './CreateNewScheduleForm';
+import CreateNewScheduleForm from '../EditCourse/CreateNewScheduleForm';
+import AvailableScheduleOnlineForm from './AvailableScheduleOnlineForm';
 
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
@@ -33,7 +35,6 @@ import CreateNewScheduleForm from './CreateNewScheduleForm';
 type IOptionListForADay = {
 	optionStudyTimeList: IOptionCommon[];
 	list: Array<{
-		optionRoomList: IOptionCommon[];
 		optionTeacherList: IOptionCommon[];
 	}>;
 };
@@ -58,10 +59,9 @@ type IScheduleListToSave = {
 	SubjectID: number;
 	Date: string;
 	StudyTimeID: number;
-	RoomID: number;
 	TeacherID: number;
 };
-const EditCourse = (props) => {
+const EditCourseOnline = (props) => {
 	const router = useRouter();
 	const {slug: courseID} = router.query;
 	// -----------STATE-----------
@@ -81,7 +81,6 @@ const EditCourse = (props) => {
 			optionStudyTimeList: [],
 			list: [
 				{
-					optionRoomList: [],
 					optionTeacherList: [],
 				},
 			],
@@ -107,9 +106,7 @@ const EditCourse = (props) => {
 		setOptionListForGetAvailableSchedule,
 	] = useState<{
 		studyTimes: IOptionCommon[];
-		rooms: IOptionCommon[];
 	}>({
-		rooms: [],
 		studyTimes: [],
 	});
 	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>(
@@ -124,91 +121,48 @@ const EditCourse = (props) => {
 	const fetchInfoAvailableSchedule = async (
 		arrSchedule: ICourseDetailSchedule[]
 	) => {
-		// SPLIT SCHEDULE TO 2 OBJECT TO CALL 2 API
-		// paramsArr = [ {Schedule-*: [{params teacher}, {params room}]} ]
+		// paramsArr = [ {params teacher of schedule}  ]
 		const paramsArr = arrSchedule.map((sch, idx) => {
-			const {BranchID, Date, SubjectID, StudyTimeID, RoomID, CourseID} = sch;
+			const {BranchID, Date, SubjectID, StudyTimeID} = sch;
 			return {
-				[`Schedule-${idx + 1}`]: [
-					// TEACHER
-					{
-						BranchID,
-						SubjectID,
-						StudyTimeID,
-						Date,
-					},
-					// ROOM
-					{
-						BranchID,
-						Rooms: RoomID,
-						StudyTimeID,
-						Date,
-						CourseID,
-					},
-				],
+				// TEACHER
+				BranchID,
+				SubjectID,
+				StudyTimeID,
+				Date,
 			};
 		});
 		try {
 			if (!paramsArr.length) return;
-			// promises = [ {checkTeacher promise}, {checkRoom promise} ]
-			const promises = paramsArr
-				.map((obj, idx1) => {
-					return obj[`Schedule-${idx1 + 1}`].map((p, idx2) =>
-						idx2 % 2 === 0 ? checkTeacherApi.getAll(p) : checkRoomApi.getAll(p)
-					);
-				})
-				.flat(1);
+			// promises = [ {checkTeacher promise} ]
+			const promises = paramsArr.map((param) => checkTeacherApi.getAll(param));
 			await Promise.all(promises)
 				.then((res) => {
-					//res = [ {data teacher}, {data room} ]
-					//newRes = [ [{data teacher}, {data room}] ]
-					const newRes = [];
-					for (let i = 0, len = res.length; i < len; i += 2) {
-						newRes.push([res[i], res[i + 1]]);
-					}
-					// newOptionForSchedule = [ {optionTeacherList:[], optionRoomList:[]} ]
-					const newOptionForSchedule = newRes.map((r, idx) => {
-						const teacherList = r[0];
-						const roomList = r[1];
-						const {RoomID, RoomName, TeacherID, TeacherName} = arrSchedule[idx];
+					// res = [ {data teacher schedule 1} ]
+					// newOptionForSchedule = [ {optionTeacherList:[]} ]
+					const newOptionForSchedule = res.map((teacherRes, idx) => {
+						const {TeacherID, TeacherName} = arrSchedule[idx];
 						const rs = {
 							optionTeacherList: [
 								{title: '---Chọn giáo viên---', value: 0},
 								{title: TeacherName, value: TeacherID},
 							],
-							optionRoomList: [
-								{title: '---Chọn phòng---', value: 0},
-								{title: RoomName, value: RoomID},
-							],
 						};
 						//
-						if (teacherList.status === 200) {
+						if (teacherRes.status === 200) {
 							const newOptionTeacherList = [
 								...rs.optionTeacherList,
-								...fmSelectArr(teacherList.data.data, 'name', 'id', ['name']),
+								...fmSelectArr(teacherRes.data.data, 'name', 'id', ['name']),
 							];
 							const clearDuplicate =
 								clearOptionsDuplicate(newOptionTeacherList);
 							rs.optionTeacherList = clearDuplicate;
 						}
-						if (TeacherID === 0 && teacherList.status === 204) {
+						if (TeacherID === 0 && teacherRes.status === 204) {
 							rs.optionTeacherList = [
 								{title: '---Chọn giáo viên---', value: 0},
 							];
 						}
-						//
-						if (roomList.status === 200) {
-							const newOptionRoomList = [
-								...rs.optionRoomList,
-								...fmSelectArr(roomList.data.data, 'name', 'id', ['name']),
-							];
-							const clearDuplicate = clearOptionsDuplicate(newOptionRoomList);
-							rs.optionRoomList = clearDuplicate;
-						}
-						if (RoomID === 0 && roomList.status === 204) {
-							rs.optionRoomList = [{title: '---Chọn phòng---', value: 0}];
-						}
-						//
 						return rs;
 					});
 					setOptionListForADay((prevState) => ({
@@ -277,17 +231,15 @@ const EditCourse = (props) => {
 		return rs;
 	};
 	const getNewValueForSchedule = (key, vl, pos) => {
-		const {optionRoomList, optionTeacherList} = optionListForADay.list[pos];
+		const {optionTeacherList} = optionListForADay.list[pos];
 		switch (key) {
 			case 'CaID':
 				const StudyTimeName = optionListForADay.optionStudyTimeList.find(
 					(o) => o.value === vl
 				)?.title;
 				return {
-					RoomID: 0,
 					TeacherID: 0,
 					TeacherName: 'Giáo viên trống',
-					RoomName: 'Phòng trống',
 					StudyTimeName,
 					StudyTimeID: vl,
 				};
@@ -297,13 +249,6 @@ const EditCourse = (props) => {
 				)?.title;
 				return {
 					TeacherName: vl ? TeacherName : 'Giáo viên trống',
-					[key]: vl,
-				};
-				break;
-			case 'RoomID':
-				const RoomName = optionRoomList.find((o) => o.value === vl)?.title;
-				return {
-					RoomName: vl ? RoomName : 'Phòng trống',
 					[key]: vl,
 				};
 				break;
@@ -331,7 +276,7 @@ const EditCourse = (props) => {
 	};
 	const changeValueSchedule = (
 		uid: number,
-		key: 'CaID' | 'TeacherID' | 'RoomID',
+		key: 'CaID' | 'TeacherID',
 		vl: number | string,
 		pos: number
 	) => {
@@ -348,18 +293,6 @@ const EditCourse = (props) => {
 				showNoti('danger', 'Dữ liệu không phù hợp');
 			} else {
 				onDebounceFetchInfoAvailableSchedule(scheduleList);
-			}
-		}
-		if (key === 'RoomID') {
-			const scheduleList = newUnavailableScheduleList.filter(
-				(s) => s.Date === date
-			);
-			if (!scheduleList.some((s) => s.RoomID === 0)) {
-				onDebounceFetchInfoAvailableSchedule(scheduleList);
-				setDataModalCalendar({
-					...dataModalCalendar,
-					scheduleList,
-				});
 			}
 		}
 		setScheduleList((prevState) => ({
@@ -489,10 +422,9 @@ const EditCourse = (props) => {
 					(moment(s.Date).format('YYYY/MM/DD') !==
 						moment(s2.StartTime).format('YYYY/MM/DD') ||
 						s.StudyTimeID !== s2.StudyTimeID ||
-						s.RoomID !== s2.RoomID ||
 						s.TeacherID !== s2.TeacherID)
 				) {
-					// Date, StudyTimeID, RoomID, TeacherID
+					// Date, StudyTimeID, TeacherID
 					rs.push(s);
 				}
 			}
@@ -508,8 +440,6 @@ const EditCourse = (props) => {
 				dayOffWeek: string;
 				StudyTimeID: number;
 				studyTimeName: string;
-				RoomID: number;
-				roomName: string;
 				TeacherID: number;
 				teacherName: string;
 				isValid: boolean;
@@ -525,8 +455,6 @@ const EditCourse = (props) => {
 				ID,
 				Date,
 				StudyTimeName,
-				RoomID,
-				RoomName,
 				TeacherID,
 				TeacherName,
 				StudyTimeID,
@@ -545,7 +473,7 @@ const EditCourse = (props) => {
 				'Thứ 7',
 			];
 			const dayOffWeek = dayArr[moment(s.Date).day()];
-			let isValid = !s.RoomID || !s.TeacherID;
+			let isValid = !s.TeacherID;
 			for (let i2 = 0; i2 < unavailable.length; i2++) {
 				const s2 = unavailable[i2];
 				if (i !== i2 && s.ID !== s2.ID && s.Date === s2.Date) {
@@ -567,8 +495,6 @@ const EditCourse = (props) => {
 					optionListForADay.optionStudyTimeList.find(
 						(s) => s.value === StudyTimeID
 					).title,
-				RoomID,
-				roomName: RoomName,
 				TeacherID,
 				teacherName: TeacherName,
 				isValid,
@@ -581,7 +507,6 @@ const EditCourse = (props) => {
 				SubjectID,
 				Date,
 				StudyTimeID,
-				RoomID,
 				TeacherID,
 			});
 		}
@@ -656,10 +581,8 @@ const EditCourse = (props) => {
 				const studyTimesFm = fmSelectArr(res.data.studyTimes, 'name', 'id', [
 					'select',
 				]);
-				const roomsFm = fmSelectArr(res.data.rooms, 'name', 'id', ['select']);
 
 				setOptionListForGetAvailableSchedule({
-					rooms: roomsFm,
 					studyTimes: studyTimesFm,
 				});
 
@@ -729,19 +652,16 @@ const EditCourse = (props) => {
 			console.log('fetchStudyTime', error.message);
 		}
 	};
-	const fetchAvailableSchedule = async (data: {
-		RoomID: number[];
-		StudyTimeID: number[];
-	}) => {
+	const fetchAvailableSchedule = async (data: {StudyTimeID: number[]}) => {
 		setIsShowSaveBtnGroup(false);
 		setIsLoading({
 			type: 'FETCH_SCHEDULE',
 			status: true,
 		});
 		try {
-			const res = await courseDetailAvailableDayApi.getAll({
-				Room: data.RoomID.join(','),
+			const res = await courseOnlineDetailAvailableDayApi.getAll({
 				StudyTime: data.StudyTimeID.join(','),
+				Room: 0,
 				CourseID: courseID,
 			});
 			if (res.status === 200) {
@@ -788,8 +708,6 @@ const EditCourse = (props) => {
 					CourseName: '',
 					BranchID: scheduleList.unavailable[0].BranchID,
 					BranchName: '',
-					RoomID: 0,
-					RoomName: 'Trống',
 					StudyTimeName: 'Trống',
 					StudyTimeID: 0,
 					Date: moment().format('YYYY/MM/DD'),
@@ -839,7 +757,7 @@ const EditCourse = (props) => {
 						extra={
 							<>
 								<div className="btn-page-course">
-									<AvailableScheduleForm
+									<AvailableScheduleOnlineForm
 										isLoading={isLoading}
 										handleGetAvailableSchedule={fetchAvailableSchedule}
 										optionListForGetAvailableSchedule={
@@ -853,7 +771,7 @@ const EditCourse = (props) => {
 												optionSubjectList={optionSubjectList}
 												handleOnCreateSchedule={onCreateSchedule}
 											/>
-											<SaveCreateCourse
+											<SaveCreateCourseOnline
 												isEdit={true}
 												isLoading={isLoading}
 												scheduleShow={scheduleShow}
@@ -886,7 +804,7 @@ const EditCourse = (props) => {
 								)}
 							>
 								{dataModalCalendar.scheduleList.map((s, idx) => (
-									<ScheduleItem
+									<ScheduleOnlineItem
 										key={idx}
 										isUpdate={true}
 										scheduleObj={s}
@@ -895,7 +813,9 @@ const EditCourse = (props) => {
 											changeValueSchedule(uid, key, vl, idx)
 										}
 										handleChangeStatusSchedule={onToggleSchedule}
-										optionRoomAndTeacherForADay={optionListForADay.list[idx]}
+										optionTeacherList={
+											optionListForADay.list[idx]?.optionTeacherList
+										}
 										optionStudyTime={optionListForADay.optionStudyTimeList}
 									/>
 								))}
@@ -922,4 +842,4 @@ const EditCourse = (props) => {
 	);
 };
 
-export default EditCourse;
+export default EditCourseOnline;

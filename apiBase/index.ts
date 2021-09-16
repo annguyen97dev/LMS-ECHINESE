@@ -75,3 +75,4 @@ export {packageStudentApi} from './package/package-student';
 export {backgroundNewsFeedApi} from './newsfeed/background-newsfeed';
 export {studyDayOnlineApi} from './course-online/study-day';
 export {lessonOnlineApi} from './course-online/lesson';
+export {courseOnlineDetailAvailableDayApi} from './course-online-detail/available-day';

@@ -68,7 +68,7 @@ function CreateNewScheduleForm(props) {
 			</button>
 			<Modal
 				width="350px"
-				title="Update Staff"
+				title="Tạo buổi học"
 				visible={isModalVisible}
 				onOk={handleOk}
 				onCancel={handleCancel}
@@ -82,17 +82,17 @@ function CreateNewScheduleForm(props) {
 						<SelectField
 							form={form}
 							name="SubjectID"
-							label="Subject name"
+							label="Môn học"
 							optionList={optionSubjectList}
 							isLoading={isLoading.type === 'FETCH_SUBJECT' && isLoading.status}
 						/>
-						<InputTextField form={form} name="StudyDay" label="Study day" />
+						<InputTextField form={form} name="StudyDay" label="Số buổi học" />
 						<button
 							type="submit"
 							className="btn btn-primary w-100 mt-3"
 							disabled={isLoading.type == 'CREATE_SCHEDULE' && isLoading.status}
 						>
-							Create
+							Khởi tạo
 							{isLoading.type == 'CREATE_SCHEDULE' && isLoading.status && (
 								<Spin className="loading-base" />
 							)}
