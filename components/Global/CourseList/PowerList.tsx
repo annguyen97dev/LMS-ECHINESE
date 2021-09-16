@@ -67,6 +67,7 @@ const PowerList = (props) => {
 					})}
 				>
 					<List.Item.Meta
+						// className="course-list-item"
 						avatar={checkStatus(Status, StatusName)}
 						title={
 							<Link
@@ -82,34 +83,33 @@ const PowerList = (props) => {
 							<div className="content-body">
 								<ul className="list-ver">
 									<li>
-										<span>Academic: </span>{' '}
-										<span>{AcademicName || 'Trống'}</span>
+										<span>Học vụ: </span> <span>{AcademicName || 'Trống'}</span>
 									</li>
 									<li>
-										<span>Leader: </span>{' '}
+										<span>Quản lý: </span>{' '}
 										<span>{TeacherLeaderName || 'Trống'}</span>
 									</li>
 									<li>
-										<span>Teachers: </span> <span>{TeacherName}</span>
+										<span>Giáo viên: </span> <span>{TeacherName}</span>
 									</li>
 									<li>
-										<span>Price: </span>{' '}
+										<span>Học phí: </span>{' '}
 										<span>{numberWithCommas(Price)} VNĐ</span>
 									</li>
 								</ul>
 								<ul className="list-hor">
 									<li>
-										Number of school days: <span>{TotalDays}</span>
+										Số buổi học: <span>{TotalDays}</span>
 									</li>
 									<li>
-										Opening:{' '}
+										Khai giảng:{' '}
 										<span>{moment(StartDay).format('DD/MM/YYYY')}</span>
 									</li>
 									<li>
-										End: <span>{moment(EndDay).format('DD/MM/YYYY')}</span>
+										Bế giảng: <span>{moment(EndDay).format('DD/MM/YYYY')}</span>
 									</li>
 									<li>
-										Student: <span>{TotalStudents}</span>
+										Số học viên: <span>{TotalStudents}</span>
 									</li>
 								</ul>
 							</div>
