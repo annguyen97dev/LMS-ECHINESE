@@ -1,16 +1,205 @@
 import React, { useEffect, useState } from "react";
-import { Skeleton, Modal, Popconfirm } from "antd";
-import { Info, Bookmark, Edit, Trash2 } from "react-feather";
-import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
-
+import { Skeleton, Modal, Popconfirm, Form, Input, Tooltip, Spin } from "antd";
+import { Edit, Trash2 } from "react-feather";
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
   htmlparser2,
 } from "react-html-parser";
-import { exerciseApi, exerciseGroupApi } from "~/apiBase";
+import { exerciseGroupApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { data } from "~/lib/dashboard/data";
+import { CloseOutlined } from "@ant-design/icons";
+import { Plus } from "react-feather";
+import { data } from "~/lib/customer-student/data";
+
+let AnsID = 0;
+
+const EditQuestion = (props) => {
+  const { dataGroup, exerciseID, onEdit } = props;
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [dataForm, setDataForm] = useState(dataGroup);
+  const [indexExercise, setIndexExercise] = useState(null);
+  const [reloadContent, setReloadContent] = useState(false);
+  const { showNoti } = useWrap();
+  const [isLoading, setIsLoading] = useState(false);
+
+  console.log("Data form: ", dataForm);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    let newData = JSON.parse(JSON.stringify(dataForm));
+    newData.ExerciseAnswer.forEach((item) => {
+      if (item.isAdd) {
+        delete item.ID;
+      }
+    });
+
+    dataGroup.ExerciseList[indexExercise] = newData;
+
+    try {
+      let res = await exerciseGroupApi.update(dataGroup);
+      if (res.status == 200) {
+        setReloadContent(true);
+      }
+    } catch (error) {}
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  // ====== HANDLE ADD ANSWER ======
+  const handleAddAnswer = (questionID: number) => {
+    AnsID++;
+    dataForm.ExerciseAnswer.push({
+      ID: AnsID,
+      AnswerContent: "",
+      isTrue: true,
+      Enable: true,
+      isAdd: true,
+    });
+
+    setDataForm({ ...dataForm });
+  };
+
+  // ====== HANDLE ON CHANGE ======
+  const onChange_text = (e: any, AnswerID: number, QuestionID) => {
+    let text = e.target.value;
+    let indexAnswer = dataForm.ExerciseAnswer.findIndex(
+      (item) => item.ID == AnswerID
+    );
+    dataForm.ExerciseAnswer[indexAnswer].AnswerContent = text;
+    setDataForm({ ...dataForm });
+  };
+
+  const deleteAnswerItem = (AnswerID: number, QuestionID) => {
+    let indexAnswer = dataForm.ExerciseAnswer.findIndex(
+      (item) => item.ID == AnswerID
+    );
+    if (dataForm.ExerciseAnswer[indexAnswer].isAdd) {
+      dataForm.ExerciseAnswer.splice(indexAnswer, 1);
+    } else {
+      dataForm.ExerciseAnswer[indexAnswer].Enable = false;
+    }
+
+    setDataForm({ ...dataForm });
+  };
+
+  useEffect(() => {
+    if (reloadContent) {
+      (async function loadData() {
+        try {
+          let res = await exerciseGroupApi.getWithID(dataGroup.ID);
+
+          if (res.status == 200) {
+            showNoti("success", `Thành công`);
+            console.log("DATA DETAIL: ", res.data.data);
+            onEdit && onEdit(res.data.data);
+          }
+
+          res.status == 204 && showNoti("danger", "Không thành công");
+        } catch (error) {
+          showNoti("danger", error);
+        } finally {
+          setReloadContent(false);
+          setIsModalVisible(false);
+          setIsLoading(false);
+          setDataForm(null);
+        }
+      })();
+    }
+  }, [reloadContent]);
+
+  useEffect(() => {
+    if (isModalVisible) {
+      // Make new data
+      let index = dataGroup.ExerciseList.findIndex(
+        (item) => item.ID == exerciseID
+      );
+
+      let data = dataGroup.ExerciseList[index];
+      setDataForm(data);
+      setIndexExercise(index);
+
+      // Find max id in arr
+      let newArr = [];
+      data.ExerciseAnswer.forEach((item) => {
+        newArr.push(parseInt(item.ID));
+      });
+      AnsID = Math.max(...newArr);
+      console.log("Ans ID: ", AnsID);
+    }
+  }, [isModalVisible]);
+
+  return (
+    <>
+      <Tooltip title="Thêm/sửa đáp án">
+        <button className="btn btn-icon edit" onClick={showModal}>
+          <Edit />
+        </button>
+      </Tooltip>
+      <Modal
+        footer={
+          <div className="text-center">
+            <button className="btn btn-light mr-2" onClick={handleCancel}>
+              Hủy tác vụ
+            </button>
+            <button className="btn btn-primary" onClick={() => handleSubmit()}>
+              Lưu
+              {isLoading && <Spin className="loading-base" />}
+            </button>
+          </div>
+        }
+        title="Sửa/thêm đáp án"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+      >
+        {dataForm?.ExerciseAnswer?.map(
+          (itemAns, index) =>
+            itemAns.Enable && (
+              <>
+                <div
+                  className="w-100 d-flex align-items-center mt-2"
+                  key={index}
+                >
+                  <Form.Item className="mb-0" style={{ width: "80%" }}>
+                    <Input
+                      value={itemAns.AnswerContent}
+                      className="style-input"
+                      onChange={(e) =>
+                        onChange_text(e, itemAns.ID, dataForm.inputID)
+                      }
+                    ></Input>
+                  </Form.Item>
+                  <button
+                    className="delete-ans"
+                    onClick={() =>
+                      deleteAnswerItem(itemAns.ID, dataForm.inputID)
+                    }
+                  >
+                    <CloseOutlined />
+                  </button>
+                </div>
+              </>
+            )
+        )}
+        <Tooltip title="Thêm đáp án">
+          <button
+            className="btn-add-answer mt-2"
+            onClick={() => handleAddAnswer(dataForm.inputID)}
+          >
+            <Plus />
+          </button>
+        </Tooltip>
+      </Modal>
+    </>
+  );
+};
 
 const QuestionTyping = (props: any) => {
   const {
@@ -44,14 +233,7 @@ const QuestionTyping = (props: any) => {
 
   // ON EDIT
   const onEdit = (dataEdit) => {
-    if (!isGroup.status) {
-      onEditData(dataEdit);
-    } else {
-      let index = dataListQuestion.findIndex((item) => item.ID == dataEdit.ID);
-      dataListQuestion.splice(index, 1, dataEdit);
-
-      setDataListQuestion([...dataListQuestion]);
-    }
+    onEditData(dataEdit);
   };
 
   const deleteQuestionItem = (quesID) => {
@@ -199,7 +381,6 @@ const QuestionTyping = (props: any) => {
 
               <Popconfirm
                 title="Bạn có chắc muốn xóa?"
-                visible={dataListQuestion.ID == visible.id && visible.status}
                 onConfirm={() => handleOk(dataListQuestion)}
                 okButtonProps={{ loading: confirmLoading }}
                 onCancel={() => handleCancel(dataListQuestion.ID)}
@@ -222,6 +403,7 @@ const QuestionTyping = (props: any) => {
             <tr>
               <th>Câu hỏi</th>
               <th>Đáp án</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -229,7 +411,7 @@ const QuestionTyping = (props: any) => {
               (item, index) =>
                 item.Enable && (
                   <tr key={index}>
-                    <td>
+                    <td style={{ width: "20%" }}>
                       {returnIndexQuestion(item)}
                       {/* {`Câu (${index + 1})`} */}
                     </td>
@@ -244,32 +426,21 @@ const QuestionTyping = (props: any) => {
                           )
                       )}
                     </td>
+                    <td style={{ width: "10%" }}>
+                      {
+                        <EditQuestion
+                          dataGroup={dataListQuestion}
+                          exerciseID={item.ID}
+                          onEdit={(dataEdit) => onEdit(dataEdit)}
+                        />
+                      }
+                    </td>
                   </tr>
                 )
             )}
           </tbody>
         </table>
       )}
-
-      {/* {dataListQuestion?.ExerciseList?.map((item, index) => (
-        <div className="question-item" key={index}>
-          <div className="box-detail">
-            <div className="box-title">
-              <span className="title-ques">Câu hỏi {index + 1}</span>
-            </div>
-            <div className="box-answer">
-              <div className="question-single question-wrap w-100">
-                {item.ExerciseAnswer?.map((ans, i) => (
-                  <div>
-                    <span className="tick">- </span>
-                    <span className="text">{ans.AnswerContent}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      ))} */}
 
       {isGroup?.status && loadingInGroup ? (
         <div>

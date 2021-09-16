@@ -11,7 +11,7 @@ import ReactHtmlParser, {
 import { exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 
-const QuestionSingle = (props: any) => {
+const QuestionMap = (props: any) => {
   const {
     listQuestion,
     loadingQuestion,
@@ -170,69 +170,69 @@ const QuestionSingle = (props: any) => {
 
   return (
     <>
-      {dataListQuestion?.length == 0
-        ? !isGroup.status && (
-            <p className="text-center">
-              <b>Danh sách còn trống</b>
-            </p>
-          )
-        : dataListQuestion?.map((item, index) => (
-            <div
-              className={`question-item ${item.ID == activeID ? "active" : ""}`}
-              key={index}
-              onMouseEnter={() => onHover(item.ID)}
-            >
-              <div className="box-detail">
-                <div className="box-title">
-                  <span className="title-ques">Câu hỏi {index + 1}</span>
-                  {returnAudio(item)}
-                  <div className="title-text">
-                    {ReactHtmlParser(item.Content)}
-                  </div>
-                </div>
-                <div className="box-answer">
-                  <div className="question-single question-wrap w-100">
-                    {item.ExerciseAnswer?.map((ans, i) => (
-                      <Radio
-                        checked={ans.isTrue}
-                        key={i}
-                        className="d-block"
-                        value={ans.ID}
-                        onChange={onChange}
-                        disabled={ans.isTrue ? false : true}
-                      >
-                        <span className="tick">{listAlphabet[i]}</span>
-                        <span className="text">{ans.AnswerContent}</span>
-                      </Radio>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="box-action">
-                <CreateQuestionForm
-                  questionData={item}
-                  onFetchData={onFetchData}
-                  onEditData={(dataEdit: any) => onEdit(dataEdit)}
-                  isGroup={{ status: false, id: null }}
-                  getActiveID={(ID: any) => setActiveID(ID)}
-                />
-                <Popconfirm
-                  title="Bạn có chắc muốn xóa?"
-                  // visible={item.ID == visible.id && visible.status}
-                  onConfirm={() => handleOk(item)}
-                  okButtonProps={{ loading: confirmLoading }}
-                  onCancel={() => handleCancel(item.ID)}
-                >
-                  <button
-                    className="btn btn-icon delete"
-                    onClick={() => deleteQuestionItem(item.ID)}
+      {dataListQuestion?.length == 0 ? (
+        !isGroup.status && (
+          <p className="text-center">
+            <b>Danh sách còn trống</b>
+          </p>
+        )
+      ) : (
+        <table className="table-question mt-3" style={{ width: "900px" }}>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Câu hỏi</th>
+              <th>Đáp án</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataListQuestion?.map((item, index) => (
+              <tr key={index}>
+                <td className="text-center" style={{ width: "5%" }}>
+                  {index + "/"}
+                </td>
+                <td style={{ width: "70%" }}>
+                  {ReactHtmlParser(item.Content)}
+                </td>
+                <td>
+                  {item.ExerciseAnswer?.map(
+                    (ans, i) =>
+                      ans.Enable && (
+                        <div key={i}>
+                          <span className="tick">- </span>
+                          <span className="text">{ans.AnswerContent}</span>
+                        </div>
+                      )
+                  )}
+                </td>
+                <td className="text-center">
+                  <CreateQuestionForm
+                    questionData={item}
+                    onFetchData={onFetchData}
+                    onEditData={(dataEdit: any) => onEdit(dataEdit)}
+                    isGroup={{ status: false, id: null }}
+                    getActiveID={(ID: any) => setActiveID(ID)}
+                  />
+                  <Popconfirm
+                    title="Bạn có chắc muốn xóa?"
+                    onConfirm={() => handleOk(item)}
+                    okButtonProps={{ loading: confirmLoading }}
+                    onCancel={() => handleCancel(item.ID)}
                   >
-                    <Trash2 />
-                  </button>
-                </Popconfirm>
-              </div>
-            </div>
-          ))}
+                    <button
+                      className="btn btn-icon delete"
+                      onClick={() => deleteQuestionItem(item.ID)}
+                    >
+                      <Trash2 />
+                    </button>
+                  </Popconfirm>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {isGroup?.status && loadingInGroup ? (
         <div>
@@ -255,4 +255,4 @@ const QuestionSingle = (props: any) => {
   );
 };
 
-export default QuestionSingle;
+export default QuestionMap;

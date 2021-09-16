@@ -1,12 +1,45 @@
-import React, { useState } from "react";
-import { Drawer, Form, Select, Input, Radio } from "antd";
+import React, { useEffect, useState } from "react";
+import { Drawer, Form, Select, Spin } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
+import { examTopicApi, programApi, subjectApi } from "~/apiBase";
+import { useWrap } from "~/context/wrap";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import InputTextField from "~/components/FormControl/InputTextField";
+import DateField from "~/components/FormControl/DateField";
+import SelectField from "~/components/FormControl/SelectField";
+import TextAreaField from "~/components/FormControl/TextAreaField";
+import { string } from "yup/lib/locale";
+
+let returnSchema = {};
+let schema = null;
+
+// type defaultValuesInit = {
+//   Name: string;
+//   Code: string; //mã đề thi
+//   Description: string;
+//   Type: number; //1-Trắc nghiệm 2-Tự luận
+//   SubjectID: number;
+//   Time: number; //Thời gian làm bài
+// };
+
+type dataOject = {
+  title: string;
+  value: number;
+};
 
 const CreateExamForm = (props) => {
+  const { onFetchData, dataItem } = props;
+  const { showNoti } = useWrap();
   const [visible, setVisible] = useState(false);
   const [value, setValue] = React.useState(1);
   const [openAns, setOpenAns] = useState(false);
+  const [dataProgram, setDataProgram] = useState<dataOject[]>([]);
+  const [dataSubject, setDataSubject] = useState<dataOject[]>([]);
+  const [loadingSelect, setLoadingSelect] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const showDrawer = () => {
     setVisible(true);
@@ -17,28 +50,131 @@ const CreateExamForm = (props) => {
 
   const { Option } = Select;
 
-  function handleChange_select(value) {
-    console.log(`selected ${value}`);
-    !openAns && setOpenAns(true);
-  }
+  // GET DATA PROGRAM
+  const getDataProgram = async () => {
+    try {
+      let res = await programApi.getAll({ pageIndex: 1, pageSize: 999999 });
+      if (res.status == 200) {
+        let newData = res.data.data.map((item) => ({
+          title: item.ProgramName,
+          value: item.ID,
+        }));
+        setDataProgram(newData);
+      }
 
-  function onChange(date, dateString) {
-    console.log(date, dateString);
-  }
-
-  const onChange_Radio = (e) => {
-    console.log("radio checked", e.target.value);
-    setValue(e.target.value);
+      res.status == 204 && showNoti("danger", "Chương trình không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+    }
   };
+
+  // HANDLE CHANGE - SELECT PROGRAM
+  const handleChange_selectProgram = (value) => {
+    setDataSubject([]);
+    getDataSubject(value);
+    form.setValue("SubjectID", null);
+  };
+
+  // GET DATA SUBJECT
+  const getDataSubject = async (id) => {
+    setLoadingSelect(true);
+    try {
+      let res = await subjectApi.getAll({
+        pageIndex: 1,
+        pageSize: 999999,
+        ProgramID: id,
+      });
+      if (res.status == 200) {
+        let newData = res.data.data.map((item) => ({
+          title: item.SubjectName,
+          value: item.ID,
+        }));
+        setDataSubject(newData);
+      }
+
+      res.status == 204 && showNoti("danger", "Môn học không có dữ liệu");
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setLoadingSelect(false);
+    }
+  };
+
+  // -----  HANDLE ALL IN FORM -------------
+  const defaultValuesInit = {
+    Name: null,
+    Code: null, //mã đề thi
+    Description: null,
+    Type: null, //1-Trắc nghiệm 2-Tự luận
+    SubjectID: null,
+    Time: null, //Thời gian làm bài
+  };
+
+  (function returnSchemaFunc() {
+    returnSchema = { ...defaultValuesInit };
+    Object.keys(returnSchema).forEach(function (key) {
+      switch (key) {
+        default:
+          // returnSchema[key] = yup.mixed().required("Bạn không được để trống");
+          return;
+          break;
+      }
+    });
+
+    schema = yup.object().shape(returnSchema);
+  })();
+
+  const form = useForm({
+    defaultValues: defaultValuesInit,
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (data: any) => {
+    console.log("Data submit: ", data);
+    setIsLoading(true);
+    let res = null;
+    try {
+      if (dataItem?.ID) {
+        res = await examTopicApi.update(data);
+      } else {
+        res = await examTopicApi.add(data);
+      }
+
+      if (res.status == 200) {
+        showNoti("success", "Tạo đề thi thành công!");
+        setVisible(false);
+        onFetchData();
+        form.reset(defaultValuesInit);
+      }
+    } catch (error) {
+      showNoti("danger", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (visible) {
+      getDataProgram();
+      if (dataItem) {
+        getDataSubject(dataItem.ProgramID);
+        form.reset(dataItem);
+      }
+    }
+  }, [visible]);
 
   return (
     <>
-      <button
-        className={`btn  ${props.isEdit ? "btn-icon" : "btn-success"}`}
-        onClick={showDrawer}
-      >
-        {props.isEdit ? <Edit /> : "Tạo đề thi"}
-      </button>
+      {dataItem?.ID ? (
+        <button className="btn btn-icon edit" onClick={showDrawer}>
+          <Edit />
+        </button>
+      ) : (
+        <button className="btn btn-success" onClick={showDrawer}>
+          Tạo đề thi
+        </button>
+      )}
 
       <Drawer
         title={props.isEdit ? "Form sửa đề thi" : "Form tạo đề thi"}
@@ -48,138 +184,72 @@ const CreateExamForm = (props) => {
         visible={visible}
         width={700}
       >
-        <Form layout="vertical">
+        <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
           <div className="row">
-            <div className="col-md-6 co-12">
-              <Form.Item label="Nhập code đề">
-                <Input className="style-input" />
-              </Form.Item>
-            </div>
-            <div className="col-md-6 co-12">
-              <Form.Item label="Nhập tên đề">
-                <Input className="style-input" />
-              </Form.Item>
+            <div className="col-md-6 col-12">
+              <InputTextField form={form} name="Name" label="Tên đề thi" />
             </div>
             <div className="col-md-6 col-12">
-              <Form.Item label="Môn học">
-                <Select
-                  showSearch
-                  className="style-input"
-                  defaultValue="all"
-                  onChange={handleChange_select}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <Option value="jack">English</Option>
-                  <Option value="lucy">Toán</Option>
-                  <Option value="all">Ngữ Văn</Option>
-                </Select>
-              </Form.Item>
+              <InputTextField form={form} name="Code" label="Mã đề thi" />
             </div>
             <div className="col-md-6 col-12">
-              <Form.Item label="Loại môn học">
-                <Select
-                  showSearch
-                  className="style-input"
-                  defaultValue="all"
-                  onChange={handleChange_select}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <Option value="jack">Phát âm</Option>
-                  <Option value="lucy">Ngữ pháp</Option>
-                  <Option value="all">None</Option>
-                </Select>
-              </Form.Item>
+              <SelectField
+                disabled={dataItem?.ID && true}
+                form={form}
+                name="ProgramID"
+                label="Chương trình"
+                onChangeSelect={(value) => handleChange_selectProgram(value)}
+                optionList={dataProgram}
+              />
             </div>
-
             <div className="col-md-6 col-12">
-              <Form.Item label="Loại câu hỏi">
-                <Select
-                  showSearch
-                  className="style-input"
-                  defaultValue="all"
-                  onChange={handleChange_select}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <Option value="jack">Câu hỏi nhóm</Option>
-                  <Option value="lucy">Câu hỏi đơn</Option>
-                  <Option value="all">Trắc nhiệm</Option>
-                </Select>
-              </Form.Item>
+              <SelectField
+                disabled={dataItem?.ID && true}
+                form={form}
+                name="SubjectID"
+                label="Môn học"
+                isLoading={loadingSelect}
+                optionList={dataSubject}
+              />
             </div>
-
-            <div className="col-md-6 co-12">
-              <Form.Item label="Số câu hỏi">
-                <Input className="style-input" />
-              </Form.Item>
-            </div>
-
-            <div className="col-md-4 co-12">
-              <Form.Item label="Số câu hỏi dễ">
-                <Input className="style-input" type="number" />
-              </Form.Item>
-            </div>
-
-            <div className="col-md-4 co-12">
-              <Form.Item label="Số câu hỏi trung bình">
-                <Input className="style-input" type="number" />
-              </Form.Item>
-            </div>
-
-            <div className="col-md-4 co-12">
-              <Form.Item label="Số câu hỏi khó">
-                <Input className="style-input" type="number" />
-              </Form.Item>
-            </div>
-
             <div className="col-md-6 col-12">
-              <Form.Item label="Học kỳ">
-                <Select
-                  showSearch
-                  className="style-input"
-                  defaultValue="all"
-                  onChange={handleChange_select}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <Option value="jack">học kỳ I</Option>
-                  <Option value="lucy">học kỳ II</Option>
-                  <Option value="all">học kỳ III</Option>
-                </Select>
-              </Form.Item>
+              <InputTextField form={form} name="Time" label="Thời gian" />
             </div>
-
-            <div className="col-md-6 co-12">
-              <Form.Item label="Thời gian làm bài">
-                <Input className="style-input" type="number" />
-              </Form.Item>
+            <div className="col-md-6 col-12">
+              <SelectField
+                disabled={dataItem?.ID && true}
+                form={form}
+                name="Type"
+                label="Dạng đề thi"
+                optionList={[
+                  {
+                    value: 1,
+                    title: "Trắc nghiệm",
+                  },
+                  {
+                    value: 2,
+                    title: "Tự luận",
+                  },
+                ]}
+              />
             </div>
-
-            <div className="col-md-12">
-              <Form.Item className="mb-0 text-right">
-                <button
-                  className={`btn ${
-                    props.isEdit ? "btn-primary" : "btn-success"
-                  }`}
-                  style={{ marginRight: "10px" }}
-                >
-                  {props.isEdit ? "Sửa ngay" : "Tạo ngay"}
+            <div className="col-12">
+              <TextAreaField
+                name="Description"
+                label="Hướng dẫn làm bài"
+                form={form}
+              />
+            </div>
+            <div className="col-12">
+              <div className="text-center">
+                <button className="btn btn-light mr-2" onClick={onClose}>
+                  Đóng
                 </button>
-              </Form.Item>
+                <button className="btn btn-primary" type="submit">
+                  Lưu
+                  {isLoading && <Spin className="loading-base" />}
+                </button>
+              </div>
             </div>
           </div>
         </Form>
