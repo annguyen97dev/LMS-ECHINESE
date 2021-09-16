@@ -18,12 +18,12 @@ import TitlePage from '~/components/TitlePage';
 import {useDebounce} from '~/context/useDebounce';
 import {useWrap} from '~/context/wrap';
 import {fmArrayToObjectWithSpecialKey, fmSelectArr} from '~/utils/functions';
-import CreateCourseOnlineCalendar from './CalendarOnline/CreateCourseOnlineCalendar';
+import CreateCourseCalendar from '../CreateCourse/Calendar/CreateCourseCalendar';
+import Schedule from '../CreateCourse/Schedule/Schedule';
+import ScheduleList from '../CreateCourse/Schedule/ScheduleList';
 import CreateCourseOnlineForm from './CreateCourseOnlineForm/CreateCourseOnlineForm';
 import SaveCreateCourseOnline from './SaveCreateCourseOnline';
-import Schedule from './ScheduleOnline/Schedule';
-import ScheduleItem from './ScheduleOnline/ScheduleItem';
-import ScheduleList from './ScheduleOnline/ScheduleList';
+import ScheduleOnlineItem from './ScheduleOnline/ScheduleOnlineItem';
 
 // ------------ MAIN COMPONENT ------------------
 type IOptionListForForm = {
@@ -486,7 +486,6 @@ const CreateCourseOnline = () => {
 	// FETCH DATA FOR SELECT SCHEDULE
 	const fetchInfoAvailableSchedule = async (arrSchedule: ISchedule[]) => {
 		const {BranchID} = stoneDataToSave.current;
-		// SPLIT SCHEDULE TO 2 OBJECT TO CALL 2 API
 		// paramsArr = [ {params teacher of schedule} ]
 		const paramsArr = arrSchedule.map(({CaID, date, Tiet}, idx) => {
 			const dateFm = moment(date).format('YYYY/MM/DD');
@@ -913,7 +912,7 @@ const CreateCourseOnline = () => {
 							</div>
 						}
 					>
-						<CreateCourseOnlineCalendar
+						<CreateCourseCalendar
 							eventList={calendarDateFormat(calendarList)}
 							handleSelectDate={onSelectDate}
 							dateSelected={dateSelected}
@@ -929,7 +928,7 @@ const CreateCourseOnline = () => {
 								)}
 							>
 								{dataModalCalendar.scheduleList.map((s, idx) => (
-									<ScheduleItem
+									<ScheduleOnlineItem
 										key={idx}
 										isUpdate={true}
 										scheduleObj={s}
@@ -945,14 +944,14 @@ const CreateCourseOnline = () => {
 									/>
 								))}
 							</ScheduleList>
-						</CreateCourseOnlineCalendar>
+						</CreateCourseCalendar>
 					</Card>
 				</div>
 				<div className="col-md-4 col-12">
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
-								<ScheduleItem
+								<ScheduleOnlineItem
 									key={idx}
 									scheduleObj={s}
 									handleChangeStatusSchedule={onToggleSchedule}

@@ -24,7 +24,7 @@ const {Panel} = Collapse;
 //     "CaID": 5,
 //     "CaName": "Ca: 20:00 - 21:00",
 // }
-const ScheduleItem = (props) => {
+const ScheduleOnlineItem = (props) => {
 	const {
 		handleChangeStatusSchedule,
 		handleChangeValueSchedule,
@@ -149,7 +149,7 @@ const ScheduleItem = (props) => {
 		</Panel>
 	);
 };
-ScheduleItem.propTypes = {
+ScheduleOnlineItem.propTypes = {
 	handleChangeValueSchedule: PropTypes.func,
 	handleChangeStatusSchedule: PropTypes.func,
 	//
@@ -178,7 +178,7 @@ ScheduleItem.propTypes = {
 	optionTeacherList: optionCommonPropTypes,
 	optionStudyTime: optionCommonPropTypes,
 };
-ScheduleItem.defaultProps = {
+ScheduleOnlineItem.defaultProps = {
 	handleChangeValueSchedule: null,
 	handleChangeStatusSchedule: null,
 	//
@@ -190,4 +190,4 @@ ScheduleItem.defaultProps = {
 	optionTeacherList: [],
 	optionStudyTime: [],
 };
-export default ScheduleItem;
+export default ScheduleOnlineItem;
