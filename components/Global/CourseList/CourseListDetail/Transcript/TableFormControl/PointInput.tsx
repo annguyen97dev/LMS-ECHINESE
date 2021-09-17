@@ -18,16 +18,23 @@ PointInput.propTypes = {
 		Note: PropTypes.string,
 		Point: PropTypes.number,
 	}),
+	disabled: PropTypes.bool,
 };
 PointInput.defaultProps = {
 	handleCreatePointColumn: null,
 	handleUpdatePointColumn: null,
 	isUpdate: false,
 	item: {},
+	disabled: false,
 };
 function PointInput(props) {
-	const {handleCreatePointColumn, handleUpdatePointColumn, isUpdate, item} =
-		props;
+	const {
+		handleCreatePointColumn,
+		handleUpdatePointColumn,
+		isUpdate,
+		item,
+		disabled,
+	} = props;
 	const debounceOnChange = useRef(null);
 	const timeMs = 1000;
 	const schema = yup.object().shape({
@@ -48,9 +55,8 @@ function PointInput(props) {
 	});
 
 	useEffect(() => {
-		form.setValue('Point', item.Point);
+		form.setValue('Point', Math.round(item.Point * 10) / 10 || 0);
 	}, [isUpdate]);
-
 	const transcriptSwitchFunc = ({Point}) => {
 		if (debounceOnChange.current) {
 			clearTimeout(debounceOnChange.current);
@@ -79,6 +85,7 @@ function PointInput(props) {
 					name="Point"
 					placeholder="Điểm"
 					allowClear={false}
+					disabled={disabled}
 				/>
 			</Form>
 		</>
