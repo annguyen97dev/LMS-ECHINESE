@@ -183,6 +183,17 @@ const CreateExamForm = (props) => {
         onClose={onClose}
         visible={visible}
         width={700}
+        footer={
+          <div className="text-center">
+            <button className="btn btn-light mr-2" onClick={onClose}>
+              Đóng
+            </button>
+            <button className="btn btn-primary" type="submit">
+              Lưu
+              {isLoading && <Spin className="loading-base" />}
+            </button>
+          </div>
+        }
       >
         <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
           <div className="row">
@@ -240,7 +251,7 @@ const CreateExamForm = (props) => {
                 form={form}
               />
             </div>
-            <div className="col-12">
+            {/* <div className="col-12">
               <div className="text-center">
                 <button className="btn btn-light mr-2" onClick={onClose}>
                   Đóng
@@ -250,7 +261,7 @@ const CreateExamForm = (props) => {
                   {isLoading && <Spin className="loading-base" />}
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </Form>
       </Drawer>

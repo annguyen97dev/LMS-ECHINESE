@@ -75,7 +75,7 @@ const DeleteExam = (props) => {
   );
 };
 
-const ExamCreate = (props) => {
+const ExamList = (props) => {
   const { showNoti } = useWrap();
   const [dataExam, setDataExam] = useState<IExamTopic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -312,7 +312,8 @@ const ExamCreate = (props) => {
                             <div className="set-btn">
                               <Link
                                 href={{
-                                  pathname: "/question-bank/exam-detail/[slug]",
+                                  pathname:
+                                    "/question-bank/exam-list/exam-detail/[slug]",
                                   query: { slug: item.ID },
                                 }}
                               >
@@ -402,5 +403,5 @@ const ExamCreate = (props) => {
     </div>
   );
 };
-ExamCreate.layout = LayoutBase;
-export default ExamCreate;
+ExamList.layout = LayoutBase;
+export default ExamList;
