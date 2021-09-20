@@ -28,7 +28,7 @@ const CreateQuestionForm = (props) => {
   } = props;
 
   // console.log("Is Group in create: ", isGroup);
-  console.log("question Data in create: ", questionData);
+  // console.log("question Data in create: ", questionData);
 
   const [visible, setVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
@@ -41,8 +41,6 @@ const CreateQuestionForm = (props) => {
   const showDrawer = () => {
     setVisible(true);
   };
-
-  console.log("CHANGE DATA: ", changeData);
 
   const onClose = (e) => {
     e.stopPropagation();
@@ -75,7 +73,7 @@ const CreateQuestionForm = (props) => {
   };
 
   const onSuccessSubmit = (data) => {
-    console.log("question submit in create: ", data);
+    // console.log("question submit in create: ", data);
 
     if (isSubmit) {
       setIsSubmit(false);

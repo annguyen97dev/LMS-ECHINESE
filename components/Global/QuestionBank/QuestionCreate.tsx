@@ -60,7 +60,8 @@ const listAlphabet = [
   "V",
 ];
 
-const QuestionCreate = () => {
+const QuestionCreate = (props) => {
+  const { dataExam } = props;
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState(false);
   const [dataProgram, setDataProgram] = useState<IProgram[]>(null);
@@ -81,7 +82,10 @@ const QuestionCreate = () => {
     id: null,
     status: null,
   });
-  const [valueSubject, setValueSubject] = useState("Chọn môn học");
+  const [valueSubject, setValueSubject] = useState(null);
+  const [valueProgram, setValueProgram] = useState(null);
+  const [valueType, setValueType] = useState(null);
+  const [valueLevel, setValueLevel] = useState(null);
   const [dataGroup, setDataGroup] = useState([]);
   const [dataExercise, setDataExercise] = useState();
 
@@ -94,6 +98,7 @@ const QuestionCreate = () => {
       case 1:
         return (
           <GroupWrap
+            dataExam={dataExam}
             isGroup={isGroup}
             listQuestion={dataGroup}
             onFetchData={onFetchData}
@@ -103,6 +108,7 @@ const QuestionCreate = () => {
             onAddData={(data) => onAddData(data)}
           >
             <QuestionSingle
+              dataExam={dataExam}
               listAlphabet={listAlphabet}
               isGroup={isGroup}
               loadingQuestion={loadingQuestion}
@@ -118,6 +124,7 @@ const QuestionCreate = () => {
       case 4:
         return (
           <GroupWrap
+            dataExam={dataExam}
             isGroup={isGroup}
             listQuestion={dataGroup}
             onFetchData={onFetchData}
@@ -127,6 +134,7 @@ const QuestionCreate = () => {
             onAddData={(data) => onAddData(data)}
           >
             <QuestionMultiple
+              dataExam={dataExam}
               listAlphabet={listAlphabet}
               isGroup={isGroup}
               loadingQuestion={loadingQuestion}
@@ -142,6 +150,7 @@ const QuestionCreate = () => {
       case 6:
         return (
           <QuestionWritting
+            dataExam={dataExam}
             listAlphabet={listAlphabet}
             isGroup={isGroup}
             loadingQuestion={loadingQuestion}
@@ -156,6 +165,7 @@ const QuestionCreate = () => {
       case 3:
         return (
           <GroupWrap
+            dataExam={dataExam}
             isGroup={isGroup}
             listQuestion={dataGroup}
             onFetchData={onFetchData}
@@ -180,6 +190,7 @@ const QuestionCreate = () => {
       case 2:
         return (
           <GroupWrap
+            dataExam={dataExam}
             isGroup={isGroup}
             listQuestion={dataGroup}
             onFetchData={onFetchData}
@@ -204,6 +215,7 @@ const QuestionCreate = () => {
       case 5:
         return (
           <GroupWrap
+            dataExam={dataExam}
             isGroup={isGroup}
             listQuestion={dataGroup}
             onFetchData={onFetchData}
@@ -265,7 +277,7 @@ const QuestionCreate = () => {
         // todoApi.pageIndex == 1 && showNoti("success", "Thành công");
         // !showListQuestion && setShowListQuestion(true);
 
-        // Tính phân trang
+        // Caculator pageindex
         let totalPage = Math.ceil(res.data.totalRow / 10);
         setTotalPageIndex(totalPage);
       }
@@ -375,7 +387,7 @@ const QuestionCreate = () => {
       case "program":
         getDataSubject(option.value);
         setDataSubject(null);
-        setValueSubject("Chọn môn học");
+        setValueSubject(null);
         showListQuestion &&
           (setIsLoading(true),
           setTodoApi({
@@ -388,6 +400,7 @@ const QuestionCreate = () => {
           status: false,
         });
         setShowListQuestion(false);
+        setValueProgram(option.value);
         break;
 
       // -- Chọn loại câu hỏi đơn hay nhóm
@@ -411,7 +424,7 @@ const QuestionCreate = () => {
             ...todoApi,
             pageIndex: 1,
           }));
-
+        setValueType(option.value);
         break;
 
       // -- Chọn môn học
@@ -440,6 +453,7 @@ const QuestionCreate = () => {
             ...todoApi,
             Level: option.value,
           }));
+        setValueLevel(option.value);
         break;
       default:
         break;
@@ -624,6 +638,23 @@ const QuestionCreate = () => {
     setQuestionData({ ...questionData });
   }, [todoApi]);
 
+  useEffect(() => {
+    if (dataExam) {
+      setValueProgram(dataExam.ProgramID);
+      getDataSubject(dataExam.ProgramID);
+      setValueSubject(dataExam.SubjectID);
+      questionData.SubjectID = dataExam.SubjectID;
+      questionData.Level = 1;
+      setQuestionData({ ...questionData });
+      setValueLevel(1);
+      setValueType(0);
+      setShowTypeQuestion({
+        ...showTypeQuetion,
+        status: true,
+      });
+    }
+  }, [dataExam]);
+
   return (
     <div className="question-create">
       <TitlePage title="Tạo câu hỏi" />
@@ -671,7 +702,9 @@ const QuestionCreate = () => {
             {!showListQuestion ? (
               <>
                 <p className="font-weight-blue text-center">
-                  Vui lòng chọn môn học và dạng câu hỏi
+                  {dataExam
+                    ? "Vui lòng chọn dạng câu hỏi"
+                    : "Vui lòng chọn môn học và dạng câu hỏi"}
                 </p>
                 <div className="img-load">
                   <img src="/images/study-min.jpg" alt="" />
@@ -699,8 +732,10 @@ const QuestionCreate = () => {
               <div className="col-md-6 col-12 ">
                 <div className="item-select">
                   <Select
+                    disabled={dataExam && true}
+                    placeholder="Chọn chương trình"
                     className="style-input"
-                    defaultValue="Chọn chương trình"
+                    value={valueProgram}
                     style={{ width: "100%" }}
                     onChange={(value, option) =>
                       handleChange_select("program", option)
@@ -719,9 +754,10 @@ const QuestionCreate = () => {
                 <div className="item-select">
                   {/* <p className="font-weight-black mb-2">Chọn môn học</p> */}
                   <Select
+                    disabled={dataExam && true}
                     loading={loadingSelect}
                     className="style-input"
-                    defaultValue="Chọn môn học"
+                    placeholder="Chọn môn học"
                     value={valueSubject}
                     style={{ width: "100%" }}
                     onChange={(value, option) =>
@@ -742,8 +778,9 @@ const QuestionCreate = () => {
                 <div className="item-select">
                   {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
                   <Select
+                    value={valueType}
                     className="style-input"
-                    defaultValue="Chọn loại câu hỏi"
+                    placeholder="Chọn loại câu hỏi"
                     style={{ width: "100%" }}
                     onChange={(value, option) =>
                       handleChange_select("type-question-group", option)
@@ -760,8 +797,10 @@ const QuestionCreate = () => {
                 <div className="item-select">
                   {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
                   <Select
+                    value={valueLevel}
                     className="style-input"
-                    defaultValue="Chọn mức độ"
+                    // defaultValue="Chọn mức độ"
+                    placeholder="Chọn mức độ"
                     style={{ width: "100%" }}
                     onChange={(value, option) =>
                       handleChange_select("level", option)
