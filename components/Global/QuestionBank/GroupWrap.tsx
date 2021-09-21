@@ -23,8 +23,7 @@ import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug
 import { CheckOutlined } from "@ant-design/icons";
 
 const GroupWrap = (props) => {
-  const { isGetQuestion, onGetListQuestionID, listQuestionID } =
-    useExamDetail();
+  const { isGetQuestion, onGetListQuestionID, listGroupID } = useExamDetail();
   const {
     children,
     isGroup,
@@ -249,6 +248,7 @@ const GroupWrap = (props) => {
       type: 2,
       ExerciseOrExerciseGroupID: quesID,
     });
+    onGetListQuestionID([...listQuestionAdd]);
     setListQuestionAdd([...listQuestionAdd]);
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
@@ -260,12 +260,10 @@ const GroupWrap = (props) => {
     setDataListQuestion([...dataListQuestion]);
   };
 
-  // GET LIST QUESTION ID
+  // CHECK AND REMOVE ID IS SELECTED
   useEffect(() => {
-    if (isGetQuestion) {
-      onGetListQuestionID(listQuestionAdd);
-    }
-  }, [isGetQuestion]);
+    setListQuestionAdd([]);
+  }, [listGroupID]);
 
   return (
     <>
@@ -322,7 +320,7 @@ const GroupWrap = (props) => {
                       </button>
                     </Popover>
                     {dataExam &&
-                      (listQuestionID.includes(item.ID) ? (
+                      (listGroupID.includes(item.ID) ? (
                         <Tooltip title="Đã có trong đề thi">
                           <button className="btn btn-icon edit">
                             <CheckOutlined />

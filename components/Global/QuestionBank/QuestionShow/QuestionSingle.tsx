@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Radio, Tooltip, Skeleton, Popconfirm, Checkbox } from "antd";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
-import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 
 import ReactHtmlParser, {
   processNodes,
@@ -11,7 +10,7 @@ import ReactHtmlParser, {
 } from "react-html-parser";
 import { exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-
+import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { CheckOutlined } from "@ant-design/icons";
 
 const QuestionSingle = (props: any) => {
@@ -41,6 +40,8 @@ const QuestionSingle = (props: any) => {
   const [activeID, setActiveID] = useState(null);
   const [lengthData, setLengthData] = useState(null);
   const [listQuestionAdd, setListQuestionAdd] = useState([]);
+
+  console.log("List question add: ", listQuestionAdd);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -189,6 +190,7 @@ const QuestionSingle = (props: any) => {
       type: 1,
       ExerciseOrExerciseGroupID: quesID,
     });
+    onGetListQuestionID([...listQuestionAdd]);
     setListQuestionAdd([...listQuestionAdd]);
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
@@ -197,15 +199,14 @@ const QuestionSingle = (props: any) => {
       }
       return true;
     });
+
     setDataListQuestion([...dataListQuestion]);
   };
 
-  // GET LIST QUESTION ID
+  // CHECK AND REMOVE ID IS SELECTED
   useEffect(() => {
-    if (isGetQuestion) {
-      onGetListQuestionID(listQuestionAdd);
-    }
-  }, [isGetQuestion]);
+    setListQuestionAdd([]);
+  }, [listQuestionID]);
 
   return (
     <>

@@ -182,6 +182,7 @@ const QuestionMultiple = (props: any) => {
       type: 1,
       ExerciseOrExerciseGroupID: quesID,
     });
+    onGetListQuestionID([...listQuestionAdd]);
     setListQuestionAdd([...listQuestionAdd]);
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
@@ -193,12 +194,10 @@ const QuestionMultiple = (props: any) => {
     setDataListQuestion([...dataListQuestion]);
   };
 
-  // GET LIST QUESTION ID
+  // CHECK AND REMOVE ID IS SELECTED
   useEffect(() => {
-    if (isGetQuestion) {
-      onGetListQuestionID(listQuestionAdd);
-    }
-  }, [isGetQuestion]);
+    setListQuestionAdd([]);
+  }, [listQuestionID]);
 
   return (
     <>

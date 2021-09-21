@@ -359,6 +359,16 @@
     }
 
     .question-list {
+      .ant-checkbox-wrapper {
+        margin-left: 0;
+        .ant-checkbox {
+          display: inline-block;
+        }
+        .ant-checkbox-disabled + span {
+          color: black;
+        }
+      }
+
       .ant-radio-disabled + span {
         color: black;
       }
@@ -641,7 +651,7 @@
         height: 100%;
       }
 
-      .btn-icon {
+      .btn-icon.menu {
         height: 100%;
         padding: 0px 10px;
 
@@ -821,11 +831,15 @@
   }
 }
 .checkbox-addquestion {
+  margin: 0 6px;
+  .ant-checkbox-input {
+    top: 4px;
+  }
   .ant-checkbox-inner {
     width: 20px;
     height: 20px;
     top: 4px;
-    left: 3px;
+    left: 0px;
   }
   .ant-checkbox-checked::after {
     top: 4px;

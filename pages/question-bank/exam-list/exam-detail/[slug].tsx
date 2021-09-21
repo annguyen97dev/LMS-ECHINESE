@@ -26,6 +26,7 @@ import { examDetailApi, examTopicApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import ChoiceList from "~/components/Global/ExamList/ExamShow/ChoiceList";
 import AddQuestionModal from "~/components/Global/ExamDetail/AddQuestionModal";
+import MultipleList from "~/components/Global/ExamList/ExamShow/MultipleList";
 
 const listAlphabet = [
   "A",
@@ -62,6 +63,7 @@ export type IProps = {
   isGetQuestion: boolean;
   listQuestionAdd: Array<objectQuestionAdd>;
   listQuestionID: Array<number>;
+  listGroupID: Array<number>;
 };
 
 const ExamDetailContext = createContext<IProps>({
@@ -70,6 +72,7 @@ const ExamDetailContext = createContext<IProps>({
   isGetQuestion: false,
   listQuestionAdd: [],
   listQuestionID: [],
+  listGroupID: [],
 });
 
 const ExamDetail = () => {
@@ -80,12 +83,14 @@ const ExamDetail = () => {
   const [dataExamDetail, setDataExamDetail] = useState([]);
   const [examTopicDetail, setExamTopicDetail] = useState<IExamTopic>();
   const [listQuestionID, setListQuestionID] = useState([]); // Lấy tất cả ID đã có
+  const [listGroupID, setListGroupID] = useState([]); // Lấy tất cả group ID đã có
   const [listQuestionAdd, setListQuestionAdd] = useState([]); // Lấy tất cả ID vừa add
   const [isGetQuestion, setIsGetQuestion] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("Data Exam: ", dataExamDetail);
-  console.log("List question: ", listQuestionID);
+  // console.log("Data Exam: ", dataExamDetail);
+  // console.log("List question: ", listQuestionID);
+  console.log("List Group ID: ", listGroupID);
 
   const getExamDetail = async () => {
     setIsLoading(true);
@@ -97,10 +102,12 @@ const ExamDetail = () => {
       if (res.status == 200) {
         setDataExamDetail(res.data.data);
         res.data.data.forEach((item) => {
+          item.ExerciseGroupID !== 0 && listGroupID.push(item.ExerciseGroupID);
           item.ExerciseTopic.forEach((ques) => {
             listQuestionID.push(ques.ExerciseID);
           });
         });
+        setListGroupID([...listGroupID]);
         setListQuestionID([...listQuestionID]);
         setListQuestionAdd([]);
       }
@@ -136,11 +143,25 @@ const ExamDetail = () => {
       case 1:
         return (
           <div key={index}>
-            <ChoiceList dataQuestion={item} listAlphabet={listAlphabet} />
+            <ChoiceList
+              listQuestionID={listQuestionID}
+              dataQuestion={item}
+              listAlphabet={listAlphabet}
+            />
           </div>
         );
         break;
-
+      case 4:
+        return (
+          <div key={index}>
+            <MultipleList
+              listQuestionID={listQuestionID}
+              dataQuestion={item}
+              listAlphabet={listAlphabet}
+            />
+          </div>
+        );
+        break;
       default:
         return;
         break;
@@ -150,13 +171,19 @@ const ExamDetail = () => {
   // ON ADD QUESTION TO EXAM
   const onAddQuestion = () => {
     setIsGetQuestion(true);
-    setTimeout(() => {
-      setIsGetQuestion(false);
-    }, 200);
+    // setTimeout(() => {
+    //   setIsGetQuestion(false);
+    // }, 200);
+  };
+
+  const onFetchData = () => {
+    getExamDetail();
+    setIsGetQuestion(false);
   };
 
   // ON GET LIST QUESTION ID
-  const onGetListQuestionID = (data) => {
+  const onGetListQuestionID = (data: any) => {
+    console.log("List question add outside: ", data);
     setListQuestionAdd(data);
   };
 
@@ -197,6 +224,7 @@ const ExamDetail = () => {
         onGetListQuestionID,
         listQuestionAdd,
         listQuestionID: listQuestionID,
+        listGroupID: listGroupID,
       }}
     >
       <div className="question-create">
@@ -241,7 +269,7 @@ const ExamDetail = () => {
               extra={
                 <AddQuestionModal
                   dataExam={examTopicDetail}
-                  onFetchData={() => getExamDetail()}
+                  onFetchData={onFetchData}
                 />
               }
             >

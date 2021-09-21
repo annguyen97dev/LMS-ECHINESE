@@ -7,8 +7,14 @@ import ReactHtmlParser, {
 import { Radio, Tooltip, Skeleton, Popconfirm, Spin } from "antd";
 
 const ChoiceList = (props) => {
-  const { dataQuestion, listAlphabet } = props;
+  const { dataQuestion, listAlphabet, listQuestionID } = props;
   // console.log("Data Question List: ", dataQuestion);
+
+  const returnPosition = (quesID) => {
+    let index = listQuestionID.indexOf(quesID);
+    let text = "Câu " + (index + 1).toString();
+    return text;
+  };
 
   return (
     <>
@@ -16,7 +22,9 @@ const ChoiceList = (props) => {
         <div className={`question-item`} key={ind}>
           <div className="box-detail">
             <div className="box-title">
-              <span className="title-ques">Câu hỏi {ind + 1}</span>
+              <span className="title-ques">
+                {returnPosition(ques.ExerciseID)}
+              </span>
               {/* {returnAudio(item)} */}
               <div className="title-text">{ReactHtmlParser(ques.Content)}</div>
             </div>

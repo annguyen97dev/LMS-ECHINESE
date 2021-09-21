@@ -119,6 +119,7 @@ const QuestionCreate = (props) => {
             />
           </GroupWrap>
         );
+
         break;
       /** Quesion Multiple */
       case 4:
@@ -145,6 +146,7 @@ const QuestionCreate = (props) => {
             />
           </GroupWrap>
         );
+
         break;
       /** Quesion Writting */
       case 6:
