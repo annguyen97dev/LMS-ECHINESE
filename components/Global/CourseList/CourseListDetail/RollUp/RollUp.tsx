@@ -132,7 +132,9 @@ function RollUp(props) {
 					const endTime = moment(item.EndTime).format('HH:mm');
 					return {
 						value: item.ID,
-						title: `[${item.RoomName}][${date}] ${startTime} - ${endTime}`,
+						title: `${
+							item.RoomName ? `[${item.RoomName}]` : ''
+						}[${date}] ${startTime} - ${endTime}`,
 						options: {
 							BranchID: item.BranchID,
 						},
@@ -256,7 +258,7 @@ function RollUp(props) {
 						disabled={warning}
 						checked={warning}
 						onChange={(e) =>
-							debounceOnChangeValue('Warning', e.target.checked.toString(), idx)
+							debounceOnChangeValue('Warning', e.target.checked, idx)
 						}
 					>
 						Cảnh cáo
