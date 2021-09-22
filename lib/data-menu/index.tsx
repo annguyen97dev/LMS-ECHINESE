@@ -599,18 +599,18 @@ export const dataMenu = [
 		MenuItem: [
 			{
 				ItemType: 'single',
-				Key: '/question-bank/question-create',
-				Route: '/question-bank/question-create',
+				Key: '/question-bank/question-list',
+				Route: '/question-bank/question-list',
 				Text: 'Tạo câu hỏi & trả lời',
 				Icon: '',
 			},
-			// {
-			//   ItemType: "single",
-			//   Key: "/question-bank/exam-create",
-			//   Route: "/question-bank/exam-create",
-			//   Text: "Tạo đề thi",
-			//   Icon: "",
-			// },
+			{
+				ItemType: 'single',
+				Key: '/question-bank/exam-list',
+				Route: '/question-bank/exam-list',
+				Text: 'Tạo đề thi',
+				Icon: '',
+			},
 		],
 	},
 	{

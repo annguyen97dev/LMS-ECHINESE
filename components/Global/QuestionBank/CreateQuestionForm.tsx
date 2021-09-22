@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Form, Select, Input, Radio, Spin, Modal } from "antd";
+import { Drawer, Tooltip, Spin, Modal } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
 import ChoiceForm from "./QuestionFormType/ChoiceForm";
@@ -14,6 +14,7 @@ import WrittingForm from "./QuestionFormType/WrittingForm";
 import GroupFormTyping from "./QuestionFormType/TypingForm";
 import TypingForm from "./QuestionFormType/TypingForm";
 import DragForm from "./QuestionFormType/DragForm";
+import MapForm from "./QuestionFormType/MapForm";
 
 const CreateQuestionForm = (props) => {
   const {
@@ -27,7 +28,7 @@ const CreateQuestionForm = (props) => {
   } = props;
 
   // console.log("Is Group in create: ", isGroup);
-  console.log("question Data in create: ", questionData);
+  // console.log("question Data in create: ", questionData);
 
   const [visible, setVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
@@ -40,8 +41,6 @@ const CreateQuestionForm = (props) => {
   const showDrawer = () => {
     setVisible(true);
   };
-
-  console.log("CHANGE DATA: ", changeData);
 
   const onClose = (e) => {
     e.stopPropagation();
@@ -74,7 +73,7 @@ const CreateQuestionForm = (props) => {
   };
 
   const onSuccessSubmit = (data) => {
-    console.log("question submit in create: ", data);
+    // console.log("question submit in create: ", data);
 
     if (isSubmit) {
       setIsSubmit(false);
@@ -194,6 +193,18 @@ const CreateQuestionForm = (props) => {
           />
         );
         break;
+      case 5:
+        return (
+          <MapForm
+            isGroup={isGroup}
+            visible={visible}
+            questionData={questionData}
+            isSubmit={isSubmit}
+            changeIsSubmit={onSuccessSubmit}
+            changeData={() => !changeData && setChangeData(true)}
+          />
+        );
+        break;
       default:
         return <p>Vui lòng chọn dạng câu hỏi</p>;
         break;
@@ -243,9 +254,11 @@ const CreateQuestionForm = (props) => {
           );
         } else {
           return (
-            <button className="btn btn-icon edit" onClick={showDrawer}>
-              <Edit />
-            </button>
+            <Tooltip title="Sửa câu hỏi">
+              <button className="btn btn-icon edit" onClick={showDrawer}>
+                <Edit />
+              </button>
+            </Tooltip>
           );
         }
       }

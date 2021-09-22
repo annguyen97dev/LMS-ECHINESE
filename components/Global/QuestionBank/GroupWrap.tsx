@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Collapse, Popover, Modal, Spin } from "antd";
+import { Collapse, Popover, Modal, Spin, Tooltip, Checkbox } from "antd";
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
@@ -19,9 +19,12 @@ import CreateQuestionForm from "./CreateQuestionForm";
 
 import { exerciseApi, exerciseGroupApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { link } from "fs";
+import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
+import { CheckOutlined } from "@ant-design/icons";
 
 const GroupWrap = (props) => {
+  const { isGetQuestion, onGetListQuestionID, listQuestionID } =
+    useExamDetail();
   const {
     children,
     isGroup,
@@ -31,6 +34,7 @@ const GroupWrap = (props) => {
     onEditData,
     onAddData,
     getGroupID,
+    dataExam,
   } = props;
   const { Panel } = Collapse;
   const { showNoti } = useWrap();
@@ -51,9 +55,10 @@ const GroupWrap = (props) => {
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [dataListQuestion, setDataListQuestion] = useState(null);
   const [lengthData, setLengthData] = useState(0);
+  const [listQuestionAdd, setListQuestionAdd] = useState([]);
 
-  console.log("List question in group: ", listQuestion);
-  console.log("active Key: ", activeKey);
+  // console.log("List question in group: ", listQuestion);
+  // console.log("active Key: ", activeKey);
 
   // ACTION TABLE
   const showModalConfirm = (e) => {
@@ -139,6 +144,16 @@ const GroupWrap = (props) => {
         ];
         break;
 
+      // Map
+      case 5:
+        cloneItem.ExerciseAnswer = [
+          {
+            ID: 1,
+            AnswerContent: "",
+            isTrue: true,
+          },
+        ];
+        break;
       // Multiple
       case 4:
         cloneItem.ExerciseAnswer = [];
@@ -228,6 +243,30 @@ const GroupWrap = (props) => {
     setLinkAudio(listQuestion);
   }, [listQuestion]);
 
+  // On change - add question
+  const onChange_AddQuestion = (checked, quesID) => {
+    listQuestionAdd.push({
+      type: 2,
+      ExerciseOrExerciseGroupID: quesID,
+    });
+    setListQuestionAdd([...listQuestionAdd]);
+    dataListQuestion.every((item) => {
+      if (item.ID == quesID) {
+        item.isChecked = checked;
+        return false;
+      }
+      return true;
+    });
+    setDataListQuestion([...dataListQuestion]);
+  };
+
+  // GET LIST QUESTION ID
+  useEffect(() => {
+    if (isGetQuestion) {
+      onGetListQuestionID(listQuestionAdd);
+    }
+  }, [isGetQuestion]);
+
   return (
     <>
       <Modal
@@ -265,19 +304,40 @@ const GroupWrap = (props) => {
                       <RightOutlined />
                     )}
                   </button>
-                  <Popover
-                    content={contentMenu(item.ID, item)}
-                    trigger="click"
-                    visible={item.ID == visible.id && visible.status}
-                    onVisibleChange={() => onChangePopover(item.ID)}
+                  <div
+                    className="wrap-action-right"
+                    style={{ right: dataExam ? "12px" : "0" }}
                   >
-                    <button
-                      className="btn btn-icon menu"
-                      onClick={(e) => showMenu(e)}
+                    <Popover
+                      content={contentMenu(item.ID, item)}
+                      trigger="click"
+                      visible={item.ID == visible.id && visible.status}
+                      onVisibleChange={() => onChangePopover(item.ID)}
                     >
-                      <MoreOutlined />
-                    </button>
-                  </Popover>
+                      <button
+                        className="btn btn-icon menu"
+                        onClick={(e) => showMenu(e)}
+                      >
+                        <MoreOutlined />
+                      </button>
+                    </Popover>
+                    {dataExam &&
+                      (listQuestionID.includes(item.ID) ? (
+                        <Tooltip title="Đã có trong đề thi">
+                          <button className="btn btn-icon edit">
+                            <CheckOutlined />
+                          </button>
+                        </Tooltip>
+                      ) : (
+                        <Checkbox
+                          className="checkbox-addquestion"
+                          checked={item.isChecked}
+                          onChange={(e) =>
+                            onChange_AddQuestion(e.target.checked, item.ID)
+                          }
+                        />
+                      ))}
+                  </div>
                   <div className="header-content">
                     <div className="title">Nhóm {index + 1}</div>
                   </div>

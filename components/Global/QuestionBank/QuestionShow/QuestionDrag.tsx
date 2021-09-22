@@ -199,7 +199,6 @@ const QuestionDrag = (props: any) => {
 
               <Popconfirm
                 title="Bạn có chắc muốn xóa?"
-                visible={dataListQuestion.ID == visible.id && visible.status}
                 onConfirm={() => handleOk(dataListQuestion)}
                 okButtonProps={{ loading: confirmLoading }}
                 onCancel={() => handleCancel(dataListQuestion.ID)}

@@ -10,6 +10,7 @@ import { data } from "~/lib/option/dataOption";
 import { Plus } from "react-feather";
 import EditorSimple from "~/components/Elements/EditorSimple";
 import UploadAudio from "~/components/Elements/UploadAudio";
+import { parse } from "path";
 
 // let returnSchema = {};
 // let schema = null;
@@ -119,10 +120,13 @@ const MultipleForm = (props) => {
     let AnswerIndex = questionDataForm.ExerciseAnswer.findIndex(
       (item) => item.ID == AnswerID
     );
-    // answerList.splice(AnswerIndex, 1);
-    questionDataForm.ExerciseAnswer[AnswerIndex].Enable = false;
 
-    // setAnswerList([...answerList]);
+    if (questionDataForm.ExerciseAnswer[AnswerIndex].isAdd) {
+      questionDataForm.ExerciseAnswer.splice(AnswerIndex, 1);
+    } else {
+      questionDataForm.ExerciseAnswer[AnswerIndex].Enable = false;
+    }
+
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -160,6 +164,18 @@ const MultipleForm = (props) => {
         }, 500);
       }
     } catch (error) {}
+  };
+
+  // Return alphabet
+  const returnAlphabet = (AnsID) => {
+    let char = "";
+    let cloneListAnswer = questionDataForm.ExerciseAnswer.filter(
+      (item) => item.Enable !== false
+    );
+    let indexAnswer = cloneListAnswer.findIndex((item) => item.ID == AnsID);
+    char = listAlphabet[indexAnswer];
+
+    return char;
   };
 
   useEffect(() => {
@@ -235,7 +251,7 @@ const MultipleForm = (props) => {
                         ></Checkbox>
                         <Form.Item>
                           <Input
-                            placeholder={listAlphabet[index]}
+                            placeholder={returnAlphabet(item.ID)}
                             value={item.AnswerContent}
                             className="style-input"
                             onChange={(e) => onChange_text(e, item.ID)}

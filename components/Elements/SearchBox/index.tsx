@@ -1,11 +1,12 @@
 import { Card, Select, Input } from "antd";
 
 export default function SearchBox(props) {
+  const { placeholder, handleSearch } = props;
   const { Search } = Input;
-  const onSearch = (value) => console.log(value);
+  const onSearch = (value) => handleSearch && handleSearch(value);
   return (
     <Search
-      placeholder="input search text"
+      placeholder={placeholder ? placeholder : "Search..."}
       onSearch={onSearch}
       className="btn-search style-input"
       size="large"

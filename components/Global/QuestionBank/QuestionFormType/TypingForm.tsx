@@ -155,7 +155,7 @@ const TypingForm = (props) => {
         item.ExerciseAnswer.push({
           ID: AnsID,
           AnswerContent: "",
-          isTrue: false,
+          isTrue: true,
           Enable: true,
           isAdd: true,
         });

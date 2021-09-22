@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Radio, Spin, Skeleton, Popconfirm } from "antd";
+import { Radio, Spin, Skeleton, Popconfirm, Tooltip, Checkbox } from "antd";
 import { Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
 
@@ -10,8 +10,12 @@ import ReactHtmlParser, {
 } from "react-html-parser";
 import { useWrap } from "~/context/wrap";
 import { exerciseApi } from "~/apiBase";
+import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
+import { CheckOutlined } from "@ant-design/icons";
 
 const QuestionMultiple = (props: any) => {
+  const { isGetQuestion, onGetListQuestionID, listQuestionID } =
+    useExamDetail();
   const {
     isGroup,
     listQuestion,
@@ -21,6 +25,7 @@ const QuestionMultiple = (props: any) => {
     onEditData,
     listAlphabet,
     groupID,
+    dataExam,
   } = props;
   const [value, setValue] = React.useState(1);
   const [dataListQuestion, setDataListQuestion] = useState(listQuestion);
@@ -34,6 +39,7 @@ const QuestionMultiple = (props: any) => {
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [activeID, setActiveID] = useState(null);
   const [lengthData, setLengthData] = useState(0);
+  const [listQuestionAdd, setListQuestionAdd] = useState([]);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -130,6 +136,18 @@ const QuestionMultiple = (props: any) => {
     );
   };
 
+  // Return alphabet
+  const returnAlphabet = (dataItem, AnsID) => {
+    let char = "";
+    let cloneListAnswer = dataItem.ExerciseAnswer.filter(
+      (item) => item.Enable !== false
+    );
+    let indexAnswer = cloneListAnswer.findIndex((item) => item.ID == AnsID);
+    char = listAlphabet[indexAnswer];
+
+    return char;
+  };
+
   useEffect(() => {
     // Check active item when add new data
     if (dataListQuestion?.length > 0) {
@@ -147,7 +165,7 @@ const QuestionMultiple = (props: any) => {
     // Check all situations between no group and have group
     !isGroup.status
       ? setDataListQuestion(listQuestion)
-      : isGroup.id && getQuestionInGroup();
+      : isGroup.id && isGroup.id === groupID && getQuestionInGroup();
   }, [listQuestion]);
 
   useEffect(() => {
@@ -157,6 +175,30 @@ const QuestionMultiple = (props: any) => {
       isGroup.id === groupID &&
       getQuestionInGroup();
   }, [isGroup]);
+
+  // On change - add question
+  const onChange_AddQuestion = (checked, quesID) => {
+    listQuestionAdd.push({
+      type: 1,
+      ExerciseOrExerciseGroupID: quesID,
+    });
+    setListQuestionAdd([...listQuestionAdd]);
+    dataListQuestion.every((item) => {
+      if (item.ID == quesID) {
+        item.isChecked = checked;
+        return false;
+      }
+      return true;
+    });
+    setDataListQuestion([...dataListQuestion]);
+  };
+
+  // GET LIST QUESTION ID
+  useEffect(() => {
+    if (isGetQuestion) {
+      onGetListQuestionID(listQuestionAdd);
+    }
+  }, [isGetQuestion]);
 
   return (
     <>
@@ -191,7 +233,9 @@ const QuestionMultiple = (props: any) => {
                         onChange={onChange}
                         disabled={ans.isTrue ? false : true}
                       >
-                        <span className="tick">{listAlphabet[i]}</span>
+                        <span className="tick">
+                          {returnAlphabet(item, ans.ID)}
+                        </span>
                         <span className="text">{ans.AnswerContent}</span>
                       </Radio>
                     ))}
@@ -220,6 +264,23 @@ const QuestionMultiple = (props: any) => {
                     <Trash2 />
                   </button>
                 </Popconfirm>
+                {!isGroup.status &&
+                  dataExam &&
+                  (listQuestionID.includes(item.ID) ? (
+                    <Tooltip title="Đã có trong đề thi">
+                      <button className="btn btn-icon edit">
+                        <CheckOutlined />
+                      </button>
+                    </Tooltip>
+                  ) : (
+                    <Checkbox
+                      className="checkbox-addquestion"
+                      checked={item.isChecked}
+                      onChange={(e) =>
+                        onChange_AddQuestion(e.target.checked, item.ID)
+                      }
+                    />
+                  ))}
               </div>
             </div>
           ))}
