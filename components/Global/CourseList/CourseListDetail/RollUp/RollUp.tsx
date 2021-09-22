@@ -59,7 +59,7 @@ function RollUp(props) {
 		{title: 'Nghỉ lễ', value: 6},
 	];
 	const leaningStatusOptionList = [
-		// {value: 0, title: '---Chọn học lực---'},
+		{value: 0, title: '---Chọn học lực---'},
 		{title: 'Giỏi', value: 1},
 		{title: 'Khá', value: 2},
 		{title: 'Trung bình', value: 3},
@@ -67,7 +67,7 @@ function RollUp(props) {
 		{title: 'Theo dõi đặc biệt', value: 5},
 		{title: 'Có cố gắng', value: 6},
 		{title: 'Không cố gắng', value: 7},
-		{title: 'Không nhận xét', value: 0},
+		{title: 'Không nhận xét', value: 8},
 	];
 	// FILTER
 	const [filters, setFilters] = useState({
@@ -105,6 +105,10 @@ function RollUp(props) {
 				CourseID: filters.CourseID,
 				CourseScheduleID: filters.CourseScheduleID,
 				StudentID: student.StudentID,
+				StatusID: student.StatusID,
+				LearningStatusID: student.LearningStatusID,
+				Note: student.Note,
+				Warning: student.Warning,
 				[key]: vl,
 			};
 			let res = await rollUpApi.update([dataChange]);
@@ -252,6 +256,7 @@ function RollUp(props) {
 		{
 			title: 'Cảnh cáo',
 			dataIndex: 'Warning',
+			align: 'center',
 			render: (warning, item: IStudentRollUp, idx) => {
 				return (
 					<Checkbox
@@ -260,9 +265,7 @@ function RollUp(props) {
 						onChange={(e) =>
 							debounceOnChangeValue('Warning', e.target.checked, idx)
 						}
-					>
-						Cảnh cáo
-					</Checkbox>
+					/>
 				);
 			},
 		},
