@@ -439,6 +439,7 @@ textarea.ant-input {
 }
 .style-input {
 	&[disabled],
+	.ant-input-disabled,
 	&.ant-select-disabled.ant-select:not(.ant-select-customize-input)
 		.ant-select-selector {
 		color: rgba($color: #000000, $alpha: 0.8);

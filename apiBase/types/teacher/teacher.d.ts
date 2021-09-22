@@ -22,4 +22,5 @@ type ITeacher = IBaseApi<{
 	StatusName: string;
 	Jobdate: string;
 	Mobile: string;
+	isFixSetpacked?: boolean;
 }>;

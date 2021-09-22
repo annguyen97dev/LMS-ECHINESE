@@ -76,3 +76,4 @@ export {backgroundNewsFeedApi} from './newsfeed/background-newsfeed';
 export {studyDayOnlineApi} from './course-online/study-day';
 export {lessonOnlineApi} from './course-online/lesson';
 export {courseOnlineDetailAvailableDayApi} from './course-online-detail/available-day';
+export {packageExaminerApi} from './package/package-examiner';

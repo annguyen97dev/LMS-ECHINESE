@@ -564,8 +564,8 @@ export const dataMenu = [
 			},
 			{
 				ItemType: 'single',
-				Key: '/package/examiner-list',
-				Route: '/package/examiner-list',
+				Key: '/package/package-examiner',
+				Route: '/package/package-examiner',
 				Text: 'Danh sách chấm gói bài',
 				Icon: '',
 			},
