@@ -31,18 +31,6 @@ const MultipleList = (props) => {
             <div className="box-answer">
               <div className="question-single question-wrap w-100">
                 {ques.ExerciseAnswer?.map((ans, i) => (
-                  // <div className="d-flex align-items-center" key={i}>
-                  //   <Radio
-                  //     key={i}
-                  //     value={ans.ID}
-                  //     onChange={(e) => e.preventDefault()}
-                  //     disabled={true}
-                  //   ></Radio>
-                  //   <div>
-                  //     <span className="tick">{listAlphabet[i]}</span>
-                  //     <span className="text">{ans.AnswerContent}</span>
-                  //   </div>
-                  // </div>
                   <Checkbox
                     className="d-block"
                     key={i}

@@ -27,6 +27,7 @@ import { useWrap } from "~/context/wrap";
 import ChoiceList from "~/components/Global/ExamList/ExamShow/ChoiceList";
 import AddQuestionModal from "~/components/Global/ExamDetail/AddQuestionModal";
 import MultipleList from "~/components/Global/ExamList/ExamShow/MultipleList";
+import WrapList from "~/components/Global/ExamList/ExamShow/WrapList";
 
 const listAlphabet = [
   "A",
@@ -143,11 +144,13 @@ const ExamDetail = () => {
       case 1:
         return (
           <div key={index}>
-            <ChoiceList
-              listQuestionID={listQuestionID}
-              dataQuestion={item}
-              listAlphabet={listAlphabet}
-            />
+            <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+              <ChoiceList
+                listQuestionID={listQuestionID}
+                dataQuestion={item}
+                listAlphabet={listAlphabet}
+              />
+            </WrapList>
           </div>
         );
         break;
