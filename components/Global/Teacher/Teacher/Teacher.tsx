@@ -6,24 +6,34 @@ import { Info } from "react-feather";
 import {
   areaApi,
   branchApi,
+  districtApi,
   staffSalaryApi,
   teacherApi,
   userInformationApi,
+  wardApi,
 } from "~/apiBase";
 import DeleteTableRow from "~/components/Elements/DeleteTableRow/DeleteTableRow";
 import SortBox from "~/components/Elements/SortBox";
 import PowerTable from "~/components/PowerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
+import { fmSelectArr } from "~/utils/functions";
 import StaffSalaryForm from "../../Option/StaffSalaryForm";
 import TeacherFilterForm from "./TeacherFilterForm";
 import TeacherForm from "./TeacherForm";
 
 const Teacher = () => {
   const [teacherList, setTeacherList] = useState<ITeacher[]>([]);
-  const [areaList, setAreaList] = useState([]);
+  const [optionAreaSystemList, setOptionAreaSystemList] = useState<{
+    areaList: IOptionCommon[];
+    districtList: IOptionCommon[];
+    wardList: IOptionCommon[];
+  }>({
+    areaList: [],
+    districtList: [],
+    wardList: [],
+  });
   const [branchList, setBranchList] = useState([]);
-  const [loadingFetchBranch, setLoadingFetchBranch] = useState(false);
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -53,6 +63,15 @@ const Teacher = () => {
   const [isClearForm, setIsClearForm] = useState(false);
   const [openSalaryForm, setOpenSalaryForm] = useState(false);
   const [dataStaff, setDataStaff] = useState([]);
+  const optionGenderList = [
+    { title: "Nữ", value: 0 },
+    { title: "Nam", value: 1 },
+    { title: "Khác", value: 2 },
+  ];
+  const optionStatusList = [
+    { title: "Hoạt động", value: 0 },
+    { title: "Khóa", value: 1 },
+  ];
   // SORT OPTION
   const sortOptionList = [
     {
@@ -144,15 +163,15 @@ const Teacher = () => {
   // GET AREA
   const fetchAreaList = async () => {
     try {
-      let res = await areaApi.getAll({
+      const res = await areaApi.getAll({
         selectAll: true,
       });
       if (res.status === 200 && res.data.totalRow && res.data.data.length) {
-        const newAreaList = res.data.data.map((x) => ({
-          title: x.AreaName,
-          value: x.AreaID,
-        }));
-        setAreaList(newAreaList);
+        const newAreaList = fmSelectArr(res.data.data, "AreaName", "AreaID");
+        setOptionAreaSystemList({
+          ...optionAreaSystemList,
+          areaList: newAreaList,
+        });
       }
     } catch (error) {
       showNoti("danger", error.message);
@@ -161,18 +180,57 @@ const Teacher = () => {
   useEffect(() => {
     fetchAreaList();
   }, []);
+  // DISTRICT BY AREA
+  const fetchDistrictByAreaID = async (id: number) => {
+    try {
+      const res = await districtApi.getAll({
+        AreaID: id,
+      });
+      if (res.status === 200 && res.data.totalRow && res.data.data.length) {
+        const newDistrictList = fmSelectArr(
+          res.data.data,
+          "DistrictName",
+          "ID"
+        );
+        setOptionAreaSystemList({
+          ...optionAreaSystemList,
+          districtList: newDistrictList,
+          wardList: [],
+        });
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    }
+  };
+  // WARD BY DISTRICT
+  const fetchWardByDistrictID = async (id: number) => {
+    setIsLoading({ type: "FETCH_WARD_BY_DISTRICT", status: true });
+    try {
+      const res = await wardApi.getAll({
+        DistrictID: id,
+      });
+      if (res.status === 200 && res.data.totalRow && res.data.data.length) {
+        const newWardList = fmSelectArr(res.data.data, "WardName", "ID");
+        setOptionAreaSystemList({
+          ...optionAreaSystemList,
+          wardList: newWardList,
+        });
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setIsLoading({ type: "FETCH_WARD_BY_DISTRICT", status: false });
+    }
+  };
   // BRANCH BY AREA
   const fetchBranchByAreaId = async (id: number) => {
-    setLoadingFetchBranch(true);
+    setIsLoading({ type: "FETCH_DATA_BY_AREA", status: true });
     try {
       let res = await branchApi.getAll({
         areaID: id,
       });
       if (res.status === 200 && res.data.totalRow) {
-        const newBranchList = res.data.data.map((x) => ({
-          title: x.BranchName,
-          value: x.ID,
-        }));
+        const newBranchList = fmSelectArr(res.data.data, "BranchName", "ID");
         setBranchList(newBranchList);
       }
       if (res.status === 204) {
@@ -181,7 +239,7 @@ const Teacher = () => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
-      setLoadingFetchBranch(false);
+      setIsLoading({ type: "FETCH_DATA_BY_AREA", status: false });
     }
   };
   // GET DATA IN FIRST TIME
@@ -306,7 +364,7 @@ const Teacher = () => {
           }));
         newTeacherList.splice(idx, 1, {
           ...newObj,
-          AreaName: areaList.find((a) => a.value === newObj.AreaID).title,
+          // AreaName: areaList.find((a) => a.value === newObj.AreaID).title,
           Branch: newBranch,
         });
         setTeacherList(newTeacherList);
@@ -369,7 +427,13 @@ const Teacher = () => {
     {
       title: "Tỉnh/Thành phố",
       dataIndex: "AreaName",
-      ...FilterColumn("AreaID", onSearch, onResetSearch, "select", areaList),
+      ...FilterColumn(
+        "AreaID",
+        onSearch,
+        onResetSearch,
+        "select",
+        optionAreaSystemList.areaList
+      ),
       className: activeColumnSearch === "AreaID" ? "active-column-search" : "",
     },
     {
@@ -398,20 +462,20 @@ const Teacher = () => {
       align: "center",
       filters: [
         {
-          text: "Active",
+          text: "Hoạt động",
           value: 0,
         },
         {
-          text: "Inactive",
+          text: "Khóa",
           value: 2,
         },
       ],
       onFilter: (value, record) => record.StatusID === value,
       render: (status) =>
         status ? (
-          <span className="tag gray">Inactive</span>
+          <span className="tag gray">Khóa</span>
         ) : (
-          <span className="tag green">Active</span>
+          <span className="tag green">Hoạt động</span>
         ),
     },
 
@@ -438,10 +502,13 @@ const Teacher = () => {
             indexUpdateObj={idx}
             handleUpdateTeacher={onUpdateTeacher}
             //
-            optionAreaList={areaList}
+            optionStatusList={optionStatusList}
+            optionGenderList={optionGenderList}
+            optionAreaSystemList={optionAreaSystemList}
+            handleFetchDistrict={fetchDistrictByAreaID}
+            handleFetchWard={fetchWardByDistrictID}
             optionBranchList={branchList}
             handleFetchBranch={fetchBranchByAreaId}
-            loadingFetchBranch={loadingFetchBranch}
           />
           <DeleteTableRow
             handleDelete={onDeleteTeacher(idx)}
@@ -476,11 +543,11 @@ const Teacher = () => {
           <TeacherForm
             isClearForm={isClearForm}
             isLoading={isLoading}
-            optionAreaList={areaList}
+            // optionAreaList={areaList}
+            optionAreaSystemList={optionAreaSystemList}
             optionBranchList={branchList}
             handleCreateTeacher={onCreateTeacher}
             handleFetchBranch={fetchBranchByAreaId}
-            loadingFetchBranch={loadingFetchBranch}
           />
         }
         Extra={

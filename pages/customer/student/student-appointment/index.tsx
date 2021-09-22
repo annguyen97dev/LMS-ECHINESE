@@ -1,19 +1,17 @@
 import { Tooltip } from "antd";
-import moment from "moment";
 import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
 import { branchApi, programApi } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
-import ExpandTable from "~/components/ExpandTable";
-
 import LayoutBase from "~/components/LayoutBase";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import { useWrap } from "~/context/wrap";
 import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
-import CourseRegExpand from "~/components/Global/Customer/Student/CourseRegistration/CourseRegExpand";
 import CourseRegForm from "~/components/Global/Customer/Student/CourseRegistration/CourseRegForm";
 import { Checkbox } from "antd";
+import { Eye } from "react-feather";
+import PowerTable from "~/components/PowerTable";
 
 const CourseRegistration = () => {
   const [listStudent, setListStudent] = useState([]);
@@ -83,13 +81,31 @@ const CourseRegistration = () => {
       //     />
       //   </Fragment>
       // ),
+
       render: (text, data, index) => (
-        <Checkbox
-          checked={
-            data.ID == listChecked[index]?.id && listChecked[index].checked
-          }
-          onChange={(value) => onChange(value, data.ID)}
-        ></Checkbox>
+        <div className="d-flex align-items-center">
+          <Link
+            href={{
+              pathname:
+                "/customer/student/student-appointment/student-detail/[slug]",
+              query: { slug: data.UserInformationID },
+            }}
+          >
+            <Tooltip title="Xem chi tiết">
+              <button className="btn btn-icon">
+                <Eye />
+              </button>
+            </Tooltip>
+          </Link>
+
+          <Checkbox
+            style={{ marginLeft: "5px" }}
+            checked={
+              data.ID == listChecked[index]?.id && listChecked[index].checked
+            }
+            onChange={(value) => onChange(value, data.ID)}
+          ></Checkbox>
+        </div>
       ),
     },
   ];
@@ -289,21 +305,8 @@ const CourseRegistration = () => {
     getDataCourseReg(currentPage);
   }, [params]);
 
-  const [itemDetail, setItemDetail] = useState();
-
-  const expandedRowRender = (data, index) => {
-    return (
-      <Fragment>
-        <CourseRegExpand
-          infoID={data.UserInformationID}
-          // infoIndex={index}
-        />
-      </Fragment>
-    );
-  };
-
   return (
-    <ExpandTable
+    <PowerTable
       currentPage={currentPage}
       loading={isLoading}
       totalPage={totalPage && totalPage}
@@ -337,8 +340,6 @@ const CourseRegistration = () => {
           currentPage={currentPage}
         />
       }
-      handleExpand={(data) => setItemDetail(data)}
-      expandable={{ expandedRowRender }}
     />
   );
 };

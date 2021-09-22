@@ -108,6 +108,7 @@ const ChangeCourseForm = React.memo((props: any) => {
         });
         reloadData(currentPage);
         afterSubmit(res?.data.message);
+        form.resetFields();
       } catch (error) {
         showNoti("danger", error.message);
         setLoading(false);
@@ -183,7 +184,7 @@ const ChangeCourseForm = React.memo((props: any) => {
               <div className="row">
                 <div className="col-12">
                   <Form.Item label="Khóa học">
-                    <Select
+                    {/* <Select
                       style={{ width: "100%" }}
                       className="style-input"
                       defaultValue={infoDetail.CourseID}
@@ -192,7 +193,12 @@ const ChangeCourseForm = React.memo((props: any) => {
                       <Option value={infoDetail.CourseID}>
                         {infoDetail.CourseName}
                       </Option>
-                    </Select>
+                    </Select> */}
+                    <Input
+                      className="style-input"
+                      readOnly={true}
+                      value={infoDetail.CourseName}
+                    />
                   </Form.Item>
                 </div>
               </div>

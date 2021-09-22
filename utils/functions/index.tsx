@@ -1,3 +1,4 @@
+import moment from 'moment';
 //  ---------EXPORT TO ARRAY FOR SELECT FIELD---------
 export const fmSelectArr = (
 	arr: Array<{[key: string]: any}>,
@@ -36,4 +37,15 @@ export const numberWithCommas = (number, commas = ',') => {
 };
 export const mathRound = (number) => {
 	return Math.round(number * 100) / 100;
+};
+export const fmDateFromNow = (date) => {
+	const local = moment(date).local();
+	let formattedDate = '';
+	const days = moment().diff(local, 'days');
+	if (days >= 2) {
+		formattedDate = local.locale('vi').format('DD/MM/YYYY HH:mm');
+	} else {
+		formattedDate = local.locale('vi').fromNow();
+	}
+	return formattedDate;
 };

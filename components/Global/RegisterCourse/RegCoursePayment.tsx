@@ -1,8 +1,10 @@
-import { Card, Table } from "antd";
+import Link from "next/link";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { courseStudentPriceApi } from "~/apiBase/customer/student/course-student-price";
 import PowerTable from "~/components/PowerTable";
 import { useWrap } from "~/context/wrap";
+import CourseOfStudentPriceForm from "../Customer/Finance/CourseStudentPriceForm";
 
 const RegCoursePayment = (props: any) => {
   const [isLoading, setIsLoading] = useState({
@@ -43,23 +45,90 @@ const RegCoursePayment = (props: any) => {
     {
       title: "Khóa học",
       dataIndex: "Course",
-      render: (Course) => (
-        <div style={{ width: "180px" }}>
+      render: (Course: ICourse[]) => (
+        <>
           {Course.map((item) => (
-            <a href="/" className="font-weight-blue d-block">
-              {item.CourseName}
-            </a>
+            <Link
+              key={item.ID}
+              href={{
+                pathname: "/course/course-list/course-list-detail/[slug]",
+                query: { slug: item.ID },
+              }}
+            >
+              <a
+                title={item.CourseName}
+                className="finance-course-name font-weight-black d-block"
+              >
+                {item.CourseName}
+              </a>
+            </Link>
           ))}
-        </div>
+        </>
       ),
     },
     {
-      title: "Còn lại",
-      dataIndex: "MoneyInDebt",
-      render: (text) => (
-        <p className="font-weight-black">
-          {Intl.NumberFormat("en-US").format(text)}
+      title: "Trung tâm",
+      dataIndex: "PayBranchName",
+      render: (text) => <p className="font-weight-black">{text}</p>,
+    },
+    {
+      title: "Tổng thanh toán",
+      dataIndex: "Price",
+      render: (price) => (
+        <p className="font-weight-blue">
+          {Intl.NumberFormat("en-US").format(price)}
         </p>
+      ),
+    },
+    {
+      title: "Giảm giá",
+      dataIndex: "Reduced",
+      render: (price) => (
+        <p className="font-weight-blue">
+          {Intl.NumberFormat("en-US").format(price)}
+        </p>
+      ),
+    },
+    {
+      title: "Đã thanh toán",
+      dataIndex: "Paid",
+      render: (price) => (
+        <p className="font-weight-blue">
+          {Intl.NumberFormat("en-US").format(price)}
+        </p>
+      ),
+    },
+    {
+      title: "Số tiền còn lại",
+      dataIndex: "MoneyInDebt",
+      render: (price) => (
+        <p className="font-weight-blue">
+          {Intl.NumberFormat("en-US").format(price)}
+        </p>
+      ),
+    },
+    {
+      title: "Hình thức",
+      dataIndex: "PaymentMethodsName",
+    },
+    {
+      title: "Ngày hẹn trả",
+      dataIndex: "PayDate",
+      render: (date) => (date ? moment(date).format("DD/MM/YYYY") : ""),
+    },
+    {
+      render: (data, record: ICourseOfStudentPrice) => (
+        <div onClick={(e) => e.stopPropagation()}>
+          {!record.DonePaid && (
+            <CourseOfStudentPriceForm
+              infoDetail={data}
+              infoId={data.ID}
+              reloadData={() => {
+                getDataJob();
+              }}
+            />
+          )}
+        </div>
       ),
     },
   ];

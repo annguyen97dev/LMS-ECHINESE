@@ -28,12 +28,16 @@ const CDCalendar = (props) => {
 	const closeModal = () => setIsModalVisible(false);
 	const schema = yup.object().shape({
 		CourseScheduleID: yup.number().required('Bạn không được để trống'),
-		File: yup.mixed().nullable().required('Bạn không được để trống'),
+		File: yup
+			.array()
+			.min(1, 'Bạn phải chọn ít nhất 1 file')
+			.nullable()
+			.required('Bạn không được để trống'),
 	});
 
 	const defaultValuesInit = {
 		CourseScheduleID: 0,
-		File: null,
+		File: [],
 	};
 
 	const form = useForm({
@@ -80,9 +84,11 @@ const CDCalendar = (props) => {
 					<li>
 						<span>Môn:</span> {SubjectName}
 					</li>
-					<li>
-						<span>Phòng:</span> {RoomName}
-					</li>
+					{RoomName && (
+						<li>
+							<span>Phòng:</span> {RoomName}
+						</li>
+					)}
 					<li>
 						<span>GV:</span> {TeacherName}
 					</li>
@@ -147,9 +153,11 @@ const CDCalendar = (props) => {
 						<li>
 							<span>Môn:</span> {SubjectName}
 						</li>
-						<li>
-							<span>Phòng:</span> {RoomName}
-						</li>
+						{RoomName && (
+							<li>
+								<span>Phòng:</span> {RoomName}
+							</li>
+						)}
 						<li>
 							<span>GV:</span> {TeacherName}
 						</li>
@@ -171,6 +179,7 @@ const CDCalendar = (props) => {
 			</div>
 		);
 	};
+
 	const styleDay = ({event}) => {
 		const {
 			ID,
@@ -189,9 +198,11 @@ const CDCalendar = (props) => {
 					<li>
 						<span>Môn:</span> {SubjectName}
 					</li>
-					<li>
-						<span>Phòng:</span> {RoomName}
-					</li>
+					{RoomName && (
+						<li>
+							<span>Phòng:</span> {RoomName}
+						</li>
+					)}
 					<li>
 						<span>GV:</span> {TeacherName}
 					</li>
@@ -307,6 +318,7 @@ const CDCalendar = (props) => {
 										form={form}
 										name="File"
 										label="Tài liệu buổi học"
+										max={1}
 									/>
 								</div>
 								<div

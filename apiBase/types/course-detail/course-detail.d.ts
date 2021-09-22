@@ -4,8 +4,8 @@ type ICourseDetailSchedule = {
 	CourseName: string;
 	BranchID: number;
 	BranchName: string;
-	RoomID: number;
-	RoomName: string;
+	RoomID?: number;
+	RoomName?: string;
 	StudyTimeName: string;
 	StudyTimeID: number;
 	Date: string;

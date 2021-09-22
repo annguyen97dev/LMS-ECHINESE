@@ -89,7 +89,7 @@ const CourseListUpdate = (props) => {
 			</button>
 			<Modal
 				width="350px"
-				title="Update Staff"
+				title="Cập nhật quản lý khóa học"
 				visible={isModalVisible}
 				onOk={handleOk}
 				onCancel={handleCancel}
@@ -103,14 +103,14 @@ const CourseListUpdate = (props) => {
 						<SelectField
 							form={form}
 							name="AcademicUID"
-							label="Academic Officer:"
+							label="Học vụ"
 							optionList={optionList.academicList}
 							isLoading={isLoading.type == 'FETCH_DATA' && isLoading.status}
 						/>
 						<SelectField
 							form={form}
 							name="TeacherLeaderUID"
-							label="Teacher Leader:"
+							label="Quản lý"
 							optionList={optionList.teacherLeadList}
 							isLoading={isLoading.type == 'FETCH_DATA' && isLoading.status}
 						/>
@@ -119,7 +119,7 @@ const CourseListUpdate = (props) => {
 							className="btn btn-primary w-100"
 							disabled={isLoading.type == 'UPDATE_DATA' && isLoading.status}
 						>
-							Update
+							Cập nhật
 							{isLoading.type == 'UPDATE_DATA' && isLoading.status && (
 								<Spin className="loading-base" />
 							)}

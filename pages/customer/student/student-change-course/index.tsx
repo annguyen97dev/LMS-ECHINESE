@@ -15,6 +15,7 @@ import { studentChangeCourseApi, branchApi } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import { ifError } from "assert";
 import StudentPay from "~/components/Global/Customer/Student/StudentPay";
+import PowerTable from "~/components/PowerTable";
 let pageIndex = 1;
 
 let listFieldSearch = {
@@ -238,20 +239,6 @@ export default function StudentCourseChange() {
     getDataCenter();
   }, [todoApi]);
 
-  const expandedRowRender = (data) => {
-    return (
-      <>
-        {/* <p>
-          <b className="font-weight-black">Ghi chú: </b> {data?.Note}{" "}
-        </p>
-        <p className="mt-3">
-          <b className="font-weight-black">Cam kết: </b> {data?.Commitment}{" "}
-        </p> */}
-        <StudentPay CourseOfStudentPriceID={data.CourseOfStudentPriceID} />
-      </>
-    );
-  };
-
   const columns = [
     {
       title: "Học viên",
@@ -304,7 +291,7 @@ export default function StudentCourseChange() {
   ];
 
   return (
-    <ExpandTable
+    <PowerTable
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -326,7 +313,6 @@ export default function StudentCourseChange() {
           />
         </div>
       }
-      expandable={{ expandedRowRender }}
     />
   );
 }

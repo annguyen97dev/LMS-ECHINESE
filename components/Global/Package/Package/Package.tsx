@@ -219,27 +219,7 @@ function Package() {
 			});
 		}
 	};
-	const onUploadImage = async (file) => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true,
-		});
-		try {
-			let formData = new FormData();
-			formData.append('File', file);
-			const res = await packageApi.uploadImg(formData);
-			return res;
-		} catch (error) {
-			showNoti('danger', error.Message);
-		} finally {
-			setIsLoading({
-				type: 'GET_ALL',
-				status: false,
-			});
-		}
-	};
 	// CREATE
-
 	const onCreatePackage = async (packageItem: {
 		Name: string;
 		Level: number;
@@ -411,7 +391,6 @@ function Package() {
 						isLoading={isLoading}
 						isUpdate={true}
 						updateObj={packageItem}
-						handleUploadImage={onUploadImage}
 						handleUpdatePackage={onUpdatePackage(idx)}
 						paymentMethodOptionList={paymentMethodOptionList}
 					/>
@@ -440,7 +419,6 @@ function Package() {
 				TitleCard={
 					<PackageForm
 						isLoading={isLoading}
-						handleUploadImage={onUploadImage}
 						handleCreatePackage={onCreatePackage}
 						paymentMethodOptionList={paymentMethodOptionList}
 					/>

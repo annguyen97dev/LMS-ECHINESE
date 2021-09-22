@@ -1,8 +1,9 @@
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
 import {Form, Upload} from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Controller} from 'react-hook-form';
+import {studentApi} from '~/apiBase';
 import {useWrap} from '~/context/wrap';
 
 interface RcFile extends File {
@@ -32,64 +33,32 @@ type IFileList = {
 	file: IFile;
 	fileList: IFile[];
 };
-const UploadImageField = (props) => {
-	const {
-		form,
-		name,
-		label,
-		disabled,
-		handleUploadImage,
-		style,
-		className,
-		// FOR UPLOAD MULTIPLE IMAGE STILL UNDER CONSTRUCTION
-		isUploadList,
-		handleUploadMultipleImage,
-		imageList,
-	} = props;
-	const [imageListForUploadField, setImageListForUploadField] = useState<
-		{
-			uid: string;
-			name: string;
-			url?: string;
-		}[]
-	>([]);
+const UploadAvatarField = (props) => {
+	const {form, name, label, disabled, style, className} = props;
+
+	const [imgUrl, setImgUrl] = useState('');
 	const [loadingImage, setLoadingImage] = useState(false);
 	const {showNoti} = useWrap();
 	const {errors} = form.formState;
 	const hasError = errors[name];
 
-	// THIS FUNCTION IS STILL UNDER CONSTRUCTION
-	const checkHandleUploadMultipleImage = async (file: IFile[]) => {
-		if (!handleUploadMultipleImage) return;
-		handleUploadMultipleImage();
-	};
-
-	useEffect(() => {
-		// MULTI UPLOAD IMAGE NEED ARRAY IMAGE
-		isUploadList && setImageListForUploadField(imageList);
-	}, [imageList]);
-
-	const checkHandleUploadImage = async (file: IFile) => {
-		if (!handleUploadImage) return;
-		if (file.status === 'uploading') {
-			setLoadingImage(true);
-			return;
-		}
+	const handleUploadAvatar = async (file: IFile) => {
 		try {
-			if (file.status === 'done') {
-				const res = await handleUploadImage(file.originFileObj);
-				return res;
+			if (file.status === 'uploading') {
+				setLoadingImage(true);
+				return;
 			}
+			if (file.status === 'done') {
+				const res = await studentApi.uploadImage(file.originFileObj);
+				if (res.status === 200) {
+					setImgUrl(res.data.data);
+					return res;
+				}
+			}
+		} catch (err) {
+			console.log('UploadAvatarField-handleUploadAvatar', err);
 		} finally {
 			setLoadingImage(false);
-		}
-	};
-
-	const switchUploadImage = (obj: IFileList) => {
-		if (isUploadList) {
-			return checkHandleUploadMultipleImage(obj.fileList);
-		} else {
-			return checkHandleUploadImage(obj.file);
 		}
 	};
 
@@ -134,34 +103,24 @@ const UploadImageField = (props) => {
 							className="avatar-uploader"
 							disabled={disabled}
 							//
-							fileList={imageListForUploadField}
-							showUploadList={isUploadList}
-							multiple={isUploadList}
-							//
+							showUploadList={false}
 							beforeUpload={beforeUpload}
 							onChange={(obj) => {
-								setImageListForUploadField(obj.fileList);
-								switchUploadImage(obj).then((res) => {
-									if (res && res.status === 200)
-										if (isUploadList) {
-										} else {
-											field.onChange(res.data.data);
-										}
-								});
+								handleUploadAvatar(obj.file).then(
+									(res) => res?.status === 200 && field.onChange(res.data.data)
+								);
 							}}
 						>
-							{!isUploadList && (
-								<img
-									src={field.value}
-									alt="avatar"
-									style={{
-										width: '100%',
-										height: '100%',
-										objectFit: 'cover',
-										display: field.value ? 'block' : 'none',
-									}}
-								/>
-							)}
+							<img
+								src={imgUrl || field.value}
+								alt="avatar"
+								style={{
+									width: '100%',
+									height: '100%',
+									objectFit: 'cover',
+									display: imgUrl || field.value ? 'block' : 'none',
+								}}
+							/>
 							<UploadButton />
 						</Upload>
 					);
@@ -175,28 +134,18 @@ const UploadImageField = (props) => {
 		</Form.Item>
 	);
 };
-UploadImageField.propTypes = {
+UploadAvatarField.propTypes = {
 	form: PropTypes.object.isRequired,
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	disabled: PropTypes.bool,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
-	handleUploadImage: PropTypes.func,
-	// FOR UPLOAD MULTIPLE IMAGE STILL UNDER CONSTRUCTION
-	isUploadList: PropTypes.bool,
-	handleUploadMultipleImage: PropTypes.func,
-	imageList: PropTypes.array,
 };
-UploadImageField.defaultProps = {
+UploadAvatarField.defaultProps = {
 	label: '',
 	disabled: false,
 	style: {},
 	className: '',
-	handleUploadImage: null,
-	// FOR UPLOAD MULTIPLE IMAGE STILL UNDER CONSTRUCTION
-	isUploadList: false,
-	handleUploadMultipleImage: null,
-	imageList: [],
 };
-export default UploadImageField;
+export default UploadAvatarField;
