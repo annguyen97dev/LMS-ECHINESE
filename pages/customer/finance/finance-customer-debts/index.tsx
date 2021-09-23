@@ -5,15 +5,16 @@ import React, {useEffect, useState} from 'react';
 import {Eye} from 'react-feather';
 import {branchApi, courseApi, courseStudentApi, refundsApi} from '~/apiBase';
 import {courseStudentPriceApi} from '~/apiBase/customer/student/course-student-price';
+import {ExpandPaymentRow} from '~/components/Elements/ExpandBox';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
+import ExpandTable from '~/components/ExpandTable';
 import CourseOfStudentPriceForm from '~/components/Global/Customer/Finance/CourseStudentPriceForm';
 import RequestRefundForm from '~/components/Global/Customer/Finance/RequestRefundForm';
 import LayoutBase from '~/components/LayoutBase';
-import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/utils/functions';
+import {fmSelectArr, numberWithCommas} from '~/utils/functions';
 const CourseStudentPrice = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const {showNoti} = useWrap();
@@ -268,71 +269,32 @@ const CourseStudentPrice = () => {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>,
-		},
-		{
-			title: 'Khóa học',
-			dataIndex: 'Course',
-			render: (Course: ICourse[]) => (
-				<>
-					{Course.map((item) => (
-						<Link
-							key={item.ID}
-							href={{
-								pathname: '/course/course-list/course-list-detail/[slug]',
-								query: {slug: item.ID},
-							}}
-						>
-							<a
-								title={item.CourseName}
-								className="finance-course-name font-weight-black d-block"
-							>
-								{item.CourseName}
-							</a>
-						</Link>
-					))}
-				</>
-			),
+			render: (name) => <p className="font-weight-black">{name}</p>,
 		},
 		{
 			title: 'Trung tâm',
 			dataIndex: 'PayBranchName',
-			render: (text) => <p className="font-weight-black">{text}</p>,
 		},
 		{
 			title: 'Tổng thanh toán',
 			dataIndex: 'Price',
-			render: (price) => (
-				<p className="font-weight-blue">
-					{Intl.NumberFormat('en-US').format(price)}
-				</p>
-			),
+			render: (price) => <p>{numberWithCommas(price)}</p>,
 		},
 		{
 			title: 'Giảm giá',
 			dataIndex: 'Reduced',
-			render: (price) => (
-				<p className="font-weight-blue">
-					{Intl.NumberFormat('en-US').format(price)}
-				</p>
-			),
+			render: (price) => <p>{numberWithCommas(price)}</p>,
 		},
 		{
 			title: 'Đã thanh toán',
 			dataIndex: 'Paid',
-			render: (price) => (
-				<p className="font-weight-blue">
-					{Intl.NumberFormat('en-US').format(price)}
-				</p>
-			),
+			render: (price) => <p>{numberWithCommas(price)}</p>,
 		},
 		{
 			title: 'Số tiền còn lại',
 			dataIndex: 'MoneyInDebt',
 			render: (price) => (
-				<p className="font-weight-blue">
-					{Intl.NumberFormat('en-US').format(price)}
-				</p>
+				<p className="font-weight-blue">{numberWithCommas(price)}</p>
 			),
 		},
 		{
@@ -350,12 +312,11 @@ const CourseStudentPrice = () => {
 				<div onClick={(e) => e.stopPropagation()}>
 					<Link
 						href={{
-							pathname:
-								'/customer/finance/finance-customer-debts/student-detail/[slug]',
-							query: {slug: 2},
+							pathname: '/customer/student/student-list/student-detail/[slug]',
+							query: {slug: record.UserInformationID},
 						}}
 					>
-						<Tooltip title="Xem thông tin học viên">
+						<Tooltip title="Xem chi tiết">
 							<button className="btn btn-icon">
 								<Eye />
 							</button>
@@ -383,8 +344,9 @@ const CourseStudentPrice = () => {
 			),
 		},
 	];
+	const expandedRowRender = (record) => <ExpandPaymentRow dataRow={record} />;
 	return (
-		<PowerTable
+		<ExpandTable
 			currentPage={currentPage}
 			loading={isLoading}
 			totalPage={totalPage && totalPage}
@@ -406,6 +368,7 @@ const CourseStudentPrice = () => {
 					/>
 				</div>
 			}
+			expandable={{expandedRowRender}}
 		/>
 	);
 };

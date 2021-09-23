@@ -12,7 +12,7 @@ import {useWrap} from '~/context/wrap';
 import InfoChangeCard from './component/InfoChangeCard';
 import InfoCourseCard from './InfoCourseCard/InfoCourseCard';
 import InfoOtherCard from './component/InfoOtherCard';
-import InfoPaymentCard from './component/InfoPaymentCard';
+import InfoPaymentCard from './InfoPaymentCard/InfoPaymentCard';
 import InfoTestCard from './InfoTestCard/InfoTestCard';
 import InfoTestResultCard from './component/InfoTestResultCard';
 
@@ -56,7 +56,7 @@ function ProfileCustomer(props) {
 							<div className="col-2">
 								<DeploymentUnitOutlined />
 							</div>
-							<div className="col-10  d-flex ">Học viên</div>
+							<div className="col-10  d-flex ">{info?.JobName}</div>
 						</div>
 						<div className="row pt-4">
 							<div className="col-2">
@@ -74,7 +74,9 @@ function ProfileCustomer(props) {
 							<div className="col-2">
 								<AimOutlined />
 							</div>
-							<div className="col-10  d-flex ">{info?.Address}</div>
+							<div className="col-10  d-flex ">
+								{info?.Branch.map((b) => b.BranchName).join(', ')}
+							</div>
 						</div>
 					</Card>
 				</div>
@@ -87,8 +89,8 @@ function ProfileCustomer(props) {
 							<TabPane tab="Khóa học" key="3" className="profile-tabs">
 								<InfoCourseCard studentID={studentIDInt} />
 							</TabPane>
-							<TabPane tab="Payment History" key="4" className="profile-tabs">
-								<InfoPaymentCard id={studentIDInt} />
+							<TabPane tab="Thanh toán" key="4" className="profile-tabs">
+								<InfoPaymentCard studentID={studentIDInt} />
 							</TabPane>
 							<TabPane tab="Change History" key="5" className="profile-tabs">
 								<InfoChangeCard />
