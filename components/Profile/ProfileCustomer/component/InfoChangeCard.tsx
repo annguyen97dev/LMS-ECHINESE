@@ -1,58 +1,87 @@
-import React from "react";
-import { Timeline, Card } from "antd";
-import { Clock } from "react-feather";
+import {Card, Spin, Timeline} from 'antd';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, {useEffect, useState} from 'react';
+import {Clock} from 'react-feather';
+import {timelineStudentApi} from '~/apiBase/customer/student/history-change';
+import {useWrap} from '~/context/wrap';
 
-const InfoChangeCard = () => {
-  return (
-    <div className="container-fluid">
-      <Card title="Lịch sử thay đổi tài khoản">
-        <Timeline mode="left" style={{ paddingLeft: 5 }}>
-          <Timeline.Item label="25/12/2019 14:38">
-            <div>
-              <h6>Kim Trí Tú</h6>
-            </div>
-            <div>
-              <a>Tư vấn viên</a>
-            </div>
-            <div>Loại đào tạo: Academic</div>
-          </Timeline.Item>
-          <Timeline.Item
-            label="25/12/2019 14:38"
-            dot={<Clock style={{ fontSize: "16px" }} />}
-            color="red"
-          >
-            <div>
-              <h6>Kim Trí Tú</h6>
-            </div>
-            <div>
-              <a>Tư vấn viên</a>
-            </div>
-            <div>Loại đào tạo: Academic</div>
-          </Timeline.Item>
-          <Timeline.Item label="25/12/2019 14:38">
-            <div>
-              <h6>Kim Trí Tú</h6>
-            </div>
-            <div>
-              <a>Tư vấn viên</a>
-            </div>
-            <div>Loại đào tạo: Academic</div>
-          </Timeline.Item>
-          <Timeline.Item
-            label="25/12/2019 14:38"
-            dot={<Clock style={{ fontSize: "16px" }} />}
-          >
-            <div>
-              <h6>Kim Trí Tú</h6>
-            </div>
-            <div>
-              <a>Tư vấn viên</a>
-            </div>
-            <div>Mục đích học tập: Học tập</div>
-          </Timeline.Item>
-        </Timeline>
-      </Card>
-    </div>
-  );
+InfoChangeCard.propTypes = {
+	studentID: PropTypes.number,
 };
+InfoChangeCard.defaultProps = {
+	studentID: 0,
+};
+function InfoChangeCard(props) {
+	const {studentID} = props;
+	const [timelineList, setTimelineList] = useState<ITimelineStudent[]>([]);
+	const [isLoading, setIsLoading] = useState({type: 'GET_ALL', status: false});
+	const {showNoti} = useWrap();
+
+	const getDataTimeline = async () => {
+		try {
+			setIsLoading({
+				type: 'FETCH_TIMELINE',
+				status: true,
+			});
+			const res = await timelineStudentApi.getAll({
+				pageSize: 8,
+				UserInformationID: studentID,
+			});
+			if (res.status === 200) {
+				setTimelineList(res.data.data);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_TIMELINE',
+				status: false,
+			});
+		}
+	};
+
+	useEffect(() => {
+		getDataTimeline();
+	}, []);
+
+	return (
+		<Card>
+			<Spin
+				spinning={isLoading.type === 'FETCH_TIMELINE' && isLoading.status}
+				size="large"
+			>
+				<Timeline mode="left">
+					{timelineList.map((t) => (
+						<Timeline.Item
+							key={t.ID}
+							label={
+								<>
+									<div>
+										<p className="font-weight-black">
+											{moment(t.CreatedOn).format('DD/MM/YYYY')}
+										</p>
+									</div>
+									<div>{moment(t.CreatedOn).format('LT')}</div>
+								</>
+							}
+							dot={<Clock style={{fontSize: '16px'}} size={18} />}
+						>
+							<div>
+								<p className="font-weight-black">
+									Thay đổi:{' '}
+									{t.Content.slice(
+										0,
+										t.Content.indexOf(':')
+									).toLocaleLowerCase()}
+								</p>
+							</div>
+							<div>{t.Content.slice(t.Content.indexOf(':') + 1)}</div>
+						</Timeline.Item>
+					))}
+				</Timeline>
+			</Spin>
+		</Card>
+	);
+}
 export default InfoChangeCard;

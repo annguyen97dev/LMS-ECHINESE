@@ -92,8 +92,12 @@ function ProfileCustomer(props) {
 							<TabPane tab="Thanh toán" key="4" className="profile-tabs">
 								<InfoPaymentCard studentID={studentIDInt} />
 							</TabPane>
-							<TabPane tab="Change History" key="5" className="profile-tabs">
-								<InfoChangeCard />
+							<TabPane
+								tab="Lịch sử tài khoản học viên"
+								key="5"
+								className="profile-tabs"
+							>
+								<InfoChangeCard studentID={studentIDInt} />
 							</TabPane>
 							<TabPane tab="Test result" key="6" className="profile-tabs">
 								<InfoTestResultCard id={studentIDInt} />
