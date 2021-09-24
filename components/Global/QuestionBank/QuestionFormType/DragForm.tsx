@@ -423,7 +423,7 @@ const DragForm = (props) => {
                               (itemAns, index) =>
                                 itemAns.Enable && (
                                   <div className="col-md-6 col-12" key={index}>
-                                    <div className="row-ans mt-3">
+                                    <div className="row-ans">
                                       <Form.Item className="mb-0">
                                         <Input
                                           value={itemAns.AnswerContent}

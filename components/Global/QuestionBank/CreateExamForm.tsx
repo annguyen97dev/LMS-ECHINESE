@@ -148,7 +148,7 @@ const CreateExamForm = (props) => {
         form.reset(defaultValuesInit);
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -188,7 +188,10 @@ const CreateExamForm = (props) => {
             <button className="btn btn-light mr-2" onClick={onClose}>
               Đóng
             </button>
-            <button className="btn btn-primary" type="submit">
+            <button
+              className="btn btn-primary"
+              onClick={form.handleSubmit(onSubmit)}
+            >
               Lưu
               {isLoading && <Spin className="loading-base" />}
             </button>
@@ -251,17 +254,17 @@ const CreateExamForm = (props) => {
                 form={form}
               />
             </div>
-            {/* <div className="col-12">
+            <div className="col-12 d-none">
               <div className="text-center">
-                <button className="btn btn-light mr-2" onClick={onClose}>
+                {/* <button className="btn btn-light mr-2" onClick={onClose}>
                   Đóng
-                </button>
+                </button> */}
                 <button className="btn btn-primary" type="submit">
                   Lưu
                   {isLoading && <Spin className="loading-base" />}
                 </button>
               </div>
-            </div> */}
+            </div>
           </div>
         </Form>
       </Drawer>

@@ -9,7 +9,7 @@ import { useWrap } from "~/context/wrap";
 
 const AddQuestionModal = (props) => {
   const { dataExam, onFetchData } = props;
-  const { onAddQuestion, listQuestionAdd } = useExamDetail();
+  const { onAddQuestion, listQuestionAddOutside } = useExamDetail();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showNoti } = useWrap();
@@ -26,33 +26,54 @@ const AddQuestionModal = (props) => {
     setIsModalVisible(false);
   };
 
-  const handleAddQuestion = () => {
-    onAddQuestion();
+  const handleAddQuestion = async () => {
+    // onAddQuestion();
+    if (listQuestionAddOutside.length > 0) {
+      setIsLoading(true);
+      try {
+        let res = await examDetailApi.add({
+          ExamTopicID: dataExam.ID,
+          ExerciseOrExerciseGroup: listQuestionAddOutside,
+        });
+        if (res.status == 200) {
+          showNoti("success", "Thêm câu hỏi thành công");
+          onFetchData && onFetchData();
+        }
+      } catch (error) {
+        showNoti("danger", error);
+      } finally {
+        setIsModalVisible(false);
+        setIsLoading(false);
+      }
+    } else {
+      showNoti("danger", "Bạn chưa chọn câu hỏi nào!");
+    }
   };
 
-  useEffect(() => {
-    if (listQuestionAdd.length > 0) {
-      console.log("ListQuestionADD: ", listQuestionAdd);
-      (async function submitQuestionAdd() {
-        setIsLoading(true);
-        try {
-          let res = await examDetailApi.add({
-            ExamTopicID: dataExam.ID,
-            ExerciseOrExerciseGroup: listQuestionAdd,
-          });
-          if (res.status == 200) {
-            showNoti("success", "Thêm câu hỏi thành công");
-            onFetchData && onFetchData();
-          }
-        } catch (error) {
-          showNoti("danger", error);
-        } finally {
-          setIsModalVisible(false);
-          setIsLoading(false);
-        }
-      })();
-    }
-  }, [listQuestionAdd]);
+  // useEffect(() => {
+  //   console.log("List question add in form: ", listQuestionAdd);
+  //   if (listQuestionAdd.length > 0) {
+  //     console.log("ListQuestionADD: ", listQuestionAdd);
+  //     (async function submitQuestionAdd() {
+  //       setIsLoading(true);
+  //       try {
+  //         let res = await examDetailApi.add({
+  //           ExamTopicID: dataExam.ID,
+  //           ExerciseOrExerciseGroup: listQuestionAdd,
+  //         });
+  //         if (res.status == 200) {
+  //           showNoti("success", "Thêm câu hỏi thành công");
+  //           onFetchData && onFetchData();
+  //         }
+  //       } catch (error) {
+  //         showNoti("danger", error);
+  //       } finally {
+  //         setIsModalVisible(false);
+  //         setIsLoading(false);
+  //       }
+  //     })();
+  //   }
+  // }, [listQuestionAdd]);
 
   return (
     <>

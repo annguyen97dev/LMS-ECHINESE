@@ -359,6 +359,16 @@
     }
 
     .question-list {
+      .ant-checkbox-wrapper {
+        margin-left: 0;
+        .ant-checkbox {
+          display: inline-block;
+        }
+        .ant-checkbox-disabled + span {
+          color: black;
+        }
+      }
+
       .ant-radio-disabled + span {
         color: black;
       }
@@ -641,7 +651,7 @@
         height: 100%;
       }
 
-      .btn-icon {
+      .btn-icon.menu {
         height: 100%;
         padding: 0px 10px;
 
@@ -661,6 +671,10 @@
         border: 0;
         border-right: 1px solid #dbdbdb;
         line-height: 0;
+
+        &:focus {
+          outline: 0;
+        }
 
         svg {
           font-size: 12px;
@@ -821,11 +835,15 @@
   }
 }
 .checkbox-addquestion {
+  margin: 0 6px;
+  .ant-checkbox-input {
+    top: 4px;
+  }
   .ant-checkbox-inner {
     width: 20px;
     height: 20px;
     top: 4px;
-    left: 3px;
+    left: 0px;
   }
   .ant-checkbox-checked::after {
     top: 4px;
@@ -852,5 +870,36 @@
       border-radius: 10px;
       background-color: #b1b1b1;
     }
+  }
+}
+
+.wrap-group-list {
+  .content {
+    margin-top: 30px;
+
+    .content-title {
+      font-size: 17px;
+      font-style: italic;
+    }
+    .space-question {
+      margin-bottom: 20px;
+      font-size: 16px;
+      font-weight: 500;
+      font-style: italic;
+      color: #dd4667;
+    }
+  }
+}
+
+.drag-list {
+  padding-bottom: 20px;
+  border-bottom: 1px dotted #e2e2e2;
+  .drag-list-answer {
+    display: table-caption;
+    background: #e9e9e9;
+    border-radius: 0.3rem;
+    padding: 3px 11px;
+    margin-bottom: 10px;
+    cursor: pointer;
   }
 }

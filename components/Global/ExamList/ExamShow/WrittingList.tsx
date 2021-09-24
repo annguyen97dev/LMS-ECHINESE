@@ -1,6 +1,6 @@
 import React from "react";
 
-const WrittingList = () => {
+const WrittingList = (props) => {
   return <div></div>;
 };
 

@@ -163,11 +163,15 @@ const QuestionWritting = (props: any) => {
 
   // On change - add question
   const onChange_AddQuestion = (checked, quesID) => {
-    listQuestionAdd.push({
+    let objectQuestion = {
       type: 1,
       ExerciseOrExerciseGroupID: quesID,
-    });
-    setListQuestionAdd([...listQuestionAdd]);
+    };
+
+    // Call function to get ID of question
+    onGetListQuestionID(objectQuestion);
+
+    // Check isChecked in checkbox
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
         item.isChecked = checked;
@@ -175,15 +179,14 @@ const QuestionWritting = (props: any) => {
       }
       return true;
     });
+
     setDataListQuestion([...dataListQuestion]);
   };
 
-  // GET LIST QUESTION ID
-  useEffect(() => {
-    if (isGetQuestion) {
-      onGetListQuestionID(listQuestionAdd);
-    }
-  }, [isGetQuestion]);
+  // CHECK AND REMOVE ID IS SELECTED
+  // useEffect(() => {
+  //   setListQuestionAdd([]);
+  // }, [listQuestionID]);
 
   return (
     <>

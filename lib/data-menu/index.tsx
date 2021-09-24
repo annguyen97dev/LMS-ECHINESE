@@ -1,5 +1,49 @@
-import { Briefcase } from "react-feather";
 import React, { Fragment } from "react";
+import {
+  Home,
+  Airplay,
+  User,
+  Package,
+  Book,
+  UserCheck,
+  Tool,
+  FileText,
+} from "react-feather";
+
+export const AdminParentMenu = [
+  {
+    TabName: "tab-home",
+    Icon: <Home />,
+  },
+  {
+    TabName: "tab-course",
+    Icon: <Airplay />,
+  },
+  {
+    TabName: "tab-customer",
+    Icon: <User />,
+  },
+  {
+    TabName: "tab-staff",
+    Icon: <UserCheck />,
+  },
+  {
+    TabName: "tab-package",
+    Icon: <Package />,
+  },
+  {
+    TabName: "tab-document",
+    Icon: <Book />,
+  },
+  {
+    TabName: "tab-question-bank",
+    Icon: <FileText />,
+  },
+  {
+    TabName: "tab-option",
+    Icon: <Tool />,
+  },
+];
 
 export const dataMenu = [
   {
