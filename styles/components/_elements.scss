@@ -838,6 +838,10 @@ textarea.ant-input {
 	.active-column-search {
 		font-weight: 500;
 		color: $primary-color;
+		> *:not(.ant-table-filter-column) {
+			font-weight: 500;
+			color: $primary-color !important;
+		}
 	}
 	.ant-table-wrapper {
 		tr.ant-table-expanded-row > td,
@@ -2178,14 +2182,6 @@ hr {
 	border-left: 1px solid hsla(200, 10%, 50%, 100);
 	height: 100vh;
 	width: 1px;
-}
-.btn-code-editor {
-	position: absolute;
-	top: 0;
-	right: 0;
-	transform: translate(-102px, 209px);
-	z-index: 99;
-	font-weight: 500;
 }
 
 .wrap-editor {

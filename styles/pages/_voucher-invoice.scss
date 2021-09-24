@@ -1,0 +1,41 @@
+.btn-code-editor {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 2;
+	font-weight: 500;
+}
+.invoice-content {
+	@include overtext(2);
+}
+.invoice-editor {
+	position: relative;
+	&-list {
+		max-height: 180px;
+		padding: 0 5px;
+		overflow: hidden auto;
+		&::-webkit-scrollbar-track {
+			border-radius: 10px;
+			background-color: white;
+		}
+
+		&::-webkit-scrollbar {
+			border: none;
+			width: 4px;
+			background-color: #f5f5f5;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			border-radius: 10px;
+			background-color: #e7e7e7;
+		}
+	}
+	&-item {
+		cursor: pointer;
+		margin-bottom: 8px;
+		span {
+			font-weight: 500;
+			margin-right: 5px;
+		}
+	}
+}
