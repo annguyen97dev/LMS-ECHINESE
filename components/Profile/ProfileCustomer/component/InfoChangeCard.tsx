@@ -46,42 +46,46 @@ function InfoChangeCard(props) {
 	}, []);
 
 	return (
-		<Card>
-			<Spin
-				spinning={isLoading.type === 'FETCH_TIMELINE' && isLoading.status}
-				size="large"
-			>
-				<Timeline mode="left">
-					{timelineList.map((t) => (
-						<Timeline.Item
-							key={t.ID}
-							label={
-								<>
+		<>
+			{timelineList.length ? (
+				<Card>
+					<Spin
+						spinning={isLoading.type === 'FETCH_TIMELINE' && isLoading.status}
+						size="large"
+					>
+						<Timeline mode="left">
+							{timelineList.map((t) => (
+								<Timeline.Item
+									key={t.ID}
+									label={
+										<>
+											<div>
+												<p className="font-weight-black">
+													{moment(t.CreatedOn).format('DD/MM/YYYY')}
+												</p>
+											</div>
+											<div>{moment(t.CreatedOn).format('LT')}</div>
+										</>
+									}
+									dot={<Clock style={{fontSize: '16px'}} size={18} />}
+								>
 									<div>
 										<p className="font-weight-black">
-											{moment(t.CreatedOn).format('DD/MM/YYYY')}
+											Thay đổi:{' '}
+											{t.Content.slice(
+												0,
+												t.Content.indexOf(':')
+											).toLocaleLowerCase()}
 										</p>
 									</div>
-									<div>{moment(t.CreatedOn).format('LT')}</div>
-								</>
-							}
-							dot={<Clock style={{fontSize: '16px'}} size={18} />}
-						>
-							<div>
-								<p className="font-weight-black">
-									Thay đổi:{' '}
-									{t.Content.slice(
-										0,
-										t.Content.indexOf(':')
-									).toLocaleLowerCase()}
-								</p>
-							</div>
-							<div>{t.Content.slice(t.Content.indexOf(':') + 1)}</div>
-						</Timeline.Item>
-					))}
-				</Timeline>
-			</Spin>
-		</Card>
+									<div>{t.Content.slice(t.Content.indexOf(':') + 1)}</div>
+								</Timeline.Item>
+							))}
+						</Timeline>
+					</Spin>
+				</Card>
+			) : null}
+		</>
 	);
 }
 export default InfoChangeCard;

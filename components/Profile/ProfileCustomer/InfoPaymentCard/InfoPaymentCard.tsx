@@ -41,7 +41,7 @@ function InfoPaymentCard(props) {
 	}, []);
 
 	return (
-		<div className="container-fluid">
+		<div>
 			<div className="pt-3 mb-3">
 				<h5>Học phí còn nợ: {numberWithCommas(totalDebt)} VNĐ</h5>
 			</div>

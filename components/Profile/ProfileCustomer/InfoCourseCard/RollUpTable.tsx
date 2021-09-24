@@ -63,7 +63,6 @@ function RollUpTable(props) {
 			title: 'Ngày',
 			dataIndex: 'Date',
 			render: (dateString) => {
-				console.log(dateString);
 				const date = moment(dateString.slice(0, 11)).format('DD/MM/YYYY');
 				return date;
 			},
