@@ -14,8 +14,12 @@ import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug
 import { CheckOutlined } from "@ant-design/icons";
 
 const QuestionMultiple = (props: any) => {
-  const { isGetQuestion, onGetListQuestionID, listQuestionID } =
-    useExamDetail();
+  const {
+    isGetQuestion,
+    onGetListQuestionID,
+    listQuestionID,
+    listQuestionAddOutside,
+  } = useExamDetail();
   const {
     isGroup,
     listQuestion,
@@ -43,7 +47,6 @@ const QuestionMultiple = (props: any) => {
 
   const onChange = (e) => {
     e.preventDefault();
-    console.log("radio checked", e.target.value);
 
     // setValue(e.target.value);
   };
@@ -163,9 +166,28 @@ const QuestionMultiple = (props: any) => {
     }, 100);
 
     // Check all situations between no group and have group
-    !isGroup.status
-      ? setDataListQuestion(listQuestion)
-      : isGroup.id && isGroup.id === groupID && getQuestionInGroup();
+
+    if (!isGroup.status) {
+      listQuestion.forEach((item) => {
+        item.isChecked = null;
+
+        if (listQuestionAddOutside?.length > 0) {
+          if (
+            listQuestionAddOutside.some(
+              (object) => object["ExerciseOrExerciseGroupID"] == item.ID
+            )
+          ) {
+            item.isChecked = true;
+          }
+        }
+      });
+      setDataListQuestion(listQuestion);
+    } else {
+      isGroup.id && isGroup.id === groupID && getQuestionInGroup();
+    }
+    // !isGroup.status
+    //   ? setDataListQuestion(listQuestion)
+    //   : isGroup.id && isGroup.id === groupID && getQuestionInGroup();
   }, [listQuestion]);
 
   useEffect(() => {
@@ -178,12 +200,15 @@ const QuestionMultiple = (props: any) => {
 
   // On change - add question
   const onChange_AddQuestion = (checked, quesID) => {
-    listQuestionAdd.push({
+    let objectQuestion = {
       type: 1,
       ExerciseOrExerciseGroupID: quesID,
-    });
-    onGetListQuestionID([...listQuestionAdd]);
-    setListQuestionAdd([...listQuestionAdd]);
+    };
+
+    // Call function to get ID of question
+    onGetListQuestionID(objectQuestion);
+
+    // Check isChecked in checkbox
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
         item.isChecked = checked;
@@ -191,13 +216,14 @@ const QuestionMultiple = (props: any) => {
       }
       return true;
     });
+
     setDataListQuestion([...dataListQuestion]);
   };
 
   // CHECK AND REMOVE ID IS SELECTED
-  useEffect(() => {
-    setListQuestionAdd([]);
-  }, [listQuestionID]);
+  // useEffect(() => {
+  //   setListQuestionAdd([]);
+  // }, [listQuestionID]);
 
   return (
     <>

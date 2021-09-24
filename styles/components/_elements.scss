@@ -703,6 +703,20 @@ textarea.ant-input {
 .app-main {
   display: flex;
   justify-content: flex-end;
+  .icon-facebook {
+    position: fixed;
+    z-index: 9999;
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    box-shadow: 1px 2px 12px #00000038;
+    border-radius: 100%;
+    cursor: pointer;
+
+    img.facebook-img {
+      width: 100%;
+    }
+  }
 }
 .app-content {
   width: calc(100% - 330px);
@@ -2029,22 +2043,22 @@ hr {
   }
 }
 .info-modal {
-	display: flex;
-	flex-wrap: wrap;
-	&-avatar {
-		width: 112px;
-	}
-	&-content {
-		width: calc(100% - 112px);
-	}
-	@include max-media(599px) {
-		&-avatar {
-			width: 100%;
-		}
-		&-content {
-			width: 100%;
-		}
-	}
+  display: flex;
+  flex-wrap: wrap;
+  &-avatar {
+    width: 112px;
+  }
+  &-content {
+    width: calc(100% - 112px);
+  }
+  @include max-media(599px) {
+    &-avatar {
+      width: 100%;
+    }
+    &-content {
+      width: 100%;
+    }
+  }
 }
 .box-info-modal {
   p {

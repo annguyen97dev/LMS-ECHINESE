@@ -9,7 +9,7 @@ import { useWrap } from "~/context/wrap";
 
 const AddQuestionModal = (props) => {
   const { dataExam, onFetchData } = props;
-  const { onAddQuestion, listQuestionAdd } = useExamDetail();
+  const { onAddQuestion, listQuestionAddOutside } = useExamDetail();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showNoti } = useWrap();
@@ -28,12 +28,12 @@ const AddQuestionModal = (props) => {
 
   const handleAddQuestion = async () => {
     // onAddQuestion();
-    if (listQuestionAdd.length > 0) {
+    if (listQuestionAddOutside.length > 0) {
       setIsLoading(true);
       try {
         let res = await examDetailApi.add({
           ExamTopicID: dataExam.ID,
-          ExerciseOrExerciseGroup: listQuestionAdd,
+          ExerciseOrExerciseGroup: listQuestionAddOutside,
         });
         if (res.status == 200) {
           showNoti("success", "Thêm câu hỏi thành công");

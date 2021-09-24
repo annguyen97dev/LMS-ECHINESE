@@ -244,12 +244,15 @@ const GroupWrap = (props) => {
 
   // On change - add question
   const onChange_AddQuestion = (checked, quesID) => {
-    listQuestionAdd.push({
+    let objectQuestion = {
       type: 2,
       ExerciseOrExerciseGroupID: quesID,
-    });
-    onGetListQuestionID([...listQuestionAdd]);
-    setListQuestionAdd([...listQuestionAdd]);
+    };
+
+    // Call function to get ID of question
+    onGetListQuestionID(objectQuestion);
+
+    // Check isChecked in checkbox
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
         item.isChecked = checked;
@@ -257,13 +260,14 @@ const GroupWrap = (props) => {
       }
       return true;
     });
+
     setDataListQuestion([...dataListQuestion]);
   };
 
   // CHECK AND REMOVE ID IS SELECTED
-  useEffect(() => {
-    setListQuestionAdd([]);
-  }, [listGroupID]);
+  // useEffect(() => {
+  //   setListQuestionAdd([]);
+  // }, [listGroupID]);
 
   return (
     <>

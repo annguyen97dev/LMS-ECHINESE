@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
@@ -8,7 +8,6 @@ import { Radio, Tooltip, Skeleton, Popconfirm, Spin } from "antd";
 
 const ChoiceList = (props) => {
   const { dataQuestion, listAlphabet, listQuestionID } = props;
-  // console.log("Data Question List: ", dataQuestion);
 
   const returnPosition = (quesID) => {
     let index = listQuestionID.indexOf(quesID);
@@ -25,6 +24,11 @@ const ChoiceList = (props) => {
               <span className="title-ques">
                 {returnPosition(ques.ExerciseID)}
               </span>
+              {ques.LinkAudio !== "" && (
+                <audio controls>
+                  <source src={ques.LinkAudio} type="audio/mpeg" />
+                </audio>
+              )}
               {/* {returnAudio(item)} */}
               <div className="title-text">{ReactHtmlParser(ques.Content)}</div>
             </div>

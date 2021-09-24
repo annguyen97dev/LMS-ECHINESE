@@ -10,6 +10,7 @@ import TitlePageHeader from "~/components/Elements/TitlePageHeader";
 import { Breadcrumb } from "antd";
 export const siteTitle = "Mona Media Admin";
 import { dataMenu } from "~/lib/data-menu";
+import { Popover } from "antd";
 
 const name = "Mona";
 
@@ -220,6 +221,21 @@ function Layout({
     return nameRouter;
   };
 
+  const contentFanpage = (
+    <div>
+      <iframe
+        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fechinese.vn%2F&tabs=timeline%2C%20message&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=688873135187834"
+        width="500"
+        height="500"
+        style={{ border: "bone", overflow: "hidden" }}
+        scrolling="no"
+        frameBorder="0"
+        allowFullScreen
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      ></iframe>
+    </div>
+  );
+
   return (
     <div className="app">
       <Head>
@@ -242,6 +258,12 @@ function Layout({
         funcMenuMobile={funcMenuMobile}
       />
       <main className="app-main">
+        <Popover content={contentFanpage} title="Fanpage" trigger="click">
+          <div className="icon-facebook">
+            <img className="facebook-img" src="/icons/facebook.png"></img>
+          </div>
+        </Popover>
+
         <div className={`app-content ${!isOpen && "close-app"}`}>
           <div className="wrap-breadcrumb">
             <Breadcrumb>

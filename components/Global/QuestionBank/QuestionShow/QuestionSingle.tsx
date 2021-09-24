@@ -14,8 +14,12 @@ import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug
 import { CheckOutlined } from "@ant-design/icons";
 
 const QuestionSingle = (props: any) => {
-  const { isGetQuestion, onGetListQuestionID, listQuestionID } =
-    useExamDetail();
+  const {
+    isGetQuestion,
+    onGetListQuestionID,
+    listQuestionID,
+    listQuestionAddOutside,
+  } = useExamDetail();
   const {
     listQuestion,
     loadingQuestion,
@@ -40,8 +44,6 @@ const QuestionSingle = (props: any) => {
   const [activeID, setActiveID] = useState(null);
   const [lengthData, setLengthData] = useState(null);
   const [listQuestionAdd, setListQuestionAdd] = useState([]);
-
-  console.log("List question add: ", listQuestionAdd);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -166,6 +168,16 @@ const QuestionSingle = (props: any) => {
     if (!isGroup.status) {
       listQuestion.forEach((item) => {
         item.isChecked = null;
+
+        if (listQuestionAddOutside?.length > 0) {
+          if (
+            listQuestionAddOutside.some(
+              (object) => object["ExerciseOrExerciseGroupID"] == item.ID
+            )
+          ) {
+            item.isChecked = true;
+          }
+        }
       });
       setDataListQuestion(listQuestion);
     } else {
@@ -186,12 +198,15 @@ const QuestionSingle = (props: any) => {
 
   // On change - add question
   const onChange_AddQuestion = (checked, quesID) => {
-    listQuestionAdd.push({
+    let objectQuestion = {
       type: 1,
       ExerciseOrExerciseGroupID: quesID,
-    });
-    onGetListQuestionID([...listQuestionAdd]);
-    setListQuestionAdd([...listQuestionAdd]);
+    };
+
+    // Call function to get ID of question
+    onGetListQuestionID(objectQuestion);
+
+    // Check isChecked in checkbox
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
         item.isChecked = checked;
@@ -204,9 +219,9 @@ const QuestionSingle = (props: any) => {
   };
 
   // CHECK AND REMOVE ID IS SELECTED
-  useEffect(() => {
-    setListQuestionAdd([]);
-  }, [listQuestionID]);
+  // useEffect(() => {
+  //   setListQuestionAdd([]);
+  // }, [listQuestionID]);
 
   return (
     <>

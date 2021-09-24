@@ -24,7 +24,7 @@ import { type } from "os";
 
 import ReactHtmlParser from "react-html-parser";
 
-import { dataMenu } from "~/lib/data-menu";
+import { dataMenu, AdminParentMenu } from "~/lib/data-menu";
 import { useWrap } from "~/context/wrap";
 
 import {
@@ -83,7 +83,8 @@ const MenuDefault = ({
 }) => {
   // const router = useRouter();
   // const getRouter = router.pathname;
-
+  const { userInformation } = useWrap();
+  console.log("Userinformation: ", userInformation);
   const router = useRouter();
   let getRouter = router.pathname;
 
@@ -292,30 +293,6 @@ const MenuDefault = ({
     }
   }, [sameTab]);
 
-  const menuParent = [
-    {
-      TabName: "tab-course",
-    },
-    {
-      TabName: "tab-customer",
-    },
-    {
-      TabName: "tab-staff",
-    },
-    {
-      TabName: "tab-package",
-    },
-    {
-      TabName: "tab-layout",
-    },
-    {
-      TabName: "tab-option",
-    },
-    {
-      TabName: "tab-document",
-    },
-  ];
-
   const closeMenuMobile = (e) => {
     e.preventDefault();
     funcMenuMobile();
@@ -359,7 +336,19 @@ const MenuDefault = ({
         </div>
         <div className="menu-parent-body">
           <ul className="list-menu">
-            <li className={tab === "tab-home" ? "active" : ""} key="1">
+            {AdminParentMenu.map((item, index) => (
+              <li className={tab === item.TabName ? "active" : ""} key={index}>
+                <a
+                  href="#"
+                  onClick={changeTabsClick}
+                  onMouseEnter={changeTabs}
+                  data-tabs={item.TabName}
+                >
+                  {item.Icon}
+                </a>
+              </li>
+            ))}
+            {/* <li className={tab === "tab-home" ? "active" : ""} key="1">
               <a
                 href="#"
                 onClick={changeTabsClick}
@@ -450,7 +439,7 @@ const MenuDefault = ({
               >
                 <Layers />
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>

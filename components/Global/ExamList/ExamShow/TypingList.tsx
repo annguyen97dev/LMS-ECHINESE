@@ -1,6 +1,6 @@
 import React from "react";
 
-const TypingList = () => {
+const TypingList = (props) => {
   return <div></div>;
 };
 
