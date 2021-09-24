@@ -106,7 +106,7 @@ const PointColumnForm = (props) => {
 				</button>
 			)}
 			<Modal
-				title={isUpdate ? 'Update Point Column' : 'Create Point Column'}
+				title={isUpdate ? 'Cập nhật cột điểm' : 'Tạo cột điểm'}
 				visible={isModalVisible}
 				onCancel={closeModal}
 				footer={null}
@@ -157,7 +157,7 @@ const PointColumnForm = (props) => {
 									className="btn btn-primary w-100"
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
-									{isUpdate ? 'Update' : 'Create'}
+									{isUpdate ? 'Cập nhật' : 'Khởi tạo'}
 									{isLoading.type == 'ADD_DATA' && isLoading.status && (
 										<Spin className="loading-base" />
 									)}

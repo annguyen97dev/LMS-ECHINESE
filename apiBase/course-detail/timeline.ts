@@ -1,12 +1,12 @@
-import { instance } from "~/apiBase/instance";
+import {instance} from '~/apiBase/instance';
 
-const url = "/api/TimeLine";
+const url = '/api/TimeLine';
 
 class TimelineApi {
-  getByCourseID = (id: number) =>
-    instance.get<IApiResultData<ITimeLine>>(`${url}/${id}`);
+	getByCourseID = (id: number) =>
+		instance.get<IApiResultData<ITimeLine[]>>(`${url}/${id}`);
 
-  add = (data: ITimeLine) => instance.post(url, data);
+	add = (data) => instance.post(url, data);
 }
 
 export const timelineApi = new TimelineApi();

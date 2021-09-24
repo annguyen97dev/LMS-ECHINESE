@@ -15,9 +15,9 @@ import {
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
-import Comment from './Comment/Comment';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
+import TimelineCourse from './Timeline/Timeline';
 import Transcript from './Transcript/Transcript';
 
 const {TabPane} = Tabs;
@@ -118,7 +118,7 @@ const CourseListDetail = () => {
 					}
 					key="7"
 				>
-					<Comment courseID={parseIntID} />
+					<TimelineCourse courseID={parseIntID} />
 				</TabPane>
 				<TabPane
 					tab={

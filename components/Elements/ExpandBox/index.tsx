@@ -1,7 +1,6 @@
 import {Card} from 'antd';
-import moment from 'moment';
+import Link from 'next/link';
 import React from 'react';
-import ReactHtmlParser from 'react-html-parser';
 
 export default function ExpandBox() {
 	return (
@@ -30,8 +29,49 @@ export default function ExpandBox() {
 	);
 }
 
-export function ExpandBoxService(props) {
-	// console.log(props.dataRow);
+export function ExpandPaymentRow(props: {dataRow: ICourseOfStudentPrice}) {
+	const {dataRow} = props;
+	const {Course} = dataRow;
+	return (
+		<div className="feedback-detail-text">
+			<table className="tb-expand">
+				<thead>
+					<tr>
+						<th>Các khóa học</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<div className="list-coursename">
+								{Course.map((item, index) => (
+									<Link
+										key={item.ID}
+										href={{
+											pathname: '/course/course-list/course-list-detail/[slug]',
+											query: {slug: item.ID, type: item.TypeCourse},
+										}}
+									>
+										<a
+											title={item.CourseName}
+											className="font-weight-black d-block"
+										>
+											{item.CourseName}
+										</a>
+									</Link>
+								))}
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	);
+}
+
+export function ExpandRefundRow(props: {dataRow: IRefunds}) {
+	const {dataRow} = props;
+	const {Reason, RefundsDetail, PaymentMethodsName} = dataRow;
 	return (
 		<div className="feedback-detail-text">
 			<table className="tb-expand">
@@ -40,32 +80,32 @@ export function ExpandBoxService(props) {
 						<th>Lý do hoàn tiền</th>
 						<th>Khóa học</th>
 						<th>Phương thức hoàn tiền</th>
-						<th>Ngày tạo</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td>
-							{props.dataRow?.Reason == ''
-								? 'Không có lý do'
-								: props.dataRow?.Reason}
-						</td>
+						<td>{Reason || 'Không có lý do'}</td>
 						<td>
 							<div className="list-coursename">
-								{props.dataRow?.RefundsDetail &&
-									props.dataRow?.RefundsDetail.map((item, index) => (
-										<span className="item-coursename" key={index}>
+								{RefundsDetail.map((item, index) => (
+									<Link
+										key={item.CourseID}
+										href={{
+											pathname: '/course/course-list/course-list-detail/[slug]',
+											query: {slug: item.CourseID, type: item.TypeCourse},
+										}}
+									>
+										<a
+											title={item.CourseName}
+											className="font-weight-black d-block"
+										>
 											{item.CourseName}
-										</span>
-									))}
+										</a>
+									</Link>
+								))}
 							</div>
 						</td>
-						<td>{props.dataRow?.PaymentMethodsName}</td>
-						<td>
-							{props.dataRow?.CreatedOn
-								? moment(props.dataRow?.CreatedOn).format('DD/MM/YYYY')
-								: ''}
-						</td>
+						<td>{PaymentMethodsName}</td>
 					</tr>
 				</tbody>
 			</table>

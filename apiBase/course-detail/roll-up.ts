@@ -1,14 +1,21 @@
-import { instance } from "~/apiBase/instance";
+import {instance} from '~/apiBase/instance';
 
-const url = "/api/RollUp";
+const url = '/api/RollUp';
 
-class RollUpApi {
-  getAll = (Params: any) =>
-    instance.get<IApiResultData<IRollUp[]>>(url, {
-      params: Params,
-    });
+type IApiResultRollUp = {
+	message: string;
+	TotalRow: number;
+	RollUp: IRollUp[];
+	ScheduleList: ICourseDetailSchedule[];
+	StudentList: IStudentListInCourse[];
+};
 
-  add = (data: IRollUp) => instance.post(url, data);
-}
+export const rollUpApi = {
+	getAll: (Params: any) =>
+		instance.get<IApiResultRollUp>(url, {
+			params: Params,
+		}),
 
-export const rollUpApi = new RollUpApi();
+	add: (data) => instance.post(url, data),
+	update: (data) => instance.post(url, data),
+};

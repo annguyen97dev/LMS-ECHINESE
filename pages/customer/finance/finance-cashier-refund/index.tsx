@@ -1,21 +1,18 @@
-import React, {Fragment, useEffect, useState} from 'react';
-import TitlePage from '~/components/TitlePage';
-import ExpandTable from '~/components/ExpandTable';
-import SortBox from '~/components/Elements/SortBox';
-import {dataService} from 'lib/customer/dataCustomer';
-import {ExpandBoxService} from '~/components/Elements/ExpandBox';
-import RefundForm from '~/components/Global/Customer/Finance/RefundForm';
-import FilterColumn from '~/components/Tables/FilterColumn';
-import FilterTable from '~/components/Global/CourseList/FilterTable';
-import StudyTimeForm from '~/components/Global/Option/StudyTimeForm';
-import LayoutBase from '~/components/LayoutBase';
-import {refundsApi, branchApi} from '~/apiBase';
-import moment from 'moment';
-import {useWrap} from '~/context/wrap';
+import React, {useEffect, useState} from 'react';
+import {Check} from 'react-feather';
+import {branchApi, refundsApi} from '~/apiBase';
+import {ExpandRefundRow} from '~/components/Elements/ExpandBox';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
+import SortBox from '~/components/Elements/SortBox';
+import ExpandTable from '~/components/ExpandTable';
+import RefundForm from '~/components/Global/Customer/Finance/RefundForm';
+import LayoutBase from '~/components/LayoutBase';
+import FilterColumn from '~/components/Tables/FilterColumn';
+import {useWrap} from '~/context/wrap';
+import {numberWithCommas} from '~/utils/functions';
 FinanceRefund.layout = LayoutBase;
 export default function FinanceRefund() {
-	const expandedRowRender = (record) => <ExpandBoxService dataRow={record} />;
+	const expandedRowRender = (record) => <ExpandRefundRow dataRow={record} />;
 
 	const [dataTable, setDataTable] = useState<IRefunds[]>([]);
 	const [dataBranch, setDataBranch] = useState([]);
@@ -242,7 +239,6 @@ export default function FinanceRefund() {
 		setCurrentPage(pageNumber);
 		setTodoApi({
 			...todoApi,
-			//   ...listFieldSearch,
 			pageIndex: pageIndex,
 			pageSize: pageSize,
 		});
@@ -283,37 +279,25 @@ export default function FinanceRefund() {
 
 	const columns = [
 		{
-			title: 'Trung tâm',
-			dataIndex: 'BranchName',
-			// ...FilterColumn("center")
-		},
-		{
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
-			render: (a) => <p className="font-weight-blue">{a}</p>,
+			render: (name) => <p className="font-weight-black">{name}</p>,
 		},
-		// {
-		//   title: "Nguồn",
-		//   dataIndex: "source",
-		//   // ...FilterColumn("source")
-		// },
+		{
+			title: 'Trung tâm',
+			dataIndex: 'BranchName',
+		},
 		{
 			title: 'Số điện thoại',
 			dataIndex: 'Mobile',
-			// ...FilterColumn("tel")
 		},
 		{
 			title: 'Số tiền',
 			dataIndex: 'Price',
-			// ...FilterColumn("cost"),
 			render: (Price) => {
-				return (
-					<p className="font-weight-black">
-						{Intl.NumberFormat('ja-JP').format(Price)}
-					</p>
-				);
+				return <p className="font-weight-blue">{numberWithCommas(Price)}</p>;
 			},
 		},
 		{
@@ -330,6 +314,14 @@ export default function FinanceRefund() {
 						return <span className="tag yellow">{fnStatus}</span>;
 						break;
 				}
+			},
+		},
+		{
+			title: 'Xóa khỏi lớp',
+			dataIndex: 'isExpulsion',
+			align: 'center',
+			render: (isExpulsion) => {
+				return <p>{isExpulsion ? <Check color="#0da779" /> : ''}</p>;
 			},
 		},
 		{
@@ -362,9 +354,6 @@ export default function FinanceRefund() {
 			addClass="basic-header"
 			TitlePage="Danh sách yêu cầu hoàn tiền"
 			dataSource={dataTable}
-			// TitleCard={
-			//   <StudyTimeForm showAdd={true} />
-			// }
 			columns={columns}
 			expandable={{expandedRowRender: (record) => expandedRowRender(record)}}
 			Extra={

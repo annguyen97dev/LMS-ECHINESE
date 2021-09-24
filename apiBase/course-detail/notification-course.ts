@@ -1,14 +1,14 @@
-import { instance } from "~/apiBase/instance";
+import {instance} from '~/apiBase/instance';
 
-const url = "/api/NotificationCourse";
+const url = '/api/NotificationCourse';
 
 class NotificationCourseApi {
-  getAll = (Params: any) =>
-    instance.get<IApiResultData<INotificationCourse[]>>(url, {
-      params: Params,
-    });
+	getAll = (Params: any) =>
+		instance.get<IApiResultData<INotificationCourse[]>>(url, {
+			params: Params,
+		});
 
-  add = (data: INotificationCourse) => instance.post(url, data);
+	add = (data) => instance.post(url, data);
 }
 
 export const notificationCourseApi = new NotificationCourseApi();

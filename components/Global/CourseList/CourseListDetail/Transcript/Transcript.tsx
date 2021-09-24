@@ -14,10 +14,10 @@ const Transcript = () => {
 					setActiveTab(+activeKey);
 				}}
 			>
-				<TabPane tab="Transcript Course" key="1">
+				<TabPane tab="Bảng điểm trung bình" key="1">
 					{activeTab === 1 && <TranscriptCourse />}
 				</TabPane>
-				<TabPane tab="Transcript Each Subject" key="2">
+				<TabPane tab="Bảng điểm theo môn" key="2">
 					{activeTab === 2 && <TranscriptSubject />}
 				</TabPane>
 			</Tabs>

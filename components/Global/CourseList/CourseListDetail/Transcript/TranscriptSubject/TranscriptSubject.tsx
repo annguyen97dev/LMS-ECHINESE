@@ -120,6 +120,7 @@ function TranscriptSubject(props) {
 	};
 	const onUpdateTranscriptStudent = async (obj: {
 		UserInformationID: number;
+		CourseID: number;
 		PointColumnID: number;
 		Point: number;
 		Note: string;
@@ -130,14 +131,24 @@ function TranscriptSubject(props) {
 			status: true,
 		});
 		try {
-			console.log('update', obj);
-			const {UserInformationID, PointColumnID, Point, Note, Type} = obj;
+			const {UserInformationID, CourseID, PointColumnID, Point, Note, Type} =
+				obj;
 			let updateObj;
 			if (Type === 'Note') {
-				updateObj = {UserInformationID, PointColumnID, Note};
+				updateObj = {
+					UserInformationID,
+					CourseID,
+					PointColumnID,
+					Note,
+				};
 			}
 			if (Type === 'Point') {
-				updateObj = {UserInformationID, PointColumnID, Point};
+				updateObj = {
+					UserInformationID,
+					CourseID,
+					PointColumnID,
+					Point,
+				};
 			}
 			const res = await transcriptApi.update(updateObj);
 			if (res.status === 200) {
@@ -174,6 +185,7 @@ function TranscriptSubject(props) {
 								{col.Type === 3 ? (
 									<div key={idx}>
 										<NoteInput
+											// ALREADY COLUMN_ID => UPDATE POINT FOT THIS COLUMN
 											isUpdate={
 												item[`Column_${col.ID}`] !== undefined ? true : false
 											}
@@ -197,6 +209,8 @@ function TranscriptSubject(props) {
 												PointColumnID: col.ID,
 												Point: item[`Column_${col.ID}`],
 											}}
+											// TYPE = 2 > AVERAGE POINT > CAN NOT UPDATE OR INSERT
+											disabled={col.Type === 2 ? true : false}
 											handleCreatePointColumn={onCreateTranscriptStudent}
 											handleUpdatePointColumn={onUpdateTranscriptStudent}
 										/>
@@ -234,7 +248,7 @@ function TranscriptSubject(props) {
 	};
 	useEffect(() => {
 		fetchColumnForTable();
-	}, [dataSource, filters.SubjectID]);
+	}, [dataSource]);
 
 	const flatPointColumnsOfStudent = (
 		pointColumn: {

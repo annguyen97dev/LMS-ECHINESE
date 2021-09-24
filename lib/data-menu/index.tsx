@@ -120,8 +120,15 @@ export const dataMenu = [
         Key: "/course/schedule-study",
         Icon: '<span class="anticon"><img src="/images/icons/calendar.svg"></span>',
         Route: "/course/schedule-study",
-        Text: "Kiểm tra lịch học",
+        Text: "Kiểm tra lịch",
       },
+      //   {
+      //     TypeItem: "single",
+      //     Key: "/course/schedule-study-teacher",
+      //     Icon: '<span class="anticon"><img src="/images/icons/calendar.svg"></span>',
+      //     Route: "/course/schedule-study-teacher",
+      //     Text: "Lịch dạy giáo viên",
+      //   },
       {
         TypeItem: "single",
         Key: "/course/course-list-report",
@@ -608,8 +615,8 @@ export const dataMenu = [
       },
       {
         ItemType: "single",
-        Key: "/package/examiner-list",
-        Route: "/package/examiner-list",
+        Key: "/package/package-examiner",
+        Route: "/package/package-examiner",
         Text: "Danh sách chấm gói bài",
         Icon: "",
       },
