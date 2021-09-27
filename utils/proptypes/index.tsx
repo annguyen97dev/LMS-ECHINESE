@@ -7,3 +7,10 @@ export const optionCommonPropTypes = PropTypes.arrayOf(
 		options: PropTypes.shape({}),
 	})
 );
+export const radioCommonPropTypes = PropTypes.arrayOf(
+	PropTypes.shape({
+		label: PropTypes.string.isRequired,
+		value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+		disabled: PropTypes.bool,
+	})
+);

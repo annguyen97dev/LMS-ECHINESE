@@ -11,8 +11,9 @@ import InputTextField from '~/components/FormControl/InputTextField';
 import RadioField from '~/components/FormControl/RadioField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
 import {numberWithCommas} from '~/utils/functions';
+import {radioCommonPropTypes} from '~/utils/proptypes';
 
-RequestRefundForm.propTypes = {
+RequestRefundsForm.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
@@ -20,18 +21,11 @@ RequestRefundForm.propTypes = {
 	studentObj: PropTypes.object,
 	getInfoCourse: PropTypes.func,
 	courseListOfStudent: PropTypes.array,
-	paymentMethodOptionList: PropTypes.arrayOf(
-		PropTypes.shape({
-			label: PropTypes.string.isRequired,
-			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-				.isRequired,
-			disabled: PropTypes.bool,
-		})
-	),
+	paymentMethodOptionList: radioCommonPropTypes,
 	onSubmit: PropTypes.func,
 };
 
-RequestRefundForm.defaultProps = {
+RequestRefundsForm.defaultProps = {
 	isLoading: {type: '', status: false},
 	studentObj: {},
 	getInfoCourse: null,
@@ -40,7 +34,7 @@ RequestRefundForm.defaultProps = {
 	onSubmit: null,
 };
 
-function RequestRefundForm(props) {
+function RequestRefundsForm(props) {
 	const {
 		isLoading,
 		studentObj,
@@ -247,4 +241,4 @@ function RequestRefundForm(props) {
 	);
 }
 
-export default RequestRefundForm;
+export default RequestRefundsForm;

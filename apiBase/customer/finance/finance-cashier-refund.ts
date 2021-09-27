@@ -13,7 +13,7 @@ class Refunds {
 
 	add = (data) => instance.post(url, data);
 
-	update = (data: IRefunds) => instance.put(url, data, {});
+	update = (data) => instance.put(url, data, {});
 }
 
 export const refundsApi = new Refunds();
