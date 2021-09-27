@@ -22,6 +22,7 @@ function RollUpTable(props) {
 	});
 	const [rollUpList, setRollUpList] = useState<IRollUp[]>([]);
 	const {showNoti} = useWrap();
+	const [totalPage, setTotalPage] = useState(null);
 	// FILTER
 	const [filters, setFilters] = useState({
 		pageSize: 10,
@@ -45,6 +46,7 @@ function RollUpTable(props) {
 			const res = await rollUpApi.getAll(filters);
 			if (res.status === 200) {
 				setRollUpList(res.data.data);
+				setTotalPage(res.data.totalRow);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -109,6 +111,7 @@ function RollUpTable(props) {
 		<ExpandTable
 			loading={isLoading}
 			currentPage={filters.pageIndex}
+			totalPage={totalPage}
 			getPagination={getPagination}
 			noScroll
 			dataSource={rollUpList}
