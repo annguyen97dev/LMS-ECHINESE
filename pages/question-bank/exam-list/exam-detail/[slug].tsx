@@ -6,17 +6,7 @@ import React, {
   createContext,
 } from "react";
 
-import {
-  Popover,
-  Card,
-  Divider,
-  Drawer,
-  Form,
-  Select,
-  Input,
-  Affix,
-  Spin,
-} from "antd";
+import { Popover, Card, Skeleton, Spin } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
 import { Info, Bookmark } from "react-feather";
 
@@ -26,6 +16,12 @@ import { examDetailApi, examTopicApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import ChoiceList from "~/components/Global/ExamList/ExamShow/ChoiceList";
 import AddQuestionModal from "~/components/Global/ExamDetail/AddQuestionModal";
+import MultipleList from "~/components/Global/ExamList/ExamShow/MultipleList";
+import WrapList from "~/components/Global/ExamList/ExamShow/WrapList";
+import MapList from "~/components/Global/ExamList/ExamShow/MapList";
+import DragList from "~/components/Global/ExamList/ExamShow/DragList";
+import TypingList from "~/components/Global/ExamList/ExamShow/TypingList";
+import WrittingList from "~/components/Global/ExamList/ExamShow/WrittingList";
 
 const listAlphabet = [
   "A",
@@ -51,7 +47,7 @@ const listAlphabet = [
   "V",
 ];
 
-type objectQuestionAdd = {
+type objectQuestionAddOutside = {
   type: number;
   ExerciseOrExerciseGroupID: number;
 };
@@ -60,16 +56,18 @@ export type IProps = {
   onAddQuestion: Function;
   onGetListQuestionID: Function;
   isGetQuestion: boolean;
-  listQuestionAdd: Array<objectQuestionAdd>;
+  listQuestionAddOutside: Array<objectQuestionAddOutside>;
   listQuestionID: Array<number>;
+  listGroupID: Array<number>;
 };
 
 const ExamDetailContext = createContext<IProps>({
   onAddQuestion: () => {},
   onGetListQuestionID: (data) => {},
   isGetQuestion: false,
-  listQuestionAdd: [],
+  listQuestionAddOutside: [],
   listQuestionID: [],
+  listGroupID: [],
 });
 
 const ExamDetail = () => {
@@ -80,34 +78,61 @@ const ExamDetail = () => {
   const [dataExamDetail, setDataExamDetail] = useState([]);
   const [examTopicDetail, setExamTopicDetail] = useState<IExamTopic>();
   const [listQuestionID, setListQuestionID] = useState([]); // Lấy tất cả ID đã có
-  const [listQuestionAdd, setListQuestionAdd] = useState([]); // Lấy tất cả ID vừa add
+  const [listGroupID, setListGroupID] = useState([]); // Lấy tất cả group ID đã có
+  const [listQuestionAddOutside, setListQuestionAddOutside] = useState([]); // Lấy tất cả ID vừa add
   const [isGetQuestion, setIsGetQuestion] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [totalPageIndex, setTotalPageIndex] = useState(0);
+  const boxEl = useRef(null);
+  const [loadingQuestion, setLoadingQuestion] = useState(false);
+  const listTodoApi = {
+    pageIndex: 1,
+    pageSize: 10,
+    ExamTopicID: examID,
+  };
+  const [todoApi, setTodoApi] = useState(listTodoApi);
 
-  console.log("Data Exam: ", dataExamDetail);
-  console.log("List question: ", listQuestionID);
+  // console.log("Data Exam: ", dataExamDetail);
+  // console.log("List question: ", listQuestionID);
+  console.log("List Group ID: ", listGroupID);
 
+  // ---- GET LIST QUESTION IN EXAM ----
   const getExamDetail = async () => {
-    setIsLoading(true);
+    let cloneListQuestionID = [...listQuestionID];
+    let cloneListGroupID = [...listGroupID];
+
     try {
-      let res = await examDetailApi.getAll({
-        selectAll: true,
-        ExamTopicID: examID,
-      });
+      let res = await examDetailApi.getAll(todoApi);
       if (res.status == 200) {
         setDataExamDetail(res.data.data);
+
+        let cloneData = [...dataExamDetail];
+        res.data.data.forEach((item, index) => {
+          cloneData.push(item);
+        });
+
+        setDataExamDetail([...cloneData]);
+
         res.data.data.forEach((item) => {
+          item.ExerciseGroupID !== 0 &&
+            cloneListGroupID.push(item.ExerciseGroupID);
           item.ExerciseTopic.forEach((ques) => {
-            listQuestionID.push(ques.ExerciseID);
+            cloneListQuestionID.push(ques.ExerciseID);
           });
         });
-        setListQuestionID([...listQuestionID]);
-        setListQuestionAdd([]);
+        setListGroupID([...cloneListGroupID]);
+        setListQuestionID([...cloneListQuestionID]);
+        setListQuestionAddOutside([]);
+
+        // Caculator pageindex
+        let totalPage = Math.ceil(res.data.totalRow / 10);
+        setTotalPageIndex(totalPage);
       }
     } catch (error) {
       showNoti("danger", error);
     } finally {
       setIsLoading(false);
+      loadingQuestion && setLoadingQuestion(false);
     }
   };
 
@@ -136,11 +161,77 @@ const ExamDetail = () => {
       case 1:
         return (
           <div key={index}>
-            <ChoiceList dataQuestion={item} listAlphabet={listAlphabet} />
+            <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+              <ChoiceList
+                listQuestionID={listQuestionID}
+                dataQuestion={item}
+                listAlphabet={listAlphabet}
+              />
+            </WrapList>
           </div>
         );
         break;
-
+      case 2:
+        return (
+          <div key={index}>
+            <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+              <DragList
+                listQuestionID={listQuestionID}
+                dataQuestion={item}
+                listAlphabet={listAlphabet}
+              />
+            </WrapList>
+          </div>
+        );
+        break;
+      case 3:
+        return (
+          <div key={index}>
+            <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+              <TypingList />
+            </WrapList>
+          </div>
+        );
+        break;
+      case 4:
+        return (
+          <div key={index}>
+            <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+              <MultipleList
+                listQuestionID={listQuestionID}
+                dataQuestion={item}
+                listAlphabet={listAlphabet}
+              />
+            </WrapList>
+          </div>
+        );
+        break;
+      case 5:
+        return (
+          <div key={index}>
+            <WrapList>
+              <MapList
+                listQuestionID={listQuestionID}
+                dataQuestion={item}
+                listAlphabet={listAlphabet}
+              />
+            </WrapList>
+          </div>
+        );
+        break;
+      case 6:
+        return (
+          <div key={6}>
+            <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+              <WrittingList
+                listQuestionID={listQuestionID}
+                dataQuestion={item}
+                listAlphabet={listAlphabet}
+              />
+            </WrapList>
+          </div>
+        );
+        break;
       default:
         return;
         break;
@@ -150,20 +241,55 @@ const ExamDetail = () => {
   // ON ADD QUESTION TO EXAM
   const onAddQuestion = () => {
     setIsGetQuestion(true);
-    setTimeout(() => {
-      setIsGetQuestion(false);
-    }, 200);
+  };
+
+  const onFetchData = () => {
+    setIsLoading(true);
+    setListGroupID([]);
+    setListQuestionID([]);
+    setDataExamDetail([]);
+    setTodoApi(listTodoApi);
+    setIsGetQuestion(false);
   };
 
   // ON GET LIST QUESTION ID
-  const onGetListQuestionID = (data) => {
-    setListQuestionAdd(data);
+  const onGetListQuestionID = (objectQuestion: any) => {
+    listQuestionAddOutside.push(objectQuestion);
+
+    setListQuestionAddOutside([...listQuestionAddOutside]);
+  };
+  console.log("List question add outside: ", listQuestionAddOutside);
+  // ON SCROLL
+  const onScroll = () => {
+    const scrollHeight = boxEl.current.scrollHeight;
+    const offsetHeight = boxEl.current.offsetHeight;
+    const scrollTop = boxEl.current.scrollTop;
+
+    // console.log("Height: ", scrollHeight - offsetHeight - 50);
+    // console.log("Scroll: ", scrollTop);
+
+    if (scrollTop > scrollHeight - offsetHeight - 50) {
+      if (todoApi.pageIndex < totalPageIndex) {
+        setLoadingQuestion(true);
+
+        if (scrollTop > 0 && loadingQuestion == false) {
+          setTodoApi({
+            ...todoApi,
+            pageIndex: todoApi.pageIndex + 1,
+          });
+        }
+      }
+    }
   };
 
   useEffect(() => {
+    setIsLoading(true);
     getExamTopicDetail();
-    getExamDetail();
   }, []);
+
+  useEffect(() => {
+    getExamDetail();
+  }, [todoApi]);
 
   const content = (
     <div className="question-bank-info">
@@ -195,8 +321,9 @@ const ExamDetail = () => {
         onAddQuestion,
         isGetQuestion: isGetQuestion,
         onGetListQuestionID,
-        listQuestionAdd,
+        listQuestionAddOutside,
         listQuestionID: listQuestionID,
+        listGroupID: listGroupID,
       }}
     >
       <div className="question-create">
@@ -241,11 +368,11 @@ const ExamDetail = () => {
               extra={
                 <AddQuestionModal
                   dataExam={examTopicDetail}
-                  onFetchData={() => getExamDetail()}
+                  onFetchData={onFetchData}
                 />
               }
             >
-              <div className="question-list">
+              <div className="question-list" ref={boxEl} onScroll={onScroll}>
                 {isLoading ? (
                   <div className="text-center mt-3">
                     <Spin />
@@ -258,6 +385,11 @@ const ExamDetail = () => {
                   dataExamDetail?.map((item, index) =>
                     returnQuestionType(item, index)
                   )
+                )}
+                {loadingQuestion && (
+                  <div>
+                    <Skeleton />
+                  </div>
                 )}
               </div>
             </Card>

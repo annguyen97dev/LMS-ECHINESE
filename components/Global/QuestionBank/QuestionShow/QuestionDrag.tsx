@@ -190,13 +190,6 @@ const QuestionDrag = (props: any) => {
               {ReactHtmlParser(dataListQuestion?.Paragraph)}
             </div>
             <div className="box-action">
-              {/* <CreateQuestionForm
-                isGroup={{ status: false, id: dataListQuestion?.ID }}
-                questionData={dataListQuestion}
-                onFetchData={onFetchData}
-                onEditData={(data) => onEditData(data)}
-              /> */}
-
               <Popconfirm
                 title="Bạn có chắc muốn xóa?"
                 onConfirm={() => handleOk(dataListQuestion)}

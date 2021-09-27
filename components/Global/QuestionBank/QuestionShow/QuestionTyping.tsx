@@ -23,8 +23,6 @@ const EditQuestion = (props) => {
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("Data form: ", dataForm);
-
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -224,8 +222,6 @@ const QuestionTyping = (props: any) => {
   const [dataExercise, setDataExercise] = useState([]);
   const [showContent, setShowContent] = useState(false);
 
-  console.log("List Question: ", listQuestion);
-
   const onChange = (e) => {
     e.preventDefault();
     // setValue(e.target.value);
@@ -317,9 +313,6 @@ const QuestionTyping = (props: any) => {
     return title;
   };
 
-  console.log("Data list question: ", listQuestion);
-  console.log("Show content: ", showContent);
-
   const checkShowContent = (data) => {
     let preventLoop = false;
     data.ExerciseList.length == 0 && setShowContent(false);
@@ -332,17 +325,13 @@ const QuestionTyping = (props: any) => {
       }
     });
 
-    console.log("Prevent loop là: ", preventLoop);
-
     if (!preventLoop) {
       setShowContent(false);
     }
   };
 
   useEffect(() => {
-    console.log("Change list question 111");
     if (listQuestion) {
-      console.log("Change list question");
       checkShowContent(listQuestion);
       let filterExerciseList = listQuestion?.ExerciseList.filter(
         (item) => item.Enable !== false

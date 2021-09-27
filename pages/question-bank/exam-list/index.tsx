@@ -60,10 +60,10 @@ const DeleteExam = (props) => {
         footer={
           <div className="text-center">
             <button className="btn btn-light mr-2" onClick={handleCancel}>
-              Đóng
+              Hủy
             </button>
             <button className="btn btn-primary" onClick={handleSubmit}>
-              Lưu
+              Xóa
               {isLoading && <Spin className="loading-base" />}
             </button>
           </div>
@@ -254,7 +254,7 @@ const ExamList = (props) => {
                 </h3>
               </div>
             }
-            extra={<CreateExamForm onFetchData={() => onFetchData()} />}
+            extra={<CreateExamForm onFetchData={onFetchData} />}
           >
             <div className="question-list" ref={boxEl} onScroll={onScroll}>
               <div className="row mb-3">

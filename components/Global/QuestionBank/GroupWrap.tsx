@@ -23,8 +23,7 @@ import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug
 import { CheckOutlined } from "@ant-design/icons";
 
 const GroupWrap = (props) => {
-  const { isGetQuestion, onGetListQuestionID, listQuestionID } =
-    useExamDetail();
+  const { isGetQuestion, onGetListQuestionID, listGroupID } = useExamDetail();
   const {
     children,
     isGroup,
@@ -245,11 +244,15 @@ const GroupWrap = (props) => {
 
   // On change - add question
   const onChange_AddQuestion = (checked, quesID) => {
-    listQuestionAdd.push({
+    let objectQuestion = {
       type: 2,
       ExerciseOrExerciseGroupID: quesID,
-    });
-    setListQuestionAdd([...listQuestionAdd]);
+    };
+
+    // Call function to get ID of question
+    onGetListQuestionID(objectQuestion);
+
+    // Check isChecked in checkbox
     dataListQuestion.every((item) => {
       if (item.ID == quesID) {
         item.isChecked = checked;
@@ -257,15 +260,14 @@ const GroupWrap = (props) => {
       }
       return true;
     });
+
     setDataListQuestion([...dataListQuestion]);
   };
 
-  // GET LIST QUESTION ID
-  useEffect(() => {
-    if (isGetQuestion) {
-      onGetListQuestionID(listQuestionAdd);
-    }
-  }, [isGetQuestion]);
+  // CHECK AND REMOVE ID IS SELECTED
+  // useEffect(() => {
+  //   setListQuestionAdd([]);
+  // }, [listGroupID]);
 
   return (
     <>
@@ -322,7 +324,7 @@ const GroupWrap = (props) => {
                       </button>
                     </Popover>
                     {dataExam &&
-                      (listQuestionID.includes(item.ID) ? (
+                      (listGroupID.includes(item.ID) ? (
                         <Tooltip title="Đã có trong đề thi">
                           <button className="btn btn-icon edit">
                             <CheckOutlined />

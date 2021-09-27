@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
@@ -7,8 +7,13 @@ import ReactHtmlParser, {
 import { Radio, Tooltip, Skeleton, Popconfirm, Spin } from "antd";
 
 const ChoiceList = (props) => {
-  const { dataQuestion, listAlphabet } = props;
-  // console.log("Data Question List: ", dataQuestion);
+  const { dataQuestion, listAlphabet, listQuestionID } = props;
+
+  const returnPosition = (quesID) => {
+    let index = listQuestionID.indexOf(quesID);
+    let text = "Câu " + (index + 1).toString();
+    return text;
+  };
 
   return (
     <>
@@ -16,25 +21,20 @@ const ChoiceList = (props) => {
         <div className={`question-item`} key={ind}>
           <div className="box-detail">
             <div className="box-title">
-              <span className="title-ques">Câu hỏi {ind + 1}</span>
+              <span className="title-ques">
+                {returnPosition(ques.ExerciseID)}
+              </span>
+              {ques.LinkAudio !== "" && (
+                <audio controls>
+                  <source src={ques.LinkAudio} type="audio/mpeg" />
+                </audio>
+              )}
               {/* {returnAudio(item)} */}
               <div className="title-text">{ReactHtmlParser(ques.Content)}</div>
             </div>
             <div className="box-answer">
               <div className="question-single question-wrap w-100">
                 {ques.ExerciseAnswer?.map((ans, i) => (
-                  // <div className="d-flex align-items-center" key={i}>
-                  //   <Radio
-                  //     key={i}
-                  //     value={ans.ID}
-                  //     onChange={(e) => e.preventDefault()}
-                  //     disabled={true}
-                  //   ></Radio>
-                  //   <div>
-                  //     <span className="tick">{listAlphabet[i]}</span>
-                  //     <span className="text">{ans.AnswerContent}</span>
-                  //   </div>
-                  // </div>
                   <Radio
                     className="d-block"
                     key={i}
