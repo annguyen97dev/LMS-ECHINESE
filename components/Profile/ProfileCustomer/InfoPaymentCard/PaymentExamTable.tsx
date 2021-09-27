@@ -1,20 +1,21 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import {useEffect, useRef, useState} from 'react';
-import {courseOfStudentPriceApi} from '~/apiBase';
+import {invoiceApi} from '~/apiBase';
+import {studentExamServicesApi} from '~/apiBase/customer/student/student-exam-services';
 import {ExpandPaymentRow} from '~/components/Elements/ExpandBox';
 import ExpandTable from '~/components/ExpandTable';
 import {useWrap} from '~/context/wrap';
 import {numberWithCommas} from '~/utils/functions';
 
-PaymentTable.propTypes = {
+PaymentExamTable.propTypes = {
 	studentID: PropTypes.number,
 };
-PaymentTable.defaultProps = {
+PaymentExamTable.defaultProps = {
 	studentID: 0,
 };
 
-function PaymentTable(props) {
+function PaymentExamTable(props) {
 	const {studentID} = props;
 	const {showNoti} = useWrap();
 	const [isLoading, setIsLoading] = useState({
@@ -22,44 +23,44 @@ function PaymentTable(props) {
 		status: false,
 	});
 	const [paymentHistoryList, setPaymentHistoryList] = useState<
-		ICourseOfStudentPrice[]
+		IStudentExamServices[]
 	>([]);
 	const [totalPage, setTotalPage] = useState(null);
+	const [infoInvoiceList, setInfoInvoiceList] = useState<IInvoice[]>([]);
+
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
-		sortType: false,
 
 		UserInformationID: studentID,
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
-		sortType: false,
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
 		setFilters({
 			...filters,
-			pageIndex,
+			...refValue.current,
 		});
 	};
 
-	const getCourseOfStudentPrice = async () => {
+	const getExamOfStudent = async () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
 				status: true,
 			});
-			const res = await courseOfStudentPriceApi.getAll(filters);
+			const res = await studentExamServicesApi.getAll(filters);
 			if (res.status === 200) {
 				setPaymentHistoryList(res.data.data);
 				setTotalPage(res.data.totalRow);
@@ -75,7 +76,7 @@ function PaymentTable(props) {
 	};
 
 	useEffect(() => {
-		getCourseOfStudentPrice();
+		getExamOfStudent();
 	}, [filters]);
 
 	const columns = [
@@ -85,6 +86,10 @@ function PaymentTable(props) {
 			render: (date) => (
 				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 			),
+		},
+		{
+			title: 'Dịch vụ',
+			dataIndex: 'ServiceName',
 		},
 		{
 			title: 'Tổng thanh toán',
@@ -108,23 +113,53 @@ function PaymentTable(props) {
 			},
 		},
 		{
-			title: 'Số tiền còn lại',
-			dataIndex: 'MoneyInDebt',
-			render: (price) => {
-				return <p className="font-weight-blue">{numberWithCommas(price)}</p>;
-			},
-		},
-		{
 			title: 'Hình thức',
 			dataIndex: 'PaymentMethodsName',
 		},
-		{
-			title: 'Ngày hẹn trả',
-			dataIndex: 'PayDate',
-			render: (date) => <p>{moment(date).format('DD/MM/YYYY')}</p>,
-		},
 	];
-	const expandedRowRender = (record) => <ExpandPaymentRow dataRow={record} />;
+
+	//
+	const fetchInfoInvoice = async (ID: number) => {
+		try {
+			setIsLoading({
+				type: 'FETCH_INFO_INVOICE',
+				status: true,
+			});
+			const res = await invoiceApi.getAll({
+				PayID: ID,
+			});
+			if (res.status === 200) {
+				setInfoInvoiceList(res.data.data);
+			}
+			if (res.status === 204) {
+				setInfoInvoiceList(null);
+			}
+		} catch (error) {
+			console.log(fetchInfoInvoice, error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_INFO_INVOICE',
+				status: false,
+			});
+		}
+	};
+
+	const expandableObj = {
+		expandedRowRender: (record) => (
+			<ExpandPaymentRow
+				isLoading={isLoading}
+				key={record.ID}
+				dataRow={record}
+				infoInvoiceList={infoInvoiceList}
+			/>
+		),
+		onExpand: (expanded, record) => {
+			if (expanded) {
+				fetchInfoInvoice(record.ID);
+			}
+		},
+	};
+
 	return (
 		<ExpandTable
 			loading={isLoading}
@@ -134,9 +169,9 @@ function PaymentTable(props) {
 			noScroll
 			dataSource={paymentHistoryList}
 			columns={columns}
-			Extra={<h5>Lịch sử thanh toán</h5>}
-			expandable={{expandedRowRender}}
+			Extra={<h5>Lịch sử thanh toán dịch vụ</h5>}
+			expandable={expandableObj}
 		/>
 	);
 }
-export default PaymentTable;
+export default PaymentExamTable;

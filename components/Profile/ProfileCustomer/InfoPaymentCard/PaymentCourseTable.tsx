@@ -1,43 +1,41 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useRef, useState} from 'react';
-import {Check} from 'react-feather';
-import {refundsApi, voucherApi} from '~/apiBase';
-import {ExpandRefundRow} from '~/components/Elements/ExpandBox';
+import {useEffect, useRef, useState} from 'react';
+import {courseOfStudentPriceApi, invoiceApi} from '~/apiBase';
+import {ExpandPaymentRow} from '~/components/Elements/ExpandBox';
 import ExpandTable from '~/components/ExpandTable';
 import {useWrap} from '~/context/wrap';
 import {numberWithCommas} from '~/utils/functions';
 
-RefundsTable.propTypes = {
+PaymentCourseTable.propTypes = {
 	studentID: PropTypes.number,
 };
-RefundsTable.defaultProps = {
+PaymentCourseTable.defaultProps = {
 	studentID: 0,
 };
-function RefundsTable(props) {
+
+function PaymentCourseTable(props) {
 	const {studentID} = props;
 	const {showNoti} = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: null,
 		status: false,
 	});
-	const [refundList, setRefundList] = useState<IRefunds[]>([]);
+	const [paymentHistoryList, setPaymentHistoryList] = useState<
+		ICourseOfStudentPrice[]
+	>([]);
 	const [totalPage, setTotalPage] = useState(null);
-	const [infoVoucherList, setInfoVoucherList] = useState<IVoucher[]>([]);
+	const [infoInvoiceList, setInfoInvoiceList] = useState<IInvoice[]>([]);
 
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
-		sortType: false,
 
 		UserInformationID: studentID,
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
-		sortType: false,
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -55,15 +53,15 @@ function RefundsTable(props) {
 		});
 	};
 
-	const getRefundList = async () => {
+	const getCourseOfStudentPrice = async () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
 				status: true,
 			});
-			const res = await refundsApi.getAll(filters);
+			const res = await courseOfStudentPriceApi.getAll(filters);
 			if (res.status === 200) {
-				setRefundList(res.data.data);
+				setPaymentHistoryList(res.data.data);
 				setTotalPage(res.data.totalRow);
 			}
 		} catch (error) {
@@ -77,7 +75,7 @@ function RefundsTable(props) {
 	};
 
 	useEffect(() => {
-		getRefundList();
+		getCourseOfStudentPrice();
 	}, [filters]);
 
 	const columns = [
@@ -89,63 +87,64 @@ function RefundsTable(props) {
 			),
 		},
 		{
-			title: 'Trung tâm',
-			dataIndex: 'BranchName',
+			title: 'Tổng thanh toán',
+			dataIndex: 'Price',
+			render: (price) => {
+				return <p>{numberWithCommas(price)}</p>;
+			},
 		},
 		{
-			title: 'Số tiền',
-			dataIndex: 'Price',
+			title: 'Giảm giá',
+			dataIndex: 'Reduced',
+			render: (price) => {
+				return <p>{numberWithCommas(price)}</p>;
+			},
+		},
+		{
+			title: '	Đã thanh toán',
+			dataIndex: 'Paid',
+			render: (price) => {
+				return <p>{numberWithCommas(price)}</p>;
+			},
+		},
+		{
+			title: 'Số tiền còn lại',
+			dataIndex: 'MoneyInDebt',
 			render: (price) => {
 				return <p className="font-weight-blue">{numberWithCommas(price)}</p>;
 			},
 		},
 		{
-			title: 'Trạng thái',
-			dataIndex: 'StatusName',
-			align: 'center',
-			render: (fnStatus) => {
-				switch (fnStatus) {
-					case 'Chờ duyệt':
-						return <span className="tag green">{fnStatus}</span>;
-					case 'Không duyệt':
-						return <span className="tag red">{fnStatus}</span>;
-					case 'Đã duyệt':
-						return <span className="tag yellow">{fnStatus}</span>;
-						break;
-				}
-			},
+			title: 'Hình thức',
+			dataIndex: 'PaymentMethodsName',
 		},
 		{
-			title: 'Xóa khỏi lớp',
-			dataIndex: 'isExpulsion',
-			align: 'center',
-			render: (isExpulsion) => {
-				return <p>{isExpulsion ? <Check color="#0da779" /> : ''}</p>;
-			},
+			title: 'Ngày hẹn trả',
+			dataIndex: 'PayDate',
+			render: (date) => (date ? moment(date).format('DD/MM/YYYY') : ''),
 		},
 	];
-
 	//
-	const fetchInfoVoucherList = async (ID: number) => {
+	const fetchInfoInvoice = async (ID: number) => {
 		try {
 			setIsLoading({
-				type: 'FETCH_INFO_VOUCHER',
+				type: 'FETCH_INFO_INVOICE',
 				status: true,
 			});
-			const res = await voucherApi.getAll({
-				RefundsID: ID,
+			const res = await invoiceApi.getAll({
+				PayID: ID,
 			});
 			if (res.status === 200) {
-				setInfoVoucherList(res.data.data);
+				setInfoInvoiceList(res.data.data);
 			}
 			if (res.status === 204) {
-				setInfoVoucherList(null);
+				setInfoInvoiceList(null);
 			}
 		} catch (error) {
-			console.log(fetchInfoVoucherList, error.message);
+			console.log(fetchInfoInvoice, error.message);
 		} finally {
 			setIsLoading({
-				type: 'FETCH_INFO_VOUCHER',
+				type: 'FETCH_INFO_INVOICE',
 				status: false,
 			});
 		}
@@ -153,20 +152,19 @@ function RefundsTable(props) {
 
 	const expandableObj = {
 		expandedRowRender: (record) => (
-			<ExpandRefundRow
+			<ExpandPaymentRow
 				isLoading={isLoading}
 				key={record.ID}
 				dataRow={record}
-				infoVoucherList={infoVoucherList}
+				infoInvoiceList={infoInvoiceList}
 			/>
 		),
 		onExpand: (expanded, record) => {
 			if (expanded) {
-				fetchInfoVoucherList(record.ID);
+				fetchInfoInvoice(record.ID);
 			}
 		},
 	};
-
 	return (
 		<ExpandTable
 			loading={isLoading}
@@ -174,11 +172,11 @@ function RefundsTable(props) {
 			totalPage={totalPage}
 			getPagination={getPagination}
 			noScroll
-			dataSource={refundList}
+			dataSource={paymentHistoryList}
 			columns={columns}
-			Extra={<h5>Lịch sử hoàn tiền</h5>}
+			Extra={<h5>Lịch sử thanh toán khóa học</h5>}
 			expandable={expandableObj}
 		/>
 	);
 }
-export default RefundsTable;
+export default PaymentCourseTable;

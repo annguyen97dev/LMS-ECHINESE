@@ -46,14 +46,14 @@ export function ExpandPaymentRow(props: {
 				<table className="tb-expand">
 					<thead>
 						<tr>
-							{Course.length ? <th>Các khóa học</th> : null}
+							{Course?.length ? <th>Các khóa học</th> : null}
 							<th>Lý do</th>
 							<th>Xem phiếu thu</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							{Course.length ? (
+							{Course?.length ? (
 								<td>
 									<div className="list-coursename">
 										{Course.map((item) => (
