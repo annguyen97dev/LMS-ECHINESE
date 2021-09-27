@@ -70,14 +70,10 @@ RadioField.propTypes = {
 	size: PropTypes.oneOf(['', 'small', 'middle', 'large']),
 	radioList: PropTypes.arrayOf(
 		PropTypes.shape({
-			label: PropTypes.oneOfType([
-				PropTypes.string.isRequired,
-				PropTypes.number.isRequired,
-			]),
-			value: PropTypes.oneOfType([
-				PropTypes.string.isRequired,
-				PropTypes.number.isRequired,
-			]),
+			label: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+				.isRequired,
+			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+				.isRequired,
 			disabled: PropTypes.bool,
 		})
 	),

@@ -10,7 +10,7 @@ import RadioField from '~/components/FormControl/RadioField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
 import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
 import {numberWithCommas} from '~/utils/functions';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import {radioCommonPropTypes} from '~/utils/proptypes';
 
 PackageForm.propTypes = {
 	isUpdate: PropTypes.bool,
@@ -21,7 +21,7 @@ PackageForm.propTypes = {
 	}),
 	handleCreatePackage: PropTypes.func,
 	handleUpdatePackage: PropTypes.func,
-	paymentMethodOptionList: optionCommonPropTypes,
+	paymentMethodOptionList: radioCommonPropTypes,
 };
 PackageForm.defaultProps = {
 	isUpdate: false,
