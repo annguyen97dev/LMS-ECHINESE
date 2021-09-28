@@ -34,4 +34,5 @@ type IUser = IBaseApi<{
   ParentsNameOf: string;
   role: string;
   RoleName: string;
+  RoleID: number;
 }>;

@@ -45,10 +45,10 @@ export const AdminParentMenu = [
   },
 ];
 
-export const dataMenu = [
+export const AdminChildMenu = [
   {
     MenuName: "tab-home",
-    MenuTitle: "Dashboard",
+    MenuTitle: "Trang chủ",
     MenuKey: "/dashboard",
     MenuItem: [
       {
@@ -575,7 +575,7 @@ export const dataMenu = [
         ItemType: "single",
         Key: "/staff/manage-task",
         Route: "/staff/manage-task",
-        Text: "Quản lí task",
+        Text: "Quản lí công việc",
         Icon: "",
       },
     ],

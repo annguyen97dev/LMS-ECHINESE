@@ -1,0 +1,71 @@
+.table-dayoff {
+  border-collapse: collapse;
+  width: 100%;
+  th {
+    background-color: #f2f2f2;
+    &:first-child {
+      border-top-left-radius: 0.375rem;
+    }
+    &:last-child {
+      border-top-right-radius: 0.375rem;
+    }
+  }
+  td,
+  th {
+    border: 1px solid #dddddd;
+    padding: 12px 8px;
+    text-align: center;
+    color: #525252;
+
+    &:first-child {
+      width: 12%;
+    }
+  }
+}
+
+.day-off-schedule {
+  .note-info {
+    &__item {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 15px;
+
+      .text {
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      .box {
+        width: 22px;
+        height: 22px;
+        margin-right: 15px;
+
+        &.grey {
+          background-color: rgb(240, 240, 240);
+        }
+
+        &.red {
+          background-color: rgb(219, 0, 0);
+        }
+
+        &.white {
+          background-color: white;
+          border: 1px solid rgb(209, 209, 209);
+        }
+
+        &.blue {
+          background-color: rgb(0, 115, 223);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          svg {
+            color: white;
+            width: 19px;
+          }
+        }
+      }
+    }
+  }
+}

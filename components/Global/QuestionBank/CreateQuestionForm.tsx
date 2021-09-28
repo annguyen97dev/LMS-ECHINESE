@@ -15,6 +15,7 @@ import GroupFormTyping from "./QuestionFormType/TypingForm";
 import TypingForm from "./QuestionFormType/TypingForm";
 import DragForm from "./QuestionFormType/DragForm";
 import MapForm from "./QuestionFormType/MapForm";
+import SpeakingForm from "./QuestionFormType/SpeakingForm";
 
 const CreateQuestionForm = (props) => {
   const {
@@ -145,26 +146,14 @@ const CreateQuestionForm = (props) => {
           />
         );
         break;
-      case 4:
+      case 2:
         return (
-          <MultipleForm
+          <DragForm
             isGroup={isGroup}
             visible={visible}
             questionData={questionData}
             isSubmit={isSubmit}
-            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
-            changeData={() => !changeData && setChangeData(true)}
-          />
-        );
-        break;
-      case 6:
-        return (
-          <WrittingForm
-            isGroup={isGroup}
-            visible={visible}
-            questionData={questionData}
-            isSubmit={isSubmit}
-            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+            changeIsSubmit={onSuccessSubmit}
             changeData={() => !changeData && setChangeData(true)}
           />
         );
@@ -181,14 +170,14 @@ const CreateQuestionForm = (props) => {
           />
         );
         break;
-      case 2:
+      case 4:
         return (
-          <DragForm
+          <MultipleForm
             isGroup={isGroup}
             visible={visible}
             questionData={questionData}
             isSubmit={isSubmit}
-            changeIsSubmit={onSuccessSubmit}
+            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
             changeData={() => !changeData && setChangeData(true)}
           />
         );
@@ -201,6 +190,30 @@ const CreateQuestionForm = (props) => {
             questionData={questionData}
             isSubmit={isSubmit}
             changeIsSubmit={onSuccessSubmit}
+            changeData={() => !changeData && setChangeData(true)}
+          />
+        );
+        break;
+      case 6:
+        return (
+          <WrittingForm
+            isGroup={isGroup}
+            visible={visible}
+            questionData={questionData}
+            isSubmit={isSubmit}
+            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
+            changeData={() => !changeData && setChangeData(true)}
+          />
+        );
+        break;
+      case 7:
+        return (
+          <SpeakingForm
+            isGroup={isGroup}
+            visible={visible}
+            questionData={questionData}
+            isSubmit={isSubmit}
+            changeIsSubmit={(data: any) => onSuccessSubmit(data)}
             changeData={() => !changeData && setChangeData(true)}
           />
         );
@@ -325,7 +338,7 @@ const CreateQuestionForm = (props) => {
         onClose={onClose}
         visible={visible}
         width={
-          (!isGroup?.status && questionData.Type == 3) || questionData.Type == 2
+          !isGroup?.status && (questionData.Type == 3 || questionData.Type == 2)
             ? 1300
             : 800
         }

@@ -22,16 +22,15 @@ const GroupForm = (props) => {
   const [loadAtFirst, setLoadAtFirst] = useState(true);
 
   console.log("question data Form: ", questionDataForm);
-  // console.log("question data: ", questionData);
+  // console.log("Question Data: ", questionData);
 
   // SUBMI FORM
-  const onSubmit = handleSubmit((data: any, e) => {
-    console.log("DATA SUBMIT: ", data);
-  });
+  // const onSubmit = handleSubmit((data: any, e) => {
+  //   console.log("DATA SUBMIT: ", data);
+  // });
 
   // GET INTRODUCE EDITOR
   const getIntroduceEditor = (dataEditor: any) => {
-    console.log("Value Editor: ", dataEditor);
     if (questionDataForm) {
       questionDataForm.Introduce = dataEditor;
     }
@@ -44,6 +43,7 @@ const GroupForm = (props) => {
       console.log("Data content: ", dataEditor);
       questionDataForm.Content = dataEditor;
     }
+
     setQuestionDataForm({ ...questionDataForm });
   };
 
@@ -67,7 +67,10 @@ const GroupForm = (props) => {
       Type: questionDataForm.Type,
       LinkAudio: questionDataForm.LinkAudio,
       Introduce: questionDataForm.Introduce,
+      SkillID: questionDataForm.SkillID,
     };
+
+    console.log("Data submit is: ", newData);
 
     try {
       if (questionDataForm.ID) {
@@ -107,9 +110,15 @@ const GroupForm = (props) => {
         questionData.Introduce = "";
         questionData.LinkAudio = "";
       }
+
       setQuestionDataForm({ ...questionData });
     } else {
-      setQuestionDataForm(null);
+      // setQuestionDataForm({
+      //   ...questionDataForm,
+      //   Content: "",
+      //   Introduce: "",
+      //   LinkAudio: "",
+      // });
       setLoadAtFirst(true);
     }
   }, [visible]);
@@ -132,8 +141,8 @@ const GroupForm = (props) => {
 
   return (
     <div className="form-create-question">
-      {visible && (
-        <Form form={form} layout="vertical" onFinish={onSubmit}>
+      {visible && questionDataForm && (
+        <Form form={form} layout="vertical" onFinish={handleSubmitQuestion}>
           <div className="container-fluid">
             <div className="row">
               <div className="col-12">

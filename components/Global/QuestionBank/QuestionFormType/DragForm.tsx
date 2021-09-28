@@ -12,6 +12,7 @@ let AnsID = 0;
 let QuesID = -1;
 
 const DragForm = (props) => {
+  console.log("Câu hỏi kéo thả");
   const { isSubmit, questionData, changeIsSubmit, visible } = props;
   const { showNoti } = useWrap();
   const {
