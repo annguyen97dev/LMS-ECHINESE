@@ -101,7 +101,7 @@ const GroupWrap = (props) => {
 
   // ACTION COLLAPSE
   const onShowCollapse = (groupID) => {
-    getGroupID(groupID);
+    getGroupID && getGroupID(groupID);
     if (groupID == activeKey) {
       setActiveKey(null);
     } else {
@@ -263,11 +263,6 @@ const GroupWrap = (props) => {
 
     setDataListQuestion([...dataListQuestion]);
   };
-
-  // CHECK AND REMOVE ID IS SELECTED
-  // useEffect(() => {
-  //   setListQuestionAdd([]);
-  // }, [listGroupID]);
 
   return (
     <>

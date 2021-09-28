@@ -9,7 +9,7 @@ import { useWrap } from "~/context/wrap";
 import TitlePageHeader from "~/components/Elements/TitlePageHeader";
 import { Breadcrumb } from "antd";
 export const siteTitle = "Mona Media Admin";
-import { dataMenu } from "~/lib/data-menu";
+import { AdminChildMenu } from "~/lib/data-menu/AdminMenu";
 import { Popover } from "antd";
 
 const name = "Mona";
@@ -101,7 +101,7 @@ function Layout({
     }
 
     let nameRouter = null;
-    dataMenu.forEach((item, value) => {
+    AdminChildMenu.forEach((item, value) => {
       if (nameRouter == null) {
         item.MenuItem.forEach((element: any) => {
           if (nameRouter == null) {
@@ -152,7 +152,7 @@ function Layout({
   // Tìm nameRouter với trường hợp breadcum chỉ có 1
   const findNameRouterOnly = (getRouter: string) => {
     let nameRouter = "";
-    dataMenu.forEach((item, index) => {
+    AdminChildMenu.forEach((item, index) => {
       if (item.MenuKey === getRouter) {
         nameRouter = item.MenuTitle;
         return false;
@@ -166,7 +166,7 @@ function Layout({
   const findNameRouterMany = (getRouter: string) => {
     let nameRouter = "";
 
-    dataMenu.forEach((item, value) => {
+    AdminChildMenu.forEach((item, value) => {
       if (nameRouter == "") {
         item.MenuItem.forEach((element: any) => {
           if (nameRouter == "") {

@@ -15,7 +15,7 @@ import UploadAudio from "~/components/Elements/UploadAudio";
 
 let AnsID = 0;
 
-const WrittingForm = (props) => {
+const SpeakingForm = (props) => {
   const { isSubmit, questionData, changeIsSubmit, visible, changeData } = props;
   const { showNoti } = useWrap();
   const {
@@ -147,4 +147,4 @@ const WrittingForm = (props) => {
   );
 };
 
-export default WrittingForm;
+export default SpeakingForm;

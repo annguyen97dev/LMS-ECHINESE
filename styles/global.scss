@@ -1,102 +1,104 @@
-@import 'variables';
-@import 'mixins';
-@import './fontawesome/css/all.css';
-@import './fonts/Noir/font.css';
+@import "variables";
+@import "mixins";
+@import "./fontawesome/css/all.css";
+@import "./fonts/Noir/font.css";
 
 html,
 body {
-	background-color: #f7f7f7 !important;
-	padding: 0;
-	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-		Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-	//  font-family: 'Noir';
-	font-size: 14px !important;
-	color: #636363 !important;
+  background-color: #f7f7f7 !important;
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  //  font-family: 'Noir';
+  font-size: 14px !important;
+  color: #636363 !important;
 }
 
 .ant-card {
-	color: #414141;
+  color: #414141;
 }
 
 a {
-	color: inherit;
-	text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 // ======= HEADER ====== //
-@import './components/header';
+@import "./components/header";
 
 // ======= MENU ====== //
-@import './components/menu';
+@import "./components/menu";
 
 // ======= MAIN ====== //
-@import './components/main';
+@import "./components/main";
 
 // -------------------------- PAGES ------------------------------//
-@import './pages/dashboard';
+@import "./pages/dashboard";
 
-@import './pages/course-map-detail';
+@import "./pages/course-map-detail";
 
-@import './pages/create-course';
+@import "./pages/create-course";
 
-@import './pages/course-list';
+@import "./pages/course-list";
 
-@import './pages/transcript';
+@import "./pages/transcript";
 
-@import './pages/course-buy';
+@import "./pages/course-buy";
 
-@import './pages/manage-task';
+@import "./pages/manage-task";
 
-@import './pages/profile';
+@import "./pages/profile";
 
-@import './pages/feedback-list';
+@import "./pages/feedback-list";
 
-@import './pages/package-list';
+@import "./pages/package-list";
 
-@import './pages/package-create';
+@import "./pages/package-create";
 
-@import './pages/package-set';
+@import "./pages/package-set";
 
-@import './pages/package-examiner';
+@import "./pages/package-examiner";
 
-@import './pages/doing-test';
+@import "./pages/doing-test";
 
-@import './pages/layoutTags';
+@import "./pages/layoutTags";
 
-@import './pages/question-bank';
+@import "./pages/question-bank";
 
-@import './pages/quiz';
+@import "./pages/quiz";
 
-@import './pages/schedule-study';
+@import "./pages/schedule-study";
 
-@import './pages/zoom-internal';
+@import "./pages/zoom-internal";
 
-@import './pages/exam';
+@import "./pages/exam";
 
-@import './pages/finance';
+@import "./pages/finance";
+
+@import "./pages/day-off-schedule";
 
 @import './pages/voucher-invoice';
 
 // -------------------------- ELEMENTS ------------------------------//
-@import './components/elements';
-@import './components/expandbox';
-@import './components/color-base';
-@import './components/editor';
+@import "./components/elements";
+@import "./components/expandbox";
+@import "./components/color-base";
+@import "./components/editor";
 
-@import './components/elements';
-@import './components/expandbox';
-@import './components/color-base';
-@import './components/editor';
-@import './components/newsfeed';
-@import './components/document';
-@import './components/loading-layout';
+@import "./components/elements";
+@import "./components/expandbox";
+@import "./components/color-base";
+@import "./components/editor";
+@import "./components/newsfeed";
+@import "./components/document";
+@import "./components/loading-layout";
 // -------------------------- CALENDAR ------------------------------//
-@import './components/calendar';
+@import "./components/calendar";
 
 // -------------------------- ANIMATIONS ------------------------------//
-@import './components/animations';
+@import "./components/animations";

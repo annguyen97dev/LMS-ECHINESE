@@ -20,47 +20,17 @@ import {
   ContainerOutlined,
   MailOutlined,
 } from "@ant-design/icons";
-import { type } from "os";
-
 import ReactHtmlParser from "react-html-parser";
-
-import { dataMenu, AdminParentMenu } from "~/lib/data-menu";
-import { useWrap } from "~/context/wrap";
-
+import { AdminChildMenu, AdminParentMenu } from "~/lib/data-menu/AdminMenu";
 import {
-  Bookmark,
-  Server,
-  Home,
-  Activity,
-  Airplay,
-  Box,
-  Layers,
-  Settings,
-  Users,
-  User,
-  BarChart2,
-  Package,
-  Calendar,
-  BookOpen,
-  Award,
-  List,
-  Cast,
-  Book,
-  Archive,
-  MapPin,
-  UserCheck,
-  CheckSquare,
-  Tool,
-  DollarSign,
-  Briefcase,
-  Info,
-  FileText,
-} from "react-feather";
+  TeacherChildMenu,
+  TeacherParentMenu,
+} from "~/lib/data-menu/TeacherMenu";
+import { useWrap } from "~/context/wrap";
+import { useSession } from "next-auth/client";
 import Link from "next/link";
-import { is } from "date-fns/locale";
-import { icons } from "antd/lib/image/PreviewGroup";
 
-type dataMenu = [];
+type childMenu = [];
 
 const { SubMenu } = Menu;
 
@@ -83,8 +53,7 @@ const MenuDefault = ({
 }) => {
   // const router = useRouter();
   // const getRouter = router.pathname;
-  const { userInformation } = useWrap();
-  console.log("Userinformation: ", userInformation);
+
   const router = useRouter();
   let getRouter = router.pathname;
 
@@ -104,6 +73,9 @@ const MenuDefault = ({
   const [openKeys, setOpenKeys] = useState(null);
   const [statusOpen, setStatusOpen] = useState<boolean>(false);
   const [sameTab, setSameTab] = useState(false);
+  const [parentMenu, setParentMenu] = useState([]);
+  const [childMenu, setChildMenu] = useState([]);
+  const [session, loading] = useSession();
 
   const changeTabs = (e) => {
     e.preventDefault();
@@ -155,7 +127,7 @@ const MenuDefault = ({
   };
 
   const FindTabActive = () => {
-    dataMenu.forEach((menu, index) => {
+    childMenu.forEach((menu, index) => {
       menu.MenuItem.forEach((item, ind) => {
         if (getRouter === "/") {
           tabSet("tab-home");
@@ -180,7 +152,7 @@ const MenuDefault = ({
 
   const FindSubMenuActive = () => {
     let SubMenuActive = "";
-    dataMenu.forEach((menu, index) => {
+    childMenu.forEach((menu, index) => {
       menu.MenuItem.forEach((item, ind) => {
         if (item.ItemType === "sub-menu") {
           item.SubMenuList.forEach((itemSub, key) => {
@@ -198,7 +170,7 @@ const MenuDefault = ({
     setOpenKeys(openKeys);
     if (openKeys.length > 0) {
       for (const value of openKeys) {
-        dataMenu.forEach((menu, index) => {
+        childMenu.forEach((menu, index) => {
           menu.MenuItem.forEach((item, ind) => {
             if (item.ItemType === "sub-menu") {
               if (item.Key === value) {
@@ -242,6 +214,7 @@ const MenuDefault = ({
   }, [openKeys]);
 
   useEffect(() => {
+    console.log("Chạy get router");
     let widthScr = window.innerWidth;
     widthScr < 1000 ? resetMenuMobile() : FindSubMenuActive(), FindTabActive();
   }, [getRouter]);
@@ -280,24 +253,6 @@ const MenuDefault = ({
     }
   };
 
-  useEffect(() => {
-    changeTabsWithPostion();
-  }, [tab]);
-
-  useEffect(() => {
-    if (sameTab) {
-      changeTabsWithPostion();
-      setTimeout(() => {
-        setSameTab(false);
-      }, 100);
-    }
-  }, [sameTab]);
-
-  const closeMenuMobile = (e) => {
-    e.preventDefault();
-    funcMenuMobile();
-  };
-
   // Functions fine active menu when at detail page
   const convertRouter = (router: string) => {
     let arrRouter = router.split("/");
@@ -320,6 +275,67 @@ const MenuDefault = ({
 
   getRouter = convertRouter(getRouter);
 
+  const closeMenuMobile = (e) => {
+    e.preventDefault();
+    funcMenuMobile();
+  };
+
+  useEffect(() => {
+    changeTabsWithPostion();
+  }, [tab]);
+
+  useEffect(() => {
+    if (sameTab) {
+      changeTabsWithPostion();
+      setTimeout(() => {
+        setSameTab(false);
+      }, 100);
+    }
+  }, [sameTab]);
+
+  function parseJwt(token) {
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
+  }
+
+  useEffect(() => {
+    console.log("Chạy menu");
+    if (session !== undefined) {
+      let token = session.accessToken;
+      let userInfor = parseJwt(token);
+      console.log("userInfo: ", userInfor);
+      switch (parseInt(userInfor.roleID)) {
+        case 1:
+          setParentMenu(AdminParentMenu);
+          setChildMenu(AdminChildMenu);
+          break;
+        case 2:
+          setParentMenu(TeacherParentMenu);
+          setChildMenu(TeacherChildMenu);
+          break;
+        default:
+          break;
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (childMenu.length > 0) {
+      FindSubMenuActive();
+      FindTabActive();
+    }
+  }, [childMenu]);
+
   return (
     <aside className={`navbar-right ${openMenuMobile ? "mobile" : ""}`}>
       <div className={`navbar-right-bg ${openMenuMobile ? "active" : ""}`}>
@@ -336,7 +352,7 @@ const MenuDefault = ({
         </div>
         <div className="menu-parent-body">
           <ul className="list-menu">
-            {AdminParentMenu.map((item, index) => (
+            {parentMenu.map((item, index) => (
               <li className={tab === item.TabName ? "active" : ""} key={index}>
                 <a
                   href="#"
@@ -466,7 +482,7 @@ const MenuDefault = ({
             top: isHover.status ? isHover.position : "unset",
           }}
         >
-          {dataMenu?.map((menu, indexMenu) => (
+          {childMenu?.map((menu, indexMenu) => (
             <div key={indexMenu}>
               <Menu
                 key={indexMenu}

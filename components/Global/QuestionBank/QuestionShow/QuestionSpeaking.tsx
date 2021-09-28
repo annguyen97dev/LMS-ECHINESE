@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Radio, Tooltip, Skeleton, Popconfirm, Spin } from "antd";
-import { Info, Bookmark, Edit, Trash2 } from "react-feather";
+import { Spin, Popconfirm, Tooltip, Checkbox } from "antd";
+import { Trash2 } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
 
 import ReactHtmlParser, {
@@ -10,8 +10,12 @@ import ReactHtmlParser, {
 } from "react-html-parser";
 import { exerciseApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
+import { CheckOutlined } from "@ant-design/icons";
 
-const QuestionMap = (props: any) => {
+const QuestionSpeaking = (props: any) => {
+  const { isGetQuestion, onGetListQuestionID, listQuestionID } =
+    useExamDetail();
   const {
     listQuestion,
     loadingQuestion,
@@ -20,7 +24,7 @@ const QuestionMap = (props: any) => {
     isGroup,
     onEditData,
     listAlphabet,
-    groupID,
+    dataExam,
   } = props;
   const [value, setValue] = React.useState(1);
   const [dataListQuestion, setDataListQuestion] = useState(null);
@@ -33,7 +37,8 @@ const QuestionMap = (props: any) => {
   const [loadingInGroup, setLoadingInGroup] = useState(false);
   const [loadingAudio, setLoadingAudio] = useState(null);
   const [activeID, setActiveID] = useState(null);
-  const [lengthData, setLengthData] = useState(null);
+  const [lengthData, setLengthData] = useState(0);
+  const [listQuestionAdd, setListQuestionAdd] = useState([]);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -147,99 +152,112 @@ const QuestionMap = (props: any) => {
       }
     }
     setLengthData(listQuestion.length);
-
     // Loading audio for change html audio (because the link not change when update state)
     setLoadingAudio(true);
     setTimeout(() => {
       setLoadingAudio(false);
     }, 100);
 
-    // Check all situations between no group and have group
-    !isGroup.status
-      ? setDataListQuestion(listQuestion)
-      : isGroup.id && isGroup.id === groupID && getQuestionInGroup();
+    setDataListQuestion(listQuestion);
   }, [listQuestion]);
 
-  useEffect(() => {
-    isGroup.status && setDataListQuestion([]);
-    isGroup.status &&
-      isGroup.id &&
-      isGroup.id === groupID &&
-      getQuestionInGroup();
-  }, [isGroup]);
+  // On change - add question
+  const onChange_AddQuestion = (checked, quesID) => {
+    let objectQuestion = {
+      type: 1,
+      ExerciseOrExerciseGroupID: quesID,
+    };
+
+    // Call function to get ID of question
+    onGetListQuestionID(objectQuestion);
+
+    // Check isChecked in checkbox
+    dataListQuestion.every((item) => {
+      if (item.ID == quesID) {
+        item.isChecked = checked;
+        return false;
+      }
+      return true;
+    });
+
+    setDataListQuestion([...dataListQuestion]);
+  };
+
+  // CHECK AND REMOVE ID IS SELECTED
+  // useEffect(() => {
+  //   setListQuestionAdd([]);
+  // }, [listQuestionID]);
 
   return (
     <>
       {dataListQuestion?.length == 0 ? (
-        !isGroup.status && (
-          <p className="text-center">
-            <b>Danh sách còn trống</b>
-          </p>
-        )
+        <p className="text-center">
+          <b>Danh sách còn trống</b>
+        </p>
       ) : (
-        <table className="table-question mt-3" style={{ width: "900px" }}>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Câu hỏi</th>
-              <th>Đáp án</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataListQuestion?.map((item, index) => (
-              <tr key={index}>
-                <td className="text-center" style={{ width: "5%" }}>
-                  {index + 1 + "/"}
-                </td>
-                <td style={{ width: "70%" }}>
+        dataListQuestion?.map((item, index) => (
+          <div
+            className={`question-item ${item.ID == activeID ? "active" : ""}`}
+            key={index}
+            onMouseEnter={() => onHover(item.ID)}
+          >
+            <div className="box-detail">
+              <div className="box-title">
+                <span className="title-ques">Câu hỏi {index + 1}</span>
+                {returnAudio(item)}
+                <div className="title-text">
                   {ReactHtmlParser(item.Content)}
-                </td>
-                <td>
-                  {item.ExerciseAnswer?.map(
-                    (ans, i) =>
-                      ans.Enable && (
-                        <div key={i}>
-                          <span className="tick">- </span>
-                          <span className="text">{ans.AnswerContent}</span>
-                        </div>
-                      )
-                  )}
-                </td>
-                <td className="text-center">
-                  <CreateQuestionForm
-                    questionData={item}
-                    onFetchData={onFetchData}
-                    onEditData={(dataEdit: any) => onEdit(dataEdit)}
-                    isGroup={{ status: false, id: null }}
-                    getActiveID={(ID: any) => setActiveID(ID)}
-                  />
-                  <Popconfirm
-                    title="Bạn có chắc muốn xóa?"
-                    onConfirm={() => handleOk(item)}
-                    okButtonProps={{ loading: confirmLoading }}
-                    onCancel={() => handleCancel(item.ID)}
-                  >
-                    <button
-                      className="btn btn-icon delete"
-                      onClick={() => deleteQuestionItem(item.ID)}
-                    >
-                      <Trash2 />
+                </div>
+              </div>
+            </div>
+            <div className="box-action">
+              <CreateQuestionForm
+                questionData={item}
+                onFetchData={onFetchData}
+                onEditData={(dataEdit) => onEdit(dataEdit)}
+                isGroup={{ status: false, id: null }}
+                getActiveID={(ID: any) => setActiveID(ID)}
+              />
+              <Popconfirm
+                title="Bạn có chắc muốn xóa?"
+                // visible={item.ID == visible.id && visible.status}
+                onConfirm={() => handleOk(item)}
+                okButtonProps={{ loading: confirmLoading }}
+                onCancel={() => handleCancel(item.ID)}
+              >
+                <button
+                  className="btn btn-icon delete"
+                  onClick={() => deleteQuestionItem(item.ID)}
+                >
+                  <Trash2 />
+                </button>
+              </Popconfirm>
+              {dataExam &&
+                (listQuestionID.includes(item.ID) ? (
+                  <Tooltip title="Đã có trong đề thi">
+                    <button className="btn btn-icon edit">
+                      <CheckOutlined />
                     </button>
-                  </Popconfirm>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </Tooltip>
+                ) : (
+                  <Checkbox
+                    className="checkbox-addquestion"
+                    checked={item.isChecked}
+                    onChange={(e) =>
+                      onChange_AddQuestion(e.target.checked, item.ID)
+                    }
+                  />
+                ))}
+            </div>
+          </div>
+        ))
       )}
 
-      {isGroup?.status && loadingInGroup ? (
+      {/* {isGroup?.status && loadingInGroup ? (
         <div>
           <Skeleton />
         </div>
       ) : (
-        isGroup?.status &&
         dataListQuestion?.length == 0 && (
           <p style={{ color: "#dd4667" }}>
             <i>Nhóm này chưa có câu hỏi</i>
@@ -250,9 +268,9 @@ const QuestionMap = (props: any) => {
         <div>
           <Skeleton />
         </div>
-      )}
+      )} */}
     </>
   );
 };
 
-export default QuestionMap;
+export default QuestionSpeaking;

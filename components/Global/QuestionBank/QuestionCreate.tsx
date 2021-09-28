@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import { Popover, Card, Tooltip, Select, Spin } from "antd";
+import { Card, Select, Spin } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
-import { Info, Bookmark, Edit, Trash2 } from "react-feather";
+import { Bookmark } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
 import { dataTypeGroup, dataTypeSingle } from "~/lib/question-bank/dataBoxType";
-import { data } from "~/lib/option/dataOption2";
 import LayoutBase from "~/components/LayoutBase";
 import QuestionSingle from "~/components/Global/QuestionBank/QuestionShow/QuestionSingle";
 import QuestionMultiple from "~/components/Global/QuestionBank/QuestionShow/QuestionMultiple";
-import QuestionWrite from "~/components/Global/QuestionBank/QuestionShow/QuestionWritting";
 import {
   programApi,
   subjectApi,
@@ -23,6 +21,7 @@ import QuestionWritting from "~/components/Global/QuestionBank/QuestionShow/Ques
 import QuestionTyping from "~/components/Global/QuestionBank/QuestionShow/QuestionTyping";
 import QuestionDrag from "~/components/Global/QuestionBank/QuestionShow/QuestionDrag";
 import QuestionMap from "~/components/Global/QuestionBank/QuestionShow/QuestionMap";
+import QuestionSpeaking from "./QuestionShow/QuestionSpeaking";
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -32,6 +31,7 @@ const listTodoApi = {
   SubjectID: null,
   Type: null,
   Level: null,
+  SkillID: null,
   ExerciseGroupID: null,
   ExamTopicType: null,
 };
@@ -86,6 +86,7 @@ const QuestionCreate = (props) => {
   const [valueProgram, setValueProgram] = useState(null);
   const [valueType, setValueType] = useState(null);
   const [valueLevel, setValueLevel] = useState(null);
+  const [valueSkill, setValueSkill] = useState(null);
   const [dataGroup, setDataGroup] = useState([]);
   const [dataExercise, setDataExercise] = useState();
 
@@ -121,8 +122,8 @@ const QuestionCreate = (props) => {
         );
 
         break;
-      /** Quesion Multiple */
-      case 4:
+      /** Quesion Drag */
+      case 2:
         return (
           <GroupWrap
             dataExam={dataExam}
@@ -134,33 +135,16 @@ const QuestionCreate = (props) => {
             onEditData={(data) => onEditData(data)}
             onAddData={(data) => onAddData(data)}
           >
-            <QuestionMultiple
-              dataExam={dataExam}
+            <QuestionDrag
               listAlphabet={listAlphabet}
               isGroup={isGroup}
               loadingQuestion={loadingQuestion}
-              listQuestion={dataSource}
+              listQuestion={dataExercise}
               onFetchData={onFetchData}
               onEditData={(data) => onEditData(data)}
               onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
             />
           </GroupWrap>
-        );
-
-        break;
-      /** Quesion Writting */
-      case 6:
-        return (
-          <QuestionWritting
-            dataExam={dataExam}
-            listAlphabet={listAlphabet}
-            isGroup={isGroup}
-            loadingQuestion={loadingQuestion}
-            listQuestion={dataSource}
-            onFetchData={onFetchData}
-            onEditData={(data) => onEditData(data)}
-            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
-          />
         );
         break;
       /** Quesion Typing */
@@ -188,8 +172,8 @@ const QuestionCreate = (props) => {
           </GroupWrap>
         );
         break;
-      /** Quesion Drag */
-      case 2:
+      /** Quesion Multiple */
+      case 4:
         return (
           <GroupWrap
             dataExam={dataExam}
@@ -201,17 +185,19 @@ const QuestionCreate = (props) => {
             onEditData={(data) => onEditData(data)}
             onAddData={(data) => onAddData(data)}
           >
-            <QuestionDrag
+            <QuestionMultiple
+              dataExam={dataExam}
               listAlphabet={listAlphabet}
               isGroup={isGroup}
               loadingQuestion={loadingQuestion}
-              listQuestion={dataExercise}
+              listQuestion={dataSource}
               onFetchData={onFetchData}
               onEditData={(data) => onEditData(data)}
               onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
             />
           </GroupWrap>
         );
+
         break;
       /** Quesion Map */
       case 5:
@@ -236,6 +222,36 @@ const QuestionCreate = (props) => {
               onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
             />
           </GroupWrap>
+        );
+        break;
+      /** Quesion Writting */
+      case 6:
+        return (
+          <QuestionWritting
+            dataExam={dataExam}
+            listAlphabet={listAlphabet}
+            isGroup={isGroup}
+            loadingQuestion={loadingQuestion}
+            listQuestion={dataSource}
+            onFetchData={onFetchData}
+            onEditData={(data) => onEditData(data)}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+          />
+        );
+        break;
+      /** Quesion Speaking */
+      case 7:
+        return (
+          <QuestionSpeaking
+            dataExam={dataExam}
+            listAlphabet={listAlphabet}
+            isGroup={isGroup}
+            loadingQuestion={loadingQuestion}
+            listQuestion={dataSource}
+            onFetchData={onFetchData}
+            onEditData={(data) => onEditData(data)}
+            onRemoveData={(dataRemove) => onRemoveData(dataRemove)}
+          />
         );
         break;
       default:
@@ -334,7 +350,7 @@ const QuestionCreate = (props) => {
 
   // CHỌN DẠNG CÂU HỎI (CHOICE, MULTIPLE,...)
   const changeBoxType = (e: any, Type: number, TypeName: string) => {
-    e.preventDefault();
+    e?.preventDefault();
 
     questionData.Type = Type;
     questionData.TypeName = TypeName;
@@ -373,6 +389,7 @@ const QuestionCreate = (props) => {
       Type: Type,
       SubjectID: questionData.SubjectID,
       Level: questionData.Level,
+      SkillID: questionData.SkillID,
       pageIndex: 1,
     });
   };
@@ -420,12 +437,26 @@ const QuestionCreate = (props) => {
             status: true,
           });
         }
-        showListQuestion &&
-          (setIsLoading(true),
-          setTodoApi({
-            ...todoApi,
-            pageIndex: 1,
-          }));
+
+        if (
+          questionData.Type == 2 ||
+          questionData.Type == 3 ||
+          questionData.Type == 5
+        ) {
+          setShowListQuestion(false);
+          setShowTypeQuestion({
+            ...showTypeQuetion,
+            type: null,
+          });
+        } else {
+          showListQuestion &&
+            (setIsLoading(true),
+            setTodoApi({
+              ...todoApi,
+              pageIndex: 1,
+            }));
+        }
+
         setValueType(option.value);
         break;
 
@@ -457,6 +488,38 @@ const QuestionCreate = (props) => {
           }));
         setValueLevel(option.value);
         break;
+      case "skill":
+        questionData.SkillID = option.value;
+
+        // Xét trường hợp kĩ năng "Nói" hoặc "Viết"
+        if (option.value == 2 || option.value == 4) {
+          questionData.Type = 0;
+          setShowListQuestion(false);
+          // Nếu loại "Nói" hoặc "Viết" thì mặc định không phải câu hỏi nhóm
+          setIsGroup({
+            id: null,
+            status: false,
+          });
+          setValueType(0);
+        } else {
+          !valueType && setValueType(0);
+
+          if (valueSkill == 1 || valueSkill == 3) {
+            setIsLoading(true);
+            setTodoApi({
+              ...todoApi,
+              SkillID: option.value,
+            });
+          } else {
+            setShowListQuestion(false);
+            setShowTypeQuestion({
+              ...showTypeQuetion,
+              type: null,
+            });
+          }
+        }
+        setValueSkill(option.value);
+        isOpenTypeQuestion = true;
       default:
         break;
     }
@@ -467,6 +530,7 @@ const QuestionCreate = (props) => {
       if (
         questionData.ExerciseGroupID !== null &&
         questionData.SubjectID !== null &&
+        questionData.SkillID !== null &&
         questionData.Level !== null &&
         isOpenTypeQuestion == true
       ) {
@@ -657,6 +721,8 @@ const QuestionCreate = (props) => {
     }
   }, [dataExam]);
 
+  console.log("Is loading: ", isLoading);
+
   return (
     <div className="question-create">
       <TitlePage title="Tạo câu hỏi" />
@@ -775,21 +841,22 @@ const QuestionCreate = (props) => {
                 </div>
               </div>
 
-              {/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
+              {/** KĨ NĂNG  */}
               <div className="col-md-6 col-12 mt-3">
                 <div className="item-select">
-                  {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
                   <Select
-                    value={valueType}
+                    value={valueSkill}
                     className="style-input"
-                    placeholder="Chọn loại câu hỏi"
+                    placeholder="Chọn kĩ năng"
                     style={{ width: "100%" }}
                     onChange={(value, option) =>
-                      handleChange_select("type-question-group", option)
+                      handleChange_select("skill", option)
                     }
                   >
-                    <Option value={0}>Câu hỏi đơn</Option>
-                    <Option value={1}>Câu hỏi nhóm</Option>
+                    <Option value={1}>Nghe </Option>
+                    <Option value={2}>Nói</Option>
+                    <Option value={3}>Đọc</Option>
+                    <Option value={4}>Viết</Option>
                   </Select>
                 </div>
               </div>
@@ -814,6 +881,25 @@ const QuestionCreate = (props) => {
                   </Select>
                 </div>
               </div>
+
+              {/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
+              <div className="col-md-12 col-12 mt-3">
+                <div className="item-select">
+                  {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
+                  <Select
+                    value={valueType}
+                    className="style-input"
+                    placeholder="Chọn loại câu hỏi"
+                    style={{ width: "100%" }}
+                    onChange={(value, option) =>
+                      handleChange_select("type-question-group", option)
+                    }
+                  >
+                    <Option value={0}>Câu hỏi đơn</Option>
+                    <Option value={1}>Câu hỏi nhóm</Option>
+                  </Select>
+                </div>
+              </div>
             </div>
             <div className="row">
               <div
@@ -821,61 +907,74 @@ const QuestionCreate = (props) => {
                   showTypeQuetion.status ? "active" : "nun-active"
                 }`}
               >
+                <div className="col-md-12">
+                  <p style={{ fontWeight: 500 }}>Chọn dạng câu hỏi dưới đây</p>
+                </div>
                 {isGroup.status
-                  ? dataTypeGroup?.map((item, index) => (
-                      <div className="col-md-12" key={index}>
-                        <div className="box-type-question">
-                          <a
-                            href="#"
-                            onClick={(e) =>
-                              changeBoxType(e, item.Type, item.TypeName)
-                            }
-                            className={
-                              item.Type === showTypeQuetion.type ? "active" : ""
-                            }
-                          >
-                            <div className="type-img">
-                              <img
-                                src={item.Images}
-                                alt=""
-                                className="img-inner"
-                              />
+                  ? dataTypeGroup?.map(
+                      (item, index) =>
+                        item.Skill.includes(valueSkill) && (
+                          <div className="col-md-12" key={index}>
+                            <div className="box-type-question">
+                              <a
+                                href="#"
+                                onClick={(e) =>
+                                  changeBoxType(e, item.Type, item.TypeName)
+                                }
+                                className={
+                                  item.Type === showTypeQuetion.type
+                                    ? "active"
+                                    : ""
+                                }
+                              >
+                                <div className="type-img">
+                                  <img
+                                    src={item.Images}
+                                    alt=""
+                                    className="img-inner"
+                                  />
+                                </div>
+                                <div className="type-detail">
+                                  {/* <h5 className="number">{item.Number}</h5> */}
+                                  <div className="p text">{item.TypeName}</div>
+                                </div>
+                              </a>
                             </div>
-                            <div className="type-detail">
-                              {/* <h5 className="number">{item.Number}</h5> */}
-                              <div className="p text">{item.TypeName}</div>
+                          </div>
+                        )
+                    )
+                  : dataTypeSingle?.map(
+                      (item, index) =>
+                        item.Skill.includes(valueSkill) && (
+                          <div className="col-md-12" key={index}>
+                            <div className="box-type-question">
+                              <a
+                                href="#"
+                                onClick={(e) =>
+                                  changeBoxType(e, item.Type, item.TypeName)
+                                }
+                                className={
+                                  item.Type === showTypeQuetion.type
+                                    ? "active"
+                                    : ""
+                                }
+                              >
+                                <div className="type-img">
+                                  <img
+                                    src={item.Images}
+                                    alt=""
+                                    className="img-inner"
+                                  />
+                                </div>
+                                <div className="type-detail">
+                                  {/* <h5 className="number">{item.Number}</h5> */}
+                                  <div className="p text">{item.TypeName}</div>
+                                </div>
+                              </a>
                             </div>
-                          </a>
-                        </div>
-                      </div>
-                    ))
-                  : dataTypeSingle?.map((item, index) => (
-                      <div className="col-md-12" key={index}>
-                        <div className="box-type-question">
-                          <a
-                            href="#"
-                            onClick={(e) =>
-                              changeBoxType(e, item.Type, item.TypeName)
-                            }
-                            className={
-                              item.Type === showTypeQuetion.type ? "active" : ""
-                            }
-                          >
-                            <div className="type-img">
-                              <img
-                                src={item.Images}
-                                alt=""
-                                className="img-inner"
-                              />
-                            </div>
-                            <div className="type-detail">
-                              {/* <h5 className="number">{item.Number}</h5> */}
-                              <div className="p text">{item.TypeName}</div>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                    ))}
+                          </div>
+                        )
+                    )}
               </div>
             </div>
           </Card>

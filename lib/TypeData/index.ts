@@ -29,6 +29,7 @@ export const questionObj = {
   LevelName: "",
   LinkAudio: "",
   Type: 0,
+  SkillID: null,
   TypeName: "",
   ExerciseList: [],
   ExerciseAnswer: [
