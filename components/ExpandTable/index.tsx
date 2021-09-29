@@ -3,6 +3,7 @@ import {Table, Card} from 'antd';
 import {useWrap} from '~/context/wrap';
 
 const ExpandTable = (props) => {
+	const {handleTableChange} = props;
 	const {getTitlePage} = useWrap();
 	const [state, setState] = useState({selectedRowKeys: []});
 	const [dataSource, setDataSource] = useState([]);
@@ -20,6 +21,11 @@ const ExpandTable = (props) => {
 
 	const onSelectedRowKeysChange = (selectedRowKeys) => {
 		setState({selectedRowKeys});
+	};
+
+	const checkHandleTableChange = (pagination, filters, sorter) => {
+		if (!handleTableChange) return;
+		handleTableChange(pagination, filters, sorter);
 	};
 
 	const changePagination = (pageNumber, pageSize) => {
@@ -90,6 +96,9 @@ const ExpandTable = (props) => {
 								selectRow(record);
 							},
 						})}
+						onChange={(pagination, filters, sorter) =>
+							checkHandleTableChange(pagination, filters, sorter)
+						}
 						expandable={props.expandable}
 						onExpand={onExpand}
 					/>
