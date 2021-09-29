@@ -348,17 +348,6 @@ function Package() {
 			title: 'Trạng thái',
 			dataIndex: 'Enable',
 			align: 'center',
-			filters: [
-				{
-					text: 'Active',
-					value: true,
-				},
-				{
-					text: 'Unactive',
-					value: false,
-				},
-			],
-			onFilter: (value, record) => record.Enable === value,
 			render: (Enable: boolean, record: IPackage, idx: number) => (
 				<>
 					<Switch
