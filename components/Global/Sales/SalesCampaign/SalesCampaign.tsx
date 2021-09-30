@@ -366,7 +366,7 @@ const SalesCampaign = () => {
 				<div onClick={(e) => e.stopPropagation()}>
 					<Link
 						href={{
-							pathname: '/staff/sales-campaign/detail/[slug]',
+							pathname: '/staff/sales-campaign/sales-campaign-detail/[slug]',
 							query: {slug: record.ID},
 						}}
 					>

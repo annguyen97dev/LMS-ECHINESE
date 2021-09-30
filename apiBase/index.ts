@@ -79,3 +79,4 @@ export {courseOnlineDetailAvailableDayApi} from './course-online-detail/availabl
 export {packageExaminerApi} from './package/package-examiner';
 export {examDetailApi} from './exam-detail/exam-detail';
 export {saleCampaignApi} from './sale/sale-campaign';
+export {saleCampaignDetailApi} from './sale/sale-campaign-detail';
