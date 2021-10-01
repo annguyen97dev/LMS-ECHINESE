@@ -75,14 +75,16 @@ const SalesCampaignDetail = (props) => {
 		});
 	};
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
 		setFilters({
 			...filters,
-			pageIndex,
+			...refValue.current,
 		});
 	};
 	// SORT
@@ -253,7 +255,7 @@ const SalesCampaignDetail = (props) => {
 			totalPage={totalPage}
 			getPagination={getPagination}
 			addClass="basic-header"
-			TitlePage="Danh sách phiếu chi"
+			TitlePage="Chi tiết chiến dịch kinh doanh"
 			dataSource={saleCampaignDetailList}
 			columns={columns}
 			Extra={
