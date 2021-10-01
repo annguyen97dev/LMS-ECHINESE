@@ -6,6 +6,7 @@ import {Eye} from 'react-feather';
 import {saleCampaignApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
+import FilterColumn from '~/components/Tables/FilterColumn';
 import {useWrap} from '~/context/wrap';
 import {numberWithCommas, parsePriceStrToNumber} from '~/utils/functions';
 import SalesCampaignFilter from './SalesCampaignFilter';
@@ -319,6 +320,7 @@ const SalesCampaign = () => {
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusID',
+			align: 'center',
 			render: (statusID, record: ISaleCampaign) => {
 				let cls = 'tag';
 				switch (statusID) {
@@ -337,24 +339,24 @@ const SalesCampaign = () => {
 				}
 				return <span className={cls}>{record.StatusName}</span>;
 			},
-			filters: [
+			...FilterColumn('StatusID', onSearch, onResetSearch, 'select', [
 				{
-					text: 'Chưa hoạt động',
+					title: 'Chưa hoạt động',
 					value: 1,
 				},
 				{
-					text: 'Đang hoạt động',
+					title: 'Đang hoạt động',
 					value: 2,
 				},
 				{
-					text: 'Tạm ngưng',
+					title: 'Tạm ngưng',
 					value: 3,
 				},
 				{
-					text: 'Kết thúc',
+					title: 'Kết thúc',
 					value: 4,
 				},
-			],
+			]),
 		},
 		{
 			title: 'Ghi chú',
@@ -423,13 +425,6 @@ const SalesCampaign = () => {
 			TitlePage="Danh sách phiếu chi"
 			dataSource={saleCampaignList}
 			columns={columns}
-			handleTableChange={(pagination, filters, sorter) => {
-				if (filters['StatusID']) {
-					onSearch(filters['StatusID'].toString(), 'StatusID');
-				} else {
-					onSearch(null, 'StatusID');
-				}
-			}}
 			TitleCard={
 				<>
 					<SalesCampaignForm

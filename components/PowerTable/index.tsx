@@ -1,10 +1,8 @@
+import {Card, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {Table, Card} from 'antd';
-import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
 
 const PowerTable = React.memo((props: any) => {
-	const {handleTableChange} = props;
 	const {getTitlePage} = useWrap();
 	const [state, setState] = useState({selectedRowKeys: []});
 	const [dataSource, setDataSource] = useState([]);
@@ -22,11 +20,6 @@ const PowerTable = React.memo((props: any) => {
 
 	const onSelectedRowKeysChange = (selectedRowKeys) => {
 		setState({selectedRowKeys});
-	};
-
-	const checkHandleTableChange = (pagination, filters, sorter) => {
-		if (!handleTableChange) return;
-		handleTableChange(pagination, filters, sorter);
 	};
 
 	const changePagination = (pageNumber, pageSize) => {
@@ -86,9 +79,6 @@ const PowerTable = React.memo((props: any) => {
 										changePagination(pageNumber, pageSize),
 									current: props.currentPage && props.currentPage,
 								}}
-								onChange={(pagination, filters, sorter) =>
-									checkHandleTableChange(pagination, filters, sorter)
-								}
 								rowSelection={rowSelection}
 								onRow={(record) => ({
 									onClick: () => {

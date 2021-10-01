@@ -1,9 +1,8 @@
+import {Card, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {Table, Card} from 'antd';
 import {useWrap} from '~/context/wrap';
 
 const ExpandTable = (props) => {
-	const {handleTableChange} = props;
 	const {getTitlePage} = useWrap();
 	const [state, setState] = useState({selectedRowKeys: []});
 	const [dataSource, setDataSource] = useState([]);
@@ -23,11 +22,6 @@ const ExpandTable = (props) => {
 		setState({selectedRowKeys});
 	};
 
-	const checkHandleTableChange = (pagination, filters, sorter) => {
-		if (!handleTableChange) return;
-		handleTableChange(pagination, filters, sorter);
-	};
-
 	const changePagination = (pageNumber, pageSize) => {
 		if (typeof props.getPagination != 'undefined') {
 			props.getPagination(pageNumber, pageSize);
@@ -41,10 +35,6 @@ const ExpandTable = (props) => {
 			props.handleExpand(record);
 		}
 	};
-
-	// const onRowchange = (row) => {
-	//   console.log("ROW: ", row);
-	// };
 
 	const rowSelection = {
 		selectedRowKeys: state.selectedRowKeys,
@@ -96,9 +86,6 @@ const ExpandTable = (props) => {
 								selectRow(record);
 							},
 						})}
-						onChange={(pagination, filters, sorter) =>
-							checkHandleTableChange(pagination, filters, sorter)
-						}
 						expandable={props.expandable}
 						onExpand={onExpand}
 					/>
