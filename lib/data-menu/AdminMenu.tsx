@@ -534,7 +534,6 @@ export const AdminChildMenu = [
 					// add more
 				],
 			},
-
 			{
 				ItemType: 'sub-menu',
 				Key: 'sub-list-staff-child-3',
@@ -550,15 +549,15 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
-						Key: '/staff/salary-review',
-						Route: '/staff/salary-review',
+						Key: '/staff/sales-salary',
+						Route: '/staff/sales-salary',
 						Text: 'Duyệt lương',
 						Icon: '',
 					},
 					{
 						ItemType: 'single',
-						Key: '/staff/salary-history',
-						Route: '/staff/salary-history',
+						Key: '/staff/sales-salary-history',
+						Route: '/staff/sales-salary-history',
 						Text: 'Lịch sử duyệt',
 						Icon: '',
 					},

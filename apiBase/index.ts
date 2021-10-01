@@ -80,3 +80,4 @@ export {packageExaminerApi} from './package/package-examiner';
 export {examDetailApi} from './exam-detail/exam-detail';
 export {saleCampaignApi} from './sale/sale-campaign';
 export {saleCampaignDetailApi} from './sale/sale-campaign-detail';
+export {saleSalaryApi} from './sale/sale-salary';

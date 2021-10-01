@@ -50,4 +50,4 @@ export const fmDateFromNow = (date) => {
 	return formattedDate;
 };
 export const parsePriceStrToNumber = (str: number | string) =>
-	parseInt(str.toString().replace(/\D/g, ''));
+	parseInt(str.toString().replace(/\D/g, '')) || 0;
