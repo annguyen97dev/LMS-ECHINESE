@@ -563,6 +563,13 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/staff/saler-list',
+						Route: '/staff/saler-list',
+						Text: 'Danh sách tư vấn viên',
+						Icon: '',
+					},
+					{
+						ItemType: 'single',
 						Key: '/staff/revenue',
 						Route: '/staff/revenue',
 						Text: 'Doanh thu',
