@@ -81,3 +81,5 @@ export {examDetailApi} from './exam-detail/exam-detail';
 export {saleCampaignApi} from './sale/sale-campaign';
 export {saleCampaignDetailApi} from './sale/sale-campaign-detail';
 export {saleSalaryApi} from './sale/sale-salary';
+export {salerTotalRevenueApi} from './sale/saler-total-revenue';
+export {salerRevenueApi} from './sale/saler-revenue';
