@@ -50,8 +50,6 @@ const ChoiceForm = (props) => {
   const [isResetEditor, setIsResetEditor] = useState(false);
   const [loadAtFirst, setLoadAtFirst] = useState(true);
 
-  console.log("question in form: ", questionDataForm);
-
   // GET VALUE IN EDITOR
   const getDataEditor = (dataEditor) => {
     if (questionDataForm) {
@@ -75,7 +73,7 @@ const ChoiceForm = (props) => {
     let checked = e.target.checked;
 
     // Xóa các isTrue còn lại (vì là câu hỏi chọn 1 đáp án)
-    questionData.ExerciseAnswer.forEach((item) => {
+    questionDataForm.ExerciseAnswer.forEach((item) => {
       item.isTrue = false;
     });
 

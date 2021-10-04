@@ -96,13 +96,13 @@ const EditQuestion = (props) => {
 
           if (res.status == 200) {
             showNoti("success", `Thành công`);
-            console.log("DATA DETAIL: ", res.data.data);
+
             onEdit && onEdit(res.data.data);
           }
 
           res.status == 204 && showNoti("danger", "Không thành công");
         } catch (error) {
-          showNoti("danger", error);
+          showNoti("danger", error.message);
         } finally {
           setReloadContent(false);
           setIsModalVisible(false);
@@ -257,8 +257,6 @@ const QuestionTyping = (props: any) => {
     quesItem.Paragraph = "<p><br></p>";
     quesItem.ExerciseGroupID = null;
 
-    console.log("Question Item delete: ", quesItem);
-
     try {
       let res = await exerciseGroupApi.update(quesItem);
       if (res.status == 200) {
@@ -270,7 +268,7 @@ const QuestionTyping = (props: any) => {
         showNoti("success", "Xóa thành công");
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setConfirmLoading(false);
     }
@@ -299,7 +297,7 @@ const QuestionTyping = (props: any) => {
 
       res.status == 204 && setDataListQuestion([]);
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingInGroup(false);
     }
@@ -374,12 +372,14 @@ const QuestionTyping = (props: any) => {
                 okButtonProps={{ loading: confirmLoading }}
                 onCancel={() => handleCancel(dataListQuestion.ID)}
               >
-                <button
-                  className="btn btn-icon delete"
-                  onClick={() => deleteQuestionItem(dataListQuestion.ID)}
-                >
-                  <Trash2 />
-                </button>
+                <Tooltip title="Xóa hết câu hỏi" placement="rightTop">
+                  <button
+                    className="btn btn-icon delete"
+                    onClick={() => deleteQuestionItem(dataListQuestion.ID)}
+                  >
+                    <Trash2 />
+                  </button>
+                </Tooltip>
               </Popconfirm>
             </div>
           </>

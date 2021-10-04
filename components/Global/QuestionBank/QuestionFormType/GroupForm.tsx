@@ -22,12 +22,7 @@ const GroupForm = (props) => {
   const [loadAtFirst, setLoadAtFirst] = useState(true);
 
   console.log("question data Form: ", questionDataForm);
-  // console.log("Question Data: ", questionData);
-
-  // SUBMI FORM
-  // const onSubmit = handleSubmit((data: any, e) => {
-  //   console.log("DATA SUBMIT: ", data);
-  // });
+  console.log("Question Data: ", questionData);
 
   // GET INTRODUCE EDITOR
   const getIntroduceEditor = (dataEditor: any) => {
@@ -111,14 +106,9 @@ const GroupForm = (props) => {
         questionData.LinkAudio = "";
       }
 
-      setQuestionDataForm({ ...questionData });
+      setQuestionDataForm(questionData);
     } else {
-      // setQuestionDataForm({
-      //   ...questionDataForm,
-      //   Content: "",
-      //   Introduce: "",
-      //   LinkAudio: "",
-      // });
+      setQuestionDataForm(null);
       setLoadAtFirst(true);
     }
   }, [visible]);

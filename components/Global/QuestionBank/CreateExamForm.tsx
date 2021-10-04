@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Form, Select, Spin } from "antd";
-import Editor from "~/components/Elements/Editor";
 import { Edit } from "react-feather";
 import { examTopicApi, programApi, subjectApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
@@ -8,10 +7,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
-import DateField from "~/components/FormControl/DateField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
-import { string } from "yup/lib/locale";
 
 let returnSchema = {};
 let schema = null;
@@ -38,8 +35,10 @@ const CreateExamForm = (props) => {
   const [openAns, setOpenAns] = useState(false);
   const [dataProgram, setDataProgram] = useState<dataOject[]>([]);
   const [dataSubject, setDataSubject] = useState<dataOject[]>([]);
-  const [loadingSelect, setLoadingSelect] = useState(false);
+  const [loadingSubject, setLoadingSubject] = useState(false);
+  const [loadingProgram, setLoadingProgram] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isTest, setIsTest] = useState(false);
 
   const showDrawer = () => {
     setVisible(true);
@@ -52,6 +51,7 @@ const CreateExamForm = (props) => {
 
   // GET DATA PROGRAM
   const getDataProgram = async () => {
+    setLoadingProgram(true);
     try {
       let res = await programApi.getAll({ pageIndex: 1, pageSize: 999999 });
       if (res.status == 200) {
@@ -66,6 +66,7 @@ const CreateExamForm = (props) => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
+      setLoadingProgram(false);
     }
   };
 
@@ -76,9 +77,16 @@ const CreateExamForm = (props) => {
     form.setValue("SubjectID", null);
   };
 
+  // HANLE CHANGE - SELECT TYPE EXAM
+  const handleChange_type = (value) => {
+    if (value === 1) {
+      setIsTest(true);
+    }
+  };
+
   // GET DATA SUBJECT
   const getDataSubject = async (id) => {
-    setLoadingSelect(true);
+    setLoadingSubject(true);
     try {
       let res = await subjectApi.getAll({
         pageIndex: 1,
@@ -97,7 +105,7 @@ const CreateExamForm = (props) => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
-      setLoadingSelect(false);
+      setLoadingSubject(false);
     }
   };
 
@@ -107,6 +115,7 @@ const CreateExamForm = (props) => {
     Code: null, //mã đề thi
     Description: null,
     Type: null, //1-Trắc nghiệm 2-Tự luận
+    ProgramID: null,
     SubjectID: null,
     Time: null, //Thời gian làm bài
   };
@@ -131,7 +140,9 @@ const CreateExamForm = (props) => {
   });
 
   const onSubmit = async (data: any) => {
-    console.log("Data submit: ", data);
+    if (data.Type == 1) {
+      data.SubjectID = 0;
+    }
     setIsLoading(true);
     let res = null;
     try {
@@ -142,7 +153,9 @@ const CreateExamForm = (props) => {
       }
 
       if (res.status == 200) {
-        showNoti("success", "Tạo đề thi thành công!");
+        !dataItem?.ID
+          ? showNoti("success", "Tạo đề thi thành công!")
+          : showNoti("success", "Cập nhật thành công!");
         setVisible(false);
         onFetchData();
         form.reset(defaultValuesInit);
@@ -155,11 +168,18 @@ const CreateExamForm = (props) => {
   };
 
   useEffect(() => {
+    console.log("Data item: ", dataItem);
     if (visible) {
-      getDataProgram();
       if (dataItem) {
-        getDataSubject(dataItem.ProgramID);
+        dataItem.Type !== 1 &&
+          (getDataProgram(), getDataSubject(dataItem.ProgramID));
         form.reset(dataItem);
+        if (dataItem.Type == 1) {
+          form.setValue("SubjectID", null);
+          form.setValue("ProgramID", null);
+        }
+      } else {
+        getDataProgram();
       }
     }
   }, [visible]);
@@ -201,6 +221,29 @@ const CreateExamForm = (props) => {
         <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
           <div className="row">
             <div className="col-md-6 col-12">
+              <SelectField
+                disabled={dataItem?.ID && true}
+                form={form}
+                name="Type"
+                label="Dạng đề thi"
+                onChangeSelect={(value) => handleChange_type(value)}
+                optionList={[
+                  {
+                    value: 1,
+                    title: "Đề hẹn test",
+                  },
+                  {
+                    value: 2,
+                    title: "Đề bán",
+                  },
+                  {
+                    value: 3,
+                    title: "Đề kiểm tra",
+                  },
+                ]}
+              />
+            </div>
+            <div className="col-md-6 col-12">
               <InputTextField form={form} name="Name" label="Tên đề thi" />
             </div>
             <div className="col-md-6 col-12">
@@ -208,45 +251,29 @@ const CreateExamForm = (props) => {
             </div>
             <div className="col-md-6 col-12">
               <SelectField
-                disabled={dataItem?.ID && true}
+                disabled={isTest ? true : dataItem?.ID && true}
                 form={form}
                 name="ProgramID"
                 label="Chương trình"
                 onChangeSelect={(value) => handleChange_selectProgram(value)}
+                isLoading={loadingProgram}
                 optionList={dataProgram}
               />
             </div>
             <div className="col-md-6 col-12">
               <SelectField
-                disabled={dataItem?.ID && true}
+                disabled={isTest ? true : dataItem?.ID && true}
                 form={form}
                 name="SubjectID"
                 label="Môn học"
-                isLoading={loadingSelect}
+                isLoading={loadingSubject}
                 optionList={dataSubject}
               />
             </div>
             <div className="col-md-6 col-12">
               <InputTextField form={form} name="Time" label="Thời gian" />
             </div>
-            <div className="col-md-6 col-12">
-              <SelectField
-                disabled={dataItem?.ID && true}
-                form={form}
-                name="Type"
-                label="Dạng đề thi"
-                optionList={[
-                  {
-                    value: 1,
-                    title: "Trắc nghiệm",
-                  },
-                  {
-                    value: 2,
-                    title: "Tự luận",
-                  },
-                ]}
-              />
-            </div>
+
             <div className="col-12">
               <TextAreaField
                 name="Description"

@@ -37,10 +37,11 @@ const AddQuestionModal = (props) => {
         });
         if (res.status == 200) {
           showNoti("success", "Thêm câu hỏi thành công");
+
           onFetchData && onFetchData();
         }
       } catch (error) {
-        showNoti("danger", error);
+        showNoti("danger", error.message);
       } finally {
         setIsModalVisible(false);
         setIsLoading(false);
@@ -66,7 +67,7 @@ const AddQuestionModal = (props) => {
   //           onFetchData && onFetchData();
   //         }
   //       } catch (error) {
-  //         showNoti("danger", error);
+  //         showNoti("danger", error.message);
   //       } finally {
   //         setIsModalVisible(false);
   //         setIsLoading(false);

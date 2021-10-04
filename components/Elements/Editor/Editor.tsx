@@ -226,8 +226,8 @@ const EditorSummernote = (props) => {
       // On add space
       let replacement = propetyEditor.textNode.splitText(propetyEditor.offset);
       let inputE = document.createElement("input");
-      inputE.className = "space-editor";
       inputE.id = inputID.toString();
+      inputE.className = "space-editor";
       inputE.setAttribute("placeholder", `(${(indexInput + 1).toString()})`);
       propetyEditor.textNode.parentNode.insertBefore(inputE, replacement);
       // setPropetyEditor({ ...propetyEditor });

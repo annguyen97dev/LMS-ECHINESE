@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useWrap } from "~/context/wrap";
-import { Form, Upload, Spin, Button, Input, Tooltip } from "antd";
+import { Form, Spin, Checkbox, Input, Tooltip } from "antd";
 import Editor from "~/components/Elements/Editor";
 import { exerciseGroupApi } from "~/apiBase/";
 import { dataQuestion } from "~/lib/question-bank/dataBoxType";
@@ -46,7 +46,7 @@ const DragForm = (props) => {
         showNoti("success", "Upload file thành công");
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingUpload(false);
     }
@@ -135,7 +135,7 @@ const DragForm = (props) => {
         {
           ID: AnsID,
           AnswerContent: "",
-          isTrue: false,
+          isTrue: true,
           Enable: true,
           isAdd: true,
         },
@@ -167,6 +167,36 @@ const DragForm = (props) => {
 
     setQuestionDataForm({ ...questionDataForm });
   };
+
+  const onChange_isCorrect = (e, AnswerID, QuestionID) => {
+    let checked = e.target.checked;
+
+    // - Get question index
+    let QuestionIndex = questionDataForm?.ExerciseList?.findIndex(
+      (item) => item.inputID == QuestionID
+    );
+
+    // - Get answer index
+    let AnswerIndex = questionDataForm.ExerciseList[
+      QuestionIndex
+    ].ExerciseAnswer.findIndex((item) => item.ID == AnswerID);
+
+    // Delete all is true before and new isTrue
+    questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer.forEach(
+      (item) => {
+        item.isTrue = false;
+      }
+    );
+
+    // - add isTrue
+    questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
+      AnswerIndex
+    ].isTrue = checked;
+
+    setQuestionDataForm({ ...questionDataForm });
+  };
+
+  console.log("QUESTION DATA FORM IN DRAG: ", questionDataForm);
 
   // ====== ON CHANGE TEXT ======
   const onChange_text = (e: any, AnswerID: number, QuestionID) => {
@@ -204,10 +234,20 @@ const DragForm = (props) => {
       QuestionIndex
     ].ExerciseAnswer.findIndex((item) => item.ID == AnswerID);
 
-    // answerList.splice(AnswerIndex, 1);
-    questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
-      AnswerIndex
-    ].Enable = false;
+    // Action delete
+    if (
+      questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[AnswerIndex]
+        .isAdd
+    ) {
+      questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer.splice(
+        AnswerIndex,
+        1
+      );
+    } else {
+      questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
+        AnswerIndex
+      ].Enable = false;
+    }
 
     // setAnswerList([...answerList]);
     setQuestionDataForm({ ...questionDataForm });
@@ -239,10 +279,43 @@ const DragForm = (props) => {
       res = await exerciseGroupApi.update(newData);
 
       if (res.status == 200) {
-        setReloadContent(true);
+        handleSubmitChange(res.data.data);
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
+    }
+  };
+
+  // SUBMIT AND CHANGE PARAGRAPH
+  const handleSubmitChange = async (dataSubmit) => {
+    let res = null;
+
+    let cloneParagraph = dataSubmit.Paragraph;
+
+    dataSubmit.ExerciseList.forEach((item, index) => {
+      cloneParagraph = cloneParagraph.replace(
+        `<input id="${item.inputID}"`,
+        `<input ques-id="${item.ID}"  id="${item.inputID}"`
+      );
+    });
+
+    dataSubmit.Paragraph = cloneParagraph;
+
+    // ----------
+
+    try {
+      res = await exerciseGroupApi.update(dataSubmit);
+
+      if (res.status == 200) {
+        changeIsSubmit(res.data.data);
+        if (!questionDataForm.ID) {
+          resetForm();
+        }
+        showNoti("success", `Tạo câu hỏi thành công`);
+        setIsResetEditor(true);
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
     }
   };
 
@@ -270,7 +343,7 @@ const DragForm = (props) => {
       res.status == 200 && reloadNewContent(res.data.data);
       res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingForm(false);
     }
@@ -284,26 +357,6 @@ const DragForm = (props) => {
 
     setDataExercise([...filterExerciseList]);
     setQuestionDataForm({ ...data });
-    // let paragraph = data.Paragraph;
-
-    // console.log("Paragraph lúc đầu: ", paragraph);
-
-    // data.ExerciseList?.forEach((item, index) => {
-    //   console.log("Test thử nha: ", `<input id="${index.toString()}"`);
-    //   if (item.Enable) {
-    //     if (paragraph.includes(`<input id="${index.toString()}"`)) {
-    //       console.log("Coi có chạy vô đây không");
-    //       paragraph = paragraph.replace(
-    //         `<input id="${index.toString()}"`,
-    //         `<input id="${item.ID.toString()}"`
-    //       );
-    //     }
-    //   }
-    // });
-
-    // console.log("Paragraph lúc sau: ", paragraph);
-
-    // data.Paragraph = paragraph;
   };
 
   useEffect(() => {
@@ -321,34 +374,34 @@ const DragForm = (props) => {
     }
   }, [visible]);
 
-  useEffect(() => {
-    if (reloadContent) {
-      (async function loadData() {
-        try {
-          let res = await exerciseGroupApi.getWithID(questionDataForm.ID);
+  // useEffect(() => {
+  //   if (reloadContent) {
+  //     (async function loadData() {
+  //       try {
+  //         let res = await exerciseGroupApi.getWithID(questionDataForm.ID);
 
-          if (res.status == 200) {
-            changeIsSubmit(res.data.data);
-            showNoti("success", `Thành công`);
-            if (!questionDataForm.ID) {
-              resetForm();
-            }
-            setIsResetEditor(true);
+  //         if (res.status == 200) {
+  //           changeIsSubmit(res.data.data);
+  //           showNoti("success", `Thành công`);
+  //           if (!questionDataForm.ID) {
+  //             resetForm();
+  //           }
+  //           setIsResetEditor(true);
 
-            setTimeout(() => {
-              setIsResetEditor(false);
-            }, 500);
-          }
+  //           setTimeout(() => {
+  //             setIsResetEditor(false);
+  //           }, 500);
+  //         }
 
-          res.status == 204 && showNoti("danger", "Không có dữ liệu");
-        } catch (error) {
-          showNoti("danger", error);
-        } finally {
-          setReloadContent(false);
-        }
-      })();
-    }
-  }, [reloadContent]);
+  //         res.status == 204 && showNoti("danger", "Không có dữ liệu");
+  //       } catch (error) {
+  //         showNoti("danger", error.message);
+  //       } finally {
+  //         setReloadContent(false);
+  //       }
+  //     })();
+  //   }
+  // }, [reloadContent]);
 
   return (
     <div className="form-create-question">
@@ -402,22 +455,21 @@ const DragForm = (props) => {
                   {questionDataForm?.ExerciseList?.map(
                     (itemQues, index) =>
                       itemQues.Enable && (
-                        <div key={index}>
+                        <div key={index} className="question-item-group">
                           <p
-                            className="mt-4"
+                            className=""
                             style={{ fontWeight: 500, color: "#525252" }}
                           >
                             {returnIndexQuestion(itemQues)}
-                            {/* {`Câu (${index + 1})`} */}
                           </p>
-                          {/* <Tooltip title="Thêm đáp án">
+                          <Tooltip title="Thêm đáp án">
                             <button
-                              className="btn-add-answer"
+                              className="btn-add-answer mb-3"
                               onClick={() => handleAddAnswer(itemQues.inputID)}
                             >
                               <Plus />
                             </button>
-                          </Tooltip> */}
+                          </Tooltip>
 
                           <div className="row">
                             {itemQues.ExerciseAnswer?.map(
@@ -425,6 +477,16 @@ const DragForm = (props) => {
                                 itemAns.Enable && (
                                   <div className="col-md-6 col-12" key={index}>
                                     <div className="row-ans">
+                                      <Checkbox
+                                        checked={itemAns.isTrue}
+                                        onChange={(e) =>
+                                          onChange_isCorrect(
+                                            e,
+                                            itemAns.ID,
+                                            itemQues.inputID
+                                          )
+                                        }
+                                      ></Checkbox>
                                       <Form.Item className="mb-0">
                                         <Input
                                           value={itemAns.AnswerContent}
@@ -438,7 +500,7 @@ const DragForm = (props) => {
                                           }
                                         ></Input>
                                       </Form.Item>
-                                      {/* <button
+                                      <button
                                         className="delete-ans"
                                         onClick={() =>
                                           deleteAnswerItem(
@@ -448,7 +510,7 @@ const DragForm = (props) => {
                                         }
                                       >
                                         <CloseOutlined />
-                                      </button> */}
+                                      </button>
                                     </div>
                                   </div>
                                 )
