@@ -30,7 +30,7 @@ function Package() {
 
 		Type: null,
 		Level: null,
-		formDate: '',
+		fromDate: '',
 		toDate: '',
 	};
 	let refValue = useRef({
@@ -300,6 +300,7 @@ function Package() {
 						src={url}
 						title="Ảnh bìa bộ đề"
 						alt="Ảnh bìa bộ đề"
+						style={{objectFit: 'cover'}}
 					/>
 				);
 			},

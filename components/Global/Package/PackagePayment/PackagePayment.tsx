@@ -36,7 +36,7 @@ function PackagePayment() {
 		Type: 2,
 		SetPackageID: null,
 		StudentID: null,
-		formDate: '',
+		fromDate: '',
 		toDate: '',
 	};
 	let refValue = useRef({

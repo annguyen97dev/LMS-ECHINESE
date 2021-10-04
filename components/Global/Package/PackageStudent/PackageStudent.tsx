@@ -1,7 +1,7 @@
 import {Card, Image, List} from 'antd';
 import Link from 'next/link';
 import React, {useEffect, useRef, useState} from 'react';
-import {packageApi, packageStudentApi} from '~/apiBase';
+import {packageStudentApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import TitlePage from '~/components/Elements/TitlePage';
 import {useWrap} from '~/context/wrap';
@@ -13,27 +13,26 @@ const PackageStudent = () => {
 		type: '',
 		status: false,
 	});
-	const [packageOfStudentList, setPackageOfStudentList] = useState<IPackage[]>(
-		[]
-	);
+	const [packageOfStudentList, setPackageOfStudentList] = useState<
+		IPackageStudent[]
+	>([]);
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti, userInformation} = useWrap();
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 999,
+		pageSize: 10,
 		sort: -1,
 		sortType: false,
 
-		TeacherID: null,
 		Type: null,
-		Level: null,
-		formDate: '',
+		StudentID: null,
+		fromDate: '',
 		toDate: '',
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 999,
+		pageSize: 10,
 		sort: -1,
 		sortType: false,
 	});
@@ -46,32 +45,6 @@ const PackageStudent = () => {
 		{
 			value: 2,
 			title: 'Cao cấp',
-		},
-	];
-	const levelOptionList = [
-		{
-			value: 1,
-			title: 'HSK 1',
-		},
-		{
-			value: 2,
-			title: 'HSK 2',
-		},
-		{
-			value: 3,
-			title: 'HSK 3',
-		},
-		{
-			value: 4,
-			title: 'HSK 4',
-		},
-		{
-			value: 5,
-			title: 'HSK 5',
-		},
-		{
-			value: 6,
-			title: 'HSK 6',
 		},
 	];
 	// SORT OPTION
@@ -118,17 +91,19 @@ const PackageStudent = () => {
 			...obj,
 		});
 	};
-	// // PAGINATION
-	// const getPagination = (pageIndex: number) => {
-	// 	refValue.current = {
-	// 		...refValue.current,
-	// 		pageIndex,
-	// 	};
-	// 	setFilters({
-	// 		...filters,
-	// 		pageIndex,
-	// 	});
-	// };
+	// PAGINATION
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		refValue.current = {
+			...refValue.current,
+			pageSize,
+			pageIndex,
+		};
+		setFilters({
+			...filters,
+			...refValue.current,
+		});
+	};
 	// SORT
 	const onSort = (option) => {
 		refValue.current = {
@@ -156,38 +131,19 @@ const PackageStudent = () => {
 		});
 		try {
 			if (!userInformation) return;
-			const StudentID = userInformation.UserInformationID;
+			const res = await packageStudentApi.getAll({
+				...filters,
+				StudentID: userInformation.UserInformationID,
+			});
 
-			const res = await Promise.all([
-				packageApi.getAll(filters),
-				packageStudentApi.getAll({StudentID}),
-			]);
-
-			const packageList: IPackage[] = res[0].data.data;
-			const billList: IPackageStudent[] = res[1].data.data;
-
-			if (res[0].status === 200 && res[1].status === 200) {
-				// ONLY SHOW PACKAGE STUDENT BOUGHT
-				const getOnlyPackageBought = packageList.filter(
-					(p) => p.Enable && billList.some((b) => b.SetPackageID === p.ID)
-				);
-				const newPackageListWithApproval = getOnlyPackageBought.map((p) => {
-					return {
-						...p,
-						Approval: billList.find((b) => b.SetPackageID === p.ID).Approval,
-						ApprovalName: billList.find((b) => b.SetPackageID === p.ID)
-							.ApprovalName,
-					};
-				});
-
-				if (newPackageListWithApproval.length) {
-					setPackageOfStudentList(newPackageListWithApproval);
-					setTotalPage(newPackageListWithApproval.length);
-				} else {
-					showNoti('danger', 'Không tìm thấy');
-				}
-			} else {
-				showNoti('danger', 'Không tìm thấy');
+			if (res.status === 200) {
+				setPackageOfStudentList(res.data.data);
+				setTotalPage(res.data.totalRow);
+			}
+			if (res.status === 204) {
+				setPackageOfStudentList([]);
+				setTotalPage(0);
+				showNoti('danger', 'Dữ liệu trống');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -215,10 +171,7 @@ const PackageStudent = () => {
 									<PackageStudentFilterForm
 										handleFilter={onFilter}
 										handleResetFilter={onResetSearch}
-										optionListForFilter={{
-											levelOptionList: levelOptionList,
-											typeOptionList: typeOptionList,
-										}}
+										typeOptionList={typeOptionList}
 									/>
 									<SortBox dataOption={sortOptionList} handleSort={onSort} />
 								</div>
@@ -227,22 +180,21 @@ const PackageStudent = () => {
 							<List
 								loading={isLoading?.type === 'GET_ALL' && isLoading?.status}
 								pagination={{
-									// onChange: getPagination,
+									onChange: getPagination,
 									total: totalPage,
 									size: 'small',
 								}}
 								itemLayout="horizontal"
 								dataSource={packageOfStudentList}
-								renderItem={(item: IPackage, idx) => {
+								renderItem={(item: IPackageStudent, idx) => {
 									const {
 										ID,
-										Name,
-										Avatar,
+										SetPackageName,
+										SetPackageAvatar,
 										Level,
 										Type,
 										TypeName,
 										Price,
-										Description,
 										Approval,
 										ApprovalName,
 									} = item;
@@ -258,9 +210,10 @@ const PackageStudent = () => {
 															width="100%"
 															height="100%"
 															preview={false}
-															src={Avatar}
+															src={SetPackageAvatar}
 															title="Ảnh bìa bộ đề"
 															alt="Ảnh bìa bộ đề"
+															style={{objectFit: 'cover'}}
 														/>
 													)}
 													{Approval === 3 && (
@@ -276,9 +229,10 @@ const PackageStudent = () => {
 																	width="100%"
 																	height="100%"
 																	preview={false}
-																	src={Avatar}
+																	src={SetPackageAvatar}
 																	title="Ảnh bìa bộ đề"
 																	alt="Ảnh bìa bộ đề"
+																	style={{objectFit: 'cover'}}
 																/>
 															</a>
 														</Link>
@@ -286,7 +240,8 @@ const PackageStudent = () => {
 												</div>
 												<div className="wrap-set-content">
 													<h6 className="set-title">
-														{(Approval === 1 || Approval === 2) && Name}
+														{(Approval === 1 || Approval === 2) &&
+															SetPackageName}
 														{Approval === 3 && (
 															<Link
 																href={{
@@ -295,7 +250,7 @@ const PackageStudent = () => {
 																	query: {slug: ID},
 																}}
 															>
-																<a>{Name}</a>
+																<a>{SetPackageName}</a>
 															</Link>
 														)}
 													</h6>
@@ -306,9 +261,9 @@ const PackageStudent = () => {
 														<li className="price">
 															Giá:<span>{numberWithCommas(Price)} VNĐ</span>
 														</li>
-														<li className="desc">
+														{/* <li className="desc">
 															Mô tả:<span>{Description}</span>
-														</li>
+														</li> */}
 													</ul>
 													<div className="set-btn">
 														{(Approval === 1 || Approval === 2) && (
