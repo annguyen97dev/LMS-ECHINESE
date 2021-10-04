@@ -13,7 +13,7 @@ import InfoCourseCard from './InfoCourseCard/InfoCourseCard';
 import InfoOtherCard from './InfoOtherCard/InfoOtherCard';
 import InfoPaymentCard from './InfoPaymentCard/InfoPaymentCard';
 import InfoTestCard from './InfoTestCard/InfoTestCard';
-import InfoTestResultCard from './InfoTestResultCard/InfoTestResultCard';
+// import InfoTestResultCard from './InfoTestResultCard/InfoTestResultCard';
 import InfoTimelineCard from './InfoTimelineCard/InfoTimelineCard';
 
 function ProfileCustomer(props) {
@@ -100,7 +100,7 @@ function ProfileCustomer(props) {
 								<InfoTimelineCard studentID={studentIDInt} />
 							</TabPane>
 							<TabPane tab="Kết quả kiểm tra" key="6" className="profile-tabs">
-								<InfoTestResultCard studentID={studentIDInt} />
+								{/* <InfoTestResultCard studentID={studentIDInt} /> */}
 							</TabPane>
 							<TabPane tab="Khác" key="7" className="profile-tabs">
 								<InfoOtherCard studentID={studentIDInt} />
@@ -109,7 +109,6 @@ function ProfileCustomer(props) {
 					</Card>
 				</div>
 			</div>
-			<div></div>
 		</div>
 	);
 }

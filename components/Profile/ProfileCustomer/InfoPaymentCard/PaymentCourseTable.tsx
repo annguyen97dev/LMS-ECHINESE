@@ -133,6 +133,7 @@ function PaymentCourseTable(props) {
 			});
 			const res = await invoiceApi.getAll({
 				PayID: ID,
+				StyleID: 1,
 			});
 			if (res.status === 200) {
 				setInfoInvoiceList(res.data.data);

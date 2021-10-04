@@ -65,9 +65,14 @@ function ExamAppointmentTable(props) {
 		{
 			title: 'Ngày hẹn',
 			dataIndex: 'AppointmentDate',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) =>
+				date ? (
+					<p className="font-weight-black">
+						{moment(date).format('DD/MM/YYYY')}
+					</p>
+				) : (
+					''
+				),
 		},
 		{
 			title: 'Thời gian',
