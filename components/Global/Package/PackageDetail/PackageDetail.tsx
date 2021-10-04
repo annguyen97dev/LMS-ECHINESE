@@ -260,7 +260,7 @@ const PackageDetail = () => {
 				addClass="basic-header"
 				dataSource={packageDetailList}
 				columns={columns}
-				TitlePage="Danh sách gói bài tập"
+				TitlePage="Danh sách bộ đề"
 				TitleCard={
 					<PackageDetailForm
 						isLoading={isLoading}

@@ -247,7 +247,7 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/package/package-payment',
 						Route: '/package/package-payment',
-						Text: 'Danh sách học viên mua gói',
+						Text: 'Danh sách học viên mua bộ đề',
 						Icon: '',
 					},
 				],
@@ -595,21 +595,21 @@ export const AdminChildMenu = [
 	},
 	{
 		MenuName: 'tab-package',
-		MenuTitle: 'Gói bài tập',
+		MenuTitle: 'Bộ đề',
 		MenuKey: '/package',
 		MenuItem: [
 			{
 				ItemType: 'single',
 				Key: '/package/package-list',
 				Route: '/package/package-list',
-				Text: 'Quản lí gói bài',
+				Text: 'Quản lí bộ đề',
 				Icon: '',
 			},
 			{
 				ItemType: 'single',
 				Key: '/package/package-student',
 				Route: '/package/package-student',
-				Text: 'Danh sách gói bài học viên',
+				Text: 'Danh sách bộ đề học viên',
 				Icon: '',
 			},
 			// {
@@ -630,14 +630,14 @@ export const AdminChildMenu = [
 				ItemType: 'single',
 				Key: '/package/package-examiner',
 				Route: '/package/package-examiner',
-				Text: 'Danh sách chấm gói bài',
+				Text: 'Danh sách chấm bộ đề',
 				Icon: '',
 			},
 			{
 				ItemType: 'single',
 				Key: '/package/package-set-result/',
 				Route: '/package/package-set-result/',
-				Text: 'Kết quả gói bài',
+				Text: 'Kết quả bộ đề',
 				Icon: '',
 			},
 			{

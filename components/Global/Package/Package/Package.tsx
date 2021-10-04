@@ -298,14 +298,14 @@ function Package() {
 						width={80}
 						height={80}
 						src={url}
-						title="Ảnh bìa gói bài tập"
-						alt="Ảnh bìa gói bài tập"
+						title="Ảnh bìa bộ đề"
+						alt="Ảnh bìa bộ đề"
 					/>
 				);
 			},
 		},
 		{
-			title: 'Tên gói',
+			title: 'Tên bộ đề',
 			dataIndex: 'Name',
 		},
 		{
@@ -322,7 +322,7 @@ function Package() {
 			className: activeColumnSearch === 'Level' ? 'active-column-search' : '',
 		},
 		{
-			title: 'Loại gói',
+			title: 'Loại',
 			dataIndex: 'TypeName',
 			...FilterColumn(
 				'Type',
@@ -339,7 +339,7 @@ function Package() {
 			render: (price) => (!price ? 0 : numberWithCommas(price)),
 		},
 		{
-			title: 'Ngày tạo gói',
+			title: 'Ngày tạo bộ đề',
 			dataIndex: 'CreatedOn',
 			...FilterColumn('CreatedOn', onSearch, onResetSearch, 'date-range'),
 			render: (date) => moment(date).format('DD/MM/YYYY'),
@@ -401,7 +401,7 @@ function Package() {
 				addClass="basic-header"
 				dataSource={packageList}
 				columns={columns}
-				TitlePage="Danh sách gói bài tập"
+				TitlePage="Danh sách bộ đề"
 				Extra={
 					<div className="extra-table">
 						<SortBox dataOption={sortOptionList} handleSort={onSort} />

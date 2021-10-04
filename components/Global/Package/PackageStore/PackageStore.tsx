@@ -285,8 +285,8 @@ const PackageStore = () => {
 														width="100%"
 														height="100%"
 														src={Avatar}
-														title="Ảnh bìa gói bài tập"
-														alt="Ảnh bìa gói bài tập"
+														title="Ảnh bìa bộ đề"
+														alt="Ảnh bìa bộ đề"
 													/>
 												</div>
 												<div className="wrap-set-content">

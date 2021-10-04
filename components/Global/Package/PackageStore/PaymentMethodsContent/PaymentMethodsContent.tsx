@@ -53,7 +53,7 @@ function PaymentMethodsContent(props) {
 								chính trường với đại chỉ{' '}
 								<span className="text-info">323/226 Lý Thường Kiệt P8 TB </span>{' '}
 								để thanh toán và được cấp User và Mật khẩu để đăng nhập vào
-								(các) Khóa học/Gói bài/Dịch vụ đã đăng ký.
+								(các) Khóa học/Bộ đề/Dịch vụ đã đăng ký.
 							</p>
 							<p>
 								Nếu cần tư vấn thêm, Quý khách vui lòng liên hệ lại chúng tôi
@@ -111,7 +111,7 @@ function PaymentMethodsContent(props) {
 									<td colSpan={2}>
 										<p>Theo cấu trúc sau:</p>
 										<p>
-											[Tên gói bài/Khóa học/Dịch vụ].[Họ và tên].[Số điện thoại]
+											[Tên bộ đề/Khóa học/Dịch vụ].[Họ và tên].[Số điện thoại]
 										</p>
 										<p>Ví dụ: Khoa Hoc Quan Ly.TRUONG MINH LOC.0987654321</p>
 									</td>
@@ -121,7 +121,7 @@ function PaymentMethodsContent(props) {
 						<div className="mg-t-20">
 							<p>
 								Trong vòng 02 ngày làm việc, Quý khách sẽ nhận được email cấp
-								User và Mật khẩu để đăng nhập vào (các) Khóa học/Gói bài/Dịch vụ
+								User và Mật khẩu để đăng nhập vào (các) Khóa học/Bộ đề/Dịch vụ
 								đã đăng ký.
 							</p>
 							<p>

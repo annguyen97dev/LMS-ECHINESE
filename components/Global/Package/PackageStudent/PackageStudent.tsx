@@ -206,7 +206,7 @@ const PackageStudent = () => {
 		<>
 			<div className="row package-set package-detail-list">
 				<div className="col-12">
-					<TitlePage title="Danh sách gói bài học viên" />
+					<TitlePage title="Danh sách bộ đề học viên" />
 					<div className="wrap-table">
 						<Card
 							className="package-set-wrap"
@@ -259,8 +259,8 @@ const PackageStudent = () => {
 															height="100%"
 															preview={false}
 															src={Avatar}
-															title="Ảnh bìa gói bài tập"
-															alt="Ảnh bìa gói bài tập"
+															title="Ảnh bìa bộ đề"
+															alt="Ảnh bìa bộ đề"
 														/>
 													)}
 													{Approval === 3 && (
@@ -277,8 +277,8 @@ const PackageStudent = () => {
 																	height="100%"
 																	preview={false}
 																	src={Avatar}
-																	title="Ảnh bìa gói bài tập"
-																	alt="Ảnh bìa gói bài tập"
+																	title="Ảnh bìa bộ đề"
+																	alt="Ảnh bìa bộ đề"
 																/>
 															</a>
 														</Link>
@@ -329,7 +329,7 @@ const PackageStudent = () => {
 																}}
 															>
 																<a className="btn btn-warning">
-																	Chi tiết gói bài
+																	Chi tiết bộ đề
 																</a>
 															</Link>
 														)}

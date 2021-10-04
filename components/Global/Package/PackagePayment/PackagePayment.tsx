@@ -271,7 +271,7 @@ function PackagePayment() {
 				activeColumnSearch === 'StudentID' ? 'active-column-search' : '',
 		},
 		{
-			title: 'Tên gói',
+			title: 'Tên bộ đề',
 			dataIndex: 'SetPackageName',
 			...FilterColumn(
 				'SetPackageID',
@@ -289,7 +289,7 @@ function PackagePayment() {
 			render: (level) => `HSK ${level}`,
 		},
 		{
-			title: 'Loại gói',
+			title: 'Loại',
 			dataIndex: 'TypeName',
 		},
 
@@ -343,7 +343,7 @@ function PackagePayment() {
 				addClass="basic-header"
 				dataSource={packagePaymentList}
 				columns={columns}
-				TitlePage="Danh sách học viên mua gói"
+				TitlePage="Danh sách học viên mua bộ đề"
 				Extra={
 					<div className="extra-table">
 						<SortBox dataOption={sortOptionList} handleSort={onSort} />

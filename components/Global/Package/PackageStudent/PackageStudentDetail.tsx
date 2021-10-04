@@ -81,7 +81,7 @@ const PackageStudentDetail = () => {
 		<>
 			<div className="row package-set package-detail-list">
 				<div className="col-12">
-					<TitlePage title="Chi tiết gói bài" />
+					<TitlePage title="Chi tiết bộ đề" />
 					<div className="wrap-table">
 						<Card className="package-set-wrap">
 							<List
