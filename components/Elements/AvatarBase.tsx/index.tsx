@@ -26,7 +26,6 @@ const AvatarBase = (props) => {
   };
 
   const handleChange_img = async (info: any) => {
-    console.log("Info file: ", info.file.originFileObj);
     if (info.file.status === "uploading") {
       setLoadingImage(true);
       return;

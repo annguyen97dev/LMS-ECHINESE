@@ -19,6 +19,13 @@ class ExerciseApi {
   delete(data: IExercise) {
     return instance.put(url, data);
   }
+
+  // Import Excel
+  importExcel(file: File) {
+    let fData = new FormData();
+    fData.append("File", file);
+    return instance.post("/api/ImportExercise", fData, {});
+  }
 }
 
 export const exerciseApi = new ExerciseApi();

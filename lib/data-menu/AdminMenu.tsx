@@ -606,13 +606,13 @@ export const AdminChildMenu = [
       //   Text: "Tạo gói mới",
       //   Icon: "",
       // },
-      {
-        ItemType: "single",
-        Key: "/package/topic-list",
-        Route: "/package/topic-list",
-        Text: "Topic",
-        Icon: "",
-      },
+      // {
+      //   ItemType: "single",
+      //   Key: "/package/topic-list",
+      //   Route: "/package/topic-list",
+      //   Text: "Topic",
+      //   Icon: "",
+      // },
       {
         ItemType: "single",
         Key: "/package/package-examiner",
@@ -622,18 +622,18 @@ export const AdminChildMenu = [
       },
       {
         ItemType: "single",
-        Key: "/package/package-set-result/",
-        Route: "/package/package-set-result/",
+        Key: "/package/package-set-result",
+        Route: "/package/package-set-result",
         Text: "Kết quả gói bài",
         Icon: "",
       },
-      {
-        ItemType: "single",
-        Key: "/package/package-set",
-        Route: "/package/package-set",
-        Text: "Bộ sưu tập",
-        Icon: "",
-      },
+      // {
+      //   ItemType: "single",
+      //   Key: "/package/package-set",
+      //   Route: "/package/package-set",
+      //   Text: "Bộ sưu tập",
+      //   Icon: "",
+      // },
       {
         ItemType: "single",
         Key: "/package/package-store",

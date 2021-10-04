@@ -22,6 +22,7 @@ import QuestionTyping from "~/components/Global/QuestionBank/QuestionShow/Questi
 import QuestionDrag from "~/components/Global/QuestionBank/QuestionShow/QuestionDrag";
 import QuestionMap from "~/components/Global/QuestionBank/QuestionShow/QuestionMap";
 import QuestionSpeaking from "./QuestionShow/QuestionSpeaking";
+import ImportExcel from "./Elements/ImportExcel";
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -763,13 +764,31 @@ const QuestionCreate = (props) => {
 
       questionData.Level = 1;
       setQuestionData({ ...questionData });
+      setValueSkill(3);
       setValueLevel(1);
       setValueType(0);
+      changeBoxType(null, 1, "Lựa chọn một");
       setShowTypeQuestion({
-        ...showTypeQuetion,
+        type: 1,
         status: true,
       });
+    } else {
+      setValueProgram(32);
+      getDataSubject(32);
+      setValueSubject(23);
+      questionData.SubjectID = 23;
+      questionData.Level = 1;
+      questionData.SkillID = 3;
+      setQuestionData({ ...questionData });
+      setValueSkill(3);
+      setValueLevel(1);
+      setValueType(0);
+      changeBoxType(null, 1, "Lựa chọn một");
     }
+    setShowTypeQuestion({
+      type: 1,
+      status: true,
+    });
   }, [dataExam]);
 
   console.log("Is loading: ", isLoading);
@@ -810,12 +829,15 @@ const QuestionCreate = (props) => {
               </div>
             }
             extra={
-              <CreateQuestionForm
-                questionData={questionData}
-                onFetchData={onFetchData}
-                isGroup={isGroup}
-                onAddData={(data) => onAddData(data)}
-              />
+              <>
+                <ImportExcel onFetchData={onFetchData} />
+                <CreateQuestionForm
+                  questionData={questionData}
+                  onFetchData={onFetchData}
+                  isGroup={isGroup}
+                  onAddData={(data) => onAddData(data)}
+                />
+              </>
             }
           >
             {!showListQuestion ? (

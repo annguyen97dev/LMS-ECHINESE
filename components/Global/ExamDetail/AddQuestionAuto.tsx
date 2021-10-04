@@ -6,14 +6,12 @@ import ExamDetail, {
 } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { examDetailApi, examTopicApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { Edit } from "react-feather";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
-import DateField from "~/components/FormControl/DateField";
 import SelectField from "~/components/FormControl/SelectField";
-import TextAreaField from "~/components/FormControl/TextAreaField";
+import { Zap } from "react-feather";
 
 let returnSchema = {};
 let schema = null;
@@ -26,9 +24,10 @@ const AddQuestionAuto = (props) => {
   const [visibleConfirm, setVisibleConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showNoti } = useWrap();
+  const [countShowConfirm, setCountShowConfirm] = useState(0);
 
-  console.log("Data Exam: ", dataExam);
-  console.log("Exam ID: ", examTopicID);
+  // console.log("Data Exam: ", dataExam);
+  // console.log("Exam ID: ", examTopicID);
 
   const showModalConfirm = () => {
     setVisibleConfirm(true);
@@ -135,12 +134,19 @@ const AddQuestionAuto = (props) => {
   return (
     <>
       <button
-        className="btn btn-warning ml-3"
+        className="btn btn-warning "
         onClick={
-          listQuestionID.length > 0 ? showModalConfirm : showModalCreateQuestion
+          countShowConfirm < 1
+            ? listQuestionID.length > 0
+              ? showModalConfirm
+              : showModalCreateQuestion
+            : showModalCreateQuestion
         }
       >
-        Tạo nhanh
+        <div className="d-flex align-item-center">
+          <Zap className="mr-2" style={{ width: "18px" }} />
+          Tạo nhanh
+        </div>
       </button>
       <Modal
         title="Chú ý!"
@@ -159,6 +165,7 @@ const AddQuestionAuto = (props) => {
               onClick={() => {
                 setVisibleConfirm(false);
                 showModalCreateQuestion();
+                setCountShowConfirm(countShowConfirm + 1);
               }}
             >
               Đồng ý
@@ -167,7 +174,8 @@ const AddQuestionAuto = (props) => {
         }
       >
         <p style={{ fontWeight: 500 }}>
-          Toàn bộ câu hỏi trong đề sẽ bị xóa. Bạn có muốn tạo danh sách mới?
+          Toàn bộ câu hỏi trong đề sẽ bị xóa sau khi tạo danh sách mới. <br />
+          Bạn có muốn tiếp tục?
         </p>
       </Modal>
       <Modal

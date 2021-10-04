@@ -168,8 +168,6 @@ const ExamDetail = () => {
     }
   };
 
-  console.log("LOADING QUESTION: ", loadingQuestion);
-
   const getExamTopicDetail = async () => {
     listExam.length == 0 && setLoadingExam(true);
     setLoadingDetail(true);
@@ -527,14 +525,14 @@ const ExamDetail = () => {
               }
               extra={
                 <>
-                  <AddQuestionModal
-                    dataExam={examTopicDetail}
-                    onFetchData={onFetchData}
-                  />
                   <AddQuestionAuto
                     dataExam={examTopicDetail}
                     onFetchData={onFetchData}
                     examTopicID={examID}
+                  />
+                  <AddQuestionModal
+                    dataExam={examTopicDetail}
+                    onFetchData={onFetchData}
                   />
                 </>
               }
@@ -576,7 +574,10 @@ const ExamDetail = () => {
                   </div>
                 ) : listExam?.length > 0 ? (
                   listExam.map((item, index) => (
-                    <li key={index} className={item.ID == examID && "active"}>
+                    <li
+                      key={index}
+                      className={item.ID == examID ? "active" : ""}
+                    >
                       <Link
                         href={{
                           pathname:
