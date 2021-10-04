@@ -11,6 +11,7 @@ import {
 	XAxis,
 	YAxis,
 } from 'recharts';
+import {numberWithCommas} from '~/utils/functions';
 
 SalerRevenueChart.propTypes = {
 	revenueList: PropTypes.arrayOf(
@@ -29,19 +30,10 @@ SalerRevenueChart.propTypes = {
 SalerRevenueChart.defaultProps = {
 	revenueList: {},
 };
-
 function SalerRevenueChart(props) {
 	const {revenueList} = props;
 
-	const newDataRow = useMemo(() => {
-		return revenueList.map((r: ISalerRevenue) => ({
-			name: r.SaleCampaignName,
-			revenue: r.Revenue,
-			customers: r.CustomersNumber,
-			invoice: r.InvoiceNumber,
-		}));
-	}, [revenueList]);
-
+	console.log(revenueList);
 	return (
 		<Card
 			title={<h4>BIỂU ĐỒ TỔNG KẾT DOANH THU</h4>}
@@ -49,36 +41,39 @@ function SalerRevenueChart(props) {
 		>
 			<ResponsiveContainer width="100%" height={280}>
 				<ComposedChart
-					data={newDataRow}
-					margin={{top: 10, right: 0, left: -15, bottom: 0}}
+					data={revenueList}
+					margin={{top: 10, right: 0, left: 40, bottom: 0}}
 				>
 					<XAxis dataKey="name" />
-					<YAxis />
-					<Tooltip />
+					<YAxis tickFormatter={(value) => numberWithCommas(value)} />
+					<Tooltip formatter={(value) => numberWithCommas(value)} />
 					<Legend />
 					<CartesianGrid stroke="#f5f5f5" />
+					<Bar
+						dataKey="customers"
+						name="Số khách hàng"
+						barSize={20}
+						fill="#003366"
+						stackId="col"
+					/>
+					<Bar
+						dataKey="invoice"
+						name="Số hóa đơn"
+						barSize={20}
+						fill="#0080FF"
+						stackId="col"
+					/>
 					<Bar
 						dataKey="revenue"
 						name="Doanh thu theo chiến dịch"
 						barSize={20}
-						fill="#82ca9d"
+						fill="#dd4667"
+						stackId="col"
 					/>
-					{/* <Line
-						type="monotone"
-						name="Số khách hàng"
-						dataKey="customers"
-						stroke="#003366"
-					/>
-					<Line
-						type="monotone"
-						name="Số hóa đơn"
-						dataKey="invoice"
-						stroke="#0080FF"
-					/> */}
 				</ComposedChart>
 			</ResponsiveContainer>
 		</Card>
 	);
 }
 
-export default SalerRevenueChart;
+export default React.memo(SalerRevenueChart);

@@ -1,3 +1,4 @@
+import {Spin} from 'antd';
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {salerRevenueApi, salerTotalRevenueApi, staffApi} from '~/apiBase';
@@ -222,7 +223,6 @@ function SalerRevenue(props) {
 	useEffect(() => {
 		fetchSalerList();
 	}, []);
-
 	const fetchSalerRevenue = async (SalerID: number) => {
 		try {
 			setIsLoading({
@@ -245,6 +245,43 @@ function SalerRevenue(props) {
 					...salerRevenue,
 					id: SalerID,
 				});
+			}
+		} catch (error) {
+			console.log('fetchTotalRevenueSaler', error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_SALER_REVENUE',
+				status: false,
+			});
+		}
+	};
+	const filterSalerRevenue = async (data: {
+		fromDate: string;
+		toDate: string;
+	}) => {
+		try {
+			setIsLoading({
+				type: 'FETCH_SALER_REVENUE',
+				status: true,
+			});
+			const newData = {
+				fromDate: moment(data.fromDate).format('YYYY/MM/DD'),
+				toDate: moment(data.toDate).format('YYYY/MM/DD'),
+			};
+			const res = await salerRevenueApi.getAll({
+				selectAll: true,
+				CounselorsID: salerRevenue.id,
+				...newData,
+			});
+
+			if (res.status === 200) {
+				setSalerRevenue({
+					...salerRevenue,
+					data: res.data.data,
+				});
+			}
+			if (res.status === 204) {
+				showNoti('danger', 'Dữ liệu trống');
 			}
 		} catch (error) {
 			console.log('fetchTotalRevenueSaler', error.message);
@@ -288,14 +325,12 @@ function SalerRevenue(props) {
 
 	const expandableObj = {
 		expandedRowRender: (record: ISalerRevenue) => (
-			<>
-				<SalerRevenueSearch
-					handleSubmit={(data) => {
-						console.log(data);
-					}}
-				/>
+			<Spin
+				spinning={isLoading.type === 'FETCH_SALER_REVENUE' && isLoading.status}
+			>
+				<SalerRevenueSearch handleSubmit={filterSalerRevenue} />
 				<SalerRevenueChart revenueList={salerRevenue.data} />
-			</>
+			</Spin>
 		),
 		onExpand: (expanded, record: ISalerRevenue) => {
 			if (expanded && salerRevenue.id !== record.CounselorsID) {
@@ -313,10 +348,6 @@ function SalerRevenue(props) {
 			noScroll
 			Extra={
 				<div className="extra-table">
-					{/* <SalerRevenueFilter
-						handleFilter={onFilter}
-						handleResetFilter={onResetSearch}
-					/> */}
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

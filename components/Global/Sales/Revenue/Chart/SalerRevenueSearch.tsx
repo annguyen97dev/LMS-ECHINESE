@@ -1,12 +1,11 @@
-import PropTypes from 'prop-types';
-import {DatePicker, Form, Spin} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
-import RevenueChart from '~/components/Dashboard/RevenueChart';
-import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
+import {Form, Spin} from 'antd';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React from 'react';
+import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
-import moment from 'moment';
 
 SalerRevenueSearch.propTypes = {
 	isLoading: PropTypes.shape({
