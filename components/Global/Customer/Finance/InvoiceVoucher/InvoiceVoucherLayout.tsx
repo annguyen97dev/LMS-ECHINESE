@@ -1,5 +1,5 @@
 import {Card} from 'antd';
-import React from 'react';
+import React, {useRef} from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import PropTypes from 'prop-types';
 InvoiceVoucherLayout.propTypes = {
@@ -12,9 +12,23 @@ InvoiceVoucherLayout.defaultProps = {
 };
 function InvoiceVoucherLayout(props) {
 	const {title, templateString} = props;
+
+	const isIFrame = (input: HTMLElement | null): input is HTMLIFrameElement =>
+		input !== null && input.tagName === 'IFRAME';
+
 	const onPrint = () => {
-		window.print();
+		const contentEl = document.getElementById('selector-print');
+		const printEl = document.getElementById('iframe-print');
+		if (isIFrame(printEl) && printEl.contentWindow) {
+			const print = printEl.contentWindow;
+			print.document.open();
+			print.document.write(contentEl.innerHTML);
+			print.document.close();
+			print.focus();
+			print.print();
+		}
 	};
+
 	return (
 		<div>
 			<Card
@@ -30,7 +44,15 @@ function InvoiceVoucherLayout(props) {
 				}
 			>
 				<div className="row">
-					<div className="col-12">{ReactHtmlParser(templateString)}</div>
+					<div className="col-12">
+						<div id="selector-print">{ReactHtmlParser(templateString)}</div>
+						<iframe
+							id="iframe-print"
+							style={{
+								display: 'none',
+							}}
+						></iframe>
+					</div>
 				</div>
 			</Card>
 		</div>
