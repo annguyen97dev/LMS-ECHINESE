@@ -24,4 +24,8 @@ export const examDetailApi = {
   delete(data) {
     return instance.put(url, data);
   },
+  // Tạo câu hỏi tự động
+  createAuto(data) {
+    return instance.post("api/AutoCreateExamtopicDetail", data);
+  },
 };

@@ -38,7 +38,7 @@ const DeleteExam = (props) => {
         setIsModalVisible(false);
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -387,12 +387,13 @@ const ExamList = (props) => {
                   {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
                   <Select
                     className="style-input"
-                    defaultValue="Chọn loại câu hỏi"
+                    defaultValue="Chọn dạng đề"
                     style={{ width: "100%" }}
                     onChange={(value, option) => handleSelect_Type(value)}
                   >
-                    <Option value={1}>Trắc nghiệm</Option>
-                    <Option value={2}>Tự luận</Option>
+                    <Option value={1}>Đề hẹn test</Option>
+                    <Option value={2}>Đề bán</Option>
+                    <Option value={3}>Đề kiểm tra</Option>
                   </Select>
                 </div>
               </div>

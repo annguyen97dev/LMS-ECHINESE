@@ -79,7 +79,7 @@ const QuestionMap = (props: any) => {
         showNoti("success", "Xóa thành công");
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setConfirmLoading(false);
     }
@@ -103,7 +103,7 @@ const QuestionMap = (props: any) => {
       res.status == 200 && setDataListQuestion(res.data.data);
       res.status == 204 && setDataListQuestion([]);
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingInGroup(false);
     }
@@ -177,12 +177,16 @@ const QuestionMap = (props: any) => {
           </p>
         )
       ) : (
-        <table className="table-question mt-3" style={{ width: "900px" }}>
+        <table
+          className="table-question mt-3 w-100"
+          style={{ maxWidth: "100%" }}
+        >
           <thead>
             <tr>
               <th></th>
               <th>Câu hỏi</th>
-              <th>Đáp án</th>
+              <th>Đáp án đúng</th>
+              <th>Đáp án gây nhiễu</th>
               <th></th>
             </tr>
           </thead>
@@ -192,13 +196,26 @@ const QuestionMap = (props: any) => {
                 <td className="text-center" style={{ width: "5%" }}>
                   {index + 1 + "/"}
                 </td>
-                <td style={{ width: "70%" }}>
+                <td style={{ width: "40%" }}>
                   {ReactHtmlParser(item.Content)}
                 </td>
                 <td>
                   {item.ExerciseAnswer?.map(
                     (ans, i) =>
-                      ans.Enable && (
+                      ans.Enable &&
+                      ans.isTrue && (
+                        <div key={i}>
+                          <span className="tick">- </span>
+                          <span className="text">{ans.AnswerContent}</span>
+                        </div>
+                      )
+                  )}
+                </td>
+                <td>
+                  {item.ExerciseAnswer?.map(
+                    (ans, i) =>
+                      ans.Enable &&
+                      !ans.isTrue && (
                         <div key={i}>
                           <span className="tick">- </span>
                           <span className="text">{ans.AnswerContent}</span>
@@ -220,12 +237,14 @@ const QuestionMap = (props: any) => {
                     okButtonProps={{ loading: confirmLoading }}
                     onCancel={() => handleCancel(item.ID)}
                   >
-                    <button
-                      className="btn btn-icon delete"
-                      onClick={() => deleteQuestionItem(item.ID)}
-                    >
-                      <Trash2 />
-                    </button>
+                    <Tooltip title="Xóa câu hỏi" placement="rightTop">
+                      <button
+                        className="btn btn-icon delete"
+                        onClick={() => deleteQuestionItem(item.ID)}
+                      >
+                        <Trash2 />
+                      </button>
+                    </Tooltip>
                   </Popconfirm>
                 </td>
               </tr>

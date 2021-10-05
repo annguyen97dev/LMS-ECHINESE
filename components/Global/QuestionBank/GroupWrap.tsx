@@ -23,7 +23,13 @@ import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug
 import { CheckOutlined } from "@ant-design/icons";
 
 const GroupWrap = (props) => {
-  const { isGetQuestion, onGetListQuestionID, listGroupID } = useExamDetail();
+  const {
+    isGetQuestion,
+    onGetListQuestionID,
+    listGroupID,
+    onRemoveQuestionAdd,
+    listQuestionAddOutside,
+  } = useExamDetail();
   const {
     children,
     isGroup,
@@ -145,13 +151,7 @@ const GroupWrap = (props) => {
 
       // Map
       case 5:
-        cloneItem.ExerciseAnswer = [
-          {
-            ID: 1,
-            AnswerContent: "",
-            isTrue: true,
-          },
-        ];
+        cloneItem.ExerciseAnswer = [];
         break;
       // Multiple
       case 4:
@@ -250,19 +250,46 @@ const GroupWrap = (props) => {
     };
 
     // Call function to get ID of question
-    onGetListQuestionID(objectQuestion);
+    if (checked) {
+      onGetListQuestionID(objectQuestion);
+    } else {
+      onRemoveQuestionAdd(objectQuestion);
+    }
 
     // Check isChecked in checkbox
-    dataListQuestion.every((item) => {
-      if (item.ID == quesID) {
-        item.isChecked = checked;
-        return false;
-      }
-      return true;
-    });
+    // dataListQuestion.every((item) => {
+    //   if (item.ID == quesID) {
+    //     item.isChecked = checked;
+    //     return false;
+    //   }
+    //   return true;
+    // });
 
-    setDataListQuestion([...dataListQuestion]);
+    // setDataListQuestion([...dataListQuestion]);
   };
+
+  useEffect(() => {
+    if (dataListQuestion?.length > 0) {
+      if (listQuestionAddOutside?.length > 0) {
+        dataListQuestion?.forEach((item) => {
+          if (
+            listQuestionAddOutside.some(
+              (object) => object["ExerciseOrExerciseGroupID"] == item.ID
+            )
+          ) {
+            item.isChecked = true;
+          } else {
+            item.isChecked = false;
+          }
+        });
+      } else {
+        dataListQuestion?.forEach((item) => {
+          item.isChecked = false;
+        });
+      }
+      setDataListQuestion([...dataListQuestion]);
+    }
+  }, [listQuestionAddOutside]);
 
   return (
     <>
@@ -307,7 +334,7 @@ const GroupWrap = (props) => {
                   >
                     <Popover
                       content={contentMenu(item.ID, item)}
-                      trigger="click"
+                      trigger="hover"
                       visible={item.ID == visible.id && visible.status}
                       onVisibleChange={() => onChangePopover(item.ID)}
                     >

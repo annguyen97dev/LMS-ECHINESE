@@ -45,7 +45,7 @@ const TypingForm = (props) => {
         showNoti("success", "Upload file thành công");
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingUpload(false);
     }
@@ -203,10 +203,20 @@ const TypingForm = (props) => {
       QuestionIndex
     ].ExerciseAnswer.findIndex((item) => item.ID == AnswerID);
 
-    // answerList.splice(AnswerIndex, 1);
-    questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
-      AnswerIndex
-    ].Enable = false;
+    // Action delete
+    if (
+      questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[AnswerIndex]
+        .isAdd
+    ) {
+      questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer.splice(
+        AnswerIndex,
+        1
+      );
+    } else {
+      questionDataForm.ExerciseList[QuestionIndex].ExerciseAnswer[
+        AnswerIndex
+      ].Enable = false;
+    }
 
     // setAnswerList([...answerList]);
     setQuestionDataForm({ ...questionDataForm });
@@ -231,17 +241,50 @@ const TypingForm = (props) => {
     }
 
     newData.ExerciseGroupID = null;
-    console.log("DataSubmit: ", newData);
+
     // ----------
 
     try {
       res = await exerciseGroupApi.update(newData);
 
       if (res.status == 200) {
-        setReloadContent(true);
+        handleSubmitChange(res.data.data);
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
+    }
+  };
+
+  // SUBMIT AND CHANGE PARAGRAPH
+  const handleSubmitChange = async (dataSubmit) => {
+    let res = null;
+
+    let cloneParagraph = dataSubmit.Paragraph;
+
+    dataSubmit.ExerciseList.forEach((item, index) => {
+      cloneParagraph = cloneParagraph.replace(
+        `<input id="${item.inputID}"`,
+        `<input ques-id="${item.ID}"  id="${item.inputID}"`
+      );
+    });
+
+    dataSubmit.Paragraph = cloneParagraph;
+
+    // ----------
+
+    try {
+      res = await exerciseGroupApi.update(dataSubmit);
+
+      if (res.status == 200) {
+        changeIsSubmit(res.data.data);
+        if (!questionDataForm.ID) {
+          resetForm();
+        }
+        showNoti("success", `Tạo câu hỏi thành công`);
+        setIsResetEditor(true);
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
     }
   };
 
@@ -269,7 +312,7 @@ const TypingForm = (props) => {
       res.status == 200 && reloadNewContent(res.data.data);
       res.status == 204 && showNoti("danger", "Không có dữ liệu");
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingForm(false);
     }
@@ -283,26 +326,6 @@ const TypingForm = (props) => {
 
     setDataExercise([...filterExerciseList]);
     setQuestionDataForm({ ...data });
-    // let paragraph = data.Paragraph;
-
-    // console.log("Paragraph lúc đầu: ", paragraph);
-
-    // data.ExerciseList?.forEach((item, index) => {
-    //   console.log("Test thử nha: ", `<input id="${index.toString()}"`);
-    //   if (item.Enable) {
-    //     if (paragraph.includes(`<input id="${index.toString()}"`)) {
-    //       console.log("Coi có chạy vô đây không");
-    //       paragraph = paragraph.replace(
-    //         `<input id="${index.toString()}"`,
-    //         `<input id="${item.ID.toString()}"`
-    //       );
-    //     }
-    //   }
-    // });
-
-    // console.log("Paragraph lúc sau: ", paragraph);
-
-    // data.Paragraph = paragraph;
   };
 
   useEffect(() => {
@@ -313,41 +336,39 @@ const TypingForm = (props) => {
   }, [isSubmit]);
 
   useEffect(() => {
-    console.log("Visible: ", visible);
-    console.log("Question Data: ", questionData);
     if (visible) {
       dataGroupDetail();
     }
   }, [visible]);
 
-  useEffect(() => {
-    if (reloadContent) {
-      (async function loadData() {
-        try {
-          let res = await exerciseGroupApi.getWithID(questionDataForm.ID);
+  // useEffect(() => {
+  //   if (reloadContent) {
+  //     (async function loadData() {
+  //       try {
+  //         let res = await exerciseGroupApi.getWithID(questionDataForm.ID);
 
-          if (res.status == 200) {
-            changeIsSubmit(res.data.data);
-            showNoti("success", `Thành công`);
-            if (!questionDataForm.ID) {
-              resetForm();
-            }
-            setIsResetEditor(true);
+  //         if (res.status == 200) {
+  //           changeIsSubmit(res.data.data);
+  //           showNoti("success", `Thành công`);
+  //           if (!questionDataForm.ID) {
+  //             resetForm();
+  //           }
+  //           setIsResetEditor(true);
 
-            setTimeout(() => {
-              setIsResetEditor(false);
-            }, 500);
-          }
+  //           setTimeout(() => {
+  //             setIsResetEditor(false);
+  //           }, 500);
+  //         }
 
-          res.status == 204 && showNoti("danger", "Không có dữ liệu");
-        } catch (error) {
-          showNoti("danger", error);
-        } finally {
-          setReloadContent(false);
-        }
-      })();
-    }
-  }, [reloadContent]);
+  //         res.status == 204 && showNoti("danger", "Không có dữ liệu");
+  //       } catch (error) {
+  //         showNoti("danger", error.message);
+  //       } finally {
+  //         setReloadContent(false);
+  //       }
+  //     })();
+  //   }
+  // }, [reloadContent]);
 
   return (
     <div className="form-create-question">

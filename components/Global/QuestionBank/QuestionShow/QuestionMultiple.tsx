@@ -19,6 +19,7 @@ const QuestionMultiple = (props: any) => {
     onGetListQuestionID,
     listQuestionID,
     listQuestionAddOutside,
+    onRemoveQuestionAdd,
   } = useExamDetail();
   const {
     isGroup,
@@ -78,7 +79,7 @@ const QuestionMultiple = (props: any) => {
         showNoti("success", "Xóa thành công");
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setConfirmLoading(false);
     }
@@ -103,7 +104,7 @@ const QuestionMultiple = (props: any) => {
       res.status == 200 && setDataListQuestion(res.data.data);
       res.status == 204 && setDataListQuestion([]);
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingInGroup(false);
     }
@@ -206,19 +207,46 @@ const QuestionMultiple = (props: any) => {
     };
 
     // Call function to get ID of question
-    onGetListQuestionID(objectQuestion);
+    if (checked) {
+      onGetListQuestionID(objectQuestion);
+    } else {
+      onRemoveQuestionAdd(objectQuestion);
+    }
 
     // Check isChecked in checkbox
-    dataListQuestion.every((item) => {
-      if (item.ID == quesID) {
-        item.isChecked = checked;
-        return false;
-      }
-      return true;
-    });
+    // dataListQuestion.every((item) => {
+    //   if (item.ID == quesID) {
+    //     item.isChecked = checked;
+    //     return false;
+    //   }
+    //   return true;
+    // });
 
-    setDataListQuestion([...dataListQuestion]);
+    // setDataListQuestion([...dataListQuestion]);
   };
+
+  useEffect(() => {
+    if (dataListQuestion?.length > 0) {
+      if (listQuestionAddOutside?.length > 0) {
+        dataListQuestion?.forEach((item) => {
+          if (
+            listQuestionAddOutside.some(
+              (object) => object["ExerciseOrExerciseGroupID"] == item.ID
+            )
+          ) {
+            item.isChecked = true;
+          } else {
+            item.isChecked = false;
+          }
+        });
+      } else {
+        dataListQuestion?.forEach((item) => {
+          item.isChecked = false;
+        });
+      }
+      setDataListQuestion([...dataListQuestion]);
+    }
+  }, [listQuestionAddOutside]);
 
   // CHECK AND REMOVE ID IS SELECTED
   // useEffect(() => {
@@ -282,12 +310,14 @@ const QuestionMultiple = (props: any) => {
                   okButtonProps={{ loading: confirmLoading }}
                   onCancel={() => handleCancel(item.ID)}
                 >
-                  <button
-                    className="btn btn-icon delete"
-                    onClick={() => deleteQuestionItem(item.ID)}
-                  >
-                    <Trash2 />
-                  </button>
+                  <Tooltip title="Xóa câu hỏi" placement="rightTop">
+                    <button
+                      className="btn btn-icon delete"
+                      onClick={() => deleteQuestionItem(item.ID)}
+                    >
+                      <Trash2 />
+                    </button>
+                  </Tooltip>
                 </Popconfirm>
                 {!isGroup.status &&
                   dataExam &&

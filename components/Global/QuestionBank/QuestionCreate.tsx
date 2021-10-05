@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import { Card, Select, Spin } from "antd";
+import { Card, Select, Spin, Switch } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
 import { Bookmark } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
@@ -89,6 +89,8 @@ const QuestionCreate = (props) => {
   const [valueSkill, setValueSkill] = useState(null);
   const [dataGroup, setDataGroup] = useState([]);
   const [dataExercise, setDataExercise] = useState();
+  const [isTest, setIsTest] = useState(false);
+  const [loadingProgram, setLoadingProgram] = useState(false);
 
   // Phân loại dạng câu hỏi để trả ra danh sách
   const returnQuestionType = () => {
@@ -320,6 +322,7 @@ const QuestionCreate = (props) => {
 
   // GET DATA PROGRAM
   const getDataProgram = async () => {
+    setLoadingProgram(true);
     try {
       let res = await programApi.getAll({ pageIndex: 1, pageSize: 999999 });
       res.status == 200 && setDataProgram(res.data.data);
@@ -327,6 +330,7 @@ const QuestionCreate = (props) => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
+      setLoadingProgram(false);
     }
   };
 
@@ -394,7 +398,39 @@ const QuestionCreate = (props) => {
     });
   };
 
-  // console.log("Question Data bên ngoài: ", questionData);
+  console.log("Question Data: ", questionData);
+
+  // PICK IS TEST
+  const pickIsTest = (checked) => {
+    if (!dataExam) {
+      setIsTest(checked);
+      if (checked) {
+        console.log("Chạy vô đây");
+        setQuestionData({
+          ...questionData,
+          SubjectID: 0,
+        });
+        setValueProgram(null);
+        setValueSubject(null);
+        if (showListQuestion) {
+          setIsLoading(true);
+          setTodoApi({
+            ...todoApi,
+            pageIndex: 1,
+            SubjectID: 0,
+          });
+          setDataSource([]);
+          setDataGroup([]);
+        }
+      } else {
+        setShowListQuestion(false);
+        setShowTypeQuestion({
+          status: false,
+          type: null,
+        });
+      }
+    }
+  };
 
   // HANDLE CHANGE SELECT - THAO TÁC VỚI CÁC SELECT
   const handleChange_select = (selectName, option) => {
@@ -529,15 +565,23 @@ const QuestionCreate = (props) => {
     if (!showTypeQuetion.status) {
       if (
         questionData.ExerciseGroupID !== null &&
-        questionData.SubjectID !== null &&
         questionData.SkillID !== null &&
         questionData.Level !== null &&
         isOpenTypeQuestion == true
       ) {
-        setShowTypeQuestion({
-          ...showTypeQuetion,
-          status: true,
-        });
+        if (isTest) {
+          setShowTypeQuestion({
+            ...showTypeQuetion,
+            status: true,
+          });
+        } else {
+          if (questionData.SubjectID !== null && questionData.SubjectID !== 0) {
+            setShowTypeQuestion({
+              ...showTypeQuetion,
+              status: true,
+            });
+          }
+        }
       }
     }
   };
@@ -706,10 +750,17 @@ const QuestionCreate = (props) => {
 
   useEffect(() => {
     if (dataExam) {
-      setValueProgram(dataExam.ProgramID);
-      getDataSubject(dataExam.ProgramID);
-      setValueSubject(dataExam.SubjectID);
-      questionData.SubjectID = dataExam.SubjectID;
+      console.log("Data exam: ", dataExam);
+      if (dataExam.Type == 1) {
+        setIsTest(true);
+        questionData.SubjectID = 0;
+      } else {
+        setValueProgram(dataExam.ProgramID);
+        getDataSubject(dataExam.ProgramID);
+        setValueSubject(dataExam.SubjectID);
+        questionData.SubjectID = dataExam.SubjectID;
+      }
+
       questionData.Level = 1;
       setQuestionData({ ...questionData });
       setValueLevel(1);
@@ -750,7 +801,7 @@ const QuestionCreate = (props) => {
                     color: "#777777",
                   }}
                 >
-                  {questionData.TypeName}
+                  {showTypeQuetion.type && questionData.TypeName}
                 </p>
                 {/* <p className="text-lesson">
                   <span className="font-weight-black">Môn học:</span>
@@ -793,14 +844,27 @@ const QuestionCreate = (props) => {
             )}
           </Card>
         </div>
+
+        {/** Menu Question */}
         <div className="col-md-4 col-12">
           <Card className="card-box-type">
             <div className={`row ${showTypeQuetion ? "mb-2" : ""}`}>
+              {/** CHỌN LOẠI ĐỀ */}
+              <div className="col-12 mb-4">
+                <Switch
+                  className="pick-test"
+                  checkedChildren="Đề hẹn test"
+                  unCheckedChildren="Đề hẹn test"
+                  checked={isTest}
+                  onChange={pickIsTest}
+                />
+              </div>
               {/** CHỌN CHƯƠNG TRÌNH */}
               <div className="col-md-6 col-12 ">
                 <div className="item-select">
                   <Select
-                    disabled={dataExam && true}
+                    loading={loadingProgram}
+                    disabled={isTest ? true : dataExam ? true : false}
                     placeholder="Chọn chương trình"
                     className="style-input"
                     value={valueProgram}
@@ -822,7 +886,7 @@ const QuestionCreate = (props) => {
                 <div className="item-select">
                   {/* <p className="font-weight-black mb-2">Chọn môn học</p> */}
                   <Select
-                    disabled={dataExam && true}
+                    disabled={isTest ? true : dataExam ? true : false}
                     loading={loadingSelect}
                     className="style-input"
                     placeholder="Chọn môn học"

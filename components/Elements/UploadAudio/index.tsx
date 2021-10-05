@@ -25,7 +25,7 @@ const UploadAudio = (props) => {
         showNoti("success", "Upload file thành công");
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingUpload(false);
     }

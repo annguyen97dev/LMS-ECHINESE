@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Skeleton, Modal, Popconfirm } from "antd";
+import {
+  Skeleton,
+  Modal,
+  Popconfirm,
+  Tooltip,
+  Spin,
+  Form,
+  Input,
+  Checkbox,
+} from "antd";
 import { Info, Bookmark, Edit, Trash2 } from "react-feather";
-import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
+import { CloseOutlined } from "@ant-design/icons";
+import { Plus } from "react-feather";
 
 import ReactHtmlParser, {
   processNodes,
@@ -10,7 +20,209 @@ import ReactHtmlParser, {
 } from "react-html-parser";
 import { exerciseApi, exerciseGroupApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { data } from "~/lib/dashboard/data";
+
+let AnsID = 0;
+const EditQuestion = (props) => {
+  const { dataGroup, exerciseID, onEdit } = props;
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [dataForm, setDataForm] = useState(dataGroup);
+  const [indexExercise, setIndexExercise] = useState(null);
+  const [reloadContent, setReloadContent] = useState(false);
+  const { showNoti } = useWrap();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    let newData = JSON.parse(JSON.stringify(dataForm));
+    newData.ExerciseAnswer.forEach((item) => {
+      if (item.isAdd) {
+        delete item.ID;
+      }
+    });
+
+    dataGroup.ExerciseList[indexExercise] = newData;
+
+    try {
+      let res = await exerciseGroupApi.update(dataGroup);
+      if (res.status == 200) {
+        setReloadContent(true);
+      }
+    } catch (error) {}
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  // ====== HANDLE ADD ANSWER ======
+  const handleAddAnswer = (questionID: number) => {
+    AnsID++;
+    dataForm.ExerciseAnswer.push({
+      ID: AnsID,
+      AnswerContent: "",
+      isTrue: false,
+      Enable: true,
+      isAdd: true,
+    });
+
+    setDataForm({ ...dataForm });
+  };
+
+  // ====== HANDLE ON CHANGE ======
+  const onChange_text = (e: any, AnswerID: number, QuestionID) => {
+    let text = e.target.value;
+    let indexAnswer = dataForm.ExerciseAnswer.findIndex(
+      (item) => item.ID == AnswerID
+    );
+    dataForm.ExerciseAnswer[indexAnswer].AnswerContent = text;
+    setDataForm({ ...dataForm });
+  };
+
+  const deleteAnswerItem = (AnswerID: number, QuestionID) => {
+    let indexAnswer = dataForm.ExerciseAnswer.findIndex(
+      (item) => item.ID == AnswerID
+    );
+    if (dataForm.ExerciseAnswer[indexAnswer].isAdd) {
+      dataForm.ExerciseAnswer.splice(indexAnswer, 1);
+    } else {
+      dataForm.ExerciseAnswer[indexAnswer].Enable = false;
+    }
+
+    setDataForm({ ...dataForm });
+  };
+
+  const onChange_isCorrect = (e, AnswerID: number) => {
+    let checked = e.target.checked;
+    let indexAnswer = dataForm.ExerciseAnswer.findIndex(
+      (item) => item.ID == AnswerID
+    );
+
+    dataForm.ExerciseAnswer[indexAnswer].isTrue = checked;
+
+    setDataForm({ ...dataForm });
+  };
+
+  useEffect(() => {
+    if (reloadContent) {
+      (async function loadData() {
+        try {
+          let res = await exerciseGroupApi.getWithID(dataGroup.ID);
+
+          if (res.status == 200) {
+            showNoti("success", `Thành công`);
+            console.log("DATA DETAIL: ", res.data.data);
+            onEdit && onEdit(res.data.data);
+          }
+
+          res.status == 204 && showNoti("danger", "Không thành công");
+        } catch (error) {
+          showNoti("danger", error.message);
+        } finally {
+          setReloadContent(false);
+          setIsModalVisible(false);
+          setIsLoading(false);
+          setDataForm(null);
+        }
+      })();
+    }
+  }, [reloadContent]);
+
+  useEffect(() => {
+    if (isModalVisible) {
+      // Make new data
+      let index = dataGroup.ExerciseList.findIndex(
+        (item) => item.ID == exerciseID
+      );
+
+      let data = dataGroup.ExerciseList[index];
+      setDataForm(data);
+      setIndexExercise(index);
+
+      // Find max id in arr
+      let newArr = [];
+      data.ExerciseAnswer.forEach((item) => {
+        newArr.push(parseInt(item.ID));
+      });
+      AnsID = Math.max(...newArr);
+      console.log("Ans ID: ", AnsID);
+    }
+  }, [isModalVisible]);
+
+  return (
+    <>
+      <Tooltip title="Thêm/sửa đáp án">
+        <button className="btn btn-icon edit" onClick={showModal}>
+          <Edit />
+        </button>
+      </Tooltip>
+      <Modal
+        footer={
+          <div className="text-center">
+            <button className="btn btn-light mr-2" onClick={handleCancel}>
+              Hủy tác vụ
+            </button>
+            <button className="btn btn-primary" onClick={() => handleSubmit()}>
+              Lưu
+              {isLoading && <Spin className="loading-base" />}
+            </button>
+          </div>
+        }
+        title="Sửa đáp án"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+      >
+        {dataForm?.ExerciseAnswer?.map(
+          (itemAns, index) =>
+            itemAns.Enable && (
+              <>
+                <div
+                  className="w-100 d-flex align-items-center mt-2 form-create-question"
+                  key={index}
+                >
+                  <div className="row-ans">
+                    <Checkbox
+                      checked={itemAns.isTrue}
+                      onChange={(e) => onChange_isCorrect(e, itemAns.ID)}
+                    ></Checkbox>
+                    <Form.Item className="mb-0" style={{ width: "80%" }}>
+                      <Input
+                        value={itemAns.AnswerContent}
+                        className="style-input"
+                        onChange={(e) =>
+                          onChange_text(e, itemAns.ID, dataForm.inputID)
+                        }
+                      ></Input>
+                    </Form.Item>
+                    <button
+                      className="delete-ans"
+                      onClick={() =>
+                        deleteAnswerItem(itemAns.ID, dataForm.inputID)
+                      }
+                    >
+                      <CloseOutlined />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )
+        )}
+        <Tooltip title="Thêm đáp án">
+          <button
+            className="btn-add-answer mt-2"
+            onClick={() => handleAddAnswer(dataForm.inputID)}
+          >
+            <Plus />
+          </button>
+        </Tooltip>
+      </Modal>
+    </>
+  );
+};
 
 const QuestionDrag = (props: any) => {
   const {
@@ -35,7 +247,7 @@ const QuestionDrag = (props: any) => {
   const [dataExercise, setDataExercise] = useState([]);
   const [showContent, setShowContent] = useState(false);
 
-  console.log("List Question: ", listQuestion);
+  console.log("List Question: ", dataListQuestion);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -44,14 +256,7 @@ const QuestionDrag = (props: any) => {
 
   // ON EDIT
   const onEdit = (dataEdit) => {
-    if (!isGroup.status) {
-      onEditData(dataEdit);
-    } else {
-      let index = dataListQuestion.findIndex((item) => item.ID == dataEdit.ID);
-      dataListQuestion.splice(index, 1, dataEdit);
-
-      setDataListQuestion([...dataListQuestion]);
-    }
+    onEditData(dataEdit);
   };
 
   const deleteQuestionItem = (quesID) => {
@@ -79,8 +284,6 @@ const QuestionDrag = (props: any) => {
     quesItem.Paragraph = "<p><br></p>";
     quesItem.ExerciseGroupID = null;
 
-    console.log("Question Item delete: ", quesItem);
-
     try {
       let res = await exerciseGroupApi.update(quesItem);
       if (res.status == 200) {
@@ -92,7 +295,7 @@ const QuestionDrag = (props: any) => {
         showNoti("success", "Xóa thành công");
       }
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setConfirmLoading(false);
     }
@@ -121,7 +324,7 @@ const QuestionDrag = (props: any) => {
 
       res.status == 204 && setDataListQuestion([]);
     } catch (error) {
-      showNoti("danger", error);
+      showNoti("danger", error.message);
     } finally {
       setLoadingInGroup(false);
     }
@@ -134,9 +337,6 @@ const QuestionDrag = (props: any) => {
     title = `Câu (${index + 1})`;
     return title;
   };
-
-  console.log("Data list question: ", listQuestion);
-  console.log("Show content: ", showContent);
 
   const checkShowContent = (data) => {
     let preventLoop = false;
@@ -196,12 +396,14 @@ const QuestionDrag = (props: any) => {
                 okButtonProps={{ loading: confirmLoading }}
                 onCancel={() => handleCancel(dataListQuestion.ID)}
               >
-                <button
-                  className="btn btn-icon delete"
-                  onClick={() => deleteQuestionItem(dataListQuestion.ID)}
-                >
-                  <Trash2 />
-                </button>
+                <Tooltip title="Xóa hết câu hỏi" placement="rightTop">
+                  <button
+                    className="btn btn-icon delete"
+                    onClick={() => deleteQuestionItem(dataListQuestion.ID)}
+                  >
+                    <Trash2 />
+                  </button>
+                </Tooltip>
               </Popconfirm>
             </div>
           </>
@@ -213,7 +415,9 @@ const QuestionDrag = (props: any) => {
           <thead>
             <tr>
               <th>Câu hỏi</th>
-              <th>Đáp án</th>
+              <th>Đáp án đúng</th>
+              <th>Đáp án gây nhiễu</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -221,20 +425,42 @@ const QuestionDrag = (props: any) => {
               (item, index) =>
                 item.Enable && (
                   <tr key={index}>
-                    <td>
+                    <td style={{ width: "20%" }}>
                       {returnIndexQuestion(item)}
                       {/* {`Câu (${index + 1})`} */}
                     </td>
                     <td>
                       {item.ExerciseAnswer?.map(
                         (ans, i) =>
-                          ans.Enable && (
+                          ans.Enable &&
+                          ans.isTrue && (
                             <div key={i}>
                               <span className="tick">- </span>
                               <span className="text">{ans.AnswerContent}</span>
                             </div>
                           )
                       )}
+                    </td>
+                    <td>
+                      {item.ExerciseAnswer?.map(
+                        (ans, i) =>
+                          ans.Enable &&
+                          !ans.isTrue && (
+                            <div key={i}>
+                              <span className="tick">- </span>
+                              <span className="text">{ans.AnswerContent}</span>
+                            </div>
+                          )
+                      )}
+                    </td>
+                    <td style={{ width: "10%" }}>
+                      {
+                        <EditQuestion
+                          dataGroup={dataListQuestion}
+                          exerciseID={item.ID}
+                          onEdit={(dataEdit) => onEdit(dataEdit)}
+                        />
+                      }
                     </td>
                   </tr>
                 )
