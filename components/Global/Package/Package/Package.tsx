@@ -2,7 +2,7 @@ import {Image, Switch, Tooltip} from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React, {useEffect, useRef, useState} from 'react';
-import {Info} from 'react-feather';
+import {Eye} from 'react-feather';
 import {packageApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
@@ -375,7 +375,7 @@ function Package() {
 					>
 						<Tooltip title="Chi tiết">
 							<a className="btn btn-icon">
-								<Info />
+								<Eye />
 							</a>
 						</Tooltip>
 					</Link>

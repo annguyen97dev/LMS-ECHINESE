@@ -2,7 +2,7 @@ import {Tooltip} from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React, {useEffect, useRef, useState} from 'react';
-import {Info} from 'react-feather';
+import {Eye} from 'react-feather';
 import {
 	areaApi,
 	branchApi,
@@ -472,7 +472,7 @@ const Teacher = () => {
 					>
 						<Tooltip title="Xem giáo viên">
 							<a className="btn btn-icon">
-								<Info />
+								<Eye />
 							</a>
 						</Tooltip>
 					</Link>
