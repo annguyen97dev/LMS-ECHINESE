@@ -1,4 +1,5 @@
 type IExamAppointmentResult = IBaseApi<{
+	ID: number;
 	ExamAppointmentID: number;
 	UserInformationID: number;
 	ListeningPoint: number;
@@ -12,4 +13,18 @@ type IExamAppointmentResult = IBaseApi<{
 	CounselorsID: number;
 	CounselorsName: string;
 	Note: string;
+	FullNameUnicode: string;
+	ExamTopicID: number;
+	ExamTopicName: string;
+	NumberExercise: number;
+	ListeningNumber: number;
+	SpeakingNumber: number;
+	ReadingNumber: number;
+	WritingNumber: number;
+	ListeningCorrect: number;
+	ReadingCorrect: number;
+	isDone: boolean;
+	StatusID: number;
+	StatusName: string;
+	PointTotal: number;
 }>;

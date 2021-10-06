@@ -1,20 +1,19 @@
-import { instance } from "~/apiBase/instance";
+import {instance} from '~/apiBase/instance';
 
-const url = "/api/Voucher";
+const url = '/api/Voucher';
 
 class Voucher {
-  getAll = (Params: any) =>
-    instance.get<IApiResultData<IVoucher[]>>(url, {
-      params: Params,
-    });
+	getAll = (Params: any) =>
+		instance.get<IApiResultData<IVoucher[]>>(url, {
+			params: Params,
+		});
 
-  getDetail = (id: number) =>
-    instance.get<IApiResultData<IVoucher>>(`${url}/${id}`);
+	getDetail = (id: number) =>
+		instance.get<IApiResultData<IVoucher>>(`${url}/${id}`);
 
-  update = (data: IVoucher) => instance.put(url, data, {});
+	update = (data) => instance.put(url, data, {});
 
-  export = (id) =>
-    instance.get<IApiResultData>(`/api/ExportVoucher/${id}`);
+	export = (id) => instance.get<IApiResultData>(`/api/ExportVoucher/${id}`);
 }
 
 export const voucherApi = new Voucher();

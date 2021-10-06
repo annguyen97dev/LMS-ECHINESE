@@ -26,11 +26,11 @@ function InfoTestCard(props) {
 				type: 'GET_ALL',
 				status: true,
 			});
-			const res = await examAppointmentResultApi.getWithUserInformationID(
-				studentID
-			);
+			const res = await examAppointmentResultApi.getAll({
+				UserInformationID: studentID,
+			});
 			if (res.status === 200) {
-				setExam([res.data.data]);
+				setExam(res.data.data);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -46,28 +46,52 @@ function InfoTestCard(props) {
 		getExamAppointmentResult();
 	}, []);
 
-	const expandedRowRender = (exam: IExamAppointmentResult) => {
-		return (
-			<p>
-				<span className="font-weight-black">Ghi chú: </span>
-				{exam.Note}
-			</p>
-		);
-	};
-
 	const columns = [
 		{
-			title: 'Thời gian',
+			title: 'Ngày kiểm tra',
 			dataIndex: 'CreatedOn',
-			render: (date) => moment(date).format('DD/MM/YYYY'),
+			render: (date) => (
+				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
+			),
 		},
-		{title: 'Listening', dataIndex: 'ListeningPoint'},
-		{title: 'Speaking', dataIndex: 'SpeakingPoint'},
-		{title: 'Reading', dataIndex: 'ReadingPoint'},
-		{title: 'Writing', dataIndex: 'WritingPoint'},
-		{title: 'Người tư vấn', dataIndex: 'CounselorsName'},
-		{title: 'Giáo viên test', dataIndex: 'TeacherName'},
+		{title: 'Tên đề', dataIndex: 'ExamTopicName'},
+		{title: 'Nghe', dataIndex: 'ListeningPoint'},
+		{title: 'Nói', dataIndex: 'SpeakingPoint'},
+		{title: 'Đọc', dataIndex: 'ReadingPoint'},
+		{title: 'Viết', dataIndex: 'WritingPoint'},
+		{
+			title: 'Trạng thái',
+			dataIndex: 'StatusName',
+			render: (statusName) => <p className="font-weight-black">{statusName}</p>,
+		},
 	];
+
+	const expandedRowRender = (exam: IExamAppointmentResult) => {
+		return (
+			<table className="tb-expand">
+				<tbody>
+					<tr>
+						<td>
+							<p className="font-weight-black">Giáo viên kiểm tra</p>
+						</td>
+						<td>{exam.TeacherName}</td>
+					</tr>
+					<tr>
+						<td>
+							<p className="font-weight-black"> Tư vấn viên</p>
+						</td>
+						<td>{exam.CounselorsName}</td>
+					</tr>
+					<tr>
+						<td>
+							<p className="font-weight-black">Ghi chú</p>
+						</td>
+						<td>{exam.Note}</td>
+					</tr>
+				</tbody>
+			</table>
+		);
+	};
 
 	return (
 		<>

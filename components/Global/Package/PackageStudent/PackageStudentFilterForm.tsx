@@ -9,20 +9,17 @@ import SelectField from '~/components/FormControl/SelectField';
 import {optionCommonPropTypes} from '~/utils/proptypes';
 
 const PackageStudentFilterForm = (props) => {
-	const {handleFilter, handleResetFilter, optionListForFilter} = props;
-	const {levelOptionList, typeOptionList} = optionListForFilter;
+	const {handleFilter, handleResetFilter, typeOptionList} = props;
 	const [showFilter, showFilterSet] = useState(false);
 
 	const funcShowFilter = () => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
 	const schema = yup.object().shape({
-		Level: yup.number().nullable(),
 		Type: yup.number().nullable(),
 	});
 
 	const defaultValuesInit = {
-		Level: null,
 		Type: null,
 	};
 	const form = useForm({
@@ -47,17 +44,8 @@ const PackageStudentFilterForm = (props) => {
 					<div className="col-md-12">
 						<SelectField
 							form={form}
-							name="Level"
-							label="Level"
-							placeholder="Chọn level"
-							optionList={levelOptionList}
-						/>
-					</div>
-					<div className="col-md-12">
-						<SelectField
-							form={form}
 							name="Type"
-							label="Loại gói"
+							label="Loại"
 							placeholder="Chọn loại"
 							optionList={typeOptionList}
 						/>
@@ -105,17 +93,11 @@ const PackageStudentFilterForm = (props) => {
 PackageStudentFilterForm.propTypes = {
 	handleFilter: PropTypes.func,
 	handleResetFilter: PropTypes.func,
-	optionListForFilter: PropTypes.shape({
-		levelOptionList: optionCommonPropTypes,
-		typeOptionList: optionCommonPropTypes,
-	}),
+	typeOptionList: optionCommonPropTypes,
 };
 PackageStudentFilterForm.defaultProps = {
 	handleFilter: null,
 	handleResetFilter: null,
-	optionListForFilter: {
-		levelOptionList: [],
-		typeOptionList: [],
-	},
+	typeOptionList: [],
 };
 export default PackageStudentFilterForm;

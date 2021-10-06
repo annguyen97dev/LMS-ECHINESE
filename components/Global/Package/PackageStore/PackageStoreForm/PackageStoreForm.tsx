@@ -110,18 +110,16 @@ function PackageStoreForm(props) {
 		<>
 			{isAddPackageFree ? (
 				<button type="button" className="btn btn-warning" onClick={openModal}>
-					Thêm gói
+					Thêm bộ đề
 				</button>
 			) : (
 				<button type="button" className="btn btn-primary" onClick={openModal}>
-					Mua gói
+					Mua bộ đề
 				</button>
 			)}
 			<Modal
 				style={{top: 40}}
-				title={
-					isAddPackageFree ? 'Thêm gói bài miễn phí' : 'Xác nhận mua gói bài'
-				}
+				title={isAddPackageFree ? 'Thêm bộ đề miễn phí' : 'Xác nhận mua bộ đề'}
 				visible={isModalVisible}
 				footer={null}
 				onCancel={closeModal}
@@ -136,8 +134,8 @@ function PackageStoreForm(props) {
 								<InputTextField
 									form={form}
 									name="Name"
-									label="Tên gói"
-									placeholder="Nhập tên gói"
+									label="Tên bộ đề"
+									placeholder="Nhập tên bộ đề"
 									disabled={true}
 								/>
 							</div>

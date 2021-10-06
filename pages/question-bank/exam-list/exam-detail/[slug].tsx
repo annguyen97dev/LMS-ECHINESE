@@ -168,6 +168,8 @@ const ExamDetail = () => {
     }
   };
 
+  console.log("LOADING QUESTION: ", loadingQuestion);
+
   const getExamTopicDetail = async () => {
     listExam.length == 0 && setLoadingExam(true);
     setLoadingDetail(true);

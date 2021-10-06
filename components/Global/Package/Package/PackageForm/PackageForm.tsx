@@ -10,7 +10,7 @@ import RadioField from '~/components/FormControl/RadioField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
 import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
 import {numberWithCommas} from '~/utils/functions';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import {radioCommonPropTypes} from '~/utils/proptypes';
 
 PackageForm.propTypes = {
 	isUpdate: PropTypes.bool,
@@ -21,7 +21,7 @@ PackageForm.propTypes = {
 	}),
 	handleCreatePackage: PropTypes.func,
 	handleUpdatePackage: PropTypes.func,
-	paymentMethodOptionList: optionCommonPropTypes,
+	paymentMethodOptionList: radioCommonPropTypes,
 };
 PackageForm.defaultProps = {
 	isUpdate: false,
@@ -130,12 +130,12 @@ function PackageForm(props) {
 				</button>
 			) : (
 				<button className="btn btn-warning add-new" onClick={openModal}>
-					Tạo gói mới
+					Tạo bộ đề mới
 				</button>
 			)}
 			<Modal
 				style={{top: 50}}
-				title={isUpdate ? 'Cập nhật gói' : 'Tạo gói mới'}
+				title={isUpdate ? 'Cập nhật bộ đề' : 'Tạo bộ đề mới'}
 				visible={isModalVisible}
 				footer={null}
 				onCancel={closeModal}
@@ -150,8 +150,8 @@ function PackageForm(props) {
 								<InputTextField
 									form={form}
 									name="Name"
-									label="Tên gói"
-									placeholder="Nhập tên gói"
+									label="Tên bộ đề"
+									placeholder="Nhập tên bộ đề"
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -173,7 +173,7 @@ function PackageForm(props) {
 								<RadioField
 									form={form}
 									name="Type"
-									label="Chọn loại gói"
+									label="Chọn loại"
 									radioList={paymentMethodOptionList}
 									handleChange={(typeID: number) => {
 										typeID === 2

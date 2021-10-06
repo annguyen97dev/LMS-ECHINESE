@@ -4,7 +4,8 @@ import React, {useEffect, useState} from 'react';
 import {courseOfStudentPriceApi} from '~/apiBase';
 import {useWrap} from '~/context/wrap';
 import {numberWithCommas} from '~/utils/functions';
-import PaymentTable from './PaymentTable';
+import PaymentCourseTable from './PaymentCourseTable';
+import PaymentExamTable from './PaymentExamTable';
 import RefundsTable from './RefundsTable';
 InfoPaymentCard.propTypes = {
 	studentID: PropTypes.number,
@@ -41,11 +42,13 @@ function InfoPaymentCard(props) {
 	}, []);
 
 	return (
-		<div className="container-fluid">
+		<div>
 			<div className="pt-3 mb-3">
 				<h5>Học phí còn nợ: {numberWithCommas(totalDebt)} VNĐ</h5>
 			</div>
-			<PaymentTable studentID={studentID} />
+			<PaymentCourseTable studentID={studentID} />
+			<Divider />
+			<PaymentExamTable studentID={studentID} />
 			<Divider />
 			<RefundsTable studentID={studentID} />
 		</div>

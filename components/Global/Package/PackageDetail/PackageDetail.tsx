@@ -40,14 +40,16 @@ const PackageDetail = () => {
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
 		setFilters({
 			...filters,
-			pageIndex,
+			...refValue.current,
 		});
 	};
 	// RESET SEARCH
@@ -258,7 +260,7 @@ const PackageDetail = () => {
 				addClass="basic-header"
 				dataSource={packageDetailList}
 				columns={columns}
-				TitlePage="Danh sách gói bài tập"
+				TitlePage="Danh sách bộ đề"
 				TitleCard={
 					<PackageDetailForm
 						isLoading={isLoading}

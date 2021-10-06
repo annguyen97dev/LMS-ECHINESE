@@ -90,8 +90,8 @@ function PackageDetailForm(props) {
 								<InputTextField
 									form={form}
 									name="Name"
-									label="Tên gói"
-									placeholder="Nhập tên gói"
+									label="Tên bộ đề"
+									placeholder="Nhập tên bộ đề"
 									disabled={true}
 								/>
 							</div>

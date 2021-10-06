@@ -22,7 +22,7 @@ const FilterColumn = (
 
 	const checkHandleSearch = (value) => {
 		if (!handleSearch) return;
-		if (!valueSearch) return;
+		if (valueSearch == null) return;
 		switch (type) {
 			case 'text':
 				handleSearch(value, dataIndex);

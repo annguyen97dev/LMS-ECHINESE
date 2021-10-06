@@ -57,7 +57,7 @@ const PackageStoreFilterForm = (props) => {
 						<SelectField
 							form={form}
 							name="Type"
-							label="Loại gói"
+							label="Loại"
 							placeholder="Chọn loại"
 							optionList={typeOptionList}
 						/>

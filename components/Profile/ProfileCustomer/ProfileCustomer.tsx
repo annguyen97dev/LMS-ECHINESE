@@ -9,12 +9,12 @@ import {Avatar, Card, Tabs} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {studentApi} from '~/apiBase';
 import {useWrap} from '~/context/wrap';
-import InfoChangeCard from './component/InfoChangeCard';
 import InfoCourseCard from './InfoCourseCard/InfoCourseCard';
-import InfoOtherCard from './component/InfoOtherCard';
+import InfoOtherCard from './InfoOtherCard/InfoOtherCard';
 import InfoPaymentCard from './InfoPaymentCard/InfoPaymentCard';
 import InfoTestCard from './InfoTestCard/InfoTestCard';
-import InfoTestResultCard from './component/InfoTestResultCard';
+// import InfoTestResultCard from './InfoTestResultCard/InfoTestResultCard';
+import InfoTimelineCard from './InfoTimelineCard/InfoTimelineCard';
 
 function ProfileCustomer(props) {
 	const {id: studentID} = props;
@@ -97,19 +97,18 @@ function ProfileCustomer(props) {
 								key="5"
 								className="profile-tabs"
 							>
-								<InfoChangeCard studentID={studentIDInt} />
+								<InfoTimelineCard studentID={studentIDInt} />
 							</TabPane>
-							<TabPane tab="Test result" key="6" className="profile-tabs">
-								<InfoTestResultCard id={studentIDInt} />
+							<TabPane tab="Kết quả kiểm tra" key="6" className="profile-tabs">
+								{/* <InfoTestResultCard studentID={studentIDInt} /> */}
 							</TabPane>
-							<TabPane tab="Other" key="7" className="profile-tabs">
-								<InfoOtherCard />
+							<TabPane tab="Khác" key="7" className="profile-tabs">
+								<InfoOtherCard studentID={studentIDInt} />
 							</TabPane>
 						</Tabs>
 					</Card>
 				</div>
 			</div>
-			<div></div>
 		</div>
 	);
 }

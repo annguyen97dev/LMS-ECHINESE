@@ -1,0 +1,32 @@
+.more-revenue {
+	position: relative;
+
+	.add,
+	.remove {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 2;
+		transition: 0.2s ease-in-out;
+		cursor: pointer;
+		&:hover {
+			color: $primary-hover;
+		}
+	}
+	.add {
+		right: 10px;
+	}
+	> .ant-form-item {
+		margin-bottom: 0;
+	}
+	&-list {
+		max-height: 180px;
+		overflow: hidden auto;
+		padding-right: 5px;
+		margin-right: -5px;
+		@include custom-scrollbar();
+	}
+	&-item {
+		position: relative;
+	}
+}

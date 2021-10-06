@@ -1,15 +1,27 @@
 import {instance} from '~/apiBase/instance';
 
-class ExamAppointmentResult {
-	getWithID = (id: number) =>
-		instance.get<IApiResultData<IExamAppointmentResult[]>>(
-			`/api/ExamAppointmentResult/${id}`
-		);
-
-	getWithUserInformationID = (id: number) =>
-		instance.get<IApiResultData<IExamAppointmentResult>>(
-			`/api/ExamAppointmentResultUserInformationID/${id}`
-		);
-}
-
-export const examAppointmentResultApi = new ExamAppointmentResult();
+const url = '/api/ExamAppointmentResult/';
+export const examAppointmentResultApi = {
+	// Lấy tất cả data
+	getAll(params) {
+		return instance.get<IApiResultData<IExamAppointmentResult[]>>(url, {
+			params,
+		});
+	},
+	// Lấy theo id
+	getById(id: number) {
+		return instance.get<IApiResultData<IExamAppointmentResult>>(`${url}${id}`);
+	},
+	// Thêm mới data
+	add(data) {
+		return instance.post(url, data);
+	},
+	// Cập nhật data
+	update(data) {
+		return instance.put(url, data);
+	},
+	// Xóa data
+	delete(data) {
+		return instance.put(url, data);
+	},
+};

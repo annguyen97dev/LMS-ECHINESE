@@ -6,12 +6,22 @@ import ExamDetail, {
 } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { examDetailApi, examTopicApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+<<<<<<< HEAD
+=======
+import { Edit } from "react-feather";
+>>>>>>> bao-fe
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
+<<<<<<< HEAD
 import SelectField from "~/components/FormControl/SelectField";
 import { Zap } from "react-feather";
+=======
+import DateField from "~/components/FormControl/DateField";
+import SelectField from "~/components/FormControl/SelectField";
+import TextAreaField from "~/components/FormControl/TextAreaField";
+>>>>>>> bao-fe
 
 let returnSchema = {};
 let schema = null;
@@ -24,10 +34,16 @@ const AddQuestionAuto = (props) => {
   const [visibleConfirm, setVisibleConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showNoti } = useWrap();
+<<<<<<< HEAD
   const [countShowConfirm, setCountShowConfirm] = useState(0);
 
   // console.log("Data Exam: ", dataExam);
   // console.log("Exam ID: ", examTopicID);
+=======
+
+  console.log("Data Exam: ", dataExam);
+  console.log("Exam ID: ", examTopicID);
+>>>>>>> bao-fe
 
   const showModalConfirm = () => {
     setVisibleConfirm(true);
@@ -134,6 +150,7 @@ const AddQuestionAuto = (props) => {
   return (
     <>
       <button
+<<<<<<< HEAD
         className="btn btn-warning "
         onClick={
           countShowConfirm < 1
@@ -147,6 +164,14 @@ const AddQuestionAuto = (props) => {
           <Zap className="mr-2" style={{ width: "18px" }} />
           Tạo nhanh
         </div>
+=======
+        className="btn btn-warning ml-3"
+        onClick={
+          listQuestionID.length > 0 ? showModalConfirm : showModalCreateQuestion
+        }
+      >
+        Tạo nhanh
+>>>>>>> bao-fe
       </button>
       <Modal
         title="Chú ý!"
@@ -165,7 +190,10 @@ const AddQuestionAuto = (props) => {
               onClick={() => {
                 setVisibleConfirm(false);
                 showModalCreateQuestion();
+<<<<<<< HEAD
                 setCountShowConfirm(countShowConfirm + 1);
+=======
+>>>>>>> bao-fe
               }}
             >
               Đồng ý
@@ -174,8 +202,12 @@ const AddQuestionAuto = (props) => {
         }
       >
         <p style={{ fontWeight: 500 }}>
+<<<<<<< HEAD
           Toàn bộ câu hỏi trong đề sẽ bị xóa sau khi tạo danh sách mới. <br />
           Bạn có muốn tiếp tục?
+=======
+          Toàn bộ câu hỏi trong đề sẽ bị xóa. Bạn có muốn tạo danh sách mới?
+>>>>>>> bao-fe
         </p>
       </Modal>
       <Modal

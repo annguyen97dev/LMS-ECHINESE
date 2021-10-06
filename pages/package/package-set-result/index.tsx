@@ -112,7 +112,7 @@ const PackageSetResult = () => {
             query: { slug: `${data.ID}` },
           }}
         >
-          <Tooltip title="Kết quả gói bài chi tiết">
+          <Tooltip title="Kết quả bộ đề chi tiết">
             <button className="btn btn-icon">
               <Info />
             </button>
@@ -166,7 +166,7 @@ const PackageSetResult = () => {
     },
     {
       name: "SetPackageDetailID",
-      title: "Gói bài",
+      title: "Bộ đề",
       col: "col-12",
       type: "select",
       optionList: null,
@@ -300,7 +300,7 @@ const PackageSetResult = () => {
         setDataFunc("SetPackageDetailID", newData);
       }
 
-      res.status == 204 && showNoti("danger", "Không có dữ liệu gói bài này!");
+      res.status == 204 && showNoti("danger", "Không có dữ liệu bộ đề này!");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -365,7 +365,7 @@ const PackageSetResult = () => {
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       addClass="basic-header"
-      TitlePage="KẾT QUẢ GÓI BÀI"
+      TitlePage="KẾT QUẢ BỘ ĐỀ"
       dataSource={packageSetResult}
       columns={columns}
       TitleCard={

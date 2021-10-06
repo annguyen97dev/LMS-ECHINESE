@@ -2,7 +2,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, {useEffect, useRef, useState} from 'react';
 import {Check} from 'react-feather';
-import {refundsApi} from '~/apiBase';
+import {refundsApi, voucherApi} from '~/apiBase';
 import {ExpandRefundRow} from '~/components/Elements/ExpandBox';
 import ExpandTable from '~/components/ExpandTable';
 import {useWrap} from '~/context/wrap';
@@ -23,6 +23,8 @@ function RefundsTable(props) {
 	});
 	const [refundList, setRefundList] = useState<IRefunds[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
+	const [infoVoucherList, setInfoVoucherList] = useState<IVoucher[]>([]);
+
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
@@ -40,14 +42,16 @@ function RefundsTable(props) {
 	const [filters, setFilters] = useState(listFieldInit);
 
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
 		setFilters({
 			...filters,
-			pageIndex,
+			...refValue.current,
 		});
 	};
 
@@ -120,7 +124,49 @@ function RefundsTable(props) {
 			},
 		},
 	];
-	const expandedRowRender = (record) => <ExpandRefundRow dataRow={record} />;
+
+	//
+	const fetchInfoVoucherList = async (ID: number) => {
+		try {
+			setIsLoading({
+				type: 'FETCH_INFO_VOUCHER',
+				status: true,
+			});
+			const res = await voucherApi.getAll({
+				RefundsID: ID,
+			});
+			if (res.status === 200) {
+				setInfoVoucherList(res.data.data);
+			}
+			if (res.status === 204) {
+				setInfoVoucherList(null);
+			}
+		} catch (error) {
+			console.log(fetchInfoVoucherList, error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_INFO_VOUCHER',
+				status: false,
+			});
+		}
+	};
+
+	const expandableObj = {
+		expandedRowRender: (record) => (
+			<ExpandRefundRow
+				isLoading={isLoading}
+				key={record.ID}
+				dataRow={record}
+				infoVoucherList={infoVoucherList}
+			/>
+		),
+		onExpand: (expanded, record) => {
+			if (expanded) {
+				fetchInfoVoucherList(record.ID);
+			}
+		},
+	};
+
 	return (
 		<ExpandTable
 			loading={isLoading}
@@ -131,7 +177,7 @@ function RefundsTable(props) {
 			dataSource={refundList}
 			columns={columns}
 			Extra={<h5>Lịch sử hoàn tiền</h5>}
-			expandable={{expandedRowRender}}
+			expandable={expandableObj}
 		/>
 	);
 }

@@ -187,7 +187,7 @@ const TeacherForm = (props) => {
 			)}
 			<Modal
 				style={{top: isUpdate ? 20 : 100}}
-				title={isUpdate ? 'Update Teacher' : 'Create Teacher'}
+				title={isUpdate ? 'Cập nhật giáo viên' : 'Thêm giáo viên'}
 				visible={isModalVisible}
 				onCancel={closeModal}
 				footer={
@@ -200,7 +200,7 @@ const TeacherForm = (props) => {
 									onClick={form.handleSubmit(teacherSwitchFunc)}
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
-									Update
+									Cập nhật
 									{isLoading.type === 'ADD_DATA' && isLoading.status && (
 										<Spin className="loading-base" />
 									)}
@@ -499,10 +499,10 @@ const TeacherForm = (props) => {
 									<button
 										type="submit"
 										className="btn btn-primary w-100"
-										disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+										disabled={isLoading.type === 'ADD_DATA' && isLoading.status}
 									>
-										Create
-										{isLoading.type == 'ADD_DATA' && isLoading.status && (
+										Thêm mới
+										{isLoading.type === 'ADD_DATA' && isLoading.status && (
 											<Spin className="loading-base" />
 										)}
 									</button>

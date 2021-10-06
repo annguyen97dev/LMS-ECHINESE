@@ -36,7 +36,7 @@ function PackagePayment() {
 		Type: 2,
 		SetPackageID: null,
 		StudentID: null,
-		formDate: '',
+		fromDate: '',
 		toDate: '',
 	};
 	let refValue = useRef({
@@ -96,14 +96,16 @@ function PackagePayment() {
 		},
 	];
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
 		setFilters({
 			...filters,
-			pageIndex,
+			...refValue.current,
 		});
 	};
 	// SORT
@@ -269,7 +271,7 @@ function PackagePayment() {
 				activeColumnSearch === 'StudentID' ? 'active-column-search' : '',
 		},
 		{
-			title: 'Tên gói',
+			title: 'Tên bộ đề',
 			dataIndex: 'SetPackageName',
 			...FilterColumn(
 				'SetPackageID',
@@ -287,7 +289,7 @@ function PackagePayment() {
 			render: (level) => `HSK ${level}`,
 		},
 		{
-			title: 'Loại gói',
+			title: 'Loại',
 			dataIndex: 'TypeName',
 		},
 
@@ -341,7 +343,7 @@ function PackagePayment() {
 				addClass="basic-header"
 				dataSource={packagePaymentList}
 				columns={columns}
-				TitlePage="Danh sách học viên mua gói"
+				TitlePage="Danh sách học viên mua bộ đề"
 				Extra={
 					<div className="extra-table">
 						<SortBox dataOption={sortOptionList} handleSort={onSort} />

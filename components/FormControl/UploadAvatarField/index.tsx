@@ -98,7 +98,8 @@ const UploadAvatarField = (props) => {
 				render={({field}) => {
 					return (
 						<Upload
-							{...field}
+							name={field.name}
+							ref={field.ref}
 							listType="picture-card"
 							className="avatar-uploader"
 							disabled={disabled}

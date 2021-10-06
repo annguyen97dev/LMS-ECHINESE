@@ -333,7 +333,7 @@ function PackageExaminer() {
 			addClass="basic-header"
 			dataSource={examinerList}
 			columns={columns}
-			TitlePage="Danh sách giáo viên chấm gói bài"
+			TitlePage="Danh sách giáo viên chấm bộ đề"
 			Extra={
 				<div className="extra-table">
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />

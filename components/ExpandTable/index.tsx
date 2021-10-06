@@ -1,6 +1,5 @@
+import {Card, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
-import {Table, Card} from 'antd';
-import TitlePage from '~/components/TitlePage';
 import {useWrap} from '~/context/wrap';
 
 const ExpandTable = (props) => {
@@ -23,9 +22,9 @@ const ExpandTable = (props) => {
 		setState({selectedRowKeys});
 	};
 
-	const changePagination = (pageNumber) => {
+	const changePagination = (pageNumber, pageSize) => {
 		if (typeof props.getPagination != 'undefined') {
-			props.getPagination(pageNumber);
+			props.getPagination(pageNumber, pageSize);
 		} else {
 			return pageNumber;
 		}
@@ -37,10 +36,6 @@ const ExpandTable = (props) => {
 		}
 	};
 
-	// const onRowchange = (row) => {
-	//   console.log("ROW: ", row);
-	// };
-
 	const rowSelection = {
 		selectedRowKeys: state.selectedRowKeys,
 		onChange: onSelectedRowKeysChange,
@@ -51,7 +46,7 @@ const ExpandTable = (props) => {
 		if (props.TitlePage) {
 			getTitlePage(props.TitlePage);
 		}
-		if (props.dataSource && props.dataSource.length > 0) {
+		if (props.dataSource) {
 			let dataClone = [...props.dataSource];
 			dataClone.forEach((item, index) => {
 				item.key = index.toString();
@@ -63,7 +58,6 @@ const ExpandTable = (props) => {
 
 	return (
 		<>
-			{/* <TitlePage title={props.TitlePage} /> */}
 			<div className="wrap-table table-expand">
 				<Card
 					className={`cardRadius ${props.addClass && props.addClass} ${
@@ -82,7 +76,8 @@ const ExpandTable = (props) => {
 						size="middle"
 						pagination={{
 							total: props.totalPage && props.totalPage,
-							onChange: (pageNumber) => changePagination(pageNumber),
+							onChange: (pageNumber, pageSize) =>
+								changePagination(pageNumber, pageSize),
 							current: props.currentPage && props.currentPage,
 						}}
 						rowSelection={rowSelection}

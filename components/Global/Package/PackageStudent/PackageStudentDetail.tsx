@@ -35,14 +35,16 @@ const PackageStudentDetail = () => {
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
 		setFilters({
 			...filters,
-			pageIndex,
+			...refValue.current,
 		});
 	};
 	// GET DATA IN FIRST TIME
@@ -79,7 +81,7 @@ const PackageStudentDetail = () => {
 		<>
 			<div className="row package-set package-detail-list">
 				<div className="col-12">
-					<TitlePage title="Chi tiết gói bài" />
+					<TitlePage title="Chi tiết bộ đề" />
 					<div className="wrap-table">
 						<Card className="package-set-wrap">
 							<List
