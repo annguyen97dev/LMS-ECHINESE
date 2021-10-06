@@ -445,7 +445,7 @@
   &.active {
     display: block;
     animation: show_box 0.5s forwards;
-    height: calc(100vh - 292px);
+    height: calc(100vh - 384px);
     overflow: auto;
 
     &::-webkit-scrollbar-track {

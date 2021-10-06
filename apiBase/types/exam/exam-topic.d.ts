@@ -4,8 +4,8 @@ type IExamTopic = IBaseApi<{
   Code: string;
   Type: number;
   TypeName: string;
-  SubjectID: number;
-  SubjectName: string;
+  CurriculumID: number;
+  CurriculumName: string;
   NumberExercise: number;
   Time: number;
   DifficultExercise: number;

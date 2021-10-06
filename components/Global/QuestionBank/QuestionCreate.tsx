@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import { Card, Select, Spin, Switch } from "antd";
+import { Card, Select, Spin, Switch, Tooltip } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
 import { Bookmark } from "react-feather";
 import CreateQuestionForm from "~/components/Global/QuestionBank/CreateQuestionForm";
@@ -10,7 +10,7 @@ import QuestionSingle from "~/components/Global/QuestionBank/QuestionShow/Questi
 import QuestionMultiple from "~/components/Global/QuestionBank/QuestionShow/QuestionMultiple";
 import {
   programApi,
-  subjectApi,
+  curriculumApi,
   exerciseApi,
   exerciseGroupApi,
 } from "~/apiBase";
@@ -29,7 +29,7 @@ let isOpenTypeQuestion = false;
 const listTodoApi = {
   pageSize: 10,
   pageIndex: 1,
-  SubjectID: null,
+  CurriculumID: null,
   Type: null,
   Level: null,
   SkillID: null,
@@ -66,7 +66,7 @@ const QuestionCreate = (props) => {
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState(false);
   const [dataProgram, setDataProgram] = useState<IProgram[]>(null);
-  const [dataSubject, setDataSubject] = useState<ISubject[]>(null);
+  const [dataCurriculum, setDataCurriculum] = useState<ICurriculum[]>(null);
   const [loadingSelect, setLoadingSelect] = useState(false);
   const [questionData, setQuestionData] = useState(questionObj);
   const [showListQuestion, setShowListQuestion] = useState(false);
@@ -83,7 +83,7 @@ const QuestionCreate = (props) => {
     id: null,
     status: null,
   });
-  const [valueSubject, setValueSubject] = useState(null);
+  const [valueCurriculum, setValueCurriculum] = useState(null);
   const [valueProgram, setValueProgram] = useState(null);
   const [valueType, setValueType] = useState(null);
   const [valueLevel, setValueLevel] = useState(null);
@@ -335,16 +335,16 @@ const QuestionCreate = (props) => {
     }
   };
 
-  // GET DATA SUBJECT
-  const getDataSubject = async (id) => {
+  // GET DATA Curriculum
+  const getDataCurriculum = async (id) => {
     setLoadingSelect(true);
     try {
-      let res = await subjectApi.getAll({
+      let res = await curriculumApi.getAll({
         pageIndex: 1,
         pageSize: 999999,
         ProgramID: id,
       });
-      res.status == 200 && setDataSubject(res.data.data);
+      res.status == 200 && setDataCurriculum(res.data.data);
       res.status == 204 && showNoti("danger", "Môn học không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
@@ -392,7 +392,7 @@ const QuestionCreate = (props) => {
     setTodoApi({
       ...todoApi,
       Type: Type,
-      SubjectID: questionData.SubjectID,
+      CurriculumID: questionData.CurriculumID,
       Level: questionData.Level,
       SkillID: questionData.SkillID,
       pageIndex: 1,
@@ -409,16 +409,16 @@ const QuestionCreate = (props) => {
         console.log("Chạy vô đây");
         setQuestionData({
           ...questionData,
-          SubjectID: 0,
+          CurriculumID: 0,
         });
         setValueProgram(null);
-        setValueSubject(null);
+        setValueCurriculum(null);
         if (showListQuestion) {
           setIsLoading(true);
           setTodoApi({
             ...todoApi,
             pageIndex: 1,
-            SubjectID: 0,
+            CurriculumID: 0,
           });
           setDataSource([]);
           setDataGroup([]);
@@ -441,15 +441,15 @@ const QuestionCreate = (props) => {
     switch (selectName) {
       // -- Chọn chương trình
       case "program":
-        getDataSubject(option.value);
-        setDataSubject(null);
-        setValueSubject(null);
+        getDataCurriculum(option.value);
+        setDataCurriculum(null);
+        setValueCurriculum(null);
         showListQuestion &&
           (setIsLoading(true),
           setTodoApi({
             ...todoApi,
             pageIndex: 1,
-            SubjectID: null,
+            CurriculumID: null,
           }));
         setShowTypeQuestion({
           type: null,
@@ -498,19 +498,18 @@ const QuestionCreate = (props) => {
         break;
 
       // -- Chọn môn học
-      case "subject":
-        questionData.SubjectID = option.value;
-        questionData.SubjectName = option.children;
-        setValueSubject(option.value);
+      case "curriculum":
+        questionData.CurriculumID = option.value;
+        questionData.CurriculumName = option.children;
 
         showListQuestion &&
           (setIsLoading(true),
           setTodoApi({
             ...todoApi,
-            SubjectID: option.value,
+            CurriculumID: option.value,
             pageIndex: 1,
           }));
-
+        setValueCurriculum(option.value);
         break;
 
       // -- Chọn level (Dễ, trung bình, khó)
@@ -525,6 +524,8 @@ const QuestionCreate = (props) => {
           }));
         setValueLevel(option.value);
         break;
+
+      // -- Chọn kĩ năng
       case "skill":
         questionData.SkillID = option.value;
 
@@ -564,19 +565,26 @@ const QuestionCreate = (props) => {
 
     // kiểm tra mới vào đã chọn đầy đủ 4 trường hay chưa rồi mới show danh sách dạng câu hỏi
     if (!showTypeQuetion.status) {
+      console.log("YEAHHHH");
       if (
         questionData.ExerciseGroupID !== null &&
         questionData.SkillID !== null &&
         questionData.Level !== null &&
         isOpenTypeQuestion == true
       ) {
+        console.log("Chạy 1");
         if (isTest) {
           setShowTypeQuestion({
             ...showTypeQuetion,
             status: true,
           });
         } else {
-          if (questionData.SubjectID !== null && questionData.SubjectID !== 0) {
+          console.log("chạy 2");
+          if (
+            questionData.CurriculumID !== null &&
+            questionData.CurriculumID !== 0
+          ) {
+            console.log("chạy 3");
             setShowTypeQuestion({
               ...showTypeQuetion,
               status: true,
@@ -586,6 +594,8 @@ const QuestionCreate = (props) => {
       }
     }
   };
+
+  console.log("Show type quesion: ", showTypeQuetion);
 
   // ON ADD NEW DATA
   const addDataGroup = (dataAdd) => {
@@ -754,12 +764,12 @@ const QuestionCreate = (props) => {
       console.log("Data exam: ", dataExam);
       if (dataExam.Type == 1) {
         setIsTest(true);
-        questionData.SubjectID = 0;
+        questionData.CurriculumID = 0;
       } else {
         setValueProgram(dataExam.ProgramID);
-        getDataSubject(dataExam.ProgramID);
-        setValueSubject(dataExam.SubjectID);
-        questionData.SubjectID = dataExam.SubjectID;
+        getDataCurriculum(dataExam.ProgramID);
+        setValueCurriculum(dataExam.CurriculumID);
+        questionData.CurriculumID = dataExam.CurriculumID;
       }
 
       questionData.Level = 1;
@@ -768,15 +778,12 @@ const QuestionCreate = (props) => {
       setValueLevel(1);
       setValueType(0);
       changeBoxType(null, 1, "Lựa chọn một");
-      setShowTypeQuestion({
-        type: 1,
-        status: true,
-      });
+      isOpenTypeQuestion = true;
     } else {
-      setValueProgram(32);
-      getDataSubject(32);
-      setValueSubject(23);
-      questionData.SubjectID = 23;
+      setValueProgram(31);
+      getDataCurriculum(31);
+      setValueCurriculum(23);
+      questionData.CurriculumID = 23;
       questionData.Level = 1;
       questionData.SkillID = 3;
       setQuestionData({ ...questionData });
@@ -784,6 +791,7 @@ const QuestionCreate = (props) => {
       setValueLevel(1);
       setValueType(0);
       changeBoxType(null, 1, "Lựa chọn một");
+      isOpenTypeQuestion = true;
     }
     setShowTypeQuestion({
       type: 1,
@@ -824,7 +832,7 @@ const QuestionCreate = (props) => {
                 </p>
                 {/* <p className="text-lesson">
                   <span className="font-weight-black">Môn học:</span>
-                  <span>{questionData?.SubjectName}</span>
+                  <span>{questionData?.CurriculumName}</span>
                 </p> */}
               </div>
             }
@@ -884,106 +892,113 @@ const QuestionCreate = (props) => {
               {/** CHỌN CHƯƠNG TRÌNH */}
               <div className="col-md-6 col-12 ">
                 <div className="item-select">
-                  <Select
-                    loading={loadingProgram}
-                    disabled={isTest ? true : dataExam ? true : false}
-                    placeholder="Chọn chương trình"
-                    className="style-input"
-                    value={valueProgram}
-                    style={{ width: "100%" }}
-                    onChange={(value, option) =>
-                      handleChange_select("program", option)
-                    }
-                  >
-                    {dataProgram?.map((item, index) => (
-                      <Option key={index} value={item.ID}>
-                        {item.ProgramName}
-                      </Option>
-                    ))}
-                  </Select>
+                  <Tooltip title="Chương trình" placement="topLeft">
+                    <Select
+                      loading={loadingProgram}
+                      disabled={isTest ? true : dataExam ? true : false}
+                      placeholder="Chọn chương trình"
+                      className="style-input"
+                      value={valueProgram}
+                      style={{ width: "100%" }}
+                      onChange={(value, option) =>
+                        handleChange_select("program", option)
+                      }
+                    >
+                      {dataProgram?.map((item, index) => (
+                        <Option key={index} value={item.ID}>
+                          {item.ProgramName}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Tooltip>
                 </div>
               </div>
               {/** CHỌN MÔN HỌC */}
               <div className="col-md-6 col-12 ">
                 <div className="item-select">
-                  {/* <p className="font-weight-black mb-2">Chọn môn học</p> */}
-                  <Select
-                    disabled={isTest ? true : dataExam ? true : false}
-                    loading={loadingSelect}
-                    className="style-input"
-                    placeholder="Chọn môn học"
-                    value={valueSubject}
-                    style={{ width: "100%" }}
-                    onChange={(value, option) =>
-                      handleChange_select("subject", option)
-                    }
-                  >
-                    {dataSubject?.map((item, index) => (
-                      <Option key={index} value={item.ID}>
-                        {item.SubjectName}
-                      </Option>
-                    ))}
-                  </Select>
+                  <Tooltip title="Giáo trình" placement="topLeft">
+                    <Select
+                      disabled={isTest ? true : dataExam ? true : false}
+                      loading={loadingSelect}
+                      className="style-input"
+                      placeholder="Chọn giáo trình"
+                      value={valueCurriculum}
+                      style={{ width: "100%" }}
+                      onChange={(value, option) =>
+                        handleChange_select("curriculum", option)
+                      }
+                    >
+                      {dataCurriculum?.map((item, index) => (
+                        <Option key={index} value={item.ID}>
+                          {item.CurriculumName}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Tooltip>
                 </div>
               </div>
 
               {/** KĨ NĂNG  */}
               <div className="col-md-6 col-12 mt-3">
                 <div className="item-select">
-                  <Select
-                    value={valueSkill}
-                    className="style-input"
-                    placeholder="Chọn kĩ năng"
-                    style={{ width: "100%" }}
-                    onChange={(value, option) =>
-                      handleChange_select("skill", option)
-                    }
-                  >
-                    <Option value={1}>Nghe </Option>
-                    <Option value={2}>Nói</Option>
-                    <Option value={3}>Đọc</Option>
-                    <Option value={4}>Viết</Option>
-                  </Select>
+                  <Tooltip title="Kĩ năng" placement="topLeft">
+                    <Select
+                      value={valueSkill}
+                      className="style-input"
+                      placeholder="Chọn kĩ năng"
+                      style={{ width: "100%" }}
+                      onChange={(value, option) =>
+                        handleChange_select("skill", option)
+                      }
+                    >
+                      <Option value={1}>Nghe </Option>
+                      <Option value={2}>Nói</Option>
+                      <Option value={3}>Đọc</Option>
+                      <Option value={4}>Viết</Option>
+                    </Select>
+                  </Tooltip>
                 </div>
               </div>
 
               {/** MỨC ĐỘ  */}
               <div className="col-md-6 col-12 mt-3">
                 <div className="item-select">
-                  {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
-                  <Select
-                    value={valueLevel}
-                    className="style-input"
-                    // defaultValue="Chọn mức độ"
-                    placeholder="Chọn mức độ"
-                    style={{ width: "100%" }}
-                    onChange={(value, option) =>
-                      handleChange_select("level", option)
-                    }
-                  >
-                    <Option value={1}>Dễ</Option>
-                    <Option value={2}>Trung bình</Option>
-                    <Option value={3}>Khó</Option>
-                  </Select>
+                  <Tooltip title="Mức độ" placement="topLeft">
+                    <Select
+                      value={valueLevel}
+                      className="style-input"
+                      // defaultValue="Chọn mức độ"
+                      placeholder="Chọn mức độ"
+                      style={{ width: "100%" }}
+                      onChange={(value, option) =>
+                        handleChange_select("level", option)
+                      }
+                    >
+                      <Option value={1}>Dễ</Option>
+                      <Option value={2}>Trung bình</Option>
+                      <Option value={3}>Khó</Option>
+                    </Select>
+                  </Tooltip>
                 </div>
               </div>
 
               {/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
               <div className="col-md-12 col-12 mt-3">
                 <div className="item-select">
-                  {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
-                  <Select
-                    value={valueType}
-                    className="style-input"
-                    placeholder="Chọn loại câu hỏi"
-                    style={{ width: "100%" }}
-                    onChange={(value, option) =>
-                      handleChange_select("type-question-group", option)
-                    }
-                  >
-                    <Option value={0}>Câu hỏi đơn</Option>
-                    <Option value={1}>Câu hỏi nhóm</Option>
-                  </Select>
+                  <Tooltip title=" Loại câu hỏi" placement="topLeft">
+                    <Select
+                      value={valueType}
+                      className="style-input"
+                      placeholder="Chọn loại câu hỏi"
+                      style={{ width: "100%" }}
+                      onChange={(value, option) =>
+                        handleChange_select("type-question-group", option)
+                      }
+                    >
+                      <Option value={0}>Câu hỏi đơn</Option>
+                      <Option value={1}>Câu hỏi nhóm</Option>
+                    </Select>
+                  </Tooltip>
                 </div>
               </div>
             </div>

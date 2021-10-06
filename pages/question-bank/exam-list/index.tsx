@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 
-import { Popover, Card, Spin, Skeleton, Select, Modal } from "antd";
+import { Popover, Card, Spin, Skeleton, Select, Modal, Tooltip } from "antd";
 import TitlePage from "~/components/Elements/TitlePage";
 import { Bookmark, Trash2 } from "react-feather";
-import { AudioOutlined } from "@ant-design/icons";
+import { SyncOutlined } from "@ant-design/icons";
 import CreateExamForm from "~/components/Global/QuestionBank/CreateExamForm";
 import LayoutBase from "~/components/LayoutBase";
 import Link from "next/link";
-import { examTopicApi, programApi, subjectApi } from "~/apiBase";
+import { examTopicApi, programApi, curriculumApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import SearchBox from "~/components/Elements/SearchBox";
 
@@ -82,18 +82,22 @@ const ExamList = (props) => {
   const listTodoApi = {
     pageIndex: 1,
     pageSize: 10,
-    SubjectID: null,
+    CurriculumID: null,
     Type: null,
     Code: null,
   };
   const [todoApi, setTodoApi] = useState(listTodoApi);
   const [dataProgram, setDataProgram] = useState<dataOject[]>([]);
-  const [dataSubject, setDataSubject] = useState<dataOject[]>([]);
+  const [dataCurriculum, setDataCurriculum] = useState<dataOject[]>([]);
   const [loadingSelect, setLoadingSelect] = useState(false);
   const [loadingQuestion, setLoadingQuestion] = useState(false);
   const [totalPageIndex, setTotalPageIndex] = useState(0);
   const boxEl = useRef(null);
-  const [valueSubject, setValueSubject] = useState("Chọn môn học");
+  const [valueCurriculum, setValueCurriculum] = useState(null);
+  const [valueProgram, setValueProgram] = useState(null);
+  const [valueTypeExam, setValueTypeExam] = useState(null);
+  const [valueFilter, setValueFilter] = useState(null);
+  const [showFilter, setShowFilter] = useState(false);
 
   const getAllExam = async () => {
     try {
@@ -140,21 +144,21 @@ const ExamList = (props) => {
     }
   };
 
-  // GET DATA SUBJECT
-  const getDataSubject = async (id) => {
+  // GET DATA Curriculum
+  const getDataCurriculum = async (id) => {
     setLoadingSelect(true);
     try {
-      let res = await subjectApi.getAll({
+      let res = await curriculumApi.getAll({
         pageIndex: 1,
         pageSize: 999999,
         ProgramID: id,
       });
       if (res.status == 200) {
         let newData = res.data.data.map((item) => ({
-          title: item.SubjectName,
+          title: item.CurriculumName,
           value: item.ID,
         }));
-        setDataSubject(newData);
+        setDataCurriculum(newData);
       }
 
       res.status == 204 && showNoti("danger", "Môn học không có dữ liệu");
@@ -167,23 +171,49 @@ const ExamList = (props) => {
 
   // SELECT PROGRAM
   const handleSelect_Program = (value) => {
-    setValueSubject("Chọn môn học");
+    setValueProgram(value);
+    setValueCurriculum(null);
     setDataExam([]);
-    getDataSubject(value);
+    getDataCurriculum(value);
   };
 
-  // SELECT SUBJECT
-  const handleSelect_Subject = (value) => {
-    setValueSubject(value);
+  // SELECT Curriculum
+  const handleSelect_Curriculum = (value) => {
+    setValueCurriculum(value);
 
     reloadData();
-    setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10, SubjectID: value });
+    setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10, CurriculumID: value });
   };
 
   // SELECT TYPE
   const handleSelect_Type = (value) => {
+    setValueTypeExam(value);
     reloadData();
     setTodoApi({ ...todoApi, pageIndex: 1, pageSize: 10, Type: value });
+  };
+
+  // SELECT FILTER
+  const handleSelect_Filter = (value) => {
+    setValueFilter(value);
+    switch (value) {
+      case 0:
+        reloadData();
+        resetFilter();
+        break;
+      case 1:
+        reloadData();
+        setTodoApi({
+          ...todoApi,
+          Type: value,
+        });
+        break;
+      case 2:
+        setDataExam([]);
+        setShowFilter(true);
+        break;
+      default:
+        break;
+    }
   };
 
   // ON FETCH DATA
@@ -195,6 +225,19 @@ const ExamList = (props) => {
   // RELOAD DATA
   const reloadData = () => {
     scrollToTop(), setIsLoading(true), setDataExam([]);
+  };
+
+  // RESET FILTER
+  const resetFilter = () => {
+    setValueFilter(0);
+    setShowFilter(false);
+    setValueCurriculum(null);
+    setValueProgram(null);
+    setValueTypeExam(null);
+    reloadData();
+    setTodoApi({
+      ...listTodoApi,
+    });
   };
 
   // ON SEARCH
@@ -238,6 +281,10 @@ const ExamList = (props) => {
     getDataProgram();
     getAllExam();
   }, [todoApi]);
+
+  useEffect(() => {
+    setValueFilter(0);
+  }, []);
 
   return (
     <div className="question-create exam-create">
@@ -298,7 +345,7 @@ const ExamList = (props) => {
                             </div>
                             <ul className="set-list">
                               <li className="status">
-                                Môn học: <span>{item.SubjectName}</span>
+                                Môn học: <span>{item.CurriculumName}</span>
                               </li>
                               <li className="price">
                                 Dạng: <span>{item.TypeName}</span>
@@ -342,62 +389,90 @@ const ExamList = (props) => {
         </div>
         <div className="col-md-4 col-12">
           <Card className="card-box-type" title="Lọc nhanh">
-            <div className="row mb-2">
-              {/** CHỌN CHƯƠNG TRÌNH */}
-              <div className="col-md-6 col-12 ">
-                <div className="item-select">
-                  <Select
-                    className="style-input"
-                    defaultValue="Chọn chương trình"
-                    style={{ width: "100%" }}
-                    onChange={(value, option) => handleSelect_Program(value)}
-                  >
-                    {dataProgram?.map((item, index) => (
-                      <Option key={index} value={item.value}>
-                        {item.title}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-              {/** CHỌN MÔN HỌC */}
-              <div className="col-md-6 col-12 ">
-                <div className="item-select">
-                  {/* <p className="font-weight-black mb-2">Chọn môn học</p> */}
-                  <Select
-                    loading={loadingSelect}
-                    className="style-input"
-                    defaultValue="Chọn môn học"
-                    value={valueSubject}
-                    style={{ width: "100%" }}
-                    onChange={(value, option) => handleSelect_Subject(value)}
-                  >
-                    {dataSubject?.map((item, index) => (
-                      <Option key={index} value={item.value}>
-                        {item.title}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-
-              {/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
+            <div className="row mb-3">
+              {/**  PHÂN LOẠI  */}
               <div className="col-md-12 col-12 mt-3">
                 <div className="item-select">
-                  {/* <p className="font-weight-black mb-2">Loại câu hỏi</p> */}
                   <Select
                     className="style-input"
-                    defaultValue="Chọn dạng đề"
+                    placeholder="Phân loại"
+                    value={valueFilter}
                     style={{ width: "100%" }}
-                    onChange={(value, option) => handleSelect_Type(value)}
+                    onChange={(value, option) => handleSelect_Filter(value)}
                   >
+                    <Option value={0}>Tất cả</Option>
                     <Option value={1}>Đề hẹn test</Option>
-                    <Option value={2}>Đề bán</Option>
-                    <Option value={3}>Đề kiểm tra</Option>
+                    <Option value={2}>Đề bán & Đề kiểm tra</Option>
                   </Select>
                 </div>
               </div>
             </div>
+            {showFilter && (
+              <div className="row">
+                {/** CHỌN CHƯƠNG TRÌNH */}
+                <div className="col-md-6 col-12 ">
+                  <div className="item-select">
+                    <Select
+                      className="style-input"
+                      placeholder="Chọn chương trình"
+                      value={valueProgram}
+                      style={{ width: "100%" }}
+                      onChange={(value, option) => handleSelect_Program(value)}
+                    >
+                      {dataProgram?.map((item, index) => (
+                        <Option key={index} value={item.value}>
+                          {item.title}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                {/** CHỌN MÔN HỌC */}
+                <div className="col-md-6 col-12 ">
+                  <div className="item-select">
+                    <Select
+                      loading={loadingSelect}
+                      className="style-input"
+                      placeholder="Chọn giáo trình"
+                      value={valueCurriculum}
+                      style={{ width: "100%" }}
+                      onChange={(value, option) =>
+                        handleSelect_Curriculum(value)
+                      }
+                    >
+                      {dataCurriculum?.map((item, index) => (
+                        <Option key={index} value={item.value}>
+                          {item.title}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+
+                {/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
+                <div className="col-md-10 col-10 mt-3">
+                  <div className="item-select">
+                    <Select
+                      className="style-input"
+                      placeholder="Chọn dạng đề"
+                      value={valueTypeExam}
+                      style={{ width: "100%" }}
+                      onChange={(value, option) => handleSelect_Type(value)}
+                    >
+                      <Option value={2}>Đề bán</Option>
+                      <Option value={3}>Đề kiểm tra</Option>
+                    </Select>
+                  </div>
+                </div>
+                <div className="col-md-2 col-2 mt-3 d-flex align-items-center">
+                  <Tooltip title="Reset">
+                    <button className="btn btn-icon edit" onClick={resetFilter}>
+                      <SyncOutlined />
+                    </button>
+                  </Tooltip>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
       </div>
