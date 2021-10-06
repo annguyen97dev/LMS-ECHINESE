@@ -1,19 +1,19 @@
 import {Card} from 'antd';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import {scheduleZoomApi, zoomRoomApi} from '~/apiBase';
+import {scheduleZoomApi} from '~/apiBase';
 import TitlePage from '~/components/TitlePage';
 import {useDebounce} from '~/context/useDebounce';
 import {useWrap} from '~/context/wrap';
 import CDCalendar from '../CourseList/CourseListDetail/CourseDetailCalendar/Calendar';
 
-const ScheduleStudyTeacher = () => {
+const ScheduleStudyStudent = () => {
 	const {showNoti} = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
 	});
-	const [scheduleTeacherList, setScheduleTeacherList] = useState<
+	const [scheduleStudentList, setScheduleStudentList] = useState<
 		IScheduleZoom[]
 	>([]);
 	const [filters, setFilters] = useState({
@@ -21,15 +21,15 @@ const ScheduleStudyTeacher = () => {
 		EndTime: moment().endOf('month').format('YYYY/MM/DD'),
 	});
 
-	const fetchScheduleStudyTeacher = async () => {
+	const fetchScheduleStudyStudent = async () => {
 		try {
 			setIsLoading({
-				type: 'FETCH_SCHEDULE_TEACHER',
+				type: 'FETCH_SCHEDULE_STUDENT',
 				status: true,
 			});
 			const res = await scheduleZoomApi.getAll(filters);
 			if (res.status === 200) {
-				setScheduleTeacherList(res.data.data);
+				setScheduleStudentList(res.data.data);
 			}
 			if (res.status === 204) {
 				showNoti('danger', 'Lịch dạy trống');
@@ -38,14 +38,14 @@ const ScheduleStudyTeacher = () => {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
-				type: 'FETCH_SCHEDULE_TEACHER',
+				type: 'FETCH_SCHEDULE_STUDENT',
 				status: false,
 			});
 		}
 	};
 
 	useEffect(() => {
-		fetchScheduleStudyTeacher();
+		fetchScheduleStudyStudent();
 	}, [filters]);
 
 	const fetchNewScheduleList = (date) => {
@@ -75,62 +75,12 @@ const ScheduleStudyTeacher = () => {
 		try {
 			//0 - ,1-Bắt đầu , 2-Vào lớp học, 3-Kết thúc
 			const {idx, btnID, btnName, scheduleID} = data;
-			if (btnID === 1) {
-				setIsLoading({
-					type: 'FETCH_SCHEDULE_TEACHER',
-					status: true,
-				});
-				const res = await zoomRoomApi.createRoom(scheduleID);
-				if (res.status === 200) {
-					const newScheduleTeacherList = [...scheduleTeacherList];
-					const newScheduleTeacher: IScheduleZoom = {
-						...newScheduleTeacherList[idx],
-						ButtonName: 'Vào lớp học',
-						ButtonID: 2,
-					};
-					newScheduleTeacherList.splice(idx, 1, newScheduleTeacher);
-					setScheduleTeacherList(newScheduleTeacherList);
-					setIsLoading({
-						type: 'FETCH_SCHEDULE_TEACHER',
-						status: false,
-					});
-					if (scheduleID) {
-						window.open(`/course/zoom-view/${scheduleID}`);
-					}
-				}
-			}
 			if (btnID === 2 && scheduleID) {
 				window.open(`/course/zoom-view/${scheduleID}`);
-			}
-			if (btnID === 3 && scheduleID) {
-				setIsLoading({
-					type: 'FETCH_SCHEDULE_TEACHER',
-					status: true,
-				});
-				const res = await zoomRoomApi.closeRoom(scheduleID);
-				if (res.status === 200) {
-					const newScheduleTeacherList = [...scheduleTeacherList];
-					const newScheduleTeacher: IScheduleZoom = {
-						...newScheduleTeacherList[idx],
-						ButtonName: '',
-						ButtonID: 0,
-					};
-					newScheduleTeacherList.splice(idx, 1, newScheduleTeacher);
-					setScheduleTeacherList(newScheduleTeacherList);
-					setIsLoading({
-						type: 'FETCH_SCHEDULE_TEACHER',
-						status: false,
-					});
-				}
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
 			console.log('fetchConfigAccount', error.message);
-		} finally {
-			setIsLoading({
-				type: 'FETCH_SCHEDULE_TEACHER',
-				status: false,
-			});
 		}
 	};
 
@@ -178,16 +128,16 @@ const ScheduleStudyTeacher = () => {
 
 	return (
 		<div className="row">
-			<TitlePage title="Lịch dạy giáo viên" />
+			<TitlePage title="Lịch học của học viên" />
 			<div className="col-12">
 				<Card>
 					<CDCalendar
 						isLoaded={
-							isLoading.type === 'FETCH_SCHEDULE_TEACHER' && isLoading.status
+							isLoading.type === 'FETCH_SCHEDULE_STUDENT' && isLoading.status
 								? false
 								: true
 						}
-						eventList={calendarFm(scheduleTeacherList)}
+						eventList={calendarFm(scheduleStudentList)}
 						isStudyZoom={true}
 						fetchStudyZoom={debounceFetchScheduleList}
 						handleStudyZoom={onHandleZoom}
@@ -197,4 +147,4 @@ const ScheduleStudyTeacher = () => {
 		</div>
 	);
 };
-export default ScheduleStudyTeacher;
+export default ScheduleStudyStudent;

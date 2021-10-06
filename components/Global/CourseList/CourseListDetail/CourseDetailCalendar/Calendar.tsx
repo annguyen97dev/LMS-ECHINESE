@@ -1,72 +1,136 @@
-import {yupResolver} from '@hookform/resolvers/yup';
 import {Button, Popover, Spin} from 'antd';
-import Form from 'antd/lib/form/Form';
-import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Calendar, momentLocalizer} from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import {useForm} from 'react-hook-form';
-import * as yup from 'yup';
-import InputTextField from '~/components/FormControl/InputTextField';
-import UploadFileField from '~/components/FormControl/UploadFileField';
+import {useWrap} from '~/context/wrap';
+import CourseDetailUploadFile from './CourseDetailUploadFile';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
 
-const CDCalendar = (props) => {
+CDCalendar.propTypes = {
+	isLoading: PropTypes.shape({
+		type: PropTypes.string.isRequired,
+		status: PropTypes.bool.isRequired,
+	}),
+	eventList: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.number.isRequired,
+			title: PropTypes.string.isRequired,
+			start: PropTypes.instanceOf(Date).isRequired,
+			end: PropTypes.instanceOf(Date).isRequired,
+			resource: PropTypes.object,
+		})
+	).isRequired,
+	isLoaded: PropTypes.bool,
+	//
+	isUploadDocument: PropTypes.bool,
+	handleUploadDocument: PropTypes.func,
+	//
+	isStudyZoom: PropTypes.bool,
+	fetchStudyZoom: PropTypes.func,
+	handleStudyZoom: PropTypes.func,
+	handleEndStudyZoom: PropTypes.func,
+};
+CDCalendar.defaultProps = {
+	isLoading: {type: '', status: false},
+	eventList: [],
+	isLoaded: false,
+	//
+	isUploadDocument: false,
+	handleUploadDocument: null,
+	//
+	isStudyZoom: false,
+	fetchStudyZoom: null,
+	handleStudyZoom: null,
+	handleEndStudyZoom: null,
+};
+function CDCalendar(props) {
 	const {
 		isLoading,
-		isUploadDocument,
 		eventList,
 		isLoaded,
+		isUploadDocument,
 		handleUploadDocument,
+		//
+		isStudyZoom,
+		fetchStudyZoom,
+		handleStudyZoom,
+		handleEndStudyZoom,
 	} = props;
-	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [courseScheduleID, setCourseScheduleID] = useState(0);
+	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
-	const schema = yup.object().shape({
-		CourseScheduleID: yup.number().required('Bạn không được để trống'),
-		File: yup
-			.array()
-			.min(1, 'Bạn phải chọn ít nhất 1 file')
-			.nullable()
-			.required('Bạn không được để trống'),
-	});
-
-	const defaultValuesInit = {
-		CourseScheduleID: 0,
-		File: [],
-	};
-
-	const form = useForm({
-		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
-	});
-
-	useEffect(() => {
-		if (!isModalVisible) {
-			form.reset({...defaultValuesInit});
-		}
-		if (!courseScheduleID) return;
-		form.setValue('CourseScheduleID', courseScheduleID);
-	}, [isModalVisible]);
-
-	const checkHandleUploadDocument = (data) => {
-		if (!handleUploadDocument) return;
-		handleUploadDocument(data).then((res) => {
-			if (res && res.status === 200) {
-				closeModal();
-				form.reset({...defaultValuesInit});
-			}
-		});
-	};
+	const {userInformation} = useWrap();
 	const middlewareUploadImage = (ID) => {
 		setCourseScheduleID(+ID);
 		openModal();
 	};
-	const styleEvent = ({event}, idx) => {
+
+	const checkFetchStudyZoom = (date) => {
+		if (!fetchStudyZoom) return;
+		fetchStudyZoom(date);
+	};
+
+	const checkHandleStudyZoom = (data: {
+		idx: number;
+		btnID: number;
+		btnName: string;
+		scheduleID: number;
+	}) => {
+		if (!handleStudyZoom) return;
+		handleStudyZoom(data);
+	};
+
+	const checkTypeButtonStudyZoom = (data: {
+		idx: number;
+		btnID: number;
+		btnName: string;
+		scheduleID: number;
+	}) => {
+		const {btnID, btnName} = data;
+		if (!btnID) return;
+		if (userInformation?.RoleID === 3 && btnID === 2) {
+			return (
+				<Button
+					size="middle"
+					className="mt-3 btn-success w-100"
+					onClick={() => {
+						checkHandleStudyZoom(data);
+					}}
+				>
+					{btnName}
+				</Button>
+			);
+		}
+		if (userInformation?.RoleID === 2) {
+			let cls;
+			if (btnID === 1) {
+				cls = 'mt-3 btn-warning w-100';
+			}
+			if (btnID === 2) {
+				cls = 'mt-3 btn-success w-100';
+			}
+			if (btnID === 3) {
+				cls = 'mt-3 btn-secondary w-100';
+			}
+			return (
+				<Button
+					size="middle"
+					className={cls}
+					onClick={() => {
+						checkHandleStudyZoom(data);
+					}}
+				>
+					{btnName}
+				</Button>
+			);
+		}
+	};
+
+	const styleEvent = ({event}) => {
 		const {
 			ID,
 			CourseID,
@@ -77,34 +141,46 @@ const CDCalendar = (props) => {
 			LinkDocument,
 			//
 			StudyTimeName,
-		}: ICourseDetailSchedule = event.resource;
+			// ZOOM
+			ButtonID: btnID,
+			ButtonName: btnName,
+			idx,
+		} = event.resource;
 		const content = (
 			<div className="course-dt-event-info">
 				<ul>
-					<li>
-						<span>Môn:</span> {SubjectName}
-					</li>
+					{SubjectName && (
+						<li>
+							<span>Môn:</span> {SubjectName}
+						</li>
+					)}
 					{RoomName && (
 						<li>
 							<span>Phòng:</span> {RoomName}
 						</li>
 					)}
-					<li>
-						<span>GV:</span> {TeacherName}
-					</li>
-					<li>
-						<span>Trung tâm:</span> {BranchName}
-					</li>
-					<li>
-						<span>Tài liệu: </span>
-						{LinkDocument ? (
-							<a href={LinkDocument} target="_blank" download>
-								<i>Click to download</i>
-							</a>
-						) : (
-							'Trống'
-						)}
-					</li>
+					{TeacherName && (
+						<li>
+							<span>GV:</span> {TeacherName}
+						</li>
+					)}
+					{BranchName && (
+						<li>
+							<span>Trung tâm:</span> {BranchName}
+						</li>
+					)}
+					{LinkDocument && (
+						<li>
+							<span>Tài liệu: </span>
+							{LinkDocument ? (
+								<a href={LinkDocument} target="_blank" download>
+									<i>Click to download</i>
+								</a>
+							) : (
+								'Trống'
+							)}
+						</li>
+					)}
 					{isUploadDocument && (
 						<li>
 							<Button
@@ -116,11 +192,22 @@ const CDCalendar = (props) => {
 							</Button>
 						</li>
 					)}
+					{isStudyZoom && (
+						<li>
+							{checkTypeButtonStudyZoom({
+								idx,
+								btnID,
+								btnName,
+								scheduleID: ID,
+							})}
+						</li>
+					)}
 				</ul>
 			</div>
 		);
 		return (
 			<Popover
+				zIndex={999}
 				title={`Ca: ${StudyTimeName}`}
 				content={content}
 				placement="rightTop"
@@ -136,7 +223,7 @@ const CDCalendar = (props) => {
 	};
 	const styleAgenda = ({event}) => {
 		const {
-			CourseID,
+			ID,
 			RoomName,
 			BranchName,
 			TeacherName,
@@ -144,42 +231,63 @@ const CDCalendar = (props) => {
 			LinkDocument,
 			//
 			StudyTimeName,
-		}: ICourseDetailSchedule = event.resource;
+			// ZOOM
+			ButtonID: btnID,
+			ButtonName: btnName,
+			idx,
+		} = event.resource;
 		return (
 			<div className="course-dt-event">
 				<div className="time">Ca: {StudyTimeName}</div>
 				<div className="course-dt-event-info">
 					<ul>
-						<li>
-							<span>Môn:</span> {SubjectName}
-						</li>
+						{SubjectName && (
+							<li>
+								<span>Môn:</span> {SubjectName}
+							</li>
+						)}
 						{RoomName && (
 							<li>
 								<span>Phòng:</span> {RoomName}
 							</li>
 						)}
-						<li>
-							<span>GV:</span> {TeacherName}
-						</li>
-						<li>
-							<span>Trung tâm:</span> {BranchName}
-						</li>
-						<li>
-							<span>Tài liệu: </span>
-							{LinkDocument ? (
-								<a href={LinkDocument} target="_blank" download>
-									<i>Click to download</i>
-								</a>
-							) : (
-								'Trống'
-							)}
-						</li>
+						{TeacherName && (
+							<li>
+								<span>GV:</span> {TeacherName}
+							</li>
+						)}
+						{BranchName && (
+							<li>
+								<span>Trung tâm:</span> {BranchName}
+							</li>
+						)}
+						{LinkDocument && (
+							<li>
+								<span>Tài liệu: </span>
+								{LinkDocument ? (
+									<a href={LinkDocument} target="_blank" download>
+										<i>Click to download</i>
+									</a>
+								) : (
+									'Trống'
+								)}
+							</li>
+						)}
+						{isStudyZoom && (
+							<li>
+								{checkTypeButtonStudyZoom({
+									idx,
+									btnID,
+									btnName,
+									scheduleID: ID,
+								})}
+							</li>
+						)}
 					</ul>
 				</div>
 			</div>
 		);
 	};
-
 	const styleDay = ({event}) => {
 		const {
 			ID,
@@ -191,34 +299,46 @@ const CDCalendar = (props) => {
 			LinkDocument,
 			//
 			StudyTimeName,
-		}: ICourseDetailSchedule = event.resource;
+			// ZOOM
+			ButtonID: btnID,
+			ButtonName: btnName,
+			idx,
+		} = event.resource;
 		const content = (
 			<div className="course-dt-event-info">
 				<ul>
-					<li>
-						<span>Môn:</span> {SubjectName}
-					</li>
+					{SubjectName && (
+						<li>
+							<span>Môn:</span> {SubjectName}
+						</li>
+					)}
 					{RoomName && (
 						<li>
 							<span>Phòng:</span> {RoomName}
 						</li>
 					)}
-					<li>
-						<span>GV:</span> {TeacherName}
-					</li>
-					<li>
-						<span>Trung tâm:</span> {BranchName}
-					</li>
-					<li>
-						<span>Tài liệu: </span>
-						{LinkDocument ? (
-							<a href={LinkDocument} target="_blank" download>
-								<i>Click to download</i>
-							</a>
-						) : (
-							'Trống'
-						)}
-					</li>
+					{TeacherName && (
+						<li>
+							<span>GV:</span> {TeacherName}
+						</li>
+					)}
+					{BranchName && (
+						<li>
+							<span>Trung tâm:</span> {BranchName}
+						</li>
+					)}
+					{LinkDocument && (
+						<li>
+							<span>Tài liệu: </span>
+							{LinkDocument ? (
+								<a href={LinkDocument} target="_blank" download>
+									<i>Click to download</i>
+								</a>
+							) : (
+								'Trống'
+							)}
+						</li>
+					)}
 					{isUploadDocument && (
 						<li>
 							<Button
@@ -230,11 +350,22 @@ const CDCalendar = (props) => {
 							</Button>
 						</li>
 					)}
+					{isStudyZoom && (
+						<li>
+							{checkTypeButtonStudyZoom({
+								idx,
+								btnID,
+								btnName,
+								scheduleID: ID,
+							})}
+						</li>
+					)}
 				</ul>
 			</div>
 		);
 		return (
 			<Popover
+				zIndex={999}
 				title={`Ca: ${StudyTimeName}`}
 				content={content}
 				placement="bottomLeft"
@@ -248,133 +379,67 @@ const CDCalendar = (props) => {
 			</Popover>
 		);
 	};
+
 	return (
-		<div
-			className={`wrap-calendar ${!isLoaded ? 'wrap-calendar-loading' : ''}`}
-		>
-			<Calendar
-				className="custom-calendar"
-				localizer={localizer}
-				events={eventList}
-				startAccessor="start"
-				endAccessor="end"
-				style={{minHeight: 600}}
-				popup
-				defaultView="month"
-				showMultiDayTimes={false}
-				formats={{
-					agendaDateFormat: 'DD/MM/YYYY',
-					monthHeaderFormat: (date) => moment(date).format('MM/YYYY'),
-					dayHeaderFormat: (date) => {
-						const dayArr = [
-							'Chủ Nhật',
-							'Thứ 2',
-							'Thứ 3',
-							'Thứ 4',
-							'Thứ 5',
-							'Thứ 6',
-							'Thứ 7',
-						];
-						const dayOffWeek = dayArr[moment(date).day()];
-						return `${dayOffWeek} - ${moment(date).format('DD/MM')}`;
-					},
-					dayRangeHeaderFormat: ({start, end}) =>
-						`${moment(start).format('DD/MM')} - ${moment(end).format('DD/MM')}`,
-				}}
-				components={{
-					event: styleEvent,
-					day: {
-						event: styleDay,
-					},
-					agenda: {event: styleAgenda},
-				}}
-				messages={{}}
-			/>
-			<Spin className="calendar-loading" size="large" />
+		<div className="wrap-calendar">
+			<Spin
+				spinning={!isLoaded}
+				size="large"
+				wrapperClassName="calendar-loading"
+			>
+				<Calendar
+					className="custom-calendar"
+					localizer={localizer}
+					events={eventList}
+					startAccessor="start"
+					endAccessor="end"
+					style={{minHeight: 600}}
+					popup
+					defaultView="month"
+					showMultiDayTimes={false}
+					onRangeChange={checkFetchStudyZoom}
+					handleDragStart={() => null}
+					formats={{
+						agendaDateFormat: 'DD/MM/YYYY',
+						monthHeaderFormat: (date) => moment(date).format('MM/YYYY'),
+						dayHeaderFormat: (date) => {
+							const dayArr = [
+								'Chủ Nhật',
+								'Thứ 2',
+								'Thứ 3',
+								'Thứ 4',
+								'Thứ 5',
+								'Thứ 6',
+								'Thứ 7',
+							];
+							const dayOffWeek = dayArr[moment(date).day()];
+							return `${dayOffWeek} - ${moment(date).format('DD/MM')}`;
+						},
+						dayRangeHeaderFormat: ({start, end}) =>
+							`${moment(start).format('DD/MM')} - ${moment(end).format(
+								'DD/MM'
+							)}`,
+					}}
+					components={{
+						event: styleEvent,
+						day: {
+							event: styleDay,
+						},
+						agenda: {event: styleAgenda},
+					}}
+					messages={{}}
+				/>
+			</Spin>
 			{isUploadDocument && (
-				<Modal
-					title="Thêm tài liệu cho buổi học"
-					visible={isModalVisible}
-					footer={null}
-					onCancel={closeModal}
-					width={400}
-				>
-					<div className="wrap-form">
-						<Form
-							layout="vertical"
-							onFinish={form.handleSubmit(checkHandleUploadDocument)}
-						>
-							<div className="row">
-								<div className="col-md-12 col-12">
-									<InputTextField
-										form={form}
-										name="CourseScheduleID"
-										label="Mã buổi học"
-										disabled={true}
-									/>
-								</div>
-								<div className="col-md-12 col-12">
-									<UploadFileField
-										form={form}
-										name="File"
-										label="Tài liệu buổi học"
-										max={1}
-									/>
-								</div>
-								<div
-									className="col-md-12 col-12 mt-3"
-									style={{textAlign: 'center'}}
-								>
-									<button
-										type="submit"
-										className="btn btn-primary"
-										disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
-									>
-										Thêm tài liệu
-										{isLoading.type == 'ADD_DATA' && isLoading.status && (
-											<Spin className="loading-base" />
-										)}
-									</button>
-								</div>
-							</div>
-						</Form>
-					</div>
-				</Modal>
+				<CourseDetailUploadFile
+					isLoading={isLoading}
+					isModalVisible={isModalVisible}
+					handleCloseModal={closeModal}
+					handleUploadDocument={handleUploadDocument}
+					courseScheduleID={courseScheduleID}
+				/>
 			)}
 		</div>
 	);
-};
-CDCalendar.propTypes = {
-	isLoading: PropTypes.shape({
-		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
-	}),
-	isUploadDocument: PropTypes.bool,
-	eventList: PropTypes.arrayOf(
-		PropTypes.shape({
-			id: PropTypes.number.isRequired,
-			title: PropTypes.string.isRequired,
-			start: PropTypes.instanceOf(Date).isRequired,
-			end: PropTypes.instanceOf(Date).isRequired,
-			resource: PropTypes.shape({
-				CourseID: PropTypes.number,
-				RoomName: PropTypes.string,
-				BranchName: PropTypes.string,
-				TeacherName: PropTypes.string,
-				SubjectName: PropTypes.string,
-				//
-				StudyTimeName: PropTypes.string,
-			}),
-		})
-	).isRequired,
-	isLoaded: PropTypes.bool,
-	handleUploadDocument: PropTypes.func,
-};
-CDCalendar.defaultProps = {
-	isLoading: {type: '', status: false},
-	isUploadDocument: false,
-	eventList: [],
-	isLoaded: false,
-	handleUploadDocument: null,
-};
+}
 export default CDCalendar;

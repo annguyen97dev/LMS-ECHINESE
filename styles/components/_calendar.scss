@@ -6,20 +6,8 @@
 		border-radius: 0.575rem;
 	}
 	.calendar-loading {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		z-index: 4;
-		display: none;
 		.ant-spin-dot-item.ant-spin-dot-item {
 			background: $primary-color;
-		}
-	}
-	&.wrap-calendar-loading {
-		position: relative;
-		.calendar-loading {
-			display: inline-block;
 		}
 	}
 }
@@ -61,6 +49,9 @@
 	.rbc-agenda-event-cell {
 		* {
 			font-size: 14px;
+		}
+		.w-100 {
+			width: auto !important;
 		}
 	}
 	@include max-media(767px) {

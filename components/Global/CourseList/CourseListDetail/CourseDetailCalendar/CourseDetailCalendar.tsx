@@ -64,6 +64,10 @@ function CourseDetailCalendar(props) {
 	};
 	const fetchCalendarList = async () => {
 		try {
+			setIsLoading({
+				type: 'FETCH_COURSE_DETAIL_CALENDAR',
+				status: true,
+			});
 			const res = await courseDetailApi.getAll({CourseID: ID});
 			if (res.status === 200) {
 				setCalendarList(res.data.data);
@@ -74,6 +78,11 @@ function CourseDetailCalendar(props) {
 			}
 		} catch (error) {
 			showNoti('error', error.message);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_COURSE_DETAIL_CALENDAR',
+				status: false,
+			});
 		}
 	};
 
@@ -126,7 +135,11 @@ function CourseDetailCalendar(props) {
 			<CDCalendar
 				isLoading={isLoading}
 				isUploadDocument={true}
-				isLoaded={isLoaded}
+				isLoaded={
+					isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status
+						? false
+						: true
+				}
 				eventList={calendarDateFormat(calendarList)}
 				handleUploadDocument={onUploadDocument}
 			/>

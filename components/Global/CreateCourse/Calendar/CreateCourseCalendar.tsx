@@ -86,29 +86,34 @@ const CreateCourseCalendar = (props) => {
 		}
 	};
 	return (
-		<div
-			className={`wrap-calendar ${!isLoaded ? 'wrap-calendar-loading' : ''}`}
-		>
-			<Calendar
-				className="custom-calendar"
-				localizer={localizer}
-				events={eventList}
-				startAccessor="start"
-				endAccessor="end"
-				style={{minHeight: 600}}
-				popup={true}
-				views={['month']}
-				defaultView="month"
-				showMultiDayTimes={true}
-				eventPropGetter={customEventPropGetter}
-				components={{event: styleEvent}}
-				formats={{
-					monthHeaderFormat: (date) => moment(date).format('MM/YYYY'),
-					dayRangeHeaderFormat: ({start, end}) =>
-						`${moment(start).format('DD/MM')} - ${moment(end).format('DD/MM')}`,
-				}}
-			/>
-			<Spin className="calendar-loading" size="large" />
+		<div className="wrap-calendar">
+			<Spin
+				spinning={!isLoaded}
+				size="large"
+				wrapperClassName="calendar-loading"
+			>
+				<Calendar
+					className="custom-calendar"
+					localizer={localizer}
+					events={eventList}
+					startAccessor="start"
+					endAccessor="end"
+					style={{minHeight: 600}}
+					popup={true}
+					views={['month']}
+					defaultView="month"
+					showMultiDayTimes={true}
+					eventPropGetter={customEventPropGetter}
+					components={{event: styleEvent}}
+					formats={{
+						monthHeaderFormat: (date) => moment(date).format('MM/YYYY'),
+						dayRangeHeaderFormat: ({start, end}) =>
+							`${moment(start).format('DD/MM')} - ${moment(end).format(
+								'DD/MM'
+							)}`,
+					}}
+				/>
+			</Spin>
 			<Modal
 				className="custom-calendar-modal create-course-modal"
 				getContainer=".create-course-wrap-modal"
