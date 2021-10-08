@@ -5,7 +5,6 @@ import "../styles/global.scss";
 import React, { useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/client";
 import Head from "next/head";
-import Layout, { siteTitle } from "../components/layout";
 import Dashboard from "~/pages/dashboard";
 import { Provider as AuthProvider } from "next-auth/client";
 import { useRouter } from "next/router";
@@ -75,7 +74,7 @@ export default function App({ Component, pageProps }) {
       <AuthProvider session={pageProps.session}>
         <WrapProvider>
           <Layout>
-              <Component {...pageProps} />
+            <Component {...pageProps} />
           </Layout>
         </WrapProvider>
       </AuthProvider>
