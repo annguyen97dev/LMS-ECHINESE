@@ -251,6 +251,7 @@ const CourseList = () => {
 									isLoading={isLoading}
 									dataSource={courseList}
 									totalPage={totalPage}
+									currentPage={filters.pageIndex}
 									getPagination={getPagination}
 								>
 									<CourseListUpdate

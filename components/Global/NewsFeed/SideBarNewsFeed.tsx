@@ -1,8 +1,12 @@
 import {Card, Drawer, Input, Select} from 'antd';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {Link, MoreHorizontal} from 'react-feather';
+import React, {useEffect, useState} from 'react';
+import {MoreHorizontal} from 'react-feather';
+import {packageApi, packageStudentApi} from '~/apiBase';
+import {useWrap} from '~/context/wrap';
 import {optionCommonPropTypes} from '~/utils/proptypes';
+import TopPackageNewsFeed from './TopPackageNewsFeed';
 const {Search} = Input;
 const {Option} = Select;
 
@@ -38,6 +42,14 @@ function SideBarNewsFeed(props) {
 	const {name, idTeam, idGroup} = filtersData;
 	const {teamOptionList, groupOptionList} = optionList;
 	const [visible, setVisible] = useState(false);
+	const [isLoading, setIsLoading] = useState({
+		type: '',
+		status: false,
+	});
+	const {showNoti, userInformation} = useWrap();
+	// PACKAGE TOP LIST
+	const [topPackageList, setTopPackageList] = useState<IPackage[]>([]);
+
 	const showSideBar = () => {
 		setVisible(true);
 	};
@@ -53,6 +65,59 @@ function SideBarNewsFeed(props) {
 		handleFilters(field, value);
 		closeSideBar();
 	};
+
+	// PACKAGE
+	const fetchTopPackageList = async () => {
+		try {
+			if (userInformation?.RoleID !== 3) return;
+			const res = await packageApi.getAll({Type: 2});
+			if (res.status === 200) {
+				setTopPackageList(res.data.data);
+			}
+		} catch (error) {
+			console.log('fetchTopPackageList', error.message);
+		}
+	};
+
+	useEffect(() => {
+		fetchTopPackageList();
+	}, [userInformation]);
+
+	const onBuyPackage = async (data: {
+		ID: number;
+		Price: string;
+		PaymentMethodsID: number;
+		Note: string;
+	}) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		try {
+			const {ID, Price, PaymentMethodsID, Note} = data;
+			const newPackageStudent = {
+				StudentID: userInformation.UserInformationID,
+				SetPackageID: ID,
+				Paid: parseInt(Price.toString().replace(/\D/g, '')),
+				PaymentMethodsID,
+				Note,
+			};
+			const res = await packageStudentApi.add(newPackageStudent);
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				fetchTopPackageList();
+			}
+			return res;
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
+	};
+
 	const SideBar = () => (
 		<>
 			<Card className="card-newsfeed" bordered={false}>
@@ -64,6 +129,22 @@ function SideBarNewsFeed(props) {
 					onSearch={(value) => checkHandleFilters('name', value)}
 				/>
 			</Card>
+			{/* PACKAGE ONLY STUDENT */}
+			{userInformation?.RoleID === 3 && (
+				<Card className="card-newsfeed" bordered={false}>
+					<div className="card-newsfeed__label font-weight-black d-flex justify-content-between">
+						BỘ ĐỀ CAO CẤP
+						<Link href="/package/package-store?type=2">
+							<a className="label-nf font-weight-black">Xem thêm</a>
+						</Link>
+					</div>
+					<TopPackageNewsFeed
+						isLoading={isLoading}
+						topPackageList={topPackageList}
+						handleBuyPackage={onBuyPackage}
+					/>
+				</Card>
+			)}
 			<Card className="card-newsfeed" bordered={false}>
 				<div className="card-newsfeed-wrap__label">
 					<p className="card-newsfeed__label font-weight-black">Trung tâm</p>
@@ -93,7 +174,9 @@ function SideBarNewsFeed(props) {
 				</ul>
 				{/* CHIA CÁCH BÌNH YÊN */}
 				<div className="card-newsfeed-wrap__label">
-					<p className="card-newsfeed__label font-weight-black">Nhóm</p>
+					<p className="card-newsfeed__label have-plus font-weight-black">
+						Nhóm
+					</p>
 					{groupFormComponent}
 				</div>
 				<Select
