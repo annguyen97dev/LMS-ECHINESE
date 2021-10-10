@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from "react";
-import ExpandTable from "~/components/ExpandTable";
-import { Eye } from "react-feather";
-import { Card, Tooltip } from "antd";
+import { Tooltip } from "antd";
 import Link from "next/link";
-import { data } from "~/lib/customer-student/data";
-import SortBox from "~/components/Elements/SortBox";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import LayoutBase from "~/components/LayoutBase";
-import { useWrap } from "~/context/wrap";
-import StudentForm from "~/components/Global/Customer/Student/StudentForm";
+import React, { useEffect, useState } from "react";
+import { Eye } from "react-feather";
 import {
-  studentApi,
   areaApi,
-  districtApi,
-  wardApi,
-  jobApi,
-  puroseApi,
   branchApi,
-  sourceInfomationApi,
+  jobApi,
   parentsApi,
+  puroseApi,
+  sourceInfomationApi,
   staffApi,
+  studentApi,
 } from "~/apiBase";
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
+import SortBox from "~/components/Elements/SortBox";
+import StudentForm from "~/components/Global/Customer/Student/StudentForm";
+import LayoutBase from "~/components/LayoutBase";
+import PowerTable from "~/components/PowerTable";
+import FilterColumn from "~/components/Tables/FilterColumn";
+import { useWrap } from "~/context/wrap";
 
 let pageIndex = 1;
 
@@ -471,8 +468,6 @@ const StudentData = () => {
 
   // EXPAND ROW
 
-  console.log("Data Row: ", dataRow);
-
   const expandedRowRender = (data, index) => {
     return (
       <>
@@ -506,33 +501,49 @@ const StudentData = () => {
   // Columns
   const columns = [
     {
+      title: "Mã học viên",
+      dataIndex: "UserCode",
+    },
+    {
+      title: "Họ tên",
+      dataIndex: "FullNameUnicode",
+      render: (nameStudent) => (
+        <p className="font-weight-black">{nameStudent}</p>
+      ),
+      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
+    },
+    {
+      title: "Tên tiếng Trung",
+      dataIndex: "ChineseName",
+      render: (text) => <p className="font-weight-black">{text}</p>,
+    },
+    {
       title: "Tỉnh/TP",
       dataIndex: "AreaName",
 
       // ...FilterColumn("city")
     },
     {
-      title: "Họ tên",
-      dataIndex: "FullNameUnicode",
-      render: (nameStudent) => (
-        <p className="font-weight-blue">{nameStudent}</p>
-      ),
-      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
-    },
-    {
       title: "SĐT",
       dataIndex: "Mobile",
-      // ...FilterColumn("tel")
     },
     {
       title: "Email",
       dataIndex: "Email",
-      // ...FilterColumn("email")
     },
     {
       title: "Nguồn",
       dataIndex: "SourceInformationName",
-      //  ...FilterColumn("introducer")
+    },
+    {
+      title: "Facebook",
+      dataIndex: "LinkFaceBook",
+      render: (link) =>
+        link && (
+          <a className="font-weight-black" href={link} target="_blank">
+            Link
+          </a>
+        ),
     },
     {
       title: "Trạng thái",
@@ -550,28 +561,52 @@ const StudentData = () => {
         );
       },
     },
-
     {
       title: "",
-      render: (record) => (
-        <Link
-          href={{
-            pathname: "/customer/student/student-list/student-detail/[slug]",
-            query: { slug: record.UserInformationID },
-          }}
-        >
-          <Tooltip title="Xem chi tiết">
-            <button className="btn btn-icon">
-              <Eye />
-            </button>
-          </Tooltip>
-        </Link>
+      width: 100,
+      render: (record, _, index) => (
+        <div onClick={(e) => e.stopPropagation()}>
+          <StudentForm
+            index={index}
+            dataRow={record}
+            listDataForm={checkEmptyData && listDataForm}
+            _handleSubmit={(dataSubmit, index) => {
+              let newDataSource = [...dataSource];
+              newDataSource.splice(index, 1, {
+                ...dataSubmit,
+                AreaName:
+                  dataSubmit.AreaID &&
+                  listDataForm.Area.find(
+                    (item) => item.value == dataSubmit.AreaID
+                  ).title,
+                SourceInformationName:
+                  dataSubmit.SourceInformationID &&
+                  listDataForm.SourceInformation.find(
+                    (item) => item.value == dataSubmit.SourceInformationID
+                  ).title,
+              });
+              setDataSource(newDataSource);
+            }}
+          />
+          <Link
+            href={{
+              pathname: "/customer/student/student-list/student-detail/[slug]",
+              query: { slug: record.UserInformationID },
+            }}
+          >
+            <Tooltip title="Xem chi tiết">
+              <button className="btn btn-icon">
+                <Eye />
+              </button>
+            </Tooltip>
+          </Link>
+        </div>
       ),
     },
   ];
 
   return (
-    <ExpandTable
+    <PowerTable
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -593,8 +628,6 @@ const StudentData = () => {
           />
         </div>
       }
-      handleExpand={(data) => setDataRow(data)}
-      expandable={{ expandedRowRender }}
     />
   );
 };

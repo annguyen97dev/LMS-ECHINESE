@@ -383,6 +383,10 @@ const Teacher = () => {
 
 	const columns = [
 		{
+			title: 'Mã giáo viên',
+			dataIndex: 'UserCode',
+		},
+		{
 			title: 'Họ và tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
@@ -391,7 +395,12 @@ const Teacher = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>,
 		},
 		{
-			title: 'Tỉnh/Thành phố',
+			title: 'Tên tiếng Trung',
+			dataIndex: 'ChineseName',
+			render: (text) => <p className="font-weight-black">{text}</p>,
+		},
+		{
+			title: 'Tỉnh/TP',
 			dataIndex: 'AreaName',
 			...FilterColumn(
 				'AreaID',
@@ -401,7 +410,6 @@ const Teacher = () => {
 				optionAreaSystemList.areaList
 			),
 			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : '',
-			render: (text) => <p className="font-weight-black">{text}</p>,
 		},
 		{
 			title: 'Giới tính',
@@ -423,6 +431,16 @@ const Teacher = () => {
 			render: (date) => date && moment(date).format('DD/MM/YYYY'),
 		},
 		{
+			title: 'Facebook',
+			dataIndex: 'LinkFaceBook',
+			render: (link) =>
+				link && (
+					<a className="font-weight-black" href={link} target="_blank">
+						Link
+					</a>
+				),
+		},
+		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusID',
 			align: 'center',
@@ -442,6 +460,7 @@ const Teacher = () => {
 		},
 
 		{
+			width: 100,
 			align: 'center',
 			render: (value, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
@@ -520,7 +539,6 @@ const Teacher = () => {
 					<TeacherForm
 						isClearForm={isClearForm}
 						isLoading={isLoading}
-						// optionAreaList={areaList}
 						optionAreaSystemList={optionAreaSystemList}
 						optionBranchList={branchList}
 						handleCreateTeacher={onCreateTeacher}

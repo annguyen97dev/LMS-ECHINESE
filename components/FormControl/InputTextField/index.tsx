@@ -16,6 +16,7 @@ const InputTextField = (props) => {
 		allowClear,
 		handleFormatCurrency,
 		isDynamicField,
+		isRequired,
 	} = props;
 
 	const {errors} = form.formState;
@@ -48,6 +49,8 @@ const InputTextField = (props) => {
 			className={`${className} ${
 				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
 			}`}
+			required={isRequired}
+			colon
 		>
 			<Controller
 				name={name}
@@ -90,6 +93,7 @@ InputTextField.propTypes = {
 	className: PropTypes.string,
 	allowClear: PropTypes.bool,
 	isDynamicField: PropTypes.bool,
+	isRequired: PropTypes.bool,
 };
 InputTextField.defaultProps = {
 	label: '',
@@ -101,5 +105,6 @@ InputTextField.defaultProps = {
 	className: '',
 	allowClear: true,
 	isDynamicField: false,
+	isRequired: false,
 };
 export default InputTextField;

@@ -1,35 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { Card, Form, Divider, Spin } from "antd";
 import {
   LoadingOutlined,
-  PlusOutlined,
+  MailOutlined,
   SearchOutlined,
+  WhatsAppOutlined,
 } from "@ant-design/icons";
-
-import LayoutBase from "~/components/LayoutBase";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Divider, Form, Modal, Spin, Tooltip } from "antd";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { RotateCcw } from "react-feather";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import InputTextField from "~/components/FormControl/InputTextField";
+import { districtApi, studentApi, wardApi } from "~/apiBase";
+import AvatarBase from "~/components/Elements/AvatarBase.tsx";
 import DateField from "~/components/FormControl/DateField";
+import InputTextField from "~/components/FormControl/InputTextField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
-import { useWrap } from "~/context/wrap";
-import AvatarBase from "~/components/Elements/AvatarBase.tsx";
-import {
-  studentApi,
-  areaApi,
-  districtApi,
-  wardApi,
-  jobApi,
-  puroseApi,
-  branchApi,
-  sourceInfomationApi,
-  parentsApi,
-  staffApi,
-} from "~/apiBase";
 import TimePickerField from "~/components/FormControl/TimePickerField";
-import { useRouter } from "next/router";
+import LayoutBase from "~/components/LayoutBase";
+import { useWrap } from "~/context/wrap";
 
 let returnSchema = {};
 let schema = null;
@@ -69,6 +59,7 @@ const StudentForm = (props) => {
   const [isStudentDetail, setIsStudentDetail] = useState(
     url.includes("student-list") || url.includes("student-detail")
   );
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { showNoti } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -82,7 +73,9 @@ const StudentForm = (props) => {
   const [listData, setListData] = useState<listData>(listDataForm);
   const [valueEmail, setValueEmail] = useState();
   const [isSearch, setIsSearch] = useState(false);
-
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
   // ------------- ADD data to list --------------
 
   const makeNewData = (data, name) => {
@@ -216,6 +209,8 @@ const StudentForm = (props) => {
   // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
     FullNameUnicode: null,
+    ChineseName: null,
+    LinkFaceBook: null,
     Email: "",
     Mobile: null,
     AreaID: null, //int id Tỉnh/TP
@@ -366,11 +361,12 @@ const StudentForm = (props) => {
   const handleDataRow = (data) => {
     let arrBranch = [];
     let cloneRowData = { ...data };
-
     cloneRowData.Branch.forEach((item, index) => {
       arrBranch.push(item.ID);
     });
     cloneRowData.Branch = arrBranch;
+
+    console.log("CloneRow: ", cloneRowData);
 
     form.reset(cloneRowData);
     cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
@@ -379,312 +375,370 @@ const StudentForm = (props) => {
   };
 
   useEffect(() => {
-    if (dataRow) {
-      handleDataRow(dataRow);
+    if (isModalVisible) {
+      if (dataRow) {
+        handleDataRow(dataRow);
 
-      // let arrBranch = [];
-      // let cloneRowData = { ...dataRow };
-      // cloneRowData.Branch.forEach((item, index) => {
-      //   arrBranch.push(item.ID);
-      // });
-      // cloneRowData.Branch = arrBranch;
-      // form.reset(cloneRowData);
-      // cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
-      // cloneRowData.DistrictID &&
-      //   getDataWithID(cloneRowData.DistrictID, "WardID");
-      // setImageUrl(cloneRowData.Avatar);
+        // let arrBranch = [];
+        // let cloneRowData = { ...dataRow };
+        // cloneRowData.Branch.forEach((item, index) => {
+        //   arrBranch.push(item.ID);
+        // });
+        // cloneRowData.Branch = arrBranch;
+        // form.reset(cloneRowData);
+        // cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
+        // cloneRowData.DistrictID &&
+        //   getDataWithID(cloneRowData.DistrictID, "WardID");
+        // setImageUrl(cloneRowData.Avatar);
+      }
     }
-  }, [dataRow]);
+  }, [isModalVisible]);
 
   return (
-    <div>
-      <div className="col-12 d-flex justify-content-center">
-        <Card title="Phiếu thông tin cá nhân" className="w-70 w-100-mobile">
-          <div className="wrap-form">
-            <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
-              {/*  */}
-
+    <>
+      <button className="btn btn-icon edit" onClick={showModal}>
+        <Tooltip title="Cập nhật">
+          <RotateCcw />
+        </Tooltip>
+      </button>
+      <Modal
+        style={{ top: 20 }}
+        title="Cập nhật học viên"
+        visible={isModalVisible}
+        footer={
+          <div className="row">
+            <div className="col-12 d-flex justify-content-center">
+              <div style={{ paddingRight: 5 }}>
+                <button
+                  type="button"
+                  className="btn btn-primary w-100"
+                  onClick={form.handleSubmit(onSubmit)}
+                  disabled={isLoading.type == "ADD_DATA" && isLoading.status}
+                >
+                  Lưu học viên
+                  {isLoading.type == "ADD_DATA" && isLoading.status && (
+                    <Spin className="loading-base" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+        onCancel={() => setIsModalVisible(false)}
+        className="modal-50 modal-scroll"
+      >
+        <div className="box-form form-staff">
+          <Form layout="vertical">
+            <div className="row">
               {/** ==== Thông tin cơ bản  ====*/}
-              <div className="row">
-                <div className="col-12">
-                  <AvatarBase
-                    imageUrl={imageUrl}
-                    getValue={(value) => form.setValue("Avatar", value)}
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12">
-                  <Divider orientation="center">Thông tin cơ bản</Divider>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <div className="search-box">
-                    <InputTextField
-                      form={form}
-                      name="Email"
-                      label="Email"
-                      handleChange={(value) => setValueEmail(value)}
+              <div className="col-12">
+                <div className="info-modal">
+                  <div className="info-modal-avatar">
+                    <AvatarBase
+                      imageUrl={imageUrl}
+                      getValue={(value) => form.setValue("Avatar", value)}
                     />
-                    {!dataRow && (
-                      <button
-                        type="button"
-                        className="btn-search"
-                        onClick={searchValue}
-                      >
-                        {isLoading.type == "SEARCH_EMAIL" &&
-                        isLoading.status ? (
-                          <Spin
-                            indicator={
-                              <LoadingOutlined style={{ fontSize: 16 }} spin />
-                            }
-                          />
-                        ) : (
-                          <SearchOutlined />
-                        )}
-                      </button>
+                  </div>
+                  <div className="info-modal-content">
+                    {dataRow && (
+                      <div className="box-info-modal">
+                        <p className="name">{dataRow.FullNameUnicode}</p>
+                        <p className="detail">
+                          <span className="icon mobile">
+                            <WhatsAppOutlined />
+                          </span>
+                          <span className="text">{dataRow.Mobile}</span>
+                        </p>
+                        <p className="detail">
+                          <span className="icon email">
+                            <MailOutlined />
+                          </span>
+                          <span className="text">{dataRow.Email}</span>
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>
-
-                <div className="col-md-6 col-12">
+              </div>
+              <div className="col-12">
+                <Divider orientation="center">Thông tin cơ bản</Divider>
+              </div>
+              <div className="col-md-6 col-12">
+                <div className="search-box">
                   <InputTextField
                     form={form}
-                    name="FullNameUnicode"
-                    label="Họ và tên"
+                    name="Email"
+                    label="Email"
+                    handleChange={(value) => setValueEmail(value)}
+                    placeholder="Nhập email"
+                    isRequired={true}
                   />
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <InputTextField
-                    form={form}
-                    name="Mobile"
-                    label="Số điện thoại"
-                  />
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <DateField form={form} name="DOB" label="Ngày sinh" />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <InputTextField form={form} name="CMND" label="Số CMND" />
-                </div>
-                <div className="col-md-6 col-12">
-                  <InputTextField
-                    form={form}
-                    name="CMNDRegister"
-                    label="Nơi cấp CMND"
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <DateField form={form} name="CMNDDate" label="Ngày cấp" />
-                </div>
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="Gender"
-                    label="Giới tính"
-                    optionList={optionGender}
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="JobID"
-                    label="Công việc"
-                    optionList={listData.Job}
-                  />
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              {/** ==== Địa chỉ  ====*/}
-              <div className="row">
-                <div className="col-12">
-                  <Divider orientation="center">Địa chỉ</Divider>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="AreaID"
-                    label="Tỉnh/TP"
-                    optionList={listData.Area}
-                    onChangeSelect={
-                      (value) => handleChange_select(value, "DistrictID") // Select Area to load District
-                    }
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    isLoading={
-                      loadingSelect.name == "DistrictID" && loadingSelect.status
-                    }
-                    form={form}
-                    name="DistrictID"
-                    label="Quận/Huyện"
-                    optionList={listData.DistrictID}
-                    onChangeSelect={
-                      (value) => handleChange_select(value, "WardID") // Select District to load Ward
-                    }
-                  />
-                </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              {/*  */}
-
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    isLoading={
-                      loadingSelect.name == "WardID" && loadingSelect.status
-                    }
-                    form={form}
-                    name="WardID"
-                    label="Phường/Xã"
-                    optionList={listData.WardID}
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <InputTextField
-                    form={form}
-                    name="Address"
-                    label="Mô tả thêm"
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <InputTextField
-                    form={form}
-                    name="HouseNumber"
-                    label="Số nhà/tên đường"
-                  />
-                </div>
-              </div>
-              {/** Hẹn Test */}
-              <div className="row">
-                <div className="col-12">
-                  <Divider orientation="center">
-                    {isStudentDetail ? "Trung tâm" : "Hẹn test"}
-                  </Divider>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    mode={dataRow ? "multiple" : ""}
-                    form={form}
-                    name="Branch"
-                    label="Tên trung tâm"
-                    optionList={listData.Branch}
-                  />
-                </div>
-                {!isStudentDetail && (
-                  <>
-                    <div className="col-md-6 col-12">
-                      <TimePickerField
-                        disabled={isStudentDetail && true}
-                        form={form}
-                        name="ExamAppointmentTime"
-                        label="Giờ hẹn test"
-                      />
-                    </div>
-                    <div className="col-md-6 col-12">
-                      <DateField
-                        disabled={isStudentDetail && true}
-                        form={form}
-                        name="AppointmentDate"
-                        label="Ngày hẹn test"
-                      />
-                    </div>
-                    <div className="col-md-6 col-12">
-                      <TextAreaField
-                        disabled={isStudentDetail && true}
-                        name="ExamAppointmentNote"
-                        label="Ghi chú"
-                        form={form}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-              {/*  */}
-              {/** ==== Khác  ====*/}
-              <div className="row">
-                <div className="col-12">
-                  <Divider orientation="center">Khác</Divider>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="AcademicPurposesID"
-                    label="Mục đích học"
-                    optionList={listData.Purposes}
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="ParentsOf"
-                    label="Phụ huynh"
-                    optionList={listData.Parent}
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="SourceInformationID"
-                    label="Nguồn khách"
-                    optionList={listData.SourceInformation}
-                  />
-                </div>
-                <div className="col-md-6 col-12">
-                  <SelectField
-                    form={form}
-                    name="CounselorsID"
-                    label="Tư vấn viên"
-                    optionList={listData.Counselors}
-                  />
-                </div>
-                <div className="col-12">
-                  <TextAreaField
-                    name="Extension"
-                    label="Giới thiệu thêm"
-                    form={form}
-                  />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-12 d-flex justify-content-center">
-                  <div style={{ paddingRight: 5 }}>
-                    <button type="submit" className="btn btn-primary w-100">
-                      Lưu
-                      {isLoading.type == "ADD_DATA" && isLoading.status && (
-                        <Spin className="loading-base" />
+                  {!dataRow && (
+                    <button
+                      type="button"
+                      className="btn-search"
+                      onClick={searchValue}
+                    >
+                      {isLoading.type == "SEARCH_EMAIL" && isLoading.status ? (
+                        <Spin
+                          indicator={
+                            <LoadingOutlined style={{ fontSize: 16 }} spin />
+                          }
+                        />
+                      ) : (
+                        <SearchOutlined />
                       )}
                     </button>
-                  </div>
+                  )}
                 </div>
               </div>
-            </Form>
-          </div>
-        </Card>
-      </div>
-    </div>
+
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="FullNameUnicode"
+                  label="Họ và tên"
+                  placeholder="Nhập họ và tên"
+                  isRequired={true}
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="ChineseName"
+                  label="Tên tiêng Trung"
+                  placeholder="Nhập tên tiếng Trung"
+                />
+              </div>
+              {/*  */}
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="Mobile"
+                  label="Số điện thoại"
+                  placeholder="Nhập số điện thoại"
+                  isRequired={true}
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <DateField
+                  form={form}
+                  name="DOB"
+                  label="Ngày sinh"
+                  placeholder="Chọn ngày sinh"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="CMND"
+                  label="Số CMND"
+                  placeholder="Nhập số CMND"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="CMNDRegister"
+                  label="Nơi cấp CMND"
+                  placeholder="Nhập nơi cấp CMND"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <DateField
+                  form={form}
+                  name="CMNDDate"
+                  label="Ngày cấp"
+                  placeholder="Chọn ngày cấp"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="Gender"
+                  label="Giới tính"
+                  optionList={optionGender}
+                  placeholder="Chọn giới tính"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="JobID"
+                  label="Công việc"
+                  optionList={listData.Job}
+                  placeholder="Chọn công việc"
+                />
+              </div>
+              {/** ==== Địa chỉ  ====*/}
+              <div className="col-12">
+                <Divider orientation="center">Địa chỉ</Divider>
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="AreaID"
+                  label="Tỉnh/TP"
+                  optionList={listData.Area}
+                  onChangeSelect={
+                    (value) => handleChange_select(value, "DistrictID") // Select Area to load District
+                  }
+                  placeholder="Chọn tỉnh/tp"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  isLoading={
+                    loadingSelect.name == "DistrictID" && loadingSelect.status
+                  }
+                  form={form}
+                  name="DistrictID"
+                  label="Quận/Huyện"
+                  optionList={listData.DistrictID}
+                  onChangeSelect={
+                    (value) => handleChange_select(value, "WardID") // Select District to load Ward
+                  }
+                  placeholder="Chọn quận/huyện"
+                />
+              </div>
+              {/*  */}
+              <div className="col-md-6 col-12">
+                <SelectField
+                  isLoading={
+                    loadingSelect.name == "WardID" && loadingSelect.status
+                  }
+                  form={form}
+                  name="WardID"
+                  label="Phường/Xã"
+                  optionList={listData.WardID}
+                  placeholder="Chọn phường/xã"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="Address"
+                  label="Mô tả thêm"
+                  placeholder="Nhập mô tả thêm"
+                />
+              </div>
+              <div className="col-12">
+                <InputTextField
+                  form={form}
+                  name="HouseNumber"
+                  label="Số nhà/tên đường"
+                  placeholder="Nhập số nhà/tên đường"
+                />
+              </div>
+              {/** Hẹn Test */}
+              <div className="col-12">
+                <Divider orientation="center">
+                  {isStudentDetail ? "Trung tâm" : "Hẹn test"}
+                </Divider>
+              </div>
+              <div className="col-12">
+                <SelectField
+                  mode={dataRow ? "multiple" : ""}
+                  form={form}
+                  name="Branch"
+                  label="Trung tâm"
+                  optionList={listData.Branch}
+                  placeholder="Chọn trung tâm"
+                  isRequired={true}
+                />
+              </div>
+              {!isStudentDetail && (
+                <>
+                  <div className="col-md-6 col-12">
+                    <TimePickerField
+                      disabled={isStudentDetail && true}
+                      form={form}
+                      name="ExamAppointmentTime"
+                      label="Giờ hẹn test"
+                      placeholder="Chọn giờ hẹn test"
+                    />
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <DateField
+                      disabled={isStudentDetail && true}
+                      form={form}
+                      name="AppointmentDate"
+                      label="Ngày hẹn test"
+                      placeholder="Chọn ngày hẹn test"
+                    />
+                  </div>
+                  <div className="col-md-6 col-12">
+                    <TextAreaField
+                      disabled={isStudentDetail && true}
+                      name="ExamAppointmentNote"
+                      label="Ghi chú"
+                      form={form}
+                      placeholder="Nhập ghi chú"
+                    />
+                  </div>
+                </>
+              )}
+              {/** ==== Khác  ====*/}
+              <div className="col-12">
+                <Divider orientation="center">Khác</Divider>
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="AcademicPurposesID"
+                  label="Mục đích học"
+                  optionList={listData.Purposes}
+                  placeholder="Chọn mục đich học"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="ParentsOf"
+                  label="Phụ huynh học sinh"
+                  optionList={listData.Parent}
+                  placeholder="Chọn phụ huynh học sinh"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="SourceInformationID"
+                  label="Nguồn khách"
+                  optionList={listData.SourceInformation}
+                  placeholder="Chọn nguồn khách"
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="CounselorsID"
+                  label="Tư vấn viên"
+                  optionList={listData.Counselors}
+                  placeholder="Chọn tư vấn viên"
+                />
+              </div>
+              <div className="col-12">
+                <InputTextField
+                  form={form}
+                  name="LinkFaceBook"
+                  label="Link Facebook"
+                  placeholder="Nhập link facebook"
+                />
+              </div>
+              <div className="col-12">
+                <TextAreaField
+                  name="Extension"
+                  label="Giới thiệu thêm"
+                  form={form}
+                  placeholder="Nhập giới thiệu thêm"
+                />
+              </div>
+            </div>
+          </Form>
+        </div>
+      </Modal>
+    </>
   );
 };
 StudentForm.layout = LayoutBase;
