@@ -10,11 +10,12 @@ import { examDetailApi } from "~/apiBase";
 import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { useWrap } from "~/context/wrap";
 import EditPoint from "../ExamForm/EditPoint";
+import ChangePosition from "../ExamForm/ChangePosition";
 
 const ChoiceList = (props) => {
   const { onDeleteQuestion } = useExamDetail();
   const { showNoti } = useWrap();
-  const { dataQuestion, listAlphabet, listQuestionID } = props;
+  const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [visible, setVisible] = useState({
     id: null,
@@ -99,7 +100,7 @@ const ChoiceList = (props) => {
                     key={i}
                     value={ans.ID}
                     onChange={(e) => e.preventDefault()}
-                    disabled={true}
+                    disabled={!isDoingTest ? true : false}
                   >
                     <span className="tick">{listAlphabet[i]}</span>
                     <span className="text">{ans.AnswerContent}</span>
@@ -109,23 +110,29 @@ const ChoiceList = (props) => {
             </div>
           </div>
           <div className="box-action">
-            <EditPoint quesItem={ques} dataQuestion={dataQuestion} />
-            <Popconfirm
-              title="Bạn có chắc muốn xóa?"
-              // visible={item.ID == visible.id && visible.status}
-              onConfirm={() => handleOk(ques)}
-              okButtonProps={{ loading: confirmLoading }}
-              onCancel={() => handleCancel(ques.ID)}
-            >
-              <Tooltip title="Xóa câu hỏi" placement="rightTop">
-                <button
-                  className="btn btn-icon delete"
-                  onClick={() => deleteQuestionItem(ques.ID)}
+            {!isDoingTest && (
+              <>
+                <EditPoint quesItem={ques} dataQuestion={dataQuestion} />
+
+                <Popconfirm
+                  title="Bạn có chắc muốn xóa?"
+                  // visible={item.ID == visible.id && visible.status}
+                  onConfirm={() => handleOk(ques)}
+                  okButtonProps={{ loading: confirmLoading }}
+                  onCancel={() => handleCancel(ques.ID)}
                 >
-                  <Trash2 />
-                </button>
-              </Tooltip>
-            </Popconfirm>
+                  <Tooltip title="Xóa câu hỏi" placement="rightTop">
+                    <button
+                      className="btn btn-icon delete"
+                      onClick={() => deleteQuestionItem(ques.ID)}
+                    >
+                      <Trash2 />
+                    </button>
+                  </Tooltip>
+                </Popconfirm>
+                <ChangePosition questionID={dataQuestion.ID} />
+              </>
+            )}
             <div className="point-question mt-2">
               <p className="text">{ques.Point}</p>
             </div>

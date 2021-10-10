@@ -1,35 +1,43 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Modal, Form, Input, Spin, Tooltip, Skeleton } from "antd";
+import { Modal, Form, Spin, Tooltip } from "antd";
 import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputTextField from "~/components/FormControl/InputTextField";
-import DateField from "~/components/FormControl/DateField";
 import SelectField from "~/components/FormControl/SelectField";
-import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
+import TextAreaField from "~/components/FormControl/TextAreaField";
 
 let returnSchema = {};
 let schema = null;
 
 const StudentAdviseForm = React.memo((props: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isLoading, rowID, _onSubmit, getIndex, index, rowData, listData } =
-    props;
+  const {
+    isLoading,
+    rowID,
+    _onSubmit,
+    getIndex,
+    index,
+    rowData,
+    listData,
+    dataProgram,
+  } = props;
 
   const { showNoti } = useWrap();
-
-  console.log("LIST DATA: ", listData);
 
   // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
     AreaID: null, //int
     CustomerName: null,
+    ChineseName: null,
     Number: null, //số điện thoại
     Email: "", //
     SourceInformationID: null, //int ID nguồn khách
     CustomerConsultationStatusID: null, // tình trạng tư vấn
+    ProgramID: null,
+    Note: null,
   };
 
   (function returnSchemaFunc() {
@@ -59,7 +67,6 @@ const StudentAdviseForm = React.memo((props: any) => {
 
   // SUBMI FORM
   const onSubmit = (data: any, e) => {
-    console.log("DATA submit: ", data);
     let res = _onSubmit(data);
 
     res.then(function (rs: any) {
@@ -114,16 +121,6 @@ const StudentAdviseForm = React.memo((props: any) => {
         <div className="container-fluid">
           <Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
             <div className="row">
-              <div className="col-12">
-                <SelectField
-                  form={form}
-                  name="AreaID"
-                  label="Tỉnh/TP"
-                  optionList={listData.Area}
-                />
-              </div>
-            </div>
-            <div className="row">
               <div className="col-md-6 col-12">
                 <InputTextField
                   form={form}
@@ -134,12 +131,38 @@ const StudentAdviseForm = React.memo((props: any) => {
               <div className="col-md-6 col-12">
                 <InputTextField
                   form={form}
-                  name="Number"
-                  label="Số điện thoại"
+                  name="ChineseName"
+                  label="Tên tiếng Trung"
                 />
               </div>
             </div>
             <div className="row">
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="ProgramID"
+                  label="Nhu cầu học"
+                  optionList={listData.Program}
+                />
+              </div>
+              <div className="col-md-6 col-12">
+                <SelectField
+                  form={form}
+                  name="AreaID"
+                  label="Tỉnh/TP"
+                  optionList={listData.Area}
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="Number"
+                  label="Số điện thoại"
+                />
+              </div>
               <div className="col-md-6 col-12">
                 <InputTextField form={form} name="Email" label="Email" />
               </div>
@@ -152,7 +175,7 @@ const StudentAdviseForm = React.memo((props: any) => {
                 />
               </div>
 
-              <div className="col-md-12 col-12">
+              <div className="col-md-6 col-12">
                 <SelectField
                   disabled={!rowID && true}
                   form={form}
@@ -160,6 +183,11 @@ const StudentAdviseForm = React.memo((props: any) => {
                   label="Tình trạng tư vấn"
                   optionList={listData.ConsultationStatus}
                 />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-12">
+                <TextAreaField form={form} label="Ghi chú" name="Note" />
               </div>
             </div>
             <div className="row mt-3">

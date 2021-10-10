@@ -88,7 +88,7 @@ const AddQuestionModal = (props) => {
       <Modal
         centered={true}
         style={{ top: 10 }}
-        width={"80%"}
+        width={"90%"}
         title="Thêm câu hỏi vào đề thi"
         visible={isModalVisible}
         onOk={handleOk}

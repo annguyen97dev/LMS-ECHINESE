@@ -161,7 +161,7 @@ const ExamList = (props) => {
         setDataCurriculum(newData);
       }
 
-      res.status == 204 && showNoti("danger", "Môn học không có dữ liệu");
+      res.status == 204 && showNoti("danger", "Giáo trình không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -345,7 +345,7 @@ const ExamList = (props) => {
                             </div>
                             <ul className="set-list">
                               <li className="status">
-                                Môn học: <span>{item.CurriculumName}</span>
+                                Giáo trình: <span>{item.CurriculumName}</span>
                               </li>
                               <li className="price">
                                 Dạng: <span>{item.TypeName}</span>
@@ -427,7 +427,7 @@ const ExamList = (props) => {
                     </Select>
                   </div>
                 </div>
-                {/** CHỌN MÔN HỌC */}
+                {/** CHỌN Giáo trình */}
                 <div className="col-md-6 col-12 ">
                   <div className="item-select">
                     <Select

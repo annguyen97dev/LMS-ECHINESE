@@ -14,8 +14,8 @@ import LayoutBase from "~/components/LayoutBase";
 import { useRouter } from "next/router";
 import { examDetailApi, examTopicApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import ChoiceList from "~/components/Global/ExamList/ExamShow/ChoiceList";
 import AddQuestionModal from "~/components/Global/ExamDetail/AddQuestionModal";
+import ChoiceList from "~/components/Global/ExamList/ExamShow/ChoiceList";
 import MultipleList from "~/components/Global/ExamList/ExamShow/MultipleList";
 import WrapList from "~/components/Global/ExamList/ExamShow/WrapList";
 import MapList from "~/components/Global/ExamList/ExamShow/MapList";
@@ -24,6 +24,7 @@ import TypingList from "~/components/Global/ExamList/ExamShow/TypingList";
 import WrittingList from "~/components/Global/ExamList/ExamShow/WrittingList";
 import AddQuestionAuto from "~/components/Global/ExamDetail/AddQuestionAuto";
 import Link from "next/link";
+import ChangePosition from "~/components/Global/ExamList/ExamForm/ChangePosition";
 
 const listAlphabet = [
   "A",
@@ -54,16 +55,23 @@ type objectQuestionAddOutside = {
   ExerciseOrExerciseGroupID: number;
 };
 
+type objectDataChange = {
+  IDChangeOne: number;
+  IDChangeTwo: number;
+};
+
 export type IProps = {
   onAddQuestion: Function;
   onGetListQuestionID: Function;
   onRemoveQuestionAdd: Function;
   onDeleteQuestion: Function;
   onEditPoint: Function;
+  getDataChange: Function;
   isGetQuestion: boolean;
   listQuestionAddOutside: Array<objectQuestionAddOutside>;
   listQuestionID: Array<number>;
   listGroupID: Array<number>;
+  dataChange: objectDataChange;
 };
 
 const ExamDetailContext = createContext<IProps>({
@@ -72,10 +80,15 @@ const ExamDetailContext = createContext<IProps>({
   onEditPoint: () => {},
   onRemoveQuestionAdd: (data) => {},
   onGetListQuestionID: (data) => {},
+  getDataChange: (data) => {},
   isGetQuestion: false,
   listQuestionAddOutside: [],
   listQuestionID: [],
   listGroupID: [],
+  dataChange: {
+    IDChangeOne: null,
+    IDChangeTwo: null,
+  },
 });
 
 const ExamDetail = () => {
@@ -102,10 +115,13 @@ const ExamDetail = () => {
   const [listExam, setListExam] = useState([]);
   const [loadingExam, setLoadingExam] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
-  let { asPath } = useRouter();
+  const [dataChange, setDataChange] = useState({
+    IDChangeOne: null,
+    IDChangeTwo: null,
+  });
 
-  console.log("Data Exam: ", dataExamDetail);
-  console.log("List question: ", listQuestionID);
+  // console.log("Data Exam: ", dataExamDetail);
+  // console.log("List question: ", listQuestionID);
   // console.log("List Group ID: ", listGroupID);
 
   // ---- GET LIST EXAM ----
@@ -113,7 +129,7 @@ const ExamDetail = () => {
     try {
       let res = await examTopicApi.getAll({
         setlectAll: true,
-        SubjectID: examTopicDetail.SubjectID,
+        CurriculumID: examTopicDetail.CurriculumID,
         Type: examTopicDetail.Type,
       });
       if (res.status == 200) {
@@ -168,8 +184,6 @@ const ExamDetail = () => {
     }
   };
 
-  console.log("LOADING QUESTION: ", loadingQuestion);
-
   const getExamTopicDetail = async () => {
     listExam.length == 0 && setLoadingExam(true);
     setLoadingDetail(true);
@@ -194,6 +208,7 @@ const ExamDetail = () => {
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
               <ChoiceList
+                isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
                 listAlphabet={listAlphabet}
@@ -207,6 +222,7 @@ const ExamDetail = () => {
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
               <DragList
+                isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
                 listAlphabet={listAlphabet}
@@ -220,6 +236,7 @@ const ExamDetail = () => {
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
               <TypingList
+                isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
                 listAlphabet={listAlphabet}
@@ -233,6 +250,7 @@ const ExamDetail = () => {
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
               <MultipleList
+                isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
                 listAlphabet={listAlphabet}
@@ -246,6 +264,7 @@ const ExamDetail = () => {
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
               <MapList
+                isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
                 listAlphabet={listAlphabet}
@@ -259,6 +278,7 @@ const ExamDetail = () => {
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
               <WrittingList
+                isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
                 listAlphabet={listAlphabet}
@@ -272,6 +292,7 @@ const ExamDetail = () => {
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
               <WrittingList
+                isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
                 listAlphabet={listAlphabet}
@@ -376,9 +397,6 @@ const ExamDetail = () => {
     const offsetHeight = boxEl.current.offsetHeight;
     const scrollTop = boxEl.current.scrollTop;
 
-    // console.log("Height: ", scrollHeight - offsetHeight - 50);
-    // console.log("Scroll: ", scrollTop);
-
     if (scrollTop > scrollHeight - offsetHeight - 50) {
       if (todoApi.pageIndex < totalPageIndex) {
         dataExamDetail?.length !== 0 && setLoadingQuestion(true);
@@ -391,6 +409,52 @@ const ExamDetail = () => {
         }
       }
     }
+  };
+
+  // ACTION CHANGE POSITION
+  const actionChangePosition = async () => {
+    try {
+      let res = await examDetailApi.changePosition(dataChange);
+      if (res.status === 200) {
+        showNoti("success", "Đổi vị trí thành công");
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    }
+  };
+
+  const changePositionInArray = () => {
+    let dataFrom = null;
+    let dataTo = null;
+
+    let indexFrom = null;
+    let indexTo = null;
+
+    dataExamDetail.every((item, index) => {
+      if (item.ID === dataChange.IDChangeOne) {
+        dataFrom = item;
+        indexFrom = index;
+      }
+      if (item.ID === dataChange.IDChangeTwo) {
+        dataTo = item;
+        indexTo = index;
+      }
+      if (dataFrom && dataTo) {
+        return false;
+      }
+    });
+    console.log("Data From: ", dataFrom);
+    console.log("Index From: ", indexFrom);
+
+    dataExamDetail[indexFrom] = dataTo;
+    dataExamDetail[indexTo] = dataFrom;
+
+    setDataExamDetail([...dataExamDetail]);
+  };
+
+  // GET DATA CHANGE
+  const getDataChange = (data) => {
+    setDataChange(data);
   };
 
   useEffect(() => {
@@ -415,26 +479,36 @@ const ExamDetail = () => {
     getExamDetail();
   }, [todoApi]);
 
+  useEffect(() => {
+    if (dataChange.IDChangeOne && dataChange.IDChangeTwo) {
+      actionChangePosition();
+    }
+  }, [dataChange]);
+
   const content = (
     <div className="question-bank-info">
       <ul className="list">
-        <li className="list-item mb-0">
-          <span className="list-title">Chương trình</span>
-          <span className="list-text">{examTopicDetail?.ProgramName}</span>
-        </li>
-        <li className="list-item">
-          <span className="list-title">Môn học:</span>
-          <span className="list-text">{examTopicDetail?.SubjectName}</span>
-        </li>
-        <li className="list-item">
-          <span className="list-title">Dạng đề thi:</span>
-          <span className="list-text">{examTopicDetail?.TypeName}</span>
-        </li>
+        <div className="d-flex">
+          <li className="list-item">
+            <span className="list-title">Chương trình</span>
+            <span className="list-text">{examTopicDetail?.ProgramName}</span>
+          </li>
+          <li className="list-item">
+            <span className="list-title">Giáo trình:</span>
+            <span className="list-text">{examTopicDetail?.CurriculumName}</span>
+          </li>
+        </div>
+        <div className="d-flex">
+          <li className="list-item">
+            <span className="list-title">Dạng đề thi:</span>
+            <span className="list-text">{examTopicDetail?.TypeName}</span>
+          </li>
 
-        <li className="list-item mb-0">
-          <span className="list-title">Thời gian:</span>
-          <span className="list-text">{examTopicDetail?.Time} phút</span>
-        </li>
+          <li className="list-item mb-0">
+            <span className="list-title">Thời gian:</span>
+            <span className="list-text">{examTopicDetail?.Time} phút</span>
+          </li>
+        </div>
       </ul>
     </div>
   );
@@ -451,6 +525,8 @@ const ExamDetail = () => {
         listGroupID: listGroupID,
         onRemoveQuestionAdd,
         onDeleteQuestion,
+        dataChange: dataChange,
+        getDataChange,
       }}
     >
       <div className="question-create exam">
@@ -505,17 +581,17 @@ const ExamDetail = () => {
                           </span>
                         </li>
                         <li>
-                          <span className="title">Môn học:</span>
-                          <span className="text">
-                            {examTopicDetail?.SubjectName}
+                          <span className="title">Giáo trình:</span>
+                          <span className="text text-curriculum">
+                            {examTopicDetail?.CurriculumName}
                           </span>
                         </li>
-                        <li>
+                        {/* <li>
                           <span className="title">Thời gian:</span>
                           <span className="text">
                             {examTopicDetail?.Time} phút
                           </span>
-                        </li>
+                        </li> */}
                         <li>
                           <span className="title">Tổng số câu:</span>
                           <span className="text">{listQuestionID.length}</span>
@@ -565,7 +641,7 @@ const ExamDetail = () => {
           <div className="col-md-3 col-12 fixed-card">
             <Card
               className="card-exam-bank"
-              title="Danh sách đề cùng môn học"
+              title="Danh sách đề cùng giáo trình"
               // extra={<AddQuestionForm />}
             >
               <ul className="list-exam-bank">

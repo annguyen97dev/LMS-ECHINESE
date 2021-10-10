@@ -47,7 +47,7 @@ const AddQuestionAuto = (props) => {
 
   // ON SUBMIT DATA
   const onSubmit = async (data) => {
-    delete data.SubjectName;
+    delete data.CurriculumName;
     data.NumberQuestions = parseInt(data.NumberQuestions);
     data.Point = parseFloat(data.Point);
     console.log("Data submit: ", data);
@@ -94,8 +94,8 @@ const AddQuestionAuto = (props) => {
   // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
     ExamTopicID: null, //Cái này chỉ để kiểm tra xem Đề này đã đc tạo hay chưa
-    SubjectID: null, //Trường hợp tạo cho đề hẹn test thì nhập subject = 0
-    SubjectName: null,
+    CurriculumID: null, //Trường hợp tạo cho đề hẹn test thì nhập Curriculum = 0
+    CurriculumName: null,
     Level: undefined, //Cấp độ muốn thêm
     Type: undefined, //Loại câu muốn thêm
     SkillID: undefined, //Kỹ năng muốn thêm
@@ -124,8 +124,8 @@ const AddQuestionAuto = (props) => {
 
   useEffect(() => {
     if (dataExam) {
-      form.setValue("SubjectID", dataExam.SubjectID);
-      form.setValue("SubjectName", dataExam.SubjectName);
+      form.setValue("CurriculumID", dataExam.CurriculumID);
+      form.setValue("CurriculumName", dataExam.CurriculumName);
       form.setValue("ExamTopicID", examTopicID);
       form.setValue("SkillID", [1, 2, 3, 4]);
     }
@@ -206,8 +206,8 @@ const AddQuestionAuto = (props) => {
               <InputTextField
                 disabled={true}
                 form={form}
-                name="SubjectName"
-                label="Môn học"
+                name="CurriculumName"
+                label="Giáo trình"
               />
             </div>
             <div className="col-md-6 col-12">

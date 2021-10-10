@@ -471,6 +471,8 @@ const StudentData = () => {
 
   // EXPAND ROW
 
+  console.log("Data Row: ", dataRow);
+
   const expandedRowRender = (data, index) => {
     return (
       <>

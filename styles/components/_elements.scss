@@ -1812,10 +1812,10 @@ hr {
   }
 }
 
-.ant-form-item-label
-  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
-  display: none;
-}
+// .ant-form-item-label
+//   > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+//   display: none;
+// }
 
 .text-confirm {
   font-size: 14px;
@@ -2236,5 +2236,26 @@ hr {
 .textarea-editor {
   .note-editable {
     height: 270px;
+  }
+}
+
+.control-volume {
+  padding: 16px 0;
+  color: rgba(53, 53, 53, 0.85);
+  font-weight: normal;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+
+  .sound-edit {
+    width: 100px;
+    .ant-slider-track {
+      top: 2px;
+      height: 8px;
+    }
+    .ant-slider-rail {
+      top: 2px;
+      height: 8px;
+    }
   }
 }
