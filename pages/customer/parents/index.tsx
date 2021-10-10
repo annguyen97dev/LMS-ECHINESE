@@ -1,1099 +1,722 @@
-// import { Tooltip } from "antd";
-// import moment from "moment";
-// import Link from "next/link";
-// import React, { Fragment, useEffect, useState } from "react";
-// import { Info } from "react-feather";
-// import { areaApi, branchApi, parentsApi } from "~/apiBase";
-// import FilterBase from "~/components/Elements/FilterBase/FilterBase";
-// import SortBox from "~/components/Elements/SortBox";
-// import ParentsDelete from "~/components/Global/Customer/ParentsList/ParentsDelete";
-// import ParentsForm from "~/components/Global/Customer/ParentsList/ParentsForm";
-// import LayoutBase from "~/components/LayoutBase";
-// import PowerTable from "~/components/PowerTable";
-// import FilterColumn from "~/components/Tables/FilterColumn";
-// import { useWrap } from "~/context/wrap";
-
-// const ParentsList = () => {
-//   const onSearch = (data) => {
-//     setCurrentPage(1);
-//     setParams({
-//       ...listParamsDefault,
-//       FullNameUnicode: data,
-//     });
-//   };
-
-//   const handleReset = () => {
-//     setCurrentPage(1);
-//     setParams(listParamsDefault);
-//   };
-//   const columns = [
-//     {
-//       title: "Tên phụ huynh",
-//       dataIndex: "FullNameUnicode",
-//       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
-//       render: (text) => <p className="font-weight-blue">{text}</p>,
-//     },
-//     {
-//       title: "Giới tính",
-//       dataIndex: "Gender",
-//       render: (gender) => (
-//         <Fragment>{gender == 0 ? "Nữ" : gender == 1 ? "Nam" : "Khác"}</Fragment>
-//       ),
-//     },
-
-//     {
-//       title: "Ngày sinh",
-//       dataIndex: "DOB",
-//       render: (DOB) => moment(DOB).format("DD/MM/YYYY"),
-//     },
-//     {
-//       title: "Tên trung tâm",
-//       dataIndex: "Branch",
-//       render: (Branch) => (
-//         <>
-//           {Branch.map((item) => (
-//             <a href="/" className="font-weight-black d-block">
-//               {item.BranchName}
-//             </a>
-//           ))}
-//         </>
-//       ),
-//     },
-
-//     {
-//       title: "Khu vực",
-//       dataIndex: "AreaName",
-//     },
-//     {
-//       title: "SĐT",
-//       dataIndex: "Mobile",
-//     },
-
-//     {
-//       title: "Email",
-//       dataIndex: "Email",
-//     },
-
-//     {
-//       title: "Trạng thái",
-//       dataIndex: "StatusID",
-//       className: "text-center",
-//       render: (status) => (
-//         <>
-//           {
-//             <span className={`tag ${status == 0 ? "green" : "red"}`}>
-//               {status == 0 ? "Hoạt động" : "Khóa"}
-//             </span>
-//           }
-//         </>
-//       ),
-//     },
-
-//     {
-//       render: (data) => (
-//         <Fragment>
-//           <ParentsForm
-//             parentsDetail={data}
-//             parentsID={data.UserInformationID}
-//             reloadData={(firstPage) => {
-//               getDataParents(firstPage);
-//             }}
-//             currentPage={currentPage}
-//           />
-
-//           <Link
-//             href={{
-//               pathname: "/customer/parents/detail/[slug]",
-//               query: { slug: `${data.UserInformationID}` },
-//             }}
-//           >
-//             <Tooltip title="Xem học viên liên kết">
-//               <button className="btn btn-icon">
-//                 <Info />
-//               </button>
-//             </Tooltip>
-//           </Link>
-
-//           <ParentsDelete
-//             parentsID={data.UserInformationID}
-//             reloadData={(firstPage) => {
-//               getDataParents(firstPage);
-//             }}
-//             currentPage={currentPage}
-//           />
-//         </Fragment>
-//       ),
-//     },
-//   ];
-//   const [currentPage, setCurrentPage] = useState(1);
-
-//   const listParamsDefault = {
-//     pageSize: 10,
-//     pageIndex: currentPage,
-//     sort: null,
-//     sortType: null,
-//     fromDate: null,
-//     toDate: null,
-//     BranchID: null,
-//     StatusID: null,
-//     AreaID: null,
-//     FullNameUnicode: null,
-//   };
-
-//   const sortOption = [
-//     {
-//       dataSort: {
-//         sortType: null,
-//       },
-//       value: 1,
-//       text: "Mới cập nhật",
-//     },
-//     {
-//       dataSort: {
-//         sortType: true,
-//       },
-//       value: 2,
-//       text: "Từ dưới lên",
-//     },
-//   ];
-
-//   const [dataFilter, setDataFilter] = useState([
-//     {
-//       name: "AreaID",
-//       title: "Tỉnh/TP",
-//       col: "col-12",
-//       type: "select",
-//       optionList: null,
-//       value: null,
-//     },
-//     {
-//       name: "BranchID",
-//       title: "Trung tâm",
-//       col: "col-12",
-//       type: "select",
-//       optionList: null,
-//       value: null,
-//     },
-
-//     {
-//       name: "StatusID",
-//       title: "Trạng thái",
-//       col: "col-12",
-//       type: "select",
-//       optionList: [
-//         {
-//           value: 0,
-//           title: "Hoạt động",
-//         },
-//         {
-//           value: 1,
-//           title: "Khóa",
-//         },
-//       ],
-//       value: null,
-//     },
-//     {
-//       name: "date-range",
-//       title: "Ngày tạo",
-//       col: "col-12",
-//       type: "date-range",
-//       value: null,
-//     },
-//   ]);
-
-//   const handleFilter = (listFilter) => {
-//     console.log("List Filter when submit: ", listFilter);
-
-//     let newListFilter = {
-//       pageIndex: 1,
-//       fromDate: null,
-//       toDate: null,
-//       BranchID: null,
-//       StatusID: null,
-//       AreaID: null,
-//     };
-//     listFilter.forEach((item, index) => {
-//       let key = item.name;
-//       Object.keys(newListFilter).forEach((keyFilter) => {
-//         if (keyFilter == key) {
-//           newListFilter[key] = item.value;
-//         }
-//       });
-//     });
-//     setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
-//   };
-
-//   const handleSort = async (option) => {
-//     setParams({
-//       ...listParamsDefault,
-//       sortType: option.title.sortType,
-//     });
-//   };
-
-//   const [params, setParams] = useState(listParamsDefault);
-//   const { showNoti } = useWrap();
-//   const [totalPage, setTotalPage] = useState(null);
-//   const [parents, setParents] = useState<IParents[]>([]);
-//   const [isLoading, setIsLoading] = useState({
-//     type: "GET_ALL",
-//     status: false,
-//   });
-
-//   const setDataFunc = (name, data) => {
-//     dataFilter.every((item, index) => {
-//       if (item.name == name) {
-//         item.optionList = data;
-//         return false;
-//       }
-//       return true;
-//     });
-//     setDataFilter([...dataFilter]);
-//   };
-
-//   const getDataCenter = async () => {
-//     try {
-//       let res = await branchApi.getAll({ pageSize: 99999, pageIndex: 1 });
-//       if (res.status == 200) {
-//         const newData = res.data.data.map((item) => ({
-//           title: item.BranchName,
-//           value: item.ID,
-//         }));
-//         setDataFunc("BranchID", newData);
-//       }
-
-//       res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
-//     } catch (error) {
-//       showNoti("danger", error.message);
-//     } finally {
-//     }
-//   };
-
-//   const getDataArea = async () => {
-//     try {
-//       let res = await areaApi.getAll({ pageSize: 99999, pageIndex: 1 });
-//       if (res.status == 200) {
-//         const newData = res.data.data.map((item) => ({
-//           title: item.AreaName,
-//           value: item.AreaID,
-//         }));
-//         setDataFunc("AreaID", newData);
-//       }
-//       res.status == 204 && showNoti("danger", "Tỉnh/TP Không có dữ liệu");
-//     } catch (error) {
-//       showNoti("danger", error.message);
-//     } finally {
-//     }
-//   };
-
-//   useEffect(() => {
-//     getDataCenter();
-//     getDataArea();
-//   }, []);
-
-//   const getPagination = (pageNumber: number) => {
-//     setCurrentPage(pageNumber);
-//     setParams({
-//       ...params,
-//       pageIndex: currentPage,
-//     });
-//   };
-
-//   const getDataParents = (page: any) => {
-//     setIsLoading({
-//       type: "GET_ALL",
-//       status: true,
-//     });
-//     (async () => {
-//       try {
-//         let res = await parentsApi.getAll({ ...params, pageIndex: page });
-//         //@ts-ignore
-//         res.status == 200 && setParents(res.data.data);
-//         if (res.status == 204) {
-//           showNoti("danger", "Không tìm thấy dữ liệu!");
-//           setCurrentPage(1);
-//           setParams(listParamsDefault);
-//         } else setTotalPage(res.data.totalRow);
-//       } catch (error) {
-//         showNoti("danger", error.message);
-//       } finally {
-//         setIsLoading({
-//           type: "GET_ALL",
-//           status: false,
-//         });
-//       }
-//     })();
-//   };
-
-//   useEffect(() => {
-//     getDataParents(currentPage);
-//   }, [params]);
-
-//   return (
-//     <PowerTable
-//       currentPage={currentPage}
-//       loading={isLoading}
-//       totalPage={totalPage && totalPage}
-//       getPagination={(pageNumber: number) => getPagination(pageNumber)}
-//       addClass="basic-header"
-//       TitlePage="DANH SÁCH PHỤ HUYNH"
-//       TitleCard={
-//         <ParentsForm
-//           reloadData={(firstPage) => {
-//             setCurrentPage(1);
-//             getDataParents(firstPage);
-//           }}
-//         />
-//       }
-//       dataSource={parents}
-//       columns={columns}
-//       Extra={
-//         <div className="extra-table">
-//           <FilterBase
-//             dataFilter={dataFilter}
-//             handleFilter={(listFilter: any) => handleFilter(listFilter)}
-//             handleReset={handleReset}
-//           />
-
-//           <SortBox
-//             dataOption={sortOption}
-//             handleSort={(value) => handleSort(value)}
-//           />
-//         </div>
-//       }
-//     />
-//   );
-// };
-// ParentsList.layout = LayoutBase;
-// export default ParentsList;
-
-import React, { useState, useEffect } from "react";
-import { Table, Card, Tag, Tooltip } from "antd";
-import { FormOutlined, EyeOutlined } from "@ant-design/icons";
-import TitlePage from "~/components/TitlePage";
-import SearchBox from "~/components/Elements/SearchBox";
-import Link from "next/link";
-import PowerTable from "~/components/PowerTable";
-import ModalAdd from "~/components/Global/StaffList/StaffForm";
-import { useWrap } from "~/context/wrap";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import { Eye, Filter, Search } from "react-feather";
-import LayoutBase from "~/components/LayoutBase";
+import React, {useEffect, useState} from 'react';
 import {
-  branchApi,
-  areaApi,
-  studentApi,
-  districtApi,
-  wardApi,
-  jobApi,
-  puroseApi,
-  sourceInfomationApi,
-  parentsApi,
-  staffApi,
-  staffSalaryApi,
-} from "~/apiBase";
-import SortBox from "~/components/Elements/SortBox";
-import moment from "moment";
-import FilterBase from "~/components/Elements/FilterBase/FilterBase";
-// import { Roles } from "~/lib/roles/listRoles";
-import StaffForm from "~/components/Global/StaffList/StaffForm";
-import { number, string } from "yup";
-import ParentsForm from "~/components/Global/Customer/ParentsList/ParentsForm";
+	areaApi,
+	branchApi,
+	jobApi,
+	parentsApi,
+	puroseApi,
+	sourceInfomationApi,
+	staffApi,
+	staffSalaryApi,
+} from '~/apiBase';
+import FilterBase from '~/components/Elements/FilterBase/FilterBase';
+import SortBox from '~/components/Elements/SortBox';
+import ParentsForm from '~/components/Global/Customer/ParentsList/ParentsForm';
+import LayoutBase from '~/components/LayoutBase';
+import PowerTable from '~/components/PowerTable';
+import FilterColumn from '~/components/Tables/FilterColumn';
+import {useWrap} from '~/context/wrap';
 
 let pageIndex = 1;
 
 interface dataRoles {
-  title: string;
-  value: number;
+	title: string;
+	value: number;
 }
 
 let dataRoles = [];
 
 const Roles = [
-  {
-    id: 1,
-    RoleName: "Admin",
-  },
+	{
+		id: 1,
+		RoleName: 'Admin',
+	},
 
-  {
-    id: 5,
-    RoleName: "Nhân viên quản lí",
-  },
-  {
-    id: 6,
-    RoleName: "Nhân viên bán hàng",
-  },
-  {
-    id: 7,
-    RoleName: "Học vụ",
-  },
-  {
-    id: 8,
-    RoleName: "Quản lí chuyên môn",
-  },
-  {
-    id: 9,
-    RoleName: "Kế toán",
-  },
+	{
+		id: 5,
+		RoleName: 'Nhân viên quản lí',
+	},
+	{
+		id: 6,
+		RoleName: 'Nhân viên bán hàng',
+	},
+	{
+		id: 7,
+		RoleName: 'Học vụ',
+	},
+	{
+		id: 8,
+		RoleName: 'Quản lí chuyên môn',
+	},
+	{
+		id: 9,
+		RoleName: 'Kế toán',
+	},
 ];
 
 (function getListRoles() {
-  dataRoles = Roles.map((item) => ({
-    title: item.RoleName,
-    value: item.id,
-  }));
+	dataRoles = Roles.map((item) => ({
+		title: item.RoleName,
+		value: item.id,
+	}));
 })();
 
 let listFieldSearch = {
-  pageIndex: 1,
-  FullNameUnicode: null,
+	pageIndex: 1,
+	FullNameUnicode: null,
 };
 
 let listFieldFilter = {
-  pageIndex: 1,
-  fromDate: null,
-  toDate: null,
-  RoleID: null,
-  BranchID: null,
-  AreaID: null,
-  StatusID: null,
+	pageIndex: 1,
+	fromDate: null,
+	toDate: null,
+	RoleID: null,
+	BranchID: null,
+	AreaID: null,
+	StatusID: null,
 };
 
 const listTodoApi = {
-  pageSize: 10,
-  pageIndex: pageIndex,
-  sort: null,
-  sortType: null,
-  fromDate: null,
-  toDate: null,
-  FullNameUnicode: null,
-  RoleID: null,
-  BranchID: null,
-  AreaID: null,
+	pageSize: 10,
+	pageIndex: pageIndex,
+	sort: null,
+	sortType: null,
+	fromDate: null,
+	toDate: null,
+	FullNameUnicode: null,
+	RoleID: null,
+	BranchID: null,
+	AreaID: null,
 };
 
 const dataOption = [
-  {
-    dataSort: {
-      sort: 0,
-      sortType: false,
-    },
-    text: "Tên Z-A",
-  },
-  {
-    dataSort: {
-      sort: 0,
-      sortType: true,
-    },
-    text: "Tên A-Z ",
-  },
+	{
+		dataSort: {
+			sort: 0,
+			sortType: false,
+		},
+		text: 'Tên Z-A',
+	},
+	{
+		dataSort: {
+			sort: 0,
+			sortType: true,
+		},
+		text: 'Tên A-Z ',
+	},
 ];
 
 // -- FOR DIFFERENT VIEW --
 
 interface objData {
-  title: string;
-  value: number;
+	title: string;
+	value: number;
 }
 
 interface listDataForm {
-  Area: Array<objData>;
-  DistrictID: Array<objData>;
-  WardID: Array<objData>;
-  Role: Array<objData>;
-  Branch: Array<objData>;
-  Purposes: Array<objData>;
-  SourceInformation: Array<objData>;
-  Parent: Array<objData>;
-  Counselors: Array<objData>;
+	Area: Array<objData>;
+	DistrictID: Array<objData>;
+	WardID: Array<objData>;
+	Role: Array<objData>;
+	Branch: Array<objData>;
+	Purposes: Array<objData>;
+	SourceInformation: Array<objData>;
+	Parent: Array<objData>;
+	Counselors: Array<objData>;
 }
 
 const optionGender = [
-  {
-    value: 0,
-    title: "Nữ",
-  },
-  {
-    value: 1,
-    title: "Nam",
-  },
-  {
-    value: 0,
-    title: "Khác",
-  },
+	{
+		value: 0,
+		title: 'Nữ',
+	},
+	{
+		value: 1,
+		title: 'Nam',
+	},
+	{
+		value: 0,
+		title: 'Khác',
+	},
 ];
 
 const listApi = [
-  {
-    api: areaApi,
-    text: "Tỉnh/Tp",
-    name: "Area",
-  },
+	{
+		api: areaApi,
+		text: 'Tỉnh/Tp',
+		name: 'Area',
+	},
 
-  {
-    api: jobApi,
-    text: "Công việc",
-    name: "Job",
-  },
-  {
-    api: puroseApi,
-    text: "Mục đích học",
-    name: "Purposes",
-  },
-  {
-    api: branchApi,
-    text: "Trung tâm",
-    name: "Branch",
-  },
-  {
-    api: parentsApi,
-    text: "Phụ huynh",
-    name: "Parent",
-  },
-  {
-    api: sourceInfomationApi,
-    text: "Nguồn khách hàng",
-    name: "SourceInformation",
-  },
-  {
-    api: staffApi,
-    text: "Nguồn khách hàng",
-    name: "Counselors",
-  },
+	{
+		api: jobApi,
+		text: 'Công việc',
+		name: 'Job',
+	},
+	{
+		api: puroseApi,
+		text: 'Mục đích học',
+		name: 'Purposes',
+	},
+	{
+		api: branchApi,
+		text: 'Trung tâm',
+		name: 'Branch',
+	},
+	{
+		api: parentsApi,
+		text: 'Phụ huynh',
+		name: 'Parent',
+	},
+	{
+		api: sourceInfomationApi,
+		text: 'Nguồn khách hàng',
+		name: 'SourceInformation',
+	},
+	{
+		api: staffApi,
+		text: 'Nguồn khách hàng',
+		name: 'Counselors',
+	},
 ];
 
 const ParentsList = () => {
-  const [listDataForm, setListDataForm] = useState<listDataForm>({
-    Area: [],
-    DistrictID: [],
-    WardID: [],
-    Role: dataRoles,
-    Branch: [],
-    Purposes: [],
-    SourceInformation: [],
-    Parent: [],
-    Counselors: [],
-  });
+	const [listDataForm, setListDataForm] = useState<listDataForm>({
+		Area: [],
+		DistrictID: [],
+		WardID: [],
+		Role: dataRoles,
+		Branch: [],
+		Purposes: [],
+		SourceInformation: [],
+		Parent: [],
+		Counselors: [],
+	});
 
-  // ------ BASE USESTATE TABLE -------
-  const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
-  const [dataArea, setDataArea] = useState<IArea[]>([]);
-  const [dataSource, setDataSource] = useState<IParents[]>([]);
-  const { showNoti } = useWrap();
-  const [isLoading, setIsLoading] = useState({
-    type: "",
-    status: false,
-  });
-  const [totalPage, setTotalPage] = useState(null);
-  const [indexRow, setIndexRow] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [todoApi, setTodoApi] = useState(listTodoApi);
-  // GET LIST ROLES
+	// ------ BASE USESTATE TABLE -------
+	const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
+	const [dataArea, setDataArea] = useState<IArea[]>([]);
+	const [dataSource, setDataSource] = useState<IParents[]>([]);
+	const {showNoti} = useWrap();
+	const [isLoading, setIsLoading] = useState({
+		type: '',
+		status: false,
+	});
+	const [totalPage, setTotalPage] = useState(null);
+	const [indexRow, setIndexRow] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [todoApi, setTodoApi] = useState(listTodoApi);
+	// GET LIST ROLES
 
-  const [dataFilter, setDataFilter] = useState([
-    {
-      name: "AreaID",
-      title: "Tỉnh/TP",
-      col: "col-md-6 col-12",
-      type: "select",
-      optionList: null, // Gọi api xong trả data vào đây
-      value: null,
-    },
-    {
-      name: "BranchID",
-      title: "Trung tâm",
-      col: "col-md-6 col-12",
-      type: "select",
-      optionList: null,
-      value: null,
-    },
-    {
-      name: "RoleID",
-      title: "Chức vụ",
-      col: "col-md-6 col-12",
-      type: "select",
-      optionList: dataRoles,
-      value: null,
-    },
-    {
-      name: "StatusID",
-      title: "Trạng thái",
-      col: "col-md-6 col-12",
-      type: "select",
-      optionList: [
-        {
-          value: 0,
-          title: "Hoạt động",
-        },
-        {
-          value: 1,
-          title: "Không Hoạt động",
-        },
-      ],
-      value: null,
-    },
-    {
-      name: "date-range",
-      title: "Từ - đến",
-      col: "col-12",
-      type: "date-range",
-      value: null,
-    },
-  ]);
+	const [dataFilter, setDataFilter] = useState([
+		{
+			name: 'AreaID',
+			title: 'Tỉnh/TP',
+			col: 'col-md-6 col-12',
+			type: 'select',
+			optionList: null, // Gọi api xong trả data vào đây
+			value: null,
+		},
+		{
+			name: 'BranchID',
+			title: 'Trung tâm',
+			col: 'col-md-6 col-12',
+			type: 'select',
+			optionList: null,
+			value: null,
+		},
+		{
+			name: 'RoleID',
+			title: 'Chức vụ',
+			col: 'col-md-6 col-12',
+			type: 'select',
+			optionList: dataRoles,
+			value: null,
+		},
+		{
+			name: 'StatusID',
+			title: 'Trạng thái',
+			col: 'col-md-6 col-12',
+			type: 'select',
+			optionList: [
+				{
+					value: 0,
+					title: 'Hoạt động',
+				},
+				{
+					value: 1,
+					title: 'Không Hoạt động',
+				},
+			],
+			value: null,
+		},
+		{
+			name: 'date-range',
+			title: 'Từ - đến',
+			col: 'col-12',
+			type: 'date-range',
+			value: null,
+		},
+	]);
 
-  // FOR STUDENT FORM
-  // ------------- ADD data to list --------------
+	// FOR STUDENT FORM
+	// ------------- ADD data to list --------------
 
-  const makeNewData = (data, name) => {
-    let newData = null;
-    switch (name) {
-      case "Area":
-        newData = data.map((item) => ({
-          title: item.AreaName,
-          value: item.AreaID,
-        }));
-        setDataFunc("AreaID", newData);
-        break;
-      case "DistrictID":
-        newData = data.map((item) => ({
-          title: item.DistrictName,
-          value: item.ID,
-        }));
-        break;
-      case "WardID":
-        newData = data.map((item) => ({
-          title: item.WardName,
-          value: item.ID,
-        }));
-        break;
-      case "Branch":
-        newData = data.map((item) => ({
-          title: item.BranchName,
-          value: item.ID,
-        }));
-        setDataFunc("BranchID", newData);
-        break;
-      case "Job":
-        newData = data.map((item) => ({
-          title: item.JobName,
-          value: item.JobID,
-        }));
-        break;
-      case "Purposes":
-        newData = data.map((item) => ({
-          title: item.PurposesName,
-          value: item.PurposesID,
-        }));
-        break;
-      case "Parent":
-        newData = data.map((item) => ({
-          title: item.FullNameUnicode,
-          value: item.UserInformationID,
-        }));
-        break;
-      case "SourceInformation":
-        newData = data.map((item) => ({
-          title: item.SourceInformationName,
-          value: item.SourceInformationID,
-        }));
-        setDataFunc("SourceInformationID", newData);
-        break;
-      case "Counselors":
-        newData = data.map((item) => ({
-          title: item.FullNameUnicode,
-          value: item.UserInformationID,
-        }));
-        break;
-      default:
-        break;
-    }
+	const makeNewData = (data, name) => {
+		let newData = null;
+		switch (name) {
+			case 'Area':
+				newData = data.map((item) => ({
+					title: item.AreaName,
+					value: item.AreaID,
+				}));
+				setDataFunc('AreaID', newData);
+				break;
+			case 'DistrictID':
+				newData = data.map((item) => ({
+					title: item.DistrictName,
+					value: item.ID,
+				}));
+				break;
+			case 'WardID':
+				newData = data.map((item) => ({
+					title: item.WardName,
+					value: item.ID,
+				}));
+				break;
+			case 'Branch':
+				newData = data.map((item) => ({
+					title: item.BranchName,
+					value: item.ID,
+				}));
+				setDataFunc('BranchID', newData);
+				break;
+			case 'Job':
+				newData = data.map((item) => ({
+					title: item.JobName,
+					value: item.JobID,
+				}));
+				break;
+			case 'Purposes':
+				newData = data.map((item) => ({
+					title: item.PurposesName,
+					value: item.PurposesID,
+				}));
+				break;
+			case 'Parent':
+				newData = data.map((item) => ({
+					title: item.FullNameUnicode,
+					value: item.UserInformationID,
+				}));
+				break;
+			case 'SourceInformation':
+				newData = data.map((item) => ({
+					title: item.SourceInformationName,
+					value: item.SourceInformationID,
+				}));
+				setDataFunc('SourceInformationID', newData);
+				break;
+			case 'Counselors':
+				newData = data.map((item) => ({
+					title: item.FullNameUnicode,
+					value: item.UserInformationID,
+				}));
+				break;
+			default:
+				break;
+		}
 
-    return newData;
-  };
+		return newData;
+	};
 
-  const getDataTolist = (data: any, name: any) => {
-    let newData = makeNewData(data, name);
+	const getDataTolist = (data: any, name: any) => {
+		let newData = makeNewData(data, name);
 
-    Object.keys(listDataForm).forEach(function (key) {
-      if (key == name) {
-        listDataForm[key] = newData;
-      }
-    });
-    setListDataForm({ ...listDataForm });
-  };
+		Object.keys(listDataForm).forEach(function (key) {
+			if (key == name) {
+				listDataForm[key] = newData;
+			}
+		});
+		setListDataForm({...listDataForm});
+	};
 
-  // ----------- GET DATA SOURCE ---------------
-  const getDataStudentForm = (arrApi) => {
-    arrApi.forEach((item, index) => {
-      (async () => {
-        let res = null;
-        try {
-          if (item.name == "Counselors") {
-            res = await item.api.getAll({
-              pageIndex: 1,
-              pageSize: 99999,
-              RoleID: 6,
-              StatusID: 0,
-              Enable: true,
-            });
-          } else {
-            res = await item.api.getAll({
-              pageIndex: 1,
-              pageSize: 99999,
-              Enable: true,
-            });
-          }
+	// ----------- GET DATA SOURCE ---------------
+	const getDataStudentForm = (arrApi) => {
+		arrApi.forEach((item, index) => {
+			(async () => {
+				let res = null;
+				try {
+					if (item.name == 'Counselors') {
+						res = await item.api.getAll({
+							pageIndex: 1,
+							pageSize: 99999,
+							RoleID: 6,
+							StatusID: 0,
+							Enable: true,
+						});
+					} else {
+						res = await item.api.getAll({
+							pageIndex: 1,
+							pageSize: 99999,
+							Enable: true,
+						});
+					}
 
-          res.status == 200 && getDataTolist(res.data.data, item.name);
+					res.status == 200 && getDataTolist(res.data.data, item.name);
 
-          res.status == 204 &&
-            showNoti("danger", item.text + " Không có dữ liệu");
-        } catch (error) {
-          showNoti("danger", error.message);
-        } finally {
-        }
-      })();
-    });
-  };
+					res.status == 204 &&
+						showNoti('danger', item.text + ' Không có dữ liệu');
+				} catch (error) {
+					showNoti('danger', error.message);
+				} finally {
+				}
+			})();
+		});
+	};
 
-  // GET DATA SOURCE
-  const getDataSource = async () => {
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
-    });
+	// GET DATA SOURCE
+	const getDataSource = async () => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true,
+		});
 
-    try {
-      let res = await parentsApi.getAll(todoApi);
-      res.status == 200 &&
-        (setDataSource(res.data.data),
-        setTotalPage(res.data.totalRow),
-        showNoti("success", "Thành công"));
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
-    }
-  };
+		try {
+			let res = await parentsApi.getAll(todoApi);
+			res.status == 200 &&
+				(setDataSource(res.data.data),
+				setTotalPage(res.data.totalRow),
+				showNoti('success', 'Thành công'));
+			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: false,
+			});
+		}
+	};
 
-  // ------ SET DATA FUN ------
-  const setDataFunc = (name, data) => {
-    dataFilter.every((item, index) => {
-      if (item.name == name) {
-        item.optionList = data;
-        return false;
-      }
-      return true;
-    });
-    setDataFilter([...dataFilter]);
-  };
+	// ------ SET DATA FUN ------
+	const setDataFunc = (name, data) => {
+		dataFilter.every((item, index) => {
+			if (item.name == name) {
+				item.optionList = data;
+				return false;
+			}
+			return true;
+		});
+		setDataFilter([...dataFilter]);
+	};
 
-  // ---------------- AFTER SUBMIT -----------------
-  const afterPost = (mes) => {
-    // showNoti("success", "Thêm nhân viên thành công");
-    setTodoApi({
-      ...listTodoApi,
-      pageIndex: 1,
-    });
-    setCurrentPage(1);
-  };
+	// ---------------- AFTER SUBMIT -----------------
+	const afterPost = (mes) => {
+		// showNoti("success", "Thêm nhân viên thành công");
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1);
+	};
 
-  console.log("List data: ", listDataForm);
+	// ----------- SUBMI FORM ------------
+	const returnBranchName = (branchID) => {
+		let newArr = [];
+		let listID = branchID.split(',');
 
-  // ----------- SUBMI FORM ------------
-  const returnBranchName = (branchID) => {
-    let newArr = [];
-    let listID = branchID.split(",");
+		listID.forEach((item) => {
+			let newObj = {
+				ID: parseInt(item),
+				BranchName: listDataForm?.Branch.find((a) => a.value === parseInt(item))
+					.title,
+			};
 
-    console.log("List ID: ", listID);
+			newObj && newArr.push(newObj);
+		});
 
-    listID.forEach((item) => {
-      console.log(
-        "TESTT: ",
-        listDataForm?.Branch.find((a) => a.value === parseInt(item))
-      );
-      let newObj = {
-        ID: parseInt(item),
-        BranchName: listDataForm?.Branch.find((a) => a.value === parseInt(item))
-          .title,
-      };
+		return newArr;
+	};
 
-      newObj && newArr.push(newObj);
-    });
+	const onSubmitSalary = async (data: any) => {
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		let res = null;
+		try {
+			res = await staffSalaryApi.update(data);
+			if (res.status == 200) {
+				showNoti('success', 'Thêm lương thành công');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
 
-    console.log("New arr: ", newArr);
-    return newArr;
-  };
+		return res;
+	};
 
-  const onSubmitSalary = async (data: any) => {
-    console.log("DATA SUBMIT SALARY: ", data);
+	const onSubmit = async (data: any) => {
+		if (typeof data.Branch != 'undefined') {
+			data.Branch = data.Branch.toString();
+		} else {
+			data.Branch = '';
+		}
 
-    setIsLoading({
-      type: "ADD_DATA",
-      status: true,
-    });
-    let res = null;
-    try {
-      res = await staffSalaryApi.update(data);
-      if (res.status == 200) {
-        showNoti("success", "Thêm lương thành công");
-      }
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "ADD_DATA",
-        status: false,
-      });
-    }
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true,
+		});
+		let res = null;
+		try {
+			if (data.UserInformationID) {
+				res = await parentsApi.update(data);
+				if (res.status == 200) {
+					let newDataSource = [...dataSource];
+					newDataSource.splice(indexRow, 1, {
+						...data,
+						Branch: returnBranchName(data.Branch),
+					});
+					setDataSource(newDataSource);
+					showNoti('success', res.data.message);
+				}
+			} else {
+				res = await parentsApi.add(data);
+				res?.status == 200 && afterPost(res.data.message);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false,
+			});
+		}
 
-    return res;
-  };
+		return res;
+	};
 
-  const onSubmit = async (data: any) => {
-    if (typeof data.Branch != "undefined") {
-      data.Branch = data.Branch.toString();
-    } else {
-      data.Branch = "";
-    }
+	// -------------- CHECK FIELD ---------------------
+	const checkField = (valueSearch, dataIndex) => {
+		let newList = {...listFieldSearch};
+		Object.keys(newList).forEach(function (key) {
+			if (key != dataIndex) {
+				if (key != 'pageIndex') {
+					newList[key] = null;
+				}
+			} else {
+				newList[key] = valueSearch;
+			}
+		});
 
-    console.log("DATA SUBMIT STAFF: ", data);
+		return newList;
+	};
 
-    setIsLoading({
-      type: "ADD_DATA",
-      status: true,
-    });
-    let res = null;
-    try {
-      if (data.UserInformationID) {
-        res = await parentsApi.update(data);
-        if (res.status == 200) {
-          let newDataSource = [...dataSource];
-          newDataSource.splice(indexRow, 1, {
-            ...data,
-            Branch: returnBranchName(data.Branch),
-          });
-          setDataSource(newDataSource);
-          showNoti("success", res.data.message);
-        }
-      } else {
-        res = await parentsApi.add(data);
-        res?.status == 200 && afterPost(res.data.message);
-      }
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-      setIsLoading({
-        type: "ADD_DATA",
-        status: false,
-      });
-    }
+	// -------------- HANDLE FILTER ------------------
+	const handleFilter = (listFilter) => {
+		let newListFilter = {...listFieldFilter};
+		listFilter.forEach((item, index) => {
+			let key = item.name;
+			Object.keys(newListFilter).forEach((keyFilter) => {
+				if (keyFilter == key) {
+					newListFilter[key] = item.value;
+				}
+			});
+		});
+		setTodoApi({...listTodoApi, ...newListFilter, pageIndex: 1});
+	};
 
-    return res;
-  };
+	// --------------- HANDLE SORT ----------------------
+	const handleSort = async (option) => {
+		let newTodoApi = {
+			...listTodoApi,
+			pageIndex: 1,
+			sort: option.title.sort,
+			sortType: option.title.sortType,
+		};
+		setCurrentPage(1), setTodoApi(newTodoApi);
+	};
 
-  // -------------- CHECK FIELD ---------------------
-  const checkField = (valueSearch, dataIndex) => {
-    let newList = { ...listFieldSearch };
-    Object.keys(newList).forEach(function (key) {
-      console.log("key: ", key);
-      if (key != dataIndex) {
-        if (key != "pageIndex") {
-          newList[key] = null;
-        }
-      } else {
-        newList[key] = valueSearch;
-      }
-    });
+	// ------------ ON SEARCH -----------------------
+	const onSearch = (valueSearch, dataIndex) => {
+		let clearKey = checkField(valueSearch, dataIndex);
 
-    return newList;
-  };
+		setTodoApi({
+			...todoApi,
+			...clearKey,
+			...listFieldFilter,
+		});
+	};
 
-  // -------------- HANDLE FILTER ------------------
-  const handleFilter = (listFilter) => {
-    let newListFilter = { ...listFieldFilter };
-    listFilter.forEach((item, index) => {
-      let key = item.name;
-      Object.keys(newListFilter).forEach((keyFilter) => {
-        if (keyFilter == key) {
-          newListFilter[key] = item.value;
-        }
-      });
-    });
-    setTodoApi({ ...listTodoApi, ...newListFilter, pageIndex: 1 });
-  };
+	// HANDLE RESET
+	const resetListFieldSearch = () => {
+		Object.keys(listFieldSearch).forEach(function (key) {
+			if (key != 'pageIndex') {
+				listFieldSearch[key] = null;
+			}
+		});
+	};
 
-  // --------------- HANDLE SORT ----------------------
-  const handleSort = async (option) => {
-    let newTodoApi = {
-      ...listTodoApi,
-      pageIndex: 1,
-      sort: option.title.sort,
-      sortType: option.title.sortType,
-    };
-    setCurrentPage(1), setTodoApi(newTodoApi);
-  };
+	const handleReset = () => {
+		setTodoApi({
+			...listTodoApi,
+			pageIndex: 1,
+		});
+		setCurrentPage(1), resetListFieldSearch();
+	};
 
-  // ------------ ON SEARCH -----------------------
-  const onSearch = (valueSearch, dataIndex) => {
-    let clearKey = checkField(valueSearch, dataIndex);
+	// -------------- GET PAGE_NUMBER -----------------
+	const getPagination = (pageNumber: number) => {
+		pageIndex = pageNumber;
+		setCurrentPage(pageNumber);
+		setTodoApi({
+			...todoApi,
+			...listFieldSearch,
+			...listFieldFilter,
+			pageIndex: pageIndex,
+		});
+	};
 
-    setTodoApi({
-      ...todoApi,
-      ...clearKey,
-      ...listFieldFilter,
-    });
-  };
+	// ============== USE EFFECT - FETCH DATA ===================
+	useEffect(() => {
+		getDataSource();
+	}, [todoApi]);
 
-  // HANDLE RESET
-  const resetListFieldSearch = () => {
-    Object.keys(listFieldSearch).forEach(function (key) {
-      if (key != "pageIndex") {
-        listFieldSearch[key] = null;
-      }
-    });
-  };
+	useEffect(() => {
+		getDataStudentForm(listApi);
+	}, []);
 
-  const handleReset = () => {
-    setTodoApi({
-      ...listTodoApi,
-      pageIndex: 1,
-    });
-    setCurrentPage(1), resetListFieldSearch();
-  };
+	const columns = [
+		{
+			title: 'Mã phụ huynh',
+			dataIndex: 'UserCode',
+		},
+		{
+			title: 'Họ tên',
+			dataIndex: 'FullNameUnicode',
+			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+			render: (text) => <p className="font-weight-black">{text}</p>,
+		},
+		{
+			title: 'Tên tiếng Trung',
+			dataIndex: 'ChineseName',
+			render: (text) => <p className="font-weight-black">{text}</p>,
+		},
+		{
+			title: 'Trung tâm',
+			dataIndex: 'Branch',
+			render: (branch) => (
+				<>
+					{branch.map((item) => (
+						<p className="font-weight-blue d-block">{item.BranchName}</p>
+					))}
+				</>
+			),
+		},
+		{
+			title: 'Giới tính',
+			dataIndex: 'Gender',
+			render: (gender) => (
+				<>{gender == 0 ? 'Nữ' : gender == 1 ? 'Nam' : 'Khác'}</>
+			),
+		},
+		{
+			title: 'Tài khoản',
+			dataIndex: 'UserName',
+		},
+		{
+			title: 'Email',
+			dataIndex: 'Email',
+		},
+		{
+			title: 'SĐT',
+			dataIndex: 'Mobile',
+		},
+		{
+			title: 'Facebook',
+			dataIndex: 'LinkFaceBook',
+			render: (link) =>
+				link && (
+					<a className="font-weight-black" href={link} target="_blank">
+						Link
+					</a>
+				),
+		},
 
-  // -------------- GET PAGE_NUMBER -----------------
-  const getPagination = (pageNumber: number) => {
-    pageIndex = pageNumber;
-    setCurrentPage(pageNumber);
-    setTodoApi({
-      ...todoApi,
-      ...listFieldSearch,
-      ...listFieldFilter,
-      pageIndex: pageIndex,
-    });
-  };
+		{
+			title: 'Trạng thái',
+			dataIndex: 'StatusID',
+			className: 'text-center',
+			render: (status) => (
+				<>
+					{
+						<span className={`tag ${status == 0 ? 'green' : 'gray'}`}>
+							{status == 0 ? 'Hoạt động' : 'Khóa'}
+						</span>
+					}
+				</>
+			),
+		},
+		{
+			title: '',
+			dataIndex: '',
+			width: 100,
+			align: 'center',
+			render: (text, data, index) => (
+				<div onClick={(e) => e.stopPropagation()}>
+					<ParentsForm
+						getIndex={() => setIndexRow(index)}
+						index={index}
+						rowData={data}
+						rowID={data.UserInformationID}
+						isLoading={isLoading}
+						onSubmit={(data: any) => onSubmit(data)}
+						onSubmitSalary={(data: any) => onSubmitSalary(data)}
+						listDataForm={listDataForm}
+					/>
+				</div>
+			),
+		},
+	];
 
-  // ============== USE EFFECT - FETCH DATA ===================
-  useEffect(() => {
-    getDataSource();
-  }, [todoApi]);
-
-  useEffect(() => {
-    getDataStudentForm(listApi);
-  }, []);
-
-  const columns = [
-    {
-      title: "Họ tên",
-      dataIndex: "FullNameUnicode",
-      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
-      render: (text) => <p className="font-weight-black">{text}</p>,
-    },
-    {
-      title: "Trung tâm",
-      dataIndex: "Branch",
-      render: (branch) => (
-        <>
-          {branch.map((item) => (
-            <p className="font-weight-blue d-block">{item.BranchName}</p>
-          ))}
-        </>
-      ),
-    },
-    {
-      title: "Giới tính",
-      dataIndex: "Gender",
-      render: (gender) => (
-        <>{gender == 0 ? "Nữ" : gender == 1 ? "Nam" : "Khác"}</>
-      ),
-    },
-    {
-      title: "Tài khoản",
-      dataIndex: "UserName",
-    },
-    {
-      title: "Email",
-      dataIndex: "Email",
-    },
-    {
-      title: "SĐT",
-      dataIndex: "Mobile",
-    },
-
-    {
-      title: "Trạng thái",
-      dataIndex: "StatusID",
-      className: "text-center",
-      render: (status) => (
-        <>
-          {
-            <span className={`tag ${status == 0 ? "green" : "gray"}`}>
-              {status == 0 ? "Hoạt động" : "Khóa"}
-            </span>
-          }
-        </>
-      ),
-    },
-    {
-      title: "",
-      dataIndex: "",
-
-      align: "center",
-      render: (text, data, index) => (
-        <ParentsForm
-          getIndex={() => setIndexRow(index)}
-          index={index}
-          rowData={data}
-          rowID={data.UserInformationID}
-          isLoading={isLoading}
-          onSubmit={(data: any) => onSubmit(data)}
-          onSubmitSalary={(data: any) => onSubmitSalary(data)}
-          listDataForm={listDataForm}
-        />
-      ),
-    },
-  ];
-
-  console.log("Data Source: ", dataSource);
-
-  return (
-    <>
-      <PowerTable
-        currentPage={currentPage}
-        totalPage={totalPage && totalPage}
-        getPagination={(pageNumber: number) => getPagination(pageNumber)}
-        loading={isLoading}
-        addClass="basic-header"
-        columns={columns}
-        dataSource={dataSource}
-        TitlePage="Danh sách phụ huynh"
-        TitleCard={
-          <ParentsForm
-            isLoading={isLoading}
-            onSubmit={(data: any) => onSubmit(data)}
-            listDataForm={listDataForm}
-          />
-        }
-        Extra={
-          <div className="extra-table">
-            <FilterBase
-              dataFilter={dataFilter}
-              handleFilter={(listFilter: any) => handleFilter(listFilter)}
-              handleReset={handleReset}
-            />
-            <SortBox
-              handleSort={(value) => handleSort(value)}
-              dataOption={dataOption}
-            />
-          </div>
-        }
-      />
-    </>
-  );
+	return (
+		<>
+			<PowerTable
+				currentPage={currentPage}
+				totalPage={totalPage && totalPage}
+				getPagination={(pageNumber: number) => getPagination(pageNumber)}
+				loading={isLoading}
+				addClass="basic-header"
+				columns={columns}
+				dataSource={dataSource}
+				TitlePage="Danh sách phụ huynh"
+				TitleCard={
+					<ParentsForm
+						isLoading={isLoading}
+						onSubmit={(data: any) => onSubmit(data)}
+						listDataForm={listDataForm}
+					/>
+				}
+				Extra={
+					<div className="extra-table">
+						<FilterBase
+							dataFilter={dataFilter}
+							handleFilter={(listFilter: any) => handleFilter(listFilter)}
+							handleReset={handleReset}
+						/>
+						<SortBox
+							handleSort={(value) => handleSort(value)}
+							dataOption={dataOption}
+						/>
+					</div>
+				}
+			/>
+		</>
+	);
 };
 ParentsList.layout = LayoutBase;
 
