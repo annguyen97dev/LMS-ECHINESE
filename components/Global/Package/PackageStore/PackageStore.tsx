@@ -1,4 +1,5 @@
 import {Card, Image, List} from 'antd';
+import {useRouter} from 'next/router';
 import React, {useEffect, useRef, useState} from 'react';
 import {packageApi, packageStudentApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
@@ -9,6 +10,8 @@ import PackageStoreFilterForm from './PackageStoreFilterForm/PackageStoreFilterF
 import PackageStoreForm from './PackageStoreForm/PackageStoreForm';
 
 const PackageStore = () => {
+	const router = useRouter();
+	const {type} = router.query;
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
@@ -180,6 +183,17 @@ const PackageStore = () => {
 		fetchPackageList();
 	}, [filters]);
 
+	useEffect(() => {
+		if (type) {
+			setFilters({
+				...listFieldInit,
+				...refValue.current,
+				pageIndex: 1,
+				Type: type,
+			});
+		}
+	}, [type]);
+
 	const onSubmit = async (data: {
 		ID: number;
 		Price: string;
@@ -248,6 +262,7 @@ const PackageStore = () => {
 								onChange: getPagination,
 								total: totalPage,
 								size: 'small',
+								current: filters.pageIndex,
 							}}
 							itemLayout="horizontal"
 							dataSource={storePackageList}
@@ -290,8 +305,8 @@ const PackageStore = () => {
 													</li>
 												</ul>
 												<div className="set-btn">
-													{userInformation.RoleID !== 1 &&
-														userInformation.RoleID !== 5 &&
+													{userInformation?.RoleID !== 1 &&
+														userInformation?.RoleID !== 5 &&
 														(Type === 1 ? (
 															<PackageStoreForm
 																isAddPackageFree={true}
