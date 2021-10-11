@@ -191,13 +191,12 @@ export const AddCurriculumForm = (props) => {
   };
 
   const onChangeUploadLinkDocument = async (info) => {
+    setShowListUploadDoc(false);
     if (info.file.status === "uploading") {
       setLoadingUpload(true);
       return;
     }
     setLoadingUpload(true);
-    console.log("File: ", info.file);
-
     try {
       let res = await lessonDetailApi.UploadDocument(info.file.originFileObj);
       if (res.status == 200) {
