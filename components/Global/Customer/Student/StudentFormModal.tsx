@@ -395,6 +395,10 @@ const StudentFormModal = (props) => {
     }
   }, [isModalVisible]);
 
+  useEffect(() => {
+    setListData(listDataForm);
+  }, [listDataForm]);
+
   return (
     <>
       <button className="btn btn-icon edit" onClick={showModal}>
