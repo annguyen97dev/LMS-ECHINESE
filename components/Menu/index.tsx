@@ -360,6 +360,8 @@ const MenuDefault = ({
           <ul className="list-menu">
             {parentMenu.map((item, index) => (
               <li className={tab === item.TabName ? "active" : ""} key={index}>
+                <b className={tab === item.TabName ? "" : "d-none"}></b>
+                <b className={tab === item.TabName ? "" : "d-none"}></b>
                 <a
                   href="#"
                   onClick={changeTabsClick}

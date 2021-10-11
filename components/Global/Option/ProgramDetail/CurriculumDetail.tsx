@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import PowerTable from "~/components/PowerTable";
 import { useRouter } from "next/router";
 import { useWrap } from "~/context/wrap";
-import { curriculumDetailApi, subjectApi } from "~/apiBase";
+import { curriculumDetailApi, examTopicApi, subjectApi } from "~/apiBase";
 import CurriculumForm from "~/components/Global/Option/CurriculumForm";
-import { Tooltip, Select } from "antd";
+import { Tooltip, Select, Button } from "antd";
 import Link from "next/link";
 import { Info } from "react-feather";
 import NestedTable from "~/components/Elements/NestedTable";
+import { PlusOutlined } from "@ant-design/icons";
+import AddCurriculumForm from "./AddCurriculumForm";
 
 let pageIndex = 1;
 
@@ -39,10 +41,17 @@ const CurriculumDetail = (props) => {
     type: "",
     status: false,
   });
+  const [examTopic, setExamTopic] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    // CurriculumID: curriculumID ? curriculumID : null,
+    Type: 3,
+  });
   const [totalPage, setTotalPage] = useState(null);
   const [indexRow, setIndexRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [todoApi, setTodoApi] = useState(listTodoApi);
+  const [dataExamTopic, setDataExamTopic] = useState(null);
 
   // GET DATA COURSE
   const getDataSource = async () => {
@@ -147,10 +156,35 @@ const CurriculumDetail = (props) => {
     });
   };
 
+  const getLessonID = async () => {
+    setIsLoading({
+      type: "ADD_DATA",
+      status: true,
+    });
+
+    try {
+      let res = await examTopicApi.getAll(examTopic);
+      if (res.status == 200) {
+        // showNoti("success", "Upload file thành công");
+        setDataExamTopic(res.data.data);
+      } else if (res.status == 204) {
+        // showNoti("danger", "Không có dữ liệu");
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading({
+        type: "ADD_DATA",
+        status: false,
+      });
+    }
+  };
+
   // ============== USE EFFECT - FETCH DATA ===================
   useEffect(() => {
     getDataSource();
+    getLessonID();
   }, [todoApi]);
+  // console.log(dataSource);
 
   const columns = [
     {
@@ -162,7 +196,7 @@ const CurriculumDetail = (props) => {
         <Select
           loading={data.ID == loadingSelect.id && loadingSelect.status}
           value={returnValue(data.ID)}
-          style={{ width: "60%", margin: "auto" }}
+          style={{ width: "100%", margin: "auto" }}
           className="style-input"
           showSearch
           optionFilterProp="children"
@@ -181,10 +215,35 @@ const CurriculumDetail = (props) => {
       ),
     },
     {
+      title: "Trạng thái",
+      dataIndex: "StatusName",
+      key: "statusname",
+      className: "text-center",
+      render: (text, data) => (
+        <div>
+          <p>{data?.IsExam ? "Kiểm tra" : "Buổi học"}</p>
+        </div>
+      ),
+    },
+    {
       title: "Số buổi học",
       dataIndex: "LessonNumber",
       key: "lessonnumber",
       className: "col-short text-center",
+    },
+    {
+      title: "",
+      dataIndex: "StatusName",
+      key: "statusname",
+      className: "text-center",
+      render: (text, data) => (
+        <AddCurriculumForm
+          curriculumDetailID={data.ID}
+          dataExamTopic={dataExamTopic}
+          dataCurriculumDetail={dataSource}
+          onFetchData={() => setTodoApi({ ...todoApi })}
+        />
+      ),
     },
   ];
 
