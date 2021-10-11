@@ -491,7 +491,7 @@ const MenuDefault = ({
           }}
         >
           {childMenu?.map((menu, indexMenu) => (
-            <div key={indexMenu}>
+            <div key={indexMenu} className="menu-child-body-element">
               <Menu
                 key={indexMenu}
                 onOpenChange={onOpenChange}
