@@ -629,6 +629,9 @@ const ExamDetail = () => {
               }
             >
               <div className="question-list" ref={boxEl} onScroll={onScroll}>
+                <div className="loading-all">
+                  <Spin />
+                </div>
                 {isLoading ? (
                   <div className="text-center mt-3">
                     <Spin />
