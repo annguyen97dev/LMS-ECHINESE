@@ -46,7 +46,6 @@ const ScheduleOnlineItem = (props) => {
 		TeacherName,
 		SubjectName,
 	} = scheduleObj;
-	console.log(optionTeacherList);
 	const defaultValuesInit = {
 		TeacherID: 0,
 		StudyTimeID: CaID,
@@ -80,13 +79,23 @@ const ScheduleOnlineItem = (props) => {
 		form.setValue('TeacherID', 0);
 	};
 
-	// SET VALUE TO INPUT IF HAVE DATA
+	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
-		let {TeacherID, CaID, StudyTimeID} = scheduleObj;
-		form.setValue('StudyTimeID', CaID || StudyTimeID);
-		form.setValue('TeacherID', TeacherID || 0);
 		form.clearErrors();
-	}, [scheduleObj]);
+		if (isLoading.type === 'CHECK_SCHEDULE' && !isLoading.status) {
+			let {ID, TeacherID, CaID, StudyTimeID} = scheduleObj;
+			if (optionTeacherList.length) {
+				form.setValue('StudyTimeID', CaID || StudyTimeID);
+				// NEED TO SET SELECT TEACHER TO DEFAULT IF DONT HAVE VALUE FROM API RETURN
+				if (!optionTeacherList.some((o) => o.value === TeacherID)) {
+					form.setValue('TeacherID', 0);
+					checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
+				} else {
+					form.setValue('TeacherID', TeacherID);
+				}
+			}
+		}
+	}, [scheduleObj, optionTeacherList, isLoading]);
 
 	return (
 		<Panel

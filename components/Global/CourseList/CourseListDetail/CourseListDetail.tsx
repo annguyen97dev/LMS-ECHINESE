@@ -30,7 +30,6 @@ const CourseListDetail = () => {
 			<Tabs
 				tabPosition="right"
 				onTabClick={(key) => {
-					console.log(key);
 					if (parseInt(key) === 2) {
 						const url =
 							parseInt(type as string) === 1

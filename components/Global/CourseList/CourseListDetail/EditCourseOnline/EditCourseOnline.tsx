@@ -46,7 +46,7 @@ type IEditCourseScheduleShowList = {
 	[k: string]: ICourseDetailSchedule[];
 };
 type IDataModal = {
-	dateFm: string;
+	dateString: string;
 	limit: number;
 	scheduleInDay: number;
 	scheduleList: ICourseDetailSchedule[];
@@ -87,14 +87,13 @@ const EditCourseOnline = (props) => {
 		});
 	//StudyDay
 	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
-	const [dateSelected, setDateSelected] = useState('');
 	// SCHEDULE TO SHOW ON MODAL
 	const [scheduleShow, setScheduleShow] = useState<IEditCourseScheduleShowList>(
 		{}
 	);
 	// CALENDAR MODAL
 	const [dataModalCalendar, setDataModalCalendar] = useState<IDataModal>({
-		dateFm: '',
+		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
 		scheduleList: [],
@@ -182,7 +181,7 @@ const EditCourseOnline = (props) => {
 			});
 		}
 	};
-	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 1000, []);
+	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 300, []);
 	const onDebounceFetchInfoAvailableSchedule = (
 		params: ICourseDetailSchedule[]
 	) => {
@@ -292,7 +291,10 @@ const EditCourseOnline = (props) => {
 			) {
 				showNoti('danger', 'Dữ liệu không phù hợp');
 			} else {
-				onDebounceFetchInfoAvailableSchedule(scheduleList);
+				setDataModalCalendar({
+					...dataModalCalendar,
+					scheduleList: scheduleList,
+				});
 			}
 		}
 		setScheduleList((prevState) => ({
@@ -301,7 +303,7 @@ const EditCourseOnline = (props) => {
 		}));
 	};
 	const changeStatusSchedule = (sch: ICourseDetailSchedule, type = 1) => {
-		if (!dateSelected) {
+		if (!dataModalCalendar.dateString) {
 			showNoti('danger', 'Bạn chưa chọn ngày');
 			return false;
 		}
@@ -316,22 +318,27 @@ const EditCourseOnline = (props) => {
 			const idx = newScheduleUnavailableList.findIndex((s) => s.ID === sch.ID);
 			const newScheduleObj = {
 				...newScheduleUnavailableList[idx],
-				Date: dateSelected,
+				Date: dataModalCalendar.dateString,
 			};
 			newScheduleUnavailableList.splice(idx, 1);
 			newScheduleAvailableList.push(newScheduleObj);
 		}
 		// type = 1 => available to unavailable
 		if (type === 1) {
-			const limit = calendarList.find((c) => c.Day === dateSelected)?.Limit;
-			if (fmScheduleUnavailableToObject[dateSelected]?.length >= limit) {
+			const limit = calendarList.find(
+				(c) => c.Day === dataModalCalendar.dateString
+			)?.Limit;
+			if (
+				fmScheduleUnavailableToObject[dataModalCalendar.dateString]?.length >=
+				limit
+			) {
 				showNoti('danger', 'Số ca đạt giới hạn');
 				return false;
 			}
 			const idx = newScheduleAvailableList.findIndex((s) => s.ID === sch.ID);
 			const newScheduleObj = {
 				...newScheduleAvailableList[idx],
-				Date: dateSelected,
+				Date: dataModalCalendar.dateString,
 			};
 			newScheduleAvailableList.splice(idx, 1);
 			newScheduleUnavailableList.push(newScheduleObj);
@@ -379,9 +386,6 @@ const EditCourseOnline = (props) => {
 			};
 		});
 		return rs;
-	};
-	const onSelectDate = (vl) => {
-		setDateSelected(vl.resource.dateString);
 	};
 	const onToggleSchedule = (sch: ICourseDetailSchedule, type: number) => {
 		if (changeStatusSchedule(sch, type)) {
@@ -549,9 +553,10 @@ const EditCourseOnline = (props) => {
 			}
 			res = await courseDetailApi.update(scheduleListToSave);
 			if (res.status === 200) {
-				setScheduleShow({});
-				setScheduleListToSave([]);
 				showNoti('success', res.data.message);
+				router.push(
+					`/course/course-list/course-list-detail/${courseID}?type=2`
+				);
 			}
 		} catch (error) {
 			showNoti('error', error.message);
@@ -582,14 +587,17 @@ const EditCourseOnline = (props) => {
 					'select',
 				]);
 
-				setOptionListForGetAvailableSchedule({
+				const rs = {
 					studyTimes: studyTimesFm,
-				});
+				};
+
+				setOptionListForGetAvailableSchedule(rs);
 
 				setScheduleList({
 					available: [],
 					unavailable: newScheduleList,
 				});
+				return rs;
 			}
 		} catch (error) {
 			showNoti('error', error.message);
@@ -692,6 +700,15 @@ const EditCourseOnline = (props) => {
 			showNoti('error', error.message);
 		}
 	};
+	const fetchAvailableScheduleFirstTime = async () => {
+		const {studyTimes} = await fetchCourseDetail();
+		const StudyTimeID = studyTimes
+			.filter((r) => r.options.select)
+			.map((r) => r.value);
+		if (StudyTimeID.length) {
+			fetchAvailableSchedule({StudyTimeID});
+		}
+	};
 	const onCreateSchedule = (obj: {SubjectID: number; StudyDay: number}) => {
 		setIsLoading({
 			type: 'CREATE_SCHEDULE',
@@ -742,6 +759,7 @@ const EditCourseOnline = (props) => {
 			fetchSubject();
 			fetchStudyTime();
 			fetchCourseDetail();
+			fetchAvailableScheduleFirstTime();
 		}
 		return () => {
 			isMounted = false;
@@ -786,9 +804,6 @@ const EditCourseOnline = (props) => {
 					>
 						<CreateCourseCalendar
 							eventList={calendarDateFormat(calendarList)}
-							handleSelectDate={onSelectDate}
-							dateSelected={dateSelected}
-							//
 							isLoaded={
 								isLoading.type === 'FETCH_SCHEDULE' && isLoading.status
 									? false

@@ -12,9 +12,6 @@ const localizer = momentLocalizer(moment);
 const CreateCourseCalendar = (props) => {
 	const {
 		eventList,
-		handleSelectDate,
-		dateSelected,
-		//
 		isLoaded,
 		//
 		handleSetDataModalCalendar,
@@ -25,7 +22,7 @@ const CreateCourseCalendar = (props) => {
 	const {showNoti} = useWrap();
 	const openModal = () => setIsVisible(true);
 	const closeModal = () => setIsVisible(false);
-	const {dateFm, limit, scheduleInDay, scheduleList} = dataModalCalendar;
+	const {dateString, limit, scheduleInDay, scheduleList} = dataModalCalendar;
 	const checkHandleSetDataModalCalendar = (obj) => {
 		if (!handleSetDataModalCalendar) return;
 		handleSetDataModalCalendar(obj);
@@ -33,26 +30,24 @@ const CreateCourseCalendar = (props) => {
 	const styleEvent = ({event}) => {
 		const {dateString, limit, scheduleList, valid} = event.resource;
 		const scheduleInDay = scheduleList.length;
-		const dateFm = moment(dateString).format('DD/MM/YYYY');
 		return (
 			<>
 				<div
 					onClick={(e) => {
 						e.stopPropagation();
 						checkHandleSetDataModalCalendar({
-							dateFm,
+							dateString,
 							limit,
 							scheduleInDay,
 							scheduleList,
 						});
 						openModal();
-						if (handleSelectDate) {
-							handleSelectDate(event);
-						}
 						if (valid) {
 							showNoti(
 								'success',
-								`Ngày ${dateFm}- hãy chọn ${limit - scheduleInDay} ca`
+								`Ngày ${moment(dateString).format('DD/MM/YYYY')}- hãy chọn ${
+									limit - scheduleInDay
+								} ca`
 							);
 						}
 					}}
@@ -75,7 +70,7 @@ const CreateCourseCalendar = (props) => {
 		if (event.resource.scheduleList.length === 0) {
 			cls = 'create-course-event create-course-event-gray';
 		}
-		if (event.resource.dateString === dateSelected) {
+		if (event.resource.dateString === dateString) {
 			return {
 				className: 'create-course-event create-course-event-active',
 			};
@@ -118,7 +113,7 @@ const CreateCourseCalendar = (props) => {
 				className="custom-calendar-modal create-course-modal"
 				getContainer=".create-course-wrap-modal"
 				zIndex={900}
-				title={`Chi tiết ngày ${dateFm}`}
+				title={`Chi tiết ngày ${moment(dateString).format('DD/MM/YYYY')}`}
 				visible={isVisible}
 				footer={null}
 				onCancel={closeModal}
@@ -176,13 +171,11 @@ CreateCourseCalendar.propTypes = {
 			}),
 		})
 	).isRequired,
-	handleSelectDate: PropTypes.func,
-	dateSelected: PropTypes.string,
 	isLoaded: PropTypes.bool,
 	//
 	handleSetDataModalCalendar: PropTypes.func,
 	dataModalCalendar: PropTypes.shape({
-		dateFm: PropTypes.string,
+		dateString: PropTypes.string,
 		limit: PropTypes.number,
 		scheduleInDay: PropTypes.number,
 		scheduleList: PropTypes.array,
@@ -192,13 +185,11 @@ CreateCourseCalendar.propTypes = {
 };
 CreateCourseCalendar.defaultProps = {
 	eventList: [],
-	handleSelectDate: null,
-	dateSelected: '',
 	isLoaded: false,
 	//
 	handleSetDataModalCalendar: null,
 	dataModalCalendar: {
-		dateFm: '',
+		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
 		scheduleList: [],
