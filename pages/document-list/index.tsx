@@ -62,7 +62,7 @@ const DocumentList = (props) => {
             </Menu>
           </div>
           <div className="col-9">
-            <FileExtension categoryID={categoryID} />
+            {/* <FileExtension categoryID={categoryID} /> */}
           </div>
         </div>
       </Card>

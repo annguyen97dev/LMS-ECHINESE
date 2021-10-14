@@ -117,10 +117,10 @@
       // }
 
       .box-detail {
-        width: 88%;
+        width: 86%;
       }
       .box-action {
-        width: 12%;
+        width: 14%;
         text-align: right;
       }
 
@@ -372,6 +372,7 @@
   }
 
   .question-list {
+    position: relative;
     .box-answer {
       .ant-checkbox-wrapper {
         margin-left: 0;

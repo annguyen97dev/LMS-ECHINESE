@@ -417,6 +417,11 @@ const ExamDetail = () => {
       let res = await examDetailApi.changePosition(dataChange);
       if (res.status === 200) {
         showNoti("success", "Đổi vị trí thành công");
+        setDataChange({
+          IDChangeOne: null,
+          IDChangeTwo: null,
+        });
+        changePositionInArray();
       }
     } catch (error) {
       showNoti("danger", error.message);
@@ -431,6 +436,7 @@ const ExamDetail = () => {
     let indexTo = null;
 
     dataExamDetail.every((item, index) => {
+      console.log("item is: ", item.ID);
       if (item.ID === dataChange.IDChangeOne) {
         dataFrom = item;
         indexFrom = index;
@@ -441,10 +447,15 @@ const ExamDetail = () => {
       }
       if (dataFrom && dataTo) {
         return false;
+      } else {
+        return true;
       }
     });
     console.log("Data From: ", dataFrom);
     console.log("Index From: ", indexFrom);
+
+    console.log("Data To: ", dataTo);
+    console.log("Index To: ", indexTo);
 
     dataExamDetail[indexFrom] = dataTo;
     dataExamDetail[indexTo] = dataFrom;
@@ -452,8 +463,10 @@ const ExamDetail = () => {
     setDataExamDetail([...dataExamDetail]);
   };
 
+  console.log("Data exam detail: ", dataExamDetail);
+
   // GET DATA CHANGE
-  const getDataChange = (data) => {
+  const getDataChange = (data: any) => {
     setDataChange(data);
   };
 

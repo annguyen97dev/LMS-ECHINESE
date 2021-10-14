@@ -15,6 +15,8 @@ import {
 import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 import SortBox from "~/components/Elements/SortBox";
 import StudentForm from "~/components/Global/Customer/Student/StudentForm";
+import StudentFormModal from "~/components/Global/Customer/Student/StudentFormModal";
+import StudentFormModa from "~/components/Global/Customer/Student/StudentFormModal";
 import LayoutBase from "~/components/LayoutBase";
 import PowerTable from "~/components/PowerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
@@ -503,19 +505,20 @@ const StudentData = () => {
     {
       title: "Mã học viên",
       dataIndex: "UserCode",
+      render: (UserCode) => <p className="font-weight-black">{UserCode}</p>,
     },
     {
       title: "Họ tên",
       dataIndex: "FullNameUnicode",
       render: (nameStudent) => (
-        <p className="font-weight-black">{nameStudent}</p>
+        <p className="font-weight-blue">{nameStudent}</p>
       ),
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
     },
     {
       title: "Tên tiếng Trung",
       dataIndex: "ChineseName",
-      render: (text) => <p className="font-weight-black">{text}</p>,
+      render: (text) => <p className="font-weight-blue">{text}</p>,
     },
     {
       title: "Tỉnh/TP",
@@ -566,7 +569,7 @@ const StudentData = () => {
       width: 100,
       render: (record, _, index) => (
         <div onClick={(e) => e.stopPropagation()}>
-          <StudentForm
+          <StudentFormModal
             index={index}
             dataRow={record}
             listDataForm={checkEmptyData && listDataForm}

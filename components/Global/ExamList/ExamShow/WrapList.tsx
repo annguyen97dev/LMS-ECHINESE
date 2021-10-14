@@ -10,6 +10,7 @@ import { examDetailApi } from "~/apiBase";
 import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { useWrap } from "~/context/wrap";
 import EditPoint from "../ExamForm/EditPoint";
+import ChangePosition from "../ExamForm/ChangePosition";
 
 const WrapList = (props) => {
   const { children, dataQuestion, listQuestionID } = props;
@@ -151,6 +152,7 @@ const WrapList = (props) => {
                 </button>
               </Tooltip>
             </Popconfirm>
+            <ChangePosition questionID={dataQuestion.ID} />
             <div className="point-question mt-2">
               <p className="text">{dataQuestion.ExerciseTopic[0].Point}</p>
             </div>
