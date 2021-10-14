@@ -1,0 +1,67 @@
+.video-course-list {
+  width: 75%;
+  background: #fff;
+
+  @include max-media(1500px) {
+    width: 85%;
+  }
+  @include max-media(1200px) {
+    width: 95%;
+  }
+  @include max-media(1000px) {
+    width: 100%;
+  }
+
+  &__item {
+    background: #effaff;
+    // height: 250px;
+    margin: 15px;
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #eceff1;
+
+    img {
+      width: 100%;
+      height: 50%;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+    }
+
+    &__content {
+      height: 50%;
+      width: 100%;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      display: flex;
+      flex-direction: column;
+
+      //
+      .title {
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .content {
+        font-size: 16px;
+      }
+      .rate-container {
+        //
+        justify-content: space-between;
+        align-items: center;
+
+        a {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  &__item:hover {
+    background: #e5f6ff;
+  }
+}
+
+.video-course-list-title {
+  font-size: 16px;
+  margin-top: -17px;
+  color: black;
+}
