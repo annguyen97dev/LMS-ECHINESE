@@ -1,5 +1,5 @@
-import PackageExaminer from '~/components/Global/Package/PackageExaminer/PackageExaminer';
-import LayoutBase from '~/components/LayoutBase';
+import PackageExaminer from "~/components/Global/Package/PackageExaminer/PackageExaminer";
+import LayoutBase from "~/components/LayoutBase";
 
 const PackageExaminerPage = () => <PackageExaminer />;
 PackageExaminerPage.layout = LayoutBase;

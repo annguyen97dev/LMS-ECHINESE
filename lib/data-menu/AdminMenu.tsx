@@ -867,6 +867,13 @@ export const AdminChildMenu = [
             Text: "Phiếu thu, phiếu chi",
             Icon: "",
           },
+          {
+            ItemType: "single",
+            Key: "/option/faq",
+            Route: "/option/faq",
+            Text: "Câu hỏi thường gặp",
+            Icon: "",
+          },
         ],
       },
     ],
