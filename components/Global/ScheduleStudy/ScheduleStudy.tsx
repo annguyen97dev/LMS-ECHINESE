@@ -1,4 +1,4 @@
-import {Card} from 'antd';
+import {Card, Spin} from 'antd';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {
@@ -30,6 +30,15 @@ type IDataList = {
 	list: ICourseDetailSchedule[];
 	type: string;
 };
+type infoSearch = {
+	title: string;
+	branchName?: string;
+	roomName?: string;
+	teacherName?: string;
+	studyTimeName?: string;
+	fromDate: string;
+	toDate: string;
+};
 const ScheduleStudy = () => {
 	const {showNoti} = useWrap();
 	const [isLoading, setIsLoading] = useState({
@@ -46,6 +55,7 @@ const ScheduleStudy = () => {
 		list: [],
 		type: '',
 	});
+	const [infoSearch, setInfoSearch] = useState<infoSearch>(null);
 	const fetchData = async () => {
 		setIsLoading({
 			type: 'FETCH_DATA',
@@ -152,7 +162,7 @@ const ScheduleStudy = () => {
 		});
 		let res;
 		try {
-			const {RoomID, StartTime, EndTime} = value;
+			const {RoomID, StartTime, EndTime, BranchID} = value;
 			const fmObj = {
 				RoomID,
 				StartTime: moment(StartTime).format('YYYY/MM/DD'),
@@ -160,6 +170,16 @@ const ScheduleStudy = () => {
 			};
 			res = await courseDetailApi.getAll(fmObj);
 			if (res.status === 200) {
+				setInfoSearch({
+					title: 'Kiểm tra phòng',
+					branchName:
+						optionList.branchList.find((b) => b.value === BranchID)?.title ||
+						'',
+					roomName:
+						optionList.roomList.find((b) => b.value === RoomID)?.title || '',
+					fromDate: moment(StartTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY'),
+				});
 				setDataList({list: res.data.data, type: ''});
 				showNoti('success', res.data.message);
 			}
@@ -191,7 +211,7 @@ const ScheduleStudy = () => {
 		});
 		let res;
 		try {
-			const {TeacherID, StartTime, EndTime} = value;
+			const {TeacherID, StartTime, EndTime, BranchID} = value;
 			const fmObj = {
 				TeacherID: +TeacherID.toString(),
 				StartTime: moment(StartTime).format('YYYY/MM/DD'),
@@ -199,6 +219,17 @@ const ScheduleStudy = () => {
 			};
 			res = await courseDetailApi.getAll(fmObj);
 			if (res.status === 200) {
+				setInfoSearch({
+					title: 'Lịch giáo viên',
+					teacherName:
+						optionList.teacherList.find((b) => b.value === TeacherID)?.title ||
+						'',
+					branchName:
+						optionList.branchList.find((b) => b.value === BranchID)?.title ||
+						'',
+					fromDate: moment(StartTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY'),
+				});
 				setDataList({list: res.data.data, type: ''});
 				showNoti('success', res.data.message);
 			}
@@ -264,7 +295,7 @@ const ScheduleStudy = () => {
 		});
 		let res;
 		try {
-			const {TeacherID, StudyTimeID, StartTime, EndTime} = value;
+			const {TeacherID, StudyTimeID, StartTime, EndTime, BranchID} = value;
 			const fmObj = {
 				TeacherID: TeacherID.toString(),
 				StudyTimeID: StudyTimeID.join(','),
@@ -274,6 +305,14 @@ const ScheduleStudy = () => {
 			res = await checkTeacherScheduleStudy.getAll(fmObj);
 			if (res.status === 200) {
 				setDataList({list: res.data.data, type: 'CheckManyTeacher'});
+				setInfoSearch({
+					title: 'Lịch nhiều giáo viên',
+					branchName:
+						optionList.branchList.find((b) => b.value === BranchID)?.title ||
+						'',
+					fromDate: moment(StartTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY'),
+				});
 				showNoti('success', res.data.message);
 			}
 			if (res.status === 204) {
@@ -347,10 +386,18 @@ const ScheduleStudy = () => {
 			res = await checkBranchScheduleStudy.getAll(fmObj);
 			if (res.status === 200) {
 				setDataList({list: res.data.data, type: 'CheckBranch'});
+				setInfoSearch({
+					title: 'Lịch trung tâm',
+					branchName:
+						optionList.branchList.find((b) => b.value === BranchID)?.title ||
+						'',
+					fromDate: moment(StartTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY'),
+				});
 				showNoti('success', res.data.message);
 			}
 			if (res.status === 204) {
-				showNoti('danger', 'Không tìm thấy');
+				showNoti('danger', 'Lịch trống');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -362,6 +409,15 @@ const ScheduleStudy = () => {
 		}
 		return res;
 	};
+	useEffect(() => {
+		if (optionList.branchList.length) {
+			onCheckScheduleOfBranch({
+				BranchID: parseInt(optionList.branchList[0].value.toString()),
+				StartTime: moment().format('YYYY/MM/DD'),
+				EndTime: moment().add(1, 'months').format('YYYY/MM/DD'),
+			});
+		}
+	}, [optionList.branchList]);
 	const fmListOfBranch = (calendarArr: ICheckBranchScheduleStudyData[]) => {
 		// rs = {
 		// 		'2021/08/13': {
@@ -452,14 +508,31 @@ const ScheduleStudy = () => {
 						</div>
 					}
 				>
-					{dataList.type === 'CheckBranch' ||
-					dataList.type === 'CheckManyTeacher' ? (
-						<ScheduleStudyList
-							dataSource={fmList(dataList.type, dataList.list)}
-						/>
-					) : (
-						<CDCalendar isLoaded={true} eventList={calendarFm(dataList.list)} />
-					)}
+					<Spin
+						size="large"
+						spinning={isLoading.type === 'ADD_DATA' && isLoading.status}
+					>
+						{infoSearch && (
+							<h4 className="font-weight-black mb-3">
+								{infoSearch.title && `[${infoSearch.title}]`}
+								{infoSearch.branchName && `[${infoSearch.branchName}]`}
+								{infoSearch.teacherName && `[${infoSearch.teacherName}]`}
+								{infoSearch.roomName && `[${infoSearch.roomName}]`} |{' '}
+								{infoSearch.fromDate} - {infoSearch.toDate}
+							</h4>
+						)}
+						{dataList.type === 'CheckBranch' ||
+						dataList.type === 'CheckManyTeacher' ? (
+							<ScheduleStudyList
+								dataSource={fmList(dataList.type, dataList.list)}
+							/>
+						) : (
+							<CDCalendar
+								isLoaded={true}
+								eventList={calendarFm(dataList.list)}
+							/>
+						)}
+					</Spin>
 				</Card>
 			</div>
 		</div>
