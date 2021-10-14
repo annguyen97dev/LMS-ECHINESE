@@ -112,8 +112,8 @@ const ScheduleStudyTeacher = () => {
 					const newScheduleTeacherList = [...scheduleTeacherList];
 					const newScheduleTeacher: IScheduleZoom = {
 						...newScheduleTeacherList[idx],
-						ButtonName: '',
-						ButtonID: 0,
+						ButtonName: 'Đã kết thúc',
+						ButtonID: 3,
 					};
 					newScheduleTeacherList.splice(idx, 1, newScheduleTeacher);
 					setScheduleTeacherList(newScheduleTeacherList);

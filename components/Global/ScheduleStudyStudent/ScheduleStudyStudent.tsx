@@ -98,6 +98,9 @@ const ScheduleStudyStudent = () => {
 				//
 				ButtonID,
 				ButtonName,
+				//
+				isExam,
+				ExamTopicID,
 			} = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
@@ -120,6 +123,8 @@ const ScheduleStudyStudent = () => {
 					ButtonID,
 					ButtonName,
 					idx,
+					isExam,
+					ExamTopicID,
 				},
 			};
 		});

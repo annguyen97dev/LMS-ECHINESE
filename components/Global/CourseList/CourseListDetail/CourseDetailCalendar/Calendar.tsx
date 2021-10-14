@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {Calendar, momentLocalizer} from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import CloseZoomRoom from '~/components/Global/ManageZoom/ZoomRoom/CloseZoomRoom';
 import {useWrap} from '~/context/wrap';
 import CourseDetailUploadFile from './CourseDetailUploadFile';
 moment.locale('vi');
@@ -92,41 +93,72 @@ function CDCalendar(props) {
 	}) => {
 		const {btnID, btnName} = data;
 		if (!btnID) return;
-		if (userInformation?.RoleID === 3 && btnID === 2) {
-			return (
-				<Button
-					size="middle"
-					className="mt-3 btn-success w-100"
-					onClick={() => {
-						checkHandleStudyZoom(data);
-					}}
-				>
-					{btnName}
-				</Button>
-			);
+		// HỌC VIÊN
+		if (userInformation?.RoleID === 3) {
+			if (btnID === 2) {
+				return (
+					<Button
+						size="middle"
+						className="mt-3 btn-success w-100"
+						onClick={() => {
+							checkHandleStudyZoom(data);
+						}}
+					>
+						{btnName}
+					</Button>
+				);
+			}
+			if (btnID === 4) {
+				return (
+					<Button size="middle" className="mt-3 btn-success w-100">
+						{btnName}
+					</Button>
+				);
+			}
 		}
+		// GIÁO VIÊN
 		if (userInformation?.RoleID === 2) {
-			let cls;
 			if (btnID === 1) {
-				cls = 'mt-3 btn-warning w-100';
+				return (
+					<Button
+						size="middle"
+						className="mt-3 btn-warning w-100"
+						onClick={() => {
+							checkHandleStudyZoom(data);
+						}}
+					>
+						{btnName}
+					</Button>
+				);
 			}
 			if (btnID === 2) {
-				cls = 'mt-3 btn-success w-100';
+				return (
+					<>
+						<Button
+							size="middle"
+							className="mt-3 btn-success w-100"
+							onClick={() => {
+								checkHandleStudyZoom(data);
+							}}
+						>
+							{btnName}
+						</Button>
+						<CloseZoomRoom
+							isIcon={false}
+							handleClose={() => {
+								checkHandleStudyZoom({...data, btnID: 3});
+							}}
+						/>
+					</>
+				);
 			}
 			if (btnID === 3) {
-				cls = 'mt-3 btn-secondary w-100';
+				return (
+					<Button disabled size="middle" className="mt-3 btn-light w-100">
+						{btnName}
+					</Button>
+				);
 			}
-			return (
-				<Button
-					size="middle"
-					className={cls}
-					onClick={() => {
-						checkHandleStudyZoom(data);
-					}}
-				>
-					{btnName}
-				</Button>
-			);
 		}
 	};
 
@@ -206,19 +238,26 @@ function CDCalendar(props) {
 			</div>
 		);
 		return (
-			<Popover
-				zIndex={999}
-				title={`Ca: ${StudyTimeName}`}
-				content={content}
-				placement="rightTop"
-				trigger={
-					window.matchMedia('(max-width: 1199px)').matches ? 'click' : 'hover'
-				}
+			<div
+				onClick={(e) => {
+					e.stopPropagation();
+					e.nativeEvent.stopImmediatePropagation();
+				}}
 			>
-				<div className="course-dt-event">
-					<div className="time">Ca: {StudyTimeName}</div>
-				</div>
-			</Popover>
+				<Popover
+					zIndex={999}
+					title={`Ca: ${StudyTimeName}`}
+					content={content}
+					placement="rightTop"
+					trigger={
+						window.matchMedia('(max-width: 1199px)').matches ? 'click' : 'hover'
+					}
+				>
+					<div className="course-dt-event">
+						<div className="time">Ca: {StudyTimeName}</div>
+					</div>
+				</Popover>
+			</div>
 		);
 	};
 	const styleAgenda = ({event}) => {
@@ -364,19 +403,26 @@ function CDCalendar(props) {
 			</div>
 		);
 		return (
-			<Popover
-				zIndex={999}
-				title={`Ca: ${StudyTimeName}`}
-				content={content}
-				placement="bottomLeft"
-				trigger={
-					window.matchMedia('(max-width: 1199px)').matches ? 'click' : 'hover'
-				}
+			<div
+				onClick={(e) => {
+					e.stopPropagation();
+					e.nativeEvent.stopImmediatePropagation();
+				}}
 			>
-				<div className="course-dt-event">
-					<div className="time">Ca: {StudyTimeName}</div>
-				</div>
-			</Popover>
+				<Popover
+					zIndex={999}
+					title={`Ca: ${StudyTimeName}`}
+					content={content}
+					placement="bottomLeft"
+					trigger={
+						window.matchMedia('(max-width: 1199px)').matches ? 'click' : 'hover'
+					}
+				>
+					<div className="course-dt-event">
+						<div className="time">Ca: {StudyTimeName}</div>
+					</div>
+				</Popover>
+			</div>
 		);
 	};
 
