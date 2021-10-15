@@ -4,7 +4,14 @@ import { List, Button, Checkbox } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 
 type props = {
-  item: { id; name: ""; time: ""; listVideo: []; link: "" };
+  item: {
+    id;
+    Content: "";
+    MinuteVideo: "";
+    listVideo: [];
+    link: "";
+    Description: "";
+  };
   onPress: any;
 };
 
@@ -26,12 +33,12 @@ const RenderItemSub: FC<props> = ({ item, onPress }) => {
       <Checkbox onClick={handleClick} className="mr-3" onChange={() => {}} />
       <div className="video-space-between">
         <p onClick={handleClick} className="none-selection">
-          {item.name}
+          {item.Content}
         </p>
         <div className="pr-4 pl-0 mr-0 row wrap-download">
           <div onClick={handleClick} className="btn-download">
             <i className="fas mr-2 fa-play-circle"></i>
-            <span className="date none-selection">{item.time}</span>
+            <span className="date none-selection">{item.MinuteVideo}</span>
           </div>
           <Button
             className="btn-download"
@@ -56,12 +63,18 @@ export const RenderItem: FC<props> = ({ item, onPress }) => {
   return (
     <div className="wrap-render-item">
       <div
-        className="pl-5 pt-3 pb-3 row wrap-render-item"
+        className="pl-5 pt-3 pb-3 row wrap-render-item-2"
         onClick={handleClick}
       >
         <div className="">
-          <p className="none-selection">{item.name}</p>
-          <span className="date none-selection">{item.time}</span>
+          <p className="none-selection">
+            {item.Content} - {item.Description}
+          </p>
+          <span className="date none-selection">
+            {item.MinuteVideo !== null && item.MinuteVideo !== undefined
+              ? item.MinuteVideo + " phút"
+              : "Thời gian: không rõ"}
+          </span>
         </div>
 
         {isShow ? (

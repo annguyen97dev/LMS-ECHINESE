@@ -17,6 +17,7 @@ import { useWrap } from "~/context/wrap";
 import { curriculumDetailApi, examTopicApi } from "~/apiBase";
 import { lessonDetailApi } from "~/apiBase/options/lesson-detail";
 import CurriculumDetail from "./CurriculumDetail";
+import { useRouter } from "next/router";
 
 export const AddCurriculumForm = (props) => {
   const {
@@ -24,7 +25,11 @@ export const AddCurriculumForm = (props) => {
     dataExamTopic,
     dataCurriculumDetail,
     onFetchData,
+    callFrom,
+    callBack,
   } = props;
+  const router = useRouter();
+
   const [visible, setVisible] = useState(false);
   const [isExamRadio, setIsExamRadio] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -135,6 +140,10 @@ export const AddCurriculumForm = (props) => {
       }
     }
 
+    if (callFrom === "modal") {
+      callBack(true);
+    }
+
     return res;
   };
 
@@ -238,10 +247,29 @@ export const AddCurriculumForm = (props) => {
   return (
     <>
       <button className="btn btn-icon edit" onClick={showModal}>
-        <Tooltip title="Cập nhật">
-          <RotateCcw />
-        </Tooltip>
+        {callFrom === "main" ? (
+          <Tooltip title="Cập nhật">
+            <RotateCcw />
+          </Tooltip>
+        ) : callFrom === "modal" ? (
+          <Tooltip title="Thêm mới">
+            <button
+              onClick={() => {
+                callBack(false);
+              }}
+              className="btn mt-2 btn-success"
+              style={{ marginRight: -5 }}
+            >
+              <i className="far fa-plus-circle mr-2"></i>Thêm mới
+            </button>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Cập nhật">
+            <RotateCcw />
+          </Tooltip>
+        )}
       </button>
+
       <Modal
         title={!status ? "Thêm nội dung bài học" : "Thêm nội dung kiểm tra"}
         visible={visible}

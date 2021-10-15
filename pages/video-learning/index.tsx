@@ -8,6 +8,7 @@ import "react-circular-progressbar/dist/styles.css";
 import HeaderVideo from "./header";
 import { VideoTabs } from "./tabs";
 import { VideoList } from "./list-video";
+import { VideoLearningAPI } from "~/apiBase/video-learning";
 
 const { TabPane } = Tabs;
 
@@ -33,13 +34,32 @@ const VideoLearning = () => {
 
   const [size, setSize] = useState([0, 0]);
 
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    getVideos();
+  }, []);
+
   useEffect(() => {
     setWidth(ref.current.offsetWidth.toString());
   }, [size]);
 
   useEffect(() => {
-    console.log("data: ", data);
-  }, [data]);
+    console.log("videos: ", videos);
+  }, [videos]);
+
+  //GET DATA
+  const getVideos = async () => {
+    // 52 HAVE DATA
+    const ID = 52;
+
+    try {
+      const res = await VideoLearningAPI.getAll(ID);
+      res.status == 200 && setVideos(res.data.data);
+    } catch (err) {
+      // showNoti("danger", err);
+    }
+  };
 
   const [visible, setVisible] = useState(false);
 
@@ -218,7 +238,12 @@ const VideoLearning = () => {
               onPress={(p) => {
                 setCurrentVideo(p);
               }}
-              params={fakeData}
+              params={{
+                name: "",
+                time: "",
+                link: "",
+                videos: videos,
+              }}
             />
           </div>
         </div>
@@ -241,7 +266,12 @@ const VideoLearning = () => {
             onPress={(p) => {
               setCurrentVideo(p);
             }}
-            params={fakeData}
+            params={{
+              name: "",
+              time: "",
+              link: "",
+              videos: videos,
+            }}
           />
         </div>
       </Drawer>

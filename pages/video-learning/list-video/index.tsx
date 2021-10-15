@@ -3,9 +3,10 @@ import "antd/dist/antd.css";
 import { List } from "antd";
 import { RenderItem } from "./render-item";
 import { spawn } from "child_process";
+import { IVideoLearning } from "~/apiBase/types/video-learning/video-learning";
 
 type props = {
-  params: { name: ""; time: ""; listVideo: []; link: ""; videos: [] };
+  params: { name: ""; time: ""; link: ""; videos: any[] };
   onPress: any;
 };
 export const VideoList: FC<props> = ({ params, onPress }) => {

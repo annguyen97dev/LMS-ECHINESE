@@ -263,6 +263,13 @@
     height: 45px;
   }
 }
+.wrap-render-item-2 {
+  width: 102%;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7f9fa;
+  padding-right: 0px;
+}
 
 .wrap-render-item {
   width: 102%;
@@ -270,6 +277,10 @@
   justify-content: space-between;
   background: #f7f9fa;
   padding-right: 0px;
+
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: #eceff1;
 
   p {
     font-size: 18px;

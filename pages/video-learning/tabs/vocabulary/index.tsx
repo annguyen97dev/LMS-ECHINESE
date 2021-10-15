@@ -8,8 +8,6 @@ import ReactHtmlParser, {
   htmlparser2,
 } from "react-html-parser";
 
-const fakeData = require("./fakeDataVocab.json");
-
 type itemProps = {
   id: "";
   title: "";
@@ -170,7 +168,8 @@ export const VocabularyTab: FC<props> = ({
           }}
           className="row wrap-vocab__create-new-button"
         >
-          <span>Thêm mới tại {formatTime(videoRef.current.currentTime)}</span>
+          {/* {formatTime(videoRef.current.currentTime)} */}
+          <span>Thêm mới</span>
           <i className="fas fa-plus-circle" style={{ color: "gray" }}></i>
         </Button>
       ) : (
@@ -183,21 +182,26 @@ export const VocabularyTab: FC<props> = ({
             questionContent={newContent}
           />
           <div className="row wrap-vocab__create-new__button-group">
-            <Button
-              onClick={() => {
-                setTypeInput(0);
-                setShowAdd(false);
-              }}
-              className="mt-3 mr-3 wrap-vocab__cancel-button"
-            >
-              <span>Hủy</span>
-            </Button>
-            <Button
-              onClick={typeInput === 0 ? handleCreateNew : handleSubmitEdit}
-              className="mt-3 wrap-vocab__cancel-button"
-            >
-              {typeInput === 0 ? <span>Thêm</span> : <span>Lưu</span>}
-            </Button>
+            <Tooltip title="Đóng khung nhập liệu">
+              <button
+                onClick={() => {
+                  setTypeInput(0);
+                  setShowAdd(false);
+                }}
+                className="btn ml-3 mt-3 btn-primary"
+              >
+                <i className="far fa-times-circle mr-2"></i>Hủy
+              </button>
+            </Tooltip>
+
+            <Tooltip title="Thêm ghi chú">
+              <button
+                onClick={typeInput === 0 ? handleCreateNew : handleSubmitEdit}
+                className="btn ml-3 mt-3 btn-success"
+              >
+                <i className="fas fa-plus-circle mr-2"></i>Thêm
+              </button>
+            </Tooltip>
           </div>
         </div>
       )}

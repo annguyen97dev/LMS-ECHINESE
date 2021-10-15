@@ -12,7 +12,7 @@ import {
 import CurriculumForm from "~/components/Global/Option/CurriculumForm";
 import { Tooltip } from "antd";
 import Link from "next/link";
-import { Info } from "react-feather";
+import { Info, Video, Film } from "react-feather";
 import ExpandTable from "~/components/ExpandTable";
 import CurriculumDetail from "./CurriculumDetail";
 import { resolveSoa } from "dns";

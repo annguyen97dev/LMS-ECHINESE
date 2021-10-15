@@ -10,6 +10,7 @@ import { Info } from "react-feather";
 import NestedTable from "~/components/Elements/NestedTable";
 import { PlusOutlined } from "@ant-design/icons";
 import AddCurriculumForm from "./AddCurriculumForm";
+import DetailsModal from "./DetailsModal";
 
 let pageIndex = 1;
 
@@ -238,6 +239,21 @@ const CurriculumDetail = (props) => {
       className: "text-center",
       render: (text, data) => (
         <AddCurriculumForm
+          curriculumDetailID={data.ID}
+          dataExamTopic={dataExamTopic}
+          dataCurriculumDetail={dataSource}
+          callFrom="main"
+          onFetchData={() => setTodoApi({ ...todoApi })}
+        />
+      ),
+    },
+    {
+      title: "",
+      dataIndex: "StatusName",
+      key: "statusname",
+      className: "text-center",
+      render: (text, data) => (
+        <DetailsModal
           curriculumDetailID={data.ID}
           dataExamTopic={dataExamTopic}
           dataCurriculumDetail={dataSource}
