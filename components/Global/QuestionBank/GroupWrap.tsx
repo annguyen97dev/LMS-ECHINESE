@@ -60,7 +60,6 @@ const GroupWrap = (props) => {
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [dataListQuestion, setDataListQuestion] = useState(null);
   const [lengthData, setLengthData] = useState(0);
-  const [listQuestionAdd, setListQuestionAdd] = useState([]);
 
   // console.log("List question in group: ", listQuestion);
   // console.log("active Key: ", activeKey);

@@ -8,6 +8,70 @@
   z-index: 9999;
   padding: 15px;
 
+  .drag-list {
+    .box-include {
+      background-color: white;
+      border: 1px solid #a9a9a9;
+      width: 200px;
+      height: 25px;
+      margin-left: 10px;
+
+      div {
+        padding: 0 3px;
+        height: 100%;
+      }
+    }
+    .quiz-drop {
+      .listAnswer {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        p {
+          margin-bottom: 10px;
+          padding: 3px 10px;
+          background: rgb(253, 253, 253);
+          box-shadow: #bbbbbb 0px 1px 3px;
+          line-height: initial;
+          background: #efefef;
+        }
+      }
+    }
+
+    .wrap-text {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    .active-question {
+      background: #f500571c !important;
+    }
+    .active-text {
+      height: auto !important;
+    }
+    .active-box {
+      background: #efefef;
+    }
+  }
+
+  .question-create .question-list .question-item {
+    &:hover {
+      background: #f9f9f9;
+    }
+    &.active-doing {
+      background: #fffaf3;
+    }
+  }
+
+  .doingtest-single {
+    .question-create .question-list .question-item .box-detail {
+      width: 60%;
+    }
+  }
+
   @include max-media(600px) {
     padding: 10px;
   }
@@ -32,6 +96,11 @@
       height: 100%;
       overflow: auto;
       overflow-x: hidden;
+
+      .box-paragraph {
+        height: 100%;
+        border-right: 1px solid #f0f0f0;
+      }
 
       &::-webkit-scrollbar-track {
         border-radius: 10px;
@@ -262,21 +331,21 @@
         }
 
         &:hover {
-          span {
-            background: #008642 !important;
-            border: 1px solid #008642 !important;
+          a {
+            background: $primary-color !important;
+            border: 1px solid $primary-color !important;
             transition: 0.1s;
             color: white !important;
           }
-          span.checked {
-            background: #008642 !important;
-            border: 1px solid #008642 !important;
+          a.checked {
+            background: $primary-color !important;
+            border: 1px solid $primary-color !important;
             transition: 0.1s;
             color: white !important;
           }
         }
 
-        span {
+        a {
           width: 27px;
           height: 27px;
           display: flex;
@@ -315,17 +384,17 @@
         }
 
         &.activeDoing {
-          span {
-            background: #008642;
-            border: 1px solid #008642;
+          a {
+            background: $primary-color;
+            border: 1px solid $primary-color;
             transition: 0.1s;
             color: white;
           }
         }
         &.activeDoingFirst {
-          span {
-            background: #008642 !important;
-            border: 1px solid #008642 !important;
+          a {
+            background: $primary-color !important;
+            border: 1px solid $primary-color !important;
             transition: 0.1s;
             color: white !important;
           }
@@ -367,5 +436,56 @@
   .hours:after {
     content: ":";
     margin-right: 5px;
+  }
+}
+
+.btn-record {
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+
+  svg {
+    width: 17px;
+    color: white;
+  }
+
+  &.start {
+    background: $primary-color;
+  }
+
+  &.pause {
+    background: $primary-color;
+  }
+
+  &.save {
+    background: #eea135;
+  }
+}
+
+.ant-tooltip {
+  z-index: 9999;
+}
+
+.space-editor {
+  width: 150px;
+  display: inline-block;
+  margin: 5px 5px;
+  padding: 3px 5px;
+  border: 1px solid #b7b7b7;
+  background: white;
+  border-radius: 0.375rem;
+  text-align: center;
+  &:focus {
+    outline: 2px solid #8c8c8c40;
+  }
+  &.auto {
+    width: auto;
+  }
+  &.active-type-input {
+    background: #fffaf3 !important;
   }
 }

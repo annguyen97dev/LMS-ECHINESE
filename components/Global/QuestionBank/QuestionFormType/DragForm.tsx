@@ -294,8 +294,14 @@ const DragForm = (props) => {
 
     dataSubmit.ExerciseList.forEach((item, index) => {
       cloneParagraph = cloneParagraph.replace(
-        `<input id="${item.inputID}"`,
-        `<input ques-id="${item.ID}"  id="${item.inputID}"`
+        `<input id="${item.inputID}" class='space-editor' placeholder="(${
+          item.inputID + 1
+        })"`,
+        `<div ques-id="${item.ID}" id="${
+          item.inputID
+        }" class='space-editor drag-item' ondrop="drop(event)" ondragover="allowDrop(event)">(${(
+          item.inputID + 1
+        ).toString()})</div>`
       );
     });
 

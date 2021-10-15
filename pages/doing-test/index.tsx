@@ -15,6 +15,7 @@ import moment from "moment";
 import ControlVolume from "~/components/Elements/ControlVolume";
 import MainTest from "~/components/Global/DoingTest/MainTest";
 import { examTopicApi } from "~/apiBase";
+import { DoingTestProvider, useDoingTest } from "~/context/useDoingTest";
 
 const InformationUser = () => {
   const { titlePage, userInformation } = useWrap();
@@ -162,9 +163,11 @@ const steps = [
 
 const DoingTest = () => {
   const [current, setCurrent] = useState(0);
-  const [showTest, setShowTest] = useState(false);
+  const [showTest, setShowTest] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [infoExam, setInfoExam] = useState<IExamTopic>(null);
+  const router = useRouter();
+  const { examID: examID } = router.query;
 
   // --- GET INFO EXAM ---
   const getInfoExam = async () => {
@@ -192,9 +195,6 @@ const DoingTest = () => {
     setIsModalVisible(false);
   };
 
-  const router = useRouter();
-  const examID = parseInt(router.query.exam as string);
-
   const next = () => {
     setCurrent(current + 1);
   };
@@ -217,51 +217,53 @@ const DoingTest = () => {
 
   return (
     <>
-      {showTest && <MainTest infoExam={infoExam} examID={examID} />}
-      <Modal
-        title="Chú ý!"
-        visible={isModalVisible}
-        okText="Đồng ý"
-        cancelText="Đóng"
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p style={{ fontWeight: 500 }}>
-          Bạn chưa chọn đề thi. Chuyển đến trang bộ đề?
-        </p>
-      </Modal>
-      <div className="doing-test-step">
-        <TitlePage title="Xác nhận thông tin" />
-        <Card>
-          <Steps className="step-doing" current={current}>
-            {steps.map((item) => (
-              <Step key={item.title} title={item.title} />
-            ))}
-          </Steps>
-          <div className="steps-content">{steps[current].content}</div>
-          <div className="steps-action">
-            {current > 0 && (
-              <Button
-                className="btn-back-step"
-                style={{ margin: "0 8px" }}
-                onClick={() => prev()}
-              >
-                Quay lại
-              </Button>
-            )}
-            {current < steps.length - 1 && (
-              <Button type="primary" onClick={() => next()}>
-                Tiếp tục
-              </Button>
-            )}
-            {current === steps.length - 1 && (
-              <Button type="primary" onClick={moveToTest}>
-                Hoàn tất
-              </Button>
-            )}
-          </div>
-        </Card>
-      </div>
+      <DoingTestProvider>
+        {showTest && <MainTest infoExam={infoExam} examID={examID} />}
+        <Modal
+          title="Chú ý!"
+          visible={isModalVisible}
+          okText="Đồng ý"
+          cancelText="Đóng"
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p style={{ fontWeight: 500 }}>
+            Bạn chưa chọn đề thi. Chuyển đến trang bộ đề?
+          </p>
+        </Modal>
+        <div className="doing-test-step">
+          <TitlePage title="Xác nhận thông tin" />
+          <Card>
+            <Steps className="step-doing" current={current}>
+              {steps.map((item) => (
+                <Step key={item.title} title={item.title} />
+              ))}
+            </Steps>
+            <div className="steps-content">{steps[current].content}</div>
+            <div className="steps-action">
+              {current > 0 && (
+                <Button
+                  className="btn-back-step"
+                  style={{ margin: "0 8px" }}
+                  onClick={() => prev()}
+                >
+                  Quay lại
+                </Button>
+              )}
+              {current < steps.length - 1 && (
+                <Button type="primary" onClick={() => next()}>
+                  Tiếp tục
+                </Button>
+              )}
+              {current === steps.length - 1 && (
+                <Button type="primary" onClick={moveToTest}>
+                  Hoàn tất
+                </Button>
+              )}
+            </div>
+          </Card>
+        </div>
+      </DoingTestProvider>
     </>
   );
 };

@@ -1,28 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
   htmlparser2,
 } from "react-html-parser";
-import { Checkbox, Popconfirm, Tooltip } from "antd";
+import { Radio, Tooltip, Popconfirm } from "antd";
 import { Trash2 } from "react-feather";
 import { examDetailApi } from "~/apiBase";
 import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { useWrap } from "~/context/wrap";
 import EditPoint from "../ExamForm/EditPoint";
 import ChangePosition from "../ExamForm/ChangePosition";
+import AudioRecord from "~/components/Elements/AudioRecord/AudioRecord";
 import { useDoingTest } from "~/context/useDoingTest";
 
-const MultipleList = (props) => {
+const SpeakingList = (props) => {
   const { onDeleteQuestion } = useExamDetail();
+  const { activeID, packageResult, getPackageResult } = useDoingTest();
+  const { dataQuestion, listQuestionID, isDoingTest } = props;
   const { showNoti } = useWrap();
-  const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [visible, setVisible] = useState({
     id: null,
     status: false,
   });
-  const { activeID, packageResult, getPackageResult } = useDoingTest();
+  const [linkRecord, setLinkRecord] = useState("");
 
   const returnPosition = (quesID) => {
     let index = listQuestionID.indexOf(quesID);
@@ -77,44 +79,9 @@ const MultipleList = (props) => {
         });
   };
 
-  useEffect(() => {
-    if (dataQuestion) {
-    }
-  }, []);
-
   // ----------- ALL ACTION IN DOINGTEST -------------
 
-  const returnChecked = (ansID, quesID) => {
-    let checked = false;
-
-    // Find Index
-    let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
-      (item) => item.ExamTopicDetailID === dataQuestion.ID
-    );
-
-    let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
-      indexQuestion
-    ].SetPackageExerciseStudentInfoList.findIndex(
-      (item) => item.ExerciseID === quesID
-    );
-
-    // Find anh return checked
-    if (
-      packageResult.SetPackageResultDetailInfoList[
-        indexQuestion
-      ].SetPackageExerciseStudentInfoList[
-        indexQuestionDetail
-      ].SetPackageExerciseAnswerStudentList.some(
-        (object) => object["AnswerID"] === ansID
-      )
-    ) {
-      checked = true;
-    }
-
-    return checked;
-  };
-
-  const onChange_selectAnswer = (dataAns, quesID) => {
+  const onGetLinkRecord = (linkRecord, quesID) => {
     // Find index
     let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
       (item) => item.ExamTopicDetailID === dataQuestion.ID
@@ -126,35 +93,52 @@ const MultipleList = (props) => {
       (item) => item.ExerciseID === quesID
     );
 
-    let indexAnswer = packageResult.SetPackageResultDetailInfoList[
-      indexQuestion
-    ].SetPackageExerciseStudentInfoList[
-      indexQuestionDetail
-    ].SetPackageExerciseAnswerStudentList.findIndex(
-      (item) => item.AnswerID === dataAns.ID
-    );
-
-    if (indexAnswer > -1) {
-      packageResult.SetPackageResultDetailInfoList[
-        indexQuestion
-      ].SetPackageExerciseStudentInfoList[
-        indexQuestionDetail
-      ].SetPackageExerciseAnswerStudentList.splice(indexAnswer, 1);
-    } else {
-      // Add new answer to list
+    // Add new answer to list
+    if (
+      packageResult.SetPackageResultDetailInfoList[indexQuestion]
+        .SetPackageExerciseStudentInfoList[indexQuestionDetail]
+        .SetPackageExerciseAnswerStudentList.length == 0
+    ) {
       packageResult.SetPackageResultDetailInfoList[
         indexQuestion
       ].SetPackageExerciseStudentInfoList[
         indexQuestionDetail
       ].SetPackageExerciseAnswerStudentList.push({
-        AnswerID: dataAns.ID,
-        AnswerContent: dataAns.AnswerContent,
-        FileAudio: "",
+        AnswerID: 0,
+        AnswerContent: "",
+        FileAudio: linkRecord,
       });
+    } else {
+      packageResult.SetPackageResultDetailInfoList[
+        indexQuestion
+      ].SetPackageExerciseStudentInfoList[
+        indexQuestionDetail
+      ].SetPackageExerciseAnswerStudentList[0].FileAudio = linkRecord;
     }
 
     getPackageResult({ ...packageResult });
   };
+
+  useEffect(() => {
+    if (isDoingTest) {
+      // Find index
+      let indexQuestion =
+        packageResult.SetPackageResultDetailInfoList.findIndex(
+          (item) => item.ExamTopicDetailID === dataQuestion.ID
+        );
+      if (
+        packageResult.SetPackageResultDetailInfoList[indexQuestion]
+          .SetPackageExerciseStudentInfoList[0]
+          .SetPackageExerciseAnswerStudentList.length > 0
+      ) {
+        setLinkRecord(
+          packageResult.SetPackageResultDetailInfoList[indexQuestion]
+            .SetPackageExerciseStudentInfoList[0]
+            .SetPackageExerciseAnswerStudentList[0].FileAudio
+        );
+      }
+    }
+  }, [activeID]);
 
   return (
     <>
@@ -170,30 +154,16 @@ const MultipleList = (props) => {
               <span className={`title-ques `}>
                 {returnPosition(ques.ExerciseID)}
               </span>
-              {/* {returnAudio(item)} */}
-              <div className="title-text">{ReactHtmlParser(ques.Content)}</div>
-            </div>
-            <div className="box-answer">
-              <div className="question-single question-wrap w-100">
-                {ques.ExerciseAnswer?.map((ans, i) => (
-                  <Checkbox
-                    className="d-block"
-                    key={i}
-                    checked={
-                      !isDoingTest
-                        ? false
-                        : returnChecked(ans.ID, ques.ExerciseID)
-                    }
-                    onChange={(e) =>
-                      onChange_selectAnswer(ans, ques.ExerciseID)
-                    }
-                    disabled={!isDoingTest ? true : false}
-                  >
-                    <span className="tick">{listAlphabet[i]}</span>
-                    <span className="text">{ans.AnswerContent}</span>
-                  </Checkbox>
-                ))}
+
+              <div className="title-text mt-3">
+                {ReactHtmlParser(ques.Content)}
               </div>
+              <AudioRecord
+                linkRecord={linkRecord}
+                getLinkRecord={(linkRecord) =>
+                  onGetLinkRecord(linkRecord, ques.ExerciseID)
+                }
+              />
             </div>
           </div>
           <div className="box-action">
@@ -229,4 +199,4 @@ const MultipleList = (props) => {
   );
 };
 
-export default MultipleList;
+export default SpeakingList;

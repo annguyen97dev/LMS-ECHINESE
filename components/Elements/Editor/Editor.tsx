@@ -229,9 +229,13 @@ const EditorSummernote = (props) => {
       inputE.id = inputID.toString();
       inputE.className = "space-editor";
       inputE.setAttribute("placeholder", `(${(indexInput + 1).toString()})`);
+
+      // inputE.innerText = `(${(indexInput + 1).toString()})`;
+      // inputE.setAttribute("role", "textbox");
+      // inputE.setAttribute("aria-labelledby", "txtboxLabel");
+      // inputE.setAttribute("aria-multiline", "true");
+      // inputE.setAttribute("contentEditable", "true");
       propetyEditor.textNode.parentNode.insertBefore(inputE, replacement);
-      // setPropetyEditor({ ...propetyEditor });
-      // addQuestion && addQuestion(inputID);
 
       // Reload Content
       setReloadContent(true);
@@ -287,39 +291,6 @@ const EditorSummernote = (props) => {
   useEffect(() => {
     isReset && (ReactSummernote.reset(), setValueEditor(""));
   }, [isReset]);
-
-  // HANDLE BACKSPACE
-  // useEffect(() => {
-  //   let tagP = document.querySelectorAll(".note-editable p");
-  // }, [indexChar]);
-
-  // HANDLE ENTER ADD ID
-  // useEffect(() => {
-  //   indexChar = 0;
-  //   setTimeout(() => {
-  //     let tagP = document.querySelectorAll(".note-editable p"); // Get node element in editor
-  //     let nodeP = tagP.item(countEnter);
-
-  //     if (nodeP) {
-  //       if (nodeP.hasAttribute("id")) {
-  //         if (countEnter > 0) {
-  //           let nodePBefore = tagP.item(countEnter - 1);
-  //           if (nodeP.id == nodePBefore.id) {
-  //             nodeP.id = countEnter.toString();
-  //           }
-  //         }
-  //       } else {
-  //         if (countEnter > 0) {
-  //           let nodePBefore = tagP.item(countEnter - 1);
-  //           if (nodePBefore && !nodePBefore.hasAttribute("id")) {
-  //             nodePBefore.id = (countEnter - 1).toString();
-  //           }
-  //         }
-  //         nodeP.id = countEnter.toString();
-  //       }
-  //     }
-  //   }, 200);
-  // }, [countEnter]);
 
   // Function any handle delete
   const anyHandleDelete = () => {
@@ -410,17 +381,6 @@ const EditorSummernote = (props) => {
           arrKey = [];
           return false;
         });
-
-        // ON HOVER HTML NODE
-        // item.addEventListener("mouseover", (e) => {
-        //   if (isFocus) {
-        //     if (item.id) {
-        //       console.log("On mouse over");
-        //       let id = item.id;
-        //       countEnter = parseInt(id);
-        //     }
-        //   }
-        // });
       });
     } else {
       // check trường hợp trong editable là SPAN
@@ -583,7 +543,7 @@ const EditorSummernote = (props) => {
   }, [visible]);
 
   return (
-    <div className="wrap-editor">
+    <div className="wrap-editor custom">
       <button className="btn-editor" onClick={handleAddSpace}>
         Thêm input
       </button>

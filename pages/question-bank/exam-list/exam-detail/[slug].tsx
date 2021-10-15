@@ -25,6 +25,7 @@ import WrittingList from "~/components/Global/ExamList/ExamShow/WrittingList";
 import AddQuestionAuto from "~/components/Global/ExamDetail/AddQuestionAuto";
 import Link from "next/link";
 import ChangePosition from "~/components/Global/ExamList/ExamForm/ChangePosition";
+import SpeakingList from "~/components/Global/ExamList/ExamShow/Speaking";
 
 const listAlphabet = [
   "A",
@@ -119,6 +120,7 @@ const ExamDetail = () => {
     IDChangeOne: null,
     IDChangeTwo: null,
   });
+  const [loadingPosition, setLoadingPosition] = useState(false);
 
   // console.log("Data Exam: ", dataExamDetail);
   // console.log("List question: ", listQuestionID);
@@ -291,7 +293,7 @@ const ExamDetail = () => {
         return (
           <div key={index}>
             <WrapList dataQuestion={item} listQuestionID={listQuestionID}>
-              <WrittingList
+              <SpeakingList
                 isDoingTest={false}
                 listQuestionID={listQuestionID}
                 dataQuestion={item}
@@ -345,21 +347,8 @@ const ExamDetail = () => {
 
   // ON EDIT POINT
   const onEditPoint = (dataEdit, detailID) => {
-    console.log("DATA edit: ", dataEdit);
-    console.log("DATA detail ID: ", detailID);
-
     dataExamDetail.every((item, index) => {
       if (detailID == item.ID) {
-        // item.ExerciseTopic.forEach((ques, quesIndex) => {
-        //   if (
-        //     ques.ExerciseID ==
-        //     dataEdit.some((object) => object["ExerciseOrExerciseGroupID"])
-        //   ) {
-        //     ques.Point = dataEdit.Point;
-
-        //   }
-        //   return true;
-        // });
         item.ExerciseTopic[0].Point = dataEdit[0].Point;
         return false;
       }
@@ -413,8 +402,15 @@ const ExamDetail = () => {
 
   // ACTION CHANGE POSITION
   const actionChangePosition = async () => {
+    setLoadingPosition(true);
+    let cloneListQuestionID = [];
+    let cloneListGroupID = [];
     try {
-      let res = await examDetailApi.changePosition(dataChange);
+      let res = await examDetailApi.changePosition({
+        ...dataChange,
+        selectAll: true,
+        ExamTopicID: examID,
+      });
       if (res.status === 200) {
         showNoti("success", "Đổi vị trí thành công");
         setDataChange({
@@ -422,9 +418,23 @@ const ExamDetail = () => {
           IDChangeTwo: null,
         });
         changePositionInArray();
+
+        res.data.data.forEach((item) => {
+          if (item.Enable) {
+            item.ExerciseGroupID !== 0 &&
+              cloneListGroupID.push(item.ExerciseGroupID);
+            item.ExerciseTopic.forEach((ques) => {
+              cloneListQuestionID.push(ques.ExerciseID);
+            });
+          }
+        });
+        setListGroupID([...cloneListGroupID]);
+        setListQuestionID([...cloneListQuestionID]);
       }
     } catch (error) {
       showNoti("danger", error.message);
+    } finally {
+      setLoadingPosition(false);
     }
   };
 
@@ -436,7 +446,6 @@ const ExamDetail = () => {
     let indexTo = null;
 
     dataExamDetail.every((item, index) => {
-      console.log("item is: ", item.ID);
       if (item.ID === dataChange.IDChangeOne) {
         dataFrom = item;
         indexFrom = index;
@@ -451,19 +460,12 @@ const ExamDetail = () => {
         return true;
       }
     });
-    console.log("Data From: ", dataFrom);
-    console.log("Index From: ", indexFrom);
-
-    console.log("Data To: ", dataTo);
-    console.log("Index To: ", indexTo);
 
     dataExamDetail[indexFrom] = dataTo;
     dataExamDetail[indexTo] = dataFrom;
 
     setDataExamDetail([...dataExamDetail]);
   };
-
-  console.log("Data exam detail: ", dataExamDetail);
 
   // GET DATA CHANGE
   const getDataChange = (data: any) => {
@@ -628,6 +630,11 @@ const ExamDetail = () => {
                 </>
               }
             >
+              {loadingPosition && (
+                <div className="loading-all">
+                  <Spin />
+                </div>
+              )}
               <div className="question-list" ref={boxEl} onScroll={onScroll}>
                 {isLoading ? (
                   <div className="text-center mt-3">

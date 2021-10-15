@@ -9,10 +9,13 @@ import TypingList from "~/components/Global/ExamList/ExamShow/TypingList";
 import WrittingList from "~/components/Global/ExamList/ExamShow/WrittingList";
 import { useDoingTest } from "~/context/useDoingTest";
 import { ListAlphabet } from "~/lib/list-alphabet/ListAlphabet";
+import SpeakingList from "../ExamList/ExamShow/Speaking";
 
 const ListQuestion = (props) => {
   //   const { listQuestionID } = useDoingTest();
   const { dataQuestion, listQuestionID } = props;
+
+  // console.log("Data question in list: ", dataQuestion);
 
   // RETURN QUESTION TYPE
   const returnQuestionType = (dataQuestion) => {
@@ -92,7 +95,7 @@ const ListQuestion = (props) => {
         break;
       case 7:
         return (
-          <WrittingList
+          <SpeakingList
             isDoingTest={true}
             listQuestionID={listQuestionID}
             dataQuestion={dataQuestion}

@@ -8,7 +8,6 @@ const ChangePosition = (props) => {
   const { getDataChange, dataChange } = useExamDetail();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isConfirmChangePosition, setIsConfirmChangePosition] = useState(false);
-  console.log("Data Change: ", dataChange);
 
   // ACTION SHOW MODAL
   const showModal = () => {

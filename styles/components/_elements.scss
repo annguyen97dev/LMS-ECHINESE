@@ -2218,6 +2218,7 @@ hr {
     text-align: center;
     font-weight: 500;
     width: 100px;
+    line-height: 23px;
 
     &:focus {
       border: none;
@@ -2239,7 +2240,6 @@ hr {
       background: #e7e7e7;
     }
   }
-  position: relative;
 }
 .textarea-editor {
   .note-editable {
@@ -2266,4 +2266,8 @@ hr {
       height: 8px;
     }
   }
+}
+
+.ant-modal-wrap {
+  z-index: 9999;
 }

@@ -8,7 +8,8 @@ ExamReview.propTypes = {};
 
 function ExamReview() {
   const route = useRouter();
-  const { slug: ID } = route.query;
+  const { examID: ID } = route.query;
+  const { packageID: packageID } = route.query;
   const [examInfo, setExamInfo] = useState<IExamTopic>(null);
   const fetchExam = async () => {
     try {
@@ -68,7 +69,7 @@ function ExamReview() {
         <Link
           href={{
             pathname: "/doing-test",
-            query: { exam: ID },
+            query: { examID: ID, packageID: packageID },
           }}
         >
           <a className="exam-review-btn btn btn-primary">Bắt đầu thi</a>

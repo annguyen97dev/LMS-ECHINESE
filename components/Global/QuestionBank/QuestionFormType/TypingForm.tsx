@@ -134,7 +134,7 @@ const TypingForm = (props) => {
         {
           ID: AnsID,
           AnswerContent: "",
-          isTrue: false,
+          isTrue: true,
           Enable: true,
           isAdd: true,
         },
@@ -263,8 +263,14 @@ const TypingForm = (props) => {
 
     dataSubmit.ExerciseList.forEach((item, index) => {
       cloneParagraph = cloneParagraph.replace(
-        `<input id="${item.inputID}"`,
-        `<input ques-id="${item.ID}"  id="${item.inputID}"`
+        `<input id="${item.inputID}" class='space-editor' placeholder="(${
+          item.inputID + 1
+        })"`,
+        `<div ques-id="${item.ID}" id="${
+          item.inputID
+        }" class='space-editor' role='textbox'   aria-labelledby='txtboxLabel' aria-multiline='true' contentEditable="true">(${(
+          item.inputID + 1
+        ).toString()})</div>`
       );
     });
 

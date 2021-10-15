@@ -29,7 +29,7 @@ import DateField from "~/components/FormControl/DateField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
 import { useWrap } from "~/context/wrap";
-import AvatarBase from "~/components/Elements/AvatarBase.tsx";
+import AvatarBase from "~/components/Elements/AvatarBase";
 import { userApi, userInformationApi } from "~/apiBase";
 import TitlePage from "../Elements/TitlePage";
 let returnSchema = {};
