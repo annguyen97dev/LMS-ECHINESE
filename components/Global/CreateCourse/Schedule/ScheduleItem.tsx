@@ -90,29 +90,31 @@ const ScheduleItem = (props) => {
 	};
 
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
-	// useEffect(() => {
-	// 	let {ID, RoomID, TeacherID} = scheduleObj;
-	// 	const {optionRoomList, optionTeacherList} = optionRoomAndTeacherForADay;
-	// 	if (optionRoomList.length && optionTeacherList.length) {
-	// 		if (!optionRoomList.some((o) => o.value === RoomID)) {
-	// 			form.setValue('RoomID', 0);
-	// 			checkHandleChangeValueSchedule(ID, 'RoomID', 0);
-	// 		}
-	// 		if (!optionTeacherList.some((o) => o.value === TeacherID)) {
-	// 			form.setValue('TeacherID', 0);
-	// 			checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
-	// 		}
-	// 	}
-	// }, [optionRoomAndTeacherForADay]);
-
-	// SET VALUE TO INPUT IF HAVE DATA
 	useEffect(() => {
-		let {RoomID, TeacherID, CaID, StudyTimeID} = scheduleObj;
-		form.setValue('StudyTimeID', CaID || StudyTimeID);
-		form.setValue('RoomID', RoomID || 0);
-		form.setValue('TeacherID', TeacherID || 0);
 		form.clearErrors();
-	}, [scheduleObj]);
+		if (isLoading.type === 'CHECK_SCHEDULE' && !isLoading.status) {
+			let {ID, RoomID, TeacherID, CaID, StudyTimeID} = scheduleObj;
+			const {optionRoomList, optionTeacherList} = optionRoomAndTeacherForADay;
+
+			if (optionRoomList.length && optionTeacherList.length) {
+				form.setValue('StudyTimeID', CaID || StudyTimeID);
+				// NEED TO SET SELECT ROOM OR SELECT TEACHER TO DEFAULT IF DONT HAVE VALUE FROM API RETURN
+				if (!optionRoomList.some((o) => o.value === RoomID)) {
+					form.setValue('RoomID', 0);
+					checkHandleChangeValueSchedule(ID, 'RoomID', 0);
+				} else {
+					form.setValue('RoomID', RoomID);
+				}
+
+				if (!optionTeacherList.some((o) => o.value === TeacherID)) {
+					form.setValue('TeacherID', 0);
+					checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
+				} else {
+					form.setValue('TeacherID', TeacherID);
+				}
+			}
+		}
+	}, [scheduleObj, optionRoomAndTeacherForADay, isLoading]);
 
 	return (
 		<Panel
@@ -239,4 +241,4 @@ ScheduleItem.defaultProps = {
 	},
 	optionStudyTime: [],
 };
-export default ScheduleItem;
+export default React.memo(ScheduleItem);

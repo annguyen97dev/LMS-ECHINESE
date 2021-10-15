@@ -1,0 +1,21 @@
+type IZoomRoom = IBaseApi<{
+	ID: number;
+	TeacherID: number;
+	TeacherName: string;
+	CourseScheduleID: number;
+	CourseID: number;
+	CourseName: string;
+	Date: string;
+	StudyTimeID: number;
+	StudyTimeName: string;
+	TimeStart: string;
+	TimeEnd: string;
+	ZoomRoomID: string;
+	ZoomRoomPass: string;
+	IsRoomStart: boolean;
+	ZoomTeacherAPIID: number;
+	ZoomRoomID: string;
+	ZoomRoomPass: string;
+	Signature: string;
+	ApiKey: string;
+}>;

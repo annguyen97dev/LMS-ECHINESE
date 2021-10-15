@@ -151,35 +151,35 @@ export const AdminChildMenu = [
         Text: "Đăng ký khóa học",
       },
 
-      // {
-      //   ItemType: "sub-menu",
-      //   Key: "sub-course-zoom",
-      //   Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
-      //   TitleSub: "Quản lý Zoom",
-      //   SubMenuList: [
-      //     {
-      //       ItemType: "single",
-      //       Key: "/course/manage-zoom/teacher-config-zoom",
-      //       Route: "/course/manage-zoom/teacher-config-zoom",
-      //       Text: "Cấu hình",
-      //       Icon: "",
-      //     },
-      //     {
-      //       ItemType: "single",
-      //       Key: "/course/manage-zoom/meeting-zoom",
-      //       Route: "/course/manage-zoom/meeting-zoom",
-      //       Text: "Danh sách phòng học",
-      //       Icon: "",
-      //     },
-      //     {
-      //       ItemType: "single",
-      //       Key: "/course/manage-zoom/meeting-internal",
-      //       Route: "/course/manage-zoom/meeting-internal",
-      //       Text: "Phòng họp nội bộ",
-      //       Icon: "",
-      //     },
-      //   ],
-      // },
+      {
+        ItemType: "sub-menu",
+        Key: "sub-course-zoom",
+        Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
+        TitleSub: "Quản lý Zoom",
+        SubMenuList: [
+          {
+            ItemType: "single",
+            Key: "/course/manage-zoom/config-zoom",
+            Route: "/course/manage-zoom/config-zoom",
+            Text: "Cấu hình",
+            Icon: "",
+          },
+          {
+            ItemType: "single",
+            Key: "/course/manage-zoom/meeting-zoom",
+            Route: "/course/manage-zoom/meeting-zoom",
+            Text: "Danh sách phòng học",
+            Icon: "",
+          },
+          // {
+          // 	ItemType: 'single',
+          // 	Key: '/course/manage-zoom/meeting-internal',
+          // 	Route: '/course/manage-zoom/meeting-internal',
+          // 	Text: 'Phòng họp nội bộ',
+          // 	Icon: '',
+          // },
+        ],
+      },
     ],
   },
 

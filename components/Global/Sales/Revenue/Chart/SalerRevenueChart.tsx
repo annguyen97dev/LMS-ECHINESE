@@ -32,8 +32,6 @@ SalerRevenueChart.defaultProps = {
 };
 function SalerRevenueChart(props) {
 	const {revenueList} = props;
-
-	console.log(revenueList);
 	return (
 		<Card
 			title={<h4>BIỂU ĐỒ TỔNG KẾT DOANH THU</h4>}
@@ -44,27 +42,27 @@ function SalerRevenueChart(props) {
 					data={revenueList}
 					margin={{top: 10, right: 0, left: 40, bottom: 0}}
 				>
-					<XAxis dataKey="name" />
+					<XAxis dataKey="SaleCampaignName" />
 					<YAxis tickFormatter={(value) => numberWithCommas(value)} />
 					<Tooltip formatter={(value) => numberWithCommas(value)} />
 					<Legend />
 					<CartesianGrid stroke="#f5f5f5" />
 					<Bar
-						dataKey="customers"
+						dataKey="CustomersNumber"
 						name="Số khách hàng"
 						barSize={20}
 						fill="#003366"
 						stackId="col"
 					/>
 					<Bar
-						dataKey="invoice"
+						dataKey="InvoiceNumber"
 						name="Số hóa đơn"
 						barSize={20}
 						fill="#0080FF"
 						stackId="col"
 					/>
 					<Bar
-						dataKey="revenue"
+						dataKey="Revenue"
 						name="Doanh thu theo chiến dịch"
 						barSize={20}
 						fill="#dd4667"
