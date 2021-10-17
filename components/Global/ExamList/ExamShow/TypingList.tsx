@@ -22,10 +22,10 @@ const TypingList = (props) => {
         spaceEditor.forEach((item, index) => {
           let quesID = parseInt(item.getAttribute("ques-id"));
 
-          // Tìm và active đúng ô input
-          if (quesID === activeID) {
-            item.classList.add("active-type-input");
-          }
+          // // Tìm và active đúng ô input
+          // if (quesID === activeID) {
+          //   item.classList.add("active-type-input");
+          // }
 
           // Sắp xếp lại thứ tự các ô input trong đoạn văn
           let indexQues = null;

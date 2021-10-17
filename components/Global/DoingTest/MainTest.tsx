@@ -48,6 +48,8 @@ const MainTest = (props) => {
   const { packageResult, getPackageResult } = useDoingTest();
   const { userInformation } = useWrap();
 
+  console.log("Info Exam is: ", infoExam);
+
   console.log("DataQuestion: ", dataQuestion);
   // console.log("Space Question: ", spaceQuestion);
   // console.log("List question ID: ", listQuestionID);
@@ -78,18 +80,13 @@ const MainTest = (props) => {
 
         setListGroupID([...cloneListGroupID]);
         setListQuestionID([...cloneListQuestionID]);
-
-        // Run time
-        const add_minutes = (function (dt, minutes) {
-          return new Date(dt.getTime() + minutes * 60000);
-        })(new Date(), infoExam.Time);
-        setAddMinutes(add_minutes);
       }
       if (res.status == 204) {
         setDataQuestion([]);
       }
     } catch (error) {
       showNoti("danger", error.message);
+      console.log("Check Time: ", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -277,6 +274,16 @@ const MainTest = (props) => {
     }
   }, [dataQuestion]);
 
+  useEffect(() => {
+    if (infoExam && dataQuestion) {
+      // Run time
+      const add_minutes = (function (dt, minutes) {
+        return new Date(dt.getTime() + minutes * 60000);
+      })(new Date(), infoExam.Time);
+      setAddMinutes(add_minutes);
+    }
+  }, [infoExam, dataQuestion]);
+
   return (
     <div className="test-wrapper">
       <Modal
@@ -334,12 +341,10 @@ const MainTest = (props) => {
                           </div>
                         </div>
                         <div className="col-md-6 col-12 h-100">
-                          <div className="box-list-question">
-                            <ListQuestion
-                              dataQuestion={item}
-                              listQuestionID={listQuestionID}
-                            />
-                          </div>
+                          <ListQuestion
+                            dataQuestion={item}
+                            listQuestionID={listQuestionID}
+                          />
                         </div>
                       </div>
                     </div>

@@ -22,6 +22,9 @@ const WrittingModal = (props) => {
   const [isModalConfirm, setIsModalConfirm] = useState(false);
   const [isReset, setIsReset] = useState(false);
 
+  console.log("content student: ", contentOfStudent);
+  console.log("content Editor: ", contentEditor);
+
   const showModal = () => {
     setIsModalVisible(true);
     setIsReset(false);
