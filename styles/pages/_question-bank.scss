@@ -35,6 +35,10 @@
       text-align: left;
       padding: 10px;
       background: #fffbf5;
+
+      &.active-doing {
+        background: #fff0db;
+      }
     }
 
     th {

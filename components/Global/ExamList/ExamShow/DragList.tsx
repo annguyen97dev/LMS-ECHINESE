@@ -18,7 +18,8 @@ const DragList = (props) => {
   const [dataQuestionClone, setDataQuestionClone] = useState(dataQuestion);
   const [dataAnswer, setDataAnswer] = useState([]);
   // console.log("Data question in drag: ", dataQuestion);
-  console.log("Data Answer is: ", dataAnswer);
+  // console.log("Data Answer is: ", dataAnswer);
+  // console.log("DATA QUESTION IN DRAG: ", dataQuestionClone);
 
   if (isDoingTest) {
     var indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
@@ -40,20 +41,28 @@ const DragList = (props) => {
             indexQues = listQuestionID.indexOf(quesID);
           }
 
-          let span = document.createElement("span");
-          span.classList.add("position-space");
-          span.id = quesID.toString();
-          if (quesID === activeID) {
-            span.classList.add("active");
-          }
-          span.append(`(${indexQues + 1})`);
+          if (indexQues) {
+            let positionSpace = document.querySelectorAll(
+              ".drag-list .position-space"
+            );
 
-          item.innerHTML = `${(indexQues + 1).toString()}`;
-          item.before(span);
+            if (positionSpace.length < spaceEditor.length) {
+              let span = document.createElement("span");
+              span.classList.add("position-space");
+              span.id = quesID.toString();
+              if (quesID === activeID) {
+                span.classList.add("active");
+              }
+              span.append(`(${indexQues + 1})`);
+
+              item.innerHTML = `${(indexQues + 1).toString()}`;
+              item.before(span);
+            }
+          }
         });
       }
     }
-  }, []);
+  }, [listQuestionID]);
 
   // ---- ALL ACTION IN DOING TEST ----
 
@@ -394,7 +403,7 @@ const DragList = (props) => {
   useEffect(() => {
     if (isDoingTest) {
       let newDataQuestion: any = { ...dataQuestion };
-      console.log("DATA thi sao: ", dataQuestion);
+
       // console.log("New DATA: ", newDataQuestion);
       if (dataQuestion.Paragraph !== "") {
         let spaceEditor = document.querySelectorAll(".drag-list .space-editor");
@@ -404,7 +413,6 @@ const DragList = (props) => {
 
         // -- Kiểm tra các ô drop
         spaceEditor.forEach((item, index) => {
-          console.log("ITEM IS: ", item.children);
           let quesID = parseInt(item.getAttribute("ques-id"));
 
           const checkAllElement = () => {
@@ -497,13 +505,11 @@ const DragList = (props) => {
     }
   }, [activeID]);
 
-  console.log("DATA QUESTION IN DRAG: ", dataQuestionClone);
-
   return (
     <div className="drag-list h-100">
       <h6 className="font-italic mb-3 mt-4">Kéo đáp án vào ô thích hợp</h6>
 
-      {isDoingTest && ReactHtmlParser(dataQuestion.Paragraph)}
+      {ReactHtmlParser(dataQuestion.Paragraph)}
 
       <div
         className="area-drop h-100"

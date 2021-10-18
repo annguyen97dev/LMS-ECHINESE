@@ -122,7 +122,6 @@ const ExamDetail = () => {
   });
   const [loadingPosition, setLoadingPosition] = useState(false);
 
-  // console.log("Data Exam: ", dataExamDetail);
   // console.log("List question: ", listQuestionID);
   // console.log("List Group ID: ", listGroupID);
 

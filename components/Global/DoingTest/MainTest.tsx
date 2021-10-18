@@ -48,7 +48,7 @@ const MainTest = (props) => {
   const { packageResult, getPackageResult } = useDoingTest();
   const { userInformation } = useWrap();
 
-  console.log("Info Exam is: ", infoExam);
+  // console.log("Info Exam is: ", infoExam);
 
   console.log("DataQuestion: ", dataQuestion);
   // console.log("Space Question: ", spaceQuestion);
@@ -86,7 +86,6 @@ const MainTest = (props) => {
       }
     } catch (error) {
       showNoti("danger", error.message);
-      console.log("Check Time: ", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -283,8 +282,6 @@ const MainTest = (props) => {
       setAddMinutes(add_minutes);
     }
   }, [infoExam, dataQuestion]);
-
-  console.log("ACTIVE ID main test: ", activeID);
 
   // useEffect(() => {
   //   setListQuestionID([...listQuestionID]);

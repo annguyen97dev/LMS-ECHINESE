@@ -8,9 +8,61 @@
   z-index: 999;
   padding: 15px;
 
+  .box-map-question {
+    .check-box-table {
+      position: relative;
+      padding: 0;
+
+      .ant-checkbox-wrapper {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        &:hover {
+          .ant-checkbox-inner {
+            border: 1px solid #1890ff !important;
+          }
+        }
+
+        .ant-checkbox-checked {
+          .ant-checkbox-inner {
+            &:after {
+              width: 9px;
+              height: 18px;
+              top: 50%;
+              left: 42%;
+
+              border: 2px solid #009751;
+              border-top: 0;
+              border-left: 0;
+            }
+          }
+        }
+        .ant-checkbox {
+          width: 100%;
+          height: 100%;
+          top: 0;
+
+          .ant-checkbox-input {
+            width: 100%;
+            height: 100%;
+          }
+
+          .ant-checkbox-inner {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fffbf5;
+          }
+        }
+      }
+    }
+  }
+
   .drag-list {
-    .drag-item,
-    .space-editor {
+    .drag-item {
       color: transparent;
 
       &.is-hover {
@@ -105,6 +157,9 @@
   .doingtest-group {
     .box-list-question {
       padding: 0 10px;
+    }
+    .question-create {
+      padding-right: 15px;
     }
   }
 
@@ -534,6 +589,12 @@
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
   &.active {
-    color: #ea8900;
+    color: $primary-color;
+  }
+}
+
+.drag-list {
+  .space-editor {
+    color: transparent;
   }
 }

@@ -17,7 +17,7 @@ const TypingList = (props) => {
 
   useEffect(() => {
     if (dataQuestion.Paragraph !== "") {
-      let spaceEditor = document.querySelectorAll(".space-editor");
+      let spaceEditor = document.querySelectorAll(".box-typing .space-editor");
 
       if (spaceEditor && spaceEditor.length > 0) {
         spaceEditor.forEach((item, index) => {
@@ -29,20 +29,28 @@ const TypingList = (props) => {
             indexQues = listQuestionID.indexOf(quesID);
           }
 
-          let span = document.createElement("span");
-          span.classList.add("position-space");
-          span.id = quesID.toString();
-          if (quesID === activeID) {
-            span.classList.add("active");
-          }
-          span.append(`(${indexQues + 1})`);
+          if (indexQues) {
+            let positionSpace = document.querySelectorAll(
+              ".box-typing .position-space"
+            );
 
-          item.innerHTML = `${(indexQues + 1).toString()}`;
-          item.before(span);
+            if (positionSpace.length < spaceEditor.length) {
+              let span = document.createElement("span");
+              span.classList.add("position-space");
+              span.id = quesID.toString();
+              if (quesID === activeID) {
+                span.classList.add("active");
+              }
+              span.append(`(${indexQues + 1})`);
+
+              item.innerHTML = "";
+              item.before(span);
+            }
+          }
         });
       }
     }
-  }, []);
+  }, [listQuestionID]);
 
   // ----------- ALL ACTION IN DOINGTEST -------------
 
@@ -179,11 +187,9 @@ const TypingList = (props) => {
 
   return (
     <>
-      {isDoingTest && (
-        <div className="box-typing">
-          {ReactHtmlParser(dataQuestion.Paragraph)}
-        </div>
-      )}
+      <div className="box-typing">
+        {ReactHtmlParser(dataQuestion.Paragraph)}
+      </div>
     </>
   );
 };
