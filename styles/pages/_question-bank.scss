@@ -3,6 +3,9 @@
   &.exam {
     .paragraph {
       padding-top: 0;
+      .space-editor {
+        color: transparent;
+      }
     }
   }
   audio {

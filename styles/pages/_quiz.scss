@@ -9,7 +9,10 @@
   padding: 15px;
 
   .drag-list {
-    .drag-item {
+    .drag-item,
+    .space-editor {
+      color: transparent;
+
       &.is-hover {
         background: #e9e9e9;
       }
@@ -22,6 +25,7 @@
 
       &.auto {
         width: auto;
+        color: inherit;
       }
 
       .drag-list-answer {
@@ -132,7 +136,7 @@
       .box-paragraph {
         height: 100%;
         border-right: 1px solid #f0f0f0;
-        padding-right: 40px;
+        padding-right: 15px;
       }
 
       &::-webkit-scrollbar-track {
@@ -519,5 +523,17 @@
 
   &.active-type-input {
     background: #fffaf3 !important;
+  }
+}
+
+.position-space {
+  margin-left: 5px;
+  font-weight: 500;
+  font-size: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+  &.active {
+    color: #ea8900;
   }
 }

@@ -36,7 +36,8 @@ let dataAnswer = {
 
 const ChoiceList = (props) => {
   const { onDeleteQuestion } = useExamDetail();
-  const { activeID, packageResult, getPackageResult } = useDoingTest();
+  const { activeID, getActiveID, packageResult, getPackageResult } =
+    useDoingTest();
   const { showNoti } = useWrap();
   const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -107,6 +108,7 @@ const ChoiceList = (props) => {
 
   const onChange_selectAnswer = (dataAns, quesID) => {
     setAcitveValue(dataAns.ID);
+    getActiveID(quesID);
 
     // Find index
     let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(

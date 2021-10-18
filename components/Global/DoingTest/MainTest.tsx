@@ -22,7 +22,7 @@ const ListQuestion = dynamic(
 );
 
 const MainTest = (props) => {
-  const { getListQuestionID, getActiveID } = useDoingTest();
+  const { getListQuestionID, getActiveID, activeID } = useDoingTest();
   const { examID, infoExam } = props;
   const listTodoApi = {
     pageIndex: 1,
@@ -42,7 +42,7 @@ const MainTest = (props) => {
     start: 0,
     end: null,
   });
-  const [activeID, setActiveID] = useState(null);
+  const [activeQuestionID, seQuestionActiveID] = useState(null);
   const router = useRouter();
   const packageID = router.query.packageID as string;
   const { packageResult, getPackageResult } = useDoingTest();
@@ -193,7 +193,7 @@ const MainTest = (props) => {
   // --- ON CHAGNE PAGINATION
   const onChange_pagination = (e, page: number) => {
     e.preventDefault();
-    setActiveID(listQuestionID[page - 1]);
+    // setActiveID(listQuestionID[page - 1]);
     getActiveID(listQuestionID[page - 1]);
 
     checkIsGroup(page);
@@ -223,7 +223,7 @@ const MainTest = (props) => {
     if (listQuestionID?.length > 0) {
       getListQuestionID(listQuestionID);
       getActiveID(listQuestionID[0]);
-      setActiveID(listQuestionID[0]);
+      // setActiveID(listQuestionID[0]);
     }
   }, [listQuestionID]);
 
@@ -284,6 +284,12 @@ const MainTest = (props) => {
     }
   }, [infoExam, dataQuestion]);
 
+  console.log("ACTIVE ID main test: ", activeID);
+
+  // useEffect(() => {
+  //   setListQuestionID([...listQuestionID]);
+  // }, [activeID]);
+
   return (
     <div className="test-wrapper">
       <Modal
@@ -340,7 +346,7 @@ const MainTest = (props) => {
                             {ReactHtmlParser(item.Content)}
                           </div>
                         </div>
-                        <div className="col-md-6 col-12 h-100">
+                        <div className="col-md-6 col-12 h-100 pl-0">
                           <ListQuestion
                             dataQuestion={item}
                             listQuestionID={listQuestionID}

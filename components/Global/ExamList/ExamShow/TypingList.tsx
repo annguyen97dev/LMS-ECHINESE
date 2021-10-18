@@ -8,7 +8,8 @@ import { useDoingTest } from "~/context/useDoingTest";
 
 const TypingList = (props) => {
   const { dataQuestion, listQuestionID, isDoingTest } = props;
-  const { activeID, packageResult, getPackageResult } = useDoingTest();
+  const { activeID, getActiveID, packageResult, getPackageResult } =
+    useDoingTest();
   const [listInput, setListInput] = useState([]);
 
   // console.log("List ID Là: ", listQuestionID);
@@ -22,17 +23,22 @@ const TypingList = (props) => {
         spaceEditor.forEach((item, index) => {
           let quesID = parseInt(item.getAttribute("ques-id"));
 
-          // // Tìm và active đúng ô input
-          // if (quesID === activeID) {
-          //   item.classList.add("active-type-input");
-          // }
-
           // Sắp xếp lại thứ tự các ô input trong đoạn văn
           let indexQues = null;
           if (listQuestionID.includes(quesID)) {
             indexQues = listQuestionID.indexOf(quesID);
           }
+
+          let span = document.createElement("span");
+          span.classList.add("position-space");
+          span.id = quesID.toString();
+          if (quesID === activeID) {
+            span.classList.add("active");
+          }
+          span.append(`(${indexQues + 1})`);
+
           item.innerHTML = `${(indexQues + 1).toString()}`;
+          item.before(span);
         });
       }
     }
@@ -43,7 +49,9 @@ const TypingList = (props) => {
   useEffect(() => {
     if (isDoingTest) {
       if (dataQuestion.Paragraph !== "") {
-        let spaceEditor = document.querySelectorAll(".space-editor");
+        let spaceEditor = document.querySelectorAll(
+          ".doingtest-group .box-typing .space-editor"
+        );
 
         if (spaceEditor && spaceEditor.length > 0) {
           spaceEditor.forEach((item, index) => {
@@ -82,11 +90,21 @@ const TypingList = (props) => {
             }
           });
         }
+
+        // -- Sắp xếp lại vị trí
+        let positionSpace = document.querySelectorAll(".position-space");
+        positionSpace.forEach((item) => {
+          item.classList.remove("active");
+          if (parseInt(item.id) === activeID) {
+            item.classList.add("active");
+          }
+        });
       }
     }
   }, [activeID]);
 
   const handleChangeText = (text, quesID) => {
+    getActiveID(quesID);
     // Find index
     let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
       (item) => item.ExamTopicDetailID === dataQuestion.ID
@@ -158,32 +176,6 @@ const TypingList = (props) => {
 
     setListInput([...listInput]);
   }, []);
-
-  // useEffect(() => {
-  //   console.log("CHẠY VÔ ĐÂY NHA");
-  //   if (isDoingTest) {
-  //     if (packageResult) {
-  //       let indexQuestion =
-  //         packageResult.SetPackageResultDetailInfoList.findIndex(
-  //           (item) => item.ExamTopicDetailID === dataQuestion.ID
-  //         );
-
-  //         if() {
-
-  //         }
-
-  //       packageResult.SetPackageResultDetailInfoList[
-  //         indexQuestion
-  //       ].SetPackageExerciseStudentInfoList.forEach((item) => {
-  //         item.SetPackageExerciseAnswerStudentList.push({
-  //           AnswerID: 0,
-  //           AnswerContent: "",
-  //           FileAudio: "",
-  //         });
-  //       });
-  //     }
-  //   }
-  // }, [packageResult]);
 
   return (
     <>
