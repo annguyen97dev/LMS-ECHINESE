@@ -16,11 +16,14 @@ import EditorSimple from "~/components/Elements/EditorSimple";
 
 // ---- COMPONENT CHILDREN ----
 const WrittingModal = (props) => {
-  const { onGetDataEditor, contentOfStudent } = props;
+  const { onGetDataEditor, contentOfStudent, isDoingTest } = props;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [contentEditor, setContentEditor] = useState(null);
   const [isModalConfirm, setIsModalConfirm] = useState(false);
   const [isReset, setIsReset] = useState(false);
+
+  console.log("content student: ", contentOfStudent);
+  console.log("content Editor: ", contentEditor);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -240,28 +243,31 @@ const WrittingList = (props) => {
               <div className="title-text mt-3">
                 {ReactHtmlParser(ques.Content)}
               </div>
-              {contentOfStudent ? (
-                <h6 className="text-underline mb-2">
-                  <u>Bài viết của bạn</u>
-                </h6>
-              ) : (
-                <h6 className="text-underline">
-                  Bấm vào nút bên dưới để làm bài tự luận
-                </h6>
-              )}
-              {contentOfStudent && (
+              {isDoingTest &&
+                (contentOfStudent ? (
+                  <h6 className="text-underline mb-2">
+                    <u>Bài viết của bạn</u>
+                  </h6>
+                ) : (
+                  <h6 className="text-underline">
+                    Bấm vào nút bên dưới để làm bài tự luận
+                  </h6>
+                ))}
+              {isDoingTest && contentOfStudent && (
                 <div className="content-of-student">
                   {ReactHtmlParser(contentOfStudent)}
                 </div>
               )}
-              <div className="writting-editor mt-2">
-                <WrittingModal
-                  contentOfStudent={contentOfStudent}
-                  onGetDataEditor={(content) =>
-                    onGetDataEditor(content, ques.ExerciseID)
-                  }
-                />
-              </div>
+              {isDoingTest && (
+                <div className="writting-editor mt-2">
+                  <WrittingModal
+                    contentOfStudent={contentOfStudent}
+                    onGetDataEditor={(content) =>
+                      onGetDataEditor(content, ques.ExerciseID)
+                    }
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className="box-action">

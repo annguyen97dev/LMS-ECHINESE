@@ -292,20 +292,25 @@ const DragForm = (props) => {
 
     let cloneParagraph = dataSubmit.Paragraph;
 
+    console.log("DATA submit after: ", dataSubmit);
+
     dataSubmit.ExerciseList.forEach((item, index) => {
+      let indexInput: any = parseInt(item.inputID) + 1;
+      indexInput = indexInput.toString();
       cloneParagraph = cloneParagraph.replace(
-        `<input id="${item.inputID}" class='space-editor' placeholder="(${
-          item.inputID + 1
-        })"`,
-        `<div ques-id="${item.ID}" id="${
-          item.inputID
-        }" class='space-editor drag-item' ondrop="drop(event)" ondragover="allowDrop(event)">(${(
-          item.inputID + 1
-        ).toString()})</div>`
+        `<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})">`,
+        `<div ques-id="${item.ID}" id="${item.inputID}" class='space-editor drag-item' ondrop="drop(event)" ondragover="allowDrop(event)">(${indexInput})</div>`
       );
+
+      let test = `<input id="${item.inputID}" class='space-editor' placeholder="(${indexInput})">`;
+      console.log("COI THỬ NÀY LÀ GÌ: ", test);
     });
 
+    console.log("Paragraph new: ", cloneParagraph);
+
     dataSubmit.Paragraph = cloneParagraph;
+
+    console.log("Paragraph new in submit: ", dataSubmit.Paragraph);
 
     // ----------
 

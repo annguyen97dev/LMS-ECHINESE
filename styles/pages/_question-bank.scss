@@ -3,6 +3,9 @@
   &.exam {
     .paragraph {
       padding-top: 0;
+      .space-editor {
+        color: transparent;
+      }
     }
   }
   audio {
@@ -32,6 +35,10 @@
       text-align: left;
       padding: 10px;
       background: #fffbf5;
+
+      &.active-doing {
+        background: #fff0db;
+      }
     }
 
     th {

@@ -22,7 +22,7 @@ const ListQuestion = dynamic(
 );
 
 const MainTest = (props) => {
-  const { getListQuestionID, getActiveID } = useDoingTest();
+  const { getListQuestionID, getActiveID, activeID } = useDoingTest();
   const { examID, infoExam } = props;
   const listTodoApi = {
     pageIndex: 1,
@@ -42,11 +42,13 @@ const MainTest = (props) => {
     start: 0,
     end: null,
   });
-  const [activeID, setActiveID] = useState(null);
+  const [activeQuestionID, seQuestionActiveID] = useState(null);
   const router = useRouter();
   const packageID = router.query.packageID as string;
   const { packageResult, getPackageResult } = useDoingTest();
   const { userInformation } = useWrap();
+
+  // console.log("Info Exam is: ", infoExam);
 
   console.log("DataQuestion: ", dataQuestion);
   // console.log("Space Question: ", spaceQuestion);
@@ -78,12 +80,6 @@ const MainTest = (props) => {
 
         setListGroupID([...cloneListGroupID]);
         setListQuestionID([...cloneListQuestionID]);
-
-        // Run time
-        const add_minutes = (function (dt, minutes) {
-          return new Date(dt.getTime() + minutes * 60000);
-        })(new Date(), infoExam.Time);
-        setAddMinutes(add_minutes);
       }
       if (res.status == 204) {
         setDataQuestion([]);
@@ -196,7 +192,7 @@ const MainTest = (props) => {
   // --- ON CHAGNE PAGINATION
   const onChange_pagination = (e, page: number) => {
     e.preventDefault();
-    setActiveID(listQuestionID[page - 1]);
+    // setActiveID(listQuestionID[page - 1]);
     getActiveID(listQuestionID[page - 1]);
 
     checkIsGroup(page);
@@ -226,7 +222,7 @@ const MainTest = (props) => {
     if (listQuestionID?.length > 0) {
       getListQuestionID(listQuestionID);
       getActiveID(listQuestionID[0]);
-      setActiveID(listQuestionID[0]);
+      // setActiveID(listQuestionID[0]);
     }
   }, [listQuestionID]);
 
@@ -276,6 +272,20 @@ const MainTest = (props) => {
       });
     }
   }, [dataQuestion]);
+
+  useEffect(() => {
+    if (infoExam && dataQuestion) {
+      // Run time
+      const add_minutes = (function (dt, minutes) {
+        return new Date(dt.getTime() + minutes * 60000);
+      })(new Date(), infoExam.Time);
+      setAddMinutes(add_minutes);
+    }
+  }, [infoExam, dataQuestion]);
+
+  // useEffect(() => {
+  //   setListQuestionID([...listQuestionID]);
+  // }, [activeID]);
 
   return (
     <div className="test-wrapper">
@@ -333,13 +343,11 @@ const MainTest = (props) => {
                             {ReactHtmlParser(item.Content)}
                           </div>
                         </div>
-                        <div className="col-md-6 col-12 h-100">
-                          <div className="box-list-question">
-                            <ListQuestion
-                              dataQuestion={item}
-                              listQuestionID={listQuestionID}
-                            />
-                          </div>
+                        <div className="col-md-6 col-12 h-100 pl-0">
+                          <ListQuestion
+                            dataQuestion={item}
+                            listQuestionID={listQuestionID}
+                          />
                         </div>
                       </div>
                     </div>

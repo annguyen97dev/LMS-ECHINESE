@@ -158,12 +158,14 @@ const SpeakingList = (props) => {
               <div className="title-text mt-3">
                 {ReactHtmlParser(ques.Content)}
               </div>
-              <AudioRecord
-                linkRecord={linkRecord}
-                getLinkRecord={(linkRecord) =>
-                  onGetLinkRecord(linkRecord, ques.ExerciseID)
-                }
-              />
+              {isDoingTest && (
+                <AudioRecord
+                  linkRecord={linkRecord}
+                  getLinkRecord={(linkRecord) =>
+                    onGetLinkRecord(linkRecord, ques.ExerciseID)
+                  }
+                />
+              )}
             </div>
           </div>
           <div className="box-action">

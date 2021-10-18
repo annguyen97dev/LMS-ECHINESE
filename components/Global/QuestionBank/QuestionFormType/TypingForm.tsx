@@ -262,15 +262,11 @@ const TypingForm = (props) => {
     let cloneParagraph = dataSubmit.Paragraph;
 
     dataSubmit.ExerciseList.forEach((item, index) => {
+      let indexInput: any = parseInt(item.inputID) + 1;
+      indexInput = indexInput.toString();
       cloneParagraph = cloneParagraph.replace(
-        `<input id="${item.inputID}" class='space-editor' placeholder="(${
-          item.inputID + 1
-        })"`,
-        `<div ques-id="${item.ID}" id="${
-          item.inputID
-        }" class='space-editor' role='textbox'   aria-labelledby='txtboxLabel' aria-multiline='true' contentEditable="true">(${(
-          item.inputID + 1
-        ).toString()})</div>`
+        `<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})">`,
+        `<div ques-id="${item.ID}" id="${indexInput}" class='space-editor' role='textbox'   aria-labelledby='txtboxLabel' aria-multiline='true' contentEditable="true">(${indexInput})</div>`
       );
     });
 

@@ -74,22 +74,31 @@ const WrapList = (props) => {
         });
   };
 
-  useEffect(() => {
-    if (dataQuestion.Paragraph !== "") {
-      let spaceEditor = document.querySelectorAll(".space-editor");
+  // useEffect(() => {
+  //   if (dataQuestion.Paragraph !== "") {
+  //     let spaceEditor = document.querySelectorAll(".space-editor");
 
-      if (spaceEditor && spaceEditor.length > 0) {
-        spaceEditor.forEach((item, index) => {
-          let quesID = parseInt(item.getAttribute("ques-id"));
-          let indexQues = null;
-          if (listQuestionID.includes(quesID)) {
-            indexQues = listQuestionID.indexOf(quesID);
-          }
-          item.setAttribute("placeholder", `(${indexQues + 1})`);
-        });
-      }
-    }
-  }, []);
+  //     if (spaceEditor && spaceEditor.length > 0) {
+  //       spaceEditor.forEach((item, index) => {
+  //         let quesID = parseInt(item.getAttribute("ques-id"));
+
+  //         let indexQues = null;
+  //         if (listQuestionID.includes(quesID)) {
+  //           indexQues = listQuestionID.indexOf(quesID);
+  //         }
+
+  //         let span = document.createElement("span");
+  //         span.classList.add("position-space");
+  //         span.id = quesID.toString();
+
+  //         span.append(`(${indexQues + 1})`);
+
+  //         item.innerHTML = `(${indexQues + 1})`;
+  //         item.before(span);
+  //       });
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     dataQuestion?.ExerciseTopic.forEach((element) => {
@@ -120,11 +129,11 @@ const WrapList = (props) => {
             {dataQuestion.Type == 3 && (
               <h6 className="font-italic mb-3 mt-4">Điền vào ô trống</h6>
             )}
-            {dataQuestion?.Paragraph && (
+            {/* {dataQuestion?.Paragraph && (
               <div className="paragraph">
                 {ReactHtmlParser(dataQuestion?.Paragraph)}
               </div>
-            )}
+            )} */}
 
             <>{React.cloneElement(children)}</>
           </div>

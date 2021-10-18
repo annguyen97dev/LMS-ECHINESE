@@ -773,6 +773,7 @@ const QuestionCreate = (props) => {
       }
 
       questionData.Level = 1;
+      questionData.SkillID = 3;
       setQuestionData({ ...questionData });
       setValueSkill(3);
       setValueLevel(1);
