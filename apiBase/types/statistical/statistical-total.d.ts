@@ -1,0 +1,23 @@
+type IStatistical = IBaseApi<{
+  Customer: number;
+  PreCustomer: number;
+  TestAppointment: number;
+  PreTestAppointment: number;
+  TestDone: number;
+  PreTestDone: number;
+  RegisterAppointment: number;
+  PreRegisterAppointment: number;
+  Studying: number;
+  PreStudying: number;
+  Reserve: number;
+  Prereserve: number;
+  Changecourse: number;
+  PreChangecourse: number;
+  Teacher: number;
+  PreTeacher: number;
+  Employee: number;
+  PreEmployee: number;
+  Submittopic: number;
+  Marktopic: number;
+  Remaketopic: number;
+}>;
