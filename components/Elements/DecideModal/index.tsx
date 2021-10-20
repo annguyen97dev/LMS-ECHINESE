@@ -2,45 +2,47 @@ import React, { useState, useEffect } from "react";
 import { Modal } from "antd";
 
 const DecideModal = (props: any) => {
+  const { isOk, isCancel, content, isOpen, addClass } = props;
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = (e) => {
-    e.preventDefault();
-    setIsModalVisible(true);
-  };
 
   const handleOk = () => {
     setIsModalVisible(false);
-    props.isOk();
+    isOk();
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    props.isCancel();
+    isCancel();
   };
 
   useEffect(() => {
-    setIsModalVisible(props.isOpen);
-  }, [props.isOpen]);
+    setIsModalVisible(isOpen);
+  }, [isOpen]);
 
   return (
     <>
-      <a href="#" onClick={showModal}>
-        {props.addBtn && props.addBtn}
-      </a>
-
       <Modal
-        title="Xác nhận"
+        title="Chú ý"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         className="modal-decide"
+        footer={
+          <div className="text-center">
+            <button className="btn btn-light mr-2" onClick={handleCancel}>
+              Hủy
+            </button>
+            <button className="btn btn-primary" onClick={handleOk}>
+              Nộp ngay
+            </button>
+          </div>
+        }
       >
         <p
-          className={`modal-decide__text ${props.addClass && props.addClass}`}
-          style={{ fontWeight: 600 }}
+          className={`modal-decide__text ${addClass && addClass}`}
+          style={{ fontWeight: 500 }}
         >
-          {props.content ? props.content : ""}
+          {content ? content : ""}
         </p>
       </Modal>
     </>

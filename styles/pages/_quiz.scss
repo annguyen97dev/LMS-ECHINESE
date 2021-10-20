@@ -187,6 +187,20 @@
       height: 100%;
       overflow: auto;
       overflow-x: hidden;
+      position: relative;
+
+      .loading-submit {
+        background: #ffffffb0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99;
+      }
 
       .box-paragraph {
         height: 100%;
@@ -284,7 +298,7 @@
     padding: 12px 15px;
     text-align: center;
     display: flex;
-
+    z-index: 999;
     align-items: center;
 
     @include max-media(800px) {
@@ -314,6 +328,23 @@
       display: flex;
       // justify-content: space-between;
       align-items: center;
+
+      .box-preview {
+        .ant-checkbox-wrapper:hover {
+          .ant-checkbox-inner {
+            border-color: #eda034;
+          }
+          .ant-checkbox-checked {
+            &:after {
+              border-color: #eda034;
+            }
+          }
+        }
+        .ant-checkbox-checked .ant-checkbox-inner {
+          background-color: #eda034;
+          border-color: #eda034;
+        }
+      }
 
       .close-icon {
         background: none;
@@ -374,6 +405,7 @@
       .pagi-btn {
         width: 27px;
         height: 27px;
+        border: none;
         border-radius: 50%;
         display: flex;
         justify-content: center;
@@ -387,7 +419,7 @@
 
         &:hover {
           box-shadow: 0px 2px 6px #00000026;
-          background: white;
+          background: #d4d4d4;
           transition: 0.1s;
 
           svg {
@@ -401,7 +433,7 @@
         }
 
         svg {
-          font-size: 14px;
+          font-size: 12px;
           opacity: 0.5;
         }
       }
@@ -438,18 +470,22 @@
         }
 
         a {
-          width: 27px;
-          height: 27px;
+          width: 25px;
+          height: 25px;
           display: flex;
           justify-content: center;
           align-items: center;
           background: white;
           color: #000000cf;
           border-radius: 3px;
-          font-size: 14px;
+          font-size: 13px;
           border: 1px solid #0c0c0c40;
           font-weight: 400;
           transition: 0.1s;
+
+          &:hover {
+            text-decoration: none;
+          }
 
           &.checked {
             background: #404040 !important;
@@ -466,12 +502,19 @@
           }
 
           &.checked_preview {
-            background: #f50057 !important;
+            background: #eda034 !important;
             transition: 0.1s;
             color: white !important;
-            border: 1px solid #f50057 !important;
+            border: 1px solid #eda034 !important;
             border-radius: 50%;
             transition: 0.3s;
+          }
+
+          &.activeDoing {
+            background: $primary-color;
+            border: 1px solid $primary-color;
+            transition: 0.1s;
+            color: white;
           }
         }
 
@@ -596,5 +639,21 @@
 .drag-list {
   .space-editor {
     color: transparent;
+  }
+}
+
+.modal-submit-success-test {
+  text-align: center;
+  .anticon {
+    svg {
+      color: #57b887;
+      font-size: 35px;
+    }
+  }
+  .text {
+    margin-top: 15px;
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: 500;
   }
 }

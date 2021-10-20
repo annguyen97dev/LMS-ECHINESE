@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Card, Checkbox, Spin, Modal } from "antd";
-import { CloseOutlined, RightOutlined, LeftOutlined } from "@ant-design/icons";
-import { examDetailApi, examTopicApi } from "~/apiBase";
+import { Card, Checkbox, Spin, Modal, Skeleton } from "antd";
+import {
+  CloseOutlined,
+  RightOutlined,
+  LeftOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
+import { examDetailApi, examTopicApi, doingTestApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import CountDown from "~/components/Elements/CountDown/CountDown";
 import ReactHtmlParser, {
@@ -12,6 +17,7 @@ import ReactHtmlParser, {
 import { useRouter } from "next/router";
 import { useDoingTest } from "~/context/useDoingTest";
 import dynamic from "next/dynamic";
+import DecideModal from "~/components/Elements/DecideModal";
 
 const ListQuestion = dynamic(
   () => import("~/components/Global/DoingTest/ListQuestion"),
@@ -22,8 +28,9 @@ const ListQuestion = dynamic(
 );
 
 const MainTest = (props) => {
-  const { getListQuestionID, getActiveID, activeID } = useDoingTest();
-  const { examID, infoExam } = props;
+  const { getListQuestionID, getActiveID, activeID, listPicked } =
+    useDoingTest();
+  const { examID, infoExam, packageDetailID } = props;
   const listTodoApi = {
     pageIndex: 1,
     pageSize: 999,
@@ -42,11 +49,16 @@ const MainTest = (props) => {
     start: 0,
     end: null,
   });
-  const [activeQuestionID, seQuestionActiveID] = useState(null);
+  const [pageCurrent, setPageCurrent] = useState<number>(1);
+  const [listPreview, setListPreview] = useState<Array<number>>([]);
   const router = useRouter();
   const packageID = router.query.packageID as string;
   const { packageResult, getPackageResult } = useDoingTest();
   const { userInformation } = useWrap();
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [isLong, setIsLong] = useState(false);
+  const [isModalConfirm, setIsModalConfirm] = useState(false);
+  const [isModalSuccess, setIsModalSuccess] = useState(false);
 
   // console.log("Info Exam is: ", infoExam);
 
@@ -122,19 +134,23 @@ const MainTest = (props) => {
     }
   };
 
-  function onChange_preview(e) {
-    // console.log(`checked = ${e.target.checked}`);
-  }
-
   // -- CHECK IS SINGLE
   const checkIsSingle = (indexCurrent) => {
+    console.log("Index current: ", indexCurrent);
+    console.log("Space Question trong này: ", spaceQuestion);
+
     if (
       indexCurrent !== spaceQuestion.start &&
       indexCurrent !== 0 &&
       indexCurrent !== spaceQuestion.end
     ) {
       if (spaceQuestion.end - spaceQuestion.start == 2) {
-        indexCurrent = indexCurrent - 1;
+        if (
+          indexCurrent > spaceQuestion.start &&
+          indexCurrent < spaceQuestion.end
+        ) {
+          indexCurrent = indexCurrent - 1;
+        }
       }
     }
 
@@ -162,7 +178,8 @@ const MainTest = (props) => {
   };
 
   // -- CHECK IS GROUP --
-  const checkIsGroup = (page) => {
+  const checkIsGroup = (page: number) => {
+    console.log("page: ", page);
     let exerciseID = listQuestionID[page - 1];
 
     dataQuestion.every((item, index) => {
@@ -172,6 +189,7 @@ const MainTest = (props) => {
       ) {
         // Kiểm tra ở vị trí này là câu hỏi nhóm hay đơn
         if (item.ExerciseGroupID !== 0) {
+          // Nếu là nhóm
           setSpaceQuestion({
             start: index,
             end: index + 1,
@@ -190,13 +208,70 @@ const MainTest = (props) => {
   };
 
   // --- ON CHAGNE PAGINATION
+
   const onChange_pagination = (e, page: number) => {
+    setPageCurrent(page);
     e.preventDefault();
     // setActiveID(listQuestionID[page - 1]);
     getActiveID(listQuestionID[page - 1]);
 
     checkIsGroup(page);
   };
+
+  // - Previous page
+  const onChange_PreviousPage = () => {
+    listQuestionID.every((item, index) => {
+      if (item === activeID) {
+        if (index == 0) {
+          setPageCurrent(listQuestionID.length);
+          checkIsGroup(listQuestionID.length);
+          getActiveID(listQuestionID[listQuestionID.length - 1]);
+        } else {
+          setPageCurrent((pageCurrent) => pageCurrent - 1);
+          checkIsGroup(pageCurrent - 1);
+          getActiveID(listQuestionID[index - 1]);
+        }
+
+        return false;
+      }
+      return true;
+    });
+  };
+
+  // - Next Page
+  const onChange_NextPage = (e) => {
+    listQuestionID.every((item, index) => {
+      if (item === activeID) {
+        if (index === listQuestionID.length - 1) {
+          setPageCurrent(1);
+          checkIsGroup(1);
+          getActiveID(listQuestionID[0]);
+        } else {
+          setPageCurrent((pageCurrent) => pageCurrent + 1);
+          checkIsGroup(pageCurrent + 1);
+          getActiveID(listQuestionID[index + 1]);
+        }
+
+        return false;
+      }
+      return true;
+    });
+  };
+
+  // - Preview
+  function onChange_preview(e) {
+    const checked = e.target.checked;
+    if (!listPreview.includes(activeID)) {
+      listPreview.push(activeID);
+      setListPreview([...listPreview]);
+    } else {
+      let newListPreview = listPreview.filter((item) => (item! -= activeID));
+      console.log("NEW LIST NUMBER: ", newListPreview);
+      setListPreview([...newListPreview]);
+    }
+  }
+
+  console.log("List Preview: ", listPreview);
 
   // --- TIME UP ---
   const timeUp = () => {
@@ -216,8 +291,44 @@ const MainTest = (props) => {
 
   useEffect(() => {
     getListQuestion();
+    packageResult.SetPackageDetailID = parseInt(packageDetailID);
+    getPackageResult({ ...packageResult });
   }, []);
 
+  // ===== ON SUBMIT DOING TEST =====
+  const onSubmit_DoingTest = async () => {
+    setIsModalConfirm(false);
+    setLoadingSubmit(true);
+    try {
+      let res = await doingTestApi.add(packageResult);
+      if (res.status === 200) {
+        setIsModalSuccess(true);
+        setTimeout(() => {
+          router.push({
+            pathname: "/done-test",
+            query: { SetPackageResultID: res.data.data.ID },
+          });
+        }, 500);
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setLoadingSubmit(false);
+    }
+  };
+
+  // Return text confirm
+  const returnTextConfirm = () => {
+    let textConfirm = "Bạn có chắc muốn nộp bài?";
+    if (listPicked.length < listQuestionID.length) {
+      let numberOfQuestion = listQuestionID.length - listPicked.length;
+      textConfirm = `Bạn còn ${numberOfQuestion} câu chưa làm. Bạn có chắc muốn nộp bài?`;
+    }
+
+    return textConfirm;
+  };
+
+  // ===== ALL USE EFFECT ====
   useEffect(() => {
     if (listQuestionID?.length > 0) {
       getListQuestionID(listQuestionID);
@@ -283,12 +394,36 @@ const MainTest = (props) => {
     }
   }, [infoExam, dataQuestion]);
 
-  // useEffect(() => {
-  //   setListQuestionID([...listQuestionID]);
-  // }, [activeID]);
+  useEffect(() => {
+    let testFooter = document.getElementById("test-footer");
+    let heightFooter = testFooter.offsetHeight;
+    if (heightFooter > 70) {
+      setIsLong(true);
+    }
+  });
 
   return (
     <div className="test-wrapper">
+      {/* Modal báo thành công **/}
+      <Modal
+        title="Thông báo"
+        footer={null}
+        className=""
+        visible={isModalSuccess}
+      >
+        <div className="modal-submit-success-test">
+          <CheckCircleOutlined />
+          <p className="text">Nộp bài thành công</p>
+        </div>
+      </Modal>
+      {/* Modal xác nhận submit **/}
+      <DecideModal
+        isOpen={isModalConfirm}
+        isCancel={() => setIsModalConfirm(false)}
+        isOk={() => onSubmit_DoingTest()}
+        content={returnTextConfirm()}
+      />
+      {/* Modal hết giờ làm bài **/}
       <Modal
         title="Chú ý!"
         visible={isModalVisible}
@@ -323,12 +458,25 @@ const MainTest = (props) => {
         }
       >
         <div className="test-body">
+          {loadingSubmit && (
+            <div className="loading-submit text-center">
+              <div className="w-100 text-center">
+                <Spin />
+                <p
+                  className="mt-3"
+                  style={{ fontStyle: "italic", fontWeight: 500 }}
+                >
+                  Đang tiến hành nộp bài...
+                </p>
+              </div>
+            </div>
+          )}
           {isLoading ? (
-            <div className="w-100 mt-4 text-center">
-              <Spin />
-              <p className="mt-3" style={{ fontStyle: "italic" }}>
-                Đang tải dữ liệu...
-              </p>
+            <div className="w-100 mt-4 ">
+              <div className="w-50">
+                <Skeleton />
+                <Skeleton />
+              </div>
             </div>
           ) : dataQuestion?.length > 0 ? (
             dataQuestion
@@ -373,7 +521,7 @@ const MainTest = (props) => {
             </div>
           )}
         </div>
-        <div className="test-footer">
+        <div className="test-footer" id="test-footer">
           {/* <div className="footer-preview">
               <Checkbox onChange={onChange_preview}>Preview</Checkbox>
             </div> */}
@@ -391,35 +539,56 @@ const MainTest = (props) => {
               <CloseOutlined />
             </button>
             <p className="pagi-name">Danh sách câu hỏi</p>
-            <Checkbox onChange={onChange_preview}>Preview</Checkbox>
-            <span className="pagi-btn previous">
+            <div className="box-preview">
+              <Checkbox
+                checked={listPreview.includes(activeID) ? true : false}
+                onChange={onChange_preview}
+              >
+                Preview
+              </Checkbox>
+            </div>
+            <button
+              className="pagi-btn previous"
+              onClick={onChange_PreviousPage}
+            >
               <LeftOutlined />
-            </span>
+            </button>
             <ul className="list-answer">
               {listQuestionID?.length > 0 &&
                 listQuestionID.map((questionID, index) => (
                   <li
-                    className={`item ${
-                      questionID == activeID ? "activeDoing" : ""
-                    }`}
+                    className={`item `}
                     value={questionID}
                     key={questionID}
+                    style={{ marginBottom: isLong ? "10px" : "" }}
                   >
                     <a
                       href=""
                       onClick={(e) => onChange_pagination(e, index + 1)}
+                      className={`
+                      ${questionID == activeID ? "activeDoing" : ""}
+                      ${listPicked.includes(questionID) ? "checked" : ""} ${
+                        listPreview.includes(questionID)
+                          ? "checked_preview"
+                          : ""
+                      }`}
                     >
                       {index + 1}
                     </a>
                   </li>
                 ))}
             </ul>
-            <span className="pagi-btn next">
+            <button className="pagi-btn next" onClick={onChange_NextPage}>
               <RightOutlined />
-            </span>
+            </button>
           </div>
           <div className="footer-submit text-right">
-            <button className="btn btn-primary">Submit</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => setIsModalConfirm(true)}
+            >
+              Nộp bài
+            </button>
           </div>
         </div>
       </Card>

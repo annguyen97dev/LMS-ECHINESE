@@ -12,8 +12,13 @@ import { Item } from "devextreme-react/file-manager";
 let activeDrag = null;
 
 const DragList = (props) => {
-  const { activeID, getActiveID, packageResult, getPackageResult } =
-    useDoingTest();
+  const {
+    activeID,
+    getActiveID,
+    packageResult,
+    getPackageResult,
+    getListPicked,
+  } = useDoingTest();
   const { dataQuestion, listQuestionID, isDoingTest } = props;
   const [dataQuestionClone, setDataQuestionClone] = useState(dataQuestion);
   const [dataAnswer, setDataAnswer] = useState([]);
@@ -167,6 +172,7 @@ const DragList = (props) => {
             item.classList.remove("is-hover");
 
             getActiveID(parseInt(item.getAttribute("ques-id")));
+            getListPicked(parseInt(item.getAttribute("ques-id")));
 
             const actionDragAndDrop = () => {
               // -- Khởi tạo và xóa bên trong trước khi drop
@@ -270,7 +276,7 @@ const DragList = (props) => {
   // -- UPDATE AFTER DROP AND DRAG
   useEffect(() => {
     if (isDoingTest) {
-      if (dataAnswer) {
+      if (dataAnswer?.length > 0) {
         let spaceEditor = document.querySelectorAll(".drag-list .space-editor");
 
         let boxAns = document.querySelectorAll(".drag-list .drag-list-answer");
@@ -314,12 +320,6 @@ const DragList = (props) => {
                 .SetPackageExerciseAnswerStudentList.length < 1
             ) {
               item.innerHTML = `(${(indexQues + 1).toString()})`;
-              // let span = document.createElement("span");
-              // span.style.marginLeft = "5px";
-              // span.style.fontWeight = "500";
-              // span.append(`(${indexQues + 1})`);
-              // item.innerHTML = "";
-              // item.before(span);
             }
           } else {
             if (item.childNodes.length == 0) {
