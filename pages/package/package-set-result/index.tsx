@@ -1,10 +1,10 @@
-import {Switch, Tooltip} from 'antd';
+import { Switch, Tooltip } from 'antd';
 import Link from 'next/link';
-import React, {Fragment, useEffect, useState} from 'react';
-import {Eye} from 'react-feather';
-import {studentApi} from '~/apiBase';
-import {packageDetailApi} from '~/apiBase/package/package-detail';
-import {packageResultApi} from '~/apiBase/package/package-result';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
+import { studentApi } from '~/apiBase';
+import { packageDetailApi } from '~/apiBase/package/package-detail';
+import { packageResultApi } from '~/apiBase/package/package-result';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
@@ -12,14 +12,14 @@ import PackageResultExpand from '~/components/Global/Package/PackageResult/Packa
 import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResult/PackageResultUpdateTeacher';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 const PackageSetResult = () => {
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
 			...listParamsDefault,
-			StudentName: data,
+			StudentName: data
 		});
 	};
 
@@ -32,26 +32,26 @@ const PackageSetResult = () => {
 			title: 'Học viên',
 			dataIndex: 'StudentName',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>,
+			render: (text) => <p className="font-weight-blue">{text}</p>
 		},
 
 		{
 			title: 'Đề thi',
-			dataIndex: 'ExamTopicName',
+			dataIndex: 'ExamTopicName'
 		},
 		{
 			title: 'Level',
 			dataIndex: 'SetPackageLevel',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Hình thức',
 			dataIndex: 'ExamTopicTypeName',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Giáo viên',
-			dataIndex: 'TeacherName',
+			dataIndex: 'TeacherName'
 		},
 		{
 			title: 'Trạng thái',
@@ -61,7 +61,7 @@ const PackageSetResult = () => {
 					{type == true && <span className="tag green">Đã hoàn thành</span>}
 					{type == false && <span className="tag yellow">Chưa hoàn thành</span>}
 				</Fragment>
-			),
+			)
 		},
 		{
 			title: 'Yêu cầu chấm bài',
@@ -76,22 +76,21 @@ const PackageSetResult = () => {
 							onChange={async (check: boolean) => {
 								setIsLoading({
 									type: 'GET_ALL',
-									status: true,
+									status: true
 								});
 								try {
 									let res = await packageResultApi.update({
 										...data,
-										isFixPaid: check,
+										isFixPaid: check
 									});
-									res.status == 200 &&
-										setParams({...params, pageIndex: currentPage}),
+									res.status == 200 && setParams({ ...params, pageIndex: currentPage }),
 										showNoti('success', res.data.message);
 								} catch (error) {
 									showNoti('danger', error.message);
 								} finally {
 									setIsLoading({
 										type: 'GET_ALL',
-										status: false,
+										status: false
 									});
 								}
 							}}
@@ -100,15 +99,14 @@ const PackageSetResult = () => {
 						<p className="font-light-black">Trắc nghiệm được chấm tự động</p>
 					)}
 				</Fragment>
-			),
+			)
 		},
 		{
 			render: (data) => (
 				<Link
 					href={{
-						pathname:
-							'/package/package-set-result/package-set-result-detail/[slug]',
-						query: {slug: `${data.ID}`},
+						pathname: '/package/package-set-result/package-set-result-detail/[slug]',
+						query: { slug: `${data.ID}` }
 					}}
 				>
 					<Tooltip title="Kết quả bộ đề chi tiết">
@@ -117,8 +115,8 @@ const PackageSetResult = () => {
 						</button>
 					</Tooltip>
 				</Link>
-			),
-		},
+			)
+		}
 	];
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemDetail, setItemDetail] = useState();
@@ -134,24 +132,24 @@ const PackageSetResult = () => {
 		SetPackageDetailID: null,
 		isDone: null,
 		StudentName: null,
-		ExamTopicType: null,
+		ExamTopicType: null
 	};
 
 	const sortOption = [
 		{
 			dataSort: {
-				sortType: null,
+				sortType: null
 			},
 			value: 1,
-			text: 'Mới cập nhật',
+			text: 'Mới cập nhật'
 		},
 		{
 			dataSort: {
-				sortType: true,
+				sortType: true
 			},
 			value: 2,
-			text: 'Từ dưới lên',
-		},
+			text: 'Từ dưới lên'
+		}
 	];
 
 	const [dataFilter, setDataFilter] = useState([
@@ -161,7 +159,7 @@ const PackageSetResult = () => {
 			col: 'col-12',
 			type: 'select',
 			optionList: null,
-			value: null,
+			value: null
 		},
 		{
 			name: 'SetPackageDetailID',
@@ -169,7 +167,7 @@ const PackageSetResult = () => {
 			col: 'col-12',
 			type: 'select',
 			optionList: null,
-			value: null,
+			value: null
 		},
 		{
 			name: 'isDone',
@@ -179,14 +177,14 @@ const PackageSetResult = () => {
 			optionList: [
 				{
 					value: true,
-					title: 'Đã hoàn thành',
+					title: 'Đã hoàn thành'
 				},
 				{
 					value: false,
-					title: 'Chưa hoàn thành',
-				},
+					title: 'Chưa hoàn thành'
+				}
 			],
-			value: null,
+			value: null
 		},
 		{
 			name: 'ExamTopicType',
@@ -196,22 +194,22 @@ const PackageSetResult = () => {
 			optionList: [
 				{
 					value: 1,
-					title: 'Trắc nghiệm',
+					title: 'Trắc nghiệm'
 				},
 				{
 					value: 2,
-					title: 'Tự luận',
-				},
+					title: 'Tự luận'
+				}
 			],
-			value: null,
+			value: null
 		},
 		{
 			name: 'date-range',
 			title: 'Ngày tạo',
 			col: 'col-12',
 			type: 'date-range',
-			value: null,
-		},
+			value: null
+		}
 	]);
 
 	const handleFilter = (listFilter) => {
@@ -225,7 +223,7 @@ const PackageSetResult = () => {
 			SetPackageDetailID: null,
 			isDone: null,
 			StudentName: null,
-			ExamTopicType: null,
+			ExamTopicType: null
 		};
 		listFilter.forEach((item, index) => {
 			let key = item.name;
@@ -235,25 +233,23 @@ const PackageSetResult = () => {
 				}
 			});
 		});
-		setParams({...listParamsDefault, ...newListFilter, pageIndex: 1});
+		setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
 	};
 
 	const handleSort = async (option) => {
 		setParams({
 			...listParamsDefault,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		});
 	};
 
 	const [params, setParams] = useState(listParamsDefault);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
-	const [packageSetResult, setPackageSetResult] = useState<ISetPackageResult[]>(
-		[]
-	);
+	const [packageSetResult, setPackageSetResult] = useState<ISetPackageResult[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
 
 	const setDataFunc = (name, data) => {
@@ -269,11 +265,11 @@ const PackageSetResult = () => {
 
 	const getDataStudent = async () => {
 		try {
-			let res = await studentApi.getAll({pageSize: 99999, pageIndex: 1});
+			let res = await studentApi.getAll({ pageSize: 99999, pageIndex: 1 });
 			if (res.status == 200) {
 				const newData = res.data.data.map((item) => ({
 					title: item.FullNameUnicode,
-					value: item.UserInformationID,
+					value: item.UserInformationID
 				}));
 				setDataFunc('StudentID', newData);
 			}
@@ -289,12 +285,12 @@ const PackageSetResult = () => {
 		try {
 			let res = await packageDetailApi.getAll({
 				pageSize: 99999,
-				pageIndex: 1,
+				pageIndex: 1
 			});
 			if (res.status == 200) {
 				const newData = res.data.data.map((item) => ({
 					title: item.SetPackageName,
-					value: item.ID,
+					value: item.ID
 				}));
 				setDataFunc('SetPackageDetailID', newData);
 			}
@@ -315,18 +311,18 @@ const PackageSetResult = () => {
 		setCurrentPage(pageNumber);
 		setParams({
 			...params,
-			pageIndex: currentPage,
+			pageIndex: currentPage
 		});
 	};
 
 	const getDataSetPackageResult = (page: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		(async () => {
 			try {
-				let res = await packageResultApi.getAll({...params, pageIndex: page});
+				let res = await packageResultApi.getAll({ ...params, pageIndex: page });
 				//@ts-ignore
 				res.status == 200 && setPackageSetResult(res.data.data);
 				if (res.status == 204) {
@@ -339,7 +335,7 @@ const PackageSetResult = () => {
 			} finally {
 				setIsLoading({
 					type: 'GET_ALL',
-					status: false,
+					status: false
 				});
 			}
 		})();
@@ -385,14 +381,11 @@ const PackageSetResult = () => {
 						handleReset={handleReset}
 					/>
 
-					<SortBox
-						dataOption={sortOption}
-						handleSort={(value) => handleSort(value)}
-					/>
+					<SortBox dataOption={sortOption} handleSort={(value) => handleSort(value)} />
 				</div>
 			}
 			handleExpand={(data) => setItemDetail(data)}
-			expandable={{expandedRowRender}}
+			expandable={{ expandedRowRender }}
 		/>
 	);
 };

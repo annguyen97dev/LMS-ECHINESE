@@ -1,22 +1,14 @@
-import {Tooltip} from 'antd';
+import { Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
-import React, {useEffect, useRef, useState} from 'react';
-import {Eye} from 'react-feather';
-import {
-	areaApi,
-	branchApi,
-	districtApi,
-	staffSalaryApi,
-	teacherApi,
-	userInformationApi,
-	wardApi,
-} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { Eye } from 'react-feather';
+import { areaApi, branchApi, districtApi, staffSalaryApi, teacherApi, userInformationApi, wardApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr } from '~/utils/functions';
 import StaffSalaryForm from '../../Option/StaffSalaryForm';
 import TeacherFilterForm from './TeacherFilterForm';
 import TeacherForm from './TeacherForm';
@@ -30,15 +22,15 @@ const Teacher = () => {
 	}>({
 		areaList: [],
 		districtList: [],
-		wardList: [],
+		wardList: []
 	});
 	const [branchList, setBranchList] = useState([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
@@ -50,13 +42,13 @@ const Teacher = () => {
 		FullNameUnicode: '',
 		fromDate: '',
 		toDate: '',
-		StatusID: null,
+		StatusID: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	// ADD SALARY TO NEW TEACHER
@@ -64,48 +56,48 @@ const Teacher = () => {
 	const [openSalaryForm, setOpenSalaryForm] = useState(false);
 	const [dataStaff, setDataStaff] = useState([]);
 	const optionGenderList = [
-		{title: 'Nữ', value: 0},
-		{title: 'Nam', value: 1},
-		{title: 'Khác', value: 2},
+		{ title: 'Nữ', value: 0 },
+		{ title: 'Nam', value: 1 },
+		{ title: 'Khác', value: 2 }
 	];
 	const optionStatusList = [
-		{title: 'Hoạt động', value: 0},
-		{title: 'Khóa', value: 1},
+		{ title: 'Hoạt động', value: 0 },
+		{ title: 'Khóa', value: 1 }
 	];
 	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Tên tăng dần',
+			text: 'Tên tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Tên giảm dần',
+			text: 'Tên giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Ngày nhận việc tăng dần',
+			text: 'Ngày nhận việc tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Ngày nhận việc giảm dần',
-		},
+			text: 'Ngày nhận việc giảm dần'
+		}
 	];
 	// FILTER
 	const onFilter = (obj) => {
@@ -114,7 +106,7 @@ const Teacher = () => {
 			...refValue.current,
 			pageIndex: 1,
 			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
-			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
+			toDate: moment(obj.toDate).format('YYYY/MM/DD')
 		});
 	};
 	// PAGINATION
@@ -123,11 +115,11 @@ const Teacher = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -135,11 +127,11 @@ const Teacher = () => {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -147,7 +139,7 @@ const Teacher = () => {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -157,20 +149,20 @@ const Teacher = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 	// GET AREA
 	const fetchAreaList = async () => {
 		try {
 			const res = await areaApi.getAll({
-				selectAll: true,
+				selectAll: true
 			});
 			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
 				const newAreaList = fmSelectArr(res.data.data, 'AreaName', 'AreaID');
 				setOptionAreaSystemList({
 					...optionAreaSystemList,
-					areaList: newAreaList,
+					areaList: newAreaList
 				});
 			}
 		} catch (error) {
@@ -184,18 +176,14 @@ const Teacher = () => {
 	const fetchDistrictByAreaID = async (id: number) => {
 		try {
 			const res = await districtApi.getAll({
-				AreaID: id,
+				AreaID: id
 			});
 			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
-				const newDistrictList = fmSelectArr(
-					res.data.data,
-					'DistrictName',
-					'ID'
-				);
+				const newDistrictList = fmSelectArr(res.data.data, 'DistrictName', 'ID');
 				setOptionAreaSystemList({
 					...optionAreaSystemList,
 					districtList: newDistrictList,
-					wardList: [],
+					wardList: []
 				});
 			}
 		} catch (error) {
@@ -204,30 +192,30 @@ const Teacher = () => {
 	};
 	// WARD BY DISTRICT
 	const fetchWardByDistrictID = async (id: number) => {
-		setIsLoading({type: 'FETCH_WARD_BY_DISTRICT', status: true});
+		setIsLoading({ type: 'FETCH_WARD_BY_DISTRICT', status: true });
 		try {
 			const res = await wardApi.getAll({
-				DistrictID: id,
+				DistrictID: id
 			});
 			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
 				const newWardList = fmSelectArr(res.data.data, 'WardName', 'ID');
 				setOptionAreaSystemList({
 					...optionAreaSystemList,
-					wardList: newWardList,
+					wardList: newWardList
 				});
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
-			setIsLoading({type: 'FETCH_WARD_BY_DISTRICT', status: false});
+			setIsLoading({ type: 'FETCH_WARD_BY_DISTRICT', status: false });
 		}
 	};
 	// BRANCH BY AREA
 	const fetchBranchByAreaId = async (id: number) => {
-		setIsLoading({type: 'FETCH_DATA_BY_AREA', status: true});
+		setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: true });
 		try {
 			let res = await branchApi.getAll({
-				areaID: id,
+				areaID: id
 			});
 			if (res.status === 200 && res.data.totalRow) {
 				const newBranchList = fmSelectArr(res.data.data, 'BranchName', 'ID');
@@ -239,14 +227,14 @@ const Teacher = () => {
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
-			setIsLoading({type: 'FETCH_DATA_BY_AREA', status: false});
+			setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: false });
 		}
 	};
 	// GET DATA IN FIRST TIME
 	const fetchTeacherList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			let res = await teacherApi.getAll(filters);
@@ -263,7 +251,7 @@ const Teacher = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -294,7 +282,7 @@ const Teacher = () => {
 	const saveSalary = async (obj) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
@@ -308,7 +296,7 @@ const Teacher = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 		return res;
@@ -317,13 +305,13 @@ const Teacher = () => {
 	const onCreateTeacher = async (data: any) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
 			const newTeacher = {
 				...data,
-				Branch: data.Branch.join(','),
+				Branch: data.Branch.join(',')
 			};
 			res = await teacherApi.add(newTeacher);
 			if (res.status === 200) {
@@ -336,7 +324,7 @@ const Teacher = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 		return res;
@@ -345,13 +333,13 @@ const Teacher = () => {
 	const onUpdateTeacher = async (newObj: any, idx: number) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
 			const newTeacherAPI = {
 				...newObj,
-				Branch: newObj.Branch.join(','),
+				Branch: newObj.Branch.join(',')
 			};
 			res = await teacherApi.update(newTeacherAPI);
 			if (res.status === 200) {
@@ -360,12 +348,12 @@ const Teacher = () => {
 					.filter((ob) => newObj.Branch.some((nb) => nb === ob.value))
 					.map((b) => ({
 						ID: b.value,
-						BranchName: b.title,
+						BranchName: b.title
 					}));
 				newTeacherList.splice(idx, 1, {
 					...newObj,
 					// AreaName: areaList.find((a) => a.value === newObj.AreaID).title,
-					Branch: newBranch,
+					Branch: newBranch
 				});
 				setTeacherList(newTeacherList);
 				showNoti('success', res.data.message);
@@ -375,7 +363,7 @@ const Teacher = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 			return res;
 		}
@@ -384,51 +372,43 @@ const Teacher = () => {
 	const columns = [
 		{
 			title: 'Mã giáo viên',
-			dataIndex: 'UserCode',
+			dataIndex: 'UserCode'
 		},
 		{
 			title: 'Họ và tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
-			className:
-				activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Tỉnh/TP',
 			dataIndex: 'AreaName',
-			...FilterColumn(
-				'AreaID',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionAreaSystemList.areaList
-			),
-			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : '',
+			...FilterColumn('AreaID', onSearch, onResetSearch, 'select', optionAreaSystemList.areaList),
+			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Giới tính',
 			dataIndex: 'Gender',
-			render: (genderID) =>
-				optionGenderList.find((o) => o.value === genderID).title,
+			render: (genderID) => optionGenderList.find((o) => o.value === genderID).title
 		},
 		{
 			title: 'SĐT',
-			dataIndex: 'Mobile',
+			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email',
+			dataIndex: 'Email'
 		},
 		{
 			title: 'Ngày nhận việc',
 			dataIndex: 'Jobdate',
-			render: (date) => date && moment(date).format('DD/MM/YYYY'),
+			render: (date) => date && moment(date).format('DD/MM/YYYY')
 		},
 		{
 			title: 'Facebook',
@@ -438,25 +418,14 @@ const Teacher = () => {
 					<a className="font-weight-black" href={link} target="_blank">
 						Link
 					</a>
-				),
+				)
 		},
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusID',
 			align: 'center',
-			...FilterColumn(
-				'StatusID',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionStatusList
-			),
-			render: (status) =>
-				status ? (
-					<span className="tag gray">Khóa</span>
-				) : (
-					<span className="tag green">Hoạt động</span>
-				),
+			...FilterColumn('StatusID', onSearch, onResetSearch, 'select', optionStatusList),
+			render: (status) => (status ? <span className="tag gray">Khóa</span> : <span className="tag green">Hoạt động</span>)
 		},
 
 		{
@@ -467,7 +436,7 @@ const Teacher = () => {
 					<Link
 						href={{
 							pathname: '/staff/teacher-list/teacher-detail/[slug]',
-							query: {slug: _.UserInformationID},
+							query: { slug: _.UserInformationID }
 						}}
 					>
 						<Tooltip title="Xem giáo viên">
@@ -492,8 +461,8 @@ const Teacher = () => {
 						handleFetchBranch={fetchBranchByAreaId}
 					/>
 				</div>
-			),
-		},
+			)
+		}
 	];
 
 	const expandedRowRender = (item: ITeacher) => {
@@ -547,14 +516,11 @@ const Teacher = () => {
 				}
 				Extra={
 					<div className="extra-table">
-						<TeacherFilterForm
-							handleFilter={onFilter}
-							handleResetFilter={onResetSearch}
-						/>
+						<TeacherFilterForm handleFilter={onFilter} handleResetFilter={onResetSearch} />
 						<SortBox handleSort={onSort} dataOption={sortOptionList} />
 					</div>
 				}
-				expandable={{expandedRowRender}}
+				expandable={{ expandedRowRender }}
 			/>
 		</>
 	);

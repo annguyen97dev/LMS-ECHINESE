@@ -1,22 +1,22 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {examAppointmentResultApi} from '~/apiBase';
+import React, { useEffect, useState } from 'react';
+import { examAppointmentResultApi } from '~/apiBase';
 import ExpandTable from '~/components/ExpandTable';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 InfoTestCard.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 InfoTestCard.defaultProps = {
-	studentID: 0,
+	studentID: 0
 };
 function InfoTestCard(props) {
-	const {studentID} = props;
-	const {showNoti} = useWrap();
+	const { studentID } = props;
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: null,
-		status: false,
+		status: false
 	});
 	const [exam, setExam] = useState<IExamAppointmentResult[]>(null);
 
@@ -24,10 +24,10 @@ function InfoTestCard(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await examAppointmentResultApi.getAll({
-				UserInformationID: studentID,
+				UserInformationID: studentID
 			});
 			if (res.status === 200) {
 				setExam(res.data.data);
@@ -37,7 +37,7 @@ function InfoTestCard(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -50,20 +50,18 @@ function InfoTestCard(props) {
 		{
 			title: 'Ngày kiểm tra',
 			dataIndex: 'CreatedOn',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
-		{title: 'Tên đề', dataIndex: 'ExamTopicName'},
-		{title: 'Nghe', dataIndex: 'ListeningPoint'},
-		{title: 'Nói', dataIndex: 'SpeakingPoint'},
-		{title: 'Đọc', dataIndex: 'ReadingPoint'},
-		{title: 'Viết', dataIndex: 'WritingPoint'},
+		{ title: 'Tên đề', dataIndex: 'ExamTopicName' },
+		{ title: 'Nghe', dataIndex: 'ListeningPoint' },
+		{ title: 'Nói', dataIndex: 'SpeakingPoint' },
+		{ title: 'Đọc', dataIndex: 'ReadingPoint' },
+		{ title: 'Viết', dataIndex: 'WritingPoint' },
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusName',
-			render: (statusName) => <p className="font-weight-black">{statusName}</p>,
-		},
+			render: (statusName) => <p className="font-weight-black">{statusName}</p>
+		}
 	];
 
 	const expandedRowRender = (exam: IExamAppointmentResult) => {
@@ -100,7 +98,7 @@ function InfoTestCard(props) {
 				dataSource={exam}
 				columns={columns}
 				addClass="basic-header"
-				expandable={{expandedRowRender}}
+				expandable={{ expandedRowRender }}
 			/>
 		</>
 	);

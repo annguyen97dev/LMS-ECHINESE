@@ -1,0 +1,8 @@
+{
+	"extends": ["next", "next/core-web-vitals"],
+	"rules": {
+		"linebreak-style": ["warn", "unix"],
+		"react/display-name": ["off"],
+		"react-hooks/exhaustive-deps": ["off"]
+	}
+}

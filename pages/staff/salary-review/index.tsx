@@ -1,23 +1,23 @@
-import {InputNumber, Spin} from 'antd';
-import React, {Fragment, useEffect, useState} from 'react';
-import {payRollApi} from '~/apiBase/staff-manage/pay-roll';
+import { InputNumber, Spin } from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
+import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useDebounce} from '~/context/useDebounce';
-import {useWrap} from '~/context/wrap';
-import {month, year} from '~/lib/month-year';
-import {Roles} from '~/lib/roles/listRoles';
-import {numberWithCommas} from '~/utils/functions';
+import { useDebounce } from '~/context/useDebounce';
+import { useWrap } from '~/context/wrap';
+import { month, year } from '~/lib/month-year';
+import { Roles } from '~/lib/roles/listRoles';
+import { numberWithCommas } from '~/utils/functions';
 
 const SalaryReview = () => {
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
 			...listParamsDefault,
-			FullNameUnicode: data,
+			FullNameUnicode: data
 		});
 	};
 
@@ -30,30 +30,26 @@ const SalaryReview = () => {
 			title: 'Nhân viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Số điện thoại',
-			dataIndex: 'Mobile',
+			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Role',
 			dataIndex: 'RoleName',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Loại lương',
 			dataIndex: 'styleName',
 			render: (type) => (
 				<Fragment>
-					{type == 'Lương theo tháng' && (
-						<span className="tag blue">{type}</span>
-					)}
-					{type == 'Lương theo giờ' && (
-						<span className="tag green">{type}</span>
-					)}
+					{type == 'Lương theo tháng' && <span className="tag blue">{type}</span>}
+					{type == 'Lương theo giờ' && <span className="tag green">{type}</span>}
 				</Fragment>
-			),
+			)
 		},
 		{
 			title: 'Lương tháng',
@@ -61,33 +57,29 @@ const SalaryReview = () => {
 				<p className="font-weight-blue">
 					{text.Month}-{text.Year}
 				</p>
-			),
+			)
 		},
 		{
 			title: 'Số giờ dạy',
-			dataIndex: 'TeachingTime',
+			dataIndex: 'TeachingTime'
 		},
 		{
 			title: 'Lương',
 			dataIndex: 'ActualSalary',
-			render: (price) => numberWithCommas(price),
+			render: (price) => numberWithCommas(price)
 		},
 		{
 			title: 'Thưởng',
 			dataIndex: 'Bonus',
-			render: (price) => numberWithCommas(price) || 0,
+			render: (price) => numberWithCommas(price) || 0
 		},
 		{
 			title: 'Tổng lương',
 			dataIndex: 'TotalSalary',
 			render: (price, record: IPayRoll) => (
-				<p className="font-weight-blue">
-					{price
-						? numberWithCommas(price)
-						: numberWithCommas(record.ActualSalary + record.Bonus)}
-				</p>
-			),
-		},
+				<p className="font-weight-blue">{price ? numberWithCommas(price) : numberWithCommas(record.ActualSalary + record.Bonus)}</p>
+			)
+		}
 	];
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -102,58 +94,58 @@ const SalaryReview = () => {
 		RoleID: null,
 		Month: null,
 		Year: null,
-		Style: null,
+		Style: null
 	};
 
 	const sortOption = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Tên tăng dần',
+			text: 'Tên tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Tên giảm dần',
+			text: 'Tên giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Số giờ dạy tăng dần',
+			text: 'Số giờ dạy tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Số giờ dạy giảm dần',
+			text: 'Số giờ dạy giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: true,
+				sortType: true
 			},
 			value: 5,
-			text: 'Tổng lương tăng dần',
+			text: 'Tổng lương tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: false,
+				sortType: false
 			},
 			value: 6,
-			text: 'Tổng lương giảm dần',
-		},
+			text: 'Tổng lương giảm dần'
+		}
 	];
 
 	const [dataFilter, setDataFilter] = useState([
@@ -163,7 +155,7 @@ const SalaryReview = () => {
 			col: 'col-12',
 			type: 'select',
 			optionList: null,
-			value: null,
+			value: null
 		},
 		{
 			name: 'Month',
@@ -171,7 +163,7 @@ const SalaryReview = () => {
 			col: 'col-md-6 col-12',
 			type: 'select',
 			optionList: month,
-			value: null,
+			value: null
 		},
 		{
 			name: 'Year',
@@ -179,7 +171,7 @@ const SalaryReview = () => {
 			col: 'col-md-6 col-12',
 			type: 'select',
 			optionList: year,
-			value: null,
+			value: null
 		},
 		{
 			name: 'Style',
@@ -189,22 +181,22 @@ const SalaryReview = () => {
 			optionList: [
 				{
 					value: 1,
-					title: 'Lương theo tháng',
+					title: 'Lương theo tháng'
 				},
 				{
 					value: 2,
-					title: 'Lương theo giờ',
-				},
+					title: 'Lương theo giờ'
+				}
 			],
-			value: null,
+			value: null
 		},
 		{
 			name: 'date-range',
 			title: 'Ngày tạo',
 			col: 'col-12',
 			type: 'date-range',
-			value: null,
-		},
+			value: null
+		}
 	]);
 
 	const handleFilter = (listFilter) => {
@@ -215,7 +207,7 @@ const SalaryReview = () => {
 			RoleID: null,
 			Style: null,
 			Month: null,
-			Year: null,
+			Year: null
 		};
 		listFilter.forEach((item, index) => {
 			let key = item.name;
@@ -225,23 +217,23 @@ const SalaryReview = () => {
 				}
 			});
 		});
-		setParams({...listParamsDefault, ...newListFilter, pageIndex: 1});
+		setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
 	};
 
 	const handleSort = async (option) => {
 		setParams({
 			...listParamsDefault,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		});
 	};
 
 	const [params, setParams] = useState(listParamsDefault);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [payRoll, setPayRoll] = useState<IPayRoll[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
 
 	const [loadingSalaryDate, setLoadingSalaryDate] = useState(false);
@@ -261,7 +253,7 @@ const SalaryReview = () => {
 	const getDataRole = () => {
 		const newData = Roles.map((item) => ({
 			title: item.RoleName,
-			value: item.id,
+			value: item.id
 		}));
 		setDataFunc('RoleID', newData);
 	};
@@ -274,18 +266,18 @@ const SalaryReview = () => {
 		setCurrentPage(pageNumber);
 		setParams({
 			...params,
-			pageIndex: currentPage,
+			pageIndex: currentPage
 		});
 	};
 
 	const getDataPayRoll = (page: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		(async () => {
 			try {
-				let res = await payRollApi.getAll({...params, pageIndex: page});
+				let res = await payRollApi.getAll({ ...params, pageIndex: page });
 				//@ts-ignore
 				res.status == 200 && setPayRoll(res.data.data);
 				if (res.status == 204) {
@@ -298,7 +290,7 @@ const SalaryReview = () => {
 			} finally {
 				setIsLoading({
 					type: 'GET_ALL',
-					status: false,
+					status: false
 				});
 			}
 		})();
@@ -328,7 +320,7 @@ const SalaryReview = () => {
 
 	const handleChangeSalaryDate = (value: any) => {
 		setLoadingSalaryDate(true);
-		let date = {Date: value};
+		let date = { Date: value };
 		(async () => {
 			try {
 				//@ts-ignore
@@ -343,11 +335,7 @@ const SalaryReview = () => {
 			}
 		})();
 	};
-	const onDebounceChangeSalaryDate = useDebounce(
-		handleChangeSalaryDate,
-		300,
-		[]
-	);
+	const onDebounceChangeSalaryDate = useDebounce(handleChangeSalaryDate, 300, []);
 	useEffect(() => {
 		getDataPayRoll(currentPage);
 	}, [params]);
@@ -365,7 +353,7 @@ const SalaryReview = () => {
 				<div className="d-flex align-items-center justify-content-end ">
 					<div className="font-weight-black">Ngày tính lương: </div>
 					<InputNumber
-						style={{width: '100px', marginLeft: '10px'}}
+						style={{ width: '100px', marginLeft: '10px' }}
 						className="style-input"
 						onChange={(value: number) => {
 							onDebounceChangeSalaryDate(value);
@@ -375,7 +363,7 @@ const SalaryReview = () => {
 						min={1}
 						max={28}
 					/>
-					<Spin style={{marginLeft: '10px'}} spinning={loadingSalaryDate} />
+					<Spin style={{ marginLeft: '10px' }} spinning={loadingSalaryDate} />
 				</div>
 			}
 			Extra={
@@ -386,10 +374,7 @@ const SalaryReview = () => {
 						handleReset={handleReset}
 					/>
 
-					<SortBox
-						dataOption={sortOption}
-						handleSort={(value) => handleSort(value)}
-					/>
+					<SortBox dataOption={sortOption} handleSort={(value) => handleSort(value)} />
 				</div>
 			}
 		/>

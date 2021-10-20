@@ -1,24 +1,24 @@
-import {Switch, Tooltip} from 'antd';
+import { Switch, Tooltip } from 'antd';
 import moment from 'moment';
 // import FilterTable from "~/components/Global/CourseList/FilterTable";
 import Link from 'next/link';
-import React, {Fragment, useEffect, useState} from 'react';
-import {Eye} from 'react-feather';
-import {gradeApi, programApi} from '~/apiBase';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
+import { gradeApi, programApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import FilterProgram from '~/components/Global/Option/FilterTable/FilterProgram';
 import ProgramForm from '~/components/Global/Option/ProgramForm';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 let pageIndex = 1;
 
 let listFieldSearch = {
 	pageIndex: 1,
 	ProgramCode: null,
-	ProgramName: null,
+	ProgramName: null
 };
 
 const listTodoApi = {
@@ -31,38 +31,38 @@ const listTodoApi = {
 	Type: null,
 	Level: null,
 	fromDate: null,
-	toDate: null,
+	toDate: null
 };
 
 const dataOption = [
 	{
 		dataSort: {
 			sort: 0,
-			sortType: false,
+			sortType: false
 		},
-		text: 'Tên Z - A',
+		text: 'Tên Z - A'
 	},
 	{
 		dataSort: {
 			sort: 0,
-			sortType: true,
+			sortType: true
 		},
-		text: 'Tên A - Z ',
+		text: 'Tên A - Z '
 	},
 	{
 		dataSort: {
 			sort: 2,
-			sortType: false,
+			sortType: false
 		},
-		text: 'Học phí Z - A ',
+		text: 'Học phí Z - A '
 	},
 	{
 		dataSort: {
 			sort: 2,
-			sortType: true,
+			sortType: true
 		},
-		text: 'Học phí A - Z ',
-	},
+		text: 'Học phí A - Z '
+	}
 ];
 
 const Programs = () => {
@@ -71,10 +71,10 @@ const Programs = () => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IProgram[]>([]);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const [indexRow, setIndexRow] = useState(null);
@@ -85,7 +85,7 @@ const Programs = () => {
 	const getDataSource = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 
 		try {
@@ -102,7 +102,7 @@ const Programs = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -112,7 +112,7 @@ const Programs = () => {
 		try {
 			let res = await gradeApi.getAll({
 				pageIndex: 1,
-				pageSize: Number.MAX_SAFE_INTEGER,
+				pageSize: Number.MAX_SAFE_INTEGER
 			});
 			res.status == 200 && setDataGrade(res.data.data);
 			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
@@ -128,7 +128,7 @@ const Programs = () => {
 
 		setTodoApi({
 			...listTodoApi,
-			pageIndex: 1,
+			pageIndex: 1
 		});
 		setCurrentPage(1);
 	};
@@ -137,7 +137,7 @@ const Programs = () => {
 	const _onSubmit = async (dataSubmit: any) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 
 		let res = null;
@@ -150,8 +150,7 @@ const Programs = () => {
 					let newDataSource = [...dataSource];
 					newDataSource.splice(indexRow, 1, {
 						...dataSubmit,
-						GradeName: dataGrade.find((item) => item.ID === dataSubmit.GradeID)
-							.GradeName,
+						GradeName: dataGrade.find((item) => item.ID === dataSubmit.GradeID).GradeName
 					});
 					setDataSource(newDataSource);
 					showNoti('success', res.data.message);
@@ -162,7 +161,7 @@ const Programs = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		} else {
@@ -174,7 +173,7 @@ const Programs = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		}
@@ -186,23 +185,23 @@ const Programs = () => {
 	const changeStatus = async (checked: boolean, idRow: number) => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 
 		let dataChange = {
 			ID: idRow,
-			Enable: checked,
+			Enable: checked
 		};
 
 		try {
 			let res = await programApi.update(dataChange);
-			res.status == 200 && setTodoApi({...todoApi});
+			res.status == 200 && setTodoApi({ ...todoApi });
 		} catch (error) {
 			showNoti('danger', error.Message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -212,13 +211,13 @@ const Programs = () => {
 		console.log('Value in here: ', value);
 		setTodoApi({
 			...listTodoApi,
-			...value,
+			...value
 		});
 	};
 
 	// -------------- CHECK FIELD ---------------------
 	const checkField = (valueSearch, dataIndex) => {
-		let newList = {...listFieldSearch};
+		let newList = { ...listFieldSearch };
 		Object.keys(newList).forEach(function (key) {
 			console.log('key: ', key);
 			if (key != dataIndex) {
@@ -239,7 +238,7 @@ const Programs = () => {
 			...listTodoApi,
 			pageIndex: 1,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setCurrentPage(1), setTodoApi(newTodoApi);
 	};
@@ -250,7 +249,7 @@ const Programs = () => {
 
 		setTodoApi({
 			...listTodoApi,
-			...clearKey,
+			...clearKey
 		});
 	};
 
@@ -266,7 +265,7 @@ const Programs = () => {
 	const handleReset = () => {
 		setTodoApi({
 			...listTodoApi,
-			pageIndex: 1,
+			pageIndex: 1
 		});
 		setCurrentPage(1), resetListFieldSearch();
 	};
@@ -279,7 +278,7 @@ const Programs = () => {
 		setTodoApi({
 			...todoApi,
 			// ...listFieldSearch,
-			pageIndex: pageIndex,
+			pageIndex: pageIndex
 		});
 	};
 
@@ -300,7 +299,7 @@ const Programs = () => {
 
 			render: (text) => {
 				return <p className="font-weight-black">{text}</p>;
-			},
+			}
 		},
 		{
 			title: 'Tên lớp',
@@ -308,23 +307,19 @@ const Programs = () => {
 			...FilterColumn('ProgramName', onSearch, handleReset, 'text'),
 			render: (text) => {
 				return <p className="font-weight-blue">{text}</p>;
-			},
+			}
 		},
 		{
 			title: 'Level',
-			dataIndex: 'Level',
+			dataIndex: 'Level'
 		},
 		{
 			title: 'Học phí',
 			dataIndex: 'Price',
 
 			render: (Price) => {
-				return (
-					<p className="font-weight-black">
-						{new Intl.NumberFormat().format(Price)}
-					</p>
-				);
-			},
+				return <p className="font-weight-black">{new Intl.NumberFormat().format(Price)}</p>;
+			}
 		},
 		{
 			title: 'Loại',
@@ -332,7 +327,7 @@ const Programs = () => {
 			// ...FilterColumn("Price"),
 			render: (Type) => {
 				return Type == 1 ? 'Zoom' : 'Offline';
-			},
+			}
 		},
 		{
 			title: 'Trạng thái',
@@ -347,17 +342,17 @@ const Programs = () => {
 						onChange={(checked) => changeStatus(checked, record.ID)}
 					/>
 				</>
-			),
+			)
 		},
 
 		{
 			title: 'ModifiedBy',
-			dataIndex: 'ModifiedBy',
+			dataIndex: 'ModifiedBy'
 		},
 		{
 			title: 'ModifiedOn',
 			dataIndex: 'ModifiedOn',
-			render: (date: any) => moment(date).format('DD/MM/YYYY'),
+			render: (date: any) => moment(date).format('DD/MM/YYYY')
 		},
 
 		{
@@ -366,7 +361,7 @@ const Programs = () => {
 					<Link
 						href={{
 							pathname: '/option/program/program-detail/[slug]',
-							query: {slug: data.ID},
+							query: { slug: data.ID }
 						}}
 					>
 						<Tooltip title="Chi tiết chương trình">
@@ -386,8 +381,8 @@ const Programs = () => {
 						isLoading={isLoading}
 					/>
 				</>
-			),
-		},
+			)
+		}
 	];
 
 	return (
@@ -400,26 +395,14 @@ const Programs = () => {
 				addClass="basic-header"
 				TitlePage="Danh sách chương trình"
 				TitleCard={
-					<ProgramForm
-						_onSubmit={(data: any) => _onSubmit(data)}
-						dataGrade={dataGrade}
-						showAdd={true}
-						isLoading={isLoading}
-					/>
+					<ProgramForm _onSubmit={(data: any) => _onSubmit(data)} dataGrade={dataGrade} showAdd={true} isLoading={isLoading} />
 				}
 				dataSource={dataSource}
 				columns={columns}
 				Extra={
 					<div className="extra-table">
-						<FilterProgram
-							handleReset={handleReset}
-							dataLevel={dataLevel}
-							handleFilter={(value: any) => handleFilter(value)}
-						/>
-						<SortBox
-							handleSort={(value) => handleSort(value)}
-							dataOption={dataOption}
-						/>
+						<FilterProgram handleReset={handleReset} dataLevel={dataLevel} handleFilter={(value: any) => handleFilter(value)} />
+						<SortBox handleSort={(value) => handleSort(value)} dataOption={dataOption} />
 					</div>
 				}
 			/>

@@ -1,22 +1,22 @@
-import {Switch, Tooltip} from 'antd';
+import { Switch, Tooltip } from 'antd';
 // import FilterTable from "~/components/Global/CourseList/FilterTable";
 import Link from 'next/link';
-import React, {Fragment, useEffect, useState} from 'react';
-import {Eye} from 'react-feather';
-import {areaApi, branchApi} from '~/apiBase';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
+import { areaApi, branchApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import CenterForm from '~/components/Global/Option/CenterForm';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 let pageIndex = 1;
 
 let listFieldSearch = {
 	pageIndex: 1,
 	branchCode: null,
-	branchName: null,
+	branchName: null
 };
 
 const listTodoApi = {
@@ -25,47 +25,47 @@ const listTodoApi = {
 	sort: null,
 	sortType: null,
 	branchCode: null,
-	branchName: null,
+	branchName: null
 };
 
 const dataOption = [
 	{
 		dataSort: {
 			sort: 1,
-			sortType: false,
+			sortType: false
 		},
-		text: 'Mã giảm dần',
+		text: 'Mã giảm dần'
 	},
 	{
 		dataSort: {
 			sort: 1,
-			sortType: true,
+			sortType: true
 		},
-		text: 'Mã tăng dần',
+		text: 'Mã tăng dần'
 	},
 	{
 		dataSort: {
 			sort: 2,
-			sortType: false,
+			sortType: false
 		},
-		text: 'Tên giảm dần',
+		text: 'Tên giảm dần'
 	},
 	{
 		dataSort: {
 			sort: 2,
-			sortType: true,
+			sortType: true
 		},
-		text: 'Tên tăng dần ',
-	},
+		text: 'Tên tăng dần '
+	}
 ];
 
 const Center = () => {
 	const [center, setCenter] = useState<IBranch[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -76,22 +76,19 @@ const Center = () => {
 	const getDataCenter = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 
 		try {
 			let res = await branchApi.getAll(todoApi);
-			res.status == 200 &&
-				(setCenter(res.data.data),
-				setTotalPage(res.data.totalRow),
-				showNoti('success', 'Thành công'));
+			res.status == 200 && (setCenter(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
 			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -102,7 +99,7 @@ const Center = () => {
 			try {
 				const res = await areaApi.getAll({
 					pageIndex: 1,
-					pageSize: 9999,
+					pageSize: 9999
 				});
 				res.status == 200 && setDataArea(res.data.data);
 			} catch (err) {
@@ -116,7 +113,7 @@ const Center = () => {
 		showNoti('success', mes);
 		setTodoApi({
 			...listTodoApi,
-			pageIndex: 1,
+			pageIndex: 1
 		});
 		setCurrentPage(1);
 	};
@@ -125,7 +122,7 @@ const Center = () => {
 	const _onSubmit = async (dataSubmit: any) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 
 		let res = null;
@@ -146,7 +143,7 @@ const Center = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		} else {
@@ -158,7 +155,7 @@ const Center = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		}
@@ -170,23 +167,23 @@ const Center = () => {
 	const changeStatus = async (checked: boolean, idRow: number) => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 
 		let dataChange = {
 			ID: idRow,
-			Enable: checked,
+			Enable: checked
 		};
 
 		try {
 			let res = await branchApi.update(dataChange);
-			res.status == 200 && setTodoApi({...todoApi});
+			res.status == 200 && setTodoApi({ ...todoApi });
 		} catch (error) {
 			showNoti('danger', error.Message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -198,7 +195,7 @@ const Center = () => {
 		setTodoApi({
 			...todoApi,
 			// ...listFieldSearch,
-			pageIndex: pageIndex,
+			pageIndex: pageIndex
 		});
 	};
 
@@ -208,14 +205,14 @@ const Center = () => {
 			...listTodoApi,
 			pageIndex: 1,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setCurrentPage(1), setTodoApi(newTodoApi);
 	};
 
 	// -------------- CHECK FIELD ---------------------
 	const checkField = (valueSearch, dataIndex) => {
-		let newList = {...listFieldSearch};
+		let newList = { ...listFieldSearch };
 		Object.keys(newList).forEach(function (key) {
 			console.log('key: ', key);
 			if (key != dataIndex) {
@@ -236,7 +233,7 @@ const Center = () => {
 
 		setTodoApi({
 			...todoApi,
-			...clearKey,
+			...clearKey
 		});
 	};
 
@@ -252,7 +249,7 @@ const Center = () => {
 	const handleReset = () => {
 		setTodoApi({
 			...listTodoApi,
-			pageIndex: 1,
+			pageIndex: 1
 		});
 		setCurrentPage(1), resetListFieldSearch();
 	};
@@ -271,18 +268,18 @@ const Center = () => {
 			title: 'Mã trung tâm',
 			dataIndex: 'BranchCode',
 			// ...FilterColumn("BranchCode"),
-			...FilterColumn('branchCode', onSearch, handleReset, 'text'),
+			...FilterColumn('branchCode', onSearch, handleReset, 'text')
 		},
 
 		{
 			title: 'Tên trung tâm',
 			dataIndex: 'BranchName',
-			...FilterColumn('branchName', onSearch, handleReset, 'text'),
+			...FilterColumn('branchName', onSearch, handleReset, 'text')
 		},
-		{title: 'Địa chỉ', dataIndex: 'Address'},
+		{ title: 'Địa chỉ', dataIndex: 'Address' },
 		{
 			title: 'Số điện thoại',
-			dataIndex: 'Phone',
+			dataIndex: 'Phone'
 		},
 		{
 			title: 'Trạng thái',
@@ -297,7 +294,7 @@ const Center = () => {
 						onChange={(checked) => changeStatus(checked, record.ID)}
 					/>
 				</>
-			),
+			)
 		},
 		{
 			render: (text, data, index) => (
@@ -305,7 +302,7 @@ const Center = () => {
 					<Link
 						href={{
 							pathname: '/option/center/rooms-detail/[slug]',
-							query: {slug: `${data.ID}`},
+							query: { slug: `${data.ID}` }
 						}}
 					>
 						<Tooltip title="Xem phòng">
@@ -327,8 +324,8 @@ const Center = () => {
 						/>
 					</Tooltip>
 				</>
-			),
-		},
+			)
+		}
 	];
 
 	return (
@@ -340,21 +337,12 @@ const Center = () => {
 				loading={isLoading}
 				addClass="basic-header"
 				TitlePage="Danh sách trung tâm"
-				TitleCard={
-					<CenterForm
-						dataArea={dataArea}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-					/>
-				}
+				TitleCard={<CenterForm dataArea={dataArea} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
 				dataSource={center}
 				columns={columns}
 				Extra={
 					<div className="extra-table">
-						<SortBox
-							handleSort={(value) => handleSort(value)}
-							dataOption={dataOption}
-						/>
+						<SortBox handleSort={(value) => handleSort(value)} dataOption={dataOption} />
 					</div>
 				}
 			/>
