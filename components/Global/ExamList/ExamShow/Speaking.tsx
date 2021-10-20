@@ -16,7 +16,8 @@ import { useDoingTest } from "~/context/useDoingTest";
 
 const SpeakingList = (props) => {
   const { onDeleteQuestion } = useExamDetail();
-  const { activeID, packageResult, getPackageResult } = useDoingTest();
+  const { activeID, packageResult, getPackageResult, getListPicked } =
+    useDoingTest();
   const { dataQuestion, listQuestionID, isDoingTest } = props;
   const { showNoti } = useWrap();
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -82,6 +83,7 @@ const SpeakingList = (props) => {
   // ----------- ALL ACTION IN DOINGTEST -------------
 
   const onGetLinkRecord = (linkRecord, quesID) => {
+    getListPicked(quesID);
     // Find index
     let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
       (item) => item.ExamTopicDetailID === dataQuestion.ID

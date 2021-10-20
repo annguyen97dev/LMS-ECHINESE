@@ -9,8 +9,13 @@ import { useDoingTest } from "~/context/useDoingTest";
 
 const MapList = (props) => {
   const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
-  const { activeID, getActiveID, packageResult, getPackageResult } =
-    useDoingTest();
+  const {
+    activeID,
+    getActiveID,
+    packageResult,
+    getPackageResult,
+    getListPicked,
+  } = useDoingTest();
   let indexQuestion = null;
   if (isDoingTest) {
     // Find index
@@ -28,6 +33,7 @@ const MapList = (props) => {
   // ---- ALL ACTION IN DOING TEST ----
   const onChange_selectAnswer = (dataAns, quesID) => {
     getActiveID(quesID);
+    getListPicked(quesID);
     let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
       indexQuestion
     ].SetPackageExerciseStudentInfoList.findIndex(

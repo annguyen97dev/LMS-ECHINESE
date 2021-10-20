@@ -22,9 +22,6 @@ const WrittingModal = (props) => {
   const [isModalConfirm, setIsModalConfirm] = useState(false);
   const [isReset, setIsReset] = useState(false);
 
-  console.log("content student: ", contentOfStudent);
-  console.log("content Editor: ", contentEditor);
-
   const showModal = () => {
     setIsModalVisible(true);
     setIsReset(false);
@@ -100,7 +97,8 @@ const WrittingModal = (props) => {
 // ---- COMPONENT PARENT ----
 const WrittingList = (props) => {
   const { onDeleteQuestion } = useExamDetail();
-  const { activeID, packageResult, getPackageResult } = useDoingTest();
+  const { activeID, packageResult, getPackageResult, getListPicked } =
+    useDoingTest();
   const { dataQuestion, listQuestionID, isDoingTest } = props;
   const { showNoti } = useWrap();
   const [contentOfStudent, setContentOfStudent] = useState("");
@@ -166,6 +164,7 @@ const WrittingList = (props) => {
 
   // ----------- ALL ACTION IN DOINGTEST -------------
   const onGetDataEditor = (dataAns, quesID) => {
+    getListPicked(quesID);
     setContentOfStudent(dataAns);
     // Find index
     let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
@@ -243,29 +242,31 @@ const WrittingList = (props) => {
               <div className="title-text mt-3">
                 {ReactHtmlParser(ques.Content)}
               </div>
-              {isDoingTest &&
-                (contentOfStudent ? (
-                  <h6 className="text-underline mb-2">
-                    <u>Bài viết của bạn</u>
-                  </h6>
-                ) : (
-                  <h6 className="text-underline">
-                    Bấm vào nút bên dưới để làm bài tự luận
-                  </h6>
-                ))}
-              {isDoingTest && contentOfStudent && (
-                <div className="content-of-student">
-                  {ReactHtmlParser(contentOfStudent)}
-                </div>
-              )}
               {isDoingTest && (
-                <div className="writting-editor mt-2">
-                  <WrittingModal
-                    contentOfStudent={contentOfStudent}
-                    onGetDataEditor={(content) =>
-                      onGetDataEditor(content, ques.ExerciseID)
-                    }
-                  />
+                <div className="box-doing-wrting mt-3">
+                  {contentOfStudent ? (
+                    <h6 className="text-underline mb-2">
+                      <u>Bài viết của bạn</u>
+                    </h6>
+                  ) : (
+                    <h6 className="text-underline">
+                      Bấm vào nút bên dưới để làm bài tự luận
+                    </h6>
+                  )}
+                  {
+                    <div className="content-of-student">
+                      {ReactHtmlParser(contentOfStudent)}
+                    </div>
+                  }
+
+                  <div className="writting-editor mt-2">
+                    <WrittingModal
+                      contentOfStudent={contentOfStudent}
+                      onGetDataEditor={(content) =>
+                        onGetDataEditor(content, ques.ExerciseID)
+                      }
+                    />
+                  </div>
                 </div>
               )}
             </div>

@@ -88,3 +88,4 @@ export { saleSalaryApi } from "./sale/sale-salary";
 export { salerTotalRevenueApi } from "./sale/saler-total-revenue";
 export { salerRevenueApi } from "./sale/saler-revenue";
 export { resetPasswordApi } from "./reset-password/reset-password";
+export { doingTestApi } from "./doing-test/doing-test";

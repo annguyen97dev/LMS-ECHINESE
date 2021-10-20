@@ -8,8 +8,13 @@ import { useDoingTest } from "~/context/useDoingTest";
 
 const TypingList = (props) => {
   const { dataQuestion, listQuestionID, isDoingTest } = props;
-  const { activeID, getActiveID, packageResult, getPackageResult } =
-    useDoingTest();
+  const {
+    activeID,
+    getActiveID,
+    packageResult,
+    getPackageResult,
+    getListPicked,
+  } = useDoingTest();
   const [listInput, setListInput] = useState([]);
 
   // console.log("List ID Là: ", listQuestionID);
@@ -113,6 +118,7 @@ const TypingList = (props) => {
 
   const handleChangeText = (text, quesID) => {
     getActiveID(quesID);
+    getListPicked(quesID);
     // Find index
     let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
       (item) => item.ExamTopicDetailID === dataQuestion.ID

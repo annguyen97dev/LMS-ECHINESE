@@ -22,8 +22,13 @@ const MultipleList = (props) => {
     id: null,
     status: false,
   });
-  const { activeID, getActiveID, packageResult, getPackageResult } =
-    useDoingTest();
+  const {
+    activeID,
+    getActiveID,
+    packageResult,
+    getPackageResult,
+    getListPicked,
+  } = useDoingTest();
 
   const returnPosition = (quesID) => {
     let index = listQuestionID.indexOf(quesID);
@@ -117,6 +122,7 @@ const MultipleList = (props) => {
 
   const onChange_selectAnswer = (dataAns, quesID) => {
     getActiveID(quesID);
+    getListPicked(quesID);
     // Find index
     let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
       (item) => item.ExamTopicDetailID === dataQuestion.ID

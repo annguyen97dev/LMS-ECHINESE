@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { examDetailApi } from "~/apiBase";
+import { useWrap } from "./wrap";
 
 type answerDetail = {
   AnswerID: number;
@@ -31,16 +32,20 @@ export type IProps = {
   getListQuestionID: Function;
   getActiveID: Function;
   getPackageResult: Function;
+  getListPicked: Function;
   packageResult: packageResult;
   activeID: number;
   listQuestionID: Array<Number>;
+  listPicked: Array<Number>;
 };
 
 const DoingTestContext = createContext<IProps>({
   getListQuestionID: () => {},
   getActiveID: () => {},
   getPackageResult: () => {},
+  getListPicked: () => {},
   listQuestionID: [],
+  listPicked: [],
   activeID: null,
   packageResult: null,
 });
@@ -53,12 +58,22 @@ export const DoingTestProvider = ({ children }) => {
     SetPackageDetailID: null,
     SetPackageResultDetailInfoList: [],
   });
+  const [listPicked, setListPicked] = useState([]);
+  const { userInformation } = useWrap();
 
   console.log("Package Result: ", packageResult);
 
   // --- GET LIST QUESTION ID ---
   const getListQuestionID = (listQuestionID: Array<Number>) => {
     setListQuestionID(listQuestionID);
+  };
+
+  // --- GET LIST PICKED ---
+  const getListPicked = (pickedID) => {
+    if (!listPicked.includes(pickedID)) {
+      listPicked.push(pickedID);
+      setListPicked([...listPicked]);
+    }
   };
 
   // --- GET ACTIVE ID ---
@@ -71,6 +86,17 @@ export const DoingTestProvider = ({ children }) => {
     setPackageResult(data);
   };
 
+  useEffect(() => {
+    if (userInformation) {
+      if (!packageResult.StudentID) {
+        setPackageResult({
+          ...packageResult,
+          StudentID: userInformation.UserInformationID,
+        });
+      }
+    }
+  }, [userInformation]);
+
   return (
     <>
       <DoingTestContext.Provider
@@ -81,6 +107,8 @@ export const DoingTestProvider = ({ children }) => {
           activeID: activeID,
           packageResult: packageResult,
           getPackageResult,
+          listPicked: listPicked,
+          getListPicked,
         }}
       >
         {children}

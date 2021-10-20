@@ -15,7 +15,7 @@ import moment from "moment";
 import ControlVolume from "~/components/Elements/ControlVolume";
 import MainTest from "~/components/Global/DoingTest/MainTest";
 import { examTopicApi } from "~/apiBase";
-import { DoingTestProvider, useDoingTest } from "~/context/useDoingTest";
+import { DoingTestProvider } from "~/context/useDoingTest";
 
 const InformationUser = () => {
   const { titlePage, userInformation } = useWrap();
@@ -168,6 +168,7 @@ const DoingTest = () => {
   const [infoExam, setInfoExam] = useState<IExamTopic>(null);
   const router = useRouter();
   const { examID: examID } = router.query;
+  const { packageDetailID: packageDetailID } = router.query;
 
   // --- GET INFO EXAM ---
   const getInfoExam = async () => {
@@ -218,7 +219,13 @@ const DoingTest = () => {
   return (
     <>
       <DoingTestProvider>
-        {showTest && <MainTest infoExam={infoExam} examID={examID} />}
+        {showTest && (
+          <MainTest
+            packageDetailID={packageDetailID}
+            infoExam={infoExam}
+            examID={examID}
+          />
+        )}
         <Modal
           title="Chú ý!"
           visible={isModalVisible}
