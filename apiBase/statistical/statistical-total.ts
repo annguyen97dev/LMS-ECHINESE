@@ -40,6 +40,11 @@ class StatisticalApi {
     instance.get<IApiResultData<IStatRate[]>>("/api/StatisticalRale", {
       params,
     });
+  getStatisticalCourse = () =>
+    instance.get<IApiResultData<IStatCourse[]>>(
+      "/api/StatisticalCourse/2021",
+      {}
+    );
 }
 
 export const statisticalApi = new StatisticalApi();

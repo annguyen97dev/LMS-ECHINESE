@@ -37,17 +37,11 @@ const Subject = () => {
   const router = useRouter();
   const programID = parseInt(router.query.slug as string);
 
-  const listTodoApi = {
-    pageSize: 10,
-    pageIndex: pageIndex,
-    ProgramID: programID ? programID : null,
-  };
-
   const [dataProgram, setDataProgram] = useState<IProgram[]>([]);
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<ISubject[]>([]);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -55,6 +49,11 @@ const Subject = () => {
   const [totalPage, setTotalPage] = useState(null);
   const [indexRow, setIndexRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const listTodoApi = {
+    pageSize: pageSize,
+    pageIndex: pageIndex,
+    ProgramID: programID ? programID : null,
+  };
   const [todoApi, setTodoApi] = useState(listTodoApi);
   const [subjectID, setSubjectID] = useState(null);
   const [activeRow, setActiveRow] = useState([]);
@@ -78,7 +77,9 @@ const Subject = () => {
         }
       }
 
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+      res.status == 204 &&
+        showNoti("danger", "Không có dữ liệu") &&
+        setDataSource([]);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {

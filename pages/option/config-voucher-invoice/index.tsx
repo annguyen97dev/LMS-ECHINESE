@@ -14,7 +14,7 @@ const ConfigVoucherInvoice = () => {
     type: null,
     status: false,
   });
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
 
   const getDataTable = () => {
     setIsLoading({
@@ -26,6 +26,7 @@ const ConfigVoucherInvoice = () => {
         let res = await configApi.getAll();
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          setDataTable([]);
         }
         if (res.status == 200) {
           setDataTable(res.data.data);

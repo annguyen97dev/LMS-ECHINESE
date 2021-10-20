@@ -19,12 +19,12 @@ import moment from "moment";
 const SupplierList = () => {
   const [dataTable, setDataTable] = useState<ISupplier[]>([]);
   const [dataStaffManage, setDataStaffManage] = useState([]);
-  const [activeColumnSearch, setActiveColumnSearch] = useState('');
+  const [activeColumnSearch, setActiveColumnSearch] = useState("");
   const [dataDelete, setDataDelete] = useState({
     ID: null,
     Enable: null,
   });
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -63,7 +63,7 @@ const SupplierList = () => {
 
   // PARAMS API GETALL
   const listTodoApi = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: pageIndex,
     sort: null,
     sortType: null,
@@ -107,6 +107,7 @@ const SupplierList = () => {
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
           handleReset();
+          setDataTable([]);
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -178,17 +179,17 @@ const SupplierList = () => {
   };
 
   // PAGINATION
-	const getPagination = (pageNumber: number, pageSize: number) => {
-		if (!pageSize) pageSize = 10;
-		pageIndex = pageNumber;
-		setCurrentPage(pageNumber);
-		setTodoApi({
-		  ...todoApi,
-		//   ...listFieldSearch,
-		  pageIndex: pageIndex,
-		  pageSize: pageSize
-		});
-	};
+  const getPagination = (pageNumber: number, pageSize: number) => {
+    if (!pageSize) pageSize = 10;
+    pageIndex = pageNumber;
+    setCurrentPage(pageNumber);
+    setTodoApi({
+      ...todoApi,
+      //   ...listFieldSearch,
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+    });
+  };
 
   // ON SEARCH
   const compareField = (valueSearch, dataIndex) => {
@@ -251,7 +252,7 @@ const SupplierList = () => {
 
   // HANDLE RESET
   const handleReset = () => {
-    setActiveColumnSearch('');
+    setActiveColumnSearch("");
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -290,7 +291,7 @@ const SupplierList = () => {
       title: "Nhà cung cấp (NCC)",
       dataIndex: "SupplierName",
       ...FilterColumn("SupplierName", onSearch, handleReset, "text"),
-      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
+      className: activeColumnSearch === "ID" ? "active-column-search" : "",
       render: (text) => {
         return <p className="font-weight-black">{text}</p>;
       },

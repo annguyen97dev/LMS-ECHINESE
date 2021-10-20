@@ -41,6 +41,10 @@ const ExpandTable = (props) => {
   //   console.log("ROW: ", row);
   // };
 
+  const onShowSizeChange = (current, size) => {
+    props.onChangePageSize && props.onChangePageSize(current, size);
+  };
+
   const rowSelection = {
     selectedRowKeys: state.selectedRowKeys,
     onChange: onSelectedRowKeysChange,
@@ -81,6 +85,9 @@ const ExpandTable = (props) => {
             dataSource={dataSource}
             size="middle"
             pagination={{
+              pageSize: 30,
+              pageSizeOptions: ["30"],
+              onShowSizeChange: onShowSizeChange,
               total: props.totalPage && props.totalPage,
               onChange: (pageNumber) => changePagination(pageNumber),
               current: props.currentPage && props.currentPage,

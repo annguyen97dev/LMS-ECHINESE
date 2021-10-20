@@ -23,11 +23,6 @@ const CurriculumDetail = (props) => {
   // const curriculumID = parseInt(router.query.slug as string);
   const { curriculumID, dataSubject } = props;
 
-  const listTodoApi = {
-    // pageSize: 10,
-    // pageIndex: pageIndex,
-    CurriculumID: curriculumID ? curriculumID : null,
-  };
   const [saveValue, setSaveValue] = useState([]);
   const [loadingSelect, setLoadingSelect] = useState({
     id: null,
@@ -36,20 +31,25 @@ const CurriculumDetail = (props) => {
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<ICurriculumDetail[]>([]);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
   const [examTopic, setExamTopic] = useState({
     pageIndex: 1,
-    pageSize: 20,
+    pageSize: pageSize,
     // CurriculumID: curriculumID ? curriculumID : null,
     Type: 3,
   });
   const [totalPage, setTotalPage] = useState(null);
   const [indexRow, setIndexRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const listTodoApi = {
+    pageSize: pageSize,
+    pageIndex: pageIndex,
+    CurriculumID: curriculumID ? curriculumID : null,
+  };
   const [todoApi, setTodoApi] = useState(listTodoApi);
   const [dataExamTopic, setDataExamTopic] = useState(null);
 
@@ -73,7 +73,9 @@ const CurriculumDetail = (props) => {
         }
       }
 
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+      res.status == 204 &&
+        showNoti("danger", "Không có dữ liệu") &&
+        setDataSource([]);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {

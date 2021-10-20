@@ -81,20 +81,6 @@ const SalaryReview = () => {
   ];
   const [currentPage, setCurrentPage] = useState(1);
 
-  const listParamsDefault = {
-    pageSize: 10,
-    pageIndex: currentPage,
-    sort: null,
-    sortType: null,
-    fromDate: null,
-    toDate: null,
-    FullNameUnicode: null,
-    RoleID: null,
-    Month: null,
-    Year: null,
-    Style: null,
-  };
-
   const sortOption = [
     {
       dataSort: {
@@ -227,8 +213,22 @@ const SalaryReview = () => {
     });
   };
 
+  const { showNoti, pageSize } = useWrap();
+
+  const listParamsDefault = {
+    pageSize: pageSize,
+    pageIndex: currentPage,
+    sort: null,
+    sortType: null,
+    fromDate: null,
+    toDate: null,
+    FullNameUnicode: null,
+    RoleID: null,
+    Month: null,
+    Year: null,
+    Style: null,
+  };
   const [params, setParams] = useState(listParamsDefault);
-  const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
   const [payRoll, setPayRoll] = useState<IPayRoll[]>([]);
   const [isLoading, setIsLoading] = useState({
@@ -284,6 +284,7 @@ const SalaryReview = () => {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
           setParams(listParamsDefault);
+          setPayRoll([]);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);

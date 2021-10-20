@@ -37,7 +37,6 @@ const AcademicChart = ({
   };
 
   const formatTooltip = (value, name, props) => {
-    console.log(value, name, props);
     return new Intl.NumberFormat("de-DE").format(value);
   };
 
@@ -52,7 +51,10 @@ const AcademicChart = ({
             <XAxis dataKey="Day" />
             <YAxis type="number" tickFormatter={formatYAxis} />
             <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip formatter={formatTooltip} />
+            <Tooltip
+              formatter={formatTooltip}
+              labelFormatter={(value) => `Ngày ${value}`}
+            />
             <Legend />
             <Bar dataKey="Amount" fill="#0080FF" name="Học viên đã đăng kí" />
           </BarChart>
@@ -68,7 +70,10 @@ const AcademicChart = ({
             <XAxis dataKey="Month" />
             <YAxis type="number" tickFormatter={formatYAxis} />
             <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip formatter={formatTooltip} />
+            <Tooltip
+              formatter={formatTooltip}
+              labelFormatter={(value) => `Tháng ${value}`}
+            />
             <Legend />
             <Bar dataKey="Amount" fill="#0080FF" name="Học viên đã đăng kí" />
           </BarChart>
@@ -84,7 +89,10 @@ const AcademicChart = ({
             <XAxis dataKey="Year" />
             <YAxis type="number" tickFormatter={formatYAxis} />
             <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip formatter={formatTooltip} />
+            <Tooltip
+              formatter={formatTooltip}
+              labelFormatter={(value) => `Năm ${value}`}
+            />
             <Legend />
             <Bar dataKey="Amount" fill="#0080FF" name="Học viên đã đăng kí" />
           </BarChart>

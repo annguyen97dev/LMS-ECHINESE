@@ -16,8 +16,6 @@ import {
 } from "recharts";
 import { Card, Radio, Select } from "antd";
 
-import { scaleLog } from "d3-scale";
-
 const RevenueChart = ({
   statisticalRevenueYear,
   statisticalRevenueMonth,
@@ -33,7 +31,6 @@ const RevenueChart = ({
   };
   const { Option } = Select;
 
-  console.log(isLoading);
   const handleChangeYear = (value) => {
     setTodoApi({ ...todoApi, Year: value });
   };
@@ -46,8 +43,11 @@ const RevenueChart = ({
   };
 
   const formatTooltip = (value, name, props) => {
-    console.log(value, name, props);
     return new Intl.NumberFormat("de-DE").format(value);
+  };
+
+  const formatLabel = (value) => {
+    return `Tháng ${value}`;
   };
 
   const renderView = () => {
@@ -61,7 +61,10 @@ const RevenueChart = ({
           <XAxis dataKey="Month" tickMargin={3} />
           <YAxis type="number" tickFormatter={formatYAxis} />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip formatter={formatTooltip} />
+          <Tooltip
+            formatter={formatTooltip}
+            labelFormatter={(value) => `Tháng ${value}`}
+          />
           <Line
             type="monotone"
             dataKey="Revenue"
@@ -81,9 +84,11 @@ const RevenueChart = ({
         >
           <XAxis dataKey="Year" />
           <YAxis tickFormatter={formatYAxis} />
-          <Tooltip formatter={formatTooltip} />
+          <Tooltip
+            formatter={formatTooltip}
+            labelFormatter={(value) => `Năm ${value}`}
+          />
           <CartesianGrid stroke="#f5f5f5" />
-          <Bar dataKey="Revenue" barSize={20} fill="#0080FF" name="Doanh thu" />
           <Line
             type="monotone"
             dataKey="Revenue"
@@ -91,7 +96,12 @@ const RevenueChart = ({
             stroke="#003366"
             name="Doanh thu(triệu đồng)"
           />
-          <Bar dataKey="Revenue" fill="#0080FF" name="Doanh thu(triệu đồng)" />
+          <Bar
+            dataKey="Revenue"
+            fill="#0080FF"
+            barSize={20}
+            name="Doanh thu(triệu đồng)"
+          />
         </ComposedChart>
       );
     } else if (typeView == 3) {
@@ -104,7 +114,10 @@ const RevenueChart = ({
           <XAxis dataKey="Day" />
           <YAxis tickFormatter={formatYAxis} />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip formatter={formatTooltip} />
+          <Tooltip
+            formatter={formatTooltip}
+            labelFormatter={(value) => `Ngày ${value}`}
+          />
           <Line
             type="monotone"
             dataKey="Revenue"

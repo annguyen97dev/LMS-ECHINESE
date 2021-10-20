@@ -15,7 +15,7 @@ const Notification = () => {
     SalaryID: null,
     Enable: null,
   });
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -53,7 +53,7 @@ const Notification = () => {
 
   // PARAMS API GETALL
   const listTodoApi = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: pageIndex,
     sort: null,
     sortType: null,
@@ -76,6 +76,7 @@ const Notification = () => {
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
           handleReset();
+          setDataTable([]);
         }
         if (res.status == 200) {
           if (res.data.data.length < 1) {
@@ -167,17 +168,17 @@ const Notification = () => {
   };
 
   // PAGINATION
-	const getPagination = (pageNumber: number, pageSize: number) => {
-		if (!pageSize) pageSize = 10;
-		pageIndex = pageNumber;
-		setCurrentPage(pageNumber);
-		setTodoApi({
-		  ...todoApi,
-		//   ...listFieldSearch,
-		  pageIndex: pageIndex,
-		  pageSize: pageSize
-		});
-	};
+  const getPagination = (pageNumber: number, pageSize: number) => {
+    if (!pageSize) pageSize = 10;
+    pageIndex = pageNumber;
+    setCurrentPage(pageNumber);
+    setTodoApi({
+      ...todoApi,
+      //   ...listFieldSearch,
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+    });
+  };
 
   // HANDLE RESET
   const handleReset = () => {

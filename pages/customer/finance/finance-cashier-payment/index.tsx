@@ -16,14 +16,14 @@ FinancePayment.layout = LayoutBase;
 export default function FinancePayment() {
   const [dataTable, setDataTable] = useState<IVoucher[]>([]);
   const [dataBranch, setDataBranch] = useState([]);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeColumnSearch, setActiveColumnSearch] = useState('');
+  const [activeColumnSearch, setActiveColumnSearch] = useState("");
   const [dataFilter, setDataFilter] = useState([
     {
       name: "BranchID",
@@ -78,7 +78,7 @@ export default function FinancePayment() {
 
   // PARAMS API GETALL
   const listTodoApi = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: pageIndex,
     sort: null,
     sortType: null,
@@ -113,6 +113,7 @@ export default function FinancePayment() {
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
           handleReset();
+          setDataTable([]);
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -186,12 +187,12 @@ export default function FinancePayment() {
       ...clearKey,
     });
 
-    setCurrentPage(pageIndex)
+    setCurrentPage(pageIndex);
   };
 
   // HANDLE RESET
   const handleReset = () => {
-    setActiveColumnSearch('');
+    setActiveColumnSearch("");
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -215,17 +216,17 @@ export default function FinancePayment() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-	const getPagination = (pageNumber: number, pageSize: number) => {
-		if (!pageSize) pageSize = 10;
-		pageIndex = pageNumber;
-		setCurrentPage(pageNumber);
-		setTodoApi({
-		  ...todoApi,
-		//   ...listFieldSearch,
-		  pageIndex: pageIndex,
-		  pageSize: pageSize
-		});
-	};
+  const getPagination = (pageNumber: number, pageSize: number) => {
+    if (!pageSize) pageSize = 10;
+    pageIndex = pageNumber;
+    setCurrentPage(pageNumber);
+    setTodoApi({
+      ...todoApi,
+      //   ...listFieldSearch,
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+    });
+  };
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -269,7 +270,7 @@ export default function FinancePayment() {
       title: "Học viên",
       dataIndex: "FullNameUnicode",
       ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
-      className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
+      className: activeColumnSearch === "ID" ? "active-column-search" : "",
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {

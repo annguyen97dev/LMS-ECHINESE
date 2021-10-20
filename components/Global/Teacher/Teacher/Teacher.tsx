@@ -39,12 +39,12 @@ const Teacher = () => {
     status: false,
   });
   const [totalPage, setTotalPage] = useState(null);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [activeColumnSearch, setActiveColumnSearch] = useState("");
   // FILTER
   const listFieldInit = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: pageSize,
     sort: -1,
     sortType: false,
     AreaID: "",
@@ -257,6 +257,7 @@ const Teacher = () => {
         }
       } else if (res.status === 204) {
         showNoti("danger", "Không tìm thấy");
+        setTeacherList([]);
       }
     } catch (error) {
       showNoti("danger", error.message);

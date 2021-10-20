@@ -16,6 +16,8 @@ import PackageResultUpdateTeacher from "~/components/Global/Package/PackageResul
 import { Info } from "react-feather";
 
 const PackageSetResult = () => {
+  const { showNoti, pageSize } = useWrap();
+
   const onSearch = (data) => {
     setCurrentPage(1);
     setParams({
@@ -125,7 +127,7 @@ const PackageSetResult = () => {
   const [itemDetail, setItemDetail] = useState();
 
   const listParamsDefault = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: currentPage,
     sort: null,
     sortType: null,
@@ -247,7 +249,7 @@ const PackageSetResult = () => {
   };
 
   const [params, setParams] = useState(listParamsDefault);
-  const { showNoti } = useWrap();
+
   const [totalPage, setTotalPage] = useState(null);
   const [packageSetResult, setPackageSetResult] = useState<ISetPackageResult[]>(
     []
@@ -334,6 +336,7 @@ const PackageSetResult = () => {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
           setParams(listParamsDefault);
+          setPackageSetResult([]);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);

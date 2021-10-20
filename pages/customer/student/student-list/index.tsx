@@ -38,18 +38,6 @@ let listFieldFilter = {
   toDate: null,
 };
 
-const listTodoApi = {
-  pageSize: 10,
-  pageIndex: pageIndex,
-  sort: null,
-  sortType: null,
-  FullNameUnicode: null,
-  SourceInformationID: null,
-  BranchID: null,
-  fromDate: null,
-  toDate: null,
-};
-
 const dataOption = [
   {
     dataSort: {
@@ -140,6 +128,18 @@ const listApi = [
 ];
 
 const StudentData = () => {
+  const { showNoti, pageSize } = useWrap();
+  const listTodoApi = {
+    pageSize: pageSize,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    FullNameUnicode: null,
+    SourceInformationID: null,
+    BranchID: null,
+    fromDate: null,
+    toDate: null,
+  };
   const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
   const [dataRow, setDataRow] = useState([]);
 
@@ -184,7 +184,7 @@ const StudentData = () => {
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<IStudent[]>([]);
-  const { showNoti } = useWrap();
+
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -309,6 +309,8 @@ const StudentData = () => {
     });
   };
 
+  console.log("Todoapi: ", todoApi);
+
   // GET DATA SOURCE
   const getDataSource = async () => {
     setIsLoading({
@@ -322,7 +324,9 @@ const StudentData = () => {
         (setDataSource(res.data.data),
         setTotalPage(res.data.totalRow),
         showNoti("success", "Thành công"));
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+      res.status == 204 &&
+        showNoti("danger", "Không có dữ liệu") &&
+        setDataSource([]);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {

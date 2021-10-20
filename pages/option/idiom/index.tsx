@@ -82,20 +82,19 @@ const Idioms = () => {
   ];
   const [currentPage, setCurrentPage] = useState(1);
 
-  const listParamsDefault = {
-    pageSize: 10,
-    pageIndex: currentPage,
-    search: null,
-  };
-
-  const [params, setParams] = useState(listParamsDefault);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
   const [idioms, setIdioms] = useState<IIdioms[]>([]);
   const [isLoading, setIsLoading] = useState({
     type: "GET_ALL",
     status: false,
   });
+  const listParamsDefault = {
+    pageSize: pageSize,
+    pageIndex: currentPage,
+    search: null,
+  };
+  const [params, setParams] = useState(listParamsDefault);
 
   const getPagination = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -118,6 +117,7 @@ const Idioms = () => {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
           setParams(listParamsDefault);
+          setIdioms([]);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);

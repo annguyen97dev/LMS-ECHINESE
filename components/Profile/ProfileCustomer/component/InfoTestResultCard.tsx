@@ -10,7 +10,7 @@ import { useWrap } from "~/context/wrap";
 
 const InfoTestResultCard = (props) => {
   const [dataTable, setDataTable] = useState<IServiceCustomerExamResult[]>([]);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -23,7 +23,7 @@ const InfoTestResultCard = (props) => {
 
   // PARAMS API GETALL
   const listTodoApi = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: pageIndex,
     sort: null,
     sortType: null,
@@ -42,6 +42,7 @@ const InfoTestResultCard = (props) => {
         let res = await serviceCustomerExamResultApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          setDataTable([]);
         }
         if (res.status == 200) {
           setDataTable(res.data.data);

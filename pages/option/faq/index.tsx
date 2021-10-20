@@ -14,11 +14,11 @@ const FAQ = () => {
   const [totalPage, setTotalPage] = useState([]);
   const [fetchingData, setFetchingData] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const expandedRowKeys = [1];
   const todoApiDataSource = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: pageSize,
   };
   const [todoApi, setTodoApi] = useState(todoApiDataSource);
   const [isLoading, setIsLoading] = useState({
@@ -83,6 +83,9 @@ const FAQ = () => {
         setDataSource(res.data.data);
         setTotalPage(res.data.totalRow);
         // showNoti("success", "Thành công");
+      }
+      if (res.status == 204) {
+        setDataSource([]);
       }
     } catch (error) {
       showNoti("danger", error.message);
