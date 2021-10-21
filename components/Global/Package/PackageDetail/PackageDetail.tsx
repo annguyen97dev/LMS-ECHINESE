@@ -2,7 +2,7 @@ import {Tooltip} from 'antd';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import React, {useEffect, useRef, useState} from 'react';
-import {Info} from 'react-feather';
+import {Eye} from 'react-feather';
 import {examTopicApi, packageApi} from '~/apiBase';
 import {packageDetailApi} from '~/apiBase/package/package-detail';
 import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
@@ -40,14 +40,16 @@ const PackageDetail = () => {
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	// PAGINATION
-	const getPagination = (pageIndex: number) => {
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
 		refValue.current = {
 			...refValue.current,
+			pageSize,
 			pageIndex,
 		};
 		setFilters({
 			...filters,
-			pageIndex,
+			...refValue.current,
 		});
 	};
 	// RESET SEARCH
@@ -238,7 +240,7 @@ const PackageDetail = () => {
 					>
 						<Tooltip title="Chi tiết đề thi">
 							<a className="btn btn-icon">
-								<Info />
+								<Eye />
 							</a>
 						</Tooltip>
 					</Link>
@@ -258,7 +260,7 @@ const PackageDetail = () => {
 				addClass="basic-header"
 				dataSource={packageDetailList}
 				columns={columns}
-				TitlePage="Danh sách gói bài tập"
+				TitlePage="Danh sách bộ đề"
 				TitleCard={
 					<PackageDetailForm
 						isLoading={isLoading}

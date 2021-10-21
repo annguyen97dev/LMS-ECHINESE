@@ -268,7 +268,7 @@ const QuestionSingle = (props: any) => {
               <div className="box-detail">
                 <div className="box-title">
                   <span className="title-ques">Câu hỏi {index + 1}</span>
-                  {returnAudio(item)}
+                  {item.LinkAudio && returnAudio(item)}
                   <div className="title-text">
                     {ReactHtmlParser(item.Content)}
                   </div>

@@ -1,26 +1,21 @@
+import {
+  DeploymentUnitOutlined,
+  MailOutlined,
+  WhatsAppOutlined,
+} from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Divider, Form, Input, Modal, Spin, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
-import { Form, Divider, Spin, Modal, Tooltip } from "antd";
-
+import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import InputTextField from "~/components/FormControl/InputTextField";
+import { districtApi, wardApi } from "~/apiBase";
+import AvatarBase from "~/components/Elements/AvatarBase";
 import DateField from "~/components/FormControl/DateField";
+import InputTextField from "~/components/FormControl/InputTextField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
-import { districtApi, wardApi, branchApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { data } from "~/lib/option/dataOption2";
-import AvatarBase from "~/components/Elements/AvatarBase.tsx";
-import {
-  UserOutlined,
-  DeploymentUnitOutlined,
-  WhatsAppOutlined,
-  MailOutlined,
-  AimOutlined,
-} from "@ant-design/icons";
-
-import { RotateCcw } from "react-feather";
 import SalaryForm from "./SalaryForm";
 
 type LayoutType = Parameters<typeof Form>[0]["layout"];
@@ -236,6 +231,8 @@ const StaffForm = (props) => {
   // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
     FullNameUnicode: null,
+    ChineseName: null,
+    LinkFaceBook: null,
     Email: "",
     Mobile: null,
     AreaID: null, //int id Tỉnh/TP
@@ -265,6 +262,24 @@ const StaffForm = (props) => {
           returnSchema[key] = yup
             .string()
             .email("Email nhập sai cú pháp")
+            .required("Bạn không được để trống");
+          break;
+        case "FullNameUnicode":
+          returnSchema[key] = yup
+            .string()
+            .nullable()
+            .required("Bạn không được để trống");
+          break;
+        case "Mobile":
+          returnSchema[key] = yup
+            .string()
+            .nullable()
+            .required("Bạn không được để trống");
+          break;
+        case "RoleID":
+          returnSchema[key] = yup
+            .string()
+            .nullable()
             .required("Bạn không được để trống");
           break;
         // case "Mobile":
@@ -397,6 +412,7 @@ const StaffForm = (props) => {
                     type="button"
                     className="btn btn-primary w-100"
                     onClick={form.handleSubmit(onSubmitForm)}
+                    disabled={isLoading.type == "ADD_DATA" && isLoading.status}
                   >
                     Lưu nhân viên
                     {isLoading.type == "ADD_DATA" && isLoading.status && (
@@ -414,50 +430,53 @@ const StaffForm = (props) => {
         {statusAdd == "add-staff" ? (
           <div className="box-form form-staff">
             <Form layout="vertical" onFinish={form.handleSubmit(onSubmitForm)}>
-              {/*  */}
-
-              {/** ==== Thông tin cơ bản  ====*/}
               <div className="row">
-                <div className="col-md-2 col-12">
-                  <AvatarBase
-                    imageUrl={imageUrl}
-                    getValue={(value) => form.setValue("Avatar", value)}
-                  />
-                </div>
-                <div className="col-md-10 col-12">
-                  {rowData && (
-                    <div className="box-info-modal">
-                      <p className="name">{rowData?.FullNameUnicode}</p>
-                      <p className="detail">
-                        <span className="icon role">
-                          <DeploymentUnitOutlined />
-                        </span>
-                        <span className="text">{rowData?.RoleName}</span>
-                      </p>
-                      <p className="detail">
-                        <span className="icon mobile">
-                          <WhatsAppOutlined />
-                        </span>
-                        <span className="text">{rowData?.Mobile}</span>
-                      </p>
-                      <p className="detail">
-                        <span className="icon email">
-                          <MailOutlined />
-                        </span>
-                        <span className="text">{rowData?.Email}</span>
-                      </p>
+                {/** ==== Thông tin cơ bản  ====*/}
+                <div className="col-12">
+                  <div className="info-modal">
+                    <div className="info-modal-avatar">
+                      <AvatarBase
+                        imageUrl={imageUrl}
+                        getValue={(value) => form.setValue("Avatar", value)}
+                      />
                     </div>
-                  )}
+                    <div className="info-modal-content">
+                      {rowData && (
+                        <div className="box-info-modal">
+                          <p className="name">{rowData.FullNameUnicode}</p>
+                          <p className="detail">
+                            <span className="icon role">
+                              <DeploymentUnitOutlined />
+                            </span>
+                            <span className="text">{rowData?.RoleName}</span>
+                          </p>
+                          <p className="detail">
+                            <span className="icon mobile">
+                              <WhatsAppOutlined />
+                            </span>
+                            <span className="text">{rowData?.Mobile}</span>
+                          </p>
+                          <p className="detail">
+                            <span className="icon email">
+                              <MailOutlined />
+                            </span>
+                            <span className="text">{rowData?.Email}</span>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-12">
                   <Divider orientation="center">Thông tin cơ bản</Divider>
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-6 col-12">
-                  <InputTextField form={form} name="Email" label="Email" />
+                  <InputTextField
+                    form={form}
+                    name="Email"
+                    label="Email"
+                    isRequired={true}
+                  />
                 </div>
 
                 <div className="col-md-6 col-12">
@@ -465,25 +484,28 @@ const StaffForm = (props) => {
                     form={form}
                     name="FullNameUnicode"
                     label="Họ và tên"
+                    isRequired={true}
                   />
                 </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              <div className="row">
+                <div className="col-md-6 col-12">
+                  <InputTextField
+                    form={form}
+                    name="ChineseName"
+                    label="Tên tiêng Trung"
+                  />
+                </div>
                 <div className="col-md-6 col-12">
                   <InputTextField
                     form={form}
                     name="Mobile"
                     label="Số điện thoại"
+                    isRequired={true}
                   />
                 </div>
 
                 <div className="col-md-6 col-12">
                   <DateField form={form} name="DOB" label="Ngày sinh" />
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <InputTextField form={form} name="CMND" label="Số CMND" />
                 </div>
@@ -494,8 +516,6 @@ const StaffForm = (props) => {
                     label="Nơi cấp CMND"
                   />
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <DateField
                     form={form}
@@ -520,9 +540,10 @@ const StaffForm = (props) => {
                     onChangeSelect={
                       (value) => handleChange_Role(value) // Select Area to load District
                     }
+                    isRequired={true}
                   />
                 </div>
-                <div className="col-md-6 col-12">
+                <div className="col-12">
                   <SelectField
                     disabled={!rowID && true}
                     form={form}
@@ -549,16 +570,10 @@ const StaffForm = (props) => {
                     />
                   </div>
                 )}
-              </div>
-              {/*  */}
-              {/*  */}
-              {/** ==== Địa chỉ  ====*/}
-              <div className="row">
+                {/** ==== Địa chỉ  ====*/}
                 <div className="col-12">
                   <Divider orientation="center">Địa chỉ</Divider>
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     form={form}
@@ -584,12 +599,7 @@ const StaffForm = (props) => {
                     }
                   />
                 </div>
-              </div>
-              {/*  */}
-              {/*  */}
-              {/*  */}
 
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     isLoading={
@@ -608,8 +618,6 @@ const StaffForm = (props) => {
                     label="Mô tả thêm"
                   />
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-12 col-12">
                   <InputTextField
                     form={form}
@@ -617,16 +625,11 @@ const StaffForm = (props) => {
                     label="Số nhà/tên đường"
                   />
                 </div>
-              </div>
 
-              {/*  */}
-              {/** ==== Khác  ====*/}
-              <div className="row">
+                {/** ==== Khác  ====*/}
                 <div className="col-12">
                   <Divider orientation="center">Khác</Divider>
                 </div>
-              </div>
-              <div className="row">
                 <div className="col-md-6 col-12">
                   <SelectField
                     isLoading={
@@ -638,14 +641,19 @@ const StaffForm = (props) => {
                     label="Tên trung tâm"
                     optionList={listData.Branch}
                     disabled={disableCenter}
+                    isRequired={true}
                   />
                 </div>
                 <div className="col-md-6 col-12">
                   <DateField form={form} name="Jobdate" label="Ngày vào làm" />
                 </div>
-              </div>
-
-              <div className="row">
+                <div className="col-md-12 col-12">
+                  <InputTextField
+                    form={form}
+                    name="LinkFaceBook"
+                    label="Link Facebook"
+                  />
+                </div>
                 <div className="col-md-12 col-12">
                   <TextAreaField
                     name="Extension"
@@ -654,17 +662,17 @@ const StaffForm = (props) => {
                     rows={4}
                   />
                 </div>
-              </div>
 
-              <div className="row d-none">
-                <div className="col-12 d-flex justify-content-center">
-                  <div style={{ paddingRight: 5 }}>
-                    <button type="submit" className="btn btn-primary w-100">
-                      Lưu
-                      {isLoading.type == "ADD_DATA" && isLoading.status && (
-                        <Spin className="loading-base" />
-                      )}
-                    </button>
+                <div className="row d-none">
+                  <div className="col-12 d-flex justify-content-center">
+                    <div style={{ paddingRight: 5 }}>
+                      <button type="submit" className="btn btn-primary w-100">
+                        Lưu
+                        {isLoading.type == "ADD_DATA" && isLoading.status && (
+                          <Spin className="loading-base" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

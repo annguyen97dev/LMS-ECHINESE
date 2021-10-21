@@ -1,17 +1,16 @@
+import { InputNumber, Spin } from 'antd';
 import React, { Fragment, useEffect, useState } from 'react';
+import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
-import ExpandTable from '~/components/ExpandTable';
-
 import LayoutBase from '~/components/LayoutBase';
-import FilterColumn from '~/components/Tables/FilterColumn';
-import { useWrap } from '~/context/wrap';
-import { Roles } from '~/lib/roles/listRoles';
-import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
 import PowerTable from '~/components/PowerTable';
-import { Input, Spin, Form } from 'antd';
-import { useForm } from 'react-hook-form';
+import FilterColumn from '~/components/Tables/FilterColumn';
+import { useDebounce } from '~/context/useDebounce';
+import { useWrap } from '~/context/wrap';
 import { month, year } from '~/lib/month-year';
+import { Roles } from '~/lib/roles/listRoles';
+import { numberWithCommas } from '~/utils/functions';
 
 const SalaryReview = () => {
 	const onSearch = (data) => {
@@ -31,7 +30,7 @@ const SalaryReview = () => {
 			title: 'Nhân viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Số điện thoại',
@@ -62,16 +61,41 @@ const SalaryReview = () => {
 		},
 		{
 			title: 'Số giờ dạy',
-			dataIndex: 'TeachingTime',
-			render: (text) => <p className="font-weight-black">{text}</p>
+			dataIndex: 'TeachingTime'
+		},
+		{
+			title: 'Lương',
+			dataIndex: 'ActualSalary',
+			render: (price) => numberWithCommas(price)
+		},
+		{
+			title: 'Thưởng',
+			dataIndex: 'Bonus',
+			render: (price) => numberWithCommas(price) || 0
 		},
 		{
 			title: 'Tổng lương',
 			dataIndex: 'TotalSalary',
-			render: (text) => <p className="font-weight-blue">{Intl.NumberFormat('en-US').format(text)}</p>
+			render: (price, record: IPayRoll) => (
+				<p className="font-weight-blue">{price ? numberWithCommas(price) : numberWithCommas(record.ActualSalary + record.Bonus)}</p>
+			)
 		}
 	];
 	const [currentPage, setCurrentPage] = useState(1);
+
+	const listParamsDefault = {
+		pageSize: 10,
+		pageIndex: currentPage,
+		sort: null,
+		sortType: null,
+		fromDate: null,
+		toDate: null,
+		FullNameUnicode: null,
+		RoleID: null,
+		Month: null,
+		Year: null,
+		Style: null
+	};
 
 	const sortOption = [
 		{
@@ -176,8 +200,6 @@ const SalaryReview = () => {
 	]);
 
 	const handleFilter = (listFilter) => {
-		console.log('List Filter when submit: ', listFilter);
-
 		let newListFilter = {
 			pageIndex: 1,
 			fromDate: null,
@@ -205,22 +227,8 @@ const SalaryReview = () => {
 		});
 	};
 
-	const { showNoti, pageSize } = useWrap();
-
-	const listParamsDefault = {
-		pageSize: pageSize,
-		pageIndex: currentPage,
-		sort: null,
-		sortType: null,
-		fromDate: null,
-		toDate: null,
-		FullNameUnicode: null,
-		RoleID: null,
-		Month: null,
-		Year: null,
-		Style: null
-	};
 	const [params, setParams] = useState(listParamsDefault);
+	const { showNoti } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [payRoll, setPayRoll] = useState<IPayRoll[]>([]);
 	const [isLoading, setIsLoading] = useState({
@@ -229,7 +237,7 @@ const SalaryReview = () => {
 	});
 
 	const [loadingSalaryDate, setLoadingSalaryDate] = useState(false);
-	const [salaryDate, setSalaryDate] = useState();
+	const [salaryDate, setSalaryDate] = useState(1);
 
 	const setDataFunc = (name, data) => {
 		dataFilter.every((item, index) => {
@@ -276,7 +284,6 @@ const SalaryReview = () => {
 					showNoti('danger', 'Không tìm thấy dữ liệu!');
 					setCurrentPage(1);
 					setParams(listParamsDefault);
-					setPayRoll([]);
 				} else setTotalPage(res.data.totalRow);
 			} catch (error) {
 				showNoti('danger', error.message);
@@ -328,13 +335,10 @@ const SalaryReview = () => {
 			}
 		})();
 	};
-
+	const onDebounceChangeSalaryDate = useDebounce(handleChangeSalaryDate, 300, []);
 	useEffect(() => {
 		getDataPayRoll(currentPage);
 	}, [params]);
-
-	console.log(salaryDate);
-
 	return (
 		<PowerTable
 			currentPage={currentPage}
@@ -348,13 +352,16 @@ const SalaryReview = () => {
 			TitleCard={
 				<div className="d-flex align-items-center justify-content-end ">
 					<div className="font-weight-black">Ngày tính lương: </div>
-					<Input
+					<InputNumber
 						style={{ width: '100px', marginLeft: '10px' }}
 						className="style-input"
-						allowClear={true}
-						onChange={(value: any) => setSalaryDate(value.target.value)}
+						onChange={(value: number) => {
+							onDebounceChangeSalaryDate(value);
+							setSalaryDate(value);
+						}}
 						value={salaryDate}
-						onPressEnter={(value: any) => handleChangeSalaryDate(value.target.value)}
+						min={1}
+						max={28}
 					/>
 					<Spin style={{ marginLeft: '10px' }} spinning={loadingSalaryDate} />
 				</div>

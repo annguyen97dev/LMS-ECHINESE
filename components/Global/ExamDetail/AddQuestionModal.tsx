@@ -6,6 +6,7 @@ import ExamDetail, {
 } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { examDetailApi, examTopicApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import { Plus } from "react-feather";
 
 const AddQuestionModal = (props) => {
   const { dataExam, onFetchData } = props;
@@ -78,13 +79,16 @@ const AddQuestionModal = (props) => {
 
   return (
     <>
-      <button className="btn btn-success" onClick={showModal}>
-        Thêm câu hỏi
+      <button className="btn btn-success ml-3" onClick={showModal}>
+        <div className="d-flex align-items-center">
+          <Plus className="mr-2" style={{ width: "20px" }} />
+          Thêm câu hỏi
+        </div>
       </button>
       <Modal
         centered={true}
         style={{ top: 10 }}
-        width={"80%"}
+        width={"90%"}
         title="Thêm câu hỏi vào đề thi"
         visible={isModalVisible}
         onOk={handleOk}

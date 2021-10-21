@@ -12,7 +12,7 @@ type ICourseOfStudent = IBaseApi<{
 	Warning: true;
 	Examresult: number;
 	CourseOfStudentPriceID: number;
-	Commitment: number;
+	Commitment: string;
 	Note: number;
 	Combo: boolean;
 	isContract: boolean;

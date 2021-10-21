@@ -406,14 +406,10 @@
   width: 50%;
 
   a {
-    color: #d05151;
-    font-size: 15px;
-    font-weight: bold;
+    color: #d05151 !important;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
   }
 }
 

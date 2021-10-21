@@ -392,7 +392,7 @@
   background-color: #fff;
   border-color: #1378ab;
   border-width: 0.1rem;
-
+  transition: 0.1s;
   &:hover {
     color: #fff;
     background-color: #1378ab;
@@ -444,6 +444,7 @@ textarea.ant-input {
     .ant-select-selector {
     color: rgba($color: #000000, $alpha: 0.8);
   }
+
   .ant-select-selection-item-remove {
     user-select: none;
     line-height: 14px;
@@ -531,7 +532,14 @@ textarea.ant-input {
     height: auto !important;
   }
 }
-
+.ant-form-item-label
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional) {
+  flex-direction: row-reverse;
+  &::before {
+    margin-right: 0;
+    margin-left: 4px;
+  }
+}
 .ant-form-item-label {
   font-weight: 500;
 }
@@ -708,7 +716,7 @@ textarea.ant-input {
   justify-content: flex-end;
   .icon-facebook {
     position: fixed;
-    z-index: 9999;
+    z-index: 99;
     bottom: 20px;
     right: 20px;
     width: 45px;
@@ -852,6 +860,10 @@ textarea.ant-input {
   .active-column-search {
     font-weight: 500;
     color: $primary-color;
+    > *:not(.ant-table-filter-column) {
+      font-weight: 500;
+      color: $primary-color !important;
+    }
   }
   .ant-table-wrapper {
     tr.ant-table-expanded-row > td,
@@ -1745,7 +1757,7 @@ hr {
 }
 
 .loading-base {
-  line-height: 001;
+  line-height: 0;
   margin-left: 15px;
   .ant-spin-dot {
     font-size: 18px;
@@ -1808,10 +1820,10 @@ hr {
   }
 }
 
-.ant-form-item-label
-  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
-  display: none;
-}
+// .ant-form-item-label
+//   > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+//   display: none;
+// }
 
 .text-confirm {
   font-size: 14px;
@@ -2193,15 +2205,6 @@ hr {
   height: 100vh;
   width: 1px;
 }
-.btn-code-editor {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: translate(-102px, 209px);
-  z-index: 99;
-  font-weight: 500;
-}
-
 .wrap-editor {
   position: relative;
 
@@ -2215,6 +2218,8 @@ hr {
     text-align: center;
     font-weight: 500;
     width: 100px;
+    line-height: 23px;
+    font-size: 14px;
 
     &:focus {
       border: none;
@@ -2236,10 +2241,34 @@ hr {
       background: #e7e7e7;
     }
   }
-  position: relative;
 }
 .textarea-editor {
   .note-editable {
     height: 270px;
   }
 }
+
+.control-volume {
+  padding: 16px 0;
+  color: rgba(53, 53, 53, 0.85);
+  font-weight: normal;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+
+  .sound-edit {
+    width: 100px;
+    .ant-slider-track {
+      top: 2px;
+      height: 8px;
+    }
+    .ant-slider-rail {
+      top: 2px;
+      height: 8px;
+    }
+  }
+}
+
+// .ant-modal-wrap {
+//   z-index: 9999;
+// }

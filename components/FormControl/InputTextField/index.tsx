@@ -15,10 +15,27 @@ const InputTextField = (props) => {
 		className,
 		allowClear,
 		handleFormatCurrency,
+		isDynamicField,
+		isRequired,
 	} = props;
 
 	const {errors} = form.formState;
-	const hasError = errors[name];
+	let hasError;
+	let errorMessage;
+	if (isDynamicField) {
+		// NAME.INDEX.KEY;
+		const nameSlice = name.slice(0, name.indexOf('.'));
+		const index = name.slice(name.indexOf('.') + 1, name.lastIndexOf('.'));
+		const key = name.slice(name.lastIndexOf('.') + 1);
+		// IF HAVE NAME SLICE
+		if (errors[nameSlice] && errors[nameSlice][index]) {
+			hasError = errors[nameSlice][index][key];
+			errorMessage = errors[nameSlice][index][key]?.message;
+		}
+	} else {
+		hasError = errors[name];
+		errorMessage = errors[name]?.message;
+	}
 
 	const checkHandleChange = (value) => {
 		if (!handleChange) return;
@@ -32,6 +49,8 @@ const InputTextField = (props) => {
 			className={`${className} ${
 				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
 			}`}
+			required={isRequired}
+			colon
 		>
 			<Controller
 				name={name}
@@ -56,7 +75,7 @@ const InputTextField = (props) => {
 			/>
 			{hasError && (
 				<div className="ant-form-item-explain ant-form-item-explain-error">
-					<div role="alert">{errors[name]?.message}</div>
+					<div role="alert">{errorMessage}</div>
 				</div>
 			)}
 		</Form.Item>
@@ -73,6 +92,8 @@ InputTextField.propTypes = {
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
 	allowClear: PropTypes.bool,
+	isDynamicField: PropTypes.bool,
+	isRequired: PropTypes.bool,
 };
 InputTextField.defaultProps = {
 	label: '',
@@ -83,5 +104,7 @@ InputTextField.defaultProps = {
 	style: {},
 	className: '',
 	allowClear: true,
+	isDynamicField: false,
+	isRequired: false,
 };
 export default InputTextField;

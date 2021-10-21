@@ -7,7 +7,14 @@ import moment from 'moment';
 import CourseListUpdate from './CourseListUpdate';
 import {numberWithCommas} from '~/utils/functions';
 const PowerList = (props) => {
-	const {dataSource, isLoading, totalPage, getPagination, children} = props;
+	const {
+		dataSource,
+		isLoading,
+		totalPage,
+		currentPage,
+		getPagination,
+		children,
+	} = props;
 	const checkGetPagination = (page) => {
 		if (!getPagination) return;
 		getPagination(page);
@@ -23,6 +30,7 @@ const PowerList = (props) => {
 				onChange: checkGetPagination,
 				total: totalPage,
 				size: 'small',
+				current: currentPage,
 			}}
 			// 0 sắp diễn ra, 1 đang diễn ra, 2 đã đóng
 			//       AcademicName: "Nguyễn Phi Hùng"
@@ -128,6 +136,7 @@ const PowerList = (props) => {
 PowerList.propTypes = {
 	dataSource: PropTypes.array.isRequired,
 	totalPage: PropTypes.number,
+	currentPage: PropTypes.number,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired,
@@ -138,6 +147,7 @@ PowerList.propTypes = {
 };
 PowerList.defaultProps = {
 	totalPage: 1,
+	currentPage: 1,
 	isLoading: {type: '', status: false},
 	getPagination: null,
 };

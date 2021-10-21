@@ -1,6 +1,8 @@
-import {Card} from 'antd';
+import {Card, Spin, Tooltip} from 'antd';
+import moment from 'moment';
 import Link from 'next/link';
 import React from 'react';
+import {File} from 'react-feather';
 
 export default function ExpandBox() {
 	return (
@@ -29,86 +31,153 @@ export default function ExpandBox() {
 	);
 }
 
-export function ExpandPaymentRow(props: {dataRow: ICourseOfStudentPrice}) {
-	const {dataRow} = props;
+export function ExpandPaymentRow(props: {
+	isLoading: {type: string; status: boolean};
+	dataRow: ICourseOfStudentPrice;
+	infoInvoiceList?: IInvoice[];
+}) {
+	const {isLoading, dataRow, infoInvoiceList} = props;
 	const {Course} = dataRow;
 	return (
 		<div className="feedback-detail-text">
-			<table className="tb-expand">
-				<thead>
-					<tr>
-						<th>Các khóa học</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>
-							<div className="list-coursename">
-								{Course.map((item, index) => (
-									<Link
-										key={item.ID}
-										href={{
-											pathname: '/course/course-list/course-list-detail/[slug]',
-											query: {slug: item.ID, type: item.TypeCourse},
-										}}
-									>
-										<a
-											title={item.CourseName}
-											className="font-weight-black d-block"
+			<Spin
+				spinning={isLoading.type === 'FETCH_INFO_INVOICE' && isLoading.status}
+			>
+				<table className="tb-expand">
+					<thead>
+						<tr>
+							{Course?.length ? <th>Các khóa học</th> : null}
+							<th>Lý do</th>
+							<th>Xem phiếu thu</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							{Course?.length ? (
+								<td>
+									<div className="list-coursename">
+										{Course.map((item) => (
+											<Link
+												key={item.ID}
+												href={{
+													pathname:
+														'/course/course-list/course-list-detail/[slug]',
+													query: {slug: item.ID, type: item.TypeCourse},
+												}}
+											>
+												<a
+													title={item.CourseName}
+													className="font-weight-black d-block"
+												>
+													{item.CourseName}
+												</a>
+											</Link>
+										))}
+									</div>
+								</td>
+							) : null}
+							<td>
+								{(infoInvoiceList && infoInvoiceList[0]?.Reason) ||
+									'Không có lý do'}
+							</td>
+							<td>
+								{infoInvoiceList &&
+									infoInvoiceList.map((v) => (
+										<Link
+											key={v.ID}
+											href={{
+												pathname:
+													'/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',
+												query: {slug: v.ID},
+											}}
 										>
-											{item.CourseName}
-										</a>
-									</Link>
-								))}
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+											<Tooltip title={moment(v.CreatedOn).format('DD/MM/YYYY')}>
+												<button className="btn btn-icon exchange ">
+													<File />
+												</button>
+											</Tooltip>
+										</Link>
+									))}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</Spin>
 		</div>
 	);
 }
 
-export function ExpandRefundRow(props: {dataRow: IRefunds}) {
-	const {dataRow} = props;
+export function ExpandRefundRow(props: {
+	isLoading: {type: string; status: boolean};
+	dataRow: IRefunds;
+	infoVoucherList?: IVoucher[];
+}) {
+	const {isLoading, dataRow, infoVoucherList} = props;
 	const {Reason, RefundsDetail, PaymentMethodsName} = dataRow;
 	return (
 		<div className="feedback-detail-text">
-			<table className="tb-expand">
-				<thead>
-					<tr>
-						<th>Lý do hoàn tiền</th>
-						<th>Khóa học</th>
-						<th>Phương thức hoàn tiền</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>{Reason || 'Không có lý do'}</td>
-						<td>
-							<div className="list-coursename">
-								{RefundsDetail.map((item, index) => (
-									<Link
-										key={item.CourseID}
-										href={{
-											pathname: '/course/course-list/course-list-detail/[slug]',
-											query: {slug: item.CourseID, type: item.TypeCourse},
-										}}
-									>
-										<a
-											title={item.CourseName}
-											className="font-weight-black d-block"
+			<Spin
+				spinning={isLoading.type === 'FETCH_INFO_VOUCHER' && isLoading.status}
+			>
+				<table className="tb-expand">
+					<thead>
+						<tr>
+							{RefundsDetail.length ? <th>Các khóa học</th> : null}
+							<th>Lý do hoàn tiền</th>
+							<th>Phương thức hoàn tiền</th>
+							<th>Xem phiếu chi</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							{RefundsDetail.length ? (
+								<td>
+									<div className="list-coursename">
+										{RefundsDetail.map((item) => (
+											<Link
+												key={item.CourseID}
+												href={{
+													pathname:
+														'/course/course-list/course-list-detail/[slug]',
+													query: {slug: item.CourseID, type: item.TypeCourse},
+												}}
+											>
+												<a
+													title={item.CourseName}
+													className="font-weight-black d-block"
+												>
+													{item.CourseName}
+												</a>
+											</Link>
+										))}
+									</div>
+								</td>
+							) : null}
+							<td>{Reason || 'Không có lý do'}</td>
+							<td>{PaymentMethodsName}</td>
+							<td>
+								{infoVoucherList &&
+									infoVoucherList.map((v) => (
+										<Link
+											key={v.ID}
+											href={{
+												pathname:
+													'/customer/finance/finance-cashier-payment/invoice-detail/[slug]',
+												query: {slug: v.ID},
+											}}
 										>
-											{item.CourseName}
-										</a>
-									</Link>
-								))}
-							</div>
-						</td>
-						<td>{PaymentMethodsName}</td>
-					</tr>
-				</tbody>
-			</table>
+											<Tooltip title={moment(v.CreatedOn).format('DD/MM/YYYY')}>
+												<button className="btn btn-icon exchange ">
+													<File />
+												</button>
+											</Tooltip>
+										</Link>
+									))}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</Spin>
 		</div>
 	);
 }

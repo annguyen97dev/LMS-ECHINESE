@@ -26,6 +26,10 @@ import {
   TeacherChildMenu,
   TeacherParentMenu,
 } from "~/lib/data-menu/TeacherMenu";
+import {
+  StudentChildMenu,
+  StudentParentMenu,
+} from "~/lib/data-menu/StudentMenu";
 import { useWrap } from "~/context/wrap";
 import { useSession } from "next-auth/client";
 import Link from "next/link";
@@ -214,7 +218,6 @@ const MenuDefault = ({
   }, [openKeys]);
 
   useEffect(() => {
-    console.log("Chạy get router");
     let widthScr = window.innerWidth;
     widthScr < 1000 ? resetMenuMobile() : FindSubMenuActive(), FindTabActive();
   }, [getRouter]);
@@ -309,11 +312,10 @@ const MenuDefault = ({
   }
 
   useEffect(() => {
-    console.log("Chạy menu");
     if (session !== undefined) {
       let token = session.accessToken;
       let userInfor = parseJwt(token);
-      console.log("userInfo: ", userInfor);
+
       switch (parseInt(userInfor.roleID)) {
         case 1:
           setParentMenu(AdminParentMenu);
@@ -322,6 +324,10 @@ const MenuDefault = ({
         case 2:
           setParentMenu(TeacherParentMenu);
           setChildMenu(TeacherChildMenu);
+          break;
+        case 3:
+          setParentMenu(StudentParentMenu);
+          setChildMenu(StudentChildMenu);
           break;
         default:
           break;
@@ -485,7 +491,7 @@ const MenuDefault = ({
           }}
         >
           {childMenu?.map((menu, indexMenu) => (
-            <div key={indexMenu}>
+            <div key={indexMenu} className="menu-child-body-element">
               <Menu
                 key={indexMenu}
                 onOpenChange={onOpenChange}

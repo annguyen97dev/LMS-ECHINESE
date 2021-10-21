@@ -1,525 +1,21 @@
-// import React, { Fragment, useEffect, useState } from "react";
-// import {
-//   Modal,
-//   Form,
-//   Input,
-//   Tooltip,
-//   Select,
-//   Spin,
-//   TimePicker,
-//   DatePicker,
-//   Divider,
-// } from "antd";
-// import { RotateCcw } from "react-feather";
-// import { useWrap } from "~/context/wrap";
-// import { useForm } from "react-hook-form";
-// import {
-//   areaApi,
-//   branchApi,
-//   districtApi,
-//   parentsApi,
-//   serviceApi,
-//   studentApi,
-// } from "~/apiBase";
-// import moment from "moment";
-
-// moment.locale("vn");
-
-// const ParentsForm = React.memo((props: any) => {
-//   const { Option } = Select;
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const { parentsID, reloadData, parentsDetail, currentPage } = props;
-//   const [form] = Form.useForm();
-//   const { showNoti } = useWrap();
-//   const [loading, setLoading] = useState(false);
-//   const { setValue } = useForm();
-//   //@ts-ignore
-//   const [branch, setBranch] = useState<IBranch[]>();
-//   const [student, setStudent] = useState<IStudent[]>();
-//   const [district, setDistrict] = useState<IDistrict[]>();
-//   const [area, setArea] = useState<IArea[]>();
-
-//   const fetchData = () => {
-//     (async () => {
-//       try {
-//         const _branch = await branchApi.getAll({
-//           pageIndex: 1,
-//           pageSize: 9999,
-//           Enable: true,
-//         });
-//         // const _student = await studentApi.getAll({ selectAll: true });
-//         const _area = await areaApi.getAll({ pageIndex: 1, pageSize: 9999 });
-
-//         //@ts-ignore
-//         _branch.status == 200 && setBranch(_branch.data.data);
-//         //@ts-ignore
-//         // _student.status == 200 && setStudent(_student.data.data);
-//         //@ts-ignore
-//         _area.status == 200 && setArea(_area.data.data);
-//       } catch (err) {
-//         showNoti("danger", err.message);
-//       }
-//     })();
-//   };
-
-//   const getDistrictByArea = (AreaID: number) => {
-//     (async () => {
-//       try {
-//         const res = await districtApi.getByArea(AreaID);
-//         res.status == 200 && setDistrict(res.data.data);
-//       } catch (err) {
-//         showNoti("danger", err.message);
-//       }
-//     })();
-//   };
-
-//   const onChangeSelect = (name) => (value) => {
-//     name == "AreaID" &&
-//       (form.setFieldsValue({ DistrictID: "" }), getDistrictByArea(value));
-//     setValue(name, value);
-//   };
-
-//   const gender = [
-//     {
-//       id: 0,
-//       type: "Nữ",
-//     },
-//     {
-//       id: 1,
-//       type: "Nam",
-//     },
-//     {
-//       id: 2,
-//       type: "Khác",
-//     },
-//   ];
-
-//   useEffect(() => {
-//     // if (isModalVisible) {
-//     //   fetchData();
-//     // }
-//     fetchData();
-//   }, []);
-
-//   const onSubmit = async (data: any) => {
-//     console.log("Data submit: ", data);
-//     if (typeof data.Course != "undefined") {
-//       data.Course = data.Course.toString();
-//     } else {
-//       data.Course = "";
-//     }
-
-//     setLoading(true);
-//     if (parentsID) {
-//       try {
-//         let res = await parentsApi.update({
-//           ...data,
-//           Enable: true,
-//           UserInformationID: parentsID,
-//           Branch: data.Branch.toString(),
-//         });
-//         reloadData(currentPage);
-//         afterSubmit(res?.data.message);
-//       } catch (error) {
-//         showNoti("danger", error.message);
-//         setLoading(false);
-//       }
-//     } else {
-//       try {
-//         let res = await parentsApi.add({ ...data, Enable: true });
-//         afterSubmit(res?.data.message);
-//         reloadData(1);
-//         form.resetFields();
-//       } catch (error) {
-//         showNoti("danger", error.message);
-//         setLoading(false);
-//       }
-//     }
-//   };
-
-//   const afterSubmit = (mes) => {
-//     showNoti("success", mes);
-//     setLoading(false);
-//     setIsModalVisible(false);
-//   };
-
-//   useEffect(() => {
-//     if (parentsDetail) {
-//       let arrBranch = [];
-//       parentsDetail.Branch.forEach((item, index) => {
-//         arrBranch.push(item.ID);
-//       });
-//       console.log("arrBranch: ", arrBranch);
-//       form.setFieldsValue({
-//         ...parentsDetail,
-//         Branch: arrBranch,
-//         DOB: null,
-//         CMNDDate: null,
-//       });
-//     }
-//   }, [parentsDetail]);
-
-//   return (
-//     <>
-//       {parentsID ? (
-//         <button
-//           className="btn btn-icon edit"
-//           onClick={() => {
-//             setIsModalVisible(true);
-//           }}
-//         >
-//           <Tooltip title="Cập nhật">
-//             <RotateCcw />
-//           </Tooltip>
-//         </button>
-//       ) : (
-//         <button
-//           className="btn btn-warning add-new"
-//           onClick={() => {
-//             setIsModalVisible(true);
-//           }}
-//         >
-//           Thêm mới
-//         </button>
-//       )}
-
-//       <Modal
-//         title={<>{parentsID ? "Cập nhật phụ huynh" : "Tạo mới phụ huynh"}</>}
-//         visible={isModalVisible}
-//         onCancel={() => setIsModalVisible(false)}
-//         footer={null}
-//       >
-//         <div className="container-fluid">
-//           <Form form={form} layout="vertical" onFinish={onSubmit}>
-//             <Divider orientation="center">Thông tin cá nhân</Divider>
-
-//             <div className="row">
-//               <div className="col-12">
-//                 <Form.Item
-//                   name="Branch"
-//                   label="Trung tâm"
-//                   rules={[
-//                     {
-//                       required: true,
-//                       message: "Vui lòng điền đủ thông tin!",
-//                     },
-//                   ]}
-//                 >
-//                   <Select
-//                     mode="multiple"
-//                     className="w-100 style-input"
-//                     placeholder="Chọn trung tâm"
-//                     showSearch
-//                     allowClear
-//                   >
-//                     {branch?.map((item) => (
-//                       <Option value={`${item.ID}`}>{item.BranchName}</Option>
-//                     ))}
-//                   </Select>
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="col-12">
-//                 <Form.Item
-//                   name="FullNameUnicode"
-//                   label="Họ và tên"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Input
-//                     placeholder="Họ và tên phụ huynh"
-//                     className="style-input"
-//                     onChange={(e) =>
-//                       setValue("FullNameUnicode", e.target.value)
-//                     }
-//                   />
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="col-12 col-md-6">
-//                 <Form.Item
-//                   name="Email"
-//                   label="Email"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Input
-//                     allowClear
-//                     placeholder="Email"
-//                     className="style-input"
-//                     onChange={(e) => setValue("Email", e.target.value)}
-//                   />
-//                 </Form.Item>
-//               </div>
-
-//               <div className="col-12 col-md-6">
-//                 <Form.Item
-//                   name="Mobile"
-//                   label="Số điện thoại"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Input
-//                     allowClear
-//                     placeholder="SĐT"
-//                     className="style-input"
-//                     onChange={(e) => setValue("Mobile", e.target.value)}
-//                   />
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="col-md-6 col-12">
-//                 <Form.Item label="Giới tính" name="Gender">
-//                   <Select
-//                     className="style-input"
-//                     placeholder="Giới tính"
-//                     onChange={(value) => setValue("Gender", value)}
-//                     allowClear={true}
-//                   >
-//                     {gender?.map((item, index) => (
-//                       <Option key={index} value={item.id}>
-//                         {item.type}
-//                       </Option>
-//                     ))}
-//                   </Select>
-//                 </Form.Item>
-//               </div>
-//               <div className="col-md-6 col-12">
-//                 <Form.Item
-//                   name="DOB"
-//                   label="Ngày sinh"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <DatePicker
-//                     className="style-input"
-//                     onChange={(e) => setValue("DayOfExam", e)}
-//                   />
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="col-md-6 col-12">
-//                 <Form.Item
-//                   name="AreaID"
-//                   label="Tỉnh/TP"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Select
-//                     className="w-100 style-input"
-//                     placeholder="Chọn tỉnh/thành phố"
-//                     onChange={onChangeSelect("AreaID")}
-//                   >
-//                     {area?.map((item, index) => (
-//                       <Option key={index} value={item.AreaID}>
-//                         {item.AreaName}
-//                       </Option>
-//                     ))}
-//                   </Select>
-//                 </Form.Item>
-//               </div>
-
-//               <div className="col-md-6 col-12">
-//                 <Form.Item
-//                   name="DistrictID"
-//                   label="Quận huyện"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Select
-//                     allowClear
-//                     className="w-100 style-input"
-//                     placeholder="Chọn quận/huyện"
-//                     onChange={onChangeSelect("DistrictID")}
-//                   >
-//                     {district?.map((item, index) => (
-//                       <Option key={index} value={item.ID}>
-//                         {item.DistrictName}
-//                       </Option>
-//                     ))}
-//                   </Select>
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="col-12">
-//                 <Form.Item
-//                   name="HouseNumber"
-//                   label="Số nhà - phường xã"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Input
-//                     allowClear
-//                     placeholder="Số nhà - phường xã"
-//                     className="style-input"
-//                     onChange={(e) => setValue("HouseNumber", e.target.value)}
-//                   />
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <Divider orientation="center">Giấy tờ tùy thân</Divider>
-//             <div className="row">
-//               <div className="col-12">
-//                 <Form.Item
-//                   name="CMND"
-//                   label="Số CMND"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Input
-//                     allowClear
-//                     className="style-input"
-//                     onChange={(e) => setValue("CMND", e.target.value)}
-//                   />
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="col-12">
-//                 <Form.Item
-//                   name="CMNDDate"
-//                   label="Ngày làm CMND"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <DatePicker
-//                     allowClear
-//                     className="style-input"
-//                     onChange={(e) => setValue("CMNDDate", e)}
-//                   />
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="col-12">
-//                 <Form.Item
-//                   name="CMNDRegister"
-//                   label="Nơi làm CMND"
-//                   rules={[
-//                     { required: true, message: "Vui lòng điền đủ thông tin!" },
-//                   ]}
-//                 >
-//                   <Input
-//                     allowClear
-//                     className="style-input"
-//                     onChange={(e) => setValue("CMNDRegister", e.target.value)}
-//                   />
-//                 </Form.Item>
-//               </div>
-//             </div>
-
-//             {parentsID ? (
-//               <Fragment>
-//                 <Divider orientation="center">Tài khoản</Divider>
-//                 <div className="row">
-//                   <div className="col-12">
-//                     <Form.Item
-//                       name="UserName"
-//                       label="Tên tài khoản"
-//                       rules={[
-//                         {
-//                           required: true,
-//                           message: "Vui lòng điền đủ thông tin!",
-//                         },
-//                       ]}
-//                     >
-//                       <Input
-//                         allowClear
-//                         className="style-input"
-//                         onChange={(e) =>
-//                           setValue("HouseNumber", e.target.value)
-//                         }
-//                       />
-//                     </Form.Item>
-//                   </div>
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-12">
-//                     <Form.Item name="Password" label="Mật khẩu">
-//                       <Input
-//                         allowClear
-//                         type="password"
-//                         className="style-input"
-//                         onChange={(e) => setValue("Password", e.target.value)}
-//                       />
-//                     </Form.Item>
-//                   </div>
-//                 </div>
-//               </Fragment>
-//             ) : (
-//               <Fragment></Fragment>
-//             )}
-
-//             <div className="row ">
-//               <div className="col-12">
-//                 <button type="submit" className="btn btn-primary w-100">
-//                   Lưu
-//                   {loading == true && <Spin className="loading-base" />}
-//                 </button>
-//               </div>
-//             </div>
-//           </Form>
-//         </div>
-//       </Modal>
-//     </>
-//   );
-// });
-
-// export default ParentsForm;
-
+import { MailOutlined, WhatsAppOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Divider, Form, Modal, Spin, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
-import { Form, Divider, Spin, Modal, Tooltip } from "antd";
-
+import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import InputTextField from "~/components/FormControl/InputTextField";
+import { districtApi, wardApi } from "~/apiBase";
+import AvatarBase from "~/components/Elements/AvatarBase";
 import DateField from "~/components/FormControl/DateField";
+import InputPassField from "~/components/FormControl/InputPassField";
+import InputTextField from "~/components/FormControl/InputTextField";
 import SelectField from "~/components/FormControl/SelectField";
 import TextAreaField from "~/components/FormControl/TextAreaField";
-import { districtApi, wardApi, branchApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
-import { data } from "~/lib/option/dataOption2";
-import AvatarBase from "~/components/Elements/AvatarBase.tsx";
-import {
-  UserOutlined,
-  DeploymentUnitOutlined,
-  WhatsAppOutlined,
-  MailOutlined,
-  AimOutlined,
-} from "@ant-design/icons";
-
-import { RotateCcw } from "react-feather";
-// import SalaryForm from "./SalaryForm";
-
 type LayoutType = Parameters<typeof Form>[0]["layout"];
-
 let returnSchema = {};
 let schema = null;
-
 interface listData {
   Area: Array<Object>;
   DistrictID: Array<Object>;
@@ -571,13 +67,10 @@ const ParentsForm = (props) => {
   });
   const [listData, setListData] = useState<listData>(listDataForm);
   const [imageUrl, setImageUrl] = useState(null);
-  // const [statusAdd, setStatusAdd] = useState("add-staff");
   const [disableCenter, setDisableCenter] = useState(false);
   const [statusAdd, setStatusAdd] = useState("add-staff");
   const [dataStaff, setDataStaff] = useState(null);
   const [submitSalary, setSubmitSalary] = useState(true);
-
-  // console.log("Row Data: ", rowData);
 
   const makeNewData = (data, name) => {
     let newData = null;
@@ -728,6 +221,8 @@ const ParentsForm = (props) => {
   // -----  HANDLE ALL IN FORM -------------
   const defaultValuesInit = {
     FullNameUnicode: null,
+    ChineseName: null,
+    LinkFaceBook: null,
     Email: "",
     Mobile: null,
     AreaID: null, //int id Tỉnh/TP
@@ -759,12 +254,18 @@ const ParentsForm = (props) => {
             .email("Email nhập sai cú pháp")
             .required("Bạn không được để trống");
           break;
-        // case "Mobile":
-        //   returnSchema[key] = yup
-        //     .number()
-        //     .typeError("SDT phải là số")
-        //     .required("Bạn không được để trống");
-        //   break;
+        case "FullNameUnicode":
+          returnSchema[key] = yup
+            .string()
+            .nullable()
+            .required("Bạn không được để trống");
+          break;
+        case "Mobile":
+          returnSchema[key] = yup
+            .string()
+            .nullable()
+            .required("Bạn không được để trống");
+          break;
         // case "CMND":
         //   returnSchema[key] = yup
         //     .number()
@@ -879,9 +380,10 @@ const ParentsForm = (props) => {
                     type="button"
                     className="btn btn-primary w-100"
                     onClick={form.handleSubmit(onSubmitForm)}
+                    disabled={isLoading.type === "ADD_DATA" && isLoading.status}
                   >
                     Lưu phụ huynh
-                    {isLoading.type == "ADD_DATA" && isLoading.status && (
+                    {isLoading.type === "ADD_DATA" && isLoading.status && (
                       <Spin className="loading-base" />
                     )}
                   </button>
@@ -894,46 +396,49 @@ const ParentsForm = (props) => {
         className={`${statusAdd == "add-staff" ? "modal-50 modal-scroll" : ""}`}
       >
         <div className="box-form form-staff">
-          <Form layout="vertical" onFinish={form.handleSubmit(onSubmitForm)}>
-            {/*  */}
-
-            {/** ==== Thông tin cơ bản  ====*/}
+          <Form layout="vertical">
             <div className="row">
-              <div className="col-md-2 col-12">
-                <AvatarBase
-                  imageUrl={imageUrl}
-                  getValue={(value) => form.setValue("Avatar", value)}
-                />
-              </div>
-              <div className="col-md-10 col-12">
-                {rowData && (
-                  <div className="box-info-modal">
-                    <p className="name">{rowData?.FullNameUnicode}</p>
-
-                    <p className="detail">
-                      <span className="icon mobile">
-                        <WhatsAppOutlined />
-                      </span>
-                      <span className="text">{rowData?.Mobile}</span>
-                    </p>
-                    <p className="detail">
-                      <span className="icon email">
-                        <MailOutlined />
-                      </span>
-                      <span className="text">{rowData?.Email}</span>
-                    </p>
+              {/** ==== Thông tin cơ bản  ====*/}
+              <div className="col-12">
+                <div className="info-modal">
+                  <div className="info-modal-avatar">
+                    <AvatarBase
+                      imageUrl={imageUrl}
+                      getValue={(value) => form.setValue("Avatar", value)}
+                    />
                   </div>
-                )}
+                  <div className="info-modal-content">
+                    {rowData && (
+                      <div className="box-info-modal">
+                        <p className="name">{rowData.FullNameUnicode}</p>
+                        <p className="detail">
+                          <span className="icon mobile">
+                            <WhatsAppOutlined />
+                          </span>
+                          <span className="text">{rowData.Mobile}</span>
+                        </p>
+                        <p className="detail">
+                          <span className="icon email">
+                            <MailOutlined />
+                          </span>
+                          <span className="text">{rowData.Email}</span>
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="row">
               <div className="col-12">
                 <Divider orientation="center">Thông tin cơ bản</Divider>
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-6 col-12">
-                <InputTextField form={form} name="Email" label="Email" />
+                <InputTextField
+                  form={form}
+                  name="Email"
+                  label="Email"
+                  placeholder="Nhập email"
+                  isRequired={true}
+                />
               </div>
 
               <div className="col-md-6 col-12">
@@ -941,39 +446,59 @@ const ParentsForm = (props) => {
                   form={form}
                   name="FullNameUnicode"
                   label="Họ và tên"
+                  placeholder="Nhập họ và tên"
+                  isRequired={true}
                 />
               </div>
-            </div>
-            {/*  */}
-            {/*  */}
-            <div className="row">
+              <div className="col-md-6 col-12">
+                <InputTextField
+                  form={form}
+                  name="ChineseName"
+                  label="Tên tiếng Trung"
+                  placeholder="Nhập tên tiếng Trung"
+                />
+              </div>
               <div className="col-md-6 col-12">
                 <InputTextField
                   form={form}
                   name="Mobile"
                   label="Số điện thoại"
+                  placeholder="Nhập số điện thoại"
+                  isRequired={true}
                 />
               </div>
 
               <div className="col-md-6 col-12">
-                <DateField form={form} name="DOB" label="Ngày sinh" />
+                <DateField
+                  form={form}
+                  name="DOB"
+                  label="Ngày sinh"
+                  placeholder="Chọn ngày sinh"
+                />
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-6 col-12">
-                <InputTextField form={form} name="CMND" label="Số CMND" />
+                <InputTextField
+                  form={form}
+                  name="CMND"
+                  label="Số CMND"
+                  placeholder="Nhập số CMND"
+                />
               </div>
               <div className="col-md-6 col-12">
                 <InputTextField
                   form={form}
                   name="CMNDRegister"
                   label="Nơi cấp CMND"
+                  placeholder="Nhập nơi cấp CMND"
                 />
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-6 col-12">
-                <DateField form={form} name="CMNDDate" label="Ngày cấp CMND" />
+                <DateField
+                  form={form}
+                  name="CMNDDate"
+                  label="Ngày cấp CMND"
+                  placeholder="Chọn ngày cấp CMND"
+                />
               </div>
               <div className="col-md-6 col-12">
                 <SelectField
@@ -981,19 +506,10 @@ const ParentsForm = (props) => {
                   name="Gender"
                   label="Giới tính"
                   optionList={optionGender}
+                  placeholder="Chọn giới tính"
                 />
               </div>
-              {/* <div className="col-md-6 col-12">
-                <SelectField
-                  form={form}
-                  name="RoleID"
-                  label="Vị trí"
-                  optionList={listData.Role}
-                  onChangeSelect={
-                    (value) => handleChange_Role(value) // Select Area to load District
-                  }
-                />
-              </div> */}
+
               <div className="col-md-6 col-12">
                 <SelectField
                   disabled={!rowID && true}
@@ -1010,27 +526,23 @@ const ParentsForm = (props) => {
                       title: "Khóa",
                     },
                   ]}
+                  placeholder="Chọn trạng thái hoạt động"
                 />
               </div>
               {rowID && (
-                <div className="col-md-6 col-12">
-                  <InputTextField
+                <div className="col-12">
+                  <InputPassField
                     form={form}
                     name="Password"
                     label="Mật khẩu"
+                    placeholder="Nhập mật khẩu"
                   />
                 </div>
               )}
-            </div>
-            {/*  */}
-            {/*  */}
-            {/** ==== Địa chỉ  ====*/}
-            <div className="row">
+              {/** ==== Địa chỉ  ====*/}
               <div className="col-12">
                 <Divider orientation="center">Địa chỉ</Divider>
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-6 col-12">
                 <SelectField
                   form={form}
@@ -1040,6 +552,7 @@ const ParentsForm = (props) => {
                   onChangeSelect={
                     (value) => handleChange_select(value, "DistrictID") // Select Area to load District
                   }
+                  placeholder="Chọn tỉnh/tp"
                 />
               </div>
               <div className="col-md-6 col-12">
@@ -1054,14 +567,9 @@ const ParentsForm = (props) => {
                   onChangeSelect={
                     (value) => handleChange_select(value, "WardID") // Select District to load Ward
                   }
+                  placeholder="Chọn quận/huyện"
                 />
               </div>
-            </div>
-            {/*  */}
-            {/*  */}
-            {/*  */}
-
-            <div className="row">
               <div className="col-md-6 col-12">
                 <SelectField
                   isLoading={
@@ -1071,30 +579,29 @@ const ParentsForm = (props) => {
                   name="WardID"
                   label="Phường/Xã"
                   optionList={listData.WardID}
+                  placeholder="Chọn phường/xã"
                 />
               </div>
               <div className="col-md-6 col-12">
-                <InputTextField form={form} name="Address" label="Mô tả thêm" />
+                <InputTextField
+                  form={form}
+                  name="Address"
+                  label="Mô tả thêm"
+                  placeholder="Nhập mô tả thêm"
+                />
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-12 col-12">
                 <InputTextField
                   form={form}
                   name="HouseNumber"
                   label="Số nhà/tên đường"
+                  placeholder="Nhập số nhà/tên đường"
                 />
               </div>
-            </div>
-
-            {/*  */}
-            {/** ==== Khác  ====*/}
-            <div className="row">
+              {/** ==== Khác  ====*/}
               <div className="col-12">
                 <Divider orientation="center">Khác</Divider>
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-6 col-12">
                 <SelectField
                   isLoading={
@@ -1103,38 +610,29 @@ const ParentsForm = (props) => {
                   mode="multiple"
                   form={form}
                   name="Branch"
-                  label="Tên trung tâm"
+                  label="Trung tâm"
                   optionList={listData.Branch}
                   disabled={disableCenter}
+                  placeholder="Chọn trung tâm"
+                  isRequired={true}
                 />
               </div>
               <div className="col-md-6 col-12">
+                <InputTextField
+                  name="LinkFaceBook"
+                  label="Link Facebook"
+                  form={form}
+                  placeholder="Nhập link facebook"
+                />
+              </div>
+              <div className="col-12">
                 <TextAreaField
                   name="Extension"
                   label="Giới thiệu thêm"
                   form={form}
                   rows={4}
+                  placeholder="Nhập giới thiệu thêm"
                 />
-              </div>
-              {/* <div className="col-md-6 col-12">
-                <DateField form={form} name="Jobdate" label="Ngày vào làm" />
-              </div> */}
-            </div>
-
-            {/* <div className="row">
-             
-            </div> */}
-
-            <div className="row d-none">
-              <div className="col-12 d-flex justify-content-center">
-                <div style={{ paddingRight: 5 }}>
-                  <button type="submit" className="btn btn-primary w-100">
-                    Lưu
-                    {isLoading.type == "ADD_DATA" && isLoading.status && (
-                      <Spin className="loading-base" />
-                    )}
-                  </button>
-                </div>
               </div>
             </div>
           </Form>

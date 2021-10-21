@@ -1,4 +1,5 @@
 import {Card, Image, List} from 'antd';
+import {useRouter} from 'next/router';
 import React, {useEffect, useRef, useState} from 'react';
 import {packageApi, packageStudentApi} from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
@@ -9,29 +10,31 @@ import PackageStoreFilterForm from './PackageStoreFilterForm/PackageStoreFilterF
 import PackageStoreForm from './PackageStoreForm/PackageStoreForm';
 
 const PackageStore = () => {
+	const router = useRouter();
+	const {type} = router.query;
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false,
 	});
-	const [storePackage, setStorePackage] = useState<IPackage[]>([]);
+	const [storePackageList, setStorePackageList] = useState<IPackage[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
 	const {showNoti, userInformation} = useWrap();
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 999,
+		pageSize: 10,
 		sort: -1,
 		sortType: false,
 
 		TeacherID: null,
 		Type: null,
 		Level: null,
-		formDate: '',
+		fromDate: '',
 		toDate: '',
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 999,
+		pageSize: 10,
 		sort: -1,
 		sortType: false,
 	});
@@ -116,17 +119,19 @@ const PackageStore = () => {
 			...obj,
 		});
 	};
-	// // PAGINATION
-	// const getPagination = (pageIndex: number) => {
-	// 	refValue.current = {
-	// 		...refValue.current,
-	// 		pageIndex,
-	// 	};
-	// 	setFilters({
-	// 		...filters,
-	// 		pageIndex,
-	// 	});
-	// };
+	// PAGINATION
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		refValue.current = {
+			...refValue.current,
+			pageSize,
+			pageIndex,
+		};
+		setFilters({
+			...filters,
+			...refValue.current,
+		});
+	};
 	// SORT
 	const onSort = (option) => {
 		refValue.current = {
@@ -153,30 +158,16 @@ const PackageStore = () => {
 			status: true,
 		});
 		try {
-			if (!userInformation) return;
-			const StudentID = userInformation.UserInformationID;
+			const res = await packageApi.getAll(filters);
 
-			const res = await Promise.all([
-				packageApi.getAll(filters),
-				packageStudentApi.getAll({StudentID}),
-			]);
-
-			const packageList: IPackage[] = res[0].data.data;
-			const billList: IPackageStudent[] = res[1].data.data;
-
-			if (res[0].status === 200 && res[1].status === 200) {
-				// ONLY SHOW PACKAGE STUDENT NOT BUY
-				const getOnlyPackageNotBut = packageList.filter(
-					(p) => p.Enable && !billList.some((b) => b.SetPackageID === p.ID)
-				);
-				if (getOnlyPackageNotBut.length) {
-					setStorePackage(getOnlyPackageNotBut);
-					setTotalPage(getOnlyPackageNotBut.length);
-				} else {
-					showNoti('danger', 'Không tìm thấy');
-				}
-			} else {
-				showNoti('danger', 'Không tìm thấy');
+			if (res.status === 200) {
+				setStorePackageList(res.data.data);
+				setTotalPage(res.data.totalRow);
+			}
+			if (res.status === 204) {
+				setStorePackageList([]);
+				setTotalPage(0);
+				showNoti('danger', 'Cửa hàng trống');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -187,9 +178,21 @@ const PackageStore = () => {
 			});
 		}
 	};
+
 	useEffect(() => {
 		fetchPackageList();
-	}, [filters, userInformation]);
+	}, [filters]);
+
+	useEffect(() => {
+		if (type) {
+			setFilters({
+				...listFieldInit,
+				...refValue.current,
+				pageIndex: 1,
+				Type: type,
+			});
+		}
+	}, [type]);
 
 	const onSubmit = async (data: {
 		ID: number;
@@ -216,8 +219,8 @@ const PackageStore = () => {
 			const res = await packageStudentApi.add(newPackageStudent);
 			if (res.status === 200) {
 				showNoti('success', res.data.message);
-				if (storePackage.length === 1) {
-					filters.pageIndex === 1 && setStorePackage([]);
+				if (storePackageList.length === 1) {
+					filters.pageIndex === 1 && setStorePackageList([]);
 					return;
 				}
 				fetchPackageList();
@@ -233,77 +236,78 @@ const PackageStore = () => {
 		}
 	};
 	return (
-		<>
-			<div className="row package-set package-detail-list">
-				<div className="col-12">
-					<TitlePage title="Cửa hàng" />
-					<div className="wrap-table">
-						<Card
-							className="package-set-wrap"
-							title={
-								<div className="extra-table">
-									<PackageStoreFilterForm
-										handleFilter={onFilter}
-										handleResetFilter={onResetSearch}
-										optionListForFilter={{
-											levelOptionList: levelOptionList,
-											typeOptionList: typeOptionList,
-										}}
-									/>
-									<SortBox dataOption={sortOptionList} handleSort={onSort} />
-								</div>
-							}
-						>
-							<List
-								loading={isLoading?.type === 'GET_ALL' && isLoading?.status}
-								pagination={{
-									// onChange: getPagination,
-									total: totalPage,
-									size: 'small',
-								}}
-								itemLayout="horizontal"
-								dataSource={storePackage}
-								renderItem={(item: IPackage, idx) => {
-									const {
-										ID,
-										Name,
-										Avatar,
-										Level,
-										Type,
-										TypeName,
-										Price,
-										Description,
-									} = item;
-									return (
-										<List.Item>
-											<div className="wrap-set d-flex">
-												{Type === 1 && (
-													<div className="tag-free">{TypeName}</div>
-												)}
-												<div className="wrap-set-avatar">
-													<Image
-														width="100%"
-														height="100%"
-														src={Avatar}
-														title="Ảnh bìa gói bài tập"
-														alt="Ảnh bìa gói bài tập"
-													/>
-												</div>
-												<div className="wrap-set-content">
-													<h6 className="set-title">{Name}</h6>
-													<ul className="set-list">
-														<li>
-															Level:<span>HSK {Level}</span>
-														</li>
-														<li className="price">
-															Giá:<span>{numberWithCommas(Price)} VNĐ</span>
-														</li>
-														<li className="desc">
-															Mô tả:<span>{Description}</span>
-														</li>
-													</ul>
-													<div className="set-btn">
-														{Type === 1 ? (
+		<div className="row package-set package-detail-list">
+			<div className="col-12">
+				<TitlePage title="Cửa hàng" />
+				<div className="wrap-table">
+					<Card
+						className="package-set-wrap"
+						title={
+							<div className="extra-table">
+								<PackageStoreFilterForm
+									handleFilter={onFilter}
+									handleResetFilter={onResetSearch}
+									optionListForFilter={{
+										levelOptionList: levelOptionList,
+										typeOptionList: typeOptionList,
+									}}
+								/>
+								<SortBox dataOption={sortOptionList} handleSort={onSort} />
+							</div>
+						}
+					>
+						<List
+							loading={isLoading?.type === 'GET_ALL' && isLoading?.status}
+							pagination={{
+								onChange: getPagination,
+								total: totalPage,
+								size: 'small',
+								current: filters.pageIndex,
+							}}
+							itemLayout="horizontal"
+							dataSource={storePackageList}
+							renderItem={(item: IPackage, idx) => {
+								const {
+									ID,
+									Name,
+									Avatar,
+									Level,
+									Type,
+									TypeName,
+									Price,
+									Description,
+								} = item;
+								return (
+									<List.Item>
+										<div className="wrap-set d-flex">
+											{Type === 1 && <div className="tag-free">{TypeName}</div>}
+											<div className="wrap-set-avatar">
+												<Image
+													width="100%"
+													height="100%"
+													src={Avatar}
+													title="Ảnh bìa bộ đề"
+													alt="Ảnh bìa bộ đề"
+													style={{objectFit: 'cover'}}
+												/>
+											</div>
+											<div className="wrap-set-content">
+												<h6 className="set-title">{Name}</h6>
+												<ul className="set-list">
+													<li>
+														Level:<span>HSK {Level}</span>
+													</li>
+													<li className="price">
+														Giá:<span>{numberWithCommas(Price)} VNĐ</span>
+													</li>
+													<li className="desc">
+														Mô tả:<span>{Description}</span>
+													</li>
+												</ul>
+												<div className="set-btn">
+													{userInformation?.RoleID !== 1 &&
+														userInformation?.RoleID !== 5 &&
+														(Type === 1 ? (
 															<PackageStoreForm
 																isAddPackageFree={true}
 																isLoading={isLoading}
@@ -316,19 +320,18 @@ const PackageStore = () => {
 																packageItem={item}
 																handleSubmit={onSubmit}
 															/>
-														)}
-													</div>
+														))}
 												</div>
 											</div>
-										</List.Item>
-									);
-								}}
-							/>
-						</Card>
-					</div>
+										</div>
+									</List.Item>
+								);
+							}}
+						/>
+					</Card>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

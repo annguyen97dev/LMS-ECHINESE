@@ -57,7 +57,7 @@ const GroupForm = (props) => {
     let res = null;
     let newData = {
       Content: questionDataForm.Content,
-      SubjectID: questionDataForm.SubjectID,
+      CurriculumID: questionDataForm.CurriculumID,
       Level: questionDataForm.Level,
       Type: questionDataForm.Type,
       LinkAudio: questionDataForm.LinkAudio,

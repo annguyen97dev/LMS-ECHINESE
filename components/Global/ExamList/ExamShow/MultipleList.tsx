@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactHtmlParser, {
   processNodes,
   convertNodeToElement,
@@ -10,16 +10,25 @@ import { examDetailApi } from "~/apiBase";
 import { useExamDetail } from "~/pages/question-bank/exam-list/exam-detail/[slug]";
 import { useWrap } from "~/context/wrap";
 import EditPoint from "../ExamForm/EditPoint";
+import ChangePosition from "../ExamForm/ChangePosition";
+import { useDoingTest } from "~/context/useDoingTest";
 
 const MultipleList = (props) => {
   const { onDeleteQuestion } = useExamDetail();
   const { showNoti } = useWrap();
-  const { dataQuestion, listAlphabet, listQuestionID } = props;
+  const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [visible, setVisible] = useState({
     id: null,
     status: false,
   });
+  const {
+    activeID,
+    getActiveID,
+    packageResult,
+    getPackageResult,
+    getListPicked,
+  } = useDoingTest();
 
   const returnPosition = (quesID) => {
     let index = listQuestionID.indexOf(quesID);
@@ -74,13 +83,99 @@ const MultipleList = (props) => {
         });
   };
 
+  useEffect(() => {
+    if (dataQuestion) {
+    }
+  }, []);
+
+  // ----------- ALL ACTION IN DOINGTEST -------------
+
+  const returnChecked = (ansID, quesID) => {
+    let checked = false;
+
+    // Find Index
+    let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
+      (item) => item.ExamTopicDetailID === dataQuestion.ID
+    );
+
+    let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
+      indexQuestion
+    ].SetPackageExerciseStudentInfoList.findIndex(
+      (item) => item.ExerciseID === quesID
+    );
+
+    // Find anh return checked
+    if (
+      packageResult.SetPackageResultDetailInfoList[
+        indexQuestion
+      ].SetPackageExerciseStudentInfoList[
+        indexQuestionDetail
+      ].SetPackageExerciseAnswerStudentList.some(
+        (object) => object["AnswerID"] === ansID
+      )
+    ) {
+      checked = true;
+    }
+
+    return checked;
+  };
+
+  const onChange_selectAnswer = (dataAns, quesID) => {
+    getActiveID(quesID);
+    getListPicked(quesID);
+    // Find index
+    let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
+      (item) => item.ExamTopicDetailID === dataQuestion.ID
+    );
+
+    let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
+      indexQuestion
+    ].SetPackageExerciseStudentInfoList.findIndex(
+      (item) => item.ExerciseID === quesID
+    );
+
+    let indexAnswer = packageResult.SetPackageResultDetailInfoList[
+      indexQuestion
+    ].SetPackageExerciseStudentInfoList[
+      indexQuestionDetail
+    ].SetPackageExerciseAnswerStudentList.findIndex(
+      (item) => item.AnswerID === dataAns.ID
+    );
+
+    if (indexAnswer > -1) {
+      packageResult.SetPackageResultDetailInfoList[
+        indexQuestion
+      ].SetPackageExerciseStudentInfoList[
+        indexQuestionDetail
+      ].SetPackageExerciseAnswerStudentList.splice(indexAnswer, 1);
+    } else {
+      // Add new answer to list
+      packageResult.SetPackageResultDetailInfoList[
+        indexQuestion
+      ].SetPackageExerciseStudentInfoList[
+        indexQuestionDetail
+      ].SetPackageExerciseAnswerStudentList.push({
+        AnswerID: dataAns.ID,
+        AnswerContent: dataAns.AnswerContent,
+        FileAudio: "",
+      });
+    }
+
+    getPackageResult({ ...packageResult });
+  };
+
   return (
     <>
       {dataQuestion.ExerciseTopic.map((ques, ind) => (
-        <div className={`question-item`} key={ind}>
+        <div
+          className={`question-item ${
+            ques.ExerciseID === activeID ? "active-doing" : ""
+          }`}
+          key={ind}
+        >
           <div className="box-detail">
             <div className="box-title">
-              <span className="title-ques">
+              <span className={`title-ques `}>
                 {returnPosition(ques.ExerciseID)}
               </span>
               {/* {returnAudio(item)} */}
@@ -92,8 +187,15 @@ const MultipleList = (props) => {
                   <Checkbox
                     className="d-block"
                     key={i}
-                    onChange={(e) => e.preventDefault()}
-                    disabled={true}
+                    checked={
+                      !isDoingTest
+                        ? false
+                        : returnChecked(ans.ID, ques.ExerciseID)
+                    }
+                    onChange={(e) =>
+                      onChange_selectAnswer(ans, ques.ExerciseID)
+                    }
+                    disabled={!isDoingTest ? true : false}
                   >
                     <span className="tick">{listAlphabet[i]}</span>
                     <span className="text">{ans.AnswerContent}</span>
@@ -103,23 +205,28 @@ const MultipleList = (props) => {
             </div>
           </div>
           <div className="box-action">
-            <EditPoint quesItem={ques} dataQuestion={dataQuestion} />
-            <Popconfirm
-              title="Bạn có chắc muốn xóa?"
-              // visible={item.ID == visible.id && visible.status}
-              onConfirm={() => handleOk(ques)}
-              okButtonProps={{ loading: confirmLoading }}
-              onCancel={() => handleCancel(ques.ID)}
-            >
-              <Tooltip title="Xóa câu hỏi" placement="rightTop">
-                <button
-                  className="btn btn-icon delete"
-                  onClick={() => deleteQuestionItem(ques.ID)}
+            {!isDoingTest && (
+              <>
+                <EditPoint quesItem={ques} dataQuestion={dataQuestion} />
+                <Popconfirm
+                  title="Bạn có chắc muốn xóa?"
+                  // visible={item.ID == visible.id && visible.status}
+                  onConfirm={() => handleOk(ques)}
+                  okButtonProps={{ loading: confirmLoading }}
+                  onCancel={() => handleCancel(ques.ID)}
                 >
-                  <Trash2 />
-                </button>
-              </Tooltip>
-            </Popconfirm>
+                  <Tooltip title="Xóa câu hỏi" placement="rightTop">
+                    <button
+                      className="btn btn-icon delete"
+                      onClick={() => deleteQuestionItem(ques.ID)}
+                    >
+                      <Trash2 />
+                    </button>
+                  </Tooltip>
+                </Popconfirm>
+                <ChangePosition questionID={dataQuestion.ID} />
+              </>
+            )}
             <div className="point-question mt-2">
               <p className="text">{ques.Point}</p>
             </div>

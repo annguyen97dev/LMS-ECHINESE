@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SortBox from "~/components/Elements/SortBox";
 import ExpandBox from "~/components/Elements/ExpandBox";
-
+import moment from "moment";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import LayoutBase from "~/components/LayoutBase";
 import {
@@ -10,6 +10,7 @@ import {
   areaApi,
   staffApi,
   consultationStatusApi,
+  programApi,
 } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import StudentAdviseForm from "~/components/Global/Customer/Student/StudentAdviseForm";
@@ -19,6 +20,7 @@ import PowerTable from "~/components/PowerTable";
 import Link from "next/link";
 import { Tooltip } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
+import ExpandTable from "~/components/ExpandTable";
 
 let pageIndex = 1;
 
@@ -60,6 +62,7 @@ interface optionObj {
 
 interface listDataForm {
   Area: Array<optionObj>;
+  Program: Array<optionObj>;
   SourceInformation: Array<optionObj>;
   Counselors: Array<optionObj>;
   ConsultationStatus: Array<optionObj>;
@@ -86,6 +89,11 @@ const listApi = [
     text: "Tình trạng tư vấn",
     name: "ConsultationStatus",
   },
+  {
+    api: programApi,
+    text: "Nhu cầu học",
+    name: "Program",
+  },
 ];
 
 export default function StudentAdvisory() {
@@ -94,6 +102,7 @@ export default function StudentAdvisory() {
     SourceInformation: [],
     Counselors: [],
     ConsultationStatus: [],
+    Program: [],
   });
 
   // ------ BASE USESTATE TABLE -------
@@ -164,6 +173,13 @@ export default function StudentAdvisory() {
         newData = data.map((item) => ({
           title: item.AreaName,
           value: item.AreaID,
+        }));
+
+        break;
+      case "Program":
+        newData = data.map((item) => ({
+          title: item.ProgramName,
+          value: item.ID,
         }));
 
         break;
@@ -439,14 +455,26 @@ export default function StudentAdvisory() {
     getDataStudentForm(listApi);
   }, []);
 
-  const expandedRowRender = () => {
-    return <ExpandBox />;
+  const expandedRowRender = (data) => {
+    return (
+      <>
+        <h6 className="mt-3" style={{ fontWeight: 500 }}>
+          Ghi chú:
+        </h6>
+        <div className="d-block mb-3">
+          <p>{data.Note ? data.Note : "..."}</p>
+        </div>
+      </>
+    );
   };
 
   const columns = [
     {
-      title: "Tỉnh/TP",
-      dataIndex: "AreaName",
+      title: "Mã số",
+      dataIndex: "CustomerCode",
+      render: (CustomerCode) => (
+        <p className="font-weight-black">{CustomerCode}</p>
+      ),
     },
     {
       title: "Họ tên",
@@ -454,6 +482,16 @@ export default function StudentAdvisory() {
       ...FilterColumn("CustomerName", onSearch, handleReset, "text"),
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
+    {
+      title: "Tên tiếng Trung",
+      dataIndex: "ChineseName",
+      render: (a) => <p className="font-weight-blue">{a}</p>,
+    },
+    // {
+    //   title: "Tỉnh/TP",
+    //   dataIndex: "AreaName",
+    // },
+
     {
       title: "Số điện thoại",
       dataIndex: "Number",
@@ -463,9 +501,12 @@ export default function StudentAdvisory() {
       dataIndex: "Email",
     },
     {
+      title: "Nhu cầu học",
+      dataIndex: "ProgramName",
+    },
+    {
       title: "Nguồn",
       dataIndex: "SourceInformationName",
-      render: (name) => <p className="font-weight-black">{name}</p>,
     },
     {
       className: "text-center",
@@ -484,9 +525,14 @@ export default function StudentAdvisory() {
       title: "Tư vấn viên",
       dataIndex: "CounselorsName",
     },
-
+    {
+      title: "Ngày đăng ký",
+      dataIndex: "CreatedOn",
+      render: (date) => <p>{moment(date).format("DD/MM/YYYY")}</p>,
+    },
     {
       title: "",
+      dataIndex: "CustomerConsultationStatusID",
       render: (text, data, index) => {
         return (
           <>
@@ -499,7 +545,7 @@ export default function StudentAdvisory() {
               isLoading={isLoading}
               _onSubmit={(data: any) => _onSubmit(data)}
             />
-            {dataSource[index].CustomerConsultationStatusID == 2 && (
+            {text == 2 && (
               <Link
                 href={{
                   pathname: "/customer/service/service-info-student/",
@@ -519,13 +565,13 @@ export default function StudentAdvisory() {
   ];
 
   return (
-    <PowerTable
+    <ExpandTable
       currentPage={currentPage}
       totalPage={totalPage && totalPage}
       getPagination={(pageNumber: number) => getPagination(pageNumber)}
       loading={isLoading}
       addClass="basic-header"
-      TitlePage="Học viên cần tư vấn"
+      TitlePage="Danh sách khách hàng"
       TitleCard={
         <StudentAdviseForm
           listData={checkEmptyData && listDataForm}
@@ -548,6 +594,7 @@ export default function StudentAdvisory() {
           />
         </div>
       }
+      expandable={{ expandedRowRender }}
     />
   );
 }

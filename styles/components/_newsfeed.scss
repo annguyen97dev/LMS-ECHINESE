@@ -714,17 +714,19 @@
 }
 .card-newsfeed {
 	margin-bottom: 15px;
-	&:first-child {
-		.card-newsfeed__label {
-			width: 100%;
-			margin-bottom: 12px;
-			border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
-		}
+	.card-newsfeed__label {
+		width: 100%;
+		margin-bottom: 12px;
+		border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
 	}
 	&:last-child {
 		margin-bottom: 0;
 		height: calc(100vh - 230px);
 		overflow: auto;
+		.card-newsfeed__label {
+			margin-bottom: 0;
+			border-bottom: 0;
+		}
 		@include max-media(767px) {
 			margin-bottom: 15px;
 			height: unset;
@@ -771,7 +773,7 @@
 			margin-bottom: 15px;
 		}
 	}
-	.card-newsfeed__label {
+	.card-newsfeed__label.have-plus {
 		width: calc(100% - 30px);
 	}
 	.list-group-nf {
@@ -1063,7 +1065,7 @@
 .list-newsfeed {
 	width: 70%;
 	margin: auto;
-	@include max-media(1400px) {
+	@include max-media(1600px) {
 		width: 100%;
 	}
 }
@@ -1170,5 +1172,38 @@
 		img {
 			max-width: 100%;
 		}
+	}
+}
+.nf-package-wrap {
+	.swiper-slide {
+		height: auto;
+	}
+}
+.nf-package {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 0.2rem;
+	.img {
+		height: 150px;
+	}
+	.content {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		padding-top: 15px;
+		span {
+			font-weight: 500;
+			color: $primary-color;
+			margin-left: 8px;
+		}
+	}
+	.list {
+		padding-left: 0;
+		list-style-type: none;
+	}
+	.btn {
+		width: 100%;
+		margin-top: auto;
 	}
 }

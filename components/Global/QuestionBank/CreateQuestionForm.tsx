@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Tooltip, Spin, Modal } from "antd";
 import Editor from "~/components/Elements/Editor";
-import { Edit } from "react-feather";
+import { Edit, Plus } from "react-feather";
 import ChoiceForm from "./QuestionFormType/ChoiceForm";
 import MultipleForm from "./QuestionFormType/MultipleForm";
 import GroupForm from "./QuestionFormType/GroupForm";
@@ -9,6 +9,7 @@ import {
   FormOutlined,
   DeleteOutlined,
   AppstoreAddOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import WrittingForm from "./QuestionFormType/WrittingForm";
 import GroupFormTyping from "./QuestionFormType/TypingForm";
@@ -279,7 +280,16 @@ const CreateQuestionForm = (props) => {
       if (isGroup?.status) {
         return (
           <button className="btn btn-success" onClick={showDrawer}>
-            Tạo nhóm
+            <Plus className="mr-2" style={{ width: "20px" }} />
+            <span
+              style={{
+                display: "inline-block",
+                verticalAlign: "middle",
+                lineHeight: "4px",
+              }}
+            >
+              Tạo nhóm
+            </span>
           </button>
         );
       } else {
@@ -295,7 +305,16 @@ const CreateQuestionForm = (props) => {
         } else {
           return (
             <button className="btn btn-success" onClick={showDrawer}>
-              Tạo câu hỏi
+              <Plus className="mr-2" style={{ width: "20px" }} />
+              <span
+                style={{
+                  display: "inline-block",
+                  verticalAlign: "middle",
+                  lineHeight: "4px",
+                }}
+              >
+                Tạo câu hỏi
+              </span>
             </button>
           );
         }

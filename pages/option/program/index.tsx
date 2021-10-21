@@ -1,19 +1,17 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
-import PowerTable from '~/components/PowerTable';
-import randomColor from 'randomcolor';
-import { Tag, Tooltip, Switch } from 'antd';
-import { Info, RotateCcw } from 'react-feather';
-import SortBox from '~/components/Elements/SortBox';
-import FilterColumn from '~/components/Tables/FilterColumn';
+import { Switch, Tooltip } from 'antd';
+import moment from 'moment';
 // import FilterTable from "~/components/Global/CourseList/FilterTable";
 import Link from 'next/link';
-import LayoutBase from '~/components/LayoutBase';
-import { programApi, gradeApi } from '~/apiBase';
-import moment from 'moment';
-import { useWrap } from '~/context/wrap';
-import ClassModal from '~/components/Global/Option/ClassModal';
-import ProgramForm from '~/components/Global/Option/ProgramForm';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
+import { gradeApi, programApi } from '~/apiBase';
+import SortBox from '~/components/Elements/SortBox';
 import FilterProgram from '~/components/Global/Option/FilterTable/FilterProgram';
+import ProgramForm from '~/components/Global/Option/ProgramForm';
+import LayoutBase from '~/components/LayoutBase';
+import PowerTable from '~/components/PowerTable';
+import FilterColumn from '~/components/Tables/FilterColumn';
+import { useWrap } from '~/context/wrap';
 
 let pageIndex = 1;
 
@@ -368,7 +366,7 @@ const Programs = () => {
 					>
 						<Tooltip title="Chi tiết chương trình">
 							<button className="btn btn-icon">
-								<Info />
+								<Eye />
 							</button>
 						</Tooltip>
 					</Link>

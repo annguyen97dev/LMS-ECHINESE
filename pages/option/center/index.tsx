@@ -1,19 +1,15 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import PowerTable from '~/components/PowerTable';
-import randomColor from 'randomcolor';
-import { Tag, Tooltip, Switch, Input, Button, Space } from 'antd';
-import { Info, RotateCcw } from 'react-feather';
-import SortBox from '~/components/Elements/SortBox';
-
+import { Switch, Tooltip } from 'antd';
 // import FilterTable from "~/components/Global/CourseList/FilterTable";
 import Link from 'next/link';
-import LayoutBase from '~/components/LayoutBase';
-import { branchApi, areaApi } from '~/apiBase';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
+import { areaApi, branchApi } from '~/apiBase';
+import SortBox from '~/components/Elements/SortBox';
 import CenterForm from '~/components/Global/Option/CenterForm';
-import { useWrap } from '~/context/wrap';
-import { FormOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
-import Highlighter from 'react-highlight-words';
+import LayoutBase from '~/components/LayoutBase';
+import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
+import { useWrap } from '~/context/wrap';
 
 let pageIndex = 1;
 
@@ -310,7 +306,7 @@ const Center = () => {
 					>
 						<Tooltip title="Xem phòng">
 							<button className="btn btn-icon">
-								<Info />
+								<Eye />
 							</button>
 						</Tooltip>
 					</Link>

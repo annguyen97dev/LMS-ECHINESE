@@ -45,7 +45,7 @@ type IEditCourseScheduleShowList = {
 	[k: string]: ICourseDetailSchedule[];
 };
 type IDataModal = {
-	dateFm: string;
+	dateString: string;
 	limit: number;
 	scheduleInDay: number;
 	scheduleList: ICourseDetailSchedule[];
@@ -88,14 +88,13 @@ const EditCourse = (props) => {
 		});
 	//StudyDay
 	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
-	const [dateSelected, setDateSelected] = useState('');
 	// SCHEDULE TO SHOW ON MODAL
 	const [scheduleShow, setScheduleShow] = useState<IEditCourseScheduleShowList>(
 		{}
 	);
 	// CALENDAR MODAL
 	const [dataModalCalendar, setDataModalCalendar] = useState<IDataModal>({
-		dateFm: '',
+		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
 		scheduleList: [],
@@ -127,7 +126,8 @@ const EditCourse = (props) => {
 		// SPLIT SCHEDULE TO 2 OBJECT TO CALL 2 API
 		// paramsArr = [ {Schedule-*: [{params teacher}, {params room}]} ]
 		const paramsArr = arrSchedule.map((sch, idx) => {
-			const {BranchID, Date, SubjectID, StudyTimeID, RoomID, CourseID} = sch;
+			const {BranchID, SubjectID, StudyTimeID, RoomID, CourseID} = sch;
+			const dateFm = moment(dataModalCalendar.dateString).format('YYYY/MM/DD');
 			return {
 				[`Schedule-${idx + 1}`]: [
 					// TEACHER
@@ -135,14 +135,14 @@ const EditCourse = (props) => {
 						BranchID,
 						SubjectID,
 						StudyTimeID,
-						Date,
+						Date: dateFm,
 					},
 					// ROOM
 					{
 						BranchID,
 						Rooms: RoomID,
 						StudyTimeID,
-						Date,
+						Date: dateFm,
 						CourseID,
 					},
 				],
@@ -228,7 +228,7 @@ const EditCourse = (props) => {
 			});
 		}
 	};
-	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 1000, []);
+	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 300, []);
 	const onDebounceFetchInfoAvailableSchedule = (
 		params: ICourseDetailSchedule[]
 	) => {
@@ -347,18 +347,20 @@ const EditCourse = (props) => {
 			) {
 				showNoti('danger', 'Dữ liệu không phù hợp');
 			} else {
-				onDebounceFetchInfoAvailableSchedule(scheduleList);
+				setDataModalCalendar({
+					...dataModalCalendar,
+					scheduleList: scheduleList,
+				});
 			}
 		}
 		if (key === 'RoomID') {
 			const scheduleList = newUnavailableScheduleList.filter(
 				(s) => s.Date === date
 			);
-			if (!scheduleList.some((s) => s.RoomID === 0)) {
-				onDebounceFetchInfoAvailableSchedule(scheduleList);
+			if (scheduleList.length) {
 				setDataModalCalendar({
 					...dataModalCalendar,
-					scheduleList,
+					scheduleList: scheduleList,
 				});
 			}
 		}
@@ -368,7 +370,7 @@ const EditCourse = (props) => {
 		}));
 	};
 	const changeStatusSchedule = (sch: ICourseDetailSchedule, type = 1) => {
-		if (!dateSelected) {
+		if (!dataModalCalendar.dateString) {
 			showNoti('danger', 'Bạn chưa chọn ngày');
 			return false;
 		}
@@ -383,22 +385,27 @@ const EditCourse = (props) => {
 			const idx = newScheduleUnavailableList.findIndex((s) => s.ID === sch.ID);
 			const newScheduleObj = {
 				...newScheduleUnavailableList[idx],
-				Date: dateSelected,
+				Date: dataModalCalendar.dateString,
 			};
 			newScheduleUnavailableList.splice(idx, 1);
 			newScheduleAvailableList.push(newScheduleObj);
 		}
 		// type = 1 => available to unavailable
 		if (type === 1) {
-			const limit = calendarList.find((c) => c.Day === dateSelected)?.Limit;
-			if (fmScheduleUnavailableToObject[dateSelected]?.length >= limit) {
+			const limit = calendarList.find(
+				(c) => c.Day === dataModalCalendar.dateString
+			)?.Limit;
+			if (
+				fmScheduleUnavailableToObject[dataModalCalendar.dateString]?.length >=
+				limit
+			) {
 				showNoti('danger', 'Số ca đạt giới hạn');
 				return false;
 			}
 			const idx = newScheduleAvailableList.findIndex((s) => s.ID === sch.ID);
 			const newScheduleObj = {
 				...newScheduleAvailableList[idx],
-				Date: dateSelected,
+				Date: dataModalCalendar.dateString,
 			};
 			newScheduleAvailableList.splice(idx, 1);
 			newScheduleUnavailableList.push(newScheduleObj);
@@ -446,9 +453,6 @@ const EditCourse = (props) => {
 			};
 		});
 		return rs;
-	};
-	const onSelectDate = (vl) => {
-		setDateSelected(vl.resource.dateString);
 	};
 	const onToggleSchedule = (sch: ICourseDetailSchedule, type: number) => {
 		if (changeStatusSchedule(sch, type)) {
@@ -624,9 +628,10 @@ const EditCourse = (props) => {
 			}
 			res = await courseDetailApi.update(scheduleListToSave);
 			if (res.status === 200) {
-				setScheduleShow({});
-				setScheduleListToSave([]);
 				showNoti('success', res.data.message);
+				router.push(
+					`/course/course-list/course-list-detail/${courseID}?type=1`
+				);
 			}
 		} catch (error) {
 			showNoti('error', error.message);
@@ -658,15 +663,18 @@ const EditCourse = (props) => {
 				]);
 				const roomsFm = fmSelectArr(res.data.rooms, 'name', 'id', ['select']);
 
-				setOptionListForGetAvailableSchedule({
+				const rs = {
 					rooms: roomsFm,
 					studyTimes: studyTimesFm,
-				});
+				};
+
+				setOptionListForGetAvailableSchedule(rs);
 
 				setScheduleList({
 					available: [],
 					unavailable: newScheduleList,
 				});
+				return rs;
 			}
 		} catch (error) {
 			showNoti('error', error.message);
@@ -692,6 +700,7 @@ const EditCourse = (props) => {
 					{title: '---Chọn môn học---', value: 0},
 					...fmOption,
 				]);
+				return fmOption;
 			}
 		} catch (error) {
 			console.log('fetchSubject', error.message);
@@ -724,11 +733,13 @@ const EditCourse = (props) => {
 						...fmOption,
 					],
 				});
+				return fmOption;
 			}
 		} catch (error) {
 			console.log('fetchStudyTime', error.message);
 		}
 	};
+
 	const fetchAvailableSchedule = async (data: {
 		RoomID: number[];
 		StudyTimeID: number[];
@@ -770,6 +781,16 @@ const EditCourse = (props) => {
 			}
 		} catch (error) {
 			showNoti('error', error.message);
+		}
+	};
+	const fetchAvailableScheduleFirstTime = async () => {
+		const {rooms, studyTimes} = await fetchCourseDetail();
+		const RoomID = rooms.filter((r) => r.options.select).map((r) => r.value);
+		const StudyTimeID = studyTimes
+			.filter((r) => r.options.select)
+			.map((r) => r.value);
+		if (RoomID.length && StudyTimeID.length) {
+			fetchAvailableSchedule({RoomID, StudyTimeID});
 		}
 	};
 	const onCreateSchedule = (obj: {SubjectID: number; StudyDay: number}) => {
@@ -824,6 +845,7 @@ const EditCourse = (props) => {
 			fetchSubject();
 			fetchStudyTime();
 			fetchCourseDetail();
+			fetchAvailableScheduleFirstTime();
 		}
 		return () => {
 			isMounted = false;
@@ -868,9 +890,6 @@ const EditCourse = (props) => {
 					>
 						<CreateCourseCalendar
 							eventList={calendarDateFormat(calendarList)}
-							handleSelectDate={onSelectDate}
-							dateSelected={dateSelected}
-							//
 							isLoaded={
 								isLoading.type === 'FETCH_SCHEDULE' && isLoading.status
 									? false

@@ -5,9 +5,16 @@ import {Controller} from 'react-hook-form';
 import EditorBase from '~/components/Elements/EditorBase';
 
 const EditorField = (props) => {
-	const {form, name, label, disabled, style, className, height} = props;
+	const {form, name, label, disabled, style, className, height, handleChange} =
+		props;
 	const {errors} = form.formState;
 	const hasError = errors[name];
+
+	const checkHandleChange = (value) => {
+		if (!handleChange) return;
+		handleChange(value);
+	};
+
 	return (
 		<Form.Item
 			style={style}
@@ -27,7 +34,10 @@ const EditorField = (props) => {
 							customFieldProps={{
 								name: field.name,
 								onBlur: field.onBlur,
-								onChange: field.onChange,
+								onChange: (value) => {
+									field.onChange(value);
+									checkHandleChange(value);
+								},
 								innerRef: field.ref,
 								value: field.value,
 								disabled: disabled,
@@ -52,6 +62,7 @@ EditorField.propTypes = {
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
 	height: PropTypes.number,
+	handleChange: PropTypes.func,
 };
 EditorField.defaultProps = {
 	label: '',
@@ -59,5 +70,6 @@ EditorField.defaultProps = {
 	style: {},
 	className: '',
 	height: 150,
+	handleChange: null,
 };
 export default EditorField;

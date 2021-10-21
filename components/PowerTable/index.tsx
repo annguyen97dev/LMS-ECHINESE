@@ -1,6 +1,5 @@
+import { Card, Table } from "antd";
 import React, { useEffect, useState } from "react";
-import { Table, Card } from "antd";
-import TitlePage from "~/components/TitlePage";
 import { useWrap } from "~/context/wrap";
 
 const PowerTable = React.memo((props: any) => {

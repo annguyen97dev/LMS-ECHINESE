@@ -96,6 +96,8 @@ const TeacherForm = (props) => {
 		AreaID: null,
 		Branch: undefined,
 		FullNameUnicode: '',
+		ChineseName: '',
+		LinkFaceBook: '',
 		Jobdate: moment().format('YYYY/MM/DD'),
 		Email: '',
 		Mobile: '',
@@ -187,7 +189,7 @@ const TeacherForm = (props) => {
 			)}
 			<Modal
 				style={{top: isUpdate ? 20 : 100}}
-				title={isUpdate ? 'Update Teacher' : 'Create Teacher'}
+				title={isUpdate ? 'Cập nhật giáo viên' : 'Thêm giáo viên'}
 				visible={isModalVisible}
 				onCancel={closeModal}
 				footer={
@@ -200,7 +202,7 @@ const TeacherForm = (props) => {
 									onClick={form.handleSubmit(teacherSwitchFunc)}
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
-									Update
+									Cập nhật
 									{isLoading.type === 'ADD_DATA' && isLoading.status && (
 										<Spin className="loading-base" />
 									)}
@@ -267,6 +269,7 @@ const TeacherForm = (props) => {
 										name="Email"
 										label="Email"
 										placeholder="Nhập email"
+										isRequired={true}
 									/>
 								</div>
 								<div className="col-md-6 col-12">
@@ -275,6 +278,15 @@ const TeacherForm = (props) => {
 										name="FullNameUnicode"
 										label="Họ và tên"
 										placeholder="Nhập họ và tên"
+										isRequired={true}
+									/>
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField
+										form={form}
+										name="ChineseName"
+										label="Tên tiếng Trung"
+										placeholder="Nhập tên tiếng Trung"
 									/>
 								</div>
 								<div className="col-md-6 col-12">
@@ -335,10 +347,10 @@ const TeacherForm = (props) => {
 										placeholder="Chọn trạng thái hoạt động"
 									/>
 								</div>
-								<div className="col-md-6 col-12">
+								<div className="col-12">
 									<InputPassField
 										form={form}
-										name="Mật khẩu"
+										name="Password"
 										label="Mật khẩu"
 										placeholder="Nhập mật khẩu"
 									/>
@@ -428,7 +440,15 @@ const TeacherForm = (props) => {
 									/>
 								</div>
 
-								<div className="col-12">
+								<div className="col-md-6 col-12">
+									<InputTextField
+										form={form}
+										name="LinkFaceBook"
+										label="Link Facebook"
+										placeholder="Nhập link facebook"
+									/>
+								</div>
+								<div className="col-md-6 col-12">
 									<InputTextField
 										form={form}
 										name="Address"
@@ -447,18 +467,28 @@ const TeacherForm = (props) => {
 										optionList={areaList}
 										onChangeSelect={checkHandleFetchBranch}
 										placeholder="Chọn tỉnh/thành phố"
+										isRequired={true}
 									/>
 									<InputTextField
 										form={form}
 										name="FullNameUnicode"
 										label="Họ và tên"
 										placeholder="Nhập họ và tên"
+										isRequired={true}
 									/>
 									<InputTextField
 										form={form}
 										name="Email"
 										label="Email"
 										placeholder="Nhập email"
+										isRequired={true}
+									/>
+									<DateField
+										form={form}
+										name="Jobdate"
+										label="Ngày nhận việc"
+										placeholder="Chọn ngày nhận việc"
+										isRequired={true}
 									/>
 								</div>
 								<div className="col-md-6 col-12">
@@ -473,18 +503,26 @@ const TeacherForm = (props) => {
 											isLoading.status
 										}
 										placeholder="Chọn trung tâm"
+										isRequired={true}
+									/>
+									<InputTextField
+										form={form}
+										name="ChineseName"
+										label="Tên tiếng Trung"
+										placeholder="Nhập tên tiếng Trung"
 									/>
 									<InputTextField
 										form={form}
 										name="Mobile"
 										label="Số điện thoại"
 										placeholder="Nhập số điện thoại"
+										isRequired={true}
 									/>
-									<DateField
+									<InputTextField
 										form={form}
-										name="Jobdate"
-										label="Ngày nhận việc"
-										placeholder="Chọn ngày nhận việc"
+										name="LinkFaceBook"
+										label="Link Facebook"
+										placeholder="Nhập link faebook"
 									/>
 								</div>
 								<div className="col-12">
@@ -499,10 +537,10 @@ const TeacherForm = (props) => {
 									<button
 										type="submit"
 										className="btn btn-primary w-100"
-										disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+										disabled={isLoading.type === 'ADD_DATA' && isLoading.status}
 									>
-										Create
-										{isLoading.type == 'ADD_DATA' && isLoading.status && (
+										Thêm mới
+										{isLoading.type === 'ADD_DATA' && isLoading.status && (
 											<Spin className="loading-base" />
 										)}
 									</button>

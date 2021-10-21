@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import styles from "./LoginForm.module.scss";
 import { route } from "next/dist/next-server/server/router";
 import { useRouter } from "next/router";
 import { Spin } from "antd";
+import Link from "next/link";
 
 type Inputs = {
   text: string;
@@ -124,10 +124,12 @@ function index(props: any) {
                     <span> </span>Nhớ mật khẩu
                   </label>
                 </div> */}
-                {/* 
+
                 <div className={styles.forgetPass}>
-                  <a>Quên mật khẩu?</a>
-                </div> */}
+                  <Link href="/reset-password">
+                    <a>Quên mật khẩu?</a>
+                  </Link>
+                </div>
               </div>
 
               <div className="position-relative">

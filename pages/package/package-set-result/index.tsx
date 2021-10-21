@@ -1,23 +1,20 @@
 import { Switch, Tooltip } from 'antd';
-import moment from 'moment';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
 import { studentApi } from '~/apiBase';
+import { packageDetailApi } from '~/apiBase/package/package-detail';
+import { packageResultApi } from '~/apiBase/package/package-result';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
+import PackageResultExpand from '~/components/Global/Package/PackageResult/PackageResultExpand';
+import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResult/PackageResultUpdateTeacher';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-import { packageResultApi } from '~/apiBase/package/package-result';
-import { packageDetailApi } from '~/apiBase/package/package-detail';
-import PackageResultExpand from '~/components/Global/Package/PackageResult/PackageResultExpand';
-import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResult/PackageResultUpdateTeacher';
-import { Info } from 'react-feather';
 
 const PackageSetResult = () => {
-	const { showNoti, pageSize } = useWrap();
-
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
@@ -112,9 +109,9 @@ const PackageSetResult = () => {
 						query: { slug: `${data.ID}` }
 					}}
 				>
-					<Tooltip title="Kết quả gói bài chi tiết">
+					<Tooltip title="Kết quả bộ đề chi tiết">
 						<button className="btn btn-icon">
-							<Info />
+							<Eye />
 						</button>
 					</Tooltip>
 				</Link>
@@ -123,20 +120,6 @@ const PackageSetResult = () => {
 	];
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemDetail, setItemDetail] = useState();
-
-	const listParamsDefault = {
-		pageSize: pageSize,
-		pageIndex: currentPage,
-		sort: null,
-		sortType: null,
-		fromDate: null,
-		toDate: null,
-		StudentID: null,
-		SetPackageDetailID: null,
-		isDone: null,
-		StudentName: null,
-		ExamTopicType: null
-	};
 
 	const sortOption = [
 		{
@@ -166,7 +149,7 @@ const PackageSetResult = () => {
 		},
 		{
 			name: 'SetPackageDetailID',
-			title: 'Gói bài',
+			title: 'Bộ đề',
 			col: 'col-12',
 			type: 'select',
 			optionList: null,
@@ -246,8 +229,21 @@ const PackageSetResult = () => {
 		});
 	};
 
+	const { showNoti, pageSize } = useWrap();
+	const listParamsDefault = {
+		pageSize: pageSize,
+		pageIndex: currentPage,
+		sort: null,
+		sortType: null,
+		fromDate: null,
+		toDate: null,
+		StudentID: null,
+		SetPackageDetailID: null,
+		isDone: null,
+		StudentName: null,
+		ExamTopicType: null
+	};
 	const [params, setParams] = useState(listParamsDefault);
-
 	const [totalPage, setTotalPage] = useState(null);
 	const [packageSetResult, setPackageSetResult] = useState<ISetPackageResult[]>([]);
 	const [isLoading, setIsLoading] = useState({
@@ -268,7 +264,7 @@ const PackageSetResult = () => {
 
 	const getDataStudent = async () => {
 		try {
-			let res = await studentApi.getAll({ pageSize: 99999, pageIndex: 1 });
+			let res = await studentApi.getAll({ pageSize: pageSize, pageIndex: 1 });
 			if (res.status == 200) {
 				const newData = res.data.data.map((item) => ({
 					title: item.FullNameUnicode,
@@ -298,7 +294,7 @@ const PackageSetResult = () => {
 				setDataFunc('SetPackageDetailID', newData);
 			}
 
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu gói bài này!');
+			res.status == 204 && showNoti('danger', 'Không có dữ liệu bộ đề này!');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -364,7 +360,7 @@ const PackageSetResult = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="KẾT QUẢ GÓI BÀI"
+			TitlePage="KẾT QUẢ BỘ ĐỀ"
 			dataSource={packageSetResult}
 			columns={columns}
 			TitleCard={

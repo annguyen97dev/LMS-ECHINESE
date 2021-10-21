@@ -19,12 +19,13 @@ function InfoCourseCard(props) {
 
 	const getCourseOfStudent = async () => {
 		try {
-			const res = await courseStudentApi.getAll({selectAll: true});
+			const res = await courseStudentApi.getAll({
+				pageSize: 9999,
+				pageIndex: 1,
+				UserInformationID: studentID,
+			});
 			if (res.status === 200) {
-				const filterByStudentID = res.data.data.filter(
-					(c) => c.UserInformationID === studentID
-				);
-				setCourseStudent(filterByStudentID);
+				setCourseStudent(res.data.data);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

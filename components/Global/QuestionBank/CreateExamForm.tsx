@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Form, Select, Spin } from "antd";
 import { Edit } from "react-feather";
-import { examTopicApi, programApi, subjectApi } from "~/apiBase";
+import { examTopicApi, programApi, curriculumApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,7 +18,7 @@ let schema = null;
 //   Code: string; //mã đề thi
 //   Description: string;
 //   Type: number; //1-Trắc nghiệm 2-Tự luận
-//   SubjectID: number;
+//   CurriculumID: number;
 //   Time: number; //Thời gian làm bài
 // };
 
@@ -34,8 +34,8 @@ const CreateExamForm = (props) => {
   const [value, setValue] = React.useState(1);
   const [openAns, setOpenAns] = useState(false);
   const [dataProgram, setDataProgram] = useState<dataOject[]>([]);
-  const [dataSubject, setDataSubject] = useState<dataOject[]>([]);
-  const [loadingSubject, setLoadingSubject] = useState(false);
+  const [dataCurriculum, setDataCurriculum] = useState<dataOject[]>([]);
+  const [loadingCurriculum, setLoadingCurriculum] = useState(false);
   const [loadingProgram, setLoadingProgram] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isTest, setIsTest] = useState(false);
@@ -72,9 +72,9 @@ const CreateExamForm = (props) => {
 
   // HANDLE CHANGE - SELECT PROGRAM
   const handleChange_selectProgram = (value) => {
-    setDataSubject([]);
-    getDataSubject(value);
-    form.setValue("SubjectID", null);
+    setDataCurriculum([]);
+    getDataCurriculum(value);
+    form.setValue("CurriculumID", null);
   };
 
   // HANLE CHANGE - SELECT TYPE EXAM
@@ -84,28 +84,28 @@ const CreateExamForm = (props) => {
     }
   };
 
-  // GET DATA SUBJECT
-  const getDataSubject = async (id) => {
-    setLoadingSubject(true);
+  // GET DATA Curriculum
+  const getDataCurriculum = async (id) => {
+    setLoadingCurriculum(true);
     try {
-      let res = await subjectApi.getAll({
+      let res = await curriculumApi.getAll({
         pageIndex: 1,
         pageSize: 999999,
         ProgramID: id,
       });
       if (res.status == 200) {
         let newData = res.data.data.map((item) => ({
-          title: item.SubjectName,
+          title: item.CurriculumName,
           value: item.ID,
         }));
-        setDataSubject(newData);
+        setDataCurriculum(newData);
       }
 
-      res.status == 204 && showNoti("danger", "Môn học không có dữ liệu");
+      res.status == 204 && showNoti("danger", "Giáo trình không có dữ liệu");
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
-      setLoadingSubject(false);
+      setLoadingCurriculum(false);
     }
   };
 
@@ -116,7 +116,7 @@ const CreateExamForm = (props) => {
     Description: null,
     Type: null, //1-Trắc nghiệm 2-Tự luận
     ProgramID: null,
-    SubjectID: null,
+    CurriculumID: null,
     Time: null, //Thời gian làm bài
   };
 
@@ -141,7 +141,7 @@ const CreateExamForm = (props) => {
 
   const onSubmit = async (data: any) => {
     if (data.Type == 1) {
-      data.SubjectID = 0;
+      data.CurriculumID = 0;
     }
     setIsLoading(true);
     let res = null;
@@ -172,10 +172,10 @@ const CreateExamForm = (props) => {
     if (visible) {
       if (dataItem) {
         dataItem.Type !== 1 &&
-          (getDataProgram(), getDataSubject(dataItem.ProgramID));
+          (getDataProgram(), getDataCurriculum(dataItem.ProgramID));
         form.reset(dataItem);
         if (dataItem.Type == 1) {
-          form.setValue("SubjectID", null);
+          form.setValue("CurriculumID", null);
           form.setValue("ProgramID", null);
         }
       } else {
@@ -264,10 +264,10 @@ const CreateExamForm = (props) => {
               <SelectField
                 disabled={isTest ? true : dataItem?.ID && true}
                 form={form}
-                name="SubjectID"
-                label="Môn học"
-                isLoading={loadingSubject}
-                optionList={dataSubject}
+                name="CurriculumID"
+                label="Giáo trình"
+                isLoading={loadingCurriculum}
+                optionList={dataCurriculum}
               />
             </div>
             <div className="col-md-6 col-12">

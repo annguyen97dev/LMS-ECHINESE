@@ -1,7 +1,8 @@
-import {Checkbox, Form, Input} from 'antd';
+import {Checkbox, Form} from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {Controller} from 'react-hook-form';
+import {checkboxCommonPropTypes} from '~/utils/proptypes';
 
 const CheckboxGroupField = (props) => {
 	const {
@@ -61,19 +62,7 @@ CheckboxGroupField.propTypes = {
 	handleChange: PropTypes.func,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
-	checkboxList: PropTypes.arrayOf(
-		PropTypes.shape({
-			label: PropTypes.oneOfType([
-				PropTypes.string.isRequired,
-				PropTypes.number.isRequired,
-			]),
-			value: PropTypes.oneOfType([
-				PropTypes.string.isRequired,
-				PropTypes.number.isRequired,
-			]),
-			disabled: PropTypes.bool,
-		})
-	),
+	checkboxList: checkboxCommonPropTypes,
 };
 CheckboxGroupField.defaultProps = {
 	label: '',

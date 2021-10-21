@@ -1,34 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Card, Tag, Tooltip } from 'antd';
-import { FormOutlined, EyeOutlined } from '@ant-design/icons';
-import TitlePage from '~/components/TitlePage';
-import SearchBox from '~/components/Elements/SearchBox';
-import Link from 'next/link';
-import PowerTable from '~/components/PowerTable';
-import ModalAdd from '~/components/Global/StaffList/StaffForm';
-import { useWrap } from '~/context/wrap';
-import FilterColumn from '~/components/Tables/FilterColumn';
-import { Eye, Filter, Search } from 'react-feather';
-import LayoutBase from '~/components/LayoutBase';
-import {
-	branchApi,
-	areaApi,
-	studentApi,
-	districtApi,
-	wardApi,
-	jobApi,
-	puroseApi,
-	sourceInfomationApi,
-	parentsApi,
-	staffApi,
-	staffSalaryApi
-} from '~/apiBase';
-import SortBox from '~/components/Elements/SortBox';
 import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi, staffApi, staffSalaryApi } from '~/apiBase';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
+import SortBox from '~/components/Elements/SortBox';
 // import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from '~/components/Global/StaffList/StaffForm';
-import { number, string } from 'yup';
+import LayoutBase from '~/components/LayoutBase';
+import PowerTable from '~/components/PowerTable';
+import FilterColumn from '~/components/Tables/FilterColumn';
+import { useWrap } from '~/context/wrap';
 
 let pageIndex = 1;
 
@@ -500,7 +480,7 @@ const StaffList = () => {
 					newDataSource.splice(indexRow, 1, {
 						...data,
 						Branch: returnBranchName(data.Branch),
-						RoleName: dataRoles.find((item) => item.value == data.RoleID).title
+						RoleName: dataRoles.find((item) => item.value == data.RoleID)?.title
 					});
 					setDataSource(newDataSource);
 					showNoti('success', res.data.message);
@@ -614,9 +594,18 @@ const StaffList = () => {
 
 	const columns = [
 		{
+			title: 'Mã nhân viên',
+			dataIndex: 'UserCode'
+		},
+		{
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Tên tiếng Trung',
+			dataIndex: 'ChineseName',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
@@ -654,7 +643,17 @@ const StaffList = () => {
 		{
 			title: 'Ngày nhận việc',
 			dataIndex: 'Jobdate',
-			render: (date: any) => moment(date).format('DD/MM/YYYY')
+			render: (date: any) => date && moment(date).format('DD/MM/YYYY')
+		},
+		{
+			title: 'Facebook',
+			dataIndex: 'LinkFaceBook',
+			render: (link) =>
+				link && (
+					<a className="font-weight-black" href={link} target="_blank">
+						Link
+					</a>
+				)
 		},
 		{
 			title: 'Trạng thái',
@@ -665,19 +664,21 @@ const StaffList = () => {
 		{
 			title: '',
 			dataIndex: '',
-
 			align: 'center',
+			width: 100,
 			render: (text, data, index) => (
-				<StaffForm
-					getIndex={() => setIndexRow(index)}
-					index={index}
-					rowData={data}
-					rowID={data.UserInformationID}
-					isLoading={isLoading}
-					onSubmit={(data: any) => onSubmit(data)}
-					onSubmitSalary={(data: any) => onSubmitSalary(data)}
-					listDataForm={listDataForm}
-				/>
+				<div onClick={(e) => e.stopPropagation()}>
+					<StaffForm
+						getIndex={() => setIndexRow(index)}
+						index={index}
+						rowData={data}
+						rowID={data.UserInformationID}
+						isLoading={isLoading}
+						onSubmit={(data: any) => onSubmit(data)}
+						onSubmitSalary={(data: any) => onSubmitSalary(data)}
+						listDataForm={listDataForm}
+					/>
+				</div>
 			)
 		}
 	];

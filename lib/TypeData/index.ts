@@ -7,8 +7,8 @@ type answerObj = {
 type questionObj = {
   Content: string;
   ExerciseGroupID: number;
-  SubjectID: number;
-  SubjectName: string;
+  CurriculumID: number;
+  CurriculumName: string;
   DescribeAnswer: string;
   Level: number;
   LevelName: string;
@@ -22,8 +22,8 @@ type questionObj = {
 export const questionObj = {
   Content: "",
   ExerciseGroupID: 0,
-  SubjectID: null,
-  SubjectName: "",
+  CurriculumID: null,
+  CurriculumName: "",
   DescribeAnswer: "",
   Level: null,
   LevelName: "",

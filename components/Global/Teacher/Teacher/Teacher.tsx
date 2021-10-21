@@ -2,11 +2,10 @@ import { Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
-import { Info } from 'react-feather';
+import { Eye } from 'react-feather';
 import { areaApi, branchApi, districtApi, staffSalaryApi, teacherApi, userInformationApi, wardApi } from '~/apiBase';
-import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import SortBox from '~/components/Elements/SortBox';
-import PowerTable from '~/components/PowerTable';
+import ExpandTable from '~/components/ExpandTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { fmSelectArr } from '~/utils/functions';
@@ -42,7 +41,8 @@ const Teacher = () => {
 		AreaID: '',
 		FullNameUnicode: '',
 		fromDate: '',
-		toDate: ''
+		toDate: '',
+		StatusID: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
@@ -369,61 +369,34 @@ const Teacher = () => {
 			return res;
 		}
 	};
-	// DELETE
-	const onDeleteTeacher = (idx: number) => {
-		return async () => {
-			setIsLoading({
-				type: 'GET_ALL',
-				status: true
-			});
-			try {
-				const delObj = teacherList[idx];
-				const newDelObj = {
-					...delObj,
-					Branch: delObj['Branch'].map((o) => o.ID).join(','),
-					Enable: false
-				};
-				const res = await teacherApi.delete(newDelObj);
-				res.status === 200 && showNoti('success', res.data.message);
-				if (teacherList.length === 1) {
-					filters.pageIndex === 1
-						? (setFilters({
-								...listFieldInit,
-								...refValue.current,
-								pageIndex: 1
-						  }),
-						  setTeacherList([]))
-						: setFilters({
-								...filters,
-								...refValue.current,
-								pageIndex: filters.pageIndex - 1
-						  });
-					return;
-				}
-				fetchTeacherList();
-			} catch (error) {
-				showNoti('danger', error.message);
-			} finally {
-				setIsLoading({
-					type: 'GET_ALL',
-					status: false
-				});
-			}
-		};
-	};
 
 	const columns = [
 		{
-			title: 'Tỉnh/Thành phố',
-			dataIndex: 'AreaName',
-			...FilterColumn('AreaID', onSearch, onResetSearch, 'select', optionAreaSystemList.areaList),
-			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : ''
+			title: 'Mã giáo viên',
+			dataIndex: 'UserCode'
 		},
 		{
 			title: 'Họ và tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
-			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : ''
+			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Tên tiếng Trung',
+			dataIndex: 'ChineseName',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Tỉnh/TP',
+			dataIndex: 'AreaName',
+			...FilterColumn('AreaID', onSearch, onResetSearch, 'select', optionAreaSystemList.areaList),
+			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : ''
+		},
+		{
+			title: 'Giới tính',
+			dataIndex: 'Gender',
+			render: (genderID) => optionGenderList.find((o) => o.value === genderID).title
 		},
 		{
 			title: 'SĐT',
@@ -436,27 +409,28 @@ const Teacher = () => {
 		{
 			title: 'Ngày nhận việc',
 			dataIndex: 'Jobdate',
-			render: (date) => moment(date).format('DD/MM/YYYY')
+			render: (date) => date && moment(date).format('DD/MM/YYYY')
+		},
+		{
+			title: 'Facebook',
+			dataIndex: 'LinkFaceBook',
+			render: (link) =>
+				link && (
+					<a className="font-weight-black" href={link} target="_blank">
+						Link
+					</a>
+				)
 		},
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusID',
 			align: 'center',
-			filters: [
-				{
-					text: 'Hoạt động',
-					value: 0
-				},
-				{
-					text: 'Khóa',
-					value: 2
-				}
-			],
-			onFilter: (value, record) => record.StatusID === value,
+			...FilterColumn('StatusID', onSearch, onResetSearch, 'select', optionStatusList),
 			render: (status) => (status ? <span className="tag gray">Khóa</span> : <span className="tag green">Hoạt động</span>)
 		},
 
 		{
+			width: 100,
 			align: 'center',
 			render: (value, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
@@ -468,7 +442,7 @@ const Teacher = () => {
 					>
 						<Tooltip title="Xem giáo viên">
 							<a className="btn btn-icon">
-								<Info />
+								<Eye />
 							</a>
 						</Tooltip>
 					</Link>
@@ -487,11 +461,29 @@ const Teacher = () => {
 						optionBranchList={branchList}
 						handleFetchBranch={fetchBranchByAreaId}
 					/>
-					<DeleteTableRow handleDelete={onDeleteTeacher(idx)} text="giáo viên" />
 				</div>
 			)
 		}
 	];
+
+	const expandedRowRender = (item: ITeacher) => {
+		return (
+			<table className="tb-expand">
+				<thead>
+					<tr>
+						<th>Các trung tâm</th>
+					</tr>
+				</thead>
+				<tbody>
+					{item.Branch.map((s) => (
+						<tr>
+							<td>{s.BranchName}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		);
+	};
 
 	return (
 		<>
@@ -504,7 +496,7 @@ const Teacher = () => {
 				dataIDStaff={dataStaff[0]?.UserInformationID}
 				_onSubmit={(data: any) => saveSalary(data)}
 			/>
-			<PowerTable
+			<ExpandTable
 				currentPage={filters.pageIndex}
 				totalPage={totalPage}
 				getPagination={getPagination}
@@ -517,7 +509,6 @@ const Teacher = () => {
 					<TeacherForm
 						isClearForm={isClearForm}
 						isLoading={isLoading}
-						// optionAreaList={areaList}
 						optionAreaSystemList={optionAreaSystemList}
 						optionBranchList={branchList}
 						handleCreateTeacher={onCreateTeacher}
@@ -530,6 +521,7 @@ const Teacher = () => {
 						<SortBox handleSort={onSort} dataOption={sortOptionList} />
 					</div>
 				}
+				expandable={{ expandedRowRender }}
 			/>
 		</>
 	);

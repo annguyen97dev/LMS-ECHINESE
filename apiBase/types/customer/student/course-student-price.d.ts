@@ -1,4 +1,5 @@
 type ICourseOfStudentPrice = IBaseApi<{
+	ID: number;
 	Course: {
 		ID: number;
 		CourseName: string;
