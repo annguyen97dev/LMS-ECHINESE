@@ -1,23 +1,23 @@
-import {Image, Tooltip} from 'antd';
+import { Image, Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
-import React, {useEffect, useRef, useState} from 'react';
-import {File} from 'react-feather';
-import {branchApi, invoiceApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { File } from 'react-feather';
+import { branchApi, invoiceApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import InvoiceVoucherForm from '~/components/Global/Customer/Finance/InvoiceVoucher/InvoiceVoucherForm';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr, numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr, numberWithCommas } from '~/utils/functions';
 import InvoiceVoucherFilter from '../InvoiceVoucher/InvoiceVoucherFilter';
 
 function FinanceInvoice() {
 	const [invoiceList, setInvoiceList] = useState<IInvoice[]>([]);
-	const {showNoti} = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
@@ -27,50 +27,50 @@ function FinanceInvoice() {
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 1,
-			text: 'Tên giảm dần',
+			text: 'Tên giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 2,
-			text: 'Tên tăng dần ',
+			text: 'Tên tăng dần '
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 3,
-			text: 'Số tiền giảm dần',
+			text: 'Số tiền giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 4,
-			text: 'Số tiền tăng dần ',
-		},
+			text: 'Số tiền tăng dần '
+		}
 	];
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: -1,
 		sortType: false,
 
-		FullNameUnicode: null,
+		FullNameUnicode: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -82,7 +82,7 @@ function FinanceInvoice() {
 			pageIndex: 1,
 			...obj,
 			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
-			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
+			toDate: moment(obj.toDate).format('YYYY/MM/DD')
 		});
 	};
 	// PAGINATION
@@ -91,11 +91,11 @@ function FinanceInvoice() {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -103,11 +103,11 @@ function FinanceInvoice() {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -115,7 +115,7 @@ function FinanceInvoice() {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -125,7 +125,7 @@ function FinanceInvoice() {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 	// GET DATA TABLE
@@ -133,19 +133,22 @@ function FinanceInvoice() {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await invoiceApi.getAll(filters);
 			if (res.status === 200) {
 				setInvoiceList(res.data.data);
 				setTotalPage(res.data.totalRow);
 			}
+			if (res.status == 204) {
+				setInvoiceList([]);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -157,9 +160,9 @@ function FinanceInvoice() {
 		try {
 			setIsLoading({
 				type: 'FETCH_BRANCH',
-				status: true,
+				status: true
 			});
-			const res = await branchApi.getAll({selectAll: true});
+			const res = await branchApi.getAll({ selectAll: true });
 			if (res.status === 200) {
 				const fmOpTionBranch = fmSelectArr(res.data.data, 'BranchName', 'ID');
 				setOptionBranchList(fmOpTionBranch);
@@ -169,7 +172,7 @@ function FinanceInvoice() {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_BRANCH',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -178,19 +181,19 @@ function FinanceInvoice() {
 	}, []);
 
 	const onUpdateInvoice = (ID: number, idx: number) => {
-		return async (data: {Reason: string; Qrcode: string}) => {
+		return async (data: { Reason: string; Qrcode: string }) => {
 			try {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: true,
+					status: true
 				});
 				const res = await invoiceApi.update({
 					...data,
-					ID,
+					ID
 				});
 				if (res.status === 200) {
 					const newInvoiceList = [...invoiceList];
-					newInvoiceList.splice(idx, 1, {...newInvoiceList[idx], ...data});
+					newInvoiceList.splice(idx, 1, { ...newInvoiceList[idx], ...data });
 					setInvoiceList(newInvoiceList);
 					showNoti('success', 'Cập nhật thành công');
 					return true;
@@ -200,7 +203,7 @@ function FinanceInvoice() {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -212,38 +215,35 @@ function FinanceInvoice() {
 			dataIndex: 'FullNameUnicode',
 			render: (a) => <p className="font-weight-black">{a}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
-			className:
-				activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
+			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Trung tâm',
-			dataIndex: 'BranchName',
+			dataIndex: 'BranchName'
 		},
 		{
 			title: 'Số điện thoại',
-			dataIndex: 'Mobile',
+			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Số tiền',
 			dataIndex: 'Price',
 			render: (a) => {
 				return <p className="font-weight-black">{numberWithCommas(a)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Lý do',
-			dataIndex: 'Reason',
+			dataIndex: 'Reason'
 		},
 		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
-			render: (a) => <p>{moment(a).format('DD/MM/YYYY')}</p>,
+			render: (a) => <p>{moment(a).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'QR Code',
-			render: (record: IInvoice) => (
-				<>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</>
-			),
+			render: (record: IInvoice) => <>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</>
 		},
 		{
 			render: (record: IInvoice, _, idx) => (
@@ -257,9 +257,8 @@ function FinanceInvoice() {
 					/>
 					<Link
 						href={{
-							pathname:
-								'/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',
-							query: {slug: record.ID},
+							pathname: '/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',
+							query: { slug: record.ID }
 						}}
 					>
 						<Tooltip title="Xem phiếu thu">
@@ -269,8 +268,8 @@ function FinanceInvoice() {
 						</Tooltip>
 					</Link>
 				</>
-			),
-		},
+			)
+		}
 	];
 
 	return (
@@ -285,11 +284,7 @@ function FinanceInvoice() {
 			columns={columns}
 			Extra={
 				<div className="extra-table">
-					<InvoiceVoucherFilter
-						optionBranchList={optionBrachList}
-						handleFilter={onFilter}
-						handleResetFilter={onResetSearch}
-					/>
+					<InvoiceVoucherFilter optionBranchList={optionBrachList} handleFilter={onFilter} handleResetFilter={onResetSearch} />
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

@@ -121,20 +121,6 @@ const PackageSetResult = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemDetail, setItemDetail] = useState();
 
-	const listParamsDefault = {
-		pageSize: 10,
-		pageIndex: currentPage,
-		sort: null,
-		sortType: null,
-		fromDate: null,
-		toDate: null,
-		StudentID: null,
-		SetPackageDetailID: null,
-		isDone: null,
-		StudentName: null,
-		ExamTopicType: null
-	};
-
 	const sortOption = [
 		{
 			dataSort: {
@@ -243,8 +229,21 @@ const PackageSetResult = () => {
 		});
 	};
 
+	const { showNoti, pageSize } = useWrap();
+	const listParamsDefault = {
+		pageSize: pageSize,
+		pageIndex: currentPage,
+		sort: null,
+		sortType: null,
+		fromDate: null,
+		toDate: null,
+		StudentID: null,
+		SetPackageDetailID: null,
+		isDone: null,
+		StudentName: null,
+		ExamTopicType: null
+	};
 	const [params, setParams] = useState(listParamsDefault);
-	const { showNoti } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [packageSetResult, setPackageSetResult] = useState<ISetPackageResult[]>([]);
 	const [isLoading, setIsLoading] = useState({
@@ -265,7 +264,7 @@ const PackageSetResult = () => {
 
 	const getDataStudent = async () => {
 		try {
-			let res = await studentApi.getAll({ pageSize: 99999, pageIndex: 1 });
+			let res = await studentApi.getAll({ pageSize: pageSize, pageIndex: 1 });
 			if (res.status == 200) {
 				const newData = res.data.data.map((item) => ({
 					title: item.FullNameUnicode,
@@ -329,6 +328,7 @@ const PackageSetResult = () => {
 					showNoti('danger', 'Không tìm thấy dữ liệu!');
 					setCurrentPage(1);
 					setParams(listParamsDefault);
+					setPackageSetResult([]);
 				} else setTotalPage(res.data.totalRow);
 			} catch (error) {
 				showNoti('danger', error.message);

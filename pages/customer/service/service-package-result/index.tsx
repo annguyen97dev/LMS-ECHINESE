@@ -13,7 +13,7 @@ import FilterBase from "~/components/Elements/FilterBase/FilterBase";
 CustomerServiceResult.layout = LayoutBase;
 export default function CustomerServiceResult() {
   const [dataTable, setDataTable] = useState<IServiceCustomerExamResult[]>([]);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState({
     type: "",
@@ -21,7 +21,7 @@ export default function CustomerServiceResult() {
   });
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeColumnSearch, setActiveColumnSearch] = useState('');
+  const [activeColumnSearch, setActiveColumnSearch] = useState("");
   const [dataFilter, setDataFilter] = useState([
     {
       name: "date-range",
@@ -67,7 +67,7 @@ export default function CustomerServiceResult() {
 
   // PARAMS API GETALL
   const listTodoApi = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: pageIndex,
     sort: null,
     sortType: null,
@@ -86,6 +86,7 @@ export default function CustomerServiceResult() {
         let res = await serviceCustomerExamResultApi.getAll(todoApi);
         if (res.status == 204) {
           showNoti("danger", "Không có dữ liệu");
+          setDataTable([]);
         }
         if (res.status == 200) {
           setDataTable(res.data.data);
@@ -132,7 +133,7 @@ export default function CustomerServiceResult() {
 
   // HANDLE RESET
   const handleReset = () => {
-    setActiveColumnSearch('');
+    setActiveColumnSearch("");
     setTodoApi({
       ...listTodoApi,
       pageIndex: 1,
@@ -156,17 +157,17 @@ export default function CustomerServiceResult() {
     setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
   };
   // PAGINATION
-	const getPagination = (pageNumber: number, pageSize: number) => {
-		if (!pageSize) pageSize = 10;
-		pageIndex = pageNumber;
-		setCurrentPage(pageNumber);
-		setTodoApi({
-		  ...todoApi,
-		//   ...listFieldSearch,
-		  pageIndex: pageIndex,
-		  pageSize: pageSize
-		});
-	};
+  const getPagination = (pageNumber: number, pageSize: number) => {
+    if (!pageSize) pageSize = 10;
+    pageIndex = pageNumber;
+    setCurrentPage(pageNumber);
+    setTodoApi({
+      ...todoApi,
+      //   ...listFieldSearch,
+      pageIndex: pageIndex,
+      pageSize: pageSize,
+    });
+  };
   // HANDLE SORT
   const handleSort = async (option) => {
     console.log("Show option: ", option);
@@ -210,7 +211,10 @@ export default function CustomerServiceResult() {
     {
       title: "Họ và tên",
       dataIndex: "FullNameUnicode",
-      className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
+      className:
+        activeColumnSearch === "UserInformationID"
+          ? "active-column-search"
+          : "",
       render: (a) => <p className="font-weight-blue">{a}</p>,
     },
     {

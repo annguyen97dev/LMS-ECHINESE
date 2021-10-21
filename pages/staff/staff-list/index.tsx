@@ -69,19 +69,6 @@ let listFieldFilter = {
 	StatusID: null
 };
 
-const listTodoApi = {
-	pageSize: 10,
-	pageIndex: pageIndex,
-	sort: null,
-	sortType: null,
-	fromDate: null,
-	toDate: null,
-	FullNameUnicode: null,
-	RoleID: null,
-	BranchID: null,
-	AreaID: null
-};
-
 const dataOption = [
 	{
 		dataSort: {
@@ -189,7 +176,19 @@ const StaffList = () => {
 	const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
 	const [dataArea, setDataArea] = useState<IArea[]>([]);
 	const [dataSource, setDataSource] = useState<IStaff[]>([]);
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
+	const listTodoApi = {
+		pageSize: pageSize,
+		pageIndex: pageIndex,
+		sort: null,
+		sortType: null,
+		fromDate: null,
+		toDate: null,
+		FullNameUnicode: null,
+		RoleID: null,
+		BranchID: null,
+		AreaID: null
+	};
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -375,7 +374,7 @@ const StaffList = () => {
 		try {
 			let res = await staffApi.getAll(todoApi);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
+			res.status == 204 && showNoti('danger', 'Không có dữ liệu') && setDataSource([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {

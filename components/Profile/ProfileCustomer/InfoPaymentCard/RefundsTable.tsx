@@ -16,7 +16,7 @@ RefundsTable.defaultProps = {
 };
 function RefundsTable(props) {
 	const { studentID } = props;
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: null,
 		status: false
@@ -27,10 +27,9 @@ function RefundsTable(props) {
 
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: -1,
 		sortType: false,
-
 		UserInformationID: studentID
 	};
 	let refValue = useRef({
@@ -65,6 +64,9 @@ function RefundsTable(props) {
 			if (res.status === 200) {
 				setRefundList(res.data.data);
 				setTotalPage(res.data.totalRow);
+			}
+			if (res.status == 204) {
+				setRefundList([]);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

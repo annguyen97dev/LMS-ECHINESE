@@ -85,9 +85,9 @@ const StudentCourseReserve = () => {
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { showNoti, pageSize } = useWrap();
   const listParamsDefault = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: currentPage,
     sort: null,
     sortType: null,
@@ -171,7 +171,6 @@ const StudentCourseReserve = () => {
   };
 
   const [params, setParams] = useState(listParamsDefault);
-  const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
   const [studentCourseReserve, setStudentCourseReserve] = useState<
     ICourseReserve[]
@@ -256,6 +255,7 @@ const StudentCourseReserve = () => {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
           setParams(listParamsDefault);
+          setStudentCourseReserve([]);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);

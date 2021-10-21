@@ -18,15 +18,6 @@ let listFieldSearch = {
   GradeName: null,
 };
 
-const listTodoApi = {
-  pageSize: 10,
-  pageIndex: pageIndex,
-  sort: null,
-  sortType: null,
-  GradeCode: null,
-  GradeName: null,
-};
-
 const dataOption = [
   {
     dataSort: {
@@ -47,7 +38,7 @@ const dataOption = [
 const Grade = () => {
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<IGrade[]>([]);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -55,6 +46,14 @@ const Grade = () => {
   const [totalPage, setTotalPage] = useState(null);
   const [indexRow, setIndexRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const listTodoApi = {
+    pageSize: pageSize,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    GradeCode: null,
+    GradeName: null,
+  };
   const [todoApi, setTodoApi] = useState(listTodoApi);
 
   // GET DATA SOURCE
@@ -70,7 +69,9 @@ const Grade = () => {
         (setDataSource(res.data.data),
         setTotalPage(res.data.totalRow),
         showNoti("success", "Thành công"));
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+      res.status == 204 &&
+        showNoti("danger", "Không có dữ liệu") &&
+        setDataSource([]);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {

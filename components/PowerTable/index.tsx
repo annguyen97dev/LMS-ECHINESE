@@ -36,6 +36,11 @@ const PowerTable = React.memo((props: any) => {
     hideSelectAll: true,
   };
 
+  const onShowSizeChange = (current, size) => {
+    console.log("Curren: ", current);
+    console.log("Size: ", size);
+  };
+
   useEffect(() => {
     if (props.TitlePage) {
       getTitlePage(props.TitlePage);
@@ -74,6 +79,9 @@ const PowerTable = React.memo((props: any) => {
                 dataSource={dataSource}
                 size="middle"
                 pagination={{
+                  pageSize: 30,
+                  pageSizeOptions: ["30"],
+                  onShowSizeChange: onShowSizeChange,
                   total: props.totalPage && props.totalPage,
                   onChange: (pageNumber, pageSize) =>
                     changePagination(pageNumber, pageSize),

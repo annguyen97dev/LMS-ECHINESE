@@ -21,19 +21,6 @@ let listFieldSearch = {
 	ProgramName: null
 };
 
-const listTodoApi = {
-	pageSize: 10,
-	pageIndex: pageIndex,
-	sort: null,
-	sortType: null,
-	ProgramCode: null,
-	ProgramName: null,
-	Type: null,
-	Level: null,
-	fromDate: null,
-	toDate: null
-};
-
 const dataOption = [
 	{
 		dataSort: {
@@ -71,7 +58,7 @@ const Programs = () => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IProgram[]>([]);
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -79,6 +66,19 @@ const Programs = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
+
+	const listTodoApi = {
+		pageSize: pageSize,
+		pageIndex: pageIndex,
+		sort: null,
+		sortType: null,
+		ProgramCode: null,
+		ProgramName: null,
+		Type: null,
+		Level: null,
+		fromDate: null,
+		toDate: null
+	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
 	// GET DATA SOURCE
@@ -96,7 +96,7 @@ const Programs = () => {
 				setDataLevel(res.data.listLevel),
 				showNoti('success', res.data.message));
 
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
+			res.status == 204 && showNoti('danger', 'Không có dữ liệu') && setDataSource([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {

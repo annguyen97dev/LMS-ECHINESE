@@ -26,11 +26,11 @@ function InfoTestCard(props) {
 				type: 'GET_ALL',
 				status: true
 			});
-			const res = await examAppointmentResultApi.getAll({
-				UserInformationID: studentID
-			});
+			const res = await examAppointmentResultApi.getById(studentID);
 			if (res.status === 200) {
-				setExam(res.data.data);
+				setExam([res.data.data]);
+			} else if (res.status === 204) {
+				setExam([]);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

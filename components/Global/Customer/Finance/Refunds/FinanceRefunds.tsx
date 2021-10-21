@@ -1,22 +1,22 @@
 import moment from 'moment';
-import React, {useEffect, useRef, useState} from 'react';
-import {Check} from 'react-feather';
-import {branchApi, refundsApi, voucherApi} from '~/apiBase';
-import {ExpandRefundRow} from '~/components/Elements/ExpandBox';
+import React, { useEffect, useRef, useState } from 'react';
+import { Check } from 'react-feather';
+import { branchApi, refundsApi, voucherApi } from '~/apiBase';
+import { ExpandRefundRow } from '~/components/Elements/ExpandBox';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
 import RefundForm from '~/components/Global/Customer/Finance/Refunds/RefundsForm';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr, numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr, numberWithCommas } from '~/utils/functions';
 import InvoiceVoucherFilter from '../InvoiceVoucher/InvoiceVoucherFilter';
 
 const FinanceRefund = () => {
 	const [refundList, setRefundList] = useState<IRefunds[]>([]);
-	const {showNoti} = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	const [totalPage, setTotalPage] = useState(null);
@@ -26,68 +26,68 @@ const FinanceRefund = () => {
 	const optionStatusList = [
 		{
 			title: 'Chờ duyệt',
-			value: 1,
+			value: 1
 		},
 		{
 			title: 'Đã duyệt',
-			value: 2,
+			value: 2
 		},
 		{
 			title: 'Không duyệt',
-			value: 3,
-		},
+			value: 3
+		}
 	];
 	// SORT
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 1,
-			text: 'Tên giảm dần',
+			text: 'Tên giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 2,
-			text: 'Tên tăng dần ',
+			text: 'Tên tăng dần '
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 3,
-			text: 'Số tiền giảm dần',
+			text: 'Số tiền giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 4,
-			text: 'Số tiền tăng dần ',
-		},
+			text: 'Số tiền tăng dần '
+		}
 	];
 
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: -1,
 		sortType: false,
 
 		FullNameUnicode: null,
-		StatusID: null,
+		StatusID: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -99,32 +99,32 @@ const FinanceRefund = () => {
 			pageIndex: 1,
 			...obj,
 			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
-			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
+			toDate: moment(obj.toDate).format('YYYY/MM/DD')
 		});
 	};
-  // PAGINATION
-  const getPagination = (pageIndex: number, pageSize: number) => {
-    if (!pageSize) pageSize = 10;
-    refValue.current = {
-      ...refValue.current,
-      pageSize,
-      pageIndex,
-    };
-    setFilters({
-      ...filters,
-      ...refValue.current,
-    });
-  };
+	// PAGINATION
+	const getPagination = (pageIndex: number, pageSize: number) => {
+		if (!pageSize) pageSize = 10;
+		refValue.current = {
+			...refValue.current,
+			pageSize,
+			pageIndex
+		};
+		setFilters({
+			...filters,
+			...refValue.current
+		});
+	};
 	// SORT
 	const onSort = (option) => {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -132,7 +132,7 @@ const FinanceRefund = () => {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -142,7 +142,7 @@ const FinanceRefund = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 
@@ -151,19 +151,22 @@ const FinanceRefund = () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			let res = await refundsApi.getAll(filters);
 			if (res.status === 200) {
 				setRefundList(res.data.data);
 				setTotalPage(res.data.totalRow);
 			}
+			if (res.status == 204) {
+				setRefundList([]);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -175,15 +178,11 @@ const FinanceRefund = () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
-			const res = await branchApi.getAll({pageIndex: 1, pageSize: 9999});
+			const res = await branchApi.getAll({ pageIndex: 1, pageSize: 9999 });
 			if (res.status === 200) {
-				const fmOpTionBranchList = fmSelectArr(
-					res.data.data,
-					'BranchName',
-					'ID'
-				);
+				const fmOpTionBranchList = fmSelectArr(res.data.data, 'BranchName', 'ID');
 				setOptionBranchList(fmOpTionBranchList);
 			}
 		} catch (error) {
@@ -191,7 +190,7 @@ const FinanceRefund = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -200,16 +199,16 @@ const FinanceRefund = () => {
 	}, []);
 
 	const onUpdateRefund = (ID: number, idx: number) => {
-		return async (data: {StatusID: number}) => {
+		return async (data: { StatusID: number }) => {
 			try {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: true,
+					status: true
 				});
-				const {StatusID} = data;
+				const { StatusID } = data;
 				const newRefund = {
 					StatusID,
-					ID,
+					ID
 				};
 				const res = await refundsApi.update(newRefund);
 				if (res.status === 200) {
@@ -217,8 +216,7 @@ const FinanceRefund = () => {
 					newRefundList.splice(idx, 1, {
 						...newRefundList[idx],
 						StatusID,
-						StatusName: optionStatusList.find((s) => s.value === StatusID)
-							.title,
+						StatusName: optionStatusList.find((s) => s.value === StatusID).title
 					});
 					setRefundList(newRefundList);
 					showNoti('success', 'Cập nhật thành công');
@@ -229,7 +227,7 @@ const FinanceRefund = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -240,24 +238,23 @@ const FinanceRefund = () => {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
-			className:
-				activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
-			render: (name) => <p className="font-weight-black">{name}</p>,
+			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
+			render: (name) => <p className="font-weight-black">{name}</p>
 		},
 		{
 			title: 'Trung tâm',
-			dataIndex: 'BranchName',
+			dataIndex: 'BranchName'
 		},
 		{
 			title: 'Số điện thoại',
-			dataIndex: 'Mobile',
+			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Số tiền',
 			dataIndex: 'Price',
 			render: (Price) => {
 				return <p className="font-weight-blue">{numberWithCommas(Price)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Trạng thái',
@@ -274,13 +271,7 @@ const FinanceRefund = () => {
 						break;
 				}
 			},
-			...FilterColumn(
-				'StatusID',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionStatusList
-			),
+			...FilterColumn('StatusID', onSearch, onResetSearch, 'select', optionStatusList)
 		},
 		{
 			title: 'Xóa khỏi lớp',
@@ -288,7 +279,7 @@ const FinanceRefund = () => {
 			align: 'center',
 			render: (isExpulsion) => {
 				return <p>{isExpulsion ? <Check color="#0da779" /> : ''}</p>;
-			},
+			}
 		},
 		{
 			title: '',
@@ -300,8 +291,8 @@ const FinanceRefund = () => {
 					optionStatusList={optionStatusList}
 					handleSubmit={onUpdateRefund(record.ID, idx)}
 				/>
-			),
-		},
+			)
+		}
 	];
 
 	//
@@ -309,10 +300,10 @@ const FinanceRefund = () => {
 		try {
 			setIsLoading({
 				type: 'FETCH_INFO_VOUCHER',
-				status: true,
+				status: true
 			});
 			const res = await voucherApi.getAll({
-				RefundsID: ID,
+				RefundsID: ID
 			});
 			if (res.status === 200) {
 				setInfoVoucherList(res.data.data);
@@ -325,25 +316,20 @@ const FinanceRefund = () => {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_INFO_VOUCHER',
-				status: false,
+				status: false
 			});
 		}
 	};
 
 	const expandableObj = {
 		expandedRowRender: (record) => (
-			<ExpandRefundRow
-				isLoading={isLoading}
-				key={record.ID}
-				dataRow={record}
-				infoVoucherList={infoVoucherList}
-			/>
+			<ExpandRefundRow isLoading={isLoading} key={record.ID} dataRow={record} infoVoucherList={infoVoucherList} />
 		),
 		onExpand: (expanded, record) => {
 			if (expanded) {
 				fetchInfoVoucherList(record.ID);
 			}
-		},
+		}
 	};
 
 	return (
@@ -359,11 +345,7 @@ const FinanceRefund = () => {
 			expandable={expandableObj}
 			Extra={
 				<div className="extra-table">
-					<InvoiceVoucherFilter
-						optionBranchList={optionBrachList}
-						handleFilter={onFilter}
-						handleResetFilter={onResetSearch}
-					/>
+					<InvoiceVoucherFilter optionBranchList={optionBrachList} handleFilter={onFilter} handleResetFilter={onResetSearch} />
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

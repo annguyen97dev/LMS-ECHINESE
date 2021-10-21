@@ -19,15 +19,6 @@ let listFieldSearch = {
 	branchName: null
 };
 
-const listTodoApi = {
-	pageSize: 10,
-	pageIndex: pageIndex,
-	sort: null,
-	sortType: null,
-	branchCode: null,
-	branchName: null
-};
-
 const dataOption = [
 	{
 		dataSort: {
@@ -65,12 +56,20 @@ const Center = () => {
 		type: '',
 		status: false
 	});
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [dataArea, setDataArea] = useState<IArea[]>(null);
+	const listTodoApi = {
+		pageSize: pageSize,
+		pageIndex: pageIndex,
+		sort: null,
+		sortType: null,
+		branchCode: null,
+		branchName: null
+	};
+	const [todoApi, setTodoApi] = useState(listTodoApi);
 
 	// -------------- GET DATA CENTER ----------------
 	const getDataCenter = async () => {
@@ -82,7 +81,7 @@ const Center = () => {
 		try {
 			let res = await branchApi.getAll(todoApi);
 			res.status == 200 && (setCenter(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
+			res.status == 204 && showNoti('danger', 'Không có dữ liệu') && setCenter([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {

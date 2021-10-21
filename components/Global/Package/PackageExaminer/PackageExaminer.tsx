@@ -17,7 +17,7 @@ function PackageExaminer() {
     status: false,
   });
   const [totalPage, setTotalPage] = useState(null);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [activeColumnSearch, setActiveColumnSearch] = useState("");
   // SORT OPTION
   const sortOptionList = [
@@ -57,7 +57,7 @@ function PackageExaminer() {
   // FILTER
   const listFieldInit = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: pageSize,
     sort: -1,
     sortType: false,
 
@@ -125,6 +125,9 @@ function PackageExaminer() {
       if (res.status === 200) {
         setTeacherList(res.data.data);
       }
+      if (res.status === 204) {
+        setTeacherList([]);
+      }
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
@@ -147,6 +150,9 @@ function PackageExaminer() {
       if (res.status === 200) {
         setExaminerList(res.data.data);
         setTotalPage(res.data.totalRow);
+      }
+      if (res.status === 204) {
+        setExaminerList([]);
       }
     } catch (error) {
       showNoti("danger", error.message);
