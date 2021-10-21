@@ -6,8 +6,10 @@ import ReactHtmlParser, {
 } from "react-html-parser";
 import { Checkbox } from "antd";
 import { useDoingTest } from "~/context/useDoingTest";
+import { useDoneTest } from "~/context/useDoneTest";
 
 const MapList = (props) => {
+  const { doneTestData } = useDoneTest();
   const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
   const {
     activeID,
@@ -32,63 +34,72 @@ const MapList = (props) => {
 
   // ---- ALL ACTION IN DOING TEST ----
   const onChange_selectAnswer = (dataAns, quesID) => {
-    getActiveID(quesID);
-    getListPicked(quesID);
-    let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
-      indexQuestion
-    ].SetPackageExerciseStudentInfoList.findIndex(
-      (item) => item.ExerciseID === quesID
-    );
+    if (!doneTestData) {
+      if (isDoingTest) {
+        getActiveID(quesID);
+        getListPicked(quesID);
+        let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
+          indexQuestion
+        ].SetPackageExerciseStudentInfoList.findIndex(
+          (item) => item.ExerciseID === quesID
+        );
 
-    // Remove all data in list answer (because this single question)
-    packageResult.SetPackageResultDetailInfoList[
-      indexQuestion
-    ].SetPackageExerciseStudentInfoList[
-      indexQuestionDetail
-    ].SetPackageExerciseAnswerStudentList = [];
+        // Remove all data in list answer (because this single question)
+        packageResult.SetPackageResultDetailInfoList[
+          indexQuestion
+        ].SetPackageExerciseStudentInfoList[
+          indexQuestionDetail
+        ].SetPackageExerciseAnswerStudentList = [];
 
-    // Add new answer to list
-    packageResult.SetPackageResultDetailInfoList[
-      indexQuestion
-    ].SetPackageExerciseStudentInfoList[
-      indexQuestionDetail
-    ].SetPackageExerciseAnswerStudentList.push({
-      AnswerID: dataAns.ID,
-      AnswerContent: dataAns.AnswerContent,
-      FileAudio: "",
-    });
+        // Add new answer to list
+        packageResult.SetPackageResultDetailInfoList[
+          indexQuestion
+        ].SetPackageExerciseStudentInfoList[
+          indexQuestionDetail
+        ].SetPackageExerciseAnswerStudentList.push({
+          AnswerID: dataAns.ID,
+          AnswerContent: dataAns.AnswerContent,
+          FileAudio: "",
+        });
 
-    getPackageResult({ ...packageResult });
+        getPackageResult({ ...packageResult });
+      }
+    }
   };
 
   const returnChecked = (ansID, quesID) => {
-    let checked = false;
+    if (!doneTestData) {
+      if (isDoingTest) {
+        let checked = false;
 
-    // Find Index
-    let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
-      (item) => item.ExamTopicDetailID === dataQuestion.ID
-    );
+        // Find Index
+        let indexQuestion =
+          packageResult.SetPackageResultDetailInfoList.findIndex(
+            (item) => item.ExamTopicDetailID === dataQuestion.ID
+          );
 
-    let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
-      indexQuestion
-    ].SetPackageExerciseStudentInfoList.findIndex(
-      (item) => item.ExerciseID === quesID
-    );
+        let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
+          indexQuestion
+        ].SetPackageExerciseStudentInfoList.findIndex(
+          (item) => item.ExerciseID === quesID
+        );
 
-    // Find anh return checked
-    if (
-      packageResult.SetPackageResultDetailInfoList[
-        indexQuestion
-      ].SetPackageExerciseStudentInfoList[
-        indexQuestionDetail
-      ].SetPackageExerciseAnswerStudentList.some(
-        (object) => object["AnswerID"] === ansID
-      )
-    ) {
-      checked = true;
+        // Find anh return checked
+        if (
+          packageResult.SetPackageResultDetailInfoList[
+            indexQuestion
+          ].SetPackageExerciseStudentInfoList[
+            indexQuestionDetail
+          ].SetPackageExerciseAnswerStudentList.some(
+            (object) => object["AnswerID"] === ansID
+          )
+        ) {
+          checked = true;
+        }
+
+        return checked;
+      }
     }
-
-    return checked;
   };
 
   return (

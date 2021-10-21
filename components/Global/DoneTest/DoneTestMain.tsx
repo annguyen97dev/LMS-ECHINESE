@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { doneTestApi } from "~/apiBase/done-test/dont-test";
 import { useWrap } from "~/context/wrap";
 import { useDoneTest } from "~/context/useDoneTest";
-import { Card } from "antd";
+import { Card, Skeleton, Table } from "antd";
 import PowerTable from "~/components/PowerTable";
 import TitlePage from "~/components/TitlePage";
 import ReactHtmlParser, {
@@ -11,12 +11,15 @@ import ReactHtmlParser, {
   convertNodeToElement,
   htmlparser2,
 } from "react-html-parser";
+import { doingTestApi } from "~/apiBase";
+import { ProfileOutlined } from "@ant-design/icons";
+import MainTest from "../DoingTest/MainTest";
 
 type convertData = {
   key: number;
 
-  yourAnswer: string;
-  correctAnswer: string;
+  yourAnswer: Array<string>;
+  correctAnswer: Array<string>;
   question: string;
   isResult: boolean;
 };
@@ -27,55 +30,99 @@ const DoneTestMain = () => {
   const SetPackageResultID = router.query.SetPackageResultID as string;
   const { getDoneTestData } = useDoneTest();
   const [dataResultTest, setDataResultTest] = useState<convertData[]>([]);
-  const [isLoading, setIsLoading] = useState({
-    type: "",
-    status: false,
-  });
+  const [isLoading, setIsLoading] = useState(false);
   const [listQuestionID, setListQuestionID] = useState([]); // Lấy tất cả ID đã có
   const [listGroupID, setListGroupID] = useState([]); // Lấy tất cả group ID đã có
+  const [state, setState] = useState({ selectedRowKeys: [] });
+  const [infoTest, setInfoTest] = useState(null);
+  const [loadingInfoTest, setLoadingInfoTest] = useState(false);
+  const [dataDoneTest, setDataDoneTest] = useState([]);
+  const [showMainTest, setShowMainTest] = useState(false);
+
+  // console.log("Data Result Test: ", dataResultTest);
+  // console.log("List question ID: ", listQuestionID);
+  // console.log("Get info test: ", infoTest);
+  // console.log("Data Done Test: ", dataDoneTest);
 
   const columns = [
     {
       title: "",
       dataIndex: "",
       key: "number",
-      render: (text, data, index) => <>{index + 1 + "/"}</>,
+      width: "5%",
+      render: (text, data, index) => (
+        <p className="font-weight-black">{index + 1 + "/"}</p>
+      ),
     },
     {
       title: "Câu hỏi",
       dataIndex: "question",
       key: "number",
-      render: (text) => <>{ReactHtmlParser(text)}</>,
+      width: "30%",
+      render: (text) => (
+        <p className="font-weight-black">{ReactHtmlParser(text)}</p>
+      ),
     },
     {
       title: "Câu trả lời của bạn",
       dataIndex: "yourAnswer",
       key: "yourAnswer",
+      render: (text, data) => {
+        return text.map((item) => (
+          <p
+            style={{
+              fontWeight: 500,
+              color: data.isResult ? "#005c25" : "#b20027",
+            }}
+          >
+            {item}
+          </p>
+        ));
+      },
     },
     {
       title: "Đáp án",
       dataIndex: "correctAnswer",
       key: "correctAnswer",
+      render: (text, data, index) => {
+        return (
+          <>
+            {text.map((item) => (
+              <p className="d-block mb-0 font-weight-black">{item}</p>
+            ))}
+          </>
+        );
+      },
     },
   ];
 
-  console.log("Data Result Test: ", dataResultTest);
-  console.log("List question ID: ", listQuestionID);
+  const getInfoTest = async () => {
+    setLoadingInfoTest(true);
+    try {
+      let res = await doingTestApi.getByID(SetPackageResultID);
+      if (res.status === 200) {
+        setInfoTest(res.data.data);
+      }
+    } catch (error) {
+      showNoti("danger", error.message);
+    } finally {
+      setLoadingInfoTest(false);
+    }
+  };
 
   const getDataResultTest = async () => {
     let cloneListQuestionID = [...listQuestionID];
     let cloneListGroupID = [...listGroupID];
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
-    });
+    setIsLoading(true);
     try {
       let res = await doneTestApi.getAll({
         selectAll: true,
         SetPackageResultID: parseInt(SetPackageResultID),
       });
       if (res.status === 200) {
-        convertData(res.data.data);
+        convertDataDoneTest(res.data.data); // Convert data thích hợp với view show chi tiết shot câu hỏi & đáp án
+        convertDataResult(res.data.data); // Convert data thích hợp với table
+        setDataDoneTest(res.data.data);
         // Add questionid to list
         res.data.data.forEach((item, index) => {
           if (item.Enable) {
@@ -86,6 +133,9 @@ const DoneTestMain = () => {
             });
           }
         });
+
+        // ----- //
+
         getDoneTestData(res.data.data);
         setListGroupID([...cloneListGroupID]);
         setListQuestionID([...cloneListQuestionID]);
@@ -93,40 +143,47 @@ const DoneTestMain = () => {
     } catch (error) {
       showNoti("danger", error.message);
     } finally {
-      setIsLoading({
-        type: "GET_ALL",
-        status: false,
-      });
+      setIsLoading(false);
     }
   };
 
-  const convertData = (data) => {
-    const returnCorrectAnswer = (dataReturn) => {
-      let text = "";
+  const convertDataDoneTest = (data) => {
+    let cloneData = [...data];
+    cloneData.forEach((item) => {
+      item.ExerciseTopic = [...item.SetPackageExerciseStudent];
+      item.ExerciseTopic.forEach((ques) => {
+        ques.ExerciseAnswer = [...ques.SetPackageExerciseAnswerStudent];
+      });
+    });
 
-      dataReturn.SetPackageExerciseAnswerStudent.every((item) => {
+    setDataDoneTest([...cloneData]);
+  };
+
+  const convertDataResult = (data) => {
+    // Retung correct answer
+    const returnCorrectAnswer = (dataReturn) => {
+      let listAns = [];
+
+      dataReturn.SetPackageExerciseAnswerStudent.forEach((item) => {
         if (item.isTrue) {
-          text = item.ExerciseAnswerContent;
-          return false;
+          listAns.push(item.ExerciseAnswerContent);
         }
-        return true;
       });
 
-      return text;
+      return listAns;
     };
 
+    // return your answer
     const returnYourAnswer = (dataReturn) => {
-      let text = "";
+      let listAns = [];
 
-      dataReturn.SetPackageExerciseAnswerStudent.every((item) => {
+      dataReturn.SetPackageExerciseAnswerStudent.forEach((item) => {
         if (item.AnswerID !== 0) {
-          text = item.AnswerContent;
-          return false;
+          listAns.push(item.AnswerContent);
         }
-        return true;
       });
 
-      return text;
+      return listAns;
     };
 
     data.forEach((item) => {
@@ -144,32 +201,95 @@ const DoneTestMain = () => {
     setDataResultTest([...dataResultTest]);
   };
 
+  // ---- TABLE ----
+  const onSelectedRowKeysChange = (selectedRowKeys) => {
+    setState({ selectedRowKeys });
+  };
+
+  const rowSelection = {
+    selectedRowKeys: state.selectedRowKeys,
+    onChange: onSelectedRowKeysChange,
+    hideSelectAll: true,
+  };
+
   useEffect(() => {
     getDataResultTest();
+    getInfoTest();
   }, []);
 
   return (
     <div className="done-test-card">
+      {showMainTest && (
+        <MainTest
+          dataDoneTest={dataDoneTest}
+          isDone={true}
+          listIDFromDoneTest={listQuestionID}
+          listGroupIDFromDoneTest={listGroupID}
+        />
+      )}
       <TitlePage title="Kết quả làm bài" />
-      <Card title="Kết quả làm bài">
+      <Card
+        title="Kết quả làm bài"
+        extra={
+          <>
+            <button
+              className="btn btn-warning with-icon"
+              onClick={() => setShowMainTest(true)}
+            >
+              <ProfileOutlined />
+              Xem chi tiết
+            </button>
+          </>
+        }
+      >
         <div className="wrap-box-info">
           <div className="box-info">
             <div className="box-info__item box-info__score">
               Số điểm
-              <span className="number">10</span>
+              <span className="number">
+                {loadingInfoTest ? (
+                  <Skeleton
+                    paragraph={false}
+                    loading={true}
+                    title={true}
+                    active
+                  />
+                ) : (
+                  infoTest?.PointTotal
+                )}
+              </span>
             </div>
             <div className="box-info__item box-info__correct">
               Số câu đúng
-              <span className="number">10.10</span>
+              <span className="number">
+                {loadingInfoTest ? (
+                  <Skeleton
+                    paragraph={false}
+                    loading={true}
+                    title={true}
+                    active
+                  />
+                ) : (
+                  infoTest?.ReadingCorrect + infoTest?.ListeningCorrect
+                )}
+              </span>
             </div>
           </div>
         </div>
         <div className="done-test-table">
-          <PowerTable
-            dataSource={dataResultTest}
-            columns={columns}
-            loading={isLoading}
-          />
+          <div className="wrap-table">
+            <Card>
+              <Table
+                loading={isLoading}
+                pagination={{ pageSize: 200 }}
+                rowSelection={rowSelection}
+                dataSource={dataResultTest}
+                columns={columns}
+                size="middle"
+                scroll={{ x: "max-content" }}
+              />
+            </Card>
+          </div>
         </div>
       </Card>
     </div>

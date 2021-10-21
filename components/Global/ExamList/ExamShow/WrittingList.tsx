@@ -12,6 +12,7 @@ import { useWrap } from "~/context/wrap";
 import EditPoint from "../ExamForm/EditPoint";
 import ChangePosition from "../ExamForm/ChangePosition";
 import { useDoingTest } from "~/context/useDoingTest";
+import { useDoneTest } from "~/context/useDoneTest";
 import EditorSimple from "~/components/Elements/EditorSimple";
 
 // ---- COMPONENT CHILDREN ----
@@ -96,6 +97,7 @@ const WrittingModal = (props) => {
 
 // ---- COMPONENT PARENT ----
 const WrittingList = (props) => {
+  const { doneTestData } = useDoneTest();
   const { onDeleteQuestion } = useExamDetail();
   const { activeID, packageResult, getPackageResult, getListPicked } =
     useDoingTest();
@@ -204,22 +206,24 @@ const WrittingList = (props) => {
   };
 
   useEffect(() => {
-    if (isDoingTest) {
-      // Find index
-      let indexQuestion =
-        packageResult.SetPackageResultDetailInfoList.findIndex(
-          (item) => item.ExamTopicDetailID === dataQuestion.ID
-        );
-      if (
-        packageResult.SetPackageResultDetailInfoList[indexQuestion]
-          .SetPackageExerciseStudentInfoList[0]
-          .SetPackageExerciseAnswerStudentList.length > 0
-      ) {
-        setContentOfStudent(
+    if (!doneTestData) {
+      if (isDoingTest) {
+        // Find index
+        let indexQuestion =
+          packageResult.SetPackageResultDetailInfoList.findIndex(
+            (item) => item.ExamTopicDetailID === dataQuestion.ID
+          );
+        if (
           packageResult.SetPackageResultDetailInfoList[indexQuestion]
             .SetPackageExerciseStudentInfoList[0]
-            .SetPackageExerciseAnswerStudentList[0].AnswerContent
-        );
+            .SetPackageExerciseAnswerStudentList.length > 0
+        ) {
+          setContentOfStudent(
+            packageResult.SetPackageResultDetailInfoList[indexQuestion]
+              .SetPackageExerciseStudentInfoList[0]
+              .SetPackageExerciseAnswerStudentList[0].AnswerContent
+          );
+        }
       }
     }
   }, [activeID]);

@@ -65,7 +65,7 @@ const DoneTestContext = createContext<IProps>({
 export const DoneTestProvider = ({ children }) => {
   const [doneTestData, setDoneTestData] = useState<doneTestData[]>(null);
 
-  console.log("Done Test Data: ", doneTestData);
+  // console.log("Done Test Data: ", doneTestData);
 
   const getDoneTestData = (data) => {
     setDoneTestData(data);

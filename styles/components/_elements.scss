@@ -74,6 +74,15 @@
     align-items: center;
     margin-left: 15px;
   }
+
+  &.with-icon {
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 5px;
+    }
+  }
 }
 
 .btn.add-new {

@@ -12,9 +12,11 @@ import { useWrap } from "~/context/wrap";
 import EditPoint from "../ExamForm/EditPoint";
 import ChangePosition from "../ExamForm/ChangePosition";
 import { useDoingTest } from "~/context/useDoingTest";
+import { useDoneTest } from "~/context/useDoneTest";
 
 const MultipleList = (props) => {
   const { onDeleteQuestion } = useExamDetail();
+  const { doneTestData } = useDoneTest();
   const { showNoti } = useWrap();
   const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -91,33 +93,36 @@ const MultipleList = (props) => {
   // ----------- ALL ACTION IN DOINGTEST -------------
 
   const returnChecked = (ansID, quesID) => {
-    let checked = false;
+    if (!doneTestData) {
+      let checked = false;
 
-    // Find Index
-    let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
-      (item) => item.ExamTopicDetailID === dataQuestion.ID
-    );
+      // Find Index
+      let indexQuestion =
+        packageResult.SetPackageResultDetailInfoList.findIndex(
+          (item) => item.ExamTopicDetailID === dataQuestion.ID
+        );
 
-    let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
-      indexQuestion
-    ].SetPackageExerciseStudentInfoList.findIndex(
-      (item) => item.ExerciseID === quesID
-    );
-
-    // Find anh return checked
-    if (
-      packageResult.SetPackageResultDetailInfoList[
+      let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
         indexQuestion
-      ].SetPackageExerciseStudentInfoList[
-        indexQuestionDetail
-      ].SetPackageExerciseAnswerStudentList.some(
-        (object) => object["AnswerID"] === ansID
-      )
-    ) {
-      checked = true;
-    }
+      ].SetPackageExerciseStudentInfoList.findIndex(
+        (item) => item.ExerciseID === quesID
+      );
 
-    return checked;
+      // Find anh return checked
+      if (
+        packageResult.SetPackageResultDetailInfoList[
+          indexQuestion
+        ].SetPackageExerciseStudentInfoList[
+          indexQuestionDetail
+        ].SetPackageExerciseAnswerStudentList.some(
+          (object) => object["AnswerID"] === ansID
+        )
+      ) {
+        checked = true;
+      }
+
+      return checked;
+    }
   };
 
   const onChange_selectAnswer = (dataAns, quesID) => {
@@ -195,7 +200,7 @@ const MultipleList = (props) => {
                     onChange={(e) =>
                       onChange_selectAnswer(ans, ques.ExerciseID)
                     }
-                    disabled={!isDoingTest ? true : false}
+                    disabled={!isDoingTest ? true : doneTestData ? true : false}
                   >
                     <span className="tick">{listAlphabet[i]}</span>
                     <span className="text">{ans.AnswerContent}</span>
