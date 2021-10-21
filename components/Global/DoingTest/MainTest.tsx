@@ -30,7 +30,15 @@ const ListQuestion = dynamic(
 const MainTest = (props) => {
   const { getListQuestionID, getActiveID, activeID, listPicked } =
     useDoingTest();
-  const { examID, infoExam, packageDetailID } = props;
+  const {
+    examID,
+    infoExam,
+    packageDetailID,
+    dataDoneTest,
+    isDone,
+    listIDFromDoneTest,
+    listGroupIDFromDoneTest,
+  } = props;
   const listTodoApi = {
     pageIndex: 1,
     pageSize: 999,
@@ -63,6 +71,7 @@ const MainTest = (props) => {
   // console.log("Info Exam is: ", infoExam);
 
   console.log("DataQuestion: ", dataQuestion);
+  // console.log("Data Done Test: ", dataDoneTest);
   // console.log("Space Question: ", spaceQuestion);
   // console.log("List question ID: ", listQuestionID);
 
@@ -136,9 +145,6 @@ const MainTest = (props) => {
 
   // -- CHECK IS SINGLE
   const checkIsSingle = (indexCurrent) => {
-    console.log("Index current: ", indexCurrent);
-    console.log("Space Question trong này: ", spaceQuestion);
-
     if (
       indexCurrent !== spaceQuestion.start &&
       indexCurrent !== 0 &&
@@ -289,12 +295,6 @@ const MainTest = (props) => {
     setIsModalVisible(false);
   };
 
-  useEffect(() => {
-    getListQuestion();
-    packageResult.SetPackageDetailID = parseInt(packageDetailID);
-    getPackageResult({ ...packageResult });
-  }, []);
-
   // ===== ON SUBMIT DOING TEST =====
   const onSubmit_DoingTest = async () => {
     setIsModalConfirm(false);
@@ -329,22 +329,37 @@ const MainTest = (props) => {
   };
 
   // ===== ALL USE EFFECT ====
+
+  useEffect(() => {
+    if (!isDone) {
+      getListQuestion();
+      packageResult.SetPackageDetailID = parseInt(packageDetailID);
+      getPackageResult({ ...packageResult });
+    } else {
+      setDataQuestion(dataDoneTest);
+      checkSpaceQuestionAtFirst(dataDoneTest);
+      setListQuestionID(listIDFromDoneTest);
+      setListGroupID(listGroupIDFromDoneTest);
+    }
+  }, []);
+
   useEffect(() => {
     if (listQuestionID?.length > 0) {
       getListQuestionID(listQuestionID);
       getActiveID(listQuestionID[0]);
+
       // setActiveID(listQuestionID[0]);
     }
   }, [listQuestionID]);
 
   // Use to check
-  useEffect(() => {
-    if (spaceQuestion.start !== null && spaceQuestion.end !== null) {
-      dataQuestion
-        .slice(spaceQuestion.start, spaceQuestion.end)
-        .map((item) => console.log("ITEM ACTIVE: ", item));
-    }
-  }, [spaceQuestion]);
+  // useEffect(() => {
+  //   if (spaceQuestion.start !== null && spaceQuestion.end !== null) {
+  //     dataQuestion
+  //       .slice(spaceQuestion.start, spaceQuestion.end)
+  //       .map((item) => console.log("ITEM ACTIVE: ", item));
+  //   }
+  // }, [spaceQuestion]);
 
   useEffect(() => {
     if (userInformation) {
@@ -357,30 +372,32 @@ const MainTest = (props) => {
   }, [userInformation]);
 
   useEffect(() => {
-    if (dataQuestion?.length > 0) {
-      dataQuestion.forEach((item, index) => {
-        let listQuestion = [];
+    if (!isDone) {
+      if (dataQuestion?.length > 0) {
+        dataQuestion.forEach((item, index) => {
+          let listQuestion = [];
 
-        item.ExerciseTopic.forEach((ques, index) => {
-          listQuestion.push({
-            ExerciseID: ques.ExerciseID,
-            SetPackageExerciseAnswerStudentList: [],
+          item.ExerciseTopic.forEach((ques, index) => {
+            listQuestion.push({
+              ExerciseID: ques.ExerciseID,
+              SetPackageExerciseAnswerStudentList: [],
+            });
+          });
+
+          packageResult.SetPackageResultDetailInfoList.push({
+            ExamTopicDetailID: item.ID,
+            ExerciseGroupID: item.ExerciseGroupID,
+            Level: item.Level,
+            Type: item.Type,
+            SkillID: item.SkillID,
+            SetPackageExerciseStudentInfoList: listQuestion,
+          });
+
+          getPackageResult({
+            ...packageResult,
           });
         });
-
-        packageResult.SetPackageResultDetailInfoList.push({
-          ExamTopicDetailID: item.ID,
-          ExerciseGroupID: item.ExerciseGroupID,
-          Level: item.Level,
-          Type: item.Type,
-          SkillID: item.SkillID,
-          SetPackageExerciseStudentInfoList: listQuestion,
-        });
-
-        getPackageResult({
-          ...packageResult,
-        });
-      });
+      }
     }
   }, [dataQuestion]);
 
@@ -436,6 +453,8 @@ const MainTest = (props) => {
           Bạn chưa chọn đề thi. Chuyển đến trang bộ đề?
         </p>
       </Modal>
+
+      {/* Card Main Test **/}
       <Card
         className="test-card"
         title={

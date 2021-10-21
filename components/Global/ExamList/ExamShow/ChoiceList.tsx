@@ -12,6 +12,7 @@ import { useWrap } from "~/context/wrap";
 import EditPoint from "../ExamForm/EditPoint";
 import ChangePosition from "../ExamForm/ChangePosition";
 import { useDoingTest } from "~/context/useDoingTest";
+import { useDoneTest } from "~/context/useDoneTest";
 
 let dataAnswer = {
   ExamTopicDetailID: null,
@@ -43,6 +44,7 @@ const ChoiceList = (props) => {
     getPackageResult,
     getListPicked,
   } = useDoingTest();
+  const { doneTestData } = useDoneTest();
   const { showNoti } = useWrap();
   const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -59,7 +61,7 @@ const ChoiceList = (props) => {
     return text;
   };
 
-  // console.log("Data Question in choice: ", dataQuestion);
+  console.log("Data Question in choice: ", dataQuestion);
 
   // Chấp nhận xóa câu hỏi
   const handleOk = async (quesItem) => {
@@ -148,26 +150,59 @@ const ChoiceList = (props) => {
     getPackageResult({ ...packageResult });
   };
 
-  useEffect(() => {
-    if (isDoingTest) {
-      if (packageResult) {
-        let indexQuestion =
-          packageResult.SetPackageResultDetailInfoList.findIndex(
-            (item) => item.ExamTopicDetailID === dataQuestion.ID
-          );
+  const returnChecked = (ans, quesID) => {
+    let checked = null;
 
-        if (
-          packageResult.SetPackageResultDetailInfoList[indexQuestion]
-            .SetPackageExerciseStudentInfoList[0]
-            .SetPackageExerciseAnswerStudentList.length > 0
-        ) {
-          let AnswerID =
+    let indexQuestion = dataQuestion.ExerciseTopic.findIndex(
+      (i) => i.ExerciseID == quesID
+    );
+
+    dataQuestion.ExerciseTopic[indexQuestion].ExerciseAnswer.every((ans) => {
+      if (ans.isTrue) {
+        checked = ans.ExerciseAnswerID;
+        setAcitveValue(ans.ExerciseAnswerID);
+        return false;
+      }
+      return true;
+    });
+    console.log("INDEX: ", checked);
+    return checked;
+  };
+
+  useEffect(() => {
+    if (!doneTestData) {
+      if (isDoingTest) {
+        if (packageResult) {
+          let indexQuestion =
+            packageResult.SetPackageResultDetailInfoList.findIndex(
+              (item) => item.ExamTopicDetailID === dataQuestion.ID
+            );
+
+          if (
             packageResult.SetPackageResultDetailInfoList[indexQuestion]
               .SetPackageExerciseStudentInfoList[0]
-              .SetPackageExerciseAnswerStudentList[0].AnswerID;
-          setAcitveValue(AnswerID);
+              .SetPackageExerciseAnswerStudentList.length > 0
+          ) {
+            let AnswerID =
+              packageResult.SetPackageResultDetailInfoList[indexQuestion]
+                .SetPackageExerciseStudentInfoList[0]
+                .SetPackageExerciseAnswerStudentList[0].AnswerID;
+            setAcitveValue(AnswerID);
+          }
         }
       }
+    } else {
+      // if (dataQuestion) {
+      //   dataQuestion.ExerciseTopic.forEach((item) => {
+      //     item.ExerciseAnswer.every((ques) => {
+      //       if (ques.isTrue) {
+      //         setAcitveValue(ques.ExerciseAnswerID);
+      //         return false;
+      //       }
+      //       return true;
+      //     });
+      //   });
+      // }
     }
   }, [packageResult]);
 
@@ -199,20 +234,44 @@ const ChoiceList = (props) => {
                   <Radio.Group
                     key={i}
                     className="d-block"
-                    value={activeValue}
+                    value={
+                      !doneTestData
+                        ? activeValue
+                        : ans.AnswerID !== 0
+                        ? ans.ExerciseAnswerID
+                        : activeValue
+                    }
                     onChange={(e) =>
                       onChange_selectAnswer(ans, ques.ExerciseID)
                     }
                   >
                     <Space direction="vertical">
                       <Radio
+                        // checked={
+                        //   doneTestData
+                        //     ? returnChecked(ans, ques.ExerciseID)
+                        //     : null
+                        // }
                         className="d-block"
                         key={i}
-                        value={ans.ID}
-                        disabled={!isDoingTest ? true : false}
+                        value={!doneTestData ? ans.ID : ans.ExerciseAnswerID}
+                        disabled={
+                          !isDoingTest ? true : doneTestData ? true : false
+                        }
                       >
                         <span className="tick">{listAlphabet[i]}</span>
-                        <span className="text">{ans.AnswerContent}</span>
+                        <span
+                          className="text"
+                          style={{
+                            color: ans.isTrue
+                              ? "green"
+                              : ans.AnswerID !== 0 && "red",
+                          }}
+                        >
+                          {!doneTestData
+                            ? ans.AnswerContent
+                            : ans.ExerciseAnswerContent}
+                        </span>
                       </Radio>
                     </Space>
                   </Radio.Group>

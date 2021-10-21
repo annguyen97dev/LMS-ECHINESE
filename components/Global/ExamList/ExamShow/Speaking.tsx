@@ -13,8 +13,10 @@ import EditPoint from "../ExamForm/EditPoint";
 import ChangePosition from "../ExamForm/ChangePosition";
 import AudioRecord from "~/components/Elements/AudioRecord/AudioRecord";
 import { useDoingTest } from "~/context/useDoingTest";
+import { useDoneTest } from "~/context/useDoneTest";
 
 const SpeakingList = (props) => {
+  const { doneTestData } = useDoneTest();
   const { onDeleteQuestion } = useExamDetail();
   const { activeID, packageResult, getPackageResult, getListPicked } =
     useDoingTest();
@@ -122,22 +124,24 @@ const SpeakingList = (props) => {
   };
 
   useEffect(() => {
-    if (isDoingTest) {
-      // Find index
-      let indexQuestion =
-        packageResult.SetPackageResultDetailInfoList.findIndex(
-          (item) => item.ExamTopicDetailID === dataQuestion.ID
-        );
-      if (
-        packageResult.SetPackageResultDetailInfoList[indexQuestion]
-          .SetPackageExerciseStudentInfoList[0]
-          .SetPackageExerciseAnswerStudentList.length > 0
-      ) {
-        setLinkRecord(
+    if (!doneTestData) {
+      if (isDoingTest) {
+        // Find index
+        let indexQuestion =
+          packageResult.SetPackageResultDetailInfoList.findIndex(
+            (item) => item.ExamTopicDetailID === dataQuestion.ID
+          );
+        if (
           packageResult.SetPackageResultDetailInfoList[indexQuestion]
             .SetPackageExerciseStudentInfoList[0]
-            .SetPackageExerciseAnswerStudentList[0].FileAudio
-        );
+            .SetPackageExerciseAnswerStudentList.length > 0
+        ) {
+          setLinkRecord(
+            packageResult.SetPackageResultDetailInfoList[indexQuestion]
+              .SetPackageExerciseStudentInfoList[0]
+              .SetPackageExerciseAnswerStudentList[0].FileAudio
+          );
+        }
       }
     }
   }, [activeID]);
