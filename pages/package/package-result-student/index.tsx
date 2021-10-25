@@ -2,7 +2,7 @@ import { Switch, Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Eye } from 'react-feather';
-import { studentApi } from '~/apiBase';
+import { studentApi, priceFixExamApi } from '~/apiBase';
 import { packageDetailApi } from '~/apiBase/package/package-detail';
 import { packageResultApi } from '~/apiBase/package/package-result';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
@@ -16,32 +16,13 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { teacherApi } from '~/apiBase';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import PayFixExamForm from '~/components/Global/Package/PayFixExam/PayFixExamForm';
 
-const PackageSetResult = () => {
+const PackageResultStudent = () => {
 	const [dataTeacher, setDataTeacher] = useState([]);
-
-	// Get list teacher
-	const getListTeacher = async () => {
-		// setLoadingTeacher(true);
-		try {
-			let res = await teacherApi.getAll({
-				pageSize: 9999,
-				pageIndex: 1
-			});
-
-			if (res.status === 200) {
-				let newData = res.data.data.map((item) => ({
-					title: item.FullNameUnicode,
-					value: item.UserInformationID
-				}));
-				setDataTeacher(newData);
-			}
-		} catch (error) {
-			console.log('Error Get List Teacher: ', error.message);
-		} finally {
-			// setLoadingTeacher(true);
-		}
-	};
+	const [dataStudent, setDataStudent] = useState([]);
+	const [userID, setUserID] = useState(null);
+	const [dataLevel, setDataLevel] = useState([]);
 
 	const onSearch = (data) => {
 		setCurrentPage(1);
@@ -55,13 +36,34 @@ const PackageSetResult = () => {
 		setCurrentPage(1);
 		setParams(listParamsDefault);
 	};
+
+	const returnTypeExam = (data) => {
+		let text = '';
+		// if(data.ListeningNumber > 0 && data.SpeakingNumber > 0 && data.WritingNumber > 0 && data.ReadingNumber){
+		//     text = "Tổng hợp"
+		// }
+		if (data.ListeningNumber > 0 || data.ReadingNumber > 0) {
+			if (data.SpeakingNumber > 0 || data.WritingNumber > 0) {
+				text = 'Tổng hợp';
+			} else {
+				text = 'Trắc nghiệm';
+			}
+		} else {
+			if (data.SpeakingNumber > 0 || data.WritingNumber > 0) {
+				text = 'Tự luận';
+			}
+		}
+
+		return text;
+	};
+
 	const columns = [
-		{
-			title: 'Học viên',
-			dataIndex: 'StudentName',
-			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>
-		},
+		// {
+		// 	title: 'Học viên',
+		// 	dataIndex: 'StudentName',
+		// 	...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+		// 	render: (text) => <p className="font-weight-blue">{text}</p>
+		// },
 
 		{
 			title: 'Đề thi',
@@ -89,66 +91,57 @@ const PackageSetResult = () => {
 		// 	dataIndex: 'ExamTopicTypeName',
 		// 	render: (text) => <p className="font-weight-black">{text}</p>
 		// },
-		{
-			title: 'Giáo viên chấm bài',
-			dataIndex: 'TeacherName'
-		},
+
 		{
 			title: 'Trạng thái',
-			dataIndex: 'isDone',
-			render: (type) => (
+			dataIndex: 'StatusID',
+			render: (status) => (
 				<Fragment>
-					{type == true && <span className="tag green">Đã chấm xong</span>}
-					{type == false && <span className="tag gray">Chưa chấm xong</span>}
+					{status == 1 && <span className="tag gray">Đã nộp bài</span>}
+					{status == 2 && <span className="tag yellow">Đang chấm bài</span>}
+					{status == 3 && <span className="tag green">Đã chấm bài</span>}
+					{status == 4 && <span className="tag yellow">Đang chấm bài lại</span>}
+					{status == 5 && <span className="tag yellow">Đã chấm bài lại</span>}
 				</Fragment>
 			)
 		},
 		{
-			title: 'Yều cầu chấm bài',
-			dataIndex: 'isFixPaid',
+			title: 'Dạng đề',
+
 			align: 'center',
-			render: (type) => (
-				<>
-					{type == false && <CloseOutlined className="delete custom" />}
-					{type == true && <CheckOutlined className="success custom" />}
-				</>
-			)
+			render: (data) => <>{returnTypeExam(data)}</>
 		},
 		// {
 		// 	title: 'Yêu cầu chấm bài',
 		// 	render: (data) => (
 		// 		<Fragment>
-		// 			{data.ExamTopicType == 2 ? (
-		// 				<Switch
-		// 					checkedChildren="Có"
-		// 					unCheckedChildren="Không"
-		// 					checked={data.isFixPaid}
-		// 					size="default"
-		// 					onChange={async (check: boolean) => {
+		// 			<Switch
+		// 				checkedChildren="Có"
+		// 				unCheckedChildren="Không"
+		// 				checked={data.isFixPaid}
+		// 				size="default"
+		// 				onChange={async (check: boolean) => {
+		// 					setIsLoading({
+		// 						type: 'GET_ALL',
+		// 						status: true
+		// 					});
+		// 					try {
+		// 						let res = await packageResultApi.update({
+		// 							...data,
+		// 							isFixPaid: check
+		// 						});
+		// 						res.status == 200 && setParams({ ...params, pageIndex: currentPage }),
+		// 							showNoti('success', res.data.message);
+		// 					} catch (error) {
+		// 						showNoti('danger', error.message);
+		// 					} finally {
 		// 						setIsLoading({
 		// 							type: 'GET_ALL',
-		// 							status: true
+		// 							status: false
 		// 						});
-		// 						try {
-		// 							let res = await packageResultApi.update({
-		// 								...data,
-		// 								isFixPaid: check
-		// 							});
-		// 							res.status == 200 && setParams({ ...params, pageIndex: currentPage }),
-		// 								showNoti('success', res.data.message);
-		// 						} catch (error) {
-		// 							showNoti('danger', error.message);
-		// 						} finally {
-		// 							setIsLoading({
-		// 								type: 'GET_ALL',
-		// 								status: false
-		// 							});
-		// 						}
-		// 					}}
-		// 				/>
-		// 			) : (
-		// 				<p className="font-light-black">Trắc nghiệm được chấm tự động</p>
-		// 			)}
+		// 					}
+		// 				}}
+		// 			/>
 		// 		</Fragment>
 		// 	)
 		// },
@@ -284,7 +277,7 @@ const PackageSetResult = () => {
 		});
 	};
 
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const listParamsDefault = {
 		pageSize: pageSize,
 		pageIndex: currentPage,
@@ -316,6 +309,23 @@ const PackageSetResult = () => {
 		});
 		setDataFilter([...dataFilter]);
 	};
+	// GET DATA LEVEL
+	const getDataLevel = async () => {
+		try {
+			let res = await priceFixExamApi.getAll({ pageSize: 9999, pageIndex: 1 });
+			if (res.status == 200) {
+				let newData = res.data.data.map((item) => ({
+					title: item.SetPackageLevel,
+					value: item.ID,
+					price: item.Price
+				}));
+				setDataLevel(newData);
+				setDataFunc('SetPackageLevel', newData);
+			}
+		} catch (error) {
+			console.log('Error Level Package: ', error.message);
+		}
+	};
 
 	const getDataStudent = async () => {
 		try {
@@ -326,6 +336,7 @@ const PackageSetResult = () => {
 					value: item.UserInformationID
 				}));
 				setDataFunc('StudentID', newData);
+				setDataStudent(newData);
 			}
 
 			res.status == 204 && showNoti('danger', 'Không có dữ liệu học sinh này!');
@@ -359,7 +370,7 @@ const PackageSetResult = () => {
 	useEffect(() => {
 		getDataStudent();
 		getDataPackageDetail();
-		getListTeacher();
+		getDataLevel();
 	}, []);
 
 	const getPagination = (pageNumber: number) => {
@@ -407,6 +418,12 @@ const PackageSetResult = () => {
 		getDataSetPackageResult(currentPage);
 	}, [params]);
 
+	useEffect(() => {
+		if (userInformation) {
+			setUserID(userInformation.UserInformationID);
+		}
+	}, [userInformation]);
+
 	const expandedRowRender = (data, index) => {
 		return (
 			<Fragment>
@@ -422,17 +439,12 @@ const PackageSetResult = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="KẾT QUẢ BỘ ĐỀ"
+			TitlePage="kết quả thi"
 			dataSource={packageSetResult}
 			columns={columns}
 			TitleCard={
 				<>
-					<PackageResultUpdateTeacher
-						reloadData={(firstPage) => {
-							setCurrentPage(1);
-							getDataSetPackageResult(firstPage);
-						}}
-					/>
+					<PayFixExamForm isBuy={true} userID={userID} dataStudent={dataStudent} dataLevel={dataLevel} />
 				</>
 			}
 			Extra={
@@ -451,5 +463,5 @@ const PackageSetResult = () => {
 		/>
 	);
 };
-PackageSetResult.layout = LayoutBase;
-export default PackageSetResult;
+PackageResultStudent.layout = LayoutBase;
+export default PackageResultStudent;

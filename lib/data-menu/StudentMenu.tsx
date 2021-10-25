@@ -1,19 +1,10 @@
-import React, {Fragment} from 'react';
-import {
-	Home,
-	Airplay,
-	User,
-	Package,
-	Book,
-	UserCheck,
-	Tool,
-	FileText,
-} from 'react-feather';
+import React, { Fragment } from 'react';
+import { Home, Airplay, User, Package, Book, UserCheck, Tool, FileText } from 'react-feather';
 
 export const StudentParentMenu = [
 	{
 		TabName: 'tab-home',
-		Icon: <Home />,
+		Icon: <Home />
 	},
 	//   {
 	//     TabName: "tab-course",
@@ -33,8 +24,8 @@ export const StudentParentMenu = [
 	//   },
 	{
 		TabName: 'tab-package',
-		Icon: <Package />,
-	},
+		Icon: <Package />
+	}
 ];
 
 export const StudentChildMenu = [
@@ -48,16 +39,16 @@ export const StudentChildMenu = [
 				Key: '/newsfeed',
 				Route: '/newsfeed',
 				Icon: '',
-				Text: 'Tin tức',
+				Text: 'Tin tức'
 			},
 			{
 				TypeItem: 'single',
 				Key: '/course/schedule-study-student',
 				Icon: '',
 				Route: '/course/schedule-study-student',
-				Text: 'Lịch học',
-			},
-		],
+				Text: 'Lịch học'
+			}
+		]
 	},
 	{
 		MenuName: 'tab-package',
@@ -69,7 +60,7 @@ export const StudentChildMenu = [
 				Key: '/package/package-student',
 				Route: '/package/package-student',
 				Text: 'Danh sách bộ đề',
-				Icon: '',
+				Icon: ''
 			},
 
 			{
@@ -77,8 +68,15 @@ export const StudentChildMenu = [
 				Key: '/package/package-store',
 				Route: '/package/package-store',
 				Text: 'Cửa hàng',
-				Icon: '',
+				Icon: ''
 			},
-		],
-	},
+			{
+				ItemType: 'single',
+				Key: '/package/package-result-student',
+				Route: '/package/package-result-student',
+				Text: 'Kết quả thi',
+				Icon: ''
+			}
+		]
+	}
 ];

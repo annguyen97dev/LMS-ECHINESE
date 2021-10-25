@@ -501,12 +501,16 @@ const DragList = (props) => {
 	useEffect(() => {
 		if (doneTestData) {
 			if (listCorrectAnswer.length > 0) {
-				let spaceEditor = document.querySelectorAll('.drag-list .space-editor');
-				let tooltipAns = document.querySelectorAll('.drag-list .tooltip-answer');
+				let spaceEditor = document.querySelectorAll('.test-wrapper .drag-list .space-editor');
+				let tooltipAns = document.querySelectorAll('.test-wrapper .drag-list .tooltip-answer');
+
+				console.log('LIST TOOLTIP: ', tooltipAns);
 
 				spaceEditor.forEach((item) => {
 					// Mouse over
 					item.addEventListener('mouseover', () => {
+						console.log('IS HOVERRRRR');
+
 						let quesID = item.getAttribute('ques-id');
 						tooltipAns.forEach((e) => {
 							if (e.id === quesID) {

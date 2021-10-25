@@ -1,22 +1,12 @@
-import {Form, Input} from 'antd';
+import { Form, Input } from 'antd';
 import PropTypes from 'prop-types';
-import React from 'react';
-import {Controller} from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { Controller } from 'react-hook-form';
 
 const InputMoneyField = (props) => {
-	const {
-		form,
-		name,
-		label,
-		placeholder,
-		disabled,
-		handleChange,
-		style,
-		className,
-		isRequired,
-	} = props;
+	const { form, name, label, placeholder, disabled, handleChange, style, className, isRequired } = props;
 
-	const {errors} = form.formState;
+	const { errors } = form.formState;
 	const hasError = errors[name];
 
 	const checkHandleChange = (value) => {
@@ -24,34 +14,17 @@ const InputMoneyField = (props) => {
 		handleChange(value);
 	};
 
-	// FORMAT NUMBER
-	//   const formatNumber = (e) => {
-	//     let value = e.target.value;
-
-	//     value = parseInt(value.replace(/\,/g, ""), 10);
-	//     console.log("VALUE: ", value.toLocaleString());
-	//     if (!isNaN(value)) {
-	//       formSalary.setValue("Salary", newValue.toLocaleString());
-	//       console.log("VALUE: ", newValue);
-	//     } else {
-	//       formSalary.setValue("Salary", "");
-	//     }
-
-	//   };
-
 	return (
 		<Form.Item
 			style={style}
 			label={label}
-			className={`${className} ${
-				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
-			}`}
+			className={`${className} ${hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
 			required={isRequired}
 		>
 			<Controller
 				name={name}
 				control={form.control}
-				render={({field}) => (
+				render={({ field }) => (
 					<Input
 						{...field}
 						className="style-input"
@@ -61,16 +34,9 @@ const InputMoneyField = (props) => {
 						onChange={(e) => {
 							let convertValue = e.target.value.toString();
 							let value = parseInt(convertValue.replace(/\,/g, ''), 10);
-							// let value = new Intl.NumberFormat("vi-VN", {
-							//   style: "currency",
-							//   currency: "VND",
-							// }).format(parseInt(e.target.value));
-							// value = value.replace(" ₫", "");
-							// let newValue = parseFloat(value);
 
 							if (!isNaN(value)) {
 								field.onChange(value.toLocaleString());
-								console.log('VALUE: ', value);
 							} else {
 								field.onChange('');
 							}
@@ -95,7 +61,7 @@ InputMoneyField.propTypes = {
 	handleChange: PropTypes.func,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
-	isRequired: PropTypes.bool,
+	isRequired: PropTypes.bool
 };
 InputMoneyField.defaultProps = {
 	label: '',
@@ -104,6 +70,6 @@ InputMoneyField.defaultProps = {
 	handleChange: null,
 	style: {},
 	className: '',
-	isRequired: false,
+	isRequired: false
 };
 export default InputMoneyField;

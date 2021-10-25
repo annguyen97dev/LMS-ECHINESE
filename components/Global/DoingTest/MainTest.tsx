@@ -418,7 +418,7 @@ const MainTest = (props) => {
 	}, [activeID]);
 
 	return (
-		<div className="test-wrapper">
+		<div className="test-wrapper doing-test">
 			{/* Modal báo thành công **/}
 			<Modal title="Thông báo" footer={null} className="" visible={isModalSuccess}>
 				<div className="modal-submit-success-test">
@@ -480,7 +480,7 @@ const MainTest = (props) => {
 									<div className="doingtest-group h-100" key={index}>
 										<div className="row h-100">
 											<div className="col-md-6 col-12 h-100">
-												<div className="box-paragraph">{ReactHtmlParser(item.Content)}</div>
+												<div className="box-paragraph h-100">{ReactHtmlParser(item.Content)}</div>
 											</div>
 											<div className="col-md-6 col-12 h-100 pl-0">
 												<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />

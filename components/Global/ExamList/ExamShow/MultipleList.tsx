@@ -30,8 +30,6 @@ const MultipleList = (props) => {
 	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
 	const [ansTrue, setAnsTrue] = useState<ansTrue[]>([]);
 
-	console.log('Data question in multiple list: ', dataQuestion);
-
 	const returnPosition = (quesID) => {
 		let index = listQuestionID.indexOf(quesID);
 		let text = 'Câu ' + (index + 1).toString();
@@ -242,7 +240,7 @@ const MultipleList = (props) => {
 					</div>
 					{dataQuestion.ExerciseGroupID == 0 && (
 						<div className="box-action">
-							{!isDoingTest && (
+							{!doneTestData && !isDoingTest && (
 								<>
 									<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
 									<Popconfirm

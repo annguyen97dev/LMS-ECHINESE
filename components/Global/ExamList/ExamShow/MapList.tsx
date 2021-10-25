@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { Checkbox } from 'antd';
 import { useDoingTest } from '~/context/useDoingTest';
@@ -8,6 +8,7 @@ const MapList = (props) => {
 	const { doneTestData } = useDoneTest();
 	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
 	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
+
 	let indexQuestion = null;
 	if (isDoingTest) {
 		// Find index
@@ -80,7 +81,7 @@ const MapList = (props) => {
 	const returnCheckedDoneTest = (dataAns, dataQuestion) => {
 		let checked = false;
 
-		dataQuestion.ExerciseAnswer.every((item) => {
+		dataQuestion?.ExerciseAnswer.every((item) => {
 			if (item.AnswerID === dataAns.ExerciseAnswerID) {
 				checked = true;
 				return false;
@@ -100,7 +101,7 @@ const MapList = (props) => {
 	const returnClassDoneTest = (dataAns, dataQuestion) => {
 		let className = 'isCorrect';
 
-		dataQuestion.ExerciseAnswer.every((item) => {
+		dataQuestion?.ExerciseAnswer.every((item) => {
 			if (item.AnswerID === dataAns.ExerciseAnswerID) {
 				if (item.AnswerID !== item.ExerciseAnswerID) {
 					className = 'isWrong';
@@ -153,20 +154,18 @@ const MapList = (props) => {
 								{dataQuestion?.ExerciseTopic.map((itemQues, indexQues) =>
 									itemQues.ExerciseAnswer.map((ans, ansIndex) => (
 										<td className="text-center check-box-table" key={ansIndex}>
-											{isDoingTest && (
-												<Checkbox
-													className={returnClassDoneTest(ans, item)}
-													onChange={() => onChange_selectAnswer(ans, item.ExerciseID)}
-													checked={
-														!doneTestData
-															? !isDoingTest
-																? false
-																: returnChecked(ans.ID, item.ExerciseID)
-															: returnCheckedDoneTest(ans, item)
-													}
-													disabled={!isDoingTest ? true : false}
-												></Checkbox>
-											)}
+											<Checkbox
+												className={returnClassDoneTest(ans, item)}
+												onChange={() => onChange_selectAnswer(ans, item.ExerciseID)}
+												checked={
+													!doneTestData
+														? !isDoingTest
+															? false
+															: returnChecked(ans.ID, item.ExerciseID)
+														: returnCheckedDoneTest(ans, item)
+												}
+												disabled={!isDoingTest ? true : false}
+											></Checkbox>
 										</td>
 									))
 								)}

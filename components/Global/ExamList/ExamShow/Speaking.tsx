@@ -156,7 +156,7 @@ const SpeakingList = (props) => {
 						</div>
 					</div>
 					<div className="box-action">
-						{!isDoingTest && (
+						{!doneTestData && !isDoingTest && (
 							<>
 								<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
 								<Popconfirm

@@ -133,9 +133,9 @@ const TypingList = (props) => {
 			}
 		} else {
 			if (dataQuestion.Paragraph !== '') {
-				let spaceEditor = document.querySelectorAll('.doingtest-group .box-typing .space-editor');
+				let spaceEditor = document.querySelectorAll('.box-typing  .space-editor');
 
-				let tooltipAns = document.querySelectorAll('.doingtest-group .tooltip-answer');
+				let tooltipAns = document.querySelectorAll('.box-typing .tooltip-answer');
 
 				console.log('Tooltip: ', tooltipAns);
 
@@ -195,8 +195,8 @@ const TypingList = (props) => {
 	useEffect(() => {
 		if (doneTestData) {
 			if (listCorrectAnswer.length > 0) {
-				let spaceEditor = document.querySelectorAll('.doingtest-group .box-typing .space-editor');
-				let tooltipAns = document.querySelectorAll('.doingtest-group .box-typing .tooltip-answer');
+				let spaceEditor = document.querySelectorAll('.test-wrapper .box-typing .space-editor');
+				let tooltipAns = document.querySelectorAll('.test-wrapper .box-typing .tooltip-answer');
 
 				spaceEditor.forEach((item) => {
 					// Mouse over

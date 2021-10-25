@@ -52,8 +52,6 @@ const ChoiceList = (props) => {
 		return text;
 	};
 
-	console.log('Data Question in choice: ', dataQuestion);
-
 	// Chấp nhận xóa câu hỏi
 	const handleOk = async (quesItem) => {
 		let itemDelete = {
@@ -247,7 +245,7 @@ const ChoiceList = (props) => {
 					</div>
 					{dataQuestion.ExerciseGroupID == 0 && (
 						<div className="box-action">
-							{!isDoingTest && (
+							{!doneTestData && !isDoingTest && (
 								<>
 									<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
 
