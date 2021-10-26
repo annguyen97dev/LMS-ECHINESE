@@ -8,7 +8,13 @@ import "react-circular-progressbar/dist/styles.css";
 import HeaderVideo from "./header";
 import { VideoTabs } from "./tabs";
 import { VideoList } from "./list-video";
-import { VideoLearningAPI } from "~/apiBase/video-learning";
+import {
+  VideoCourseOfStudent,
+  VideoCourseInteraction,
+  VideoCourses,
+} from "~/apiBase/video-learning";
+import { useRouter } from "next/router";
+import { useWrap } from "~/context/wrap";
 
 const { TabPane } = Tabs;
 
@@ -17,10 +23,12 @@ const fakeData = require("./fakeData/fakeData.json");
 // const data = [];
 
 const VideoLearning = () => {
+  const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
 
+  const { titlePage, userInformation } = useWrap();
+
   const videoStudy = useRef(null);
-  const textarea = useRef(null);
   const boxVideo = useRef(null);
 
   const [currentVideo, setCurrentVideo] = useState("");
@@ -36,29 +44,96 @@ const VideoLearning = () => {
 
   const [videos, setVideos] = useState([]);
 
+  const [dataQA, setDataQA] = useState([]);
+
+  const [currentLession, setCurrentLession] = useState({ ID: "" });
+
   useEffect(() => {
-    getVideos();
+    if (router.query.course !== undefined) {
+      getVideos();
+      // getListQA(0); // jqhư eghjq danm damns dbnahjsd hjáhhjd ahgyqưgeh qưbanbsdna sgh
+      // console.log("userInformation: ", userInformation.UserAccountID);
+    }
   }, []);
 
   useEffect(() => {
     setWidth(ref.current.offsetWidth.toString());
   }, [size]);
 
-  useEffect(() => {
-    console.log("videos: ", videos);
-  }, [videos]);
-
   //GET DATA
   const getVideos = async () => {
-    // 52 HAVE DATA
-    const ID = 52;
-
     try {
-      const res = await VideoLearningAPI.getAll(ID);
+      const res = await VideoCourses.ListSection(router.query.course);
       res.status == 200 && setVideos(res.data.data);
     } catch (err) {
       // showNoti("danger", err);
     }
+  };
+
+  //GET DATA
+  const getListQA = async (LessonDetailID) => {
+    const temp = {
+      pageIndex: 1,
+      pageSize: 10,
+      VideoCourseID: router.query.course,
+      LessonDetailID: LessonDetailID,
+      Title: "",
+      sort: 0,
+    };
+
+    try {
+      const res = await VideoCourseInteraction.ListQA(temp);
+      res.status == 200 && res.data.data !== undefined
+        ? setDataQA(res.data.data)
+        : setDataQA([]);
+    } catch (err) {
+      // showNoti("danger", err);
+    }
+  };
+
+  useEffect(() => {
+    console.log("data: ", data);
+  }, [data]);
+
+  //GET DATA
+  const getListNote = async (LessonDetailID) => {
+    const temp = {
+      pageIndex: 1,
+      pageSize: 10,
+      VideoCourseID: router.query.course,
+      LessonDetailID: LessonDetailID,
+      searchCreateby: userInformation.UserAccountID,
+      sort: 0,
+    };
+
+    try {
+      const res = await VideoCourseInteraction.ListNote(temp);
+
+      res.status == 200 && res.data.data !== undefined
+        ? setData(res.data.data)
+        : setData([]);
+
+      setRender(res + "");
+    } catch (err) {
+      // showNoti("danger", err);
+    }
+
+    getListQA(LessonDetailID);
+  };
+
+  const addNewQuestion = async (comment, title) => {
+    try {
+      let temp = {
+        VideoCourseID: router.query.course,
+        LessonDetailID: currentLession.ID,
+        Title: title,
+        TextContent: comment,
+        Type: 1,
+      };
+
+      await VideoCourseInteraction.add(temp);
+      getListQA(currentLession.ID);
+    } catch (error) {}
   };
 
   const [visible, setVisible] = useState(false);
@@ -82,14 +157,6 @@ const VideoLearning = () => {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  // --- Move to current time
-  const moveToCurTime = (e) => {
-    let curTime = e.target.getAttribute("data-time");
-    console.log("cur Time: ", curTime);
-    videoStudy.current.currentTime = curTime;
-    e.preventDefault();
-  };
-
   const formatTime = (seconds) => {
     let minutes: any = Math.floor(seconds / 60);
     minutes = minutes >= 10 ? minutes : "0" + minutes;
@@ -110,7 +177,6 @@ const VideoLearning = () => {
     });
 
     setData(dataTest);
-    // setStatus(true);
     console.log("Data after remove: ", dataTest);
   };
 
@@ -133,13 +199,6 @@ const VideoLearning = () => {
     console.log("DATA after fixed: ", dataTest);
   };
 
-  // --- Create ID ---
-  const createId = () => {
-    let number = Math.floor(Math.random() * 1000 + 1);
-    let id = "id-" + number;
-    return id;
-  };
-
   // --- Calculator position of line note  inside video ---
   const calPosition = (curTime) => {
     let widthVideo = boxVideo.current.offsetWidth;
@@ -152,36 +211,34 @@ const VideoLearning = () => {
   };
 
   // --- Handle Submit ---
-  const handleSubmit = (valueNote) => {
-    let temp = data;
+  const handleSubmit = async (param) => {
+    try {
+      let curTime = videoStudy.current.currentTime;
+      let position = calPosition(curTime);
 
-    let curTime = videoStudy.current.currentTime;
-    let forTime = formatTime(videoStudy.current.currentTime);
-    let id = createId();
+      let temp = {
+        VideoCourseID: router.query.course,
+        LessonDetailID: currentLession.ID,
+        Title: param.title,
+        TextContent: param.newContent,
+        TimeNote: curTime,
+        Type: 2,
+      };
 
-    let position = calPosition(curTime);
-
-    data.push({
-      id: id,
-      curTime: curTime,
-      formatTime: forTime,
-      title: "Chổ này bỏ title vô nha",
-      subTitle: "Chổ này bỏ sub title vô",
-      note: valueNote,
-      position: position,
-    });
-
-    setData(temp);
-    setRender(id);
+      await VideoCourseInteraction.add(temp);
+      getListNote(currentLession.ID);
+    } catch (error) {}
   };
 
+  // -- PAUSE VIDEO
   const handlePause = () => {
     videoStudy.current.pause();
   };
 
+  // RENDER
   return (
     <div className="container-fluid p-0">
-      <HeaderVideo params={fakeData} onClick={showDrawer} />
+      <HeaderVideo params={router.query} onClick={showDrawer} />
       <div className="row">
         <div className="col-md-9 col-12 p-0">
           <div className="wrap-video pl-3">
@@ -189,6 +246,7 @@ const VideoLearning = () => {
               <div className="box-video" ref={boxVideo}>
                 <video ref={videoStudy} controls>
                   <track default kind="captions" />
+                  {/* VIDIEO LINK IN SRC */}
                   <source src="/static/video/video.mp4" type="video/mp4" />
                   Your browser does not support HTML video.
                 </video>
@@ -211,11 +269,12 @@ const VideoLearning = () => {
               <VideoTabs
                 params={fakeData}
                 dataNote={data}
+                dataQA={dataQA}
                 onCreateNew={(p) => {
                   handleSubmit(p);
                 }}
                 onPress={(p) => {
-                  videoStudy.current.currentTime = p.curTime;
+                  videoStudy.current.currentTime = p.TimeNote;
                 }}
                 onDelete={(p) => {
                   removeItem(p.id);
@@ -228,22 +287,28 @@ const VideoLearning = () => {
                   handlePause();
                 }}
                 videoRef={videoStudy}
+                addNewQuest={(p) => {
+                  addNewQuestion(p.comment, p.title);
+                }}
               />
             </div>
           </div>
         </div>
+
         <div className="col-md-3 col-12 p-0">
           <div className="wrap-menu">
             <VideoList
               onPress={(p) => {
-                setCurrentVideo(p);
+                console.log(p);
+
+                setCurrentLession(p);
+
+                // getListQA(p.ID);
+                getListNote(p.ID);
+
+                setCurrentVideo(p.LinkVideo);
               }}
-              params={{
-                name: "",
-                time: "",
-                link: "",
-                videos: videos,
-              }}
+              videos={videos}
             />
           </div>
         </div>
@@ -266,12 +331,7 @@ const VideoLearning = () => {
             onPress={(p) => {
               setCurrentVideo(p);
             }}
-            params={{
-              name: "",
-              time: "",
-              link: "",
-              videos: videos,
-            }}
+            videos={videos}
           />
         </div>
       </Drawer>

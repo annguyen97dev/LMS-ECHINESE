@@ -14,7 +14,12 @@ export const VideoCourseListApi = {
   // Lấy data theo user
   getByUser(ID) {
     return instance.get<IApiResultData<IVideoCourseList[]>>(
-      `${url + "GetByUser/"}${ID}`
+      `${url + "GetByUser"}${""}`
     );
+  },
+
+  // Cập nhật data
+  update(data) {
+    return instance.put(url + "StudentEvaluation", data);
   },
 };

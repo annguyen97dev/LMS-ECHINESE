@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import "antd/dist/antd.css";
-import { Button, List, Tooltip } from "antd";
+import { Button, List, Tooltip, Input } from "antd";
 import EditorSimple from "~/components/Elements/EditorSimple";
 import ReactHtmlParser, {
   processNodes,
@@ -10,10 +10,10 @@ import ReactHtmlParser, {
 
 type itemProps = {
   id: "";
-  title: "";
+  Title: "";
   subTitle: "";
-  note: "";
-  formatTime: "";
+  TextContent: "";
+  TimeNote: "";
 };
 
 type iProps = {
@@ -34,6 +34,14 @@ type props = {
 };
 
 const RenderItem: FC<iProps> = ({ item, onPress, onDelete, onEdit }) => {
+  const formatTime = (seconds) => {
+    let minutes: any = Math.floor(seconds / 60);
+    minutes = minutes >= 10 ? minutes : "0" + minutes;
+    seconds = Math.floor(seconds % 60);
+    seconds = seconds >= 10 ? seconds : "0" + seconds;
+    return minutes + ":" + seconds;
+  };
+
   return (
     <div className="pt-3 pb-3 vocab-item">
       <span className="row vocab-item__title">
@@ -44,12 +52,13 @@ const RenderItem: FC<iProps> = ({ item, onPress, onDelete, onEdit }) => {
             }}
             className="mr-3 vocab-item__time"
           >
-            {item.formatTime}
+            {formatTime(item.TimeNote)}
           </a>
           <i className="far fa-file-alt mr-3"></i>
-          {item.title}
-          <span className="ml-3 vocab-item__subtitle">{item.subTitle}</span>
+          {ReactHtmlParser(item.Title)}
+          {/* <span className="ml-3 vocab-item__subtitle">{item.TextContent}</span> */}
         </div>
+
         <div className="row mr-3 ml-3 vocab-item__menu">
           <Tooltip title="Sửa">
             <button
@@ -102,8 +111,8 @@ const RenderItem: FC<iProps> = ({ item, onPress, onDelete, onEdit }) => {
           </Tooltip>
         </div>
       </span>
-      <span className="mt-3 pt-3 pb-0 vocab-item__content">
-        {ReactHtmlParser(item.note)}
+      <span className="mt-3 pt-3 pb-3 pr-3 vocab-item__content">
+        {ReactHtmlParser(item.TextContent)}
       </span>
     </div>
   );
@@ -120,6 +129,7 @@ export const VocabularyTab: FC<props> = ({
 }) => {
   const [showAdd, setShowAdd] = useState(false);
   const [newContent, setContent] = useState("");
+  const [title, setTitle] = useState("");
   const [isReset, setReset] = useState(false);
   const [typeInput, setTypeInput] = useState(0);
   const [itemEdit, setItemEdit] = useState([]);
@@ -131,7 +141,9 @@ export const VocabularyTab: FC<props> = ({
   }, [newContent]);
 
   const handleCreateNew = () => {
-    createNew(newContent);
+    setTitle("");
+
+    createNew({ newContent: newContent, title: title });
 
     setReset(true);
     setTimeout(() => {
@@ -140,6 +152,7 @@ export const VocabularyTab: FC<props> = ({
   };
 
   const handleSubmitEdit = () => {
+    setTitle("");
     onEdit({ item: itemEdit, content: newContent });
 
     setShowAdd(false);
@@ -174,6 +187,14 @@ export const VocabularyTab: FC<props> = ({
         </Button>
       ) : (
         <div className="wrap-vocab__create-new">
+          <Input
+            placeholder="Tiêu đề"
+            className="mb-3 mt-3"
+            value={title}
+            onChange={(t) => {
+              setTitle(t.target.value);
+            }}
+          />
           <EditorSimple
             handleChange={(value) => {
               setContent(value);
@@ -185,6 +206,7 @@ export const VocabularyTab: FC<props> = ({
             <Tooltip title="Đóng khung nhập liệu">
               <button
                 onClick={() => {
+                  setTitle("");
                   setTypeInput(0);
                   setShowAdd(false);
                 }}

@@ -12,6 +12,8 @@ const titlePages = {
   page2: "Thẻ từ vựng (FlashCard)",
   page3: "Luyện tập",
   page4: "Hỏi và đáp",
+  page5: "Ghi chú",
+  page6: "Thông báo",
 };
 
 function callback(key) {
@@ -26,7 +28,9 @@ type vType = {
   onDelete: any;
   onEdit: any;
   onPauseVideo: any;
+  dataQA: any[];
   videoRef: { current: { currentTime: "" } };
+  addNewQuest: any;
 };
 
 export const VideoTabs: FC<vType> = ({
@@ -38,6 +42,8 @@ export const VideoTabs: FC<vType> = ({
   onEdit,
   onPauseVideo,
   videoRef,
+  dataQA,
+  addNewQuest,
 }) => {
   return (
     <Tabs onChange={callback} type="card">
@@ -45,6 +51,9 @@ export const VideoTabs: FC<vType> = ({
         <VideoInfomation params={params} />
       </TabPane>
       <TabPane tab={titlePages.page2} key="2">
+        Content of Tab Pane 3
+      </TabPane>
+      <TabPane tab={titlePages.page5} key="3">
         <VocabularyTab
           dataNote={dataNote}
           createNew={(p) => {
@@ -63,11 +72,14 @@ export const VideoTabs: FC<vType> = ({
           videoRef={videoRef}
         />
       </TabPane>
-      <TabPane tab={titlePages.page3} key="3">
+      <TabPane tab={titlePages.page3} key="4">
         Content of Tab Pane 3
       </TabPane>
-      <TabPane tab={titlePages.page4} key="4">
-        <VideoQuestion params={params} />
+      <TabPane tab={titlePages.page4} key="5">
+        <VideoQuestion params={dataQA} addNew={addNewQuest} />
+      </TabPane>
+      <TabPane tab={titlePages.page6} key="6">
+        Content of Tab Pane 3
       </TabPane>
     </Tabs>
   );

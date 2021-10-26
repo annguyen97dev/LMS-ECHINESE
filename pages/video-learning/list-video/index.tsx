@@ -2,14 +2,11 @@ import React, { FC, useState } from "react";
 import "antd/dist/antd.css";
 import { List } from "antd";
 import { RenderItem } from "./render-item";
-import { spawn } from "child_process";
-import { IVideoLearning } from "~/apiBase/types/video-learning/video-learning";
 
-type props = {
-  params: { name: ""; time: ""; link: ""; videos: any[] };
-  onPress: any;
-};
-export const VideoList: FC<props> = ({ params, onPress }) => {
+type IProps = { videos: any[]; onPress: any };
+
+// LIST VIDEOS
+export const VideoList: FC<IProps> = ({ videos, onPress }) => {
   return (
     <div className="wrap-video-list">
       <div className="wrap-video-list__container">
@@ -18,10 +15,11 @@ export const VideoList: FC<props> = ({ params, onPress }) => {
         </div>
         <List
           itemLayout="horizontal"
-          dataSource={params.videos}
+          dataSource={videos}
           className="wrap-list-container"
           renderItem={(item) => (
             <RenderItem
+              data={videos}
               onPress={(p) => {
                 onPress(p);
               }}

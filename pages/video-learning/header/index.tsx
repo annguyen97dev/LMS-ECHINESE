@@ -3,7 +3,7 @@ import Link from "next/link";
 import "react-circular-progressbar/dist/styles.css";
 
 type hProps = {
-  params: { name };
+  params: any;
   onClick: any;
 };
 
@@ -36,7 +36,9 @@ const HeaderVideo: FC<hProps> = ({ params, onClick }): JSX.Element => {
               </div>
             </CircularProgressbarWithChildren> */}
           </div>
-          <span className="video-header__video-title">Hoàn thành 60/100</span>
+          <span className="video-header__video-title">
+            Hoàn thành {params.complete}
+          </span>
         </div>
         <div onClick={onClick} className="video-header__playlist">
           <i className="fas fa-list-ul "></i>

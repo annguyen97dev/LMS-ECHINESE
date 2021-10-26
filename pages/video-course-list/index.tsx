@@ -4,104 +4,61 @@ import { List, Card, Progress, Rate, Modal, Input } from "antd";
 import LayoutBase from "~/components/LayoutBase";
 import { VideoCourseListApi } from "~/apiBase";
 import { useWrap } from "~/context/wrap";
+import Link from "next/link";
 
 const { TextArea } = Input;
 
-const fakeData = [
-  {
-    CreatedBy: null,
-    CreatedOn: null,
-    ID: 1,
-    ImageThumbnails: "",
-    RatingComment: "1  12 31231",
-    RatingNumber: 1,
-    Status: 1,
-    StatusName: null,
-    StudentName: null,
-    UserInformationID: null,
-    VideoCourseID: 1,
-    VideoCourseName: "Video Course 2 ấ qui qưuie uqe jqje j",
-  },
-  {
-    CreatedBy: null,
-    CreatedOn: null,
-    ID: 2,
-    ImageThumbnails: "",
-    RatingComment: "2222 24 44314 234",
-    RatingNumber: 0,
-    Status: 1,
-    StatusName: null,
-    StudentName: null,
-    UserInformationID: null,
-    VideoCourseID: 0,
-    VideoCourseName: "Video Course 2qưe ư ư ",
-  },
-  {
-    CreatedBy: null,
-    CreatedOn: null,
-    ID: 3,
-    ImageThumbnails: "",
-    RatingComment: "qwe qw e",
-    RatingNumber: 3,
-    Status: 1,
-    StatusName: null,
-    StudentName: null,
-    UserInformationID: null,
-    VideoCourseID: 0,
-    VideoCourseName: "Video Course 2",
-  },
-  {
-    CreatedBy: null,
-    CreatedOn: null,
-    ID: 4,
-    ImageThumbnails: "",
-    RatingComment: "qw qw qw eqw e qwqwe w q qweq eq w eqw ",
-    RatingNumber: 1,
-    Status: 1,
-    StatusName: null,
-    StudentName: null,
-    UserInformationID: null,
-    VideoCourseID: 2,
-    VideoCourseName: "Video Course 2",
-  },
-  {
-    CreatedBy: null,
-    CreatedOn: null,
-    ID: 5,
-    ImageThumbnails: "",
-    RatingComment: "h hqweqw hjqwh",
-    RatingNumber: 5,
-    Status: 1,
-    StatusName: null,
-    StudentName: null,
-    UserInformationID: null,
-    VideoCourseID: 5,
-    VideoCourseName: "Video Course 2",
-  },
-];
-
 const ItemVideo = ({ item, onRate }) => {
-  //
+  const [rerender, setRender] = useState("");
+
+  useEffect(() => {
+    console.log("item: ", item);
+    setRender(item);
+  }, [item]);
 
   return (
     <div className="video-course-list__item">
-      <img src="/images/logo-final.jpg"></img>
-      <div className="p-3 video-course-list__item__content">
-        <a className="title">{item.VideoCourseName}</a>
-        <a className="content">Content chưa có, nào có thì thêm</a>
+      {item.ImageThumbnails === "" || item.ImageThumbnails === null ? (
+        <img src="/images/logo-final.jpg" />
+      ) : (
+        <img src={item.ImageThumbnails} />
+      )}
 
-        <Progress percent={50} status="active" />
-        <div className="pr-3 pl-3 row rate-container">
-          <Rate disabled defaultValue={item.RatingNumber} />
-          <a
-            onClick={() => {
-              onRate(item);
-            }}
-            className="none-selection"
-          >
-            Sửa đánh giá
-          </a>
-        </div>
+      <div className="p-3 video-course-list__item__content">
+        <Link
+          href={{
+            pathname: "/video-learning",
+            query: {
+              course: item.ID,
+              complete: item.Complete + "/" + item.TotalLesson,
+              name: item.VideoCourseName,
+            },
+          }}
+        >
+          <a className="title in-2-line">{item.VideoCourseName}</a>
+        </Link>
+
+        <>
+          <Progress
+            className="text-process"
+            percent={(item.Complete / item.TotalLesson) * 100} // 10 - CHANGE TO TOTALESSION
+            status="active"
+          />
+
+          <div className="pr-3 pl-3 pt-3 row rate-container">
+            <Rate className="rate-start" disabled value={item.RatingNumber} />
+
+            <a
+              onClick={() => {
+                onRate(item);
+                // updateRate();
+              }}
+              className="none-selection btn-rate "
+            >
+              Đánh giá
+            </a>
+          </div>
+        </>
       </div>
     </div>
   );
@@ -112,6 +69,7 @@ const VideoCourseList = () => {
 
   const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [rerender, setRender] = useState("");
 
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
@@ -159,9 +117,27 @@ const VideoCourseList = () => {
       );
 
       res.status == 200 && setData(res.data.data);
+
+      setRender(res + "");
     } catch (err) {
       // showNoti("danger", err);
     }
+  };
+
+  //GET DATA
+  const updateRate = async () => {
+    let temp = {
+      ID: state.ID,
+      RatingNumber: state.RatingNumber,
+      RatingComment: state.RatingComment,
+    };
+    try {
+      await VideoCourseListApi.update(temp);
+    } catch (err) {
+      // showNoti("danger", err);
+    }
+
+    getAllArea();
   };
 
   return (
@@ -170,7 +146,7 @@ const VideoCourseList = () => {
       <Card className="video-course-list">
         <List
           itemLayout="horizontal"
-          dataSource={fakeData}
+          dataSource={data}
           grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }}
           renderItem={(item) => (
             <ItemVideo
@@ -200,6 +176,7 @@ const VideoCourseList = () => {
           onOk={() => {
             //
             setShowModal(false);
+            updateRate();
           }}
           confirmLoading={false}
           onCancel={() => {

@@ -88,4 +88,4 @@ export { saleSalaryApi } from "./sale/sale-salary";
 export { salerTotalRevenueApi } from "./sale/saler-total-revenue";
 export { salerRevenueApi } from "./sale/saler-revenue";
 export { VideoCourseListApi } from "./video-course-list";
-export { VideoLearningAPI } from "./video-learning";
+export { VideoCourseOfStudent, VideoCourseInteraction } from "./video-learning";
