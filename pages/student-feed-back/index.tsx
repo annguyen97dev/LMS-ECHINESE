@@ -10,6 +10,15 @@ import FilterTable from "~/components/Global/FeedbackList/FitlerTable";
 import { data } from "~/lib/option/dataOption2";
 import LayoutBase from "~/components/LayoutBase";
 import FilterFeedbackTable from "~/components/Global/Option/FilterTable/FilterFeedbackTable";
+
+export function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
+}
+
 const FeedbackList = () => {
   const showModal = () => {
     setIsModalVisible(true);
@@ -105,47 +114,14 @@ const FeedbackList = () => {
 
   const expandedRowRender = () => {
     const { Option } = Select;
-    return (
-      <>
-        <div className="feedback-detail-text">
-          Dương Lan Anh Advance1412. Buổi nghỉ: tối 02/03/2021 (writìng) và
-          03/03/2021(speaking) Lý do: Em đang ở vùng dịch ạ (thị xã Kinh Môn,
-          huyện Kinh Môn, tỉnh Hải Dương)
-        </div>
-      </>
-    );
+    return <div className="wrap-student-fb"></div>;
   };
 
   return (
-    <>
-      <Modal
-        title="Xác nhận thông tin"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>Bạn chắc chắn đã xử lí xong phản hồi</p>
-      </Modal>
-      <ExpandTable
-        columns={columns}
-        dataSource={data}
-        TitlePage="Feedback List"
-        Extra={
-          <div className="extra-table">
-            <SearchBox />
-            <button
-              className="btn btn-secondary light btn-filter"
-              onClick={funcShowFilter}
-            >
-              <Filter />
-            </button>
-          </div>
-        }
-        expandable={{ expandedRowRender }}
-      >
-        <FilterFeedbackTable />
-      </ExpandTable>
-    </>
+    <div
+      className="wrap-student-fb"
+      style={{ height: getWindowDimensions().height - 65 }}
+    ></div>
   );
 };
 
