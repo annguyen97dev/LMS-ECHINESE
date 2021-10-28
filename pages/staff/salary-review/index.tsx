@@ -13,6 +13,7 @@ import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
 
 const SalaryReview = () => {
+	const { showNoti, pageSize } = useWrap();
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
@@ -84,7 +85,7 @@ const SalaryReview = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 
 	const listParamsDefault = {
-		pageSize: 10,
+		pageSize: pageSize,
 		pageIndex: currentPage,
 		sort: null,
 		sortType: null,
@@ -228,7 +229,7 @@ const SalaryReview = () => {
 	};
 
 	const [params, setParams] = useState(listParamsDefault);
-	const { showNoti } = useWrap();
+
 	const [totalPage, setTotalPage] = useState(null);
 	const [payRoll, setPayRoll] = useState<IPayRoll[]>([]);
 	const [isLoading, setIsLoading] = useState({

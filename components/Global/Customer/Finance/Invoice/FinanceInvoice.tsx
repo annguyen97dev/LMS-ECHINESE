@@ -258,7 +258,7 @@ function FinanceInvoice() {
 					<Link
 						href={{
 							pathname: '/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',
-							query: { slug: record.ID }
+							query: { slug: record.ID, type: 'invoice' }
 						}}
 					>
 						<Tooltip title="Xem phiếu thu">

@@ -340,7 +340,6 @@ const MainTest = (props) => {
 		if (listQuestionID?.length > 0) {
 			getListQuestionID(listQuestionID);
 			getActiveID(listQuestionID[0]);
-
 			// setActiveID(listQuestionID[0]);
 		}
 	}, [listQuestionID]);
