@@ -12,21 +12,21 @@ export const ParentsChildMenu = [
 	{
 		MenuName: 'tab-home',
 		MenuTitle: 'Trang chủ',
-		MenuKey: '/dashboard',
+		MenuKey: '/parents',
 		MenuItem: [
 			{
 				TypeItem: 'single',
-				Key: '/dashboard',
-				Route: '/dashboard',
+				Key: '/newsfeed',
+				Route: '/newsfeed',
 				Icon: '',
-				Text: 'Trang chủ'
+				Text: 'Newsfeed'
 			},
 			{
 				TypeItem: 'single',
-				Key: '/staff/salary-of-staff',
-				Route: '/staff/salary-of-staff',
+				Key: '/parents',
+				Route: '/parents',
 				Icon: '',
-				Text: 'Bảng lương nhân viên'
+				Text: 'Phụ huynh'
 			}
 		]
 	}

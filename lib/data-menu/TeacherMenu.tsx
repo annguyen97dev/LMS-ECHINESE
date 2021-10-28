@@ -56,7 +56,7 @@ export const TeacherChildMenu = [
 				Key: '/staff/salary-of-teacher',
 				Icon: '',
 				Route: '/staff/salary-of-teacher',
-				Text: 'Bảng lương'
+				Text: 'Bảng lương giáo viên'
 			},
 			{
 				TypeItem: 'single',

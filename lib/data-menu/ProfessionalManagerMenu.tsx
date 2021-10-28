@@ -24,8 +24,8 @@ export const ProfessionalManagerChildMenu = [
 			{
 				TypeItem: 'single',
 				Key: '/staff/salary-of-staff',
-				Route: '/staff/salary-of-staff',
 				Icon: '',
+				Route: '/staff/salary-of-staff',
 				Text: 'Bảng lương nhân viên'
 			}
 		]
