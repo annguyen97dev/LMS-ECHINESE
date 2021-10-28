@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import LayoutBase from '~/components/LayoutBase';
-import { priceFixExamApi, payFixExamApi, studentApi } from '~/apiBase';
-import { useWrap } from '~/context/wrap';
-import PowerTable from '~/components/PowerTable';
-import PriceFixExamForm from '~/components/Global/Option/PriceFixExam/PriceFixExamForm';
-import { numberWithCommas } from '~/utils/functions';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import PayFixExamForm from './PayFixExamForm';
-import SortBox from '~/components/Elements/SortBox';
+import { teacherApi } from '~/apiBase';
+import { payrollFixApi } from '~/apiBase/package/payroll-fix';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
+import SortBox from '~/components/Elements/SortBox';
+import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 
-const PayFixExam = () => {
+const PayrollFix = () => {
 	let listFieldFilter = {
 		pageIndex: 1,
-		StudentID: null,
-		SetPackageLevel: null
+		fromDate: null,
+		toDate: null,
+		TeacherID: null,
+		StatusID: null,
+		Month: null,
+		Year: null
 	};
 	const dataOption = [
 		{
@@ -47,36 +48,97 @@ const PayFixExam = () => {
 			text: 'Level Z-A'
 		}
 	];
+
+	let listFieldSearch = {
+		pageIndex: 1,
+		TeacherName: null
+	};
+
 	// ------ LIST FILTER -------
+	function generateArrayOfYears() {
+		var max = new Date().getFullYear();
+		var min = max - 9;
+		var years = [];
+
+		for (var i = max; i >= min; i--) {
+			years.push({
+				title: i,
+				value: i
+			});
+		}
+		return years;
+	}
+
+	function listMonth() {
+		let months = [];
+		for (let i = 1; i < 13; i++) {
+			months.push({
+				title: `Tháng ${i}`,
+				value: i
+			});
+		}
+		return months;
+	}
+
 	const [dataFilter, setDataFilter] = useState([
 		{
-			name: 'StudentID',
-			title: 'Học sinh',
+			name: 'TeacherID',
+			title: 'Giáo viên',
 			col: 'col-md-6 col-12',
 			type: 'select',
 			optionList: null, // Gọi api xong trả data vào đây
 			value: null
 		},
 		{
-			name: 'SetPackageLevel',
-			title: 'Level',
+			name: 'StatusID',
+			title: 'Trạng thái',
 			col: 'col-md-6 col-12',
 			type: 'select',
-			optionList: null,
+			optionList: [
+				{
+					title: 'Chưa chốt',
+					value: 1
+				},
+				{
+					title: 'Đã chốt lương',
+					value: 2
+				}
+			],
+			value: null
+		},
+		{
+			name: 'Month',
+			title: 'Tháng',
+			col: 'col-md-6 col-12',
+			type: 'select',
+			optionList: listMonth(),
+			value: null
+		},
+		{
+			name: 'Year',
+			title: 'Năm',
+			col: 'col-md-6 col-12',
+			type: 'select',
+			optionList: generateArrayOfYears()
+		},
+		{
+			name: 'date-range',
+			title: 'Từ - đến',
+			col: 'col-12',
+			type: 'date-range',
 			value: null
 		}
 	]);
-	const [dataStudent, setDataStudent] = useState([]);
-	const [dataLevel, setDataLevel] = useState([]);
+
+	const [dataTeacher, setDataTeacher] = useState<ITeacher[]>([]);
 	// ------ BASE USESTATE TABLE -------
-	const [dataSource, setDataSource] = useState<IPriceFixExam[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const [dataSource, setDataSource] = useState<IPayrollFix[]>([]);
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 
 	const listTodoApi = {
@@ -84,43 +146,29 @@ const PayFixExam = () => {
 		pageIndex: currentPage,
 		sort: null,
 		sortType: null,
-		StudentID: null,
-		SetPackageLevel: null
+		fromDate: null,
+		toDate: null,
+		TeacherID: null,
+		StatusID: null,
+		Month: null,
+		Year: null,
+		TeacherName: null
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
-	// GET DATA LEVEL
-	const getDataLevel = async () => {
+	// GET DATA TEACHER
+	const getDataTeacher = async () => {
 		try {
-			let res = await priceFixExamApi.getAll({ pageSize: 9999, pageIndex: 1 });
+			let res = await teacherApi.getAll({ selectAll: true, StatusID: 0, RoleID: 2 });
 			if (res.status == 200) {
-				let newData = res.data.data.map((item) => ({
-					title: item.SetPackageLevel,
-					value: item.ID,
-					price: item.Price
-				}));
-				setDataLevel(newData);
-				setDataFunc('SetPackageLevel', newData);
-			}
-		} catch (error) {
-			console.log('Error Level Package: ', error.message);
-		}
-	};
-
-	// GET DATA STUDENT
-	const getDataStudent = async () => {
-		try {
-			let res = await studentApi.getAll({ selectAll: true, Enable: true });
-			if (res.status === 200) {
-				let newData = res.data.data.map((item) => ({
+				const newData = res.data.data.map((item) => ({
 					title: item.FullNameUnicode,
 					value: item.UserInformationID
 				}));
-				setDataStudent(newData);
-				setDataFunc('StudentID', newData);
+				setDataFunc('TeacherID', newData);
 			}
 		} catch (error) {
-			console.log('Error Student: ', error.message);
+			console.log('Error Teacher: ', error.message);
 		}
 	};
 
@@ -132,7 +180,7 @@ const PayFixExam = () => {
 		});
 
 		try {
-			let res = await payFixExamApi.getAll(todoApi);
+			let res = await payrollFixApi.getAll(todoApi);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow));
 
 			res.status == 204 && (showNoti('danger', 'Không có dữ liệu'), setDataSource([]));
@@ -151,9 +199,8 @@ const PayFixExam = () => {
 		setTodoApi(listTodoApi);
 	};
 
-	const onUpdateData = (index, dataSubmit) => {
-		dataSource.splice(index, 1, dataSubmit);
-		setDataSource([...dataSource]);
+	const onUpdateData = (index) => {
+		setTodoApi({ ...todoApi });
 	};
 
 	// -------------- GET PAGE_NUMBER -----------------
@@ -210,77 +257,77 @@ const PayFixExam = () => {
 		setCurrentPage(1);
 	};
 
+	// -------------- CHECK FIELD ---------------------
+	const checkField = (valueSearch, dataIndex) => {
+		let newList = { ...listFieldSearch };
+		Object.keys(newList).forEach(function (key) {
+			console.log('key: ', key);
+			if (key != dataIndex) {
+				if (key != 'pageIndex') {
+					newList[key] = null;
+				}
+			} else {
+				newList[key] = valueSearch;
+			}
+		});
+
+		return newList;
+	};
+
+	// ------------ ON SEARCH -----------------------
+	const onSearch = (valueSearch, dataIndex) => {
+		let clearKey = checkField(valueSearch, dataIndex);
+
+		setTodoApi({
+			...todoApi,
+			...clearKey
+		});
+	};
+
 	const columns = [
 		{
-			title: 'Học sinh',
-			dataIndex: 'StudentName',
+			title: 'Giáo viên',
+			dataIndex: 'TeacherName',
+			render: (text) => <p className="font-weight-blue">{text}</p>,
+			...FilterColumn('TeacherName', onSearch, handleReset, 'text')
+		},
 
-			render: (name) => {
-				// return <p className="font-weight-black">{(level == 1 && 'Dễ') || (level == 2 && 'Trung bình') || (level == 3 && 'Khó')}</p>;
-				return <p className="font-weight-blue">{name}</p>;
-			}
-		},
-		{
-			title: 'Level',
-			dataIndex: 'SetPackageLevel',
-			align: 'center'
-		},
-		{
-			title: 'Số tiền thanh toán',
-			dataIndex: 'Paid',
-			render: (value) => {
-				return <p className="font-weight-black">{numberWithCommas(value)}</p>;
-			}
-		},
 		{
 			title: 'Số lượt chấm',
 			dataIndex: 'Amount',
 			align: 'center'
 		},
 		{
-			title: 'Phương thức thanh toán',
-			dataIndex: 'PaymentMethodsName'
+			title: 'Số tiền',
+			dataIndex: 'Salary',
+			render: (value) => <p className="font-weight-black">{numberWithCommas(value)}</p>
+		},
+		{
+			title: 'Thời gian chốt lương',
+			render: (text, data) => <p>{data.Month + '/' + data.Year}</p>
 		},
 		{
 			title: 'Trạng thái',
-			dataIndex: 'Approval',
-			render: (type) => {
+			dataIndex: 'StatusID',
+			render: (status) => {
 				return (
 					<>
-						{type == 1 && <span className="tag red">Chưa thanh toán</span>}
-						{type == 2 && <span className="tag yellow">Chờ duyệt</span>}
-						{type == 3 && <span className="tag green">Đã thanh toán</span>}
+						{status == 1 && <span className="tag gray">Chưa chốt lương</span>}
+						{status == 2 && <span className="tag green">Đã chốt lương</span>}
 					</>
 				);
 			}
 		},
 		{
-			title: 'Thanh toán',
-			dataIndex: 'DonePaid',
-			align: 'center',
-			render: (type) => (
-				<>
-					{type == false && <CloseOutlined className="delete custom" />}
-					{type == true && <CheckOutlined className="success custom" />}
-				</>
-			)
+			title: 'Thời gian thanh toán',
+			dataIndex: 'PaymentDate'
 		}
-
-		// {
-		// 	render: (text, data, index) => (
-		// 		<PriceFixExamForm dataRow={data} onUpdateData={(dataSubmit) => onUpdateData(index, dataSubmit)} />
-		// 	)
-		// }
 	];
 
 	useEffect(() => {
 		getDataSource();
+		getDataTeacher();
 	}, [todoApi]);
-
-	useEffect(() => {
-		getDataStudent();
-		getDataLevel();
-	}, []);
 
 	return (
 		<>
@@ -290,8 +337,8 @@ const PayFixExam = () => {
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				loading={isLoading}
 				addClass="basic-header"
-				TitlePage="Danh sách học sinh mua lượt chấm"
-				TitleCard={<PayFixExamForm dataLevel={dataLevel} dataStudent={dataStudent} onFetchData={onFetchData} />}
+				TitlePage="Bảng lương chấm bài"
+				TitleCard={null}
 				dataSource={dataSource}
 				columns={columns}
 				Extra={
@@ -309,4 +356,4 @@ const PayFixExam = () => {
 	);
 };
 
-export default PayFixExam;
+export default PayrollFix;

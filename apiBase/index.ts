@@ -90,3 +90,5 @@ export { resetPasswordApi } from './reset-password/reset-password';
 export { doingTestApi } from './doing-test/doing-test';
 export { priceFixExamApi } from './options/price-fix-exam';
 export { payFixExamApi } from './package/pay-fix-exam';
+export { payFixListApi } from './package/pay-fix-list';
+export { packageResultApi } from '~/apiBase/package/package-result';

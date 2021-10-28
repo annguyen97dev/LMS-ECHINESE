@@ -15,7 +15,7 @@ import TextAreaField from '~/components/FormControl/TextAreaField';
 import InputNumberField from '~/components/FormControl/InputNumberField';
 
 const PayFixExamForm = (props) => {
-	const { dataStudent, dataRow, onFetchData, onUpdateData, dataLevel, isBuy, userID } = props;
+	const { dataStudent, dataRow, onFetchData, onUpdateData, dataLevel, isBuy, userID, isOpenMarking } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { showNoti } = useWrap();
@@ -34,7 +34,7 @@ const PayFixExamForm = (props) => {
 	};
 
 	const defaultValuesInit = {
-		StudentID: null,
+		StudentID: userID,
 		PriceFixExam: null,
 		Amount: 1,
 		Paid: null,
@@ -83,6 +83,7 @@ const PayFixExamForm = (props) => {
 
 			if (res.status === 200) {
 				onFetchData && onFetchData();
+				onUpdateData && onUpdateData();
 				setIsModalVisible(false);
 				form.reset(defaultValuesInit);
 				showNoti('success', !isBuy ? 'Thêm mới thành công' : 'Mua lượt chấm thành công');
@@ -106,6 +107,12 @@ const PayFixExamForm = (props) => {
 		userID && form.setValue('StudentID', userID);
 	}, [userID]);
 
+	useEffect(() => {
+		if (isOpenMarking) {
+			setIsModalVisible(true);
+		}
+	}, [isOpenMarking]);
+
 	return (
 		<>
 			{isBuy ? (
@@ -121,7 +128,7 @@ const PayFixExamForm = (props) => {
 				<Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
 					<div className="container-fluid">
 						<div className="row">
-							<div className="col-12">
+							{/* <div className="col-12">
 								<SelectField
 									disabled={isBuy ? true : false}
 									isRequired={true}
@@ -130,7 +137,7 @@ const PayFixExamForm = (props) => {
 									label="Học viên"
 									optionList={dataStudent}
 								/>
-							</div>
+							</div> */}
 							<div className="col-12">
 								<SelectField
 									onChangeSelect={(value) => onChange_SelectLevel(value)}

@@ -1,11 +1,11 @@
 import React from 'react';
-import PayFixExam from '~/components/Global/Package/PayFixExam/PayFixExam';
+import PayFixExamDetail from '~/components/Global/Package/PayFixExam/PayFixExamDetail';
 import LayoutBase from '~/components/LayoutBase';
 
 const PayFixExamPage = () => {
 	return (
 		<>
-			<PayFixExam />
+			<PayFixExamDetail />
 		</>
 	);
 };

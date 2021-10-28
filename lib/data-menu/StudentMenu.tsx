@@ -74,7 +74,14 @@ export const StudentChildMenu = [
 				ItemType: 'single',
 				Key: '/package/package-result-student',
 				Route: '/package/package-result-student',
-				Text: 'Kết quả thi',
+				Text: 'Kết quả làm bài',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/package/pay-fix-list',
+				Route: '/package/pay-fix-list',
+				Text: 'Mua lượt chấm bài',
 				Icon: ''
 			}
 		]

@@ -12,7 +12,7 @@ class PackageResultApi {
 
 	add = (data: ISetPackageResult) => instance.post(url, data);
 
-	update = (data: ISetPackageResult) => instance.put(url, data, {});
+	update = (data: any) => instance.put(url, data, {});
 
 	// tự động chia đều giáo viên chấm bài
 

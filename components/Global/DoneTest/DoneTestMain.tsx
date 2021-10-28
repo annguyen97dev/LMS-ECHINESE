@@ -48,13 +48,13 @@ const DoneTestMain = () => {
 			width: '5%',
 			render: (text, data, index) => <p className="font-weight-black">{index + 1 + '/'}</p>
 		},
-		{
-			title: 'Câu hỏi',
-			dataIndex: 'question',
-			key: 'number',
-			width: '30%',
-			render: (text) => <p className="font-weight-black">{ReactHtmlParser(text)}</p>
-		},
+		// {
+		// 	title: 'Câu hỏi',
+		// 	dataIndex: 'question',
+		// 	key: 'number',
+		// 	width: '30%',
+		// 	render: (text) => <p className="font-weight-black">{ReactHtmlParser(text)}</p>
+		// },
 		{
 			title: 'Câu trả lời của bạn',
 			dataIndex: 'yourAnswer',

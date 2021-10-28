@@ -480,6 +480,7 @@ export const AdminChildMenu = [
 						Text: 'Giáo viên',
 						Icon: ''
 					}
+
 					// {
 					//   ItemType: "single",
 					//   Key: "/staff/exercise-done-list",
@@ -613,6 +614,21 @@ export const AdminChildMenu = [
 			},
 			{
 				ItemType: 'sub-menu',
+				Key: 'sub-tab-package-3',
+				Icon: '',
+				TitleSub: 'Thuộc về giáo viên',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/package/payroll-fix',
+						Route: '/package/payroll-fix',
+						Text: 'Bảng lương chấm bài',
+						Icon: ''
+					}
+				]
+			},
+			{
+				ItemType: 'sub-menu',
 				Key: 'sub-tab-package-2',
 				Icon: '',
 				TitleSub: 'Thuộc về học viên',
@@ -626,8 +642,8 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
-						Key: '/package/pay-fix-exam',
-						Route: '/package/pay-fix-exam',
+						Key: '/package/pay-fix-list',
+						Route: '/package/pay-fix-list',
 						Text: 'Danh sách mua lượt chấm',
 						Icon: ''
 					},

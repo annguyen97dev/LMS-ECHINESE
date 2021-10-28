@@ -1,27 +1,27 @@
 import React from 'react';
-import {Airplay, FileText, Home, User, UserCheck} from 'react-feather';
+import { Airplay, FileText, Home, User, UserCheck } from 'react-feather';
 
 export const TeacherParentMenu = [
 	{
 		TabName: 'tab-home',
-		Icon: <Home />,
+		Icon: <Home />
 	},
 	{
 		TabName: 'tab-course',
-		Icon: <Airplay />,
+		Icon: <Airplay />
 	},
 	{
 		TabName: 'tab-exercise',
-		Icon: <FileText />,
+		Icon: <FileText />
 	},
 	{
 		TabName: 'tab-student',
-		Icon: <User />,
+		Icon: <User />
 	},
 	{
 		TabName: 'tab-staff',
-		Icon: <UserCheck />,
-	},
+		Icon: <UserCheck />
+	}
 ];
 
 export const TeacherChildMenu = [
@@ -35,23 +35,23 @@ export const TeacherChildMenu = [
 				Key: '/newsfeed',
 				Route: '/newsfeed',
 				Icon: '',
-				Text: 'Tin tức',
+				Text: 'Tin tức'
 			},
 			{
 				TypeItem: 'single',
 				Key: '/course/schedule-study-teacher',
 				Icon: '',
 				Route: '/course/schedule-study-teacher',
-				Text: 'Lịch dạy ',
+				Text: 'Lịch dạy '
 			},
 			{
 				TypeItem: 'single',
 				Key: '/teacher/day-off-schedule',
 				Icon: '',
 				Route: '/teacher/day-off-schedule',
-				Text: 'Lịch nghỉ',
-			},
-		],
+				Text: 'Lịch nghỉ'
+			}
+		]
 	},
 	{
 		MenuName: 'tab-course',
@@ -63,15 +63,15 @@ export const TeacherChildMenu = [
 				Key: '/course/course-buy',
 				Icon: '',
 				Route: '/course/course-buy',
-				Text: 'Danh sách khóa học - mua bán',
+				Text: 'Danh sách khóa học - mua bán'
 			},
 			{
 				TypeItem: 'single',
 				Key: '/course/register-course',
 				Icon: '',
 				Route: '/course/register-course',
-				Text: 'Đăng ký khóa học',
-			},
+				Text: 'Đăng ký khóa học'
+			}
 			// {
 			//   ItemType: "sub-menu",
 			//   Key: "sub-course-zoom",
@@ -101,42 +101,21 @@ export const TeacherChildMenu = [
 			//     },
 			//   ],
 			// },
-		],
+		]
 	},
 	{
 		MenuName: 'tab-exercise',
 		MenuTitle: 'Bài tập',
-		MenuKey: '/teacher',
+		MenuKey: '/package',
 		MenuItem: [
 			{
 				ItemType: 'single',
-				Key: '/teacher/new-list-exercise',
-				Route: '/teacher/new-list-exercise',
-				Text: 'Bài tập mới',
-				Icon: '',
-			},
-			{
-				ItemType: 'single',
-				Key: '/teacher/exercise-process',
-				Route: '/teacher/exercise-process',
-				Text: 'Chờ xử lí',
-				Icon: '',
-			},
-			{
-				ItemType: 'single',
-				Key: '/teacher/exercise-redo-fix',
-				Route: '/teacher/exercise-redo-fix',
-				Text: 'Chấm lại',
-				Icon: '',
-			},
-			{
-				ItemType: 'single',
-				Key: '/teacher/exercise-done',
-				Route: '/teacher/exercise-done',
-				Text: 'Đã chấm',
-				Icon: '',
-			},
-		],
+				Key: '/package/review-exam-teacher',
+				Route: '/package/review-exam-teacher',
+				Text: 'Danh sách bài tập',
+				Icon: ''
+			}
+		]
 	},
 	{
 		MenuName: 'tab-student',
@@ -154,32 +133,32 @@ export const TeacherChildMenu = [
 						Key: '/customer/report/report-customer-warning',
 						Route: '/customer/report/report-customer-warning',
 						Text: 'Cảnh báo học viên',
-						Icon: '',
+						Icon: ''
 					},
 					{
 						ItemType: 'single',
 						Key: '/customer/report/report-customer-test',
 						Route: '/customer/report/report-customer-test',
 						Text: 'Học viên sắp thi',
-						Icon: '',
-					},
-				],
+						Icon: ''
+					}
+				]
 			},
 			{
 				ItemType: 'single',
 				Key: '/customer/service/service-info-student',
 				Route: '/customer/service/service-info-student',
 				Text: 'Thêm lịch hẹn test',
-				Icon: '',
+				Icon: ''
 			},
 			{
 				ItemType: 'single',
 				Key: '/customer/feedback-list',
 				Route: '/customer/feedback-list',
 				Text: 'Phản hồi',
-				Icon: '',
-			},
-		],
+				Icon: ''
+			}
+		]
 	},
 	{
 		MenuName: 'tab-staff',
@@ -191,8 +170,8 @@ export const TeacherChildMenu = [
 				Key: '/staff/manage-task',
 				Route: '/staff/manage-task',
 				Text: 'Quản lí công việc',
-				Icon: '',
-			},
-		],
-	},
+				Icon: ''
+			}
+		]
+	}
 ];

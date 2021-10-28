@@ -31,6 +31,15 @@ type SetPackageExerciseStudent = {
 	SetPackageExerciseAnswerStudent: Array<SetPackageExerciseAnswerStudent>;
 };
 
+type dataMarking = {
+	SetPackageResultID: number;
+	Note: string;
+	setPackageExerciseStudentsList: Array<{
+		ID: number;
+		Point: number;
+	}>;
+};
+
 type doneTestData = {
 	ID: 7;
 	SetPackageResultID: number;
@@ -55,28 +64,39 @@ type doneTestData = {
 export type IProps = {
 	doneTestData: Array<doneTestData>;
 	getDoneTestData: Function;
+	dataMarking: dataMarking;
+	getDataMarking: Function;
 };
 
 const DoneTestContext = createContext<IProps>({
 	doneTestData: null,
-	getDoneTestData: () => {}
+	dataMarking: null,
+	getDoneTestData: () => {},
+	getDataMarking: () => {}
 });
 
 export const DoneTestProvider = ({ children }) => {
 	const [doneTestData, setDoneTestData] = useState<doneTestData[]>(null);
-
-	console.log('Done Test Data: ', doneTestData);
+	const [dataMarking, setDataMarking] = useState<dataMarking>(null);
 
 	const getDoneTestData = (data) => {
 		setDoneTestData(data);
+	};
+
+	console.log('Data Marking: ', dataMarking);
+
+	const getDataMarking = (data) => {
+		setDataMarking({ ...data });
 	};
 
 	return (
 		<>
 			<DoneTestContext.Provider
 				value={{
+					dataMarking: dataMarking,
 					doneTestData: doneTestData,
-					getDoneTestData
+					getDoneTestData,
+					getDataMarking
 				}}
 			>
 				{children}

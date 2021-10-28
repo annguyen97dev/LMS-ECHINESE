@@ -1,7 +1,7 @@
 import { Switch, Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Eye } from 'react-feather';
+import { Eye, Tool } from 'react-feather';
 import { studentApi } from '~/apiBase';
 import { packageDetailApi } from '~/apiBase/package/package-detail';
 import { packageResultApi } from '~/apiBase/package/package-result';
@@ -15,7 +15,7 @@ import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { teacherApi } from '~/apiBase';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 const PackageSetResult = () => {
 	const [dataTeacher, setDataTeacher] = useState([]);
@@ -91,7 +91,8 @@ const PackageSetResult = () => {
 		// },
 		{
 			title: 'Giáo viên chấm bài',
-			dataIndex: 'TeacherName'
+			dataIndex: 'TeacherName',
+			render: (text) => <p className="font-weight-blue">{text}</p>
 		},
 		{
 			title: 'Trạng thái',
@@ -104,13 +105,21 @@ const PackageSetResult = () => {
 			)
 		},
 		{
-			title: 'Yều cầu chấm bài',
+			title: 'Yêu cầu chấm bài',
 			dataIndex: 'isFixPaid',
 			align: 'center',
-			render: (type) => (
+			render: (type, data) => (
 				<>
-					{type == false && <CloseOutlined className="delete custom" />}
-					{type == true && <CheckOutlined className="success custom" />}
+					{!data.isFixPaid && !data.isReevaluate && (
+						<Tooltip title="Chưa yêu cầu chấm">
+							<CloseOutlined className="delete custom" />
+						</Tooltip>
+					)}
+					{(data.isFixPaid || data.isReevaluate) && (
+						<Tooltip title="Yêu cầu chấm bài">
+							<CheckOutlined className="success custom" />
+						</Tooltip>
+					)}
 				</>
 			)
 		},
@@ -155,8 +164,6 @@ const PackageSetResult = () => {
 		{
 			render: (data) => (
 				<>
-					{data.isFixPaid && <PackagePickTeacher dataRow={data} dataTeacher={dataTeacher} onFetchData={onFetchData} />}
-
 					<Link
 						href={{
 							pathname: '/package/package-set-result/package-set-result-detail/[slug]',
@@ -165,10 +172,11 @@ const PackageSetResult = () => {
 					>
 						<Tooltip title="Kết quả bộ đề chi tiết">
 							<button className="btn btn-icon">
-								<Eye />
+								<ExclamationCircleOutlined />
 							</button>
 						</Tooltip>
 					</Link>
+					{data.isFixPaid && <PackagePickTeacher dataRow={data} dataTeacher={dataTeacher} onFetchData={onFetchData} />}
 				</>
 			)
 		}
