@@ -460,10 +460,24 @@ export const AdminChildMenu = [
 					}
 				]
 			},
+			// {
+			// 	ItemType: 'single',
+			// 	Key: '/staff/salary-review',
+			// 	Route: '/staff/salary-review',
+			// 	Text: 'Bảng lương nhân viên',
+			// 	Icon: ''
+			// },
 			{
 				ItemType: 'single',
-				Key: '/staff/salary-review',
-				Route: '/staff/salary-review',
+				Key: '/staff/teacher-salary',
+				Route: '/staff/teacher-salary',
+				Text: 'Bảng lương giáo viên',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/staff/admin-salary-staff',
+				Route: '/staff/admin-salary-staff',
 				Text: 'Bảng lương nhân viên',
 				Icon: ''
 			},

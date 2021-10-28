@@ -50,6 +50,20 @@ export const TeacherChildMenu = [
 				Icon: '',
 				Route: '/teacher/day-off-schedule',
 				Text: 'Lịch nghỉ'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/staff/salary-of-teacher',
+				Icon: '',
+				Route: '/staff/salary-of-teacher',
+				Text: 'Bảng lương'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/staff/salary-of-staff',
+				Icon: '',
+				Route: '/staff/salary-of-staff',
+				Text: 'Bảng lương nhân viên'
 			}
 		]
 	},
@@ -110,9 +124,30 @@ export const TeacherChildMenu = [
 		MenuItem: [
 			{
 				ItemType: 'single',
-				Key: '/package/review-exam-teacher',
-				Route: '/package/review-exam-teacher',
-				Text: 'Danh sách bài tập',
+				Key: '/teacher/new-list-exercise',
+				Route: '/teacher/new-list-exercise',
+				Text: 'Bài tập mới',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/teacher/exercise-process',
+				Route: '/teacher/exercise-process',
+				Text: 'Chờ xử lí',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/teacher/exercise-redo-fix',
+				Route: '/teacher/exercise-redo-fix',
+				Text: 'Chấm lại',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/teacher/exercise-done',
+				Route: '/teacher/exercise-done',
+				Text: 'Đã chấm',
 				Icon: ''
 			}
 		]
