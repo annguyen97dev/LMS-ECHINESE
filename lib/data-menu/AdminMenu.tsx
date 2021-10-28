@@ -494,6 +494,7 @@ export const AdminChildMenu = [
 						Text: 'Giáo viên',
 						Icon: ''
 					}
+
 					// {
 					//   ItemType: "single",
 					//   Key: "/staff/exercise-done-list",
@@ -604,19 +605,79 @@ export const AdminChildMenu = [
 		MenuKey: '/package',
 		MenuItem: [
 			{
-				ItemType: 'single',
-				Key: '/package/package-list',
-				Route: '/package/package-list',
-				Text: 'Quản lí bộ đề',
-				Icon: ''
+				ItemType: 'sub-menu',
+				Key: 'sub-tab-package-1',
+				Icon: '',
+				TitleSub: 'Quản lí bộ đề',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/package/package-list',
+						Route: '/package/package-list',
+						Text: 'Quản lí bộ đề',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/package/package-examiner',
+						Route: '/package/package-examiner',
+						Text: 'Danh sách chấm bộ đề',
+						Icon: ''
+					}
+				]
 			},
 			{
-				ItemType: 'single',
-				Key: '/package/package-student',
-				Route: '/package/package-student',
-				Text: 'Danh sách bộ đề học viên',
-				Icon: ''
+				ItemType: 'sub-menu',
+				Key: 'sub-tab-package-3',
+				Icon: '',
+				TitleSub: 'Thuộc về giáo viên',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/package/payroll-fix',
+						Route: '/package/payroll-fix',
+						Text: 'Bảng lương chấm bài',
+						Icon: ''
+					}
+				]
 			},
+			{
+				ItemType: 'sub-menu',
+				Key: 'sub-tab-package-2',
+				Icon: '',
+				TitleSub: 'Thuộc về học viên',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/package/package-set-result',
+						Route: '/package/package-set-result',
+						Text: 'Kết quả thi của học viên',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/package/pay-fix-list',
+						Route: '/package/pay-fix-list',
+						Text: 'Danh sách mua lượt chấm',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/package/package-student',
+						Route: '/package/package-student',
+						Text: 'Danh sách bộ đề học viên',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/package/package-store',
+						Route: '/package/package-store',
+						Text: 'Cửa hàng',
+						Icon: ''
+					}
+				]
+			}
+
 			// {
 			//   ItemType: "single",
 			//   Key: "/package/package-create",
@@ -631,28 +692,6 @@ export const AdminChildMenu = [
 			//   Text: "Topic",
 			//   Icon: "",
 			// },
-			{
-				ItemType: 'single',
-				Key: '/package/package-examiner',
-				Route: '/package/package-examiner',
-				Text: 'Danh sách chấm bộ đề',
-				Icon: ''
-			},
-			{
-				ItemType: 'single',
-				Key: '/package/package-set-result/',
-				Route: '/package/package-set-result/',
-				Text: 'Kết quả bộ đề',
-				Icon: ''
-			},
-
-			{
-				ItemType: 'single',
-				Key: '/package/package-store',
-				Route: '/package/package-store',
-				Text: 'Cửa hàng',
-				Icon: ''
-			}
 		]
 	},
 
@@ -728,9 +767,9 @@ export const AdminChildMenu = [
 			},
 			{
 				ItemType: 'sub-menu',
-				Key: 'sub-tab-option-3',
+				Key: 'sub-tab-option-4',
 				Icon: '',
-				TitleSub: 'Khác',
+				TitleSub: 'Cấu hình học',
 				SubMenuList: [
 					{
 						ItemType: 'single',
@@ -745,13 +784,6 @@ export const AdminChildMenu = [
 						Text: 'Khối học',
 						Icon: ''
 					},
-					// {
-					//   ItemType: "single",
-					//   Key: "/option/class",
-					//   Route: "/option/class",
-					//   Text: "Lớp học",
-					//   Icon: "",
-					// },
 					{
 						ItemType: 'single',
 						Key: '/option/study-time',
@@ -766,6 +798,21 @@ export const AdminChildMenu = [
 						Text: 'Chương trình',
 						Icon: ''
 					},
+					{
+						ItemType: 'single',
+						Key: '/option/price-fix-exam',
+						Route: '/option/price-fix-exam',
+						Text: 'Giá lượt chấm bài',
+						Icon: ''
+					}
+				]
+			},
+			{
+				ItemType: 'sub-menu',
+				Key: 'sub-tab-option-3',
+				Icon: '',
+				TitleSub: 'Khác',
+				SubMenuList: [
 					{
 						ItemType: 'single',
 						Key: '/option/discount',

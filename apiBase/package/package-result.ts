@@ -1,23 +1,22 @@
-import { instance } from "~/apiBase/instance";
+import { instance } from '~/apiBase/instance';
 
-const url = "/api/SetPackageResult";
+const url = '/api/SetPackageResult';
 
 class PackageResultApi {
-  getAll = (Params: any) =>
-    instance.get<IApiResultData<ISetPackageResult[]>>(url, {
-      params: Params,
-    });
+	getAll = (Params: any) =>
+		instance.get<IApiResultData<ISetPackageResult[]>>(url, {
+			params: Params
+		});
 
-  getDetail = (id: number) =>
-    instance.get<IApiResultData<ISetPackageResult>>(`${url}/${id}`);
+	getDetail = (id: number) => instance.get<IApiResultData<ISetPackageResult>>(`${url}/${id}`);
 
-  add = (data: ISetPackageResult) => instance.post(url, data);
+	add = (data: ISetPackageResult) => instance.post(url, data);
 
-  update = (data: ISetPackageResult) => instance.put(url, data, {});
+	update = (data: any) => instance.put(url, data, {});
 
-  // tự động chia đều giáo viên chấm bài
+	// tự động chia đều giáo viên chấm bài
 
-  updateTeacher = () => instance.put("/api/UpdateTeacherOfSetPackageResult");
+	updateTeacher = () => instance.put('/api/UpdateTeacherOfSetPackageResult');
 }
 
 export const packageResultApi = new PackageResultApi();

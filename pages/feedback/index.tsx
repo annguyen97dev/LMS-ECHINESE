@@ -148,5 +148,6 @@ const FeedbackList = () => {
     </>
   );
 };
+
 FeedbackList.layout = LayoutBase;
 export default FeedbackList;

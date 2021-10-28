@@ -224,6 +224,7 @@ const DoingTest = () => {
             packageDetailID={packageDetailID}
             infoExam={infoExam}
             examID={examID}
+            isDone={false}
           />
         )}
         <Modal

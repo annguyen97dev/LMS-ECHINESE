@@ -258,7 +258,7 @@ function FinanceVoucher() {
 					<Link
 						href={{
 							pathname: '/customer/finance/finance-cashier-payment/invoice-detail/[slug]',
-							query: { slug: record.ID }
+							query: { slug: record.ID, type: 'voucher' }
 						}}
 					>
 						<Tooltip title="Xem phiếu chi">

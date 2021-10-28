@@ -48,8 +48,6 @@ const ExpandTable = (props) => {
 		}
 	};
 
-	console.log('Row Keys: ', rowKeys);
-
 	const onChangeExpand = (expandedRows) => {
 		console.log('Expand Rows: ', expandedRows);
 		if (rowKeys.some((object) => object['currentPage'] == currentPage)) {

@@ -11,7 +11,7 @@ import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 
-let pageIndex = 1;
+// let pageIndex = 1;
 
 let listFieldSearch = {
 	pageIndex: 1,
@@ -63,7 +63,7 @@ const Center = () => {
 	const [dataArea, setDataArea] = useState<IArea[]>(null);
 	const listTodoApi = {
 		pageSize: pageSize,
-		pageIndex: pageIndex,
+		pageIndex: currentPage,
 		sort: null,
 		sortType: null,
 		branchCode: null,
@@ -189,12 +189,12 @@ const Center = () => {
 
 	// -------------- GET PAGE_NUMBER -----------------
 	const getPagination = (pageNumber: number) => {
-		pageIndex = pageNumber;
+		// pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
 			...todoApi,
 			// ...listFieldSearch,
-			pageIndex: pageIndex
+			pageIndex: pageNumber
 		});
 	};
 

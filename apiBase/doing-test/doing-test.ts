@@ -9,9 +9,9 @@ export const doingTestApi = {
   // 	});
   // },
   // Lấy theo ID
-  // getByID(ID) {
-  // 	return instance.get<IApiResultData<IDoingTest>>(`${url}${ID}`);
-  // },
+  getByID(ID) {
+    return instance.get<IApiResultData<IDoingTest>>(`${url}/${ID}`);
+  },
   // Thêm mới data
   add(data) {
     return instance.post(url, data);

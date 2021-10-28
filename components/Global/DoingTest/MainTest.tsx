@@ -17,7 +17,7 @@ const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQue
 
 const MainTest = (props) => {
 	const { getListQuestionID, getActiveID, activeID, listPicked } = useDoingTest();
-	const { examID, infoExam, packageDetailID } = props;
+	const { examID, infoExam, packageDetailID, dataDoneTest, isDone, listIDFromDoneTest, listGroupIDFromDoneTest, closeMainTest } = props;
 	const listTodoApi = {
 		pageIndex: 1,
 		pageSize: 999,
@@ -50,6 +50,7 @@ const MainTest = (props) => {
 	// console.log("Info Exam is: ", infoExam);
 
 	console.log('DataQuestion: ', dataQuestion);
+	// console.log("Data Done Test: ", dataDoneTest);
 	// console.log("Space Question: ", spaceQuestion);
 	// console.log("List question ID: ", listQuestionID);
 
@@ -122,9 +123,6 @@ const MainTest = (props) => {
 
 	// -- CHECK IS SINGLE
 	const checkIsSingle = (indexCurrent) => {
-		console.log('Index current: ', indexCurrent);
-		console.log('Space Question trong này: ', spaceQuestion);
-
 		if (indexCurrent !== spaceQuestion.start && indexCurrent !== 0 && indexCurrent !== spaceQuestion.end) {
 			if (spaceQuestion.end - spaceQuestion.start == 2) {
 				if (indexCurrent > spaceQuestion.start && indexCurrent < spaceQuestion.end) {
@@ -217,6 +215,7 @@ const MainTest = (props) => {
 
 	// - Next Page
 	const onChange_NextPage = (e) => {
+		console.log('Active ID in next: ', activeID);
 		listQuestionID.every((item, index) => {
 			if (item === activeID) {
 				if (index === listQuestionID.length - 1) {
@@ -234,6 +233,8 @@ const MainTest = (props) => {
 			return true;
 		});
 	};
+
+	console.log('space question: ', spaceQuestion);
 
 	// - Preview
 	function onChange_preview(e) {
@@ -266,18 +267,33 @@ const MainTest = (props) => {
 		setIsModalVisible(false);
 	};
 
-	useEffect(() => {
-		getListQuestion();
-		packageResult.SetPackageDetailID = parseInt(packageDetailID);
-		getPackageResult({ ...packageResult });
-	}, []);
+	const remakeData = () => {
+		let cloneData = { ...packageResult };
+		cloneData.SetPackageResultDetailInfoList.forEach((item) => {
+			if (item.Type == 3 || item.Type == 2 || item.Type == 5) {
+				item.SetPackageExerciseStudentInfoList.forEach((e) => {
+					if (e.SetPackageExerciseAnswerStudentList.length == 0) {
+						e.SetPackageExerciseAnswerStudentList.push({
+							AnswerID: 0,
+							AnswerContent: '',
+							FileAudio: ''
+						});
+					}
+				});
+			}
+		});
+
+		return cloneData;
+	};
 
 	// ===== ON SUBMIT DOING TEST =====
 	const onSubmit_DoingTest = async () => {
 		setIsModalConfirm(false);
 		setLoadingSubmit(true);
+		let dataSubmit = remakeData();
+
 		try {
-			let res = await doingTestApi.add(packageResult);
+			let res = await doingTestApi.add(dataSubmit);
 			if (res.status === 200) {
 				setIsModalSuccess(true);
 				setTimeout(() => {
@@ -285,7 +301,7 @@ const MainTest = (props) => {
 						pathname: '/done-test',
 						query: { SetPackageResultID: res.data.data.ID }
 					});
-				}, 500);
+				}, 1000);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -306,6 +322,20 @@ const MainTest = (props) => {
 	};
 
 	// ===== ALL USE EFFECT ====
+
+	useEffect(() => {
+		if (!isDone) {
+			getListQuestion();
+			packageResult.SetPackageDetailID = parseInt(packageDetailID);
+			getPackageResult({ ...packageResult });
+		} else {
+			setDataQuestion(dataDoneTest);
+			checkSpaceQuestionAtFirst(dataDoneTest);
+			setListQuestionID(listIDFromDoneTest);
+			setListGroupID(listGroupIDFromDoneTest);
+		}
+	}, []);
+
 	useEffect(() => {
 		if (listQuestionID?.length > 0) {
 			getListQuestionID(listQuestionID);
@@ -332,30 +362,32 @@ const MainTest = (props) => {
 	}, [userInformation]);
 
 	useEffect(() => {
-		if (dataQuestion?.length > 0) {
-			dataQuestion.forEach((item, index) => {
-				let listQuestion = [];
+		if (!isDone) {
+			if (dataQuestion?.length > 0) {
+				dataQuestion.forEach((item, index) => {
+					let listQuestion = [];
 
-				item.ExerciseTopic.forEach((ques, index) => {
-					listQuestion.push({
-						ExerciseID: ques.ExerciseID,
-						SetPackageExerciseAnswerStudentList: []
+					item.ExerciseTopic.forEach((ques, index) => {
+						listQuestion.push({
+							ExerciseID: ques.ExerciseID,
+							SetPackageExerciseAnswerStudentList: []
+						});
+					});
+
+					packageResult.SetPackageResultDetailInfoList.push({
+						ExamTopicDetailID: item.ID,
+						ExerciseGroupID: item.ExerciseGroupID,
+						Level: item.Level,
+						Type: item.Type,
+						SkillID: item.SkillID,
+						SetPackageExerciseStudentInfoList: listQuestion
+					});
+
+					getPackageResult({
+						...packageResult
 					});
 				});
-
-				packageResult.SetPackageResultDetailInfoList.push({
-					ExamTopicDetailID: item.ID,
-					ExerciseGroupID: item.ExerciseGroupID,
-					Level: item.Level,
-					Type: item.Type,
-					SkillID: item.SkillID,
-					SetPackageExerciseStudentInfoList: listQuestion
-				});
-
-				getPackageResult({
-					...packageResult
-				});
-			});
+			}
 		}
 	}, [dataQuestion]);
 
@@ -377,8 +409,15 @@ const MainTest = (props) => {
 		}
 	});
 
+	useEffect(() => {
+		if (activeID) {
+			let index = listQuestionID.findIndex((id) => id === activeID);
+			setPageCurrent(index + 1);
+		}
+	}, [activeID]);
+
 	return (
-		<div className="test-wrapper">
+		<div className="test-wrapper doing-test">
 			{/* Modal báo thành công **/}
 			<Modal title="Thông báo" footer={null} className="" visible={isModalSuccess}>
 				<div className="modal-submit-success-test">
@@ -397,6 +436,8 @@ const MainTest = (props) => {
 			<Modal title="Chú ý!" visible={isModalVisible} okText="Đồng ý" cancelText="Đóng" onOk={handleOk} onCancel={handleCancel}>
 				<p style={{ fontWeight: 500 }}>Bạn chưa chọn đề thi. Chuyển đến trang bộ đề?</p>
 			</Modal>
+
+			{/* Card Main Test **/}
 			<Card
 				className="test-card"
 				title={
@@ -438,7 +479,7 @@ const MainTest = (props) => {
 									<div className="doingtest-group h-100" key={index}>
 										<div className="row h-100">
 											<div className="col-md-6 col-12 h-100">
-												<div className="box-paragraph">{ReactHtmlParser(item.Content)}</div>
+												<div className="box-paragraph h-100">{ReactHtmlParser(item.Content)}</div>
 											</div>
 											<div className="col-md-6 col-12 h-100 pl-0">
 												<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />
@@ -516,8 +557,11 @@ const MainTest = (props) => {
 						</button>
 					</div>
 					<div className="footer-submit text-right">
-						<button className="btn btn-primary" onClick={() => setIsModalConfirm(true)}>
-							Nộp bài
+						<button
+							className="btn btn-primary"
+							onClick={() => (!dataDoneTest ? setIsModalConfirm(true) : closeMainTest && closeMainTest())}
+						>
+							{!dataDoneTest ? 'Nộp bài' : 'Đóng'}
 						</button>
 					</div>
 				</div>

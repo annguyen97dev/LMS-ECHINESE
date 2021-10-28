@@ -22,7 +22,7 @@ type IScheduleZoom = {
 	ApiKey: string;
 	UserName: string;
 	IsOff: true;
-	isExam: boolean;
+	IsExam: boolean;
 	ExamTopicID: number;
 };
 

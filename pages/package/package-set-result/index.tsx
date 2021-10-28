@@ -1,20 +1,48 @@
 import { Switch, Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Eye } from 'react-feather';
+import { Eye, Tool } from 'react-feather';
 import { studentApi } from '~/apiBase';
 import { packageDetailApi } from '~/apiBase/package/package-detail';
 import { packageResultApi } from '~/apiBase/package/package-result';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
+import PackagePickTeacher from '~/components/Global/Package/PackageResult/PackagePickTeacher';
 import PackageResultExpand from '~/components/Global/Package/PackageResult/PackageResultExpand';
 import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResult/PackageResultUpdateTeacher';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
+import { teacherApi } from '~/apiBase';
+import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 const PackageSetResult = () => {
+	const [dataTeacher, setDataTeacher] = useState([]);
+
+	// Get list teacher
+	const getListTeacher = async () => {
+		// setLoadingTeacher(true);
+		try {
+			let res = await teacherApi.getAll({
+				pageSize: 9999,
+				pageIndex: 1
+			});
+
+			if (res.status === 200) {
+				let newData = res.data.data.map((item) => ({
+					title: item.FullNameUnicode,
+					value: item.UserInformationID
+				}));
+				setDataTeacher(newData);
+			}
+		} catch (error) {
+			console.log('Error Get List Teacher: ', error.message);
+		} finally {
+			// setLoadingTeacher(true);
+		}
+	};
+
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
@@ -37,84 +65,119 @@ const PackageSetResult = () => {
 
 		{
 			title: 'Đề thi',
-			dataIndex: 'ExamTopicName'
-		},
-		{
-			title: 'Level',
-			dataIndex: 'SetPackageLevel',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Hình thức',
-			dataIndex: 'ExamTopicTypeName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Giáo viên',
-			dataIndex: 'TeacherName'
-		},
-		{
-			title: 'Trạng thái',
-			dataIndex: 'isDone',
-			render: (type) => (
-				<Fragment>
-					{type == true && <span className="tag green">Đã hoàn thành</span>}
-					{type == false && <span className="tag yellow">Chưa hoàn thành</span>}
-				</Fragment>
-			)
-		},
-		{
-			title: 'Yêu cầu chấm bài',
-			render: (data) => (
-				<Fragment>
-					{data.ExamTopicType == 2 ? (
-						<Switch
-							checkedChildren="Có"
-							unCheckedChildren="Không"
-							checked={data.isFixPaid}
-							size="default"
-							onChange={async (check: boolean) => {
-								setIsLoading({
-									type: 'GET_ALL',
-									status: true
-								});
-								try {
-									let res = await packageResultApi.update({
-										...data,
-										isFixPaid: check
-									});
-									res.status == 200 && setParams({ ...params, pageIndex: currentPage }),
-										showNoti('success', res.data.message);
-								} catch (error) {
-									showNoti('danger', error.message);
-								} finally {
-									setIsLoading({
-										type: 'GET_ALL',
-										status: false
-									});
-								}
-							}}
-						/>
-					) : (
-						<p className="font-light-black">Trắc nghiệm được chấm tự động</p>
-					)}
-				</Fragment>
-			)
-		},
-		{
-			render: (data) => (
+			dataIndex: 'ExamTopicName',
+			render: (text, data) => (
 				<Link
 					href={{
 						pathname: '/package/package-set-result/package-set-result-detail/[slug]',
 						query: { slug: `${data.ID}` }
 					}}
 				>
-					<Tooltip title="Kết quả bộ đề chi tiết">
-						<button className="btn btn-icon">
-							<Eye />
-						</button>
-					</Tooltip>
+					<a href="#" className="font-weight-black">
+						{text}
+					</a>
 				</Link>
+			)
+		},
+		{
+			title: 'Level',
+			dataIndex: 'SetPackageLevel',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		// {
+		// 	title: 'Hình thức',
+		// 	dataIndex: 'ExamTopicTypeName',
+		// 	render: (text) => <p className="font-weight-black">{text}</p>
+		// },
+		{
+			title: 'Giáo viên chấm bài',
+			dataIndex: 'TeacherName',
+			render: (text) => <p className="font-weight-blue">{text}</p>
+		},
+		{
+			title: 'Trạng thái',
+			dataIndex: 'isDone',
+			render: (type) => (
+				<Fragment>
+					{type == true && <span className="tag green">Đã chấm xong</span>}
+					{type == false && <span className="tag gray">Chưa chấm xong</span>}
+				</Fragment>
+			)
+		},
+		{
+			title: 'Yêu cầu chấm bài',
+			dataIndex: 'isFixPaid',
+			align: 'center',
+			render: (type, data) => (
+				<>
+					{!data.isFixPaid && !data.isReevaluate && (
+						<Tooltip title="Chưa yêu cầu chấm">
+							<CloseOutlined className="delete custom" />
+						</Tooltip>
+					)}
+					{(data.isFixPaid || data.isReevaluate) && (
+						<Tooltip title="Yêu cầu chấm bài">
+							<CheckOutlined className="success custom" />
+						</Tooltip>
+					)}
+				</>
+			)
+		},
+		// {
+		// 	title: 'Yêu cầu chấm bài',
+		// 	render: (data) => (
+		// 		<Fragment>
+		// 			{data.ExamTopicType == 2 ? (
+		// 				<Switch
+		// 					checkedChildren="Có"
+		// 					unCheckedChildren="Không"
+		// 					checked={data.isFixPaid}
+		// 					size="default"
+		// 					onChange={async (check: boolean) => {
+		// 						setIsLoading({
+		// 							type: 'GET_ALL',
+		// 							status: true
+		// 						});
+		// 						try {
+		// 							let res = await packageResultApi.update({
+		// 								...data,
+		// 								isFixPaid: check
+		// 							});
+		// 							res.status == 200 && setParams({ ...params, pageIndex: currentPage }),
+		// 								showNoti('success', res.data.message);
+		// 						} catch (error) {
+		// 							showNoti('danger', error.message);
+		// 						} finally {
+		// 							setIsLoading({
+		// 								type: 'GET_ALL',
+		// 								status: false
+		// 							});
+		// 						}
+		// 					}}
+		// 				/>
+		// 			) : (
+		// 				<p className="font-light-black">Trắc nghiệm được chấm tự động</p>
+		// 			)}
+		// 		</Fragment>
+		// 	)
+		// },
+		{
+			render: (data) => (
+				<>
+					<Link
+						href={{
+							pathname: '/package/package-set-result/package-set-result-detail/[slug]',
+							query: { slug: `${data.ID}` }
+						}}
+					>
+						<Tooltip title="Kết quả bộ đề chi tiết">
+							<button className="btn btn-icon">
+								<ExclamationCircleOutlined />
+							</button>
+						</Tooltip>
+					</Link>
+					{data.isFixPaid && <PackagePickTeacher dataRow={data} dataTeacher={dataTeacher} onFetchData={onFetchData} />}
+				</>
 			)
 		}
 	];
@@ -304,6 +367,7 @@ const PackageSetResult = () => {
 	useEffect(() => {
 		getDataStudent();
 		getDataPackageDetail();
+		getListTeacher();
 	}, []);
 
 	const getPagination = (pageNumber: number) => {
@@ -311,6 +375,12 @@ const PackageSetResult = () => {
 		setParams({
 			...params,
 			pageIndex: currentPage
+		});
+	};
+
+	const onFetchData = () => {
+		setParams({
+			...params
 		});
 	};
 

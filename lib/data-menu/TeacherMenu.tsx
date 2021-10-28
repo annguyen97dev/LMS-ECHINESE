@@ -120,7 +120,7 @@ export const TeacherChildMenu = [
 	{
 		MenuName: 'tab-exercise',
 		MenuTitle: 'Bài tập',
-		MenuKey: '/teacher',
+		MenuKey: '/package',
 		MenuItem: [
 			{
 				ItemType: 'single',
