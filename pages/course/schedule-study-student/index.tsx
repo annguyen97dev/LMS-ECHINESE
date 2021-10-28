@@ -1,4 +1,4 @@
-import ScheduleStudyStudent from '~/components/Global/ScheduleStudyTeacher/ScheduleStudyTeacher';
+import ScheduleStudyStudent from '~/components/Global/ScheduleStudyStudent/ScheduleStudyStudent';
 import LayoutBase from '~/components/LayoutBase';
 
 const ScheduleStudyStudentPage = () => <ScheduleStudyStudent />;

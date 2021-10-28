@@ -1,20 +1,26 @@
-import {Card} from 'antd';
-import React, {useRef} from 'react';
-import ReactHtmlParser from 'react-html-parser';
+import { Card, Spin } from 'antd';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import ReactHtmlParser from 'react-html-parser';
+import { invoiceApi, voucherApi } from '~/apiBase';
+import { useDebounce } from '~/context/useDebounce';
+import { useWrap } from '~/context/wrap';
 InvoiceVoucherLayout.propTypes = {
 	title: PropTypes.string,
-	templateString: PropTypes.string,
+	templateString: PropTypes.string
 };
 InvoiceVoucherLayout.defaultProps = {
 	title: '',
-	templateString: '',
+	templateString: ''
 };
 function InvoiceVoucherLayout(props) {
-	const {title, templateString} = props;
-
-	const isIFrame = (input: HTMLElement | null): input is HTMLIFrameElement =>
-		input !== null && input.tagName === 'IFRAME';
+	const router = useRouter();
+	const { type, slug: id } = router.query;
+	const { title, templateString } = props;
+	const { showNoti } = useWrap();
+	const [isLoading, setIsLoading] = useState(false);
+	const isIFrame = (input: HTMLElement | null): input is HTMLIFrameElement => input !== null && input.tagName === 'IFRAME';
 
 	const onPrint = () => {
 		const contentEl = document.getElementById('selector-print');
@@ -29,6 +35,29 @@ function InvoiceVoucherLayout(props) {
 		}
 	};
 
+	const onSendMail = async () => {
+		try {
+			setIsLoading(true);
+			if (!type || !id) return;
+			let res;
+			if (type === 'invoice') {
+				res = await invoiceApi.sendMail(id);
+			}
+			if (type === 'voucher') {
+				res = await voucherApi.sendMail(id);
+			}
+			if (res?.status === 200) {
+				showNoti('success', 'Gửi mail thành công');
+			} else {
+				showNoti('danger', 'Gửi mail thất bại');
+			}
+		} catch (error) {
+			console.log('onSendMail', error.message);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+	const onSendMailDebounce = useDebounce(onSendMail, 500, []);
 	return (
 		<div>
 			<Card
@@ -36,7 +65,9 @@ function InvoiceVoucherLayout(props) {
 				className="card-invoice"
 				extra={
 					<>
-						<button className="btn btn-success mr-1">Gửi Email</button>
+						<button className="btn btn-success mr-1" disabled={isLoading} onClick={onSendMailDebounce}>
+							Gửi Email {isLoading && <Spin className="loading-base" />}
+						</button>
 						<button className="btn btn-warning" onClick={onPrint}>
 							In
 						</button>
@@ -49,7 +80,7 @@ function InvoiceVoucherLayout(props) {
 						<iframe
 							id="iframe-print"
 							style={{
-								display: 'none',
+								display: 'none'
 							}}
 						></iframe>
 					</div>
