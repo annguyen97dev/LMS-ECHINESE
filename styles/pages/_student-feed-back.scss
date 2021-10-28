@@ -1,0 +1,11 @@
+.wrap-student-fb {
+  width: 100px;
+  background: #000;
+  margin-left: -25px;
+  margin-top: -35px;
+  margin-bottom: -35px;
+
+  @include max-media(1500px) {
+    width: 85%;
+  }
+}
