@@ -607,17 +607,9 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/package/package-examiner',
 						Route: '/package/package-examiner',
-						Text: 'Danh sách chấm bộ đề',
+						Text: 'Danh sách giáo viên chấm bài',
 						Icon: ''
-					}
-				]
-			},
-			{
-				ItemType: 'sub-menu',
-				Key: 'sub-tab-package-3',
-				Icon: '',
-				TitleSub: 'Thuộc về giáo viên',
-				SubMenuList: [
+					},
 					{
 						ItemType: 'single',
 						Key: '/package/payroll-fix',
@@ -627,6 +619,7 @@ export const AdminChildMenu = [
 					}
 				]
 			},
+
 			{
 				ItemType: 'sub-menu',
 				Key: 'sub-tab-package-2',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Tooltip, Input, Form } from 'antd';
+import { Modal, Button, Tooltip, Input, Form, InputNumber } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 
 const MarkingExam = (props) => {
@@ -24,7 +24,8 @@ const MarkingExam = (props) => {
 	};
 
 	const onChange_Point = (value) => {
-		setValuePoint(parseFloat(value));
+		console.log('này là gì: ', value);
+		setValuePoint(value);
 	};
 
 	useEffect(() => {
@@ -53,10 +54,19 @@ const MarkingExam = (props) => {
 			</Tooltip>
 			<Modal title="Form chấm bài" visible={isModalVisible} onCancel={handleCancel} footer={null}>
 				<Form layout="vertical" form={form} onFinish={handleSubmit}>
-					<Form.Item label="Nhập điểm" name="username" rules={[{ required: true, message: 'Vui lòng nhập điểm' }]}>
-						<Input type="number" className="style-input" value={valuePoint} onChange={(e) => onChange_Point(e.target.value)} />
+					<Form.Item
+						className="mb-0"
+						label="Nhập điểm"
+						name="Point"
+						rules={[
+							{ required: true, message: 'Vui lòng nhập điểm' },
+							{ type: 'number', max: dataRow.PointMax, message: 'Điểm không được lớn hơn điểm tối đa' }
+						]}
+					>
+						<InputNumber className="style-input" value={valuePoint} onChange={(e) => onChange_Point(e)} />
 					</Form.Item>
-					<button type="submit" className="btn btn-primary w-100">
+					<p className="mb-0 mt-2 font-italic">Điểm tối đa: {dataRow.PointMax}</p>
+					<button type="submit" className="btn btn-primary w-100 mt-3">
 						Lưu
 					</button>
 				</Form>

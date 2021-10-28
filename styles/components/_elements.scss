@@ -447,6 +447,7 @@ textarea.ant-input {
 	height: 90px !important;
 }
 .style-input {
+	width: 100%;
 	&[disabled],
 	.ant-input-disabled,
 	&.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
@@ -457,7 +458,8 @@ textarea.ant-input {
 		user-select: none;
 		line-height: 14px;
 	}
-	.ant-input-affix-wrapper {
+	.ant-input-affix-wrapper,
+	.ant-input-number-input-wrap {
 		font-size: 14px;
 		border-radius: 0.375rem !important;
 		height: 36px !important;

@@ -58,7 +58,7 @@ const PackageResultDetail = () => {
 						res.data.data.forEach((item) => {
 							item.SetPackageExerciseStudent.forEach((ques) => {
 								newDataMarking.setPackageExerciseStudentsList.push({
-									ID: ques.ExerciseID,
+									ID: ques.ID,
 									Point: 0
 								});
 							});

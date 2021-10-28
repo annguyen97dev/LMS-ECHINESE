@@ -224,28 +224,20 @@ const SpeakingList = (props) => {
 							<p className="text mb-2">
 								{!dataMarking
 									? ques.Point
-									: dataMarking.setPackageExerciseStudentsList.find((item) => item['ID'] === ques.ExerciseID).Point}
+									: dataMarking.setPackageExerciseStudentsList.find((item) => item['ID'] === ques.ID).Point}
 							</p>
 						</div>
 
 						{dataMarking && !isMarked && (
 							<div className="point-marking">
-								<MarkingExam
-									onGetPoint={(point) => onGetPoint(point, ques.ExerciseID)}
-									dataRow={ques}
-									dataMarking={dataMarking}
-								/>
+								<MarkingExam onGetPoint={(point) => onGetPoint(point, ques.ID)} dataRow={ques} dataMarking={dataMarking} />
 							</div>
 						)}
-						{dataMarking && (
+						{/* {dataMarking && (
 							<div className="point-show mt-3">
-								<p className="mb-0">
-									{dataMarking.setPackageExerciseStudentsList.some((item) => item['ID'] === ques.ExerciseID) &&
-										'Điểm tối đa: ' +
-											dataMarking.setPackageExerciseStudentsList.find((item) => item['ID'] === ques.ExerciseID).Point}
-								</p>
+								<p className="mb-0">Điểm tối đa: {ques.PointMax}</p>
 							</div>
-						)}
+						)} */}
 					</div>
 				</div>
 			))}

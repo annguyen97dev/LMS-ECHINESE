@@ -66,7 +66,7 @@ const DoneMarkingExam = (props) => {
 				onCancel={handleCancel}
 				// confirmLoading={loading}
 			>
-				<p style={{ fontWeight: 500 }}>Ghi chú</p>
+				<p style={{ fontWeight: 500 }}>Nhận xét (có thể để trống)</p>
 				<TextArea onChange={(e) => onChange_note(e.target.value)}></TextArea>
 				<button className="btn btn-primary w-100 mt-3" onClick={handleMarkingExam}>
 					Lưu
