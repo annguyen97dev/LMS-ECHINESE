@@ -3,8 +3,8 @@ import { Item } from 'devextreme-react/file-manager';
 import React, { useEffect, useState } from 'react';
 import { useWrap } from '~/context/wrap';
 
-const ExpandTable = (props) => {
-	const { getTitlePage } = useWrap();
+const FeedbackTable = (props) => {
+	const { getTitlePage, pageSize } = useWrap();
 	const [state, setState] = useState({ selectedRowKeys: [] });
 	const [dataSource, setDataSource] = useState([]);
 	const [rowKeys, setRowKeys] = useState([
@@ -51,6 +51,8 @@ const ExpandTable = (props) => {
 	console.log('Row Keys: ', rowKeys);
 
 	const onChangeExpand = (expandedRows) => {
+		console.log('qhdháhbd ánmdb abnsbdb nábd');
+
 		console.log('Expand Rows: ', expandedRows);
 		if (rowKeys.some((object) => object['currentPage'] == currentPage)) {
 			let index = rowKeys.findIndex((item) => item.currentPage == currentPage);
@@ -121,7 +123,7 @@ const ExpandTable = (props) => {
 						dataSource={dataSource}
 						size="middle"
 						pagination={{
-							pageSize: 30,
+							pageSize: pageSize,
 							pageSizeOptions: ['30'],
 							onShowSizeChange: onShowSizeChange,
 							total: props.totalPage && props.totalPage,
@@ -145,4 +147,4 @@ const ExpandTable = (props) => {
 	);
 };
 
-export default ExpandTable;
+export default FeedbackTable;
