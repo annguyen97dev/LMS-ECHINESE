@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowSyntheticDefaultImports": true,
-        "baseUrl": ".",
+    "baseUrl": ".",
     "paths": {
-			"~/*": ["./*"]
-		},
+      "~/*": ["./*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -26,9 +22,12 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/course/dashboard.js", "pages/layoutChart/index.js", "components/Dashboard/RateChart.js", "components/Dashboard/RateChart.js"  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "**/*.tsx",
+    "pages/course/dashboard.js",
+    "pages/layoutChart/index.js",
+    "components/Dashboard/RateChart.js",
+    "components/Dashboard/RateChart.js",
+    "components/Elements/AvatarBase"
+  ],
+  "exclude": ["node_modules"]
 }

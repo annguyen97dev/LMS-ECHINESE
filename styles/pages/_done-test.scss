@@ -1,0 +1,35 @@
+.done-test-card {
+  .done-test-table {
+    margin-top: 40px;
+    .ant-card-body {
+      padding: 0;
+    }
+  }
+
+  .box-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__item {
+      padding: 10px 15px;
+      border-radius: 0.575rem;
+      text-align: center;
+      font-weight: 500;
+      margin: 0 10px;
+      width: 155px;
+
+      .number {
+        display: block;
+        margin-top: 5px;
+      }
+    }
+
+    &__score {
+      background: #ffe8c8;
+    }
+    &__correct {
+      background: #eeeeee;
+    }
+  }
+}

@@ -13,4 +13,6 @@ type IExamDetail = IBaseApi<{
   TypeName: string;
   Enable: true;
   ExerciseTopic: any;
+  SkillID: number;
+  SkillName: string;
 }>;

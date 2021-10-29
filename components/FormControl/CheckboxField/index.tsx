@@ -1,4 +1,4 @@
-import {Form, Input} from 'antd';
+import {Form} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import PropTypes from 'prop-types';
 import React from 'react';

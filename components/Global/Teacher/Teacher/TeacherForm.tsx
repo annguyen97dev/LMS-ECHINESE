@@ -350,7 +350,7 @@ const TeacherForm = (props) => {
 								<div className="col-12">
 									<InputPassField
 										form={form}
-										name="Mật khẩu"
+										name="Password"
 										label="Mật khẩu"
 										placeholder="Nhập mật khẩu"
 									/>

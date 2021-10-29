@@ -1,6 +1,6 @@
 export const increamentData = [
-  { name: "Page A", price: 200 },
-  { name: "Page B", price: 1200 },
+  { name: "Tháng trước", price: 12 },
+  { name: "Tháng hiện tại", price: 23 },
   { name: "Page C", price: 600 },
   { name: "Page D", price: 1600 },
   { name: "Page D", price: 1000 },

@@ -110,9 +110,9 @@ const CourseRegistration = () => {
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { showNoti, pageSize } = useWrap();
   const listParamsDefault = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: currentPage,
     sort: null,
     sortType: null,
@@ -194,7 +194,7 @@ const CourseRegistration = () => {
   };
 
   const [params, setParams] = useState(listParamsDefault);
-  const { showNoti } = useWrap();
+
   const [totalPage, setTotalPage] = useState(null);
   const [courseReg, setCourseReg] = useState<ICourseRegistration[]>([]);
   const [isLoading, setIsLoading] = useState({
@@ -289,6 +289,7 @@ const CourseRegistration = () => {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
           setParams(listParamsDefault);
+          setCourseReg([]);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);

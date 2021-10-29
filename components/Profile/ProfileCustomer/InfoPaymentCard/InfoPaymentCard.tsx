@@ -1,21 +1,21 @@
-import {Divider} from 'antd';
+import { Divider } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {courseOfStudentPriceApi} from '~/apiBase';
-import {useWrap} from '~/context/wrap';
-import {numberWithCommas} from '~/utils/functions';
+import React, { useEffect, useState } from 'react';
+import { courseOfStudentPriceApi } from '~/apiBase';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 import PaymentCourseTable from './PaymentCourseTable';
 import PaymentExamTable from './PaymentExamTable';
 import RefundsTable from './RefundsTable';
 InfoPaymentCard.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 InfoPaymentCard.defaultProps = {
-	studentID: 0,
+	studentID: 0
 };
 function InfoPaymentCard(props) {
-	const {studentID} = props;
-	const {showNoti} = useWrap();
+	const { studentID } = props;
+	const { showNoti } = useWrap();
 	const [totalDebt, setTotalDebt] = useState<number>(0);
 
 	const getCourseOfStudentPriceAll = async () => {
@@ -23,7 +23,7 @@ function InfoPaymentCard(props) {
 			const res = await courseOfStudentPriceApi.getAll({
 				pageSize: 9999,
 				pageIndex: 1,
-				UserInformationID: studentID,
+				UserInformationID: studentID
 			});
 			if (res.status === 200) {
 				const rs = res.data.data.reduce((total, course) => {

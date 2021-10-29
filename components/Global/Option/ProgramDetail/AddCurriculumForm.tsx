@@ -224,7 +224,6 @@ export const AddCurriculumForm = (props) => {
   };
 
   const onChangeUploadLinkHTML = async (info) => {
-    console.log(info);
     setShowListUploadHtml(false);
 
     if (info.file.status === "uploading") {

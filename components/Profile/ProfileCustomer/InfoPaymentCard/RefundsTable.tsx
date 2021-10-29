@@ -1,25 +1,25 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useRef, useState} from 'react';
-import {Check} from 'react-feather';
-import {refundsApi, voucherApi} from '~/apiBase';
-import {ExpandRefundRow} from '~/components/Elements/ExpandBox';
+import React, { useEffect, useRef, useState } from 'react';
+import { Check } from 'react-feather';
+import { refundsApi, voucherApi } from '~/apiBase';
+import { ExpandRefundRow } from '~/components/Elements/ExpandBox';
 import ExpandTable from '~/components/ExpandTable';
-import {useWrap} from '~/context/wrap';
-import {numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 
 RefundsTable.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 RefundsTable.defaultProps = {
-	studentID: 0,
+	studentID: 0
 };
 function RefundsTable(props) {
-	const {studentID} = props;
-	const {showNoti} = useWrap();
+	const { studentID } = props;
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: null,
-		status: false,
+		status: false
 	});
 	const [refundList, setRefundList] = useState<IRefunds[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
@@ -27,17 +27,16 @@ function RefundsTable(props) {
 
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: -1,
 		sortType: false,
-
-		UserInformationID: studentID,
+		UserInformationID: studentID
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -47,11 +46,11 @@ function RefundsTable(props) {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 
@@ -59,19 +58,22 @@ function RefundsTable(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await refundsApi.getAll(filters);
 			if (res.status === 200) {
 				setRefundList(res.data.data);
 				setTotalPage(res.data.totalRow);
 			}
+			if (res.status == 204) {
+				setRefundList([]);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -84,20 +86,18 @@ function RefundsTable(props) {
 		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Trung tâm',
-			dataIndex: 'BranchName',
+			dataIndex: 'BranchName'
 		},
 		{
 			title: 'Số tiền',
 			dataIndex: 'Price',
 			render: (price) => {
 				return <p className="font-weight-blue">{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Trạng thái',
@@ -113,7 +113,7 @@ function RefundsTable(props) {
 						return <span className="tag yellow">{fnStatus}</span>;
 						break;
 				}
-			},
+			}
 		},
 		{
 			title: 'Xóa khỏi lớp',
@@ -121,8 +121,8 @@ function RefundsTable(props) {
 			align: 'center',
 			render: (isExpulsion) => {
 				return <p>{isExpulsion ? <Check color="#0da779" /> : ''}</p>;
-			},
-		},
+			}
+		}
 	];
 
 	//
@@ -130,10 +130,10 @@ function RefundsTable(props) {
 		try {
 			setIsLoading({
 				type: 'FETCH_INFO_VOUCHER',
-				status: true,
+				status: true
 			});
 			const res = await voucherApi.getAll({
-				RefundsID: ID,
+				RefundsID: ID
 			});
 			if (res.status === 200) {
 				setInfoVoucherList(res.data.data);
@@ -146,25 +146,20 @@ function RefundsTable(props) {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_INFO_VOUCHER',
-				status: false,
+				status: false
 			});
 		}
 	};
 
 	const expandableObj = {
 		expandedRowRender: (record) => (
-			<ExpandRefundRow
-				isLoading={isLoading}
-				key={record.ID}
-				dataRow={record}
-				infoVoucherList={infoVoucherList}
-			/>
+			<ExpandRefundRow isLoading={isLoading} key={record.ID} dataRow={record} infoVoucherList={infoVoucherList} />
 		),
 		onExpand: (expanded, record) => {
 			if (expanded) {
 				fetchInfoVoucherList(record.ID);
 			}
-		},
+		}
 	};
 
 	return (

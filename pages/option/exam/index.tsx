@@ -94,9 +94,10 @@ const ExamServices = () => {
     },
   ];
   const [currentPage, setCurrentPage] = useState(1);
+  const { showNoti, pageSize } = useWrap();
 
   const listParamsDefault = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: currentPage,
     sort: null,
     sortType: null,
@@ -132,7 +133,6 @@ const ExamServices = () => {
   };
 
   const [params, setParams] = useState(listParamsDefault);
-  const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
   const [examServices, setExamServices] = useState<IExamServices[]>([]);
   const [isLoading, setIsLoading] = useState({
@@ -161,6 +161,7 @@ const ExamServices = () => {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
           setParams(listParamsDefault);
+          setExamServices([]);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);

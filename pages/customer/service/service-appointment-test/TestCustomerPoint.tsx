@@ -7,24 +7,24 @@ import PowerTable from "~/components/PowerTable";
 import { useWrap } from "~/context/wrap";
 
 let pageIndex = 1;
-const listTodoApi = {
-  pageSize: 10,
-  pageIndex: pageIndex,
-  sort: null,
-  sortType: null,
-  FullNameUnicode: null,
-  BranchID: null, // lọc
-  UserInformationID: null,
-  Status: null,
-  AppointmentDate: null,
-};
 
 const TestCustomerPoint = (props) => {
   const { ID } = props;
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<ITestCustomerPoint[]>();
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
+  const listTodoApi = {
+    pageSize: pageSize,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    FullNameUnicode: null,
+    BranchID: null, // lọc
+    UserInformationID: null,
+    Status: null,
+    AppointmentDate: null,
+  };
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -117,7 +117,9 @@ const TestCustomerPoint = (props) => {
         setDataSource(arr);
         // setTotalPage(res.data.totalRow), showNoti("success", "Thành công");
       }
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+      res.status == 204 &&
+        showNoti("danger", "Không có dữ liệu") &&
+        setDataSource([]);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {

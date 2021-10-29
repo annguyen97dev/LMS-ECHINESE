@@ -1,42 +1,40 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import {useEffect, useRef, useState} from 'react';
-import {invoiceApi} from '~/apiBase';
-import {studentExamServicesApi} from '~/apiBase/customer/student/student-exam-services';
-import {ExpandPaymentRow} from '~/components/Elements/ExpandBox';
+import { useEffect, useRef, useState } from 'react';
+import { invoiceApi } from '~/apiBase';
+import { studentExamServicesApi } from '~/apiBase/customer/student/student-exam-services';
+import { ExpandPaymentRow } from '~/components/Elements/ExpandBox';
 import ExpandTable from '~/components/ExpandTable';
-import {useWrap} from '~/context/wrap';
-import {numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 
 PaymentExamTable.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 PaymentExamTable.defaultProps = {
-	studentID: 0,
+	studentID: 0
 };
 
 function PaymentExamTable(props) {
-	const {studentID} = props;
-	const {showNoti} = useWrap();
+	const { studentID } = props;
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: null,
-		status: false,
+		status: false
 	});
-	const [paymentHistoryList, setPaymentHistoryList] = useState<
-		IStudentExamServices[]
-	>([]);
+	const [paymentHistoryList, setPaymentHistoryList] = useState<IStudentExamServices[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
 	const [infoInvoiceList, setInfoInvoiceList] = useState<IInvoice[]>([]);
 
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 
-		UserInformationID: studentID,
+		UserInformationID: studentID
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: 10
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -46,11 +44,11 @@ function PaymentExamTable(props) {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 
@@ -58,19 +56,22 @@ function PaymentExamTable(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await studentExamServicesApi.getAll(filters);
 			if (res.status === 200) {
 				setPaymentHistoryList(res.data.data);
 				setTotalPage(res.data.totalRow);
 			}
+			if (res.status === 204) {
+				setPaymentHistoryList([]);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -83,39 +84,37 @@ function PaymentExamTable(props) {
 		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Dịch vụ',
-			dataIndex: 'ServiceName',
+			dataIndex: 'ServiceName'
 		},
 		{
 			title: 'Tổng thanh toán',
 			dataIndex: 'Price',
 			render: (price) => {
 				return <p>{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Giảm giá',
 			dataIndex: 'Reduced',
 			render: (price) => {
 				return <p>{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: '	Đã thanh toán',
 			dataIndex: 'Paid',
 			render: (price) => {
 				return <p>{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Hình thức',
-			dataIndex: 'PaymentMethodsName',
-		},
+			dataIndex: 'PaymentMethodsName'
+		}
 	];
 
 	//
@@ -123,11 +122,11 @@ function PaymentExamTable(props) {
 		try {
 			setIsLoading({
 				type: 'FETCH_INFO_INVOICE',
-				status: true,
+				status: true
 			});
 			const res = await invoiceApi.getAll({
 				PayID: ID,
-				StyleID: 2,
+				StyleID: 2
 			});
 			if (res.status === 200) {
 				setInfoInvoiceList(res.data.data);
@@ -140,25 +139,20 @@ function PaymentExamTable(props) {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_INFO_INVOICE',
-				status: false,
+				status: false
 			});
 		}
 	};
 
 	const expandableObj = {
 		expandedRowRender: (record) => (
-			<ExpandPaymentRow
-				isLoading={isLoading}
-				key={record.ID}
-				dataRow={record}
-				infoInvoiceList={infoInvoiceList}
-			/>
+			<ExpandPaymentRow isLoading={isLoading} key={record.ID} dataRow={record} infoInvoiceList={infoInvoiceList} />
 		),
 		onExpand: (expanded, record) => {
 			if (expanded) {
 				fetchInfoInvoice(record.ID);
 			}
-		},
+		}
 	};
 
 	return (

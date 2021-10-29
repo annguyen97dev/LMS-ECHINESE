@@ -91,12 +91,12 @@ const JobsList = () => {
     status: false,
   });
 
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const listJobParams = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: currentPage,
     sort: null,
     sortType: null,
@@ -118,6 +118,7 @@ const JobsList = () => {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
           setJobParams(listJobParams);
+          setJob([]);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
         showNoti("danger", error.message);

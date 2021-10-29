@@ -51,7 +51,7 @@ type ICreateCourseScheduleShowList = {
 	[k: string]: ISchedule[];
 };
 type IDataModal = {
-	dateFm: string;
+	dateString: string;
 	limit: number;
 	scheduleInDay: number;
 	scheduleList: ISchedule[];
@@ -155,7 +155,6 @@ const CreateCourseOnline = () => {
 		});
 	//StudyDay
 	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
-	const [dateSelected, setDateSelected] = useState('');
 	// SAVE
 	const [isSave, setIsSave] = useState(false);
 	const [scheduleShow, setScheduleShow] =
@@ -191,7 +190,7 @@ const CreateCourseOnline = () => {
 	});
 	// CALENDAR MODAL
 	const [dataModalCalendar, setDataModalCalendar] = useState<IDataModal>({
-		dateFm: '',
+		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
 		scheduleList: [],
@@ -487,8 +486,8 @@ const CreateCourseOnline = () => {
 	const fetchInfoAvailableSchedule = async (arrSchedule: ISchedule[]) => {
 		const {BranchID} = stoneDataToSave.current;
 		// paramsArr = [ {params teacher of schedule} ]
-		const paramsArr = arrSchedule.map(({CaID, date, Tiet}, idx) => {
-			const dateFm = moment(date).format('YYYY/MM/DD');
+		const paramsArr = arrSchedule.map(({CaID, Tiet}, idx) => {
+			const dateFm = moment(dataModalCalendar.dateString).format('YYYY/MM/DD');
 			const {SubjectID} = Tiet;
 			return {
 				BranchID,
@@ -535,7 +534,7 @@ const CreateCourseOnline = () => {
 			});
 		}
 	};
-	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 1000, []);
+	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 300, []);
 	const onDebounceFetchInfoAvailableSchedule = (params: ISchedule[]) => {
 		setIsLoading({
 			type: 'CHECK_SCHEDULE',
@@ -609,10 +608,12 @@ const CreateCourseOnline = () => {
 			if (checkDuplicateStudyTimeInDay(scheduleList, vl)) {
 				showNoti('danger', 'Dữ liệu trùng lập');
 			} else {
-				onDebounceFetchInfoAvailableSchedule(scheduleList);
+				setDataModalCalendar({
+					...dataModalCalendar,
+					scheduleList: scheduleList,
+				});
 			}
 		}
-
 		setScheduleList((prevState) => ({
 			...prevState,
 			unavailable: newUnavailableScheduleList,
@@ -621,7 +622,7 @@ const CreateCourseOnline = () => {
 	const changeStatusSchedule = (sch: ISchedule, type: number = 1) => {
 		const newScheduleUnavailableList = [...scheduleList.unavailable];
 		const newScheduleAvailableList = [...scheduleList.available];
-		const fmDate = moment(dateSelected).format('YYYY-MM-DD');
+		const fmDate = moment(dataModalCalendar.dateString).format('YYYY-MM-DD');
 		const fmScheduleUnavailableToObject = fmArrayToObjectWithSpecialKey(
 			newScheduleUnavailableList,
 			'date'
@@ -638,7 +639,9 @@ const CreateCourseOnline = () => {
 		}
 		// type = 1 => available to unavailable
 		if (type === 1) {
-			const limit = calendarList.find((c) => c.Day === dateSelected).Limit;
+			const limit = calendarList.find(
+				(c) => c.Day === dataModalCalendar.dateString
+			).Limit;
 			if (fmScheduleUnavailableToObject[fmDate]?.length >= limit) {
 				showNoti('danger', 'Số ca đạt giới hạn');
 				return false;
@@ -697,9 +700,6 @@ const CreateCourseOnline = () => {
 			};
 		});
 		return rs;
-	};
-	const onSelectDate = (vl) => {
-		setDateSelected(vl.resource.dateString);
 	};
 	const onToggleSchedule = (sch: ISchedule, type: number) => {
 		if (changeStatusSchedule(sch, type)) {
@@ -914,8 +914,6 @@ const CreateCourseOnline = () => {
 					>
 						<CreateCourseCalendar
 							eventList={calendarDateFormat(calendarList)}
-							handleSelectDate={onSelectDate}
-							dateSelected={dateSelected}
 							//
 							isLoaded={true}
 							//

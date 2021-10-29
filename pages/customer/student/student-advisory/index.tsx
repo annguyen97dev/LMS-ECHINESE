@@ -37,17 +37,6 @@ let listFieldFilter = {
   toDate: null,
 };
 
-const listTodoApi = {
-  pageSize: 10,
-  pageIndex: pageIndex,
-  sort: null,
-  sortType: null,
-  SourceInformationID: null,
-  CounselorsID: null,
-  fromDate: null,
-  toDate: null,
-};
-
 const dataOption = [
   {
     dataSort: {
@@ -118,7 +107,17 @@ export default function StudentAdvisory() {
 
   // ------ BASE USESTATE TABLE -------
   const [dataSource, setDataSource] = useState<IStudentAdvise[]>([]);
-  const { showNoti } = useWrap();
+  const { showNoti, pageSize } = useWrap();
+  const listTodoApi = {
+    pageSize: pageSize,
+    pageIndex: pageIndex,
+    sort: null,
+    sortType: null,
+    SourceInformationID: null,
+    CounselorsID: null,
+    fromDate: null,
+    toDate: null,
+  };
   const [isLoading, setIsLoading] = useState({
     type: "",
     status: false,
@@ -271,7 +270,9 @@ export default function StudentAdvisory() {
         (setDataSource(res.data.data),
         setTotalPage(res.data.totalRow),
         showNoti("success", "Thành công"));
-      res.status == 204 && showNoti("danger", "Không có dữ liệu");
+      res.status == 204 &&
+        showNoti("danger", "Không có dữ liệu") &&
+        setDataSource([]);
     } catch (error) {
       showNoti("danger", error.message);
     } finally {

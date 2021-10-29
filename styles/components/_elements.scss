@@ -74,6 +74,15 @@
     align-items: center;
     margin-left: 15px;
   }
+
+  &.with-icon {
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 5px;
+    }
+  }
 }
 
 .btn.add-new {
@@ -392,7 +401,7 @@
   background-color: #fff;
   border-color: #1378ab;
   border-width: 0.1rem;
-
+  transition: 0.1s;
   &:hover {
     color: #fff;
     background-color: #1378ab;
@@ -716,7 +725,7 @@ textarea.ant-input {
   justify-content: flex-end;
   .icon-facebook {
     position: fixed;
-    z-index: 9999;
+    z-index: 99;
     bottom: 20px;
     right: 20px;
     width: 45px;
@@ -2218,6 +2227,8 @@ hr {
     text-align: center;
     font-weight: 500;
     width: 100px;
+    line-height: 23px;
+    font-size: 14px;
 
     &:focus {
       border: none;
@@ -2239,7 +2250,6 @@ hr {
       background: #e7e7e7;
     }
   }
-  position: relative;
 }
 .textarea-editor {
   .note-editable {
@@ -2267,3 +2277,7 @@ hr {
     }
   }
 }
+
+// .ant-modal-wrap {
+//   z-index: 9999;
+// }

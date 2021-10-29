@@ -1,29 +1,27 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import {useEffect, useRef, useState} from 'react';
-import {courseOfStudentPriceApi, invoiceApi} from '~/apiBase';
-import {ExpandPaymentRow} from '~/components/Elements/ExpandBox';
+import { useEffect, useRef, useState } from 'react';
+import { courseOfStudentPriceApi, invoiceApi } from '~/apiBase';
+import { ExpandPaymentRow } from '~/components/Elements/ExpandBox';
 import ExpandTable from '~/components/ExpandTable';
-import {useWrap} from '~/context/wrap';
-import {numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 
 PaymentCourseTable.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 PaymentCourseTable.defaultProps = {
-	studentID: 0,
+	studentID: 0
 };
 
 function PaymentCourseTable(props) {
-	const {studentID} = props;
-	const {showNoti} = useWrap();
+	const { studentID } = props;
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: null,
-		status: false,
+		status: false
 	});
-	const [paymentHistoryList, setPaymentHistoryList] = useState<
-		ICourseOfStudentPrice[]
-	>([]);
+	const [paymentHistoryList, setPaymentHistoryList] = useState<ICourseOfStudentPrice[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
 	const [infoInvoiceList, setInfoInvoiceList] = useState<IInvoice[]>([]);
 
@@ -31,11 +29,11 @@ function PaymentCourseTable(props) {
 		pageIndex: 1,
 		pageSize: 10,
 
-		UserInformationID: studentID,
+		UserInformationID: studentID
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: 10
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -45,11 +43,11 @@ function PaymentCourseTable(props) {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 
@@ -57,7 +55,7 @@ function PaymentCourseTable(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await courseOfStudentPriceApi.getAll(filters);
 			if (res.status === 200) {
@@ -69,7 +67,7 @@ function PaymentCourseTable(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -82,58 +80,56 @@ function PaymentCourseTable(props) {
 		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Tổng thanh toán',
 			dataIndex: 'Price',
 			render: (price) => {
 				return <p>{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Giảm giá',
 			dataIndex: 'Reduced',
 			render: (price) => {
 				return <p>{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: '	Đã thanh toán',
 			dataIndex: 'Paid',
 			render: (price) => {
 				return <p>{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Số tiền còn lại',
 			dataIndex: 'MoneyInDebt',
 			render: (price) => {
 				return <p className="font-weight-blue">{numberWithCommas(price)}</p>;
-			},
+			}
 		},
 		{
 			title: 'Hình thức',
-			dataIndex: 'PaymentMethodsName',
+			dataIndex: 'PaymentMethodsName'
 		},
 		{
 			title: 'Ngày hẹn trả',
 			dataIndex: 'PayDate',
-			render: (date) => (date ? moment(date).format('DD/MM/YYYY') : ''),
-		},
+			render: (date) => (date ? moment(date).format('DD/MM/YYYY') : '')
+		}
 	];
 	//
 	const fetchInfoInvoice = async (ID: number) => {
 		try {
 			setIsLoading({
 				type: 'FETCH_INFO_INVOICE',
-				status: true,
+				status: true
 			});
 			const res = await invoiceApi.getAll({
 				PayID: ID,
-				StyleID: 1,
+				StyleID: 1
 			});
 			if (res.status === 200) {
 				setInfoInvoiceList(res.data.data);
@@ -146,25 +142,20 @@ function PaymentCourseTable(props) {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_INFO_INVOICE',
-				status: false,
+				status: false
 			});
 		}
 	};
 
 	const expandableObj = {
 		expandedRowRender: (record) => (
-			<ExpandPaymentRow
-				isLoading={isLoading}
-				key={record.ID}
-				dataRow={record}
-				infoInvoiceList={infoInvoiceList}
-			/>
+			<ExpandPaymentRow isLoading={isLoading} key={record.ID} dataRow={record} infoInvoiceList={infoInvoiceList} />
 		),
 		onExpand: (expanded, record) => {
 			if (expanded) {
 				fetchInfoInvoice(record.ID);
 			}
-		},
+		}
 	};
 	return (
 		<ExpandTable

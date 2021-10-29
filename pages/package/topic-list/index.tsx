@@ -12,7 +12,10 @@ import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 
 import { Eye, Filter, Search } from "react-feather";
 import LayoutBase from "~/components/LayoutBase";
+import { useWrap } from "~/context/wrap";
+
 const QuestionList = () => {
+  const { showNoti, pageSize } = useWrap();
   let dataSource = [];
   for (let i = 0; i < 50; i++) {
     dataSource.push({

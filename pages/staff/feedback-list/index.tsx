@@ -15,8 +15,10 @@ import FilterTable from "~/components/Global/FeedbackList/FitlerTable";
 import FilterColumn from "~/components/Tables/FilterColumn";
 import FilterDateColumn from "~/components/Tables/FilterDateColumn";
 import LayoutBase from "~/components/LayoutBase";
+import { useWrap } from "~/context/wrap";
 
 const FeedbackList = () => {
+  const { showNoti, pageSize } = useWrap();
   const showModal = () => {
     setIsModalVisible(true);
   };

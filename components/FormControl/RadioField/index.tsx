@@ -2,6 +2,7 @@ import {Form, Radio} from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {Controller} from 'react-hook-form';
+import {radioCommonPropTypes} from '~/utils/proptypes';
 
 const RadioField = (props) => {
 	const {
@@ -68,15 +69,7 @@ RadioField.propTypes = {
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
 	size: PropTypes.oneOf(['', 'small', 'middle', 'large']),
-	radioList: PropTypes.arrayOf(
-		PropTypes.shape({
-			label: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-				.isRequired,
-			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-				.isRequired,
-			disabled: PropTypes.bool,
-		})
-	),
+	radioList: radioCommonPropTypes,
 	radioType: PropTypes.oneOf(['default', 'button']),
 	radioButtonStyle: PropTypes.oneOf(['outline', 'solid']),
 	handleChange: PropTypes.func,

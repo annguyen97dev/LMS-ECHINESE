@@ -9,10 +9,13 @@ import TypingList from "~/components/Global/ExamList/ExamShow/TypingList";
 import WrittingList from "~/components/Global/ExamList/ExamShow/WrittingList";
 import { useDoingTest } from "~/context/useDoingTest";
 import { ListAlphabet } from "~/lib/list-alphabet/ListAlphabet";
+import SpeakingList from "../ExamList/ExamShow/Speaking";
 
 const ListQuestion = (props) => {
   //   const { listQuestionID } = useDoingTest();
   const { dataQuestion, listQuestionID } = props;
+
+  // console.log("Data question in list: ", dataQuestion);
 
   // RETURN QUESTION TYPE
   const returnQuestionType = (dataQuestion) => {
@@ -20,79 +23,67 @@ const ListQuestion = (props) => {
     switch (type) {
       case 1:
         return (
-          <div>
-            <ChoiceList
-              isDoingTest={true}
-              listQuestionID={listQuestionID}
-              dataQuestion={dataQuestion}
-              listAlphabet={ListAlphabet}
-            />
-          </div>
+          <ChoiceList
+            isDoingTest={true}
+            listQuestionID={listQuestionID}
+            dataQuestion={dataQuestion}
+            listAlphabet={ListAlphabet}
+          />
         );
         break;
       case 2:
         return (
-          <div>
-            <DragList
-              isDoingTest={true}
-              listQuestionID={listQuestionID}
-              dataQuestion={dataQuestion}
-              listAlphabet={ListAlphabet}
-            />
-          </div>
+          <DragList
+            isDoingTest={true}
+            listQuestionID={listQuestionID}
+            dataQuestion={dataQuestion}
+            listAlphabet={ListAlphabet}
+          />
         );
         break;
       case 3:
         return (
-          <div>
-            <TypingList
-              isDoingTest={true}
-              listQuestionID={listQuestionID}
-              dataQuestion={dataQuestion}
-              listAlphabet={ListAlphabet}
-            />
-          </div>
+          <TypingList
+            isDoingTest={true}
+            listQuestionID={listQuestionID}
+            dataQuestion={dataQuestion}
+            listAlphabet={ListAlphabet}
+          />
         );
         break;
       case 4:
         return (
-          <div>
-            <MultipleList
-              isDoingTest={true}
-              listQuestionID={listQuestionID}
-              dataQuestion={dataQuestion}
-              listAlphabet={ListAlphabet}
-            />
-          </div>
+          <MultipleList
+            isDoingTest={true}
+            listQuestionID={listQuestionID}
+            dataQuestion={dataQuestion}
+            listAlphabet={ListAlphabet}
+          />
         );
         break;
       case 5:
         return (
-          <div>
-            <MapList
-              isDoingTest={true}
-              listQuestionID={listQuestionID}
-              dataQuestion={dataQuestion}
-              listAlphabet={ListAlphabet}
-            />
-          </div>
+          <MapList
+            isDoingTest={true}
+            listQuestionID={listQuestionID}
+            dataQuestion={dataQuestion}
+            listAlphabet={ListAlphabet}
+          />
         );
         break;
       case 6:
         return (
-          <div>
-            <WrittingList
-              isDoingTest={true}
-              listQuestionID={listQuestionID}
-              dataQuestion={dataQuestion}
-              listAlphabet={ListAlphabet}
-            />
-          </div>
+          <WrittingList
+            isDoingTest={true}
+            listQuestionID={listQuestionID}
+            dataQuestion={dataQuestion}
+            listAlphabet={ListAlphabet}
+          />
         );
         break;
       case 7:
         return (
-          <WrittingList
+          <SpeakingList
             isDoingTest={true}
             listQuestionID={listQuestionID}
             dataQuestion={dataQuestion}
@@ -107,9 +98,11 @@ const ListQuestion = (props) => {
   };
 
   return (
-    <div className="question-create">
-      <div className="card-detail-exam card-detail-question">
-        <div className="question-list">{returnQuestionType(dataQuestion)}</div>
+    <div className="question-create h-100">
+      <div className="card-detail-exam card-detail-question h-100">
+        <div className="question-list h-100">
+          {returnQuestionType(dataQuestion)}
+        </div>
       </div>
     </div>
   );

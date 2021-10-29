@@ -22,7 +22,6 @@ const LineCard = ({ dataCard }) => {
           data={dataCard}
           margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
         >
-          <Tooltip />
           <Line
             dataKey="price"
             stroke="#003366"

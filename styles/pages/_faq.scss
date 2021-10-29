@@ -1,0 +1,16 @@
+.expanded__row {
+  &-container {
+    background-color: #fff;
+    border-radius: 1rem;
+  }
+  &-title {
+    padding: 0.5rem;
+    padding-left: 3rem;
+    background-color: $light-blue;
+    font-weight: 700;
+  }
+  &-text {
+    padding: 0.5rem;
+    padding-left: 3rem;
+  }
+}

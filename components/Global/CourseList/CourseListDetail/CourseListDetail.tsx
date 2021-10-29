@@ -27,7 +27,18 @@ const CourseListDetail = () => {
 	const parseIntID = parseInt(ID as string);
 	return (
 		<div className="course-dt page-no-scroll">
-			<Tabs tabPosition="right">
+			<Tabs
+				tabPosition="right"
+				onTabClick={(key) => {
+					if (parseInt(key) === 2) {
+						const url =
+							parseInt(type as string) === 1
+								? `/course/course-list/edit-course/${parseIntID}`
+								: `/course/course-list/edit-course-online/${parseIntID}`;
+						router.push(url);
+					}
+				}}
+			>
 				<TabPane
 					tab={
 						<>
@@ -41,20 +52,10 @@ const CourseListDetail = () => {
 				</TabPane>
 				<TabPane
 					tab={
-						<Link
-							href={{
-								pathname:
-									parseInt(type as string) === 1
-										? '/course/course-list/edit-course/[slug]'
-										: '/course/course-list/edit-course-online/[slug]',
-								query: {slug: parseIntID},
-							}}
-						>
-							<a>
-								<Edit />
-								<span title="Chỉnh sửa"> Chỉnh sửa</span>
-							</a>
-						</Link>
+						<>
+							<Edit />
+							<span title="Chỉnh sửa"> Chỉnh sửa</span>
+						</>
 					}
 					key="2"
 				>

@@ -1,34 +1,34 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {configApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { configApi } from '~/apiBase';
 import ConfigVoucherInvoiceForm from '~/components/Global/Option/ConfigVoucherInvoice/ConfigVoucherInvoiceForm';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 const ConfigVoucherInvoice = () => {
 	const [dataTable, setDataTable] = useState<IConfig[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
-	const {showNoti} = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 
-		Type: null,
+		Type: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: 10
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	const optionFormList = [
-		{title: 'Phiếu chi', value: 1},
-		{title: 'Phiếu thu', value: 2},
+		{ title: 'Phiếu chi', value: 1 },
+		{ title: 'Phiếu thu', value: 2 }
 	];
 
 	// PAGINATION
@@ -37,11 +37,11 @@ const ConfigVoucherInvoice = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -49,7 +49,7 @@ const ConfigVoucherInvoice = () => {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -59,25 +59,28 @@ const ConfigVoucherInvoice = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 	const getDataTable = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			let res = await configApi.getAll(filters);
 			if (res.status === 200) {
 				setDataTable(res.data.data);
 			}
+			if (res.status === 204) {
+				setDataTable([]);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -87,11 +90,11 @@ const ConfigVoucherInvoice = () => {
 	}, [filters]);
 
 	// CREATE
-	const onCreate = async (data: {ConfigContent: string; Type: number}) => {
+	const onCreate = async (data: { ConfigContent: string; Type: number }) => {
 		try {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: true,
+				status: true
 			});
 			const res = await configApi.add(data);
 			if (res.status === 200) {
@@ -105,27 +108,27 @@ const ConfigVoucherInvoice = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
 
 	// UPDATE
 	const onUpdate = (idx: number) => {
-		return async (data: {ConfigContent: string; Type: number}) => {
+		return async (data: { ConfigContent: string; Type: number }) => {
 			try {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: true,
+					status: true
 				});
 				const dataUpdate = {
 					ID: dataTable[idx].ID,
-					ConfigContent: data.ConfigContent,
+					ConfigContent: data.ConfigContent
 				};
 				const res = await configApi.update(dataUpdate);
 				if (res.status === 200) {
 					const newDataTable = [...dataTable];
-					newDataTable.splice(idx, 1, {...dataTable[idx], ...data});
+					newDataTable.splice(idx, 1, { ...dataTable[idx], ...data });
 					setDataTable(newDataTable);
 					showNoti('success', res.data.message);
 					return true;
@@ -135,7 +138,7 @@ const ConfigVoucherInvoice = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -145,21 +148,14 @@ const ConfigVoucherInvoice = () => {
 		{
 			title: 'Loại phiếu',
 			dataIndex: 'Type',
-			...FilterColumn(
-				'Type',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionFormList
-			),
-			render: (type: number) =>
-				optionFormList.find((o) => o.value === type).title,
-			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : '',
+			...FilterColumn('Type', onSearch, onResetSearch, 'select', optionFormList),
+			render: (type: number) => optionFormList.find((o) => o.value === type).title,
+			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Nội dung',
 			dataIndex: 'ConfigContent',
-			render: (text) => <p className="invoice-content">{text}</p>,
+			render: (text) => <p className="invoice-content">{text}</p>
 		},
 		{
 			width: 100,
@@ -172,8 +168,8 @@ const ConfigVoucherInvoice = () => {
 					handleSubmit={onUpdate(idx)}
 					optionFormList={optionFormList}
 				/>
-			),
-		},
+			)
+		}
 	];
 
 	return (
@@ -184,13 +180,7 @@ const ConfigVoucherInvoice = () => {
 			currentPage={filters.pageIndex}
 			totalPage={totalPage}
 			getPagination={getPagination}
-			TitleCard={
-				<ConfigVoucherInvoiceForm
-					isLoading={isLoading}
-					handleSubmit={onCreate}
-					optionFormList={optionFormList}
-				/>
-			}
+			TitleCard={<ConfigVoucherInvoiceForm isLoading={isLoading} handleSubmit={onCreate} optionFormList={optionFormList} />}
 		/>
 	);
 };

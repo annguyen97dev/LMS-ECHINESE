@@ -12,7 +12,7 @@ import { RotateCcw } from "react-feather";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { districtApi, studentApi, wardApi } from "~/apiBase";
-import AvatarBase from "~/components/Elements/AvatarBase.tsx";
+import AvatarBase from "~/components/Elements/AvatarBase";
 import DateField from "~/components/FormControl/DateField";
 import InputTextField from "~/components/FormControl/InputTextField";
 import SelectField from "~/components/FormControl/SelectField";
@@ -46,7 +46,7 @@ const optionGender = [
     title: "Nam",
   },
   {
-    value: 0,
+    value: 2,
     title: "Khác",
   },
 ];

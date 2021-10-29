@@ -1,35 +1,33 @@
 import moment from 'moment';
-import React, {useEffect, useRef, useState} from 'react';
-import {packageApi, packageStudentApi, studentApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { packageApi, packageStudentApi, studentApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr, numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr, numberWithCommas } from '~/utils/functions';
 import PackagePaymentForm from './PackagePaymentForm/PackagePaymentForm';
 
 function PackagePayment() {
-	const [packagePaymentList, setPackagePaymentList] = useState<
-		IPackageStudent[]
-	>([]);
+	const [packagePaymentList, setPackagePaymentList] = useState<IPackageStudent[]>([]);
 	const [dataToSearch, setDataToSearchList] = useState<{
 		studentList: IOptionCommon[];
 		packageList: IOptionCommon[];
 	}>({
 		studentList: [],
-		packageList: [],
+		packageList: []
 	});
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti} = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: -1,
 		sortType: false,
 
@@ -37,63 +35,63 @@ function PackagePayment() {
 		SetPackageID: null,
 		StudentID: null,
 		fromDate: '',
-		toDate: '',
+		toDate: ''
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	const approvalOptionList = [
 		{
 			value: 1,
-			title: 'Chưa thanh toán',
+			title: 'Chưa thanh toán'
 		},
 		{
 			value: 2,
-			title: 'Chờ duyệt',
+			title: 'Chờ duyệt'
 		},
 		{
 			value: 3,
-			title: 'Đã duyệt',
-		},
+			title: 'Đã duyệt'
+		}
 	];
 	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Level tăng dần',
+			text: 'Level tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Level giảm dần',
+			text: 'Level giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Giá tăng dần',
+			text: 'Giá tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Giá giảm dần',
-		},
+			text: 'Giá giảm dần'
+		}
 	];
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
@@ -101,11 +99,11 @@ function PackagePayment() {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -113,11 +111,11 @@ function PackagePayment() {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -125,7 +123,7 @@ function PackagePayment() {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -136,14 +134,14 @@ function PackagePayment() {
 				...listFieldInit,
 				...refValue.current,
 				pageIndex: 1,
-				...valueSearch,
+				...valueSearch
 			});
 		} else {
 			setFilters({
 				...listFieldInit,
 				...refValue.current,
 				pageIndex: 1,
-				[dataIndex]: valueSearch,
+				[dataIndex]: valueSearch
 			});
 		}
 	};
@@ -151,25 +149,21 @@ function PackagePayment() {
 	const fetchDataToSearchList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			const [studentList, packageList] = await Promise.all([
-				studentApi.getAll({selectAll: true}),
-				packageApi.getAll({selectAll: true}),
+				studentApi.getAll({ selectAll: true }),
+				packageApi.getAll({ selectAll: true })
 			]).then((res) => {
 				return res.map((r) => r.data.data);
 			});
 			if (studentList.length && packageList.length) {
-				const fmOptionStudentList = fmSelectArr(
-					studentList,
-					'FullNameUnicode',
-					'UserInformationID'
-				);
+				const fmOptionStudentList = fmSelectArr(studentList, 'FullNameUnicode', 'UserInformationID');
 				const fmOptionPackageList = fmSelectArr(packageList, 'Name', 'ID');
 				setDataToSearchList({
 					studentList: fmOptionStudentList,
-					packageList: fmOptionPackageList,
+					packageList: fmOptionPackageList
 				});
 			}
 		} catch (error) {
@@ -177,14 +171,14 @@ function PackagePayment() {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
 	const fetchPackagePaymentList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			let res = await packageStudentApi.getAll(filters);
@@ -195,13 +189,14 @@ function PackagePayment() {
 				}
 			} else if (res.status === 204) {
 				showNoti('danger', 'Không tìm thấy');
+				setPackagePaymentList([]);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -219,10 +214,10 @@ function PackagePayment() {
 		return async (packagePaymentItem: IPackageStudent) => {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: true,
+				status: true
 			});
 			try {
-				const {ID, Approval} = packagePaymentItem;
+				const { ID, Approval } = packagePaymentItem;
 				const newPackagePaymentUpdateApi: {
 					ID: number;
 					Approval: number;
@@ -230,13 +225,12 @@ function PackagePayment() {
 				} = {
 					ID,
 					Approval,
-					Enable: true,
+					Enable: true
 				};
 				const newPackagePaymentUpdate: IPackageStudent = {
 					...packagePaymentItem,
 					Approval,
-					ApprovalName: approvalOptionList.find((a) => a.value === Approval)
-						.title,
+					ApprovalName: approvalOptionList.find((a) => a.value === Approval).title
 				};
 				const res = await packageStudentApi.update(newPackagePaymentUpdateApi);
 				if (res.status === 200) {
@@ -251,7 +245,7 @@ function PackagePayment() {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -260,60 +254,45 @@ function PackagePayment() {
 		{
 			title: 'Học viên',
 			dataIndex: 'StudentName',
-			...FilterColumn(
-				'StudentID',
-				onSearch,
-				onResetSearch,
-				'select',
-				dataToSearch.studentList
-			),
-			className:
-				activeColumnSearch === 'StudentID' ? 'active-column-search' : '',
+			...FilterColumn('StudentID', onSearch, onResetSearch, 'select', dataToSearch.studentList),
+			className: activeColumnSearch === 'StudentID' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Tên bộ đề',
 			dataIndex: 'SetPackageName',
-			...FilterColumn(
-				'SetPackageID',
-				onSearch,
-				onResetSearch,
-				'select',
-				dataToSearch.packageList
-			),
-			className:
-				activeColumnSearch === 'SetPackageID' ? 'active-column-search' : '',
+			...FilterColumn('SetPackageID', onSearch, onResetSearch, 'select', dataToSearch.packageList),
+			className: activeColumnSearch === 'SetPackageID' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Level',
 			dataIndex: 'Level',
-			render: (level) => `HSK ${level}`,
+			render: (level) => `HSK ${level}`
 		},
 		{
 			title: 'Loại',
-			dataIndex: 'TypeName',
+			dataIndex: 'TypeName'
 		},
 
 		{
 			title: 'Giá',
 			dataIndex: 'Price',
-			render: (price) => (price ? numberWithCommas(price) : 0),
+			render: (price) => (price ? numberWithCommas(price) : 0)
 		},
 		{
 			title: 'Ngày mua',
 			dataIndex: 'CreatedOn',
 			...FilterColumn('CreatedOn', onSearch, onResetSearch, 'date-range'),
 			render: (date) => moment(date).format('DD/MM/YYYY'),
-			className:
-				activeColumnSearch === 'CreatedOn' ? 'active-column-search' : '',
+			className: activeColumnSearch === 'CreatedOn' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Phương thức',
-			dataIndex: 'PaymentMethodsName',
+			dataIndex: 'PaymentMethodsName'
 		},
 		{
 			title: 'Trạng thái',
 			dataIndex: 'ApprovalName',
-			render: (status) => (status ? status : 'Trống'),
+			render: (status) => (status ? status : 'Trống')
 		},
 		{
 			align: 'center',
@@ -328,8 +307,8 @@ function PackagePayment() {
 						/>
 					)}
 				</>
-			),
-		},
+			)
+		}
 	];
 
 	return (

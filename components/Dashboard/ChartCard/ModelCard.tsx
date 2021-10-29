@@ -22,7 +22,7 @@ const ModelCard = ({ dataCard }) => {
           data={dataCard}
           margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
         >
-          <Tooltip />
+          {/* <Tooltip /> */}
           <defs>
             <linearGradient id="color4" x1="0" y1="0" x2="1" y2="0">
               <stop offset="5%" stopColor="#4ECDE4" stopOpacity={0.9} />

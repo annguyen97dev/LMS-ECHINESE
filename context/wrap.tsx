@@ -19,6 +19,7 @@ export type IProps = {
   showNoti: Function;
   getDataUser: Function;
   userInformation: IUser;
+  pageSize: number;
 };
 
 const WrapContext = createContext<IProps>({
@@ -28,6 +29,7 @@ const WrapContext = createContext<IProps>({
   showNoti: () => {},
   getDataUser: () => {},
   userInformation: null,
+  pageSize: 30,
 });
 
 // const initialState = {
@@ -121,6 +123,7 @@ export const WrapProvider = ({ children }) => {
     <>
       <WrapContext.Provider
         value={{
+          pageSize: 30,
           titlePage: titlePage,
           getTitlePage,
           getRouter,

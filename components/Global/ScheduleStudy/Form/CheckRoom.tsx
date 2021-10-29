@@ -81,7 +81,6 @@ function CheckRoom(props) {
 		handleSubmit(value).then((res) => {
 			if (res && res.status === 200) {
 				funcShowFilter();
-				form.reset({...defaultValuesInit});
 			}
 		});
 	};

@@ -46,17 +46,16 @@ const ConsultationStatus = () => {
   ];
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { showNoti, pageSize } = useWrap();
   const listParamsDefault = {
-    pageSize: 10,
+    pageSize: pageSize,
     pageIndex: currentPage,
   };
-
-  const [params, setParams] = useState(listParamsDefault);
-  const { showNoti } = useWrap();
   const [totalPage, setTotalPage] = useState(null);
   const [consultationStatus, setConsultationStatus] = useState<
     IConsultationStatus[]
   >([]);
+  const [params, setParams] = useState(listParamsDefault);
   const [isLoading, setIsLoading] = useState({
     type: "GET_ALL",
     status: false,
@@ -85,6 +84,7 @@ const ConsultationStatus = () => {
         if (res.status == 204) {
           showNoti("danger", "Không tìm thấy dữ liệu!");
           setCurrentPage(1);
+          setConsultationStatus([]);
           setParams(listParamsDefault);
         } else setTotalPage(res.data.totalRow);
       } catch (error) {
