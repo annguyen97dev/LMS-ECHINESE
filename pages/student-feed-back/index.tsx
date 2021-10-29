@@ -1,129 +1,146 @@
-import React, { useState } from "react";
-import { Table, Card, Tag, Select, Modal } from "antd";
-import TitlePage from "~/components/TitlePage";
-import SearchBox from "~/components/Elements/SearchBox";
-import Link from "next/link";
-import ExpandTable from "~/components/ExpandTable";
-import { Filter, Eye, CheckCircle } from "react-feather";
-import { Tooltip } from "antd";
-import FilterTable from "~/components/Global/FeedbackList/FitlerTable";
-import { data } from "~/lib/option/dataOption2";
-import LayoutBase from "~/components/LayoutBase";
-import FilterFeedbackTable from "~/components/Global/Option/FilterTable/FilterFeedbackTable";
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import LayoutBase from '~/components/LayoutBase';
+import MenuFeedBack from './MenuFeedBack';
+import { FeedbackApi } from '~/apiBase';
+import { useWrap } from '~/context/wrap';
+import ModalCreateFeedback from './modalCreateFeedback';
+import MainFeedback from './MainFeedback';
 
-export function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
+const StudentFeedbackList = () => {
+	const { userInformation } = useWrap();
+	const [currentTab, setCurrentTab] = useState(1);
+	const [currentFeedback, setCurrentFeedback] = useState({});
+	const [feedbackAll, setFeedbackAll] = useState([]);
+	const [feedbackImportan, setFeedbackImportan] = useState([]);
+	const [newFeedback, setNewFeedback] = useState([]);
+	const [waitingFeedback, setWaitingFeedback] = useState([]);
+	const [doneFeedback, setDoneFeedback] = useState([]);
 
-const FeedbackList = () => {
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
+	const [modalCreate, setModalCreate] = useState(false);
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+	useLayoutEffect(() => {
+		if (userInformation !== null) {
+			getAllData();
+		}
+	}, [userInformation]);
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+	useLayoutEffect(() => {
+		if (feedbackAll.length !== 0) {
+			setCurrentFeedback(feedbackAll[0]); // SET DEFAULT ITEM SELECT
+			setTypeData();
+		}
+	}, [feedbackAll]);
 
-  const columns = [
-    {
-      title: "Loại phản hồi",
-      dataIndex: "fbType",
-      key: "fbType",
-    },
-    {
-      title: "Title",
-      dataIndex: "fbReason",
-      key: "fbReason",
-    },
-    {
-      title: "Người gửi",
-      dataIndex: "staff",
-      key: "staff",
-    },
-    {
-      title: "Tư vấn viên",
-      dataIndex: "modBy",
-      key: "modBy",
-    },
+	// GET DATA FOCUS STATUS
+	const setTypeData = () => {
+		let tempNew = [];
+		let tempWaiting = [];
+		let tempDone = [];
 
-    {
-      title: "Ngày gửi",
-      dataIndex: "modDate",
-      key: "modDate",
-    },
-    {
-      title: "Xong",
-      dataIndex: "Done",
-      key: "done",
-      align: "center",
-      render: () => (
-        <Tag className="style-tag" color="#06d6a0">
-          Xong
-        </Tag>
-      ),
-    },
-    {
-      title: "Đánh giá",
-      dataIndex: "Remark",
-      key: "remark",
-    },
-    {
-      title: "Thao tác",
-      dataIndex: "Action",
-      key: "action",
-      render: (Action) => (
-        <div>
-          <Tooltip title="Xử lý xong">
-            <a className="btn btn-icon" onClick={showModal}>
-              <CheckCircle />
-            </a>
-          </Tooltip>
+		// 1-Mới gửi, 2-Đang xữ lý, 3-Đã xong
+		for (let i = 0; i < feedbackAll.length; i++) {
+			if (feedbackAll[i].StatusID === 1) {
+				tempNew.push(feedbackAll[i]);
+			}
+			if (feedbackAll[i].StatusID === 2) {
+				tempWaiting.push(feedbackAll[i]);
+			}
+			if (feedbackAll[i].StatusID === 3) {
+				tempDone.push(feedbackAll[i]);
+			}
+		}
 
-          <Tooltip title="Xem chi tiết">
-            <Link
-              href={{
-                pathname: "/feedback/[slug]",
-                query: { slug: 2 },
-              }}
-            >
-              <button className="btn btn-icon">
-                <Eye />
-              </button>
-            </Link>
-          </Tooltip>
-        </div>
-      ),
-    },
-  ];
+		setNewFeedback(tempNew);
+		setWaitingFeedback(tempWaiting);
+		setDoneFeedback(tempDone);
+	};
 
-  const [showFilter, showFilterSet] = useState(false);
+	// GET ALL DATA WHEN OPEN
+	const getAllData = async () => {
+		const temp = {
+			pageIndex: 1,
+			pageSize: 20,
+			UID: userInformation.UserInformationID
+		};
+		await getAllFeedBack(temp);
+		getDataPrioritized();
+	};
 
-  const funcShowFilter = () => {
-    showFilter ? showFilterSet(false) : showFilterSet(true);
-  };
+	// GET DATA
+	const getAllFeedBack = async (param) => {
+		try {
+			const res = await FeedbackApi.getAll(param);
+			res.status == 200 && setFeedbackAll(res.data.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+	// GET DATA PRIORITIZED
+	const getDataPrioritized = async () => {
+		const temp = {
+			pageIndex: 1,
+			pageSize: 20,
+			UID: userInformation.UserInformationID,
+			isPrioritized: true
+		};
+		try {
+			const res = await FeedbackApi.getAll(temp);
+			res.status == 200 && setFeedbackImportan(res.data.data);
+		} catch (error) {}
+	};
 
-  const expandedRowRender = () => {
-    const { Option } = Select;
-    return <div className="wrap-student-fb"></div>;
-  };
+	// RENDER
+	return (
+		<div className="row student-fb">
+			<div className="col-md-3 col-12">
+				<MenuFeedBack
+					feedbackList={
+						currentTab === 1
+							? feedbackAll
+							: currentTab === 2
+							? newFeedback
+							: currentTab === 3
+							? feedbackImportan
+							: currentTab === 4
+							? waitingFeedback
+							: doneFeedback
+					}
+					handleClickMenu={(e) => {
+						console.log(e);
+						setCurrentTab(e);
+					}}
+					handleClickItem={(e) => {
+						console.log(e);
+						setCurrentFeedback(e);
+					}}
+					handleCreateNew={() => {
+						setModalCreate(true);
+					}}
+					allDataLength={{
+						all: feedbackAll.length,
+						important: feedbackImportan.length,
+						new: newFeedback.length,
+						waiting: waitingFeedback.length,
+						done: doneFeedback.length
+					}}
+					currentTab={currentTab}
+				/>
+			</div>
+			<div className="col-md-9 col-12">
+				<MainFeedback current={currentFeedback} />
+			</div>
 
-  return (
-    <div
-      className="wrap-student-fb"
-      style={{ height: getWindowDimensions().height - 65 }}
-    ></div>
-  );
+			<ModalCreateFeedback
+				visible={modalCreate}
+				onClose={() => {
+					setModalCreate(false);
+				}}
+				created={getAllData}
+			/>
+		</div>
+	);
 };
 
-FeedbackList.layout = LayoutBase;
-export default FeedbackList;
+// FeedbackList.layout = LayoutBase;
+export default StudentFeedbackList;
