@@ -63,7 +63,7 @@ const MarkingExam = (props) => {
 							{ type: 'number', max: dataRow.PointMax, message: 'Điểm không được lớn hơn điểm tối đa' }
 						]}
 					>
-						<InputNumber className="style-input" value={valuePoint} onChange={(e) => onChange_Point(e)} />
+						<InputNumber autoFocus className="style-input" value={valuePoint} onChange={(e) => onChange_Point(e)} />
 					</Form.Item>
 					<p className="mb-0 mt-2 font-italic">Điểm tối đa: {dataRow.PointMax}</p>
 					<button type="submit" className="btn btn-primary w-100 mt-3">

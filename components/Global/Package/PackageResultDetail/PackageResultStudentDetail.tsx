@@ -1,4 +1,4 @@
-import { Card, Popover, Radio, Spin, Tooltip } from 'antd';
+import { Card, Popover, Radio, Skeleton, Spin, Tooltip } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Bookmark } from 'react-feather';
 import { packageResultDetailApi } from '~/apiBase/package/package-result-detail';
@@ -9,11 +9,13 @@ import router from 'next/router';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import ListQuestion from '~/components/Global/DoingTest/ListQuestion';
 import { useDoneTest } from '~/context/useDoneTest';
-import { AlignLeftOutlined, FormOutlined, ProfileOutlined } from '@ant-design/icons';
+import { AlignLeftOutlined, FormOutlined, ProfileOutlined, RedoOutlined } from '@ant-design/icons';
 import MainTest from '../../DoingTest/MainTest';
 import DoneMarkingExam from '../../ExamList/MarkingExam/DoneMarkingExam';
+import { doingTestApi } from '~/apiBase';
+import Link from 'next/link';
 
-const PackageResultDetail = () => {
+const PackageResultStudentDetail = () => {
 	const {} = useDoneTest();
 	const { teacherMarking: teacherMarking } = router.query;
 	const { getDoneTestData, doneTestData, dataMarking, getDataMarking } = useDoneTest();
@@ -37,6 +39,32 @@ const PackageResultDetail = () => {
 	const [isShowAll, setIsShowAll] = useState(false);
 	const [isMarked, setIsMarked] = useState(false);
 	const [showNote, setShowNote] = useState(false);
+	const [infoTest, setInfoTest] = useState(null);
+	const [loadingInfoTest, setLoadingInfoTest] = useState(false);
+
+	// ---- Get Router ----
+	const { examID: examID } = router.query;
+	const { packageDetailID: packageDetailID } = router.query;
+	const SetPackageResultID = router.query.slug as string;
+
+	const getInfoTest = async () => {
+		setLoadingInfoTest(true);
+		try {
+			let res = await doingTestApi.getByID(SetPackageResultID);
+			if (res.status === 200) {
+				let dataInfo: any = { ...res.data.data };
+				let totalQuestion = dataInfo.ListeningNumber + dataInfo.ReadingNumber;
+				setInfoTest({
+					...res.data.data,
+					TotalQuestion: totalQuestion
+				});
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setLoadingInfoTest(false);
+		}
+	};
 
 	const getDataSetPackageResult = async () => {
 		let cloneListQuestionID = [...listQuestionID];
@@ -61,7 +89,7 @@ const PackageResultDetail = () => {
 							item.SetPackageExerciseStudent.forEach((ques) => {
 								newDataMarking.setPackageExerciseStudentsList.push({
 									ID: ques.ID,
-									Point: null
+									Point: 0
 								});
 							});
 						});
@@ -153,6 +181,10 @@ const PackageResultDetail = () => {
 		}
 	}, [dataMarking]);
 
+	useEffect(() => {
+		getInfoTest();
+	}, []);
+
 	return (
 		<>
 			{showMainTest ? (
@@ -174,48 +206,69 @@ const PackageResultDetail = () => {
 									<div className="title-question-bank">
 										<h3 className="title-big">
 											<Bookmark />
-											Danh sách câu hỏi
+											Danh sách kết quả
 										</h3>
 									</div>
 								}
 								extra={
-									teacherMarking ? (
-										userInformation?.UserInformationID == parseInt(teacherMarking as string) && (
-											<>
-												<button className="btn btn-secondary" onClick={showWritingQuestion}>
-													<span className="d-flex align-items-center">
-														<AlignLeftOutlined className="mr-2" />
-														{!isShowAll ? 'Hiển thị tất cả' : 'Hiển thị câu tự luận'}
-													</span>
-												</button>
-												<Popover
-													visible={visibleNofi}
-													content={
-														<>
-															<p className="mb-0" style={{ fontWeight: 500, color: '#cb0000' }}>
-																Nhớ bấm vào đây để hoàn tất chấm bài nhé!
-															</p>
-														</>
-													}
-													title=""
-													trigger="hover"
-												>
-													<DoneMarkingExam isMarked={isMarked} onDoneMarking={() => setParams({ ...params })} />
-												</Popover>
-											</>
-										)
-									) : (
-										<Tooltip title="Xem view rút gọn">
-											<button className="btn btn-icon" onClick={() => setShowMainTest(true)}>
-												<ProfileOutlined />
-											</button>
-										</Tooltip>
-									)
+									<>
+										<Link
+											href={{
+												pathname: '/doing-test',
+												query: {
+													examID: examID,
+													packageDetailID: packageDetailID
+												}
+											}}
+										>
+											<a className="btn btn-warning">
+												<span className="d-flex align-items-center">
+													<RedoOutlined className="mr-2" />
+													Làm lại đề
+												</span>
+											</a>
+										</Link>
+
+										<button className="btn btn-secondary ml-2" onClick={() => setShowMainTest(true)}>
+											<span className="d-flex align-items-center">
+												<ProfileOutlined className="mr-2" />
+												view rút gọn
+											</span>
+										</button>
+									</>
 								}
 							>
-								<div className="test-body" ref={boxEl}>
+								<div className="test-body done-test-card " ref={boxEl}>
+									<div className="wrap-box-info mb-2">
+										<div className="box-info">
+											<div className="box-info__item box-info__score">
+												Số điểm
+												<span className="number">
+													{loadingInfoTest ? (
+														<Skeleton paragraph={false} loading={true} title={true} active />
+													) : (
+														infoTest?.PointTotal
+													)}
+												</span>
+											</div>
+											<div className="box-info__item box-info__correct">
+												Số câu đúng
+												<span className="number">
+													{loadingInfoTest ? (
+														<Skeleton paragraph={false} loading={true} title={true} active />
+													) : (
+														infoTest?.ReadingCorrect +
+														infoTest?.ListeningCorrect +
+														'/' +
+														infoTest?.TotalQuestion
+													)}
+												</span>
+											</div>
+										</div>
+									</div>
+
 									{loading ? (
-										<div className="text-center mt-3">
+										<div className="text-center mt-5">
 											<Spin />
 										</div>
 									) : detailResult?.length == 0 ? (
@@ -279,4 +332,4 @@ const PackageResultDetail = () => {
 	);
 };
 
-export default PackageResultDetail;
+export default PackageResultStudentDetail;

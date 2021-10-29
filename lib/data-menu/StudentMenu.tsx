@@ -83,6 +83,13 @@ export const StudentChildMenu = [
 				Route: '/package/pay-fix-list',
 				Text: 'Mua lượt chấm bài',
 				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/package/rank-result-student',
+				Route: '/package/rank-result-student',
+				Text: 'Bảng xếp hạng làm bài',
+				Icon: ''
 			}
 		]
 	}

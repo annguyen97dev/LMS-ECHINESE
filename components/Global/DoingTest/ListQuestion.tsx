@@ -14,7 +14,7 @@ import { useDoneTest } from '~/context/useDoneTest';
 
 const ListQuestion = (props) => {
 	//   const { listQuestionID } = useDoingTest();
-	const { dataQuestion, listQuestionID } = props;
+	const { dataQuestion, listQuestionID, isMarked } = props;
 	const { doneTestData } = useDoneTest();
 
 	// console.log("Data question in list: ", dataQuestion);
@@ -80,6 +80,7 @@ const ListQuestion = (props) => {
 						listQuestionID={listQuestionID}
 						dataQuestion={dataQuestion}
 						listAlphabet={ListAlphabet}
+						isMarked={isMarked}
 					/>
 				);
 				break;
@@ -90,6 +91,7 @@ const ListQuestion = (props) => {
 						listQuestionID={listQuestionID}
 						dataQuestion={dataQuestion}
 						listAlphabet={ListAlphabet}
+						isMarked={isMarked}
 					/>
 				);
 				break;

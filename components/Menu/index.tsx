@@ -255,7 +255,7 @@ const MenuDefault = ({
 		let arrRouter = router.split('/');
 
 		arrRouter = arrRouter.filter(function (item) {
-			if (item == '' || item == '[slug]' || item.search('detail') > 0) {
+			if (item == '' || item == '[slug]' || item.includes('detail')) {
 				return false;
 			}
 			return true;

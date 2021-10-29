@@ -21,19 +21,62 @@ const RequestMaking = (props) => {
 	// 3 - Đã chấm bài
 	// 4 - Đang chấm bài lại
 	// 5 - Đã chấm bài lại
-	const { handleRequestMaking, status, AmountFixOfStudent, handleBuyMarking } = props;
+	const { status, AmountFixOfStudent, handleBuyMarking, onFetchData, dataRow } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const { showNoti } = useWrap();
+	const [loading, setLoading] = useState(false);
 
 	const showModal = () => {
 		setIsModalVisible(true);
 	};
 
+	const handleRequestMaking = async () => {
+		// 1 - Đã nộp bài
+		// 2 - Đang chấm bài
+		// 3 - Đã chấm bài
+		// 4 - Đang chấm bài lại
+		// 5 - Đã chấm bài lại
+		let res = null;
+		let dataSubmit = {
+			ID: dataRow.ID,
+			Enable: true
+		};
+		setLoading(true);
+		try {
+			switch (dataRow.StatusID) {
+				case 1:
+					res = await packageResultApi.update({
+						...dataSubmit,
+						isFixPaid: true
+					});
+					break;
+				case 3:
+					res = await packageResultApi.update({
+						...dataSubmit,
+						isReevaluate: true
+					});
+					break;
+				default:
+					break;
+			}
+			if (res.status == 200) {
+				showNoti('success', 'Yêu cầu thành công');
+				onFetchData && onFetchData();
+				setIsModalVisible(false);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const handleOk = () => {
-		setIsModalVisible(false);
 		if (AmountFixOfStudent > 0) {
-			handleRequestMaking && handleRequestMaking();
+			handleRequestMaking();
 		} else {
 			handleBuyMarking && handleBuyMarking();
+			setIsModalVisible(false);
 		}
 	};
 
@@ -43,12 +86,13 @@ const RequestMaking = (props) => {
 
 	return (
 		<>
-			<Tooltip title={status == 1 ? 'Yêu cầu chấm bài' : 'Yêu cầu chấm '}>
+			<Tooltip title={status == 1 ? 'Yêu cầu chấm bài' : 'Yêu cầu chấm lại'}>
 				<button className="btn btn-icon edit" onClick={showModal}>
 					<FormOutlined />
 				</button>
 			</Tooltip>
 			<Modal
+				confirmLoading={loading}
 				title={
 					<button className="btn btn-icon" onClick={showModal}>
 						<ExclamationCircleOutlined />
@@ -182,7 +226,7 @@ const PackageResultStudent = () => {
 				},
 				{
 					value: 5,
-					title: 'Đã chấm bài lại'
+					title: 'Đã chấm bài'
 				}
 			],
 			value: null
@@ -393,8 +437,8 @@ const PackageResultStudent = () => {
 			render: (text, data) => (
 				<Link
 					href={{
-						pathname: '/package/package-set-result/package-set-result-detail/[slug]',
-						query: { slug: `${data.ID}` }
+						pathname: '/package/package-result-student/detail/[slug]',
+						query: { slug: `${data.ID}`, examID: data.ExamTopicID, packageDetailID: data.SetPackageDetailID }
 					}}
 				>
 					<a href="#" className="font-weight-black">
@@ -423,7 +467,7 @@ const PackageResultStudent = () => {
 					{status == 2 && <span className="tag yellow">Đang chấm bài</span>}
 					{status == 3 && <span className="tag green">Đã chấm bài</span>}
 					{status == 4 && <span className="tag yellow">Đang chấm bài lại</span>}
-					{status == 5 && <span className="tag yellow">Đã chấm bài lại</span>}
+					{status == 5 && <span className="tag green">Đã chấm bài lại</span>}
 				</Fragment>
 			)
 		},
@@ -439,8 +483,8 @@ const PackageResultStudent = () => {
 					{/* {data.isFixPaid && <PackagePickTeacher dataRow={data} dataTeacher={dataTeacher} onFetchData={onFetchData} />} */}
 					<Link
 						href={{
-							pathname: '/package/package-set-result/package-set-result-detail/[slug]',
-							query: { slug: `${data.ID}` }
+							pathname: '/package/package-result-student/detail/[slug]',
+							query: { slug: `${data.ID}`, examID: data.ExamTopicID, packageDetailID: data.SetPackageDetailID }
 						}}
 					>
 						<Tooltip title="Kết quả bộ đề chi tiết">
@@ -453,8 +497,9 @@ const PackageResultStudent = () => {
 						<RequestMaking
 							handleBuyMarking={() => handleBuyMarking()}
 							AmountFixOfStudent={data.AmountFixOfStudent}
-							handleRequestMaking={() => handleRequestMaking(data.StatusID, data.ID)}
+							onFetchData={() => onFetchData()}
 							status={data.StatusID}
+							dataRow={data}
 						/>
 					)}
 				</>

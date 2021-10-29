@@ -623,14 +623,14 @@ export const AdminChildMenu = [
 						Route: '/package/package-examiner',
 						Text: 'Danh sách giáo viên chấm bài',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/package/payroll-fix',
-						Route: '/package/payroll-fix',
-						Text: 'Bảng lương chấm bài',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/payroll-fix',
+					// 	Route: '/package/payroll-fix',
+					// 	Text: 'Bảng lương chấm bài',
+					// 	Icon: ''
+					// }
 				]
 			},
 
@@ -669,6 +669,13 @@ export const AdminChildMenu = [
 						Icon: ''
 					}
 				]
+			},
+			{
+				ItemType: 'single',
+				Key: '/package/rank-result',
+				Route: '/package/rank-result',
+				Text: 'Bảng xếp hạng làm bài',
+				Icon: ''
 			}
 
 			// {

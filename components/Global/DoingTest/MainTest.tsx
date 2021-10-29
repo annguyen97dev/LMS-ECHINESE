@@ -298,8 +298,8 @@ const MainTest = (props) => {
 				setIsModalSuccess(true);
 				setTimeout(() => {
 					router.push({
-						pathname: '/done-test',
-						query: { SetPackageResultID: res.data.data.ID }
+						pathname: '/package/package-result-student/detail/[slug]',
+						query: { slug: res.data.data.ID }
 					});
 				}, 1000);
 			}

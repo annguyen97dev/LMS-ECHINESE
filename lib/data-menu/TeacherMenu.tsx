@@ -11,7 +11,7 @@ export const TeacherParentMenu = [
 		Icon: <Airplay />
 	},
 	{
-		TabName: 'tab-exercise',
+		TabName: 'tab-package',
 		Icon: <FileText />
 	},
 	{
@@ -118,36 +118,15 @@ export const TeacherChildMenu = [
 		]
 	},
 	{
-		MenuName: 'tab-exercise',
-		MenuTitle: 'Bài tập',
+		MenuName: 'tab-package',
+		MenuTitle: 'Bộ đề',
 		MenuKey: '/package',
 		MenuItem: [
 			{
 				ItemType: 'single',
-				Key: '/teacher/new-list-exercise',
-				Route: '/teacher/new-list-exercise',
-				Text: 'Bài tập mới',
-				Icon: ''
-			},
-			{
-				ItemType: 'single',
-				Key: '/teacher/exercise-process',
-				Route: '/teacher/exercise-process',
-				Text: 'Chờ xử lí',
-				Icon: ''
-			},
-			{
-				ItemType: 'single',
-				Key: '/teacher/exercise-redo-fix',
-				Route: '/teacher/exercise-redo-fix',
-				Text: 'Chấm lại',
-				Icon: ''
-			},
-			{
-				ItemType: 'single',
-				Key: '/teacher/exercise-done',
-				Route: '/teacher/exercise-done',
-				Text: 'Đã chấm',
+				Key: '/package/package-result-teacher',
+				Route: '/package/package-result-teacher',
+				Text: 'Danh sách bài tập',
 				Icon: ''
 			}
 		]

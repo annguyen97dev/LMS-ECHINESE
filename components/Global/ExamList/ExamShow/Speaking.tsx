@@ -19,7 +19,7 @@ const SpeakingList = (props) => {
 	const { doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const { onDeleteQuestion } = useExamDetail();
 	const { activeID, packageResult, getPackageResult, getListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest } = props;
+	const { dataQuestion, listQuestionID, isDoingTest, isMarked } = props;
 	const { showNoti, userInformation } = useWrap();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
@@ -27,7 +27,6 @@ const SpeakingList = (props) => {
 		status: false
 	});
 	const [linkRecord, setLinkRecord] = useState('');
-	const [isMarked, setIsMarked] = useState(null);
 
 	const returnPosition = (quesID) => {
 		let index = listQuestionID.indexOf(quesID);
@@ -85,15 +84,14 @@ const SpeakingList = (props) => {
 	};
 
 	// ----------- ACTION IN  MARKING OF TEACHER  ------------
-	const getInfoPackage = async () => {
-		try {
-			let res = await packageResultApi.getDetail(parseInt(packageResultID as string));
-			if (res.status == 200) {
-				console.log('Coi thử nha: ', res.data.data);
-				setIsMarked(res.data.data.isDone);
-			}
-		} catch (error) {}
-	};
+	// const getInfoPackage = async () => {
+	// 	try {
+	// 		let res = await packageResultApi.getDetail(parseInt(packageResultID as string));
+	// 		if (res.status == 200) {
+	// 			setIsMarked(res.data.data.isDone);
+	// 		}
+	// 	} catch (error) {}
+	// };
 
 	const onGetPoint = (point, questionID) => {
 		if (dataMarking.setPackageExerciseStudentsList.some((item, index) => item['ID'] === questionID)) {
@@ -114,11 +112,11 @@ const SpeakingList = (props) => {
 		getDataMarking({ ...dataMarking });
 	};
 
-	useEffect(() => {
-		if (doneTestData) {
-			getInfoPackage();
-		}
-	}, []);
+	// useEffect(() => {
+	// 	if (doneTestData) {
+	// 		getInfoPackage();
+	// 	}
+	// }, []);
 
 	// ----------- ALL ACTION IN DOINGTEST -------------
 

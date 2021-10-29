@@ -1,0 +1,36 @@
+.rank-user {
+	background: #f2994a; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to bottom, #f2c94c, #f2994a); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to bottom, #ffeebc, #ffcda0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	box-shadow: 1px 2px 15px #00000017;
+
+	.title-rank {
+		color: #364045;
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	.box-rank {
+		border: 12px solid #ffffffc7;
+		margin-top: 25px;
+		text-align: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 150px;
+		height: 150px;
+		border-radius: 50%;
+		margin: auto;
+		margin-top: 25px;
+		color: #364045;
+		font-size: 32px;
+		font-weight: bold;
+	}
+	.text-point {
+		text-align: center;
+		margin-top: 30px;
+		font-size: 17px;
+		font-weight: 500;
+		color: #364045;
+	}
+}

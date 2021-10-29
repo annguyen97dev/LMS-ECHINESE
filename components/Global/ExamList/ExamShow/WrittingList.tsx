@@ -93,7 +93,7 @@ const WrittingList = (props) => {
 	const { doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const { onDeleteQuestion } = useExamDetail();
 	const { activeID, packageResult, getPackageResult, getListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest } = props;
+	const { dataQuestion, listQuestionID, isDoingTest, isMarked } = props;
 	const { showNoti, userInformation } = useWrap();
 	const [contentOfStudent, setContentOfStudent] = useState('');
 
@@ -102,7 +102,6 @@ const WrittingList = (props) => {
 		id: null,
 		status: false
 	});
-	const [isMarked, setIsMarked] = useState(null);
 
 	const returnPosition = (quesID) => {
 		let index = listQuestionID.indexOf(quesID);
@@ -158,15 +157,15 @@ const WrittingList = (props) => {
 	};
 
 	// ----------- ACTION IN  MARKING OF TEACHER  ------------
-	const getInfoPackage = async () => {
-		try {
-			let res = await packageResultApi.getDetail(parseInt(packageResultID as string));
-			if (res.status == 200) {
-				console.log('Coi thử nha: ', res.data.data);
-				setIsMarked(res.data.data.isDone);
-			}
-		} catch (error) {}
-	};
+	// const getInfoPackage = async () => {
+	// 	try {
+	// 		let res = await packageResultApi.getDetail(parseInt(packageResultID as string));
+	// 		if (res.status == 200) {
+	// 			console.log('Coi thử nha: ', res.data.data);
+	// 			setIsMarked(res.data.data.isDone);
+	// 		}
+	// 	} catch (error) {}
+	// };
 
 	const onGetPoint = (point, questionID) => {
 		if (dataMarking.setPackageExerciseStudentsList.some((item, index) => item['ID'] === questionID)) {
@@ -186,12 +185,6 @@ const WrittingList = (props) => {
 
 		getDataMarking({ ...dataMarking });
 	};
-
-	useEffect(() => {
-		if (doneTestData) {
-			getInfoPackage();
-		}
-	}, []);
 
 	// ----------- ALL ACTION IN DOINGTEST -------------
 	const onGetDataEditor = (dataAns, quesID) => {
@@ -258,27 +251,26 @@ const WrittingList = (props) => {
 							<span className={`title-ques`}>{returnPosition(ques.ExerciseID)}</span>
 
 							<div className="title-text mt-3">{ReactHtmlParser(ques.Content)}</div>
-							{isDoingTest && (
-								<div className="box-doing-wrting mt-3">
-									{contentOfStudent ? (
-										<h6 className="text-underline mb-2">
-											<u>Bài viết của bạn</u>
-										</h6>
-									) : (
-										<h6 className="text-underline">Bấm vào nút bên dưới để làm bài tự luận</h6>
-									)}
-									{<div className="content-of-student">{ReactHtmlParser(contentOfStudent)}</div>}
 
-									{!doneTestData && (
-										<div className="writting-editor mt-2">
-											<WrittingModal
-												contentOfStudent={contentOfStudent}
-												onGetDataEditor={(content) => onGetDataEditor(content, ques.ExerciseID)}
-											/>
-										</div>
-									)}
-								</div>
-							)}
+							<div className="box-doing-wrting mt-3">
+								{contentOfStudent ? (
+									<h6 className="text-underline mb-2">
+										<u>Bài viết đã làm</u>
+									</h6>
+								) : (
+									<h6 className="text-underline">Bấm vào nút bên dưới để làm bài tự luận</h6>
+								)}
+								{<div className="content-of-student">{ReactHtmlParser(contentOfStudent)}</div>}
+
+								{!doneTestData && (
+									<div className="writting-editor mt-2">
+										<WrittingModal
+											contentOfStudent={contentOfStudent}
+											onGetDataEditor={(content) => onGetDataEditor(content, ques.ExerciseID)}
+										/>
+									</div>
+								)}
+							</div>
 						</div>
 					</div>
 					<div className="box-action">
