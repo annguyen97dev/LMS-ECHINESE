@@ -24,9 +24,30 @@ export const ParentsChildMenu = [
 			{
 				TypeItem: 'single',
 				Key: '/parents',
-				Route: '/parents',
+				Route: '/parents/course-of-student',
 				Icon: '',
-				Text: 'Phụ huynh'
+				Text: 'Các khóa học'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/parents',
+				Route: '/parents/course-of-student-price',
+				Icon: '',
+				Text: 'Công nợ'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/parents',
+				Route: '/parents/schedule-of-student',
+				Icon: '',
+				Text: 'Lịch học'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/parents',
+				Route: '/parents/score-of-student',
+				Icon: '',
+				Text: 'Xem điểm'
 			}
 		]
 	}

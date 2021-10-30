@@ -64,22 +64,22 @@ const SalaryStaffReview = () => {
 		{
 			title: 'Năm',
 			dataIndex: 'Year',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: IStaffSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Tháng',
 			dataIndex: 'Month',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: IStaffSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Thưởng',
 			dataIndex: 'Bonus',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
 			dataIndex: 'NoteBonus',
-			render: (price, record: any) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: any) => <p>{price}</p>
 		},
 		{
 			title: 'Trạng Thái',
@@ -96,17 +96,17 @@ const SalaryStaffReview = () => {
 		{
 			title: 'Tăng Lương',
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tháng',
 			dataIndex: 'Salary',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tổng',
 			dataIndex: 'TotalSalary',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -202,19 +202,6 @@ const SalaryStaffReview = () => {
 			TitlePage="Duyệt lương nhân viên"
 			dataSource={payRoll}
 			columns={columns}
-			TitleCard={
-				<Popconfirm
-					title={renderTitle}
-					visible={visible}
-					onConfirm={postSalaryOfTeacherClosing}
-					onCancel={handleCancel}
-					okButtonProps={{ loading: isLoading.status }}
-				>
-					<button onClick={showPopconfirm} className="btn btn-warning add-new">
-						Tính lương tháng trước
-					</button>
-				</Popconfirm>
-			}
 			Extra={
 				<Select onChange={onChangeMonth} disabled={false} className="style-input" defaultValue={months[new Date().getMonth()]}>
 					{months.map((item, index) => (
