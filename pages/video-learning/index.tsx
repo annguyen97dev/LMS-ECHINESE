@@ -6,7 +6,7 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import { CircularProgressbarWithChildren } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import HeaderVideo from './header';
-import VideoTabs from './tabs';
+// import VideoTabs from './tabs';
 import VideoList from './list-video';
 import { VideoCourseOfStudent, VideoCourseInteraction, VideoCourses } from '~/apiBase/video-learning';
 import { useRouter } from 'next/router';
