@@ -32,8 +32,6 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 	let path: string = router.pathname;
 	let pathString: string[] = path.split('/');
 
-	console.log('Path là: ', path);
-
 	pathString = pathString.filter((item) => {
 		if (item == '' || item == '[slug]') {
 			return false;

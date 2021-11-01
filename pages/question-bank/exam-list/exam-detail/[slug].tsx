@@ -97,6 +97,8 @@ const ExamDetail = () => {
 	// console.log("List question: ", listQuestionID);
 	// console.log("List Group ID: ", listGroupID);
 
+	console.log('COIIIII Loading: ', isLoading);
+
 	// ---- GET LIST EXAM ----
 	const getListExam = async () => {
 		try {
@@ -112,6 +114,7 @@ const ExamDetail = () => {
 			showNoti('danger', error.message);
 		} finally {
 			setLoadingExam(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -143,8 +146,8 @@ const ExamDetail = () => {
 
 	// ---- GET LIST QUESTION IN EXAM ----
 	const getExamDetail = async () => {
-		// let cloneListQuestionID = [...listQuestionID];
-		// let cloneListGroupID = [...listGroupID];
+		let cloneListQuestionID = [...listQuestionID];
+		let cloneListGroupID = [...listGroupID];
 
 		try {
 			let res = await examDetailApi.getAll(todoApi);
@@ -158,17 +161,16 @@ const ExamDetail = () => {
 
 				setDataExamDetail([...cloneData]);
 
-				// res.data.data.forEach((item) => {
-				//   if (item.Enable) {
-				//     item.ExerciseGroupID !== 0 &&
-				//       cloneListGroupID.push(item.ExerciseGroupID);
-				//     item.ExerciseTopic.forEach((ques) => {
-				//       cloneListQuestionID.push(ques.ExerciseID);
-				//     });
-				//   }
-				// });
-				// setListGroupID([...cloneListGroupID]);
-				// setListQuestionID([...cloneListQuestionID]);
+				res.data.data.forEach((item) => {
+					if (item.Enable) {
+						item.ExerciseGroupID !== 0 && cloneListGroupID.push(item.ExerciseGroupID);
+						item.ExerciseTopic.forEach((ques) => {
+							cloneListQuestionID.push(ques.ExerciseID);
+						});
+					}
+				});
+				setListGroupID([...cloneListGroupID]);
+				setListQuestionID([...cloneListQuestionID]);
 				setListQuestionAddOutside([]);
 
 				// Caculator pageindex
@@ -179,6 +181,7 @@ const ExamDetail = () => {
 			showNoti('danger', error.message);
 		} finally {
 			setLoadingQuestion(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -483,6 +486,7 @@ const ExamDetail = () => {
 
 	useEffect(() => {
 		getAllListQuestionID();
+		setIsLoading(true);
 	}, []);
 
 	const content = (

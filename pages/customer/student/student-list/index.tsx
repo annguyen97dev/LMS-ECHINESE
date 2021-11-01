@@ -546,7 +546,6 @@ const StudentData = () => {
 						dataRow={record}
 						listDataForm={checkEmptyData && listDataForm}
 						_handleSubmit={(dataSubmit, index) => {
-							console.log('Data submit la: ', dataSubmit);
 							let newDataSource = [...dataSource];
 							newDataSource.splice(index, 1, {
 								...dataSubmit,

@@ -6,6 +6,7 @@ const PowerTable = React.memo((props: any) => {
 	const { getTitlePage } = useWrap();
 	const [state, setState] = useState({ selectedRowKeys: [] });
 	const [dataSource, setDataSource] = useState([]);
+	const [activeIndex, setActiveIndex] = useState(null);
 
 	const selectRow = (record) => {
 		const selectedRowKeys = [];
@@ -72,7 +73,7 @@ const PowerTable = React.memo((props: any) => {
 							<Table
 								loading={props.loading?.type == 'GET_ALL' && props.loading?.status}
 								bordered={props.haveBorder ? props.haveBorder : false} // boolean
-								scroll={props.noScroll ? { x: 'max-content' } : { x: 500 }}
+								scroll={{ x: 'max-content', y: 450 }}
 								columns={props.columns}
 								dataSource={dataSource}
 								size="middle"
@@ -84,10 +85,14 @@ const PowerTable = React.memo((props: any) => {
 									onChange: (pageNumber, pageSize) => changePagination(pageNumber, pageSize),
 									current: props.currentPage && props.currentPage
 								}}
-								rowSelection={rowSelection}
-								onRow={(record) => ({
+								// rowSelection={rowSelection}
+								rowClassName={(record, index) =>
+									index == activeIndex ? 'table-row-active' : index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+								}
+								onRow={(record, index) => ({
 									onClick: () => {
 										selectRow(record);
+										setActiveIndex(index);
 									}
 								})}
 							/>

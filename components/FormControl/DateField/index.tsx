@@ -1,42 +1,31 @@
-import {DatePicker, Form} from 'antd';
+import { DatePicker, Form } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Controller} from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 const DateField = (props) => {
-	const {
-		form,
-		name,
-		label,
-		placeholder,
-		disabled,
-		style,
-		className,
-		isRequired,
-	} = props;
-	const {errors} = form.formState;
+	const { form, name, label, placeholder, disabled, style, className, isRequired } = props;
+	const { errors } = form.formState;
 	const hasError = errors[name];
 
 	return (
 		<Form.Item
 			style={style}
 			label={label}
-			className={`${className} ${
-				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
-			}`}
+			className={`${className} ${hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
 			required={isRequired}
 		>
 			<Controller
 				name={name}
 				control={form.control}
-				render={({field}) => {
+				render={({ field }) => {
 					const checkValue = field.value ? moment(field.value) : undefined;
 					return (
 						<DatePicker
 							{...field}
 							className="style-input"
-							style={{width: '100%'}}
+							style={{ width: '100%' }}
 							placeholder={placeholder}
 							disabled={disabled}
 							allowClear={true}
@@ -64,7 +53,7 @@ DateField.propTypes = {
 	disabled: PropTypes.bool,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
-	isRequired: PropTypes.bool,
+	isRequired: PropTypes.bool
 };
 DateField.defaultProps = {
 	label: '',
@@ -72,7 +61,7 @@ DateField.defaultProps = {
 	disabled: false,
 	style: {},
 	className: '',
-	isRequired: false,
+	isRequired: false
 };
 
 export default DateField;

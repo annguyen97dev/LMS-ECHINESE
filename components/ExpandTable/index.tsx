@@ -14,6 +14,7 @@ const ExpandTable = (props) => {
 		}
 	]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [activeIndex, setActiveIndex] = useState(null);
 
 	const selectRow = (record) => {
 		const selectedRowKeys = [];
@@ -49,7 +50,8 @@ const ExpandTable = (props) => {
 	};
 
 	const onChangeExpand = (expandedRows) => {
-		console.log('Expand Rows: ', expandedRows);
+		setActiveIndex(parseInt(expandedRows[expandedRows.length - 1]));
+
 		if (rowKeys.some((object) => object['currentPage'] == currentPage)) {
 			let index = rowKeys.findIndex((item) => item.currentPage == currentPage);
 			rowKeys[index].listKeys = expandedRows;
@@ -70,6 +72,7 @@ const ExpandTable = (props) => {
 	};
 
 	const onExpand = (expand, record) => {
+		console.log('Expand: ', expand);
 		if (typeof props.handleExpand != 'undefined') {
 			props.handleExpand(record);
 		}
@@ -88,6 +91,8 @@ const ExpandTable = (props) => {
 		onChange: onSelectedRowKeysChange,
 		hideSelectAll: true
 	};
+
+	const onSelect = () => {};
 
 	useEffect(() => {
 		if (props.TitlePage) {
@@ -114,7 +119,7 @@ const ExpandTable = (props) => {
 					<Table
 						loading={props.loading?.type == 'GET_ALL' && props.loading?.status}
 						bordered={props.haveBorder ? props.haveBorder : false}
-						scroll={props.noScroll ? { x: 'max-content' } : { x: 600 }}
+						scroll={{ x: 'max-content', y: 450 }}
 						columns={props.columns}
 						dataSource={dataSource}
 						size="middle"
@@ -126,10 +131,14 @@ const ExpandTable = (props) => {
 							onChange: (pageNumber, pageSize) => changePagination(pageNumber, pageSize),
 							current: props.currentPage && props.currentPage
 						}}
-						rowSelection={rowSelection}
-						onRow={(record) => ({
+						// rowSelection={rowSelection}
+						rowClassName={(record, index) =>
+							index == activeIndex ? 'table-row-active' : index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+						}
+						onRow={(record, index) => ({
 							onClick: () => {
 								selectRow(record);
+								setActiveIndex(index);
 							}
 						})}
 						expandable={props.expandable}

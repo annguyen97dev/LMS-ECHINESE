@@ -4,11 +4,12 @@ import { packageResultDetailApi } from '~/apiBase/package/package-result-detail'
 import { useDoneTest } from '~/context/useDoneTest';
 import { useWrap } from '~/context/wrap';
 import { Modal, Input, Spin, Button } from 'antd';
+import { examAppointmentResultApi } from '~/apiBase';
 
 const { TextArea } = Input;
 
 const DoneMarkingExam = (props) => {
-	const { onDoneMarking, isMarked } = props;
+	const { onDoneMarking, isMarked, type } = props;
 	const { dataMarking, getDataMarking } = useDoneTest();
 	const { showNoti } = useWrap();
 	const [loading, setLoading] = useState(false);
@@ -28,10 +29,49 @@ const DoneMarkingExam = (props) => {
 		setIsModalVisible(false);
 	};
 
+	const remakeData = () => {
+		let dataSubmit = null;
+		switch (type) {
+			case 'test':
+				let dataTest = {
+					ExamAppointmentResultID: null,
+					Note: '',
+					examAppointmentExerciseStudentList: []
+				};
+				dataTest.ExamAppointmentResultID = dataMarking.SetPackageResultID;
+				dataTest.Note = dataMarking.Note;
+				dataTest.examAppointmentExerciseStudentList = [...dataMarking.setPackageExerciseStudentsList];
+
+				dataSubmit = { ...dataTest };
+				break;
+
+			default:
+				dataSubmit = { ...dataMarking };
+				break;
+		}
+
+		return dataSubmit;
+	};
+
 	const handleMarkingExam = async () => {
 		setLoading(true);
+
+		console.log('Data Submit: ', dataMarking);
+		let dataSubmit = remakeData();
+
+		let res = null;
+
 		try {
-			let res = await packageResultDetailApi.updatePoint(dataMarking);
+			switch (type) {
+				case 'test':
+					res = await examAppointmentResultApi.updatePoint(dataSubmit);
+					break;
+
+				default:
+					res = await packageResultDetailApi.updatePoint(dataSubmit);
+					break;
+			}
+
 			if (res.status === 200) {
 				showNoti('success', 'Hoàn tất chấm bài');
 				onDoneMarking && onDoneMarking();
