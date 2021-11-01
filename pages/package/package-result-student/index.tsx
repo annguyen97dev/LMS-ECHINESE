@@ -484,7 +484,11 @@ const PackageResultStudent = () => {
 					<Link
 						href={{
 							pathname: '/package/package-result-student/detail/[slug]',
-							query: { slug: `${data.ID}`, examID: data.ExamTopicID, packageDetailID: data.SetPackageDetailID }
+							query: {
+								slug: `${data.ID}`,
+								examID: data.ExamTopicID,
+								packageDetailID: data.SetPackageDetailID
+							}
 						}}
 					>
 						<Tooltip title="Kết quả bộ đề chi tiết">

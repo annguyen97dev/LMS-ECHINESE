@@ -47,6 +47,13 @@ export const StudentChildMenu = [
 				Icon: '',
 				Route: '/course/schedule-study-student',
 				Text: 'Lịch học'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/customer/service/service-test-student',
+				Route: '/customer/service/service-test-student',
+				Icon: '',
+				Text: 'Thông tin hẹn test'
 			}
 		]
 	},

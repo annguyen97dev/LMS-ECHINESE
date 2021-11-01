@@ -7,6 +7,7 @@ const NestedTable = React.memo((props: any) => {
 	const { getTitlePage } = useWrap();
 	const [state, setState] = useState({ selectedRowKeys: [] });
 	const [dataSource, setDataSource] = useState([]);
+	const [activeIndex, setActiveIndex] = useState(null);
 
 	const selectRow = (record) => {
 		const selectedRowKeys = [];
@@ -58,7 +59,7 @@ const NestedTable = React.memo((props: any) => {
 					className={props.addClass && props.addClass}
 					loading={props.loading?.type == 'GET_ALL' && props.loading?.status}
 					bordered={props.haveBorder ? props.haveBorder : false}
-					scroll={props.noScroll ? { x: 'max-content' } : { x: 450 }}
+					scroll={{ x: 'max-content' }}
 					columns={props.columns}
 					dataSource={dataSource}
 					size="middle"
@@ -69,10 +70,13 @@ const NestedTable = React.memo((props: any) => {
 						onChange: (pageNumber) => changePagination(pageNumber),
 						current: props.currentPage && props.currentPage
 					}}
-					rowSelection={rowSelection}
-					onRow={(record) => ({
+					rowClassName={(record, index) =>
+						index == activeIndex ? 'table-row-active' : index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+					}
+					onRow={(record, index) => ({
 						onClick: () => {
 							selectRow(record);
+							setActiveIndex(index);
 						}
 					})}
 				/>

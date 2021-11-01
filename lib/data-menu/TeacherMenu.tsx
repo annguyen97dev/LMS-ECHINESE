@@ -171,6 +171,13 @@ export const TeacherChildMenu = [
 				Route: '/customer/feedback-list',
 				Text: 'Phản hồi',
 				Icon: ''
+			},
+			{
+				TypeItem: 'single',
+				Key: '/customer/service/service-test-teacher',
+				Route: '/customer/service/service-test-teacher',
+				Icon: '',
+				Text: 'Chấm bài hẹn test'
 			}
 		]
 	},

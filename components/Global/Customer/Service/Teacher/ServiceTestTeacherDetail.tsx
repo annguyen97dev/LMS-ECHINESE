@@ -10,11 +10,11 @@ import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from
 import ListQuestion from '~/components/Global/DoingTest/ListQuestion';
 import { useDoneTest } from '~/context/useDoneTest';
 import { AlignLeftOutlined, FormOutlined, ProfileOutlined } from '@ant-design/icons';
-import MainTest from '../../DoingTest/MainTest';
-import DoneMarkingExam from '../../ExamList/MarkingExam/DoneMarkingExam';
 import { examAppointmentResultApi } from '~/apiBase';
+import MainTest from '~/components/Global/DoingTest/MainTest';
+import DoneMarkingExam from '~/components/Global/ExamList/MarkingExam/DoneMarkingExam';
 
-const PackageResultDetail = () => {
+const ServiceTestTeacherDetail = () => {
 	const {} = useDoneTest();
 	const { teacherMarking: teacherMarking, slug: slug, type } = router.query;
 	const { getDoneTestData, doneTestData, dataMarking, getDataMarking } = useDoneTest();
@@ -25,7 +25,7 @@ const PackageResultDetail = () => {
 	const paramsDefault = {
 		pageSize: 999,
 		pageIndex: 1,
-		SetPackageResultID: parseInt(slug as string),
+		ExamAppointmentResultID: parseInt(slug as string),
 		ExerciseType: teacherMarking ? 2 : null
 	};
 	const [params, setParams] = useState(paramsDefault);
@@ -38,6 +38,7 @@ const PackageResultDetail = () => {
 	const [isShowAll, setIsShowAll] = useState(false);
 	const [isMarked, setIsMarked] = useState(false);
 	const [showNote, setShowNote] = useState(false);
+	const [saveData, setSaveData] = useState(null);
 
 	const getDataSetPackageResult = async () => {
 		let cloneListQuestionID = [...listQuestionID];
@@ -45,7 +46,7 @@ const PackageResultDetail = () => {
 		setLoading(true);
 
 		try {
-			let res = await packageResultDetailApi.getAll(params);
+			let res = await examAppointmentResultApi.getResultExam(params);
 
 			//@ts-ignore
 			if (res.status == 200) {
@@ -59,14 +60,18 @@ const PackageResultDetail = () => {
 							Note: '',
 							setPackageExerciseStudentsList: []
 						};
+
 						res.data.data.forEach((item) => {
-							item.SetPackageExerciseStudent.forEach((ques) => {
-								newDataMarking.setPackageExerciseStudentsList.push({
-									ID: ques.ID,
-									Point: null
+							if (item.ExerciseType == 2) {
+								item.ExamAppointmentExerciseStudent.forEach((ques) => {
+									newDataMarking.setPackageExerciseStudentsList.push({
+										ID: ques.ID,
+										Point: null
+									});
 								});
-							});
+							}
 						});
+
 						getDataMarking({ ...newDataMarking });
 					}
 				}
@@ -75,7 +80,7 @@ const PackageResultDetail = () => {
 				res.data.data.forEach((item, index) => {
 					if (item.Enable) {
 						item.ExerciseGroupID !== 0 && cloneListGroupID.push(item.ExerciseGroupID);
-						item.SetPackageExerciseStudent.forEach((ques) => {
+						item.ExamAppointmentExerciseStudent.forEach((ques) => {
 							cloneListQuestionID.push(ques.ExerciseID);
 						});
 					}
@@ -101,9 +106,9 @@ const PackageResultDetail = () => {
 	const convertDataDoneTest = (data) => {
 		let cloneData = [...data];
 		cloneData.forEach((item) => {
-			item.ExerciseTopic = [...item.SetPackageExerciseStudent];
+			item.ExerciseTopic = [...item.ExamAppointmentExerciseStudent];
 			item.ExerciseTopic.forEach((ques) => {
-				ques.ExerciseAnswer = [...ques.SetPackageExerciseAnswerStudent];
+				ques.ExerciseAnswer = [...ques.ExamAppointmentExerciseAnswerStudent];
 			});
 		});
 
@@ -229,7 +234,7 @@ const PackageResultDetail = () => {
 									) : (
 										doneTestData && (
 											<>
-												{detailResult.map((item, index) => {
+												{detailResult?.map((item, index) => {
 													if (item.ExerciseGroupID !== 0) {
 														return (
 															<div className="wrap-group-list">
@@ -285,4 +290,4 @@ const PackageResultDetail = () => {
 	);
 };
 
-export default PackageResultDetail;
+export default ServiceTestTeacherDetail;

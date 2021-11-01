@@ -64,7 +64,7 @@ type doneTestData = {
 export type IProps = {
 	doneTestData: Array<doneTestData>;
 	getDoneTestData: Function;
-	dataMarking: dataMarking;
+	dataMarking: any;
 	getDataMarking: Function;
 };
 
@@ -77,7 +77,7 @@ const DoneTestContext = createContext<IProps>({
 
 export const DoneTestProvider = ({ children }) => {
 	const [doneTestData, setDoneTestData] = useState<doneTestData[]>(null);
-	const [dataMarking, setDataMarking] = useState<dataMarking>(null);
+	const [dataMarking, setDataMarking] = useState<any>(null);
 
 	const getDoneTestData = (data) => {
 		setDoneTestData(data);
