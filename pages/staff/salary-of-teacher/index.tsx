@@ -13,7 +13,9 @@ import { useWrap } from '~/context/wrap';
 import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
+import SalaryOfTeacherDetail from './salary-of-teacher-detail';
 import ConfirmForm from './teacher-confirm-form';
+import TecherFixExam from './teacher-fix-exam';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -62,22 +64,22 @@ const SalaryReview = () => {
 		{
 			title: 'Năm',
 			dataIndex: 'Year',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Tháng',
 			dataIndex: 'Month',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Thưởng',
 			dataIndex: 'Bonus',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
 			dataIndex: 'NoteBonus',
-			render: (price, record: any) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: any) => <p>{price}</p>
 		},
 		{
 			title: 'Trạng Thái',
@@ -92,19 +94,24 @@ const SalaryReview = () => {
 			)
 		},
 		{
-			title: 'Tăng Lương',
+			title: 'Lương Ứng',
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Lương Tháng',
 			dataIndex: 'Salary',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <SalaryOfTeacherDetail price={price} record={record} />
+		},
+		{
+			title: 'Lương Chấm Bài',
+			dataIndex: 'SalaryFixExam',
+			render: (price, record: ITeacherSalary) => <TecherFixExam price={price} record={record} />
 		},
 		{
 			title: 'Lương Tổng',
 			dataIndex: 'TotalSalary',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -199,24 +206,17 @@ const SalaryReview = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="Duyệt lương giáo viên"
+			TitlePage="Bảng lương giáo viên"
 			dataSource={payRoll}
 			columns={columns}
-			TitleCard={
-				<Popconfirm
-					title={renderTitle}
-					visible={visible}
-					onConfirm={postSalaryOfTeacherClosing}
-					onCancel={handleCancel}
-					okButtonProps={{ loading: isLoading.status }}
-				>
-					<button onClick={showPopconfirm} className="btn btn-warning add-new">
-						Tính lương tháng trước
-					</button>
-				</Popconfirm>
-			}
 			Extra={
-				<Select onChange={onChangeMonth} disabled={false} className="style-input" defaultValue={months[new Date().getMonth()]}>
+				<Select
+					onChange={onChangeMonth}
+					style={{ width: 200 }}
+					disabled={false}
+					className="style-input"
+					defaultValue={months[new Date().getMonth()]}
+				>
 					{months.map((item, index) => (
 						<Option key={index} value={index + 1}>
 							{item}

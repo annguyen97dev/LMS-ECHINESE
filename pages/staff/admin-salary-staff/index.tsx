@@ -64,27 +64,27 @@ const SalaryReview = () => {
 		{
 			title: 'Năm',
 			dataIndex: 'Year',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: IStaffSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Tháng',
 			dataIndex: 'Month',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: IStaffSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Thưởng',
 			dataIndex: 'Bonus',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
 			dataIndex: 'NoteBonus',
-			render: (price, record: any) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: any) => <p>{price}</p>
 		},
 		{
 			title: 'Ngày nghỉ',
 			dataIndex: 'CountOff',
-			render: (price, record: any) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: any) => <p>{price}</p>
 		},
 		{
 			title: 'Trạng Thái',
@@ -101,17 +101,17 @@ const SalaryReview = () => {
 		{
 			title: 'Tăng Lương',
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tháng',
 			dataIndex: 'Salary',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tổng',
 			dataIndex: 'TotalSalary',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -230,7 +230,13 @@ const SalaryReview = () => {
 				</Popconfirm>
 			}
 			Extra={
-				<Select onChange={onChangeMonth} disabled={false} className="style-input" defaultValue={months[new Date().getMonth()]}>
+				<Select
+					onChange={onChangeMonth}
+					disabled={false}
+					style={{ width: 200 }}
+					className="style-input"
+					defaultValue={months[new Date().getMonth()]}
+				>
 					{months.map((item, index) => (
 						<Option key={index} value={index + 1}>
 							{item}
