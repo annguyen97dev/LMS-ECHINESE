@@ -98,7 +98,6 @@ const ExpandTable = (props) => {
 			dataClone.forEach((item, index) => {
 				item.key = index.toString();
 			});
-
 			setDataSource(dataClone);
 		}
 	}, [props.dataSource]);

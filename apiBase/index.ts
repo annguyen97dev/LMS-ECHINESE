@@ -37,8 +37,6 @@ export { configZoomApi } from './zoom/config-zoom';
 export { scheduleZoomApi } from './zoom/schedule-zoom';
 export { zoomRoomApi } from './zoom/zoom-room';
 
-export { resetPasswordApi } from './reset-password/reset-password';
-export { doingTestApi } from './doing-test/doing-test';
 export { priceFixExamApi } from './options/price-fix-exam';
 export { payFixExamApi } from './package/pay-fix-exam';
 export { payFixListApi } from './package/pay-fix-list';
@@ -95,3 +93,6 @@ export { salerTotalRevenueApi } from './sale/saler-total-revenue';
 export { salerRevenueApi } from './sale/saler-revenue';
 export { VideoCourseListApi } from './video-course-list';
 export { VideoCourseOfStudent, VideoCourseInteraction } from './video-learning';
+export { resetPasswordApi } from './reset-password/reset-password';
+export { doingTestApi } from './doing-test/doing-test';
+export { FeedbackApi } from './feed-back';

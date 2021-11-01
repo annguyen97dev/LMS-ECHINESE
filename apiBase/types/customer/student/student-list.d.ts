@@ -23,7 +23,7 @@ type IStudent = IBaseApi<{
 	CMND: string;
 	CMNDDate: string;
 	CMNDRegister: string;
-	Branch: {BranchName: string; ID: number}[];
+	Branch: { BranchName: string; ID: number }[];
 	AcademicPurposesID: number;
 	AcademicPurposesName: string;
 	JobID: number;
@@ -32,4 +32,5 @@ type IStudent = IBaseApi<{
 	SourceInformationName: string;
 	ParentsIDOf: number;
 	ParentsNameOf: string;
+	CounselorsName: string;
 }>;

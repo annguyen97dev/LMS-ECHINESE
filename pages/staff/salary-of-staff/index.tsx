@@ -1,4 +1,5 @@
 import { InputNumber, Spin, Tooltip, Select, Popconfirm } from 'antd';
+import { useSession } from 'next-auth/client';
 import React, { Fragment, useEffect, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
@@ -20,12 +21,15 @@ const SalaryStaffReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [payRoll, setPayRoll] = useState<IStaffSalary[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [roleID, setRoleID] = useState(null);
 	const { showNoti, userInformation, pageSize } = useWrap();
+	const [session, loading] = useSession();
 	const [visible, setVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
 		status: false
 	});
+
 	const { Option } = Select;
 	const months = [
 		'Tháng 1',
@@ -45,7 +49,6 @@ const SalaryStaffReview = () => {
 		pageIndex: currentPage,
 		pageSize: pageSize,
 		sortType: true,
-		selectAll: true,
 		sort: null,
 		Year: new Date().getFullYear(),
 		Month: new Date().getMonth() + 1,
@@ -110,7 +113,9 @@ const SalaryStaffReview = () => {
 		},
 		{
 			title: 'Cập Nhật',
-			render: (text, record) => <ConfirmForm isLoading={isLoading} record={record} setParams={setParams} params={params} />
+			render: (text, record) => (
+				<ConfirmForm isLoading={isLoading} roleID={roleID} record={record} setParams={setParams} params={params} />
+			)
 		}
 	];
 
@@ -192,6 +197,30 @@ const SalaryStaffReview = () => {
 		getDataPayroll(currentPage);
 	}, [params, userInformation]);
 
+	function parseJwt(token) {
+		var base64Url = token.split('.')[1];
+		var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+		var jsonPayload = decodeURIComponent(
+			atob(base64)
+				.split('')
+				.map(function (c) {
+					return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+				})
+				.join('')
+		);
+
+		return JSON.parse(jsonPayload);
+	}
+
+	useEffect(() => {
+		if (session !== undefined) {
+			let token = session.accessToken;
+			let userInfor = parseJwt(token);
+			setRoleID(userInfor.roleID);
+		}
+	}, []);
+	console.log(roleID);
+
 	return (
 		<PowerTable
 			currentPage={currentPage}
@@ -199,11 +228,32 @@ const SalaryStaffReview = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="Duyệt lương nhân viên"
+			TitlePage="Bảng lương nhân viên"
 			dataSource={payRoll}
 			columns={columns}
+			TitleCard={
+				roleID == 5 && (
+					<Popconfirm
+						title={renderTitle}
+						visible={visible}
+						onConfirm={postSalaryOfTeacherClosing}
+						onCancel={handleCancel}
+						okButtonProps={{ loading: isLoading.status }}
+					>
+						<button onClick={showPopconfirm} className="btn btn-warning add-new">
+							Tính lương tháng trước
+						</button>
+					</Popconfirm>
+				)
+			}
 			Extra={
-				<Select onChange={onChangeMonth} disabled={false} className="style-input" defaultValue={months[new Date().getMonth()]}>
+				<Select
+					onChange={onChangeMonth}
+					style={{ width: 200 }}
+					disabled={false}
+					className="style-input"
+					defaultValue={months[new Date().getMonth()]}
+				>
 					{months.map((item, index) => (
 						<Option key={index} value={index + 1}>
 							{item}

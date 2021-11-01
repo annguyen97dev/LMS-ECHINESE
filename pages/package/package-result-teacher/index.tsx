@@ -4,7 +4,7 @@ import { packageResultApi } from '~/apiBase/package/package-result';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import Link from 'next/link';
 import { Checkbox, Modal, Tooltip, Popconfirm, message } from 'antd';
-import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, FormOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, FormOutlined, RedoOutlined } from '@ant-design/icons';
 import LayoutBase from '~/components/LayoutBase';
 import ExpandTable from '~/components/ExpandTable';
 import PackageResultExpand from '~/components/Global/Package/PackageResult/PackageResultExpand';
@@ -81,7 +81,7 @@ const TakeMarking = (props) => {
 	);
 };
 
-const ReviewExamTeacher = () => {
+const PackageResultTeacher = () => {
 	let listFieldFilter = {
 		pageIndex: 1,
 		fromDate: null,
@@ -201,7 +201,7 @@ const ReviewExamTeacher = () => {
 			let res = await packageResultApi.getAll(todoApi);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow));
 
-			res.status == 204 && (showNoti('danger', 'Không có dữ liệu'), setDataSource([]));
+			res.status == 204 && setDataSource([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -279,7 +279,7 @@ const ReviewExamTeacher = () => {
 			setTextHeader('Bài tập chờ xử lí');
 			setTodoApi({
 				...listTodoApi,
-				StatusID: 2,
+				isDone: false,
 				TeacherID: userInformation.UserInformationID
 			});
 			setCurrentPage(1);
@@ -331,8 +331,8 @@ const ReviewExamTeacher = () => {
 				data.TeacherID === userInformation.UserInformationID ? (
 					<Link
 						href={{
-							pathname: '/package/package-set-result/package-set-result-detail/[slug]',
-							query: { slug: `${data.ID}` }
+							pathname: '/package/package-result-teacher/detail/[slug]',
+							query: { slug: `${data.ID}`, teacherMarking: data.TeacherID, packageResultID: data.ID }
 						}}
 					>
 						<a href="#" className="font-weight-black">
@@ -381,16 +381,23 @@ const ReviewExamTeacher = () => {
 			align: 'center',
 			render: (type, data) => (
 				<>
-					{!data.isFixPaid && !data.isReevaluate && (
+					{(data.StatusID == 3 || data.StatusID == 5 || data.StatusID == 1) && (
 						<Tooltip title="Chưa yêu cầu chấm">
 							<CloseOutlined className="delete custom" />
 						</Tooltip>
 					)}
-					{(data.isFixPaid || data.isReevaluate) && (
-						<Tooltip title="Yêu cầu chấm bài">
-							<CheckOutlined className="success custom" />
-						</Tooltip>
-					)}
+					{(data.isFixPaid || data.isReevaluate) &&
+						(data.StatusID == 2 ? (
+							<Tooltip title="Yêu cầu chấm bài">
+								<CheckOutlined className="success custom" />
+							</Tooltip>
+						) : (
+							data.StatusID == 4 && (
+								<Tooltip title="Yêu cầu chấm bài lại">
+									<RedoOutlined className="success custom" />
+								</Tooltip>
+							)
+						))}
 				</>
 			)
 		},
@@ -399,7 +406,7 @@ const ReviewExamTeacher = () => {
 			align: 'center',
 			render: (data) =>
 				!data.TeacherID &&
-				data.isFixPaid && (
+				(data.isFixPaid || data.isReevaluate) && (
 					<TakeMarking
 						loadingMarking={loadingMarking}
 						userID={userInformation.UserInformationID}
@@ -412,10 +419,10 @@ const ReviewExamTeacher = () => {
 		{
 			render: (data) => (
 				<>
-					{data.TeacherID === userInformation.UserInformationID && (
+					{data.TeacherID === userInformation.UserInformationID && (data.StatusID == 2 || data.StatusID == 4) && (
 						<Link
 							href={{
-								pathname: '/package/review-exam-teacher/review-exam-detail/[slug]',
+								pathname: '/package/package-result-teacher/detail/[slug]',
 								query: { slug: `${data.ID}`, teacherMarking: data.TeacherID, packageResultID: data.ID }
 							}}
 						>
@@ -486,5 +493,5 @@ const ReviewExamTeacher = () => {
 	);
 };
 
-ReviewExamTeacher.layout = LayoutBase;
-export default ReviewExamTeacher;
+PackageResultTeacher.layout = LayoutBase;
+export default PackageResultTeacher;

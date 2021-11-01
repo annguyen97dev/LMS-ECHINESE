@@ -1,152 +1,296 @@
-import React, { useState } from "react";
-import { Table, Card, Tag, Select, Modal } from "antd";
-import TitlePage from "~/components/TitlePage";
-import SearchBox from "~/components/Elements/SearchBox";
-import Link from "next/link";
-import ExpandTable from "~/components/ExpandTable";
-import { Filter, Eye, CheckCircle } from "react-feather";
-import { Tooltip } from "antd";
-import FilterTable from "~/components/Global/FeedbackList/FitlerTable";
-import { data } from "~/lib/option/dataOption2";
-import LayoutBase from "~/components/LayoutBase";
-import FilterFeedbackTable from "~/components/Global/Option/FilterTable/FilterFeedbackTable";
+import React, { useLayoutEffect, useState } from 'react';
+import { Table, Card, Tag, Select, Modal, Popover, Input, Space } from 'antd';
+import TitlePage from '~/components/TitlePage';
+import SearchBox from '~/components/Elements/SearchBox';
+import Link from 'next/link';
+import ExpandTable from '~/components/ExpandTable';
+import { Filter, Eye, CheckCircle } from 'react-feather';
+import { Tooltip } from 'antd';
+import FilterTable from '~/components/Global/FeedbackList/FitlerTable';
+import { data } from '~/lib/option/dataOption2';
+import LayoutBase from '~/components/LayoutBase';
+import FilterFeedbackTable from '~/components/Global/Option/FilterTable/FilterFeedbackTable';
+import { FeedbackApi } from '~/apiBase';
+import FeedbackTable from '~/components/FeedbackTable';
+import { useWrap } from '~/context/wrap';
+import StudentFeedbackList from '../student-feed-back';
+import { FeedbackCategoryApi } from '~/apiBase/feed-back-category';
+
+const { Option } = Select;
+const { Search } = Input;
+
 const FeedbackList = () => {
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
+	const [selectedItem, setSelectedItem] = useState({ ID: '' });
+	const { userInformation } = useWrap();
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+	const showModal = () => {
+		setIsModalVisible(true);
+	};
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+	const handleOk = () => {
+		setIsModalVisible(false);
+		let temp = {
+			ID: selectedItem.ID,
+			StatusID: 3
+		};
+		updateData(temp);
+	};
 
-  const columns = [
-    {
-      title: "Loại phản hồi",
-      dataIndex: "fbType",
-      key: "fbType",
-    },
-    {
-      title: "Title",
-      dataIndex: "fbReason",
-      key: "fbReason",
-    },
-    {
-      title: "Người gửi",
-      dataIndex: "staff",
-      key: "staff",
-    },
-    {
-      title: "Tư vấn viên",
-      dataIndex: "modBy",
-      key: "modBy",
-    },
+	const handleCancel = () => {
+		setIsModalVisible(false);
+	};
 
-    {
-      title: "Ngày gửi",
-      dataIndex: "modDate",
-      key: "modDate",
-    },
-    {
-      title: "Xong",
-      dataIndex: "Done",
-      key: "done",
-      align: "center",
-      render: () => (
-        <Tag className="style-tag" color="#06d6a0">
-          Xong
-        </Tag>
-      ),
-    },
-    {
-      title: "Đánh giá",
-      dataIndex: "Remark",
-      key: "remark",
-    },
-    {
-      title: "Thao tác",
-      dataIndex: "Action",
-      key: "action",
-      render: (Action) => (
-        <div>
-          <Tooltip title="Xử lý xong">
-            <a className="btn btn-icon" onClick={showModal}>
-              <CheckCircle />
-            </a>
-          </Tooltip>
+	const updateData = async (param) => {
+		try {
+			await FeedbackApi.update(param);
+			getAllData();
+		} catch (error) {}
+	};
 
-          <Tooltip title="Xem chi tiết">
-            <Link
-              href={{
-                pathname: "/feedback/[slug]",
-                query: { slug: 2 },
-              }}
-            >
-              <button className="btn btn-icon">
-                <Eye />
-              </button>
-            </Link>
-          </Tooltip>
-        </div>
-      ),
-    },
-  ];
+	const columns = [
+		{
+			title: 'Loại phản hồi',
+			dataIndex: 'TypeName',
+			key: 'TypeName'
+		},
+		{
+			title: 'Title',
+			dataIndex: 'Title',
+			key: 'Title'
+		},
+		{
+			title: 'Người gửi',
+			dataIndex: 'CreatedBy',
+			key: 'CreatedBy'
+		},
+		{
+			title: 'Tư vấn viên',
+			dataIndex: 'ModifiedBy',
+			key: 'ModifiedBy'
+		},
 
-  const [showFilter, showFilterSet] = useState(false);
+		{
+			title: 'Ngày gửi',
+			dataIndex: 'ModifiedOn',
+			key: 'ModifiedOn'
+		},
+		{
+			title: 'Trạng thái',
+			dataIndex: 'StatusName',
+			key: 'StatusName',
+			align: 'center'
+			// render: (value) => (
+			// 	<>
+			// 		{value === 3 && (
+			// 			<Tag className="style-tag" color="#06d6a0">
+			// 				Xong
+			// 			</Tag>
+			// 		)}
+			// 	</>
+			// )
+		},
+		{
+			title: 'Thao tác',
+			dataIndex: 'Action',
+			key: 'action',
+			render: (Action, data) => (
+				<div>
+					<Tooltip title={data.StatusID === 3 ? 'Đã xử lý' : 'Xong'}>
+						<a
+							className="btn btn-icon"
+							onClick={() => {
+								if (data.StatusID !== 3) {
+									setSelectedItem(data);
+									showModal();
+								}
+							}}
+						>
+							<CheckCircle style={{ color: data.StatusID === 3 ? '#CFD8DC' : '#1cc474' }} />
+						</a>
+					</Tooltip>
 
-  const funcShowFilter = () => {
-    showFilter ? showFilterSet(false) : showFilterSet(true);
-  };
+					<Tooltip title="Xem chi tiết">
+						<Link
+							href={{
+								pathname: '/feedback/[slug]',
+								query: { slug: data.ID }
+							}}
+						>
+							<button className="btn btn-icon">
+								<Eye />
+							</button>
+						</Link>
+					</Tooltip>
+				</div>
+			)
+		}
+	];
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+	const [allFeedBackup, setBackup] = useState([]);
+	const [allFeedback, setAllFeedback] = useState([]);
+	const [categories, setCategories] = useState([]);
 
-  const expandedRowRender = () => {
-    const { Option } = Select;
-    return (
-      <>
-        <div className="feedback-detail-text">
-          Dương Lan Anh Advance1412. Buổi nghỉ: tối 02/03/2021 (writìng) và
-          03/03/2021(speaking) Lý do: Em đang ở vùng dịch ạ (thị xã Kinh Môn,
-          huyện Kinh Môn, tỉnh Hải Dương)
-        </div>
-      </>
-    );
-  };
+	useLayoutEffect(() => {
+		getAllData();
+	}, [userInformation]);
 
-  return (
-    <>
-      <Modal
-        title="Xác nhận thông tin"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>Bạn chắc chắn đã xử lí xong phản hồi</p>
-      </Modal>
-      <ExpandTable
-        columns={columns}
-        dataSource={data}
-        TitlePage="Feedback List"
-        Extra={
-          <div className="extra-table">
-            <SearchBox />
-            <button
-              className="btn btn-secondary light btn-filter"
-              onClick={funcShowFilter}
-            >
-              <Filter />
-            </button>
-          </div>
-        }
-        expandable={{ expandedRowRender }}
-      >
-        <FilterFeedbackTable />
-      </ExpandTable>
-    </>
-  );
+	// GET ALL DATA WHEN OPEN
+	const getAllData = async () => {
+		const temp = {
+			pageIndex: 1,
+			pageSize: 20
+		};
+		await getAllFeedBack(temp);
+		getFeedBackCategory();
+	};
+
+	// GET ALL DATA WITH FILTER
+	const filter = async (ID) => {
+		const temp = {
+			pageIndex: 1,
+			pageSize: 20,
+			TypeID: ID
+		};
+		await getAllFeedBack(temp);
+	};
+
+	// GET DATA
+	const getAllFeedBack = async (param) => {
+		try {
+			const res = await FeedbackApi.getAll(param);
+			res.status == 200 && setAllFeedback(res.data.data);
+			res.status == 200 && setBackup(res.data.data);
+			res.status == 204 && setAllFeedback([]);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const [showFilter, showFilterSet] = useState(false);
+
+	const funcShowFilter = () => {
+		showFilter ? showFilterSet(false) : showFilterSet(true);
+	};
+
+	const [isModalVisible, setIsModalVisible] = useState(false);
+
+	let flag = 0;
+
+	const expandedRowRender = () => {
+		const { Option } = Select;
+		flag++;
+		return (
+			<>
+				<div className="feedback-detail-text">asd asd asdqw tw qgasgdas dnb </div>
+			</>
+		);
+	};
+
+	console.log('userInformation: ', userInformation);
+
+	// GET CATEGORY
+	const getFeedBackCategory = async () => {
+		const temp = {
+			pageIndex: 1,
+			pageSize: 20
+		};
+		try {
+			const res = await FeedbackCategoryApi.getAll(temp);
+			res.status == 200 && setCategories(res.data.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const onSearch = (t) => {
+		console.log(t);
+		if (t !== '') {
+			let temp = [];
+			for (let i = 0; i < allFeedBackup.length; i++) {
+				if (allFeedBackup[i].Title.indexOf(t) !== -1) {
+					temp.push(allFeedBackup[i]);
+				}
+			}
+			setAllFeedback(temp);
+		} else {
+			setAllFeedback(allFeedBackup);
+		}
+	};
+
+	return (
+		<>
+			{userInformation !== null && userInformation.RoleID === 1 && (
+				<>
+					<Modal title="Xác nhận thông tin" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+						<p>Bạn chắc chắn đã xử lí xong phản hồi</p>
+					</Modal>
+
+					<FeedbackTable
+						columns={columns}
+						dataSource={allFeedback}
+						TitlePage="Feedback List"
+						Extra={
+							<div className="extra-table">
+								<div className="row m-0 st-fb-100w st-fb-flex-end-row">
+									<Search
+										className="fb-btn-search style-input"
+										size="large"
+										placeholder="input search text"
+										onSearch={() => {}}
+										onChange={(e) => {
+											onSearch(e.target.value);
+										}}
+										style={{ width: 500, borderRadius: 6 }}
+									/>
+								</div>
+
+								<Popover
+									placement="bottomLeft"
+									title="Chọn lọc"
+									content={
+										<div className="st-fb-column fb-f-btn">
+											<button
+												onClick={() => {
+													getAllData();
+												}}
+												className="btn light fb-i-filter"
+											>
+												Tất cả
+											</button>
+											{categories.map((item, index) => (
+												<button
+													onClick={() => {
+														filter(item.ID);
+													}}
+													className="btn light fb-i-filter"
+												>
+													{item.Name}
+												</button>
+											))}
+										</div>
+									}
+									trigger="click"
+								>
+									<button className="ml-3 btn btn-secondary light fb-btn-filter" onClick={funcShowFilter}>
+										<Filter />
+									</button>
+								</Popover>
+							</div>
+						}
+						// expandable={{ expandedRowRender }}
+					>
+						{/* <FilterFeedbackTable /> */}
+					</FeedbackTable>
+				</>
+			)}
+
+			{userInformation !== null && userInformation.RoleID !== 1 && (
+				<>
+					<StudentFeedbackList />
+				</>
+			)}
+		</>
+	);
 };
 
 FeedbackList.layout = LayoutBase;

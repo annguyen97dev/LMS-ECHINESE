@@ -1,17 +1,18 @@
-import { ExclamationCircleOutlined, FormOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
+import { CheckCircleOutlined, ExclamationCircleOutlined, FormOutlined, InfoCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
 import { packageResultDetailApi } from '~/apiBase/package/package-result-detail';
 import { useDoneTest } from '~/context/useDoneTest';
 import { useWrap } from '~/context/wrap';
-import { Modal, Input, Spin } from 'antd';
+import { Modal, Input, Spin, Button } from 'antd';
 
 const { TextArea } = Input;
 
 const DoneMarkingExam = (props) => {
-	const { onDoneMarking } = props;
+	const { onDoneMarking, isMarked } = props;
 	const { dataMarking, getDataMarking } = useDoneTest();
 	const { showNoti } = useWrap();
 	const [loading, setLoading] = useState(false);
+	const [checkDone, setCheckDone] = useState(false);
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -50,6 +51,13 @@ const DoneMarkingExam = (props) => {
 		});
 	};
 
+	useEffect(() => {
+		if (isModalVisible) {
+			let nullPoint = dataMarking?.setPackageExerciseStudentsList.some((item) => item['Point'] == null);
+			setCheckDone(!nullPoint);
+		}
+	}, [isModalVisible]);
+
 	return (
 		<>
 			<button className="btn btn-warning ml-2" onClick={showModal}>
@@ -59,19 +67,40 @@ const DoneMarkingExam = (props) => {
 				</span>
 			</button>
 			<Modal
-				title="Xác nhận hoàn tất chấm bài"
+				title={
+					isMarked || !checkDone ? (
+						<button className="btn btn-icon delete">
+							<WarningOutlined />
+						</button>
+					) : (
+						'Hoàn tất chấm bài'
+					)
+				}
 				footer={null}
 				visible={isModalVisible}
 				// onOk={handleOk}
 				onCancel={handleCancel}
 				// confirmLoading={loading}
 			>
-				<p style={{ fontWeight: 500 }}>Ghi chú</p>
-				<TextArea onChange={(e) => onChange_note(e.target.value)}></TextArea>
-				<button className="btn btn-primary w-100 mt-3" onClick={handleMarkingExam}>
-					Lưu
-					{loading && <Spin className="loading-base" />}
-				</button>
+				{isMarked ? (
+					<p className="mb-0" style={{ fontWeight: 500 }}>
+						Đề thi này đã được chấm. <br /> Bạn chỉ được chấm lại khi có yêu cầu của học viên
+					</p>
+				) : !checkDone ? (
+					<p className="mb-0" style={{ fontWeight: 500 }}>
+						Vẫn còn câu chưa được chấm điểm! <br />
+						Vui lòng chấm nốt số câu còn lại
+					</p>
+				) : (
+					<>
+						<p style={{ fontWeight: 500 }}>Nhận xét (có thể để trống)</p>
+						<TextArea onChange={(e) => onChange_note(e.target.value)}></TextArea>
+						<button className="btn btn-primary w-100 mt-3" onClick={handleMarkingExam}>
+							Lưu
+							{loading && <Spin className="loading-base" />}
+						</button>{' '}
+					</>
+				)}
 			</Modal>
 		</>
 	);

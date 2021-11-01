@@ -621,26 +621,19 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/package/package-examiner',
 						Route: '/package/package-examiner',
-						Text: 'Danh sách chấm bộ đề',
+						Text: 'Danh sách giáo viên chấm bài',
 						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/payroll-fix',
+					// 	Route: '/package/payroll-fix',
+					// 	Text: 'Bảng lương chấm bài',
+					// 	Icon: ''
+					// }
 				]
 			},
-			{
-				ItemType: 'sub-menu',
-				Key: 'sub-tab-package-3',
-				Icon: '',
-				TitleSub: 'Thuộc về giáo viên',
-				SubMenuList: [
-					{
-						ItemType: 'single',
-						Key: '/package/payroll-fix',
-						Route: '/package/payroll-fix',
-						Text: 'Bảng lương chấm bài',
-						Icon: ''
-					}
-				]
-			},
+
 			{
 				ItemType: 'sub-menu',
 				Key: 'sub-tab-package-2',
@@ -676,6 +669,13 @@ export const AdminChildMenu = [
 						Icon: ''
 					}
 				]
+			},
+			{
+				ItemType: 'single',
+				Key: '/package/rank-result',
+				Route: '/package/rank-result',
+				Text: 'Bảng xếp hạng làm bài',
+				Icon: ''
 			}
 
 			// {

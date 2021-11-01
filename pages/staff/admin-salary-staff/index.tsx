@@ -230,7 +230,13 @@ const SalaryReview = () => {
 				</Popconfirm>
 			}
 			Extra={
-				<Select onChange={onChangeMonth} disabled={false} className="style-input" defaultValue={months[new Date().getMonth()]}>
+				<Select
+					onChange={onChangeMonth}
+					disabled={false}
+					style={{ width: 200 }}
+					className="style-input"
+					defaultValue={months[new Date().getMonth()]}
+				>
 					{months.map((item, index) => (
 						<Option key={index} value={index + 1}>
 							{item}

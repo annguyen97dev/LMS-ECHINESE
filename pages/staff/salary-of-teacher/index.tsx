@@ -206,11 +206,17 @@ const SalaryReview = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="Duyệt lương giáo viên"
+			TitlePage="Bảng lương giáo viên"
 			dataSource={payRoll}
 			columns={columns}
 			Extra={
-				<Select onChange={onChangeMonth} disabled={false} className="style-input" defaultValue={months[new Date().getMonth()]}>
+				<Select
+					onChange={onChangeMonth}
+					style={{ width: 200 }}
+					disabled={false}
+					className="style-input"
+					defaultValue={months[new Date().getMonth()]}
+				>
 					{months.map((item, index) => (
 						<Option key={index} value={index + 1}>
 							{item}

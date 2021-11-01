@@ -35,6 +35,8 @@ const PackageResultDetail = () => {
 	const [showMainTest, setShowMainTest] = useState(false);
 	const { showNoti, userInformation } = useWrap();
 	const [isShowAll, setIsShowAll] = useState(false);
+	const [isMarked, setIsMarked] = useState(false);
+	const [showNote, setShowNote] = useState(false);
 
 	const getDataSetPackageResult = async () => {
 		let cloneListQuestionID = [...listQuestionID];
@@ -46,7 +48,7 @@ const PackageResultDetail = () => {
 			//@ts-ignore
 			if (res.status == 200) {
 				convertDataDoneTest(res.data.data);
-
+				setIsMarked(res.data.isDone);
 				// Add to data marking if have teacher marking
 				if (teacherMarking) {
 					if (!dataMarking) {
@@ -58,8 +60,8 @@ const PackageResultDetail = () => {
 						res.data.data.forEach((item) => {
 							item.SetPackageExerciseStudent.forEach((ques) => {
 								newDataMarking.setPackageExerciseStudentsList.push({
-									ID: ques.ExerciseID,
-									Point: 0
+									ID: ques.ID,
+									Point: null
 								});
 							});
 						});
@@ -133,22 +135,23 @@ const PackageResultDetail = () => {
 		getDataSetPackageResult();
 	}, [params]);
 
-	// useEffect(() => {
-	// 	if (dataMarking) {
-	// 		if (dataMarking.setPackageExerciseStudentsList.length > 0) {
-	// 			dataMarking.setPackageExerciseStudentsList.every((item) => {
-	// 				if (item.Point) {
-	// 					setVisibleNofi(true);
-	// 					setTimeout(() => {
-	// 						setVisibleNofi(false);
-	// 					}, 5000);
-	// 					return false;
-	// 				}
-	// 				return true;
-	// 			});
-	// 		}
-	// 	}
-	// }, [dataMarking]);
+	useEffect(() => {
+		if (dataMarking && !showNote) {
+			if (dataMarking.setPackageExerciseStudentsList.length > 0) {
+				dataMarking.setPackageExerciseStudentsList.every((item) => {
+					if (item.Point) {
+						setVisibleNofi(true);
+						setShowNote(true);
+						setTimeout(() => {
+							setVisibleNofi(false);
+						}, 5000);
+						return false;
+					}
+					return true;
+				});
+			}
+		}
+	}, [dataMarking]);
 
 	return (
 		<>
@@ -189,7 +192,7 @@ const PackageResultDetail = () => {
 													visible={visibleNofi}
 													content={
 														<>
-															<p className="mb-0" style={{ fontWeight: 500 }}>
+															<p className="mb-0" style={{ fontWeight: 500, color: '#cb0000' }}>
 																Nhớ bấm vào đây để hoàn tất chấm bài nhé!
 															</p>
 														</>
@@ -197,7 +200,7 @@ const PackageResultDetail = () => {
 													title=""
 													trigger="hover"
 												>
-													<DoneMarkingExam onDoneMarking={() => setParams({ ...params })} />
+													<DoneMarkingExam isMarked={isMarked} onDoneMarking={() => setParams({ ...params })} />
 												</Popover>
 											</>
 										)
@@ -242,7 +245,11 @@ const PackageResultDetail = () => {
 																	</div>
 
 																	<div>
-																		<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />
+																		<ListQuestion
+																			isMarked={isMarked}
+																			dataQuestion={item}
+																			listQuestionID={listQuestionID}
+																		/>
 																	</div>
 																</div>
 															</div>
@@ -250,7 +257,11 @@ const PackageResultDetail = () => {
 													} else {
 														return (
 															<div key={index}>
-																<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />
+																<ListQuestion
+																	isMarked={isMarked}
+																	dataQuestion={item}
+																	listQuestionID={listQuestionID}
+																/>
 															</div>
 														);
 													}

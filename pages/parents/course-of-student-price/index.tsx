@@ -96,7 +96,7 @@ const CourseOfStudentPrice = () => {
 
 	const getStudents = async () => {
 		setLoading({
-			type: 'GET_STUDENT',
+			type: 'GET_ALL',
 			loading: true
 		});
 		try {
@@ -113,7 +113,7 @@ const CourseOfStudentPrice = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_STUDENT',
+				type: 'GET_ALL',
 				loading: false
 			});
 		}
@@ -121,7 +121,7 @@ const CourseOfStudentPrice = () => {
 
 	const getCoursesOfStudentPrice = async () => {
 		setLoading({
-			type: 'GET_COURSES',
+			type: 'GET_ALL',
 			loading: true
 		});
 		try {
@@ -137,7 +137,7 @@ const CourseOfStudentPrice = () => {
 			console.log(error.message);
 		} finally {
 			setLoading({
-				type: 'GET_COURSES',
+				type: 'GET_ALL',
 				loading: false
 			});
 		}
@@ -165,7 +165,22 @@ const CourseOfStudentPrice = () => {
 		});
 	};
 
-	const expandedRowRender = () => {};
+	const expandColumns = [
+		{
+			title: 'Môn học',
+			dataIndex: 'CourseName',
+			render: (price, record) => <p>{price}</p>
+		},
+		{
+			title: 'Loại lớp học',
+			dataIndex: 'TypeCourseName',
+			render: (price, record) => <p className="font-weight-blue">{price}</p>
+		}
+	];
+
+	const expandedRowRender = (record) => {
+		return <PowerTable columns={expandColumns} dataSource={record.Course} />;
+	};
 
 	return (
 		<>

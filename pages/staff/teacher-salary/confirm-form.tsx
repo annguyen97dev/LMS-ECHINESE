@@ -61,6 +61,13 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 			});
 		}
 	};
+
+	const selectStatus =
+		(reConfirm.StatusID == 1 && 'Yêu cầu xác nhận') ||
+		(reConfirm.StatusID == 3 && 'Yêu cầu xác nhận') ||
+		(reConfirm.StatusID == 4 && 'Đã xác nhận') ||
+		(reConfirm.StatusID == 5 && 'Đã thanh toán');
+
 	return (
 		<>
 			{record.StatusID == 5 ? (
@@ -146,26 +153,9 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 											disabled={true}
 											style={{ width: '100%' }}
 											className="style-input"
-											defaultValue={
-												(record.StatusID == 1 && 'Yêu cầu xác nhận') ||
-												(record.StatusID == 3 && 'Yêu cầu xác nhận') ||
-												(record.StatusID == 4 && 'Đã xác nhận') ||
-												(record.StatusID == 5 && 'Đã thanh toán')
-											}
+											defaultValue={selectStatus}
 										>
-											<Option
-												value={
-													(record.StatusID == 1 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 3 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 4 && 'Đã xác nhận') ||
-													(record.StatusID == 5 && 'Đã thanh toán')
-												}
-											>
-												{(record.StatusID == 1 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 3 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 4 && 'Đã xác nhận') ||
-													(record.StatusID == 5 && 'Đã thanh toán')}
-											</Option>
+											<Option value={selectStatus}>{selectStatus}</Option>
 										</Select>
 									</Form.Item>
 								</div>
@@ -187,7 +177,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						)}
 
 						{record.StatusID == 4 &&
-							(reConfirm.StatusID ? (
+							(reConfirm.StatusID == 3 ? (
 								<div className="col-12 ">
 									<a className="font-weight-blue" onClick={onChangeReConfirm}>
 										Hủy gửi yêu cầu xác nhận lại
