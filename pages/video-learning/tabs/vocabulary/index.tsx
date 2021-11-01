@@ -239,3 +239,5 @@ export const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelet
 		</div>
 	);
 };
+
+export default RenderItem;
