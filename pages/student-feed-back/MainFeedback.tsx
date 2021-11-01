@@ -128,7 +128,7 @@ function MainFeedback(props) {
 	// RENDER
 	return (
 		<Card
-			className=" p-2 student-fb__wrap-main st-fb-empty"
+			className="p-2 student-fb__wrap-main st-fb-empty"
 			bordered={false}
 			style={{
 				alignItems: current.ID === undefined ? 'center' : null,
@@ -180,47 +180,49 @@ function MainFeedback(props) {
 
 					<hr />
 
-					<ul className="m-feedback__list-group-nf">
-						{reply.map((item, index) => (
-							<li key={index} className={currentItem === item.ID ? 'active' : ''} onClick={() => {}}>
-								<div className="row m-0 student-fb__i-fb">
-									<img className="student-fb__i-avt mr-3" src={item.Avatar} alt="" width="50" height="50" />
-									<div className="st-fb-colum st-fb-fw">
-										<div className="row m-0 st-fb-rsb">
-											<span className="student-fb__i-name">{item.FullName}</span>
-											<span className="student-fb__i-name">{getDateString(item.CreateDate)}</span>
+					<div className="card-newsfeed fv-main-sc">
+						<ul className="m-feedback__list-group-nf">
+							{reply.map((item, index) => (
+								<li key={index} className={currentItem === item.ID ? 'active' : ''} onClick={() => {}}>
+									<div className="row m-0 student-fb__i-fb">
+										<img className="student-fb__i-avt mr-3" src={item.Avatar} alt="" width="50" height="50" />
+										<div className="st-fb-colum st-fb-fw">
+											<div className="row m-0 st-fb-rsb">
+												<span className="student-fb__i-name">{item.FullName}</span>
+												<span className="student-fb__i-name">{getDateString(item.CreateDate)}</span>
+											</div>
+											<span className="student-fb__i-r-content">{ReactHtmlParser(item.Content)}</span>
 										</div>
-										<span className="student-fb__i-r-content">{ReactHtmlParser(item.Content)}</span>
 									</div>
+								</li>
+							))}
+						</ul>
+
+						{current.StatusID !== 3 && (
+							<>
+								<EditorSimple
+									handleChange={(value) => {
+										setContent(value);
+									}}
+									isReset={isReset}
+									questionContent={content}
+								/>
+
+								<div className="row wrap-vocab__create-new__button-group">
+									<Tooltip title="Thêm ghi chú">
+										<button
+											onClick={() => {
+												addReply();
+											}}
+											className="btn ml-3 mt-3 btn-primary"
+										>
+											<i className="fas fa-plus-circle mr-2"></i>Thêm nhận xét
+										</button>
+									</Tooltip>
 								</div>
-							</li>
-						))}
-					</ul>
-
-					{current.StatusID !== 3 && (
-						<>
-							<EditorSimple
-								handleChange={(value) => {
-									setContent(value);
-								}}
-								isReset={isReset}
-								questionContent={content}
-							/>
-
-							<div className="row wrap-vocab__create-new__button-group">
-								<Tooltip title="Thêm ghi chú">
-									<button
-										onClick={() => {
-											addReply();
-										}}
-										className="btn ml-3 mt-3 btn-primary"
-									>
-										<i className="fas fa-plus-circle mr-2"></i>Thêm nhận xét
-									</button>
-								</Tooltip>
-							</div>
-						</>
-					)}
+							</>
+						)}
+					</div>
 				</>
 			) : (
 				<Empty />
