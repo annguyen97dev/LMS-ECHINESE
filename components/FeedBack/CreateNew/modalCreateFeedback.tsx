@@ -1,8 +1,6 @@
-import { Card, Drawer, Button, Modal, Select, Input, Checkbox } from 'antd';
-import Link from 'next/link';
+import { Modal, Select, Input, Checkbox } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { MoreHorizontal } from 'react-feather';
 import { FeedbackCategoryApi } from '~/apiBase/feed-back-category';
 import { useWrap } from '~/context/wrap';
 import EditorSimple from '~/components/Elements/EditorSimple';
