@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { Button, Popconfirm, Tooltip } from 'antd';
 import { CalendarOutlined, UserAddOutlined } from '@ant-design/icons';
 import ExpandTable from '~/components/ExpandTable';
+import StudentAdvisoryNote from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryNote';
 
 let pageIndex = 1;
 
@@ -489,19 +490,7 @@ export default function StudentAdvisory() {
 	const expandedRowRender = (data) => {
 		return (
 			<>
-				<h6 className="mt-3" style={{ fontWeight: 500 }}>
-					Ghi chú:
-				</h6>
-				{/* <div className="d-block mb-3">
-					<p>{data.Note ? data.Note : '...'}</p>
-				</div> */}
-				{
-					<ul>
-						{data.Note.map((item) => (
-							<li>{item.Note}</li>
-						))}
-					</ul>
-				}
+				<StudentAdvisoryNote dataSource={data.Note} />
 			</>
 		);
 	};
@@ -520,11 +509,11 @@ export default function StudentAdvisory() {
 			fixed: 'left',
 			render: (a) => <p className="font-weight-blue">{a}</p>
 		},
-		{
-			title: 'Tên tiếng Trung',
-			dataIndex: 'ChineseName',
-			render: (a) => <p className="font-weight-blue">{a}</p>
-		},
+		// {
+		// 	title: 'Tên tiếng Trung',
+		// 	dataIndex: 'ChineseName',
+		// 	render: (a) => <p className="font-weight-blue">{a}</p>
+		// },
 		// {
 		//   title: "Tỉnh/TP",
 		//   dataIndex: "AreaName",
