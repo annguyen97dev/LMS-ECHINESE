@@ -13,9 +13,9 @@ import { useWrap } from '~/context/wrap';
 import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
-import SalaryOfTeacherDetail from './salary-of-teacher-detail';
-import ConfirmForm from './teacher-confirm-form';
-import TecherFixExam from './teacher-fix-exam';
+import SalaryOfTeacherDetail from '../../../components/Global/Teacher/TeacherSalary/salary-of-teacher-detail';
+import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/teacher-confirm-form';
+import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
