@@ -1,10 +1,9 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import LayoutBase from '~/components/LayoutBase';
-import MenuFeedBack from './MenuFeedBack';
 import { FeedbackApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
-import ModalCreateFeedback from './modalCreateFeedback';
-import MainFeedback from './MainFeedback';
+import MenuFeedBack from '~/components/FeedBack/Menu/MenuFeedBack';
+import ModalCreateFeedback from '~/components/FeedBack/CreateNew/modalCreateFeedback';
+import MainFeedback from '~/components/FeedBack/Main/MainFeedback';
 
 const StudentFeedbackList = () => {
 	const { userInformation } = useWrap();
