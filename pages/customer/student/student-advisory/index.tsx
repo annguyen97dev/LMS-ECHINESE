@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import SortBox from '~/components/Elements/SortBox';
-import ExpandBox from '~/components/Elements/ExpandBox';
 import moment from 'moment';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import LayoutBase from '~/components/LayoutBase';
 import { studentAdviseApi, sourceInfomationApi, areaApi, staffApi, consultationStatusApi, programApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import StudentAdviseForm from '~/components/Global/Customer/Student/StudentAdviseForm';
-import { data } from '~/lib/dashboard/data';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
-import PowerTable from '~/components/PowerTable';
 import Link from 'next/link';
 import { Button, Popconfirm, Tooltip } from 'antd';
 import { CalendarOutlined, UserAddOutlined } from '@ant-design/icons';
@@ -490,7 +487,7 @@ export default function StudentAdvisory() {
 	const expandedRowRender = (data) => {
 		return (
 			<>
-				<StudentAdvisoryNote dataSource={data.Note} />
+				<StudentAdvisoryNote dataSource={data.Note} userID={data.ID} />
 			</>
 		);
 	};
