@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import SortBox from '~/components/Elements/SortBox';
-import ExpandBox from '~/components/Elements/ExpandBox';
 import moment from 'moment';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import LayoutBase from '~/components/LayoutBase';
@@ -490,7 +489,7 @@ export default function StudentAdvisory() {
 	const expandedRowRender = (data) => {
 		return (
 			<>
-				<StudentAdvisoryNote dataSource={data.Note} />
+				<StudentAdvisoryNote dataSource={data.Note} userID={data.ID} />
 			</>
 		);
 	};

@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NestedTable from '~/components/Elements/NestedTable';
 import moment from 'moment';
+import { PlusOutlined } from '@ant-design/icons';
+import { Modal, Tooltip, Input } from 'antd';
+
+const { TextArea } = Input;
 
 const StudentAdvisoryNote = (props) => {
 	const { dataSource } = props;
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [valueNote, setValueNote] = useState(null);
 
 	const columns = [
 		{
@@ -21,14 +27,33 @@ const StudentAdvisoryNote = (props) => {
 		}
 	];
 
+	const addNote = () => {};
+
+	const showModal = () => {
+		setIsModalVisible(true);
+	};
+
+	const handleOk = () => {
+		setIsModalVisible(false);
+	};
+
+	const handleCancel = () => {
+		setIsModalVisible(false);
+	};
+
 	return (
 		<div>
-			<h6 className="mt-3" style={{ fontWeight: 500 }}>
-				Ghi chú:
-			</h6>
+			<Modal title="Thêm ghi chú" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+				<TextArea onChange={(e) => setValueNote(e.target.value)} />
+			</Modal>
+			<Tooltip title="Thêm ghi chú">
+				<button className="btn btn-icon add" onClick={showModal}>
+					<PlusOutlined />
+				</button>
+			</Tooltip>
 			<div className="row">
 				<div className="col-md-7">
-					<NestedTable addClass="basic-header" dataSource={dataSource} columns={columns} haveBorder={true} />;
+					<NestedTable addClass="basic-header" dataSource={dataSource} columns={columns} haveBorder={true} />
 				</div>
 			</div>
 		</div>
