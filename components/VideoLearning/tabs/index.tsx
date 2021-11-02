@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import 'antd/dist/antd.css';
 import { Tabs } from 'antd';
-import { VideoInfomation } from './video-information';
-import { VideoQuestion } from './question';
-import { VocabularyTab } from './vocabulary';
+import VideoQuestion from '~/components/VideoLearning/tabs/question';
+import VideoInfomation from '~/components/VideoLearning/tabs/video-information';
+import VocabularyTab from '~/components/VideoLearning/tabs/vocabulary';
 
 const { TabPane } = Tabs;
 
@@ -33,7 +33,7 @@ type vType = {
 	addNewQuest: any;
 };
 
-export const VideoTabs: FC<vType> = ({
+const VideoTabs: FC<vType> = ({
 	params,
 	dataNote,
 	onCreateNew,
@@ -84,3 +84,5 @@ export const VideoTabs: FC<vType> = ({
 		</Tabs>
 	);
 };
+
+export default VideoTabs;

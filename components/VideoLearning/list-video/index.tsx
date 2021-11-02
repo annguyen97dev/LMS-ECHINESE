@@ -1,12 +1,12 @@
 import React, { FC, useState } from 'react';
 import 'antd/dist/antd.css';
 import { List } from 'antd';
-import { RenderItem } from './render-item';
+import RenderItem from '~/components/VideoLearning/list-video/render-item';
 
 type IProps = { videos: any[]; onPress: any };
 
 // LIST VIDEOS
-export const VideoList: FC<IProps> = ({ videos, onPress }) => {
+const VideoList: FC<IProps> = ({ videos, onPress }) => {
 	return (
 		<div className="wrap-video-list">
 			<div className="wrap-video-list__container">
@@ -31,3 +31,5 @@ export const VideoList: FC<IProps> = ({ videos, onPress }) => {
 		</div>
 	);
 };
+
+export default VideoList;

@@ -112,7 +112,7 @@ const RenderItem: FC<iProps> = ({ item, onPress, onDelete, onEdit }) => {
 	);
 };
 
-export const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelete, onEdit, onPauseVideo, videoRef }) => {
+const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelete, onEdit, onPauseVideo, videoRef }) => {
 	const [showAdd, setShowAdd] = useState(false);
 	const [newContent, setContent] = useState('');
 	const [title, setTitle] = useState('');
@@ -239,3 +239,5 @@ export const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelet
 		</div>
 	);
 };
+
+export default VocabularyTab;

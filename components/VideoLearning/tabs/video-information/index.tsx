@@ -8,7 +8,7 @@ type props = {
 
 const title = 'Thông tin khóa học';
 
-export const VideoInfomation: FC<props> = ({ params }) => {
+const VideoInfomation: FC<props> = ({ params }) => {
 	return (
 		<div className="wrap-infomation">
 			<Descriptions className="ml-3 " column={1} title={title} bordered>
@@ -18,3 +18,5 @@ export const VideoInfomation: FC<props> = ({ params }) => {
 		</div>
 	);
 };
+
+export default VideoInfomation;

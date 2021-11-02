@@ -1,19 +1,13 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { Table, Card, Tag, Select, Modal, Popover, Input, Space } from 'antd';
-import TitlePage from '~/components/TitlePage';
-import SearchBox from '~/components/Elements/SearchBox';
+import { Select, Modal, Popover, Input } from 'antd';
 import Link from 'next/link';
-import ExpandTable from '~/components/ExpandTable';
 import { Filter, Eye, CheckCircle } from 'react-feather';
 import { Tooltip } from 'antd';
-import FilterTable from '~/components/Global/FeedbackList/FitlerTable';
-import { data } from '~/lib/option/dataOption2';
 import LayoutBase from '~/components/LayoutBase';
-import FilterFeedbackTable from '~/components/Global/Option/FilterTable/FilterFeedbackTable';
 import { FeedbackApi } from '~/apiBase';
 import FeedbackTable from '~/components/FeedbackTable';
 import { useWrap } from '~/context/wrap';
-import StudentFeedbackList from '../student-feed-back';
+import StudentFeedbackList from '~/components/FeedBack/student-feed-back';
 import { FeedbackCategoryApi } from '~/apiBase/feed-back-category';
 
 const { Option } = Select;
