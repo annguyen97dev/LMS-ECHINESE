@@ -14,7 +14,7 @@ import { useWrap } from '~/context/wrap';
 import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
-import ConfirmForm from './admin-confirm-salary';
+import ConfirmForm from '../../../components/Global/StaffList/StaffSalary/admin-confirm-salary';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
