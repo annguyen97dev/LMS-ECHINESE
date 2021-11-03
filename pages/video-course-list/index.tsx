@@ -13,18 +13,28 @@ const ItemVideo = ({ item, onRate }) => {
 	const [rerender, setRender] = useState('');
 
 	useEffect(() => {
-		console.log('item: ', item);
 		setRender(item);
 	}, [item]);
 
 	return (
 		<div className="video-course-list__item">
-			{item.ImageThumbnails === '' || item.ImageThumbnails === null ? (
-				<img src="/images/logo-final.jpg" />
-			) : (
-				// <img src={videoThumnail} />
-				<img src={item.ImageThumbnails} />
-			)}
+			<Link
+				href={{
+					pathname: '/video-learning',
+					query: {
+						course: item.ID,
+						complete: item.Complete + '/' + item.TotalLesson,
+						name: item.VideoCourseName
+					}
+				}}
+			>
+				{item.ImageThumbnails === '' || item.ImageThumbnails === null ? (
+					<img src="/images/logo-final.jpg" />
+				) : (
+					// <img src={videoThumnail} />
+					<img src={item.ImageThumbnails} />
+				)}
+			</Link>
 
 			<div className="p-3 video-course-list__item__content">
 				<Link

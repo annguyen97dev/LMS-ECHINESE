@@ -58,11 +58,8 @@ const RenderItemSub: FC<props> = ({ item, onPress, data, subData }) => {
 			VideoCourseOfStudentID: router.query.course,
 			LessonID: item.ID
 		};
-
 		try {
 			const res = await VideoCourses.LessonDetail(temp);
-			console.log('res.data.data: ', res.data.data);
-
 			res.status == 200 && onPress(getJsonData(res.data.data));
 		} catch (err) {}
 	};

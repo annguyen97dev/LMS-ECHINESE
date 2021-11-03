@@ -5,7 +5,7 @@ import HeaderVideo from '~/components/VideoLearning/header';
 import VideoTabs from '~/components/VideoLearning/tabs';
 import VideoList from '~/components/VideoLearning/list-video';
 import { VideoCourseOfStudent, VideoCourseInteraction, VideoCourses } from '~/apiBase/video-learning';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
 import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
 
@@ -29,10 +29,22 @@ const VideoLearning = () => {
 			getVideos();
 		}
 	}, []);
+	window.addEventListener('beforeunload', function (e) {
+		// Cancel the event
+		console.log(e);
+
+		e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+		// Chrome requires returnValue to be set
+		e.returnValue = '';
+	});
+
+	console.log('render');
 
 	useEffect(() => {
-		console.log('NOTE LIST: ', data);
-	}, [data]);
+		return () => {
+			console.log('asdasd');
+		};
+	}, []);
 
 	//GET DATA
 	const getVideos = async () => {
