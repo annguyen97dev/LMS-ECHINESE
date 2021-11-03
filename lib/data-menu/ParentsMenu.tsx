@@ -24,7 +24,7 @@ export const ParentsChildMenu = [
 			{
 				TypeItem: 'single',
 				Key: '/parents',
-				Route: '/parents/course-of-student',
+				Route: '/parents/course-of-student/',
 				Icon: '',
 				Text: 'Các khóa học'
 			},
@@ -44,7 +44,7 @@ export const ParentsChildMenu = [
 			},
 			{
 				TypeItem: 'single',
-				Key: '/parents',
+				Key: '/parents/score-of-student',
 				Route: '/parents/score-of-student',
 				Icon: '',
 				Text: 'Xem điểm'
