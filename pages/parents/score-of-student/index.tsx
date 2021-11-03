@@ -21,9 +21,9 @@ const ScoreOfStudent = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [studentID, setStudentID] = useState(null);
 	const [typeBtn, setTypeBtn] = useState(1);
-	const [loading, setLoading] = useState({
+	const [isLoading, setLoading] = useState({
 		type: '',
-		loading: false
+		status: false
 	});
 
 	const studentParams = {
@@ -354,7 +354,7 @@ const ScoreOfStudent = () => {
 	const getStudents = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await studentApi.getAll(studentParams);
@@ -370,7 +370,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -378,7 +378,7 @@ const ScoreOfStudent = () => {
 	const getScoreAppointment = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await scoreOfStudentApi.getAppointment(todoApi);
@@ -393,7 +393,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -401,7 +401,7 @@ const ScoreOfStudent = () => {
 	const getScoreExamResult = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await scoreOfStudentApi.getCourseExam(todoApi);
@@ -416,7 +416,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -424,7 +424,7 @@ const ScoreOfStudent = () => {
 	const getScoreSetPakage = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await scoreOfStudentApi.getSetPakage(todoPakageApi);
@@ -439,7 +439,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -482,7 +482,8 @@ const ScoreOfStudent = () => {
 				currentPage={currentPage}
 				totalPage={totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
-				loading={loading}
+				// loading={loading}
+				loading={isLoading}
 				addClass="basic-header"
 				columns={(typeBtn == 1 && columnsAppointment) || (typeBtn == 2 && columnsCourseExam) || (typeBtn == 3 && columnsSetPakege)}
 				dataSource={(typeBtn == 1 && dataAppointment) || (typeBtn == 2 && dataExam) || (typeBtn == 3 && dataSetPakage)}

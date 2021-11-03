@@ -16,7 +16,7 @@ const ScheduleOfStudent = () => {
 	const [studentID, setStudentID] = useState(null);
 	const [loading, setLoading] = useState({
 		type: '',
-		loading: false
+		status: false
 	});
 
 	const studentParams = {
@@ -88,7 +88,7 @@ const ScheduleOfStudent = () => {
 	const getStudents = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await studentApi.getAll(studentParams);
@@ -104,7 +104,7 @@ const ScheduleOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -112,7 +112,7 @@ const ScheduleOfStudent = () => {
 	const getStudentSchedule = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 
 		try {
@@ -127,7 +127,7 @@ const ScheduleOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -159,7 +159,7 @@ const ScheduleOfStudent = () => {
 				currentPage={currentPage}
 				totalPage={totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
-				loading={loading.loading}
+				loading={loading}
 				addClass="basic-header"
 				columns={columns}
 				dataSource={dataSource}

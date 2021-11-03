@@ -16,7 +16,7 @@ const CourseOfStudent = () => {
 	const [studentID, setStudentID] = useState(null);
 	const [loading, setLoading] = useState({
 		type: '',
-		loading: false
+		status: false
 	});
 
 	const studentParams = {
@@ -89,8 +89,8 @@ const CourseOfStudent = () => {
 
 	const getStudents = async () => {
 		setLoading({
-			type: 'GET_STUDENT',
-			loading: true
+			type: 'GET_ALL',
+			status: true
 		});
 		try {
 			let res = await studentApi.getAll(studentParams);
@@ -106,16 +106,16 @@ const CourseOfStudent = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_STUDENT',
-				loading: false
+				type: 'GET_ALL',
+				status: false
 			});
 		}
 	};
 
 	const getCoursesOfStudent = async () => {
 		setLoading({
-			type: 'GET_COURSES',
-			loading: true
+			type: 'GET_ALL',
+			status: true
 		});
 		try {
 			let res = await courseOfStudentApi.getAll(todoApi);
@@ -129,8 +129,8 @@ const CourseOfStudent = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_COURSES',
-				loading: false
+				type: 'GET_ALL',
+				status: false
 			});
 		}
 	};
