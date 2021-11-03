@@ -4,6 +4,7 @@ import { List, Button, Checkbox, notification } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { VideoCourses } from '~/apiBase/video-learning';
 import { useRouter } from 'next/router';
+import da from 'date-fns/esm/locale/da/index.js';
 
 type itemType = {
 	ID: string;
@@ -20,14 +21,21 @@ type props = {
 	item: itemType;
 	data: any[];
 	onPress: any;
+	subData: any[];
 };
 
 let playing: string = '';
 
 // RENDER SUB ITEM LIST
-const RenderItemSub: FC<props> = ({ item, onPress }) => {
+const RenderItemSub: FC<props> = ({ item, onPress, data, subData }) => {
 	const router = useRouter();
 	const [api, contextHolder] = notification.useNotification();
+
+	useEffect(() => {
+		if (subData.indexOf(item) === 0) {
+			handleClick();
+		}
+	}, [data]);
 
 	// HANDLER CLICK ITEM => PLAY VIDEO
 	const handleClick = async () => {
@@ -53,8 +61,23 @@ const RenderItemSub: FC<props> = ({ item, onPress }) => {
 
 		try {
 			const res = await VideoCourses.LessonDetail(temp);
-			res.status == 200 && onPress(res.data.data);
+			console.log('res.data.data: ', res.data.data);
+
+			res.status == 200 && onPress(getJsonData(res.data.data));
 		} catch (err) {}
+	};
+
+	const getJsonData = (param) => {
+		return {
+			ID: param.ID,
+			Description: param.Description,
+			LinkDocument: param.LinkDocument,
+			LinkHtml: param.LinkHtml,
+			LinkVideo: param.LinkVideo,
+			TimeWatched: param.TimeWatched,
+			Second: item.Second,
+			Title: item.Title
+		};
 	};
 
 	// RENDER

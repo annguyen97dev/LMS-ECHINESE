@@ -32,6 +32,12 @@ const RenderItem: FC<props> = ({ item, onPress, data }) => {
 	const [subVideos, setSubVideos] = useState([]);
 	const [reRender, setRender] = useState('');
 
+	useEffect(() => {
+		if (data.indexOf(item) === 0) {
+			handleClick();
+		}
+	}, [data]);
+
 	// CLICK ITEM TO SHOW SUBITEM
 	const handleClick = () => {
 		setShow(!isShow);
@@ -88,6 +94,7 @@ const RenderItem: FC<props> = ({ item, onPress, data }) => {
 							}}
 							data={data}
 							item={item}
+							subData={subVideos}
 						/>
 					)}
 				/>
