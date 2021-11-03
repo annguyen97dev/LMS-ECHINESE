@@ -48,6 +48,13 @@ export const ParentsChildMenu = [
 				Route: '/parents/score-of-student',
 				Icon: '',
 				Text: 'Xem điểm'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/parents',
+				Route: '/parents/roll-up-student',
+				Icon: '',
+				Text: 'Chi tiêt điểm danh'
 			}
 		]
 	}

@@ -8,6 +8,7 @@ import { scheduleOfStudentApi } from './../../../apiBase/customer/parents/schedu
 import moment from 'moment';
 import { scoreOfStudentApi } from '~/apiBase/customer/parents/score-of-student';
 import ExpandTable from '~/components/ExpandTable';
+import NestedTable from '~/components/Elements/NestedTable';
 
 const ScoreOfStudent = () => {
 	const [dataSource, setDataSource] = useState<IScheduleOfStudent[]>();
@@ -472,7 +473,7 @@ const ScoreOfStudent = () => {
 	};
 
 	const expandedRowRender = (record) => {
-		return <PowerTable columns={columns} dataSource={dataTest} />;
+		return <NestedTable columns={columns} dataSource={dataTest} />;
 	};
 
 	return (

@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LayoutBase from '~/components/LayoutBase';
 import { useWrap } from '~/context/wrap';
 import { Select } from 'antd';
-import { numberWithCommas } from '~/utils/functions';
-import { studentApi } from './../../../apiBase/customer/student/student-list';
-import PowerTable from '~/components/PowerTable';
-import { courseOfStudentPriceApi } from '~/apiBase/customer/parents/courses-of-student-price';
+import { studentApi } from '~/apiBase';
 import ExpandTable from '~/components/ExpandTable';
-import NestedTable from '~/components/Elements/NestedTable';
+import { courseOfStudentApi } from '~/apiBase/customer/parents/courses-of-student';
+import { numberWithCommas } from '~/utils/functions';
+import RollUpExpantable from '~/components/Global/Parents/RollUpExpantable';
 
-const CourseOfStudentPrice = () => {
-	const [dataSource, setDataSource] = useState<ICourseOfStudentPrice[]>();
+const RollUpStudent = () => {
+	const [courseOfStudent, setCourseOfStudent] = useState<ICourseOfStudent[]>();
 	const [students, setStudents] = useState<IStudent[]>();
 	const { showNoti, pageSize, userInformation } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [studentID, setStudentID] = useState(null);
+	const { Option } = Select;
 	const [loading, setLoading] = useState({
 		type: '',
 		loading: false
@@ -34,7 +34,7 @@ const CourseOfStudentPrice = () => {
 		ParentsOf: userInformation?.UserInformationID
 	};
 
-	const params = {
+	const coursesParamsDefault = {
 		pageIndex: 1,
 		pageSize: pageSize,
 		sort: null,
@@ -42,11 +42,13 @@ const CourseOfStudentPrice = () => {
 		fromDate: null,
 		toDate: null,
 		CourseID: null,
+		BranchID: null,
+		CourseOfStudentPriceID: null,
 		FullNameUnicode: null,
 		UserInformationID: studentID
 	};
 
-	const [todoApi, setTodoApi] = useState(params);
+	const [coursesParams, setCourseParams] = useState(coursesParamsDefault);
 
 	const columns = [
 		{
@@ -56,48 +58,29 @@ const CourseOfStudentPrice = () => {
 		},
 		{
 			title: 'Trung tâm',
-			dataIndex: 'PayBranchName',
+			dataIndex: 'BranchName',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
-			title: 'Trả trước',
-			dataIndex: 'Paid',
-			render: (price, record) => <p>{numberWithCommas(price)}</p>
-		},
-		{
-			title: 'Học phí nợ',
-			dataIndex: 'MoneyInDebt',
-			render: (price, record) => <p>{numberWithCommas(price)}</p>
-		},
-		{
-			title: 'Học phí',
-			dataIndex: 'Price',
-			render: (price, record) => <p>{numberWithCommas(price)}</p>
-		},
-		{
-			title: 'Trạng thái thanh toán',
-			dataIndex: 'DonePaid',
-			render: (price, record) => {
-				return record.DonePaid ? <p className="tag green">Đã thanh toán xong</p> : <p className="tag red">Chưa thanh toán xong</p>;
-			}
-		},
-		{
-			title: 'Phương pháp thanh toán',
-			dataIndex: 'PaymentMethodsName',
+			title: 'Môn học',
+			dataIndex: 'CourseName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Ghi chú',
 			dataIndex: 'Note',
 			render: (price, record) => <p>{price}</p>
+		},
+		{
+			title: 'Cam kết',
+			dataIndex: 'Commitment',
+			render: (price, record) => <p>{price}</p>
 		}
 	];
 
-	const { Option } = Select;
-
 	const getStudents = async () => {
 		setLoading({
-			type: 'GET_ALL',
+			type: 'GET_STUDENT',
 			loading: true
 		});
 		try {
@@ -105,7 +88,7 @@ const CourseOfStudentPrice = () => {
 			console.log(res.data.data[0]);
 			if (res.status === 200) {
 				setStudents(res.data.data);
-				setTodoApi({ ...todoApi });
+				// setTodoApi({ ...todoApi });
 				setStudentID({ ID: res.data.data[0].UserInformationID, index: 0 });
 			}
 			if (res.status == 204) {
@@ -114,74 +97,61 @@ const CourseOfStudentPrice = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_ALL',
+				type: 'GET_STUDENT',
 				loading: false
 			});
 		}
 	};
 
-	const getCoursesOfStudentPrice = async () => {
+	const getCoursesOfStudent = async () => {
 		setLoading({
-			type: 'GET_ALL',
+			type: 'GET_COURSES',
 			loading: true
 		});
 		try {
-			let res = await courseOfStudentPriceApi.getAll(todoApi);
+			let res = await courseOfStudentApi.getAll(coursesParams);
 			if (res.status == 200) {
-				setDataSource(res.data.data);
-				console.log(res.data.data);
+				setCourseOfStudent(res.data.data);
+				setTotalPage(res.data.totalRow);
 			}
 			if (res.status == 204) {
-				setDataSource([]);
+				setCourseOfStudent([]);
 			}
 		} catch (error) {
-			console.log(error.message);
 		} finally {
 			setLoading({
-				type: 'GET_ALL',
+				type: 'GET_COURSES',
 				loading: false
 			});
 		}
 	};
 
-	useEffect(() => {
-		getStudents();
-	}, [userInformation]);
-
-	useEffect(() => {
-		getCoursesOfStudentPrice();
-	}, [studentID]);
+	const expandedRowRender = (record) => {
+		return <RollUpExpantable studentID={studentID} courseID={record.CourseID} />;
+	};
 
 	const onChangeStudentID = (value) => {
 		console.log(value);
-		setTodoApi({ ...todoApi, UserInformationID: value });
+		setCourseParams({ ...coursesParams, UserInformationID: value });
 		setStudentID(value);
 	};
 
 	const getPagination = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
-		setTodoApi({
-			...todoApi,
+		setCourseParams({
+			...coursesParams,
 			pageIndex: currentPage
 		});
 	};
 
-	const expandColumns = [
-		{
-			title: 'Môn học',
-			dataIndex: 'CourseName',
-			render: (price, record) => <p>{price}</p>
-		},
-		{
-			title: 'Loại lớp học',
-			dataIndex: 'TypeCourseName',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
-		}
-	];
+	useEffect(() => {
+		getCoursesOfStudent();
+	}, [studentID]);
 
-	const expandedRowRender = (record) => {
-		return <NestedTable columns={expandColumns} dataSource={record.Course} />;
-	};
+	useEffect(() => {
+		getStudents();
+		// getCoursesOfStudent();
+	}, [userInformation]);
 
 	return (
 		<>
@@ -192,8 +162,8 @@ const CourseOfStudentPrice = () => {
 				loading={loading}
 				addClass="basic-header"
 				columns={columns}
-				dataSource={dataSource}
-				TitlePage="Danh sách công nợ của học viên"
+				dataSource={courseOfStudent}
+				TitlePage="Thông tin điểm danh học viên"
 				// TitleCard={}
 				Extra={
 					<Select
@@ -202,7 +172,6 @@ const CourseOfStudentPrice = () => {
 						className="style-input"
 						placeholder="Chọn học viên"
 						onChange={onChangeStudentID}
-						// defaultValue={studentID ? students[studentID.index].FullNameUnicode : ''}
 					>
 						{students?.map((item, index) => (
 							<Option key={index} value={item.UserInformationID}>
@@ -218,5 +187,6 @@ const CourseOfStudentPrice = () => {
 		</>
 	);
 };
-CourseOfStudentPrice.layout = LayoutBase;
-export default CourseOfStudentPrice;
+
+RollUpStudent.layout = LayoutBase;
+export default RollUpStudent;
