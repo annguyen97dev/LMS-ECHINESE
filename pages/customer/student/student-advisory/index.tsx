@@ -12,6 +12,7 @@ import { Button, Popconfirm, Tooltip } from 'antd';
 import { CalendarOutlined, UserAddOutlined } from '@ant-design/icons';
 import ExpandTable from '~/components/ExpandTable';
 import StudentAdvisoryNote from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryNote';
+import StudentAdvisoryMail from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryMail';
 
 let pageIndex = 1;
 
@@ -98,7 +99,7 @@ export default function StudentAdvisory() {
 		Program: []
 	});
 	const [confirmLoading, setConfirmLoading] = useState(false);
-
+	const [showGroup, setShowGroup] = useState(false);
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IStudentAdvise[]>([]);
 	const { showNoti, pageSize } = useWrap();
@@ -364,10 +365,16 @@ export default function StudentAdvisory() {
 
 	// show group customer
 	const showGroupCustomer = () => {
-		setTodoApi({
-			...todoApi,
-			isGroup: true
-		});
+		if (!showGroup) {
+			setTodoApi({
+				...todoApi,
+				isGroup: true
+			});
+			setShowGroup(true);
+		} else {
+			setTodoApi(listTodoApi);
+			setShowGroup(false);
+		}
 	};
 
 	// -------------- HANDLE FILTER ------------------
@@ -487,7 +494,7 @@ export default function StudentAdvisory() {
 	const expandedRowRender = (data) => {
 		return (
 			<>
-				<StudentAdvisoryNote dataSource={data.Note} userID={data.ID} />
+				<StudentAdvisoryNote onFetchData={() => setTodoApi({ ...todoApi })} dataSource={data.Note} userID={data.ID} />
 			</>
 		);
 	};
@@ -587,7 +594,7 @@ export default function StudentAdvisory() {
 							isLoading={isLoading}
 							_onSubmit={(data: any) => _onSubmit(data)}
 						/>
-						{!data.isGroup && (
+						{!data.isGroup ? (
 							<Popconfirm
 								title="Thêm vào nhóm khách hàng"
 								onConfirm={() => addToGroup(data)}
@@ -599,6 +606,15 @@ export default function StudentAdvisory() {
 									<UserAddOutlined />
 								</button>
 							</Popconfirm>
+						) : (
+							showGroup && (
+								<StudentAdvisoryMail
+									loadingOutside={isLoading}
+									dataSource={dataSource}
+									onFetchData={() => setTodoApi({ ...todoApi })}
+									dataRow={data}
+								/>
+							)
 						)}
 						{text == 2 && (
 							<Link
@@ -628,16 +644,24 @@ export default function StudentAdvisory() {
 			addClass="basic-header"
 			TitlePage="Danh sách khách hàng"
 			TitleCard={
-				<>
+				<div className="d-flex align-items-center justify-content-end">
 					<button className="btn btn-secondary mr-2" onClick={showGroupCustomer}>
-						Nhóm khách hàng
+						{!showGroup ? 'Nhóm khách hàng' : 'Hiện tất cả'}
 					</button>
-					<StudentAdviseForm
-						listData={checkEmptyData && listDataForm}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-					/>
-				</>
+					{!showGroup ? (
+						<StudentAdviseForm
+							listData={checkEmptyData && listDataForm}
+							isLoading={isLoading}
+							_onSubmit={(data: any) => _onSubmit(data)}
+						/>
+					) : (
+						<StudentAdvisoryMail
+							loadingOutside={isLoading}
+							dataSource={dataSource}
+							onFetchData={() => setTodoApi({ ...todoApi })}
+						/>
+					)}
+				</div>
 			}
 			dataSource={dataSource}
 			columns={columns}

@@ -3,6 +3,7 @@ import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi,
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ParentsForm from '~/components/Global/Customer/ParentsList/ParentsForm';
+import ResetPassParent from '~/components/Global/Customer/ParentsList/ResetPassParent';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
@@ -642,17 +643,20 @@ const ParentsList = () => {
 			width: 100,
 			align: 'center',
 			render: (text, data, index) => (
-				<div onClick={(e) => e.stopPropagation()}>
-					<ParentsForm
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.UserInformationID}
-						isLoading={isLoading}
-						onSubmit={(data: any) => onSubmit(data)}
-						onSubmitSalary={(data: any) => onSubmitSalary(data)}
-						listDataForm={listDataForm}
-					/>
+				<div className="d-flex align-items-center">
+					<div onClick={(e) => e.stopPropagation()}>
+						<ParentsForm
+							getIndex={() => setIndexRow(index)}
+							index={index}
+							rowData={data}
+							rowID={data.UserInformationID}
+							isLoading={isLoading}
+							onSubmit={(data: any) => onSubmit(data)}
+							onSubmitSalary={(data: any) => onSubmitSalary(data)}
+							listDataForm={listDataForm}
+						/>
+					</div>
+					<ResetPassParent dataRow={data} />
 				</div>
 			)
 		}

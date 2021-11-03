@@ -1,8 +1,23 @@
+import { RetweetOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi, staffApi, staffSalaryApi } from '~/apiBase';
+import {
+	areaApi,
+	branchApi,
+	jobApi,
+	parentsApi,
+	puroseApi,
+	resetPasswordApi,
+	sourceInfomationApi,
+	staffApi,
+	staffSalaryApi
+} from '~/apiBase';
+
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
+import NotiModal from '~/components/Elements/NotiModal/NotiModal';
 import SortBox from '~/components/Elements/SortBox';
+import ResetPassForm from '~/components/Global/StaffList/ResetPassForm';
 // import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from '~/components/Global/StaffList/StaffForm';
 import LayoutBase from '~/components/LayoutBase';
@@ -172,11 +187,13 @@ const StaffList = () => {
 		Counselors: []
 	});
 
+	const [isOpenReset, setIsOpenReset] = useState(false);
+
 	// ------ BASE USESTATE TABLE -------
 	const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
 	const [dataArea, setDataArea] = useState<IArea[]>([]);
 	const [dataSource, setDataSource] = useState<IStaff[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: pageIndex,
@@ -667,18 +684,22 @@ const StaffList = () => {
 			align: 'center',
 			width: 100,
 			render: (text, data, index) => (
-				<div onClick={(e) => e.stopPropagation()}>
-					<StaffForm
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.UserInformationID}
-						isLoading={isLoading}
-						onSubmit={(data: any) => onSubmit(data)}
-						onSubmitSalary={(data: any) => onSubmitSalary(data)}
-						listDataForm={listDataForm}
-					/>
-				</div>
+				<>
+					<div onClick={(e) => e.stopPropagation()}>
+						<StaffForm
+							getIndex={() => setIndexRow(index)}
+							index={index}
+							rowData={data}
+							rowID={data.UserInformationID}
+							isLoading={isLoading}
+							onSubmit={(data: any) => onSubmit(data)}
+							onSubmitSalary={(data: any) => onSubmitSalary(data)}
+							listDataForm={listDataForm}
+						/>
+					</div>
+
+					<ResetPassForm dataRow={data} />
+				</>
 			)
 		}
 	];

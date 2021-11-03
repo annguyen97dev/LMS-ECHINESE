@@ -31,7 +31,7 @@ const NotiModal = (props: any) => {
 				visible={isModalVisible}
 				onOk={handleOk}
 				onCancel={handleCancel}
-				className="modal-decide"
+				className=""
 				// footer={
 				// 	<div className="text-center">
 				// 		<button className="btn btn-light mr-2" onClick={handleCancel}>
