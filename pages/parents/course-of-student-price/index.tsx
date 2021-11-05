@@ -52,43 +52,51 @@ const CourseOfStudentPrice = () => {
 		{
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-blue">{price}</p>,
+			width: '15%'
 		},
 		{
 			title: 'Trung tâm',
 			dataIndex: 'PayBranchName',
+			width: '10%',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Trả trước',
 			dataIndex: 'Paid',
+			width: '10%',
 			render: (price, record) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Học phí nợ',
 			dataIndex: 'MoneyInDebt',
+			width: '10%',
 			render: (price, record) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Học phí',
 			dataIndex: 'Price',
+			width: '10%',
 			render: (price, record) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Trạng thái thanh toán',
 			dataIndex: 'DonePaid',
+			width: '15%',
 			render: (price, record) => {
 				return record.DonePaid ? <p className="tag green">Đã thanh toán xong</p> : <p className="tag red">Chưa thanh toán xong</p>;
 			}
 		},
 		{
-			title: 'Phương pháp thanh toán',
+			title: 'Cách thanh toán',
 			dataIndex: 'PaymentMethodsName',
+			width: '15%',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Ghi chú',
 			dataIndex: 'Note',
+			width: '15%',
 			render: (price, record) => <p>{price}</p>
 		}
 	];

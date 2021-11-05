@@ -270,26 +270,31 @@ const ScoreOfStudent = () => {
 	const columnsAppointment = [
 		{
 			title: 'Học viên',
+			width: 150,
 			dataIndex: 'FullNameUnicode',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Trung tâm',
+			width: 150,
 			dataIndex: 'TeacherName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Cố vấn',
+			width: 150,
 			dataIndex: 'CounselorsName',
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Học phí tối đa',
+			width: 200,
 			dataIndex: 'MaxTuitionOfStudent',
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Trạng thái',
+			width: 150,
 			dataIndex: 'StatusName',
 			render: (price, record) => <p>{price}</p>
 		}
@@ -298,31 +303,37 @@ const ScoreOfStudent = () => {
 	const columnsCourseExam = [
 		{
 			title: 'Học viên',
+			width: 150,
 			dataIndex: 'FullNameUnicode',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Tên môn học',
+			width: 650,
 			dataIndex: 'CourseName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Bài học',
+			width: 100,
 			dataIndex: 'Lesson',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Nội dung bài học',
+			width: 200,
 			dataIndex: 'LessonDetailContent',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Giáo viên',
+			width: 200,
 			dataIndex: 'TeacherName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Loại',
+			width: 150,
 			dataIndex: 'TypeName',
 			render: (price, record) => <p>{price}</p>
 		}
@@ -331,16 +342,19 @@ const ScoreOfStudent = () => {
 	const columnsSetPakege = [
 		{
 			title: 'Học viên',
+			width: 760,
 			dataIndex: 'StudentName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Cấp độ gói bài',
+			width: 340,
 			dataIndex: 'SetPackageLevel',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Số học sinh đã chấm',
+			width: 340,
 			dataIndex: 'AmountFixOfStudent',
 			render: (price, record) => <p>{price}</p>
 		}

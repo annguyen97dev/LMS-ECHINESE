@@ -48,7 +48,7 @@ const SalaryReview = () => {
 		sortType: true,
 		selectAll: true,
 		Year: new Date().getFullYear(),
-		Month: new Date().getMonth() + 1,
+		Month: new Date().getMonth(),
 		TeacherName: null,
 		TeacherID: null,
 		StatusID: null
@@ -58,31 +58,37 @@ const SalaryReview = () => {
 	const columns = [
 		{
 			title: 'Giáo viên',
+			width: 150,
 			dataIndex: 'TeacherName',
 			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Năm',
+			width: 80,
 			dataIndex: 'Year',
 			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Tháng',
+			width: 80,
 			dataIndex: 'Month',
 			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Thưởng',
+			width: 150,
 			dataIndex: 'Bonus',
 			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
+			width: 113,
 			dataIndex: 'NoteBonus',
 			render: (price, record: any) => <p>{price}</p>
 		},
 		{
 			title: 'Trạng Thái',
+			width: 200,
 			dataIndex: 'StatusName',
 			render: (price, record: any) => (
 				<>
@@ -95,26 +101,31 @@ const SalaryReview = () => {
 		},
 		{
 			title: 'Lương Ứng',
+			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Lương Tháng',
+			width: 150,
 			dataIndex: 'Salary',
 			render: (price, record: ITeacherSalary) => <SalaryOfTeacherDetail price={price} record={record} />
 		},
 		{
 			title: 'Lương Chấm Bài',
+			width: 150,
 			dataIndex: 'SalaryFixExam',
 			render: (price, record: ITeacherSalary) => <TecherFixExam price={price} record={record} />
 		},
 		{
 			title: 'Lương Tổng',
+			width: 150,
 			dataIndex: 'TotalSalary',
 			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
+			width: 100,
 			render: (text, record) => <ConfirmForm isLoading={isLoading} record={record} setParams={setParams} params={params} />
 		}
 	];
@@ -196,8 +207,20 @@ const SalaryReview = () => {
 	};
 
 	useEffect(() => {
+		// if (userInformation) {
+		// 	getDataPayroll(currentPage);
+		// }
 		getDataPayroll(currentPage);
 	}, [params, userInformation]);
+
+	// useEffect(() => {
+	// 	if (userInformation) {
+	// 		setParams({
+	// 			...params,
+	// 			TeacherID: userInformation.UserInformationID
+	// 		});
+	// 	}
+	// }, [userInformation]);
 
 	return (
 		<PowerTable
@@ -215,7 +238,7 @@ const SalaryReview = () => {
 					style={{ width: 200 }}
 					disabled={false}
 					className="style-input"
-					defaultValue={months[new Date().getMonth()]}
+					defaultValue={months[new Date().getMonth() - 1]}
 				>
 					{months.map((item, index) => (
 						<Option key={index} value={index + 1}>

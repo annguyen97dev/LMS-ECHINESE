@@ -23,8 +23,8 @@ export const ParentsChildMenu = [
 			},
 			{
 				TypeItem: 'single',
-				Key: '/parents/course-of-student/',
-				Route: '/parents/course-of-student/',
+				Key: '/parents/course-of-student',
+				Route: '/parents/course-of-student',
 				Icon: '',
 				Text: 'Các khóa học'
 			},

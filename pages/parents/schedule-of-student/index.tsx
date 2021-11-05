@@ -42,41 +42,49 @@ const ScheduleOfStudent = () => {
 		{
 			title: 'Tên môn học',
 			dataIndex: 'SubjectName',
+			width: 100,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Tiêu đề',
 			dataIndex: 'Title',
+			width: 150,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Trung tâm',
 			dataIndex: 'BranchName',
+			width: 150,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Thời gian bắt đầu',
 			dataIndex: 'StartTime',
+			width: 150,
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Thời gian kết thúc',
 			dataIndex: 'EndTime',
+			width: 150,
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Tên phòng',
 			dataIndex: 'RoomName',
+			width: 150,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Zoom ID',
 			dataIndex: 'ZoomRoomID',
+			width: 150,
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Mật khẩu Zoom',
 			dataIndex: 'ZoomRoomPass',
+			width: 150,
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		}
 	];

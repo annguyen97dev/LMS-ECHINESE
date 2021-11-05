@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
-import { Select } from 'antd';
+import { Select, Tooltip } from 'antd';
 import { studentApi } from './../../../apiBase/customer/student/student-list';
 import { courseOfStudentApi } from '~/apiBase/customer/parents/courses-of-student';
 import { numberWithCommas } from '~/utils/functions';
@@ -53,36 +53,42 @@ const CourseOfStudent = () => {
 		{
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
+			width: '15%',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Trung tâm',
+			width: '10%',
 			dataIndex: 'BranchName',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Môn học',
 			dataIndex: 'CourseName',
+			width: '30%',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Giá khóa học',
 			dataIndex: 'Price',
+			width: '10%',
 			render: (price, record) => <p>{numberWithCommas(price)}</p>
 		},
 		{
-			title: 'Kết quả kiểm tra',
+			title: 'Kết quả ',
 			dataIndex: 'Examresult',
-			render: (price, record) => <p>{price}</p>
+			width: '10%'
 		},
 		{
 			title: 'Ghi chú',
 			dataIndex: 'Note',
+			width: '15%',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Cam kết',
 			dataIndex: 'Commitment',
+			width: '10%',
 			render: (price, record) => <p>{price}</p>
 		}
 	];
