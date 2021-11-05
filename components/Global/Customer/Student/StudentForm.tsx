@@ -2,7 +2,7 @@ import { LoadingOutlined, MailOutlined, SearchOutlined, WhatsAppOutlined } from 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Card, Divider, Form, Modal, Spin, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { RotateCcw } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -47,7 +47,7 @@ const optionGender = [
 ];
 
 const StudentForm = (props) => {
-	const { dataRow, listDataForm, _handleSubmit, index } = props;
+	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess } = props;
 	const router = useRouter();
 	const url = router.pathname;
 
@@ -286,14 +286,18 @@ const StudentForm = (props) => {
 					res = await studentApi.add(data);
 				} else {
 					res = await studentApi.update(data);
-					res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
+
+					if (res.status == 200) {
+						_handleSubmit && _handleSubmit(data, index);
+						isSuccess && isSuccess();
+					}
 				}
 			} else {
 				res = await studentApi.add(data);
 			}
 
 			res?.status == 200 &&
-				(showNoti('success', data.UserInformationID ? 'Cập nhật học viên thành công' : 'Tạo học viên thành công'),
+				(showNoti('success', data.UserInformationID ? 'Cập nhật học viên thành công' : 'Hẹn test thành công'),
 				!dataRow && !isSearch && (form.reset(defaultValuesInit), setImageUrl('')));
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -344,60 +348,20 @@ const StudentForm = (props) => {
 	};
 
 	useEffect(() => {
-		if (isModalVisible) {
-			if (dataRow) {
-				handleDataRow(dataRow);
-
-				// let arrBranch = [];
-				// let cloneRowData = { ...dataRow };
-				// cloneRowData.Branch.forEach((item, index) => {
-				//   arrBranch.push(item.ID);
-				// });
-				// cloneRowData.Branch = arrBranch;
-				// form.reset(cloneRowData);
-				// cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, "DistrictID");
-				// cloneRowData.DistrictID &&
-				//   getDataWithID(cloneRowData.DistrictID, "WardID");
-				// setImageUrl(cloneRowData.Avatar);
-			}
+		if (dataRow) {
+			handleDataRow(dataRow);
 		}
 	}, [isModalVisible]);
 
+	useEffect(() => {
+		if (isSubmitOutSide) {
+			let element: HTMLElement = document.getElementsByClassName('btn-submit')[0] as HTMLElement;
+			element.click();
+		}
+	}, [isSubmitOutSide]);
+
 	return (
 		<>
-			{/* <button className="btn btn-icon edit" onClick={showModal}>
-        <Tooltip title="Cập nhật">
-          <RotateCcw />
-        </Tooltip>
-      </button>
-      <Modal
-        style={{ top: 20 }}
-        title="Cập nhật học viên"
-        visible={isModalVisible}
-        footer={
-          <div className="row">
-            <div className="col-12 d-flex justify-content-center">
-              <div style={{ paddingRight: 5 }}>
-                <button
-                  type="button"
-                  className="btn btn-primary w-100"
-                  onClick={form.handleSubmit(onSubmit)}
-                  disabled={isLoading.type == "ADD_DATA" && isLoading.status}
-                >
-                  Lưu học viên
-                  {isLoading.type == "ADD_DATA" && isLoading.status && (
-                    <Spin className="loading-base" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        }
-        onCancel={() => setIsModalVisible(false)}
-        className="modal-50 modal-scroll"
-      >
-        
-      </Modal> */}
 			<div className="col-12 d-flex justify-content-center">
 				<Card title="Phiếu thông tin cá nhân" className="w-70 w-100-mobile">
 					<div className="form-staff">
@@ -666,10 +630,11 @@ const StudentForm = (props) => {
 									/>
 								</div>
 							</div>
-							<div className="row">
+
+							<div className="row" style={{ opacity: !isHideButton ? 1 : 0 }}>
 								<div className="col-12 d-flex justify-content-center">
 									<div style={{ paddingRight: 5 }}>
-										<button type="submit" className="btn btn-primary w-100">
+										<button type="submit" className="btn btn-primary w-100 btn-submit">
 											Lưu
 											{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 										</button>

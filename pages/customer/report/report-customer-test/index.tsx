@@ -1,17 +1,17 @@
-import React, { Fragment, useEffect, useState } from "react";
-import PowerTable from "~/components/PowerTable";
-import { Eye } from "react-feather";
-import { Tooltip } from "antd";
-import SortBox from "~/components/Elements/SortBox";
-import { dataService } from "lib/customer/dataCustomer";
-import Link from "next/link";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import LayoutBase from "~/components/LayoutBase";
-import { examComingSoonApi } from "~/apiBase";
-import Modal from "antd/lib/modal/Modal";
-import moment from "moment";
-import { useWrap } from "~/context/wrap";
-import FilterBase from "~/components/Elements/FilterBase/FilterBase";
+import React, { Fragment, useEffect, useState } from 'react';
+import PowerTable from '~/components/PowerTable';
+import { Eye } from 'react-feather';
+import { Tooltip } from 'antd';
+import SortBox from '~/components/Elements/SortBox';
+import { dataService } from 'lib/customer/dataCustomer';
+import Link from 'next/link';
+import FilterColumn from '~/components/Tables/FilterColumn';
+import LayoutBase from '~/components/LayoutBase';
+import { examComingSoonApi } from '~/apiBase';
+import Modal from 'antd/lib/modal/Modal';
+import moment from 'moment';
+import { useWrap } from '~/context/wrap';
+import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 ReportTest.layout = LayoutBase;
 
 export default function ReportTest() {
@@ -19,20 +19,20 @@ export default function ReportTest() {
 	const { showNoti } = useWrap();
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState({
-		type: "",
-		status: false,
+		type: '',
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [dataFilter, setDataFilter] = useState([
 		{
-		name: "date-range",
-		title: "Từ - đến",
-		col: "col-12",
-		type: "date-range",
-		value: null,
-		},
-	])
+			name: 'date-range',
+			title: 'Từ - đến',
+			col: 'col-12',
+			type: 'date-range',
+			value: null
+		}
+	]);
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
 	let pageIndex = 1;
@@ -42,30 +42,30 @@ export default function ReportTest() {
 		{
 			dataSort: {
 				sort: 2,
-				sortType: false,
+				sortType: false
 			},
 			value: 3,
-			text: 'Tên giảm dần',
+			text: 'Tên giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: true,
+				sortType: true
 			},
 			value: 4,
-			text: 'Tên tăng dần ',
-		},
+			text: 'Tên tăng dần '
+		}
 	];
 
 	// PARAMS SEARCH
 	let listField = {
-		FullNameUnicode: "",
+		FullNameUnicode: ''
 	};
 
 	let listFieldFilter = {
 		pageIndex: 1,
 		fromDate: null,
-		toDate: null,
+		toDate: null
 	};
 
 	// PARAMS API GETALL
@@ -74,90 +74,92 @@ export default function ReportTest() {
 		pageIndex: pageIndex,
 		sort: null,
 		sortType: null,
-		FullNameUnicode: null,
+		FullNameUnicode: null
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
 	// GET DATA TABLE
 	const getDataTable = () => {
 		setIsLoading({
-		  type: "GET_ALL",
-		  status: true,
+			type: 'GET_ALL',
+			status: true
 		});
 		(async () => {
-		  try {
-			let res = await examComingSoonApi.getAll(todoApi);
-			if (res.status == 204) {
-				showNoti("danger", "Không có dữ liệu");
-				handleReset();
-			}
-			if(res.status == 200){
-				setDataTable(res.data.data);
-				if(res.data.data.length < 1) {
-					handleReset();
+			try {
+				let res = await examComingSoonApi.getAll(todoApi);
+				if (res.status == 204) {
+					// showNoti('danger', 'Không có dữ liệu');
+					// handleReset();
+					setDataTable([]);
 				}
-				setTotalPage(res.data.totalRow);
+				if (res.status == 200) {
+					setDataTable(res.data.data);
+					if (res.data.data.length < 1) {
+						// handleReset();
+						setDataTable([]);
+					}
+					setTotalPage(res.data.totalRow);
+				}
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false
+				});
 			}
-		  } catch (error) {
-			showNoti("danger", error.message);
-		  } finally {
-			setIsLoading({
-			  type: "GET_ALL",
-			  status: false,
-			});
-		  }
 		})();
 	};
 
-  // ON SEARCH
+	// ON SEARCH
 	const compareField = (valueSearch, dataIndex) => {
 		let newList = null;
 		Object.keys(listField).forEach(function (key) {
-			console.log("key: ", key);
+			console.log('key: ', key);
 			if (key != dataIndex) {
-			listField[key] = "";
+				listField[key] = '';
 			} else {
-			listField[key] = valueSearch;
+				listField[key] = valueSearch;
 			}
 		});
 		newList = listField;
 		return newList;
 	};
-	
+
 	const onSearch = (valueSearch, dataIndex) => {
 		console.log(dataTable);
 		let clearKey = compareField(valueSearch, dataIndex);
 
 		setTodoApi({
 			...todoApi,
-			...clearKey,
+			...clearKey
 		});
 
 		setCurrentPage(pageIndex);
 	};
 
-  	// HANDLE RESET
+	// HANDLE RESET
 	const handleReset = () => {
 		setActiveColumnSearch('');
 		setTodoApi({
 			...listTodoApi,
-			pageIndex: 1,
+			pageIndex: 1
 		});
 		setCurrentPage(1);
 	};
 
 	// -------------- HANDLE FILTER ------------------
 	const handleFilter = (listFilter) => {
-		console.log("List Filter when submit: ", listFilter);
+		console.log('List Filter when submit: ', listFilter);
 
 		let newListFilter = { ...listFieldFilter };
 		listFilter.forEach((item, index) => {
-		let key = item.name;
-		Object.keys(newListFilter).forEach((keyFilter) => {
-			if (keyFilter == key) {
-			newListFilter[key] = item.value;
-			}
-		});
+			let key = item.name;
+			Object.keys(newListFilter).forEach((keyFilter) => {
+				if (keyFilter == key) {
+					newListFilter[key] = item.value;
+				}
+			});
 		});
 		setTodoApi({ ...todoApi, ...newListFilter, pageIndex: 1 });
 	};
@@ -167,10 +169,10 @@ export default function ReportTest() {
 		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
-		  ...todoApi,
-		//   ...listFieldSearch,
-		  pageIndex: pageIndex,
-		  pageSize: pageSize
+			...todoApi,
+			//   ...listFieldSearch,
+			pageIndex: pageIndex,
+			pageSize: pageSize
 		});
 	};
 	// HANDLE SORT
@@ -180,29 +182,28 @@ export default function ReportTest() {
 		let newTodoApi = {
 			...listTodoApi,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setCurrentPage(1);
 		setTodoApi(newTodoApi);
 	};
 
-
 	const columns = [
-		// { 
-		//   title: "Tỉnh/TP", dataIndex: "AreaName", 
-		//   // ...FilterColumn("AreaName", onSearch, handleReset, "select", dataArea) 
+		// {
+		//   title: "Tỉnh/TP", dataIndex: "AreaName",
+		//   // ...FilterColumn("AreaName", onSearch, handleReset, "select", dataArea)
 		// },
 		{
-		title: "Họ và tên",
-		dataIndex: "FullNameUnicode",
-		...FilterColumn('FullNameUnicode', onSearch, handleReset, "text"),
-		className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
-		render: (a) => <p className="font-weight-blue">{a}</p>,
+			title: 'Họ và tên',
+			dataIndex: 'FullNameUnicode',
+			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+			className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
+			render: (a) => <p className="font-weight-blue">{a}</p>
 		},
-		{ title: "SĐT", dataIndex: "Mobile"},
-		{ title: "Email", dataIndex: "Email"},
-		// { 
-		//   title: "Nguồn", 
+		{ title: 'SĐT', dataIndex: 'Mobile' },
+		{ title: 'Email', dataIndex: 'Email' },
+		// {
+		//   title: "Nguồn",
 		//   dataIndex: "SourceInformationName"},
 		// {
 		//   title: "Tư vấn viên",
@@ -210,30 +211,29 @@ export default function ReportTest() {
 		//   // ...FilterColumn("apmConsultant"),
 		// },
 		{
-		title: "Ngày thi",
-		dataIndex: "DayOfExam",
-		render: (a) => <p className="font-weight-black">{moment(a).format("DD/MM/YYYY")}</p>,
+			title: 'Ngày thi',
+			dataIndex: 'DayOfExam',
+			render: (a) => <p className="font-weight-black">{moment(a).format('DD/MM/YYYY')}</p>
 		},
 		{
-		title: "",
-		render: () => (
-			<>
-			<Link
-				href={{
-				pathname:
-					"/customer/report/report-customer-test/student-detail/[slug]",
-				query: { slug: 2 },
-				}}
-			>
-				<Tooltip title="Xem chi tiết">
-				<button className="btn btn-icon view">
-					<Eye />
-				</button>
-				</Tooltip>
-			</Link>
-			</>
-		),
-		},
+			title: '',
+			render: () => (
+				<>
+					<Link
+						href={{
+							pathname: '/customer/report/report-customer-test/student-detail/[slug]',
+							query: { slug: 2 }
+						}}
+					>
+						<Tooltip title="Xem chi tiết">
+							<button className="btn btn-icon view">
+								<Eye />
+							</button>
+						</Tooltip>
+					</Link>
+				</>
+			)
+		}
 	];
 
 	useEffect(() => {
@@ -241,28 +241,27 @@ export default function ReportTest() {
 		console.log(dataFilter);
 	}, [todoApi]);
 
-  return (
-    <PowerTable
-      loading={isLoading}
-	  currentPage={currentPage}
-	  totalPage={totalPage && totalPage}
-	  getPagination={getPagination}
-      addClass="basic-header"
-      TitlePage="Danh sách học viên sắp thi"
-      dataSource={dataTable}
-      columns={columns}
-      // TitleCard={<StudyTimeForm showAdd={true} />}
-      Extra={
-        <div className="extra-table">
-          <FilterBase            
-            dataFilter={dataFilter}
-            handleFilter={(listFilter: any) => handleFilter(listFilter)}
-            handleReset={handleReset}/>
-          <SortBox 
-            handleSort={(value) => handleSort(value)}
-            dataOption={dataOption} />
-        </div>
-      }
-    />
-  );
+	return (
+		<PowerTable
+			loading={isLoading}
+			currentPage={currentPage}
+			totalPage={totalPage && totalPage}
+			getPagination={getPagination}
+			addClass="basic-header"
+			TitlePage="Danh sách học viên sắp thi"
+			dataSource={dataTable}
+			columns={columns}
+			// TitleCard={<StudyTimeForm showAdd={true} />}
+			Extra={
+				<div className="extra-table">
+					<FilterBase
+						dataFilter={dataFilter}
+						handleFilter={(listFilter: any) => handleFilter(listFilter)}
+						handleReset={handleReset}
+					/>
+					<SortBox handleSort={(value) => handleSort(value)} dataOption={dataOption} />
+				</div>
+			}
+		/>
+	);
 }

@@ -208,6 +208,13 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/customer/student/student-list',
+						Route: '/customer/student/student-list',
+						Text: 'Dữ liệu học viên',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/customer/student/student-appointment',
 						Route: '/customer/student/student-appointment',
 						Text: 'HV chờ xếp lớp',
@@ -241,13 +248,7 @@ export const AdminChildMenu = [
 						Text: 'HV chuyển giao',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/student-list',
-						Route: '/customer/student/student-list',
-						Text: 'Dữ liệu học viên',
-						Icon: ''
-					},
+
 					{
 						ItemType: 'single',
 						Key: '/package/package-payment',
@@ -713,14 +714,14 @@ export const AdminChildMenu = [
 				ItemType: 'single',
 				Key: '/question-bank/question-list',
 				Route: '/question-bank/question-list',
-				Text: 'Tạo câu hỏi & trả lời',
+				Text: 'Danh sách câu hỏi',
 				Icon: ''
 			},
 			{
 				ItemType: 'single',
 				Key: '/question-bank/exam-list',
 				Route: '/question-bank/exam-list',
-				Text: 'Tạo đề thi',
+				Text: 'Danh sách đề thi',
 				Icon: ''
 			}
 		]

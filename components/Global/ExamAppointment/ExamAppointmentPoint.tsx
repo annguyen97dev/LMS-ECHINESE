@@ -90,11 +90,7 @@ const ExamAppointmentPoint = (props) => {
 		}
 	];
 
-	return (
-		<div className="container-fluid">
-			<NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />
-		</div>
-	);
+	return <NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />;
 };
 
 export default ExamAppointmentPoint;

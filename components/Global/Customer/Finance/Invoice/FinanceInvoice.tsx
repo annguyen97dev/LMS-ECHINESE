@@ -242,6 +242,10 @@ function FinanceInvoice() {
 			render: (a) => <p>{moment(a).format('DD/MM/YYYY')}</p>
 		},
 		{
+			title: 'Người tạo',
+			dataIndex: 'CreatedBy'
+		},
+		{
 			title: 'QR Code',
 			render: (record: IInvoice) => <>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</>
 		},

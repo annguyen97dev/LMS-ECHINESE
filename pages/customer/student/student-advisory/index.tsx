@@ -6,11 +6,9 @@ import LayoutBase from '~/components/LayoutBase';
 import { studentAdviseApi, sourceInfomationApi, areaApi, staffApi, consultationStatusApi, programApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import StudentAdviseForm from '~/components/Global/Customer/Student/StudentAdviseForm';
-import { data } from '~/lib/dashboard/data';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
-import PowerTable from '~/components/PowerTable';
 import Link from 'next/link';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import { CalendarOutlined, UserAddOutlined } from '@ant-design/icons';
 import ExpandTable from '~/components/ExpandTable';
 import StudentAdvisoryNote from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryNote';
@@ -261,7 +259,8 @@ export default function StudentAdvisory() {
 
 					res.status == 204 && showNoti('danger', item.text + ' Không có dữ liệu');
 				} catch (error) {
-					showNoti('danger', error.message);
+					// showNoti('danger', error.message);
+					console.log(error.message);
 				} finally {
 				}
 			})();
@@ -578,7 +577,8 @@ export default function StudentAdvisory() {
 		{
 			title: 'Ngày đăng ký',
 			dataIndex: 'CreatedOn',
-			render: (date) => <p>{moment(date).format('DD/MM/YYYY')}</p>
+			render: (date) => <p>{moment(date).format('DD/MM/YYYY')}</p>,
+			width: 120
 		},
 		{
 			title: '',
@@ -587,16 +587,7 @@ export default function StudentAdvisory() {
 			render: (text, data, index) => {
 				return (
 					<div className="d-flex align-items-center">
-						<StudentAdviseForm
-							getIndex={() => setIndexRow(index)}
-							index={index}
-							rowData={data}
-							rowID={data.ID}
-							listData={listDataForm}
-							isLoading={isLoading}
-							_onSubmit={(data: any) => _onSubmit(data)}
-						/>
-						{!data.isGroup ? (
+						{/* {!data.isGroup && (
 							<Popconfirm
 								title="Thêm vào nhóm khách hàng"
 								onConfirm={() => addToGroup(data)}
@@ -608,16 +599,22 @@ export default function StudentAdvisory() {
 									<UserAddOutlined />
 								</button>
 							</Popconfirm>
-						) : (
-							showGroup && (
-								<StudentAdvisoryMail
-									loadingOutside={isLoading}
-									dataSource={dataSource}
-									onFetchData={() => setTodoApi({ ...todoApi })}
-									dataRow={data}
-								/>
-							)
-						)}
+						)} */}
+						<StudentAdviseForm
+							getIndex={() => setIndexRow(index)}
+							index={index}
+							rowData={data}
+							rowID={data.ID}
+							listData={listDataForm}
+							isLoading={isLoading}
+							_onSubmit={(data: any) => _onSubmit(data)}
+						/>
+						<StudentAdvisoryMail
+							loadingOutside={isLoading}
+							dataSource={dataSource}
+							onFetchData={() => setTodoApi({ ...todoApi })}
+							dataRow={data}
+						/>
 						{text == 2 && (
 							<Link
 								href={{

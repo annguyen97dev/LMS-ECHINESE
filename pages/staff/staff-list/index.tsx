@@ -621,6 +621,7 @@ const StaffList = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: 150,
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
 			render: (text) => <p className="font-weight-black">{text}</p>
@@ -637,6 +638,7 @@ const StaffList = () => {
 			)
 		},
 		{
+			width: 100,
 			title: 'Giới tính',
 			dataIndex: 'Gender',
 			render: (gender) => <>{gender == 0 ? 'Nữ' : gender == 1 ? 'Nam' : 'Khác'}</>
@@ -658,11 +660,13 @@ const StaffList = () => {
 			dataIndex: 'RoleName'
 		},
 		{
+			width: 150,
 			title: 'Ngày nhận việc',
 			dataIndex: 'Jobdate',
 			render: (date: any) => date && moment(date).format('DD/MM/YYYY')
 		},
 		{
+			width: 150,
 			title: 'Facebook',
 			dataIndex: 'LinkFaceBook',
 			render: (link) =>

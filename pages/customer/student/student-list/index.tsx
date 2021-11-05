@@ -6,12 +6,12 @@ import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi,
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
+import CourseOfStudentDetail from '~/components/Global/Customer/Student/CourseOfStudentDetail';
 import ResetPassStudent from '~/components/Global/Customer/Student/ResetPassStudent';
-import StudentForm from '~/components/Global/Customer/Student/StudentForm';
+
 import StudentFormModal from '~/components/Global/Customer/Student/StudentFormModal';
-import StudentFormModa from '~/components/Global/Customer/Student/StudentFormModal';
+
 import LayoutBase from '~/components/LayoutBase';
-import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 
@@ -292,16 +292,14 @@ const StudentData = () => {
 
 					res.status == 200 && getDataTolist(res.data.data, item.name);
 
-					res.status == 204 && showNoti('danger', item.text + ' Không có dữ liệu');
+					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
-					showNoti('danger', error.message);
+					console.log(error.message);
 				} finally {
 				}
 			})();
 		});
 	};
-
-	console.log('Data source: ', dataSource);
 
 	// GET DATA SOURCE
 	const getDataSource = async () => {
@@ -461,28 +459,7 @@ const StudentData = () => {
 	// EXPAND ROW
 
 	const expandedRowRender = (data, index) => {
-		return (
-			// <>
-			// 	<StudentForm
-			// 		index={index}
-			// 		dataRow={data}
-			// 		listDataForm={checkEmptyData && listDataForm}
-			// 		_handleSubmit={(dataSubmit, index) => {
-			// 			let newDataSource = [...dataSource];
-			// 			newDataSource.splice(index, 1, {
-			// 				...dataSubmit,
-			// 				AreaName: dataSubmit.AreaID && listDataForm.Area.find((item) => item.value == dataSubmit.AreaID).title,
-			// 				SourceInformationName:
-			// 					dataSubmit.SourceInformationID &&
-			// 					listDataForm.SourceInformation.find((item) => item.value == dataSubmit.SourceInformationID).title
-			// 			});
-			// 			console.log('NEW DATA: ', newDataSource);
-			// 			setDataSource(newDataSource);
-			// 		}}
-			// 	/>
-			// </>
-			<div>Hello</div>
-		);
+		return <CourseOfStudentDetail studentID={data.UserInformationID} />;
 	};
 
 	// Columns
