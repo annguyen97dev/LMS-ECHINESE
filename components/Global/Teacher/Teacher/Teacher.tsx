@@ -10,6 +10,7 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { fmSelectArr } from '~/utils/functions';
 import StaffSalaryForm from '../../Option/StaffSalaryForm';
+import SalaryTeacherNested from './SalaryTeacherNested';
 import TeacherFilterForm from './TeacherFilterForm';
 import TeacherForm from './TeacherForm';
 
@@ -218,7 +219,11 @@ const Teacher = () => {
 				areaID: id
 			});
 			if (res.status === 200 && res.data.totalRow) {
-				const newBranchList = fmSelectArr(res.data.data, 'BranchName', 'ID');
+				const newBranchList = res.data.data.map((item) => ({
+					title: item.BranchName,
+					value: item.ID
+				}));
+				console.log('BranchList inside: ', newBranchList);
 				setBranchList(newBranchList);
 			}
 			if (res.status === 204) {
@@ -230,6 +235,7 @@ const Teacher = () => {
 			setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: false });
 		}
 	};
+	console.log('BranchList là: ', branchList);
 	// GET DATA IN FIRST TIME
 	const fetchTeacherList = async () => {
 		setIsLoading({
@@ -373,14 +379,16 @@ const Teacher = () => {
 	const columns = [
 		{
 			title: 'Mã giáo viên',
-			dataIndex: 'UserCode'
+			dataIndex: 'UserCode',
+			fixed: 'left'
 		},
 		{
 			title: 'Họ và tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
 			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text) => <p className="font-weight-black">{text}</p>,
+			fixed: 'left'
 		},
 		{
 			title: 'Tên tiếng Trung',
@@ -408,11 +416,13 @@ const Teacher = () => {
 		},
 		{
 			title: 'Ngày nhận việc',
+			width: 150,
 			dataIndex: 'Jobdate',
 			render: (date) => date && moment(date).format('DD/MM/YYYY')
 		},
 		{
 			title: 'Facebook',
+			width: 100,
 			dataIndex: 'LinkFaceBook',
 			render: (link) =>
 				link && (
@@ -468,20 +478,21 @@ const Teacher = () => {
 
 	const expandedRowRender = (item: ITeacher) => {
 		return (
-			<table className="tb-expand">
-				<thead>
-					<tr>
-						<th>Các trung tâm</th>
-					</tr>
-				</thead>
-				<tbody>
-					{item.Branch.map((s) => (
-						<tr>
-							<td>{s.BranchName}</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+			// <table className="tb-expand">
+			// 	<thead>
+			// 		<tr>
+			// 			<th>Các trung tâm</th>
+			// 		</tr>
+			// 	</thead>
+			// 	<tbody>
+			// 		{item.Branch.map((s) => (
+			// 			<tr>
+			// 				<td>{s.BranchName}</td>
+			// 			</tr>
+			// 		))}
+			// 	</tbody>
+			// </table>
+			<SalaryTeacherNested teacherID={item.UserInformationID} />
 		);
 	};
 

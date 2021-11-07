@@ -14,7 +14,7 @@ class StudyRoleApi {
 
 	update = (data: any) => instance.put(url, data, {});
 
-	changePosition = (indexFirst, indexAfter) => instance.put(`/api/StudyRouteChangePlaces`, null, {});
+	changePosition = (data: any) => instance.put(`/api/StudyRouteChangePlaces`, data, {});
 }
 
 export const studyRoleApi = new StudyRoleApi();

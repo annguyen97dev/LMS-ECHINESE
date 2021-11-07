@@ -112,14 +112,22 @@ const InfoStudyCard = (props) => {
 	];
 
 	const updatePosition = async (indexFirst, indexAfter) => {
+		let dataSubmit = {
+			IDOne: indexFirst,
+			IDTwo: indexAfter
+		};
+		setIsLoading(true);
 		try {
-			let res = await studyRoleApi.changePosition(indexFirst, indexAfter);
+			let res = await studyRoleApi.changePosition(dataSubmit);
 			if (res.status === 200) {
 				showNoti('success', 'Đổi vị trí thành công');
 				setTodoApi({ ...todoApi });
+			} else {
+				setIsLoading(false);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
+			setIsLoading(false);
 		}
 	};
 
@@ -135,10 +143,10 @@ const InfoStudyCard = (props) => {
 		(dragIndex: any, hoverIndex: any) => {
 			const dragRow = dataSource[dragIndex];
 
-			console.log('Data index: ', dragIndex);
-			console.log('Hover Index: ', hoverIndex);
+			const dragID = dataSource[dragIndex].ID;
+			const hoverID = dataSource[hoverIndex].ID;
 
-			updatePosition(dragIndex + 1, hoverIndex + 1);
+			updatePosition(dragID, hoverID);
 
 			setDataSource(
 				update(dataSource, {
@@ -175,7 +183,7 @@ const InfoStudyCard = (props) => {
 							dataSource={dataSource}
 							components={components}
 							//@ts-ignore
-							onRow={(record, index) => ({ index, moveRow })}
+							onRow={(record, index) => ({ index, moveRow, record })}
 							loading={isLoading}
 							size="middle"
 						/>

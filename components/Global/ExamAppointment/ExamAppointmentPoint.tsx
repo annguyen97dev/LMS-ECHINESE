@@ -14,8 +14,6 @@ const ExamAppointmentPoint = (props) => {
 	const [detail, setDetail] = useState<IExamAppointmentResult>([]);
 	const { showNoti } = useWrap();
 
-	console.log('DATA DETAIL: ', detail);
-
 	const fetchDetailInfo = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
