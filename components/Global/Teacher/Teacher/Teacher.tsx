@@ -216,14 +216,15 @@ const Teacher = () => {
 		setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: true });
 		try {
 			let res = await branchApi.getAll({
-				areaID: id
+				areaID: id,
+				Enable: true
 			});
 			if (res.status === 200 && res.data.totalRow) {
 				const newBranchList = res.data.data.map((item) => ({
 					title: item.BranchName,
 					value: item.ID
 				}));
-				console.log('BranchList inside: ', newBranchList);
+
 				setBranchList(newBranchList);
 			}
 			if (res.status === 204) {

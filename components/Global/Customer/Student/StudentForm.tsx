@@ -6,7 +6,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { RotateCcw } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { districtApi, studentApi, wardApi } from '~/apiBase';
+import { districtApi, studentApi, wardApi, branchApi } from '~/apiBase';
 import AvatarBase from '~/components/Elements/AvatarBase';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
@@ -29,6 +29,8 @@ interface listData {
 	SourceInformation: Array<Object>;
 	Parent: Array<Object>;
 	Counselors: Array<Object>;
+	Teacher: Array<Object>;
+	Exam: Array<Object>;
 }
 
 const optionGender = [
@@ -50,7 +52,7 @@ const StudentForm = (props) => {
 	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess } = props;
 	const router = useRouter();
 	const url = router.pathname;
-
+	console.log('List data Form: ', listDataForm);
 	const [isStudentDetail, setIsStudentDetail] = useState(url.includes('student-list') || url.includes('student-detail'));
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { showNoti } = useWrap();
@@ -69,6 +71,8 @@ const StudentForm = (props) => {
 	const showModal = () => {
 		setIsModalVisible(true);
 	};
+	// const [listBranch, setListBranch] = useState([]);
+	// const [loadingBranch, setLoadingBranch] = useState(false);
 	// ------------- ADD data to list --------------
 
 	const makeNewData = (data, name) => {
@@ -146,6 +150,28 @@ const StudentForm = (props) => {
 		setListData({ ...listData });
 	};
 
+	// ------ GET LIST BRANCH ------
+	// const getListBranch = async (areaID) => {
+	// 	setLoadingBranch(true);
+	// 	try {
+	// 		let res = await branchApi.getAll({ pageSize: 9999, pageIndex: 1, Enable: true, areaID: areaID });
+	// 		if (res.status == 200) {
+	// 			let newData = res.data.data.map((item) => ({
+	// 				title: item.BranchName,
+	// 				value: item.ID
+	// 			}));
+	// 			setListBranch(newData);
+	// 		}
+	// 		if (res.status == 204) {
+	// 			setListBranch([]);
+	// 		}
+	// 	} catch (error) {
+	// 		console.log('Error Branch: ', error.message);
+	// 	} finally {
+	// 		setLoadingBranch(false);
+	// 	}
+	// };
+
 	//  ----- GET DATA DISTRICT -------
 	const getDataWithID = async (ID, name) => {
 		let res = null;
@@ -190,10 +216,14 @@ const StudentForm = (props) => {
 	const handleChange_select = (value, name) => {
 		if (name == 'DistrictID') {
 			form.setValue('WardID', null);
+			// form.setValue('Branch', null);
 
 			listData.DistrictID = [];
 			listData.WardID = [];
 			setListData({ ...listData });
+
+			// setListBranch([]);
+			// getListBranch(value);
 		}
 		form.setValue(name, null);
 		getDataWithID(value, name);
@@ -226,7 +256,9 @@ const StudentForm = (props) => {
 		CounselorsID: null,
 		AppointmentDate: null,
 		ExamAppointmentTime: null,
-		ExamAppointmentNote: null
+		ExamAppointmentNote: null,
+		ExamTopicID: null,
+		TeacherID: null
 	};
 
 	(function returnSchemaFunc() {
@@ -239,12 +271,7 @@ const StudentForm = (props) => {
 				case 'Mobile':
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
 					break;
-				case 'CMND':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
-					break;
-				case 'CounselorsID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
-					break;
+
 				case 'Branch':
 					returnSchema[key] = yup.array().required('Bạn không được để trống');
 				case 'AppointmentDate':
@@ -338,8 +365,6 @@ const StudentForm = (props) => {
 			arrBranch.push(item.ID);
 		});
 		cloneRowData.Branch = arrBranch;
-
-		console.log('CloneRow: ', cloneRowData);
 
 		form.reset(cloneRowData);
 		cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, 'DistrictID');
@@ -533,11 +558,12 @@ const StudentForm = (props) => {
 								</div>
 								<div className="col-12">
 									<SelectField
+										// isLoading={loadingBranch}
 										mode={dataRow ? 'multiple' : ''}
 										form={form}
 										name="Branch"
 										label="Trung tâm"
-										optionList={listData.Branch}
+										optionList={listDataForm.Branch}
 										placeholder="Chọn trung tâm"
 										isRequired={true}
 									/>
@@ -563,6 +589,24 @@ const StudentForm = (props) => {
 											/>
 										</div>
 										<div className="col-md-6 col-12">
+											<SelectField
+												form={form}
+												name="ExamTopicID"
+												label="Đề hẹn test"
+												optionList={listData.Exam}
+												placeholder="Chọn đề"
+											/>
+										</div>
+										<div className="col-md-6 col-12">
+											<SelectField
+												form={form}
+												name="TeacherID"
+												label="Giáo viên chấm bài"
+												optionList={listData.Teacher}
+												placeholder="Chọn giáo viên"
+											/>
+										</div>
+										<div className="col-md-12 col-12">
 											<TextAreaField
 												disabled={isStudentDetail && true}
 												name="ExamAppointmentNote"

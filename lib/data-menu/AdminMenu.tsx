@@ -654,7 +654,14 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/package/package-set-result',
 						Route: '/package/package-set-result',
-						Text: 'Kết quả thi của học viên',
+						Text: 'Thi cử',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/package/course-exam',
+						Route: '/package/course-exam',
+						Text: 'Kiểm tra',
 						Icon: ''
 					},
 					{
@@ -663,21 +670,21 @@ export const AdminChildMenu = [
 						Route: '/package/pay-fix-list',
 						Text: 'Danh sách mua lượt chấm',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/package/package-student',
-						Route: '/package/package-student',
-						Text: 'Danh sách bộ đề học viên',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/package/package-store',
-						Route: '/package/package-store',
-						Text: 'Cửa hàng',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/package-student',
+					// 	Route: '/package/package-student',
+					// 	Text: 'Danh sách bộ đề học viên',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/package-store',
+					// 	Route: '/package/package-store',
+					// 	Text: 'Cửa hàng',
+					// 	Icon: ''
+					// }
 				]
 			},
 			{
