@@ -1,18 +1,14 @@
 import moment from 'moment';
 //  ---------EXPORT TO ARRAY FOR SELECT FIELD---------
-export const fmSelectArr = (
-	arr: Array<{[key: string]: any}>,
-	title: string,
-	value: string,
-	options = []
-) =>
+export const fmSelectArr = (arr: Array<{ [key: string]: any }>, title: string, value: string, options = []) =>
 	arr
 		.filter((x) => (x.Enable === false ? false : x))
 		.map((x) => ({
 			title: x[title],
 			value: x[value],
-			options: options.reduce((obj, o) => ({...obj, [o]: x[o]}), {}),
+			options: options.reduce((obj, o) => ({ ...obj, [o]: x[o] }), {})
 		}));
+
 export const clearOptionsDuplicate = (arr: IOptionCommon[]) => {
 	return arr.reduce((newArr, o) => {
 		if (!newArr.some((o2) => o2.value === o.value)) {
@@ -49,5 +45,4 @@ export const fmDateFromNow = (date) => {
 	}
 	return formattedDate;
 };
-export const parsePriceStrToNumber = (str: number | string) =>
-	parseInt(str.toString().replace(/\D/g, '')) || 0;
+export const parsePriceStrToNumber = (str: number | string) => parseInt(str.toString().replace(/\D/g, '')) || 0;

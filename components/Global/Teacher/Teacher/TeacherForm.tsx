@@ -1,22 +1,19 @@
-import {
-	DeploymentUnitOutlined,
-	MailOutlined,
-	WhatsAppOutlined,
-} from '@ant-design/icons';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Divider, Form, Modal, Spin, Tooltip} from 'antd';
+import { DeploymentUnitOutlined, MailOutlined, WhatsAppOutlined } from '@ant-design/icons';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Divider, Form, Modal, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import UploadFile from '~/components/Elements/UploadFile/UploadFile';
 import DateField from '~/components/FormControl/DateField';
 import InputPassField from '~/components/FormControl/InputPassField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 const TeacherForm = (props) => {
 	const {
@@ -35,9 +32,9 @@ const TeacherForm = (props) => {
 		handleFetchDistrict,
 		handleFetchWard,
 		optionBranchList,
-		handleFetchBranch,
+		handleFetchBranch
 	} = props;
-	const {areaList, districtList, wardList} = optionAreaSystemList;
+	const { areaList, districtList, wardList } = optionAreaSystemList;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => {
 		setIsModalVisible(true);
@@ -56,16 +53,10 @@ const TeacherForm = (props) => {
 	const closeModal = () => setIsModalVisible(false);
 	const schemaBase = yup.object().shape({
 		AreaID: yup.number().nullable().required('Bạn không được để trống'),
-		Branch: yup
-			.array()
-			.min(1, 'Bạn phải chọn ít nhất 1 trung tâm')
-			.required('Bạn không được để trống'),
+		Branch: yup.array().min(1, 'Bạn phải chọn ít nhất 1 trung tâm').required('Bạn không được để trống'),
 		FullNameUnicode: yup.string().required('Bạn không được để trống'),
 		Jobdate: yup.string().required('Bạn không được để trống'),
-		Email: yup
-			.string()
-			.email('Email không đúng định dạng')
-			.required('Bạn không được để trống'),
+		Email: yup.string().email('Email không đúng định dạng').required('Bạn không được để trống'),
 		Mobile: yup
 			.string()
 			.required('Bạn không được để trống')
@@ -73,7 +64,7 @@ const TeacherForm = (props) => {
 				/^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\d)(\s|\.)?(\d{3})(\s|\.)?(\d{3})$/,
 				'Sdt không đúng định dạng'
 			),
-		Address: yup.string(),
+		Address: yup.string()
 	});
 	const schemaUpdate = yup.object().shape({
 		DistrictID: yup.number().nullable(),
@@ -87,10 +78,12 @@ const TeacherForm = (props) => {
 		CMNDRegister: yup.string().nullable(),
 		Extension: yup.string().nullable(),
 		StatusID: yup.number().nullable().oneOf([0, 1]),
-		Password: yup.string().nullable(),
+		Password: yup.string().nullable()
 	});
 
 	const schema = isUpdate ? schemaBase.concat(schemaUpdate) : schemaBase;
+
+	console.log('optionBranchList: ', optionBranchList);
 
 	const defaultValuesInit = {
 		AreaID: null,
@@ -114,24 +107,43 @@ const TeacherForm = (props) => {
 		Extension: '',
 		StatusID: 1,
 		Password: '',
+		ContractOfStaff: null, //file hợp đồng
+		DegreeOfStaff: null, //file bằng cấp
+		BankAccountNumber: null,
+		BankAccountHolderName: null,
+		BankBranch: null
 	};
 
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
+
+	// Get file
+	const getFile = (file, type) => {
+		switch (type) {
+			case 'contract':
+				form.setValue('ContractOfStaff', file);
+				break;
+			case 'degree':
+				form.setValue('DegreeOfStaff', file);
+				break;
+			default:
+				break;
+		}
+	};
 
 	useEffect(() => {
 		if (isUpdate && updateObj) {
 			form.reset({
 				...updateObj,
-				Branch: updateObj.Branch.map((obj) => obj.ID),
+				Branch: updateObj.Branch.map((obj) => obj.ID)
 			});
 		}
 	}, [updateObj]);
 
 	useEffect(() => {
-		isClearForm && form.reset({...defaultValuesInit});
+		isClearForm && form.reset({ ...defaultValuesInit });
 	}, [isClearForm]);
 
 	const checkHandleFetchBranch = (value) => {
@@ -188,7 +200,7 @@ const TeacherForm = (props) => {
 				</button>
 			)}
 			<Modal
-				style={{top: isUpdate ? 20 : 100}}
+				style={{ top: isUpdate ? 20 : 100 }}
 				title={isUpdate ? 'Cập nhật giáo viên' : 'Thêm giáo viên'}
 				visible={isModalVisible}
 				onCancel={closeModal}
@@ -203,31 +215,22 @@ const TeacherForm = (props) => {
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									Cập nhật
-									{isLoading.type === 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type === 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
 					) : null
 				}
-				className={`${isUpdate ? 'modal-50 modal-scroll' : ''}`}
+				className={`${isUpdate && 'modal-scroll'} modal-50`}
 			>
 				<div className="box-form">
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(teacherSwitchFunc)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(teacherSwitchFunc)}>
 						{isUpdate ? (
 							<div className="row">
 								<div className="col-12">
 									<div className="info-modal">
 										<div className="info-modal-avatar">
-											<UploadAvatarField
-												style={{marginBottom: 0}}
-												form={form}
-												name="Avatar"
-											/>
+											<UploadAvatarField style={{ marginBottom: 0 }} form={form} name="Avatar" />
 										</div>
 										<div className="info-modal-content">
 											{isUpdate && (
@@ -237,11 +240,7 @@ const TeacherForm = (props) => {
 														<span className="icon role">
 															<DeploymentUnitOutlined />
 														</span>
-														<span className="text">
-															{updateObj.Branch.map((b) => b.BranchName).join(
-																', '
-															)}
-														</span>
+														<span className="text">{updateObj.Branch.map((b) => b.BranchName).join(', ')}</span>
 													</p>
 													<p className="detail">
 														<span className="icon mobile">
@@ -264,13 +263,7 @@ const TeacherForm = (props) => {
 									<Divider orientation="center">Thông tin cơ bản</Divider>
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField
-										form={form}
-										name="Email"
-										label="Email"
-										placeholder="Nhập email"
-										isRequired={true}
-									/>
+									<InputTextField form={form} name="Email" label="Email" placeholder="Nhập email" isRequired={true} />
 								</div>
 								<div className="col-md-6 col-12">
 									<InputTextField
@@ -290,44 +283,19 @@ const TeacherForm = (props) => {
 									/>
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField
-										form={form}
-										name="Mobile"
-										label="Số điện thoại"
-										placeholder="Nhập số điện thoại"
-									/>
+									<InputTextField form={form} name="Mobile" label="Số điện thoại" placeholder="Nhập số điện thoại" />
 								</div>
 								<div className="col-md-6 col-12">
-									<DateField
-										form={form}
-										name="DOB"
-										label="Ngày sinh"
-										placeholder="Chọn ngày sinh"
-									/>
+									<DateField form={form} name="DOB" label="Ngày sinh" placeholder="Chọn ngày sinh" />
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField
-										form={form}
-										name="CMND"
-										label="Số CMND"
-										placeholder="Nhập số CMND"
-									/>
+									<InputTextField form={form} name="CMND" label="Số CMND" placeholder="Nhập số CMND" />
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField
-										form={form}
-										name="CMNDRegister"
-										label="Nơi cấp CMND"
-										placeholder="Nhập nơi cấp CMND"
-									/>
+									<InputTextField form={form} name="CMNDRegister" label="Nơi cấp CMND" placeholder="Nhập nơi cấp CMND" />
 								</div>
 								<div className="col-md-6 col-12">
-									<DateField
-										form={form}
-										name="CMNDDate"
-										label="Ngày cấp CMND"
-										placeholder="Chọn ngày cấp CMND"
-									/>
+									<DateField form={form} name="CMNDDate" label="Ngày cấp CMND" placeholder="Chọn ngày cấp CMND" />
 								</div>
 								<div className="col-md-6 col-12">
 									<SelectField
@@ -348,12 +316,7 @@ const TeacherForm = (props) => {
 									/>
 								</div>
 								<div className="col-12">
-									<InputPassField
-										form={form}
-										name="Password"
-										label="Mật khẩu"
-										placeholder="Nhập mật khẩu"
-									/>
+									<InputPassField form={form} name="Password" label="Mật khẩu" placeholder="Nhập mật khẩu" />
 								</div>
 								<div className="col-12">
 									<Divider orientation="center">Địa chỉ</Divider>
@@ -378,10 +341,7 @@ const TeacherForm = (props) => {
 										label="Quận/Huyện"
 										optionList={districtList}
 										onChangeSelect={checkHandleFetchWard}
-										isLoading={
-											isLoading.type === 'FETCH_DATA_BY_AREA' &&
-											isLoading.status
-										}
+										isLoading={isLoading.type === 'FETCH_DATA_BY_AREA' && isLoading.status}
 										placeholder="Chọn quận/huyện"
 									/>
 								</div>
@@ -391,20 +351,12 @@ const TeacherForm = (props) => {
 										name="WardID"
 										label="Phường/Xã"
 										optionList={wardList}
-										isLoading={
-											isLoading.type === 'FETCH_WARD_BY_DISTRICT' &&
-											isLoading.status
-										}
+										isLoading={isLoading.type === 'FETCH_WARD_BY_DISTRICT' && isLoading.status}
 										placeholder="Chọn phường/xã"
 									/>
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField
-										form={form}
-										name="Extension"
-										label="Mô tả thêm"
-										placeholder="Nhập mô tả thêm"
-									/>
+									<InputTextField form={form} name="Extension" label="Mô tả thêm" placeholder="Nhập mô tả thêm" />
 								</div>
 								<div className="col-12">
 									<InputTextField
@@ -418,26 +370,38 @@ const TeacherForm = (props) => {
 									<Divider orientation="center">Khác</Divider>
 								</div>
 								<div className="col-md-6 col-12">
+									<Form.Item label="Hợp đồng">
+										<UploadFile getFile={(file) => getFile(file, 'contract')} />
+										{updateObj?.ContractOfStaff && (
+											<a href={updateObj?.ContractOfStaff} className="link-upload">
+												File hợp đồng
+											</a>
+										)}
+									</Form.Item>
+								</div>
+								<div className="col-md-6 col-12">
+									<Form.Item label="Bằng cấp">
+										<UploadFile url={updateObj?.DegreeOfStaff} getFile={(file) => getFile(file, 'degree')} />
+										{updateObj?.ContractOfStaff && (
+											<a href={updateObj?.ContractOfStaff} className="link-upload">
+												File hợp đồng
+											</a>
+										)}
+									</Form.Item>
+								</div>
+								<div className="col-md-6 col-12">
 									<SelectField
 										form={form}
 										name="Branch"
 										label="Trung tâm"
 										mode="multiple"
 										optionList={optionBranchList}
-										isLoading={
-											isLoading.type === 'FETCH_DATA_BY_AREA' &&
-											isLoading.status
-										}
+										isLoading={isLoading.type === 'FETCH_DATA_BY_AREA' && isLoading.status}
 										placeholder="Chọn trung tâm"
 									/>
 								</div>
 								<div className="col-md-6 col-12">
-									<DateField
-										form={form}
-										name="Jobdate"
-										label="Ngày nhận việc"
-										placeholder="Chọn ngày nhận việc"
-									/>
+									<DateField form={form} name="Jobdate" label="Ngày nhận việc" placeholder="Chọn ngày nhận việc" />
 								</div>
 
 								<div className="col-md-6 col-12">
@@ -449,12 +413,21 @@ const TeacherForm = (props) => {
 									/>
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField
-										form={form}
-										name="Address"
-										label="Địa chỉ"
-										placeholder="Nhập địa chỉ"
-									/>
+									<InputTextField form={form} name="Address" label="Địa chỉ" placeholder="Nhập địa chỉ" />
+								</div>
+
+								{/** ==== Thông tin ngân hàng  ====*/}
+								<div className="col-12">
+									<Divider orientation="center">Thông tin ngân hàng</Divider>
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="BankAccountHolderName" label="Tên chủ thẻ" />
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="BankAccountNumber" label="Số tài khoản" />
+								</div>
+								<div className="col-md-12 col-12">
+									<InputTextField form={form} name="BankBranch" label="Chi nhánh ngân hàng" />
 								</div>
 							</div>
 						) : (
@@ -476,13 +449,7 @@ const TeacherForm = (props) => {
 										placeholder="Nhập họ và tên"
 										isRequired={true}
 									/>
-									<InputTextField
-										form={form}
-										name="Email"
-										label="Email"
-										placeholder="Nhập email"
-										isRequired={true}
-									/>
+									<InputTextField form={form} name="Email" label="Email" placeholder="Nhập email" isRequired={true} />
 									<DateField
 										form={form}
 										name="Jobdate"
@@ -498,10 +465,7 @@ const TeacherForm = (props) => {
 										label="Trung tâm"
 										mode="multiple"
 										optionList={optionBranchList}
-										isLoading={
-											isLoading.type === 'FETCH_DATA_BY_AREA' &&
-											isLoading.status
-										}
+										isLoading={isLoading.type === 'FETCH_DATA_BY_AREA' && isLoading.status}
 										placeholder="Chọn trung tâm"
 										isRequired={true}
 									/>
@@ -518,20 +482,43 @@ const TeacherForm = (props) => {
 										placeholder="Nhập số điện thoại"
 										isRequired={true}
 									/>
-									<InputTextField
-										form={form}
-										name="LinkFaceBook"
-										label="Link Facebook"
-										placeholder="Nhập link faebook"
-									/>
+									<InputTextField form={form} name="LinkFaceBook" label="Link Facebook" placeholder="Nhập link faebook" />
 								</div>
 								<div className="col-12">
-									<InputTextField
-										form={form}
-										name="Address"
-										label="Địa chỉ"
-										placeholder="Nhập địa chỉ"
-									/>
+									<InputTextField form={form} name="Address" label="Địa chỉ" placeholder="Nhập địa chỉ" />
+								</div>
+								<div className="col-md-6 col-12">
+									<Form.Item label="Hợp đồng">
+										<UploadFile getFile={(file) => getFile(file, 'contract')} />
+										{updateObj?.ContractOfStaff && (
+											<a href={updateObj?.ContractOfStaff} className="link-upload">
+												File hợp đồng
+											</a>
+										)}
+									</Form.Item>
+								</div>
+								<div className="col-md-6 col-12">
+									<Form.Item label="Bằng cấp">
+										<UploadFile url={updateObj?.DegreeOfStaff} getFile={(file) => getFile(file, 'degree')} />
+										{updateObj?.ContractOfStaff && (
+											<a href={updateObj?.ContractOfStaff} className="link-upload">
+												File hợp đồng
+											</a>
+										)}
+									</Form.Item>
+								</div>
+								{/** ==== Thông tin ngân hàng  ====*/}
+								<div className="col-12">
+									<Divider orientation="center">Thông tin ngân hàng</Divider>
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="BankAccountHolderName" label="Tên chủ thẻ" />
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="BankAccountNumber" label="Số tài khoản" />
+								</div>
+								<div className="col-md-12 col-12">
+									<InputTextField form={form} name="BankBranch" label="Chi nhánh ngân hàng" />
 								</div>
 								<div className="col-12 mt-3">
 									<button
@@ -540,9 +527,7 @@ const TeacherForm = (props) => {
 										disabled={isLoading.type === 'ADD_DATA' && isLoading.status}
 									>
 										Thêm mới
-										{isLoading.type === 'ADD_DATA' && isLoading.status && (
-											<Spin className="loading-base" />
-										)}
+										{isLoading.type === 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 									</button>
 								</div>
 							</div>
@@ -561,7 +546,7 @@ TeacherForm.propTypes = {
 	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	//
 	isClearForm: PropTypes.bool,
@@ -572,19 +557,19 @@ TeacherForm.propTypes = {
 	optionAreaSystemList: PropTypes.shape({
 		areaList: optionCommonPropTypes,
 		districtList: optionCommonPropTypes,
-		wardList: optionCommonPropTypes,
+		wardList: optionCommonPropTypes
 	}),
 	handleFetchDistrict: PropTypes.func,
 	handleFetchWard: PropTypes.func,
 	optionBranchList: optionCommonPropTypes,
-	handleFetchBranch: PropTypes.func,
+	handleFetchBranch: PropTypes.func
 };
 TeacherForm.defaultProps = {
 	handleCreateTeacher: null,
 	isUpdate: false,
 	handleUpdateTeacher: null,
 	updateObj: {},
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	isClearForm: false,
 	indexUpdateObj: -1,
 	optionStatusList: [],
@@ -592,11 +577,11 @@ TeacherForm.defaultProps = {
 	optionAreaSystemList: {
 		areaList: [],
 		districtList: [],
-		wardList: [],
+		wardList: []
 	},
 	handleFetchDistrict: null,
 	handleFetchWard: null,
 	optionBranchList: [],
-	handleFetchBranch: null,
+	handleFetchBranch: null
 };
 export default TeacherForm;

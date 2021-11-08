@@ -14,8 +14,6 @@ const ExamAppointmentPoint = (props) => {
 	const [detail, setDetail] = useState<IExamAppointmentResult>([]);
 	const { showNoti } = useWrap();
 
-	console.log('DATA DETAIL: ', detail);
-
 	const fetchDetailInfo = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
@@ -90,11 +88,7 @@ const ExamAppointmentPoint = (props) => {
 		}
 	];
 
-	return (
-		<div className="container-fluid">
-			<NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />
-		</div>
-	);
+	return <NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />;
 };
 
 export default ExamAppointmentPoint;

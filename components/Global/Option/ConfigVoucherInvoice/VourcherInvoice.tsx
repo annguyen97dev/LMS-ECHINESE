@@ -4,6 +4,7 @@ import ConfigVoucherInvoiceForm from '~/components/Global/Option/ConfigVoucherIn
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 const ConfigVoucherInvoice = () => {
 	const [dataTable, setDataTable] = useState<IConfig[]>([]);
@@ -155,7 +156,7 @@ const ConfigVoucherInvoice = () => {
 		{
 			title: 'Nội dung',
 			dataIndex: 'ConfigContent',
-			render: (text) => <p className="invoice-content">{text}</p>
+			render: (text) => <p className="invoice-content">{ReactHtmlParser(text)}</p>
 		},
 		{
 			width: 100,

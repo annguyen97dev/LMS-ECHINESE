@@ -151,12 +151,20 @@ export default function ServiceTestTeacher(props) {
 					value: 0
 				},
 				{
-					title: 'Chưa đăng kí khóa học',
+					title: 'Đang chấm bài test',
 					value: 1
 				},
 				{
-					title: 'Đã đăng kí khóa học',
+					title: 'Chưa đăng kí khóa học',
 					value: 2
+				},
+				{
+					title: 'Đã đăng kí khóa học',
+					value: 3
+				},
+				{
+					title: 'Đã hủy hẹn test',
+					value: 4
 				}
 			],
 			value: null
@@ -511,19 +519,25 @@ export default function ServiceTestTeacher(props) {
 		},
 
 		{
-			title: 'Trung tâm',
-			dataIndex: 'BranchName',
-
-			render: (a) => <p className="font-weight-black">{a}</p>
-		},
-		{
 			title: 'Đề test',
-			dataIndex: 'ExamTopicnName',
-			render: (text, data: any) => (
-				<a href="" className="font-weight-black" onClick={(e) => moveToTest(e, data)}>
-					{text}
-				</a>
-			)
+			dataIndex: 'ExamTopicName',
+
+			render: (text, data: any) =>
+				data.TeacherID === userInformation.UserInformationID &&
+				!data.isDone && (
+					<Link
+						href={{
+							pathname: '/customer/service/service-test-teacher/detail/[slug]',
+							query: { slug: `${data.ID}`, teacherMarking: data.TeacherID, packageResultID: data.ID, type: 'test' }
+						}}
+					>
+						<Tooltip title="Chấm bài ngay">
+							<a href="" className="font-weight-link">
+								{text}
+							</a>
+						</Tooltip>
+					</Link>
+				)
 		},
 		{
 			title: 'Ngày hẹn',
@@ -566,30 +580,15 @@ export default function ServiceTestTeacher(props) {
 		{
 			render: (data) => (
 				<>
-					{data.TeacherID === userInformation.UserInformationID && !data.isDone && (
+					{data.TeacherID === userInformation.UserInformationID && (
 						<Link
 							href={{
 								pathname: '/customer/service/service-test-teacher/detail/[slug]',
 								query: { slug: `${data.ID}`, teacherMarking: data.TeacherID, packageResultID: data.ID, type: 'test' }
 							}}
 						>
-							<Tooltip title="Chấm bài ngay">
+							<Tooltip title={!data.isDone ? 'Chấm bài ngay' : 'Xem chi tiết'}>
 								<button className="btn btn-icon edit">
-									<FormOutlined />
-								</button>
-							</Tooltip>
-						</Link>
-					)}
-
-					{data.TeacherID === userInformation.UserInformationID && data.isDone && (
-						<Link
-							href={{
-								pathname: '/customer/service/service-test-teacher/detail/[slug]',
-								query: { slug: `${data.ID}`, teacherMarking: data.TeacherID, packageResultID: data.ID, type: 'test' }
-							}}
-						>
-							<Tooltip title="Xem chi tiết đề test">
-								<button className="btn btn-icon view">
 									<FormOutlined />
 								</button>
 							</Tooltip>
@@ -616,7 +615,7 @@ export default function ServiceTestTeacher(props) {
 						getPagination={(pageNumber: number) => getPagination(pageNumber)}
 						loading={isLoading}
 						addClass="basic-header"
-						TitlePage="DS khách hẹn test"
+						TitlePage="Chấm bài hẹn test"
 						// TitleCard={
 						//   <StudentAdviseForm
 						//     listData={listDataForm}

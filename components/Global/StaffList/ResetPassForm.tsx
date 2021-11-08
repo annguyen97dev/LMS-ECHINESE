@@ -44,7 +44,7 @@ const ResetPassForm = (props) => {
 	};
 
 	return (
-		<div>
+		<>
 			<Tooltip title="Khôi phục mật khẩu">
 				<button className="btn btn-icon" onClick={showModal}>
 					<RetweetOutlined />
@@ -59,7 +59,7 @@ const ResetPassForm = (props) => {
 			>
 				<p style={{ fontWeight: 500 }}>Khôi phục mật khẩu cho nhân viên này?</p>
 			</Modal>
-		</div>
+		</>
 	);
 };
 
