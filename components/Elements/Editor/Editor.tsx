@@ -43,15 +43,15 @@ const EditorSummernote = (props) => {
 
 	// console.log("Propety: ", propetyEditor);
 	// console.log("Value editor: ", valueEditor);
-	console.log('Count Enter: ', countEnter);
+	// console.log('Count Enter: ', countEnter);
 	// console.log("Position is: ", position);
-	console.log('Key Editor: ', keyEditor);
+	// console.log('Key Editor: ', keyEditor);
 	// console.log("List Input: ", listInput);
 	// console.log("Is Focus: ", isFocus);
 	// console.log("Index Char:  ", indexChar);
-	console.log('List input: ', listInput);
+	// console.log('List input: ', listInput);
 	// console.log("Text Replace: ", textReplace);
-	console.log('Save Id is: ', saveID);
+	// console.log('Save Id is: ', saveID);
 
 	const formatKey = (e) => {
 		switch (e.keyCode) {
@@ -104,14 +104,11 @@ const EditorSummernote = (props) => {
 			}
 		}
 
-		console.log('New arr: ', newArr);
-
 		return newArr;
 	};
 
 	// ON KEY UP
 	const onKeyDown = (e) => {
-		console.log('E KEY UP: ', e);
 		let node = null;
 		let id = null;
 
@@ -154,7 +151,6 @@ const EditorSummernote = (props) => {
 
 	// ON FOCUS
 	const onFocus = (e) => {
-		console.log('E in focus: ', e);
 		countEnter = e.target.id;
 
 		// setKeyEditor({
@@ -182,11 +178,8 @@ const EditorSummernote = (props) => {
 			textNode = range.offsetNode;
 			offset = range.offset;
 		} else {
-			console.log('Not support caretPositionFromPoint');
 			return;
 		}
-
-		console.log('Range: ', range);
 
 		if (range.startContainer.previousSibling || range.startContainer.nextSibling) {
 			textReplace = range.startContainer.textContent;
@@ -279,8 +272,6 @@ const EditorSummernote = (props) => {
 
 	// Function any handle delete
 	const anyHandleDelete = () => {
-		console.log('On delete all');
-
 		setListInput([]);
 		countEnter = 0;
 		arrKey = [];
@@ -297,8 +288,6 @@ const EditorSummernote = (props) => {
 		let tagP = document.querySelectorAll('.note-editable p'); // Get node element in editor
 		let spaceEditor = document.querySelectorAll('.note-editable .space-editor');
 
-		console.log('List Editor: ', editor);
-
 		// Check space is deleted
 		let newList = [];
 		if (spaceEditor) {
@@ -309,11 +298,8 @@ const EditorSummernote = (props) => {
 
 		if (listInput.length > 0) {
 			let difID = listInput.filter((x) => !newList.includes(x.toString()));
-			// console.log("New List: ", newList);
-			// console.log("Input list: ", listInput);
-			// console.log("difID: ", difID);
+
 			if (difID.length > 0) {
-				console.log('Xóa 1 item');
 				deleteSingleQuestion && deleteSingleQuestion(difID[0]); // xóa câu hỏi ở ngoài
 				let indexID = listInput.indexOf(difID[0]);
 				listInput.splice(indexID, 1);
@@ -325,19 +311,17 @@ const EditorSummernote = (props) => {
 		}
 		// Check delete all
 		if (editor[0].childNodes.length == 0) {
-			console.log('Delete all 1');
 			anyHandleDelete();
 		} else {
 			let isEmpty = true;
 			editor[0].childNodes.forEach((item, index) => {
 				let node = editor[0].children[index];
-				// console.log("node là: ", node);
+
 				if (node?.innerHTML !== '<br>' && node?.innerHTML !== ' ') {
 					isEmpty = false;
 				}
 			});
 			if (isEmpty) {
-				console.log('Delete all 2');
 				anyHandleDelete();
 			}
 			// if (editor[0].children.length == 1) {
@@ -401,26 +385,23 @@ const EditorSummernote = (props) => {
 					if (item.id === keyEditor.id) {
 						let content = item.innerHTML;
 						content = content.replace('&nbsp;', ' ');
-						console.log('Content: ', content);
+
 						// --- Check empty key ---
 						if (keyEditor.key == '') {
 							// TH1: nếu trong text đã có input, sau khi click gần đó thì vị trí bắt đầu tính từ input trở đi nên phải kiểm tra
 							if (content.includes('space-editor')) {
-								console.log('Add Space 1');
 								let arrTextReplace = textReplace.split('');
-								// console.log("ArrText: ", arrTextReplace);
+
 								arrTextReplace.splice(
 									indexChar,
 									0,
 									`<input id="${inputID}" class='space-editor' placeholder="(${indexInput + 1})">`
 								);
-								console.log('arrText: ', arrTextReplace);
+
 								let stringTextReplace = arrTextReplace.join('');
-								// console.log("Content trước đó: ", content);
-								console.log('String convert: ', stringTextReplace);
+
 								content = content.replace(textReplace, stringTextReplace);
 							} else {
-								console.log('Add Space 2');
 								let newContent = content.split('');
 								newContent.splice(
 									indexChar,
@@ -429,10 +410,7 @@ const EditorSummernote = (props) => {
 								);
 								content = newContent.join('');
 							}
-
-							// console.log("Content is: ", content);
 						} else {
-							console.log('Add Space 3');
 							content = content.replace(
 								keyEditor.key,
 								keyEditor.key + `<input id="${inputID}" class='space-editor' placeholder="(${indexInput + 1})">`
@@ -455,7 +433,6 @@ const EditorSummernote = (props) => {
 	// ========================== RELOAD CONTENT =======================================
 	useEffect(() => {
 		let spaceEditor = document.querySelectorAll('.note-editable .space-editor');
-		// console.log("Space Editor: ", spaceEditor);
 
 		// Trường hợp các câu hỏi đã có id mới và cần làm mới lại
 		if (saveID == null) {
@@ -481,7 +458,7 @@ const EditorSummernote = (props) => {
 			let newList = [];
 			spaceEditor.forEach((item, index) => {
 				newList.push(parseInt(item.id));
-				console.log('item: ', item);
+
 				if (parseInt(item.id) === listInput[listInput.length - 1]) {
 					addQuestion && addQuestion(listInput[listInput.length - 1]);
 				}
@@ -497,7 +474,6 @@ const EditorSummernote = (props) => {
 	useEffect(() => {
 		let spaceEditor = document.querySelectorAll('.note-editable .space-editor');
 		if (changePosition) {
-			console.log('Change position');
 			if (spaceEditor.length > 0) {
 				spaceEditor.forEach((item, index) => {
 					if (listInput.includes(parseInt(item.id))) {
@@ -511,7 +487,6 @@ const EditorSummernote = (props) => {
 	}, [changePosition]);
 
 	useEffect(() => {
-		console.log('Visible is: ', visible);
 		if (!visible) {
 			ReactSummernote.reset(), setValueEditor('');
 		}
