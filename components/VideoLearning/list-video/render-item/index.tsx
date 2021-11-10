@@ -79,22 +79,23 @@ const RenderItem: FC<props> = ({ item, onPress, data }) => {
 					</span>
 				</div>
 
-				<div>{isShow ? <i className="far fa-chevron-up" /> : <i className="far fa-chevron-down" />}</div>
+				<div className="mr-2">{isShow ? <i className="far fa-chevron-up" /> : <i className="far fa-chevron-down" />}</div>
 			</div>
 
 			{isShow && (
 				<List
 					itemLayout="horizontal"
 					dataSource={subVideos || []}
-					renderItem={(item) => (
+					renderItem={(i) => (
 						<RenderItemSub
 							onPress={(p) => {
 								setRender(p.ID);
 								onPress(p);
 							}}
 							data={data}
-							item={item}
+							item={i}
 							subData={subVideos}
+							section={item}
 						/>
 					)}
 				/>

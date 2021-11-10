@@ -366,7 +366,8 @@
 		margin-bottom: -1px;
 	}
 	i {
-		margin-right: 15px;
+		// margin-right: 30px;
+		margin-left: -15px;
 
 		@include max-media(760px) {
 			margin-right: 30px;
@@ -427,6 +428,15 @@
 	@include max-media(800px) {
 		padding-right: 5px;
 	}
+	&__btn-video {
+		font-size: 20px;
+		color: #db4566;
+		margin-right: 30px;
+	}
+	&__btn-html {
+		font-size: 20px;
+		color: #1cc474;
+	}
 }
 
 .video-space-between {
@@ -443,6 +453,9 @@
 .wrap-download {
 	align-items: center;
 	justify-content: space-between;
+	@include max-media(800px) {
+		width: 190px;
+	}
 }
 
 .none-selection {

@@ -15,6 +15,11 @@ export const VideoCourseOfStudent = {
 		return instance.get<IApiResultData<IVideoLearning[]>>(`${url + 'GetByID/'}${ID}`);
 	},
 
+	// Cập nhật data
+	UpdateSeenAndTimeWatchedVideo(data) {
+		return instance.put(url + '/UpdateSeenAndTimeWatchedVideo', data);
+	},
+
 	// Lấy data GetLessonInProgress
 	GetLessonInProgress() {
 		return instance.get<IApiResultData<IVideoLearning[]>>(url + 'GetLessonInProgress/');

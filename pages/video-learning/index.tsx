@@ -8,6 +8,30 @@ import { VideoCourseOfStudent, VideoCourseInteraction, VideoCourses } from '~/ap
 import Router, { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
 import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
+import { usePageVisibility } from '~/utils/functions';
+
+const useUnload = (fn) => {
+	const cb = useRef(fn); // init with fn, so that type checkers won't assume that current might be undefined
+
+	useEffect(() => {
+		cb.current = fn;
+	}, [fn]);
+
+	useEffect(() => {
+		const onUnload = (...args) => cb.current?.(...args);
+
+		window.addEventListener('beforeunload', onUnload);
+
+		return () => window.removeEventListener('beforeunload', onUnload);
+	}, []);
+};
+
+const useBeforeUnload = (fn) => {
+	window.onbeforeunload = function () {
+		fn();
+		return 'Bạn thật sự muốn đóng video đang xem?';
+	};
+};
 
 const VideoLearning = () => {
 	const router = useRouter();
@@ -22,29 +46,55 @@ const VideoLearning = () => {
 	const [videos, setVideos] = useState([]);
 	const [dataQA, setDataQA] = useState([]);
 	const [dataNotification, setDataNotification] = useState([]);
-	const [currentLession, setCurrentLession] = useState({ ID: '', Title: '', Description: '' });
+	const [currentLession, setCurrentLession] = useState({ ID: '', Title: '', Description: '', Type: 0, SectionID: '', Second: 0 });
 
 	useEffect(() => {
 		if (router.query.course !== undefined) {
 			getVideos();
 		}
 	}, []);
-	window.addEventListener('beforeunload', function (e) {
-		// Cancel the event
-		console.log(e);
 
-		e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-		// Chrome requires returnValue to be set
+	// RELOAD TAB
+	useUnload((e) => {
+		updateTime();
+		e.preventDefault();
 		e.returnValue = '';
 	});
 
-	console.log('render');
+	// CLOSE WINDOW OR TAB
+	if (typeof window !== 'undefined') {
+		useBeforeUnload(() => updateTime());
+	}
 
-	useEffect(() => {
-		return () => {
-			console.log('asdasd');
-		};
-	}, []);
+	console.log('render: ');
+
+	// HANDLE VISIT PAGE
+	const handleVisibilityChange = (visible) => {
+		if (videoStudy.current !== null) {
+			if (videoStudy.current.currentTime !== 0) {
+				updateTime();
+			}
+		}
+	};
+
+	usePageVisibility(handleVisibilityChange);
+
+	const updateTime = async () => {
+		if (videoStudy.current !== null) {
+			if (videoStudy.current.currentTime !== 0 && currentLession.ID !== '') {
+				let temp = {
+					VideoCourseOfStudentID: router.query.course,
+					SectionID: currentLession.SectionID,
+					LessonID: currentLession.ID,
+					IsSeen: videoStudy.current.duration / 2 < videoStudy.current.currentTime ? 'True' : 'False', // True - False: đánh dấu đã xem video
+					TimeWatched: videoStudy.current.currentTime // (giây) Thời gian đã xem video
+				};
+				try {
+					const res = await VideoCourseOfStudent.UpdateSeenAndTimeWatchedVideo(temp);
+				} catch (error) {}
+			}
+		}
+	};
 
 	//GET DATA
 	const getVideos = async () => {
@@ -226,8 +276,6 @@ const VideoLearning = () => {
 		videoStudy.current.pause();
 	};
 
-	const fakeVideos = 'http://lmsv2.monamedia.net/Upload/NewsFeed/09caac49-d844-4b74-9025-ae4d03e03d82.mp4';
-
 	// RENDER
 	return (
 		<div className="container-fluid p-0">
@@ -237,11 +285,18 @@ const VideoLearning = () => {
 					<div className="wrap-video pl-3">
 						<div ref={ref} className="wrap-video__video">
 							<div className="box-video" ref={boxVideo}>
-								<video src={currentVideo} ref={videoStudy} controls>
-									<track default kind="captions" />
-								</video>
+								{currentLession.Type === 0 ? (
+									<video src={currentVideo} ref={videoStudy} controls>
+										<track default kind="captions" />
+									</video>
+								) : (
+									<iframe
+										src="http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html"
+										title="cc"
+									></iframe>
+								)}
 
-								{data.length > 0
+								{data.length > 0 && currentLession.Type === 0
 									? data.map((item) => (
 											<a
 												href="/#"
@@ -299,7 +354,11 @@ const VideoLearning = () => {
 
 								setCurrentLession(p);
 								getListNote(p.ID);
-								setCurrentVideo(p.LinkVideo);
+
+								const temp =
+									'http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html';
+
+								p.Type === 0 ? setCurrentVideo(p.LinkVideo) : setCurrentVideo(temp);
 							}}
 							videos={videos}
 						/>
