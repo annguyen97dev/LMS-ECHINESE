@@ -1,37 +1,37 @@
-import {Card, Menu, Spin} from 'antd';
+import { Card, Menu, Spin } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {Folder} from 'react-feather';
-import {documentApi} from '~/apiBase/course-detail/document';
-import {documentCategoryApi} from '~/apiBase/course-detail/document-category';
+import React, { useEffect, useState } from 'react';
+import { Folder } from 'react-feather';
+import { documentApi } from '~/apiBase/course-detail/document';
+import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
 import FileExtension from '~/components/Global/CourseList/CourseListDetail/Document/FileExtension';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 DocumentCourse.propTypes = {
-	courseID: PropTypes.number,
+	courseID: PropTypes.number
 };
 DocumentCourse.defaultProps = {
-	courseID: 0,
+	courseID: 0
 };
 
 function DocumentCourse(props) {
-	const {courseID} = props;
+	const { courseID } = props;
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [categoryDoc, setCategoryDoc] = useState<ICategoryDoc[]>([]);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [documentList, setDocumentList] = useState<IDocument[]>([]);
 
 	const getDataCategoryDoc = async () => {
 		try {
 			setIsLoading({
 				type: 'FETCH_CATEGORY',
-				status: true,
+				status: true
 			});
 			const res = await documentCategoryApi.getAll({
-				CourseID: courseID,
+				CourseID: courseID
 			});
 			if (res.status === 200) {
 				setCategoryDoc(res.data.data);
@@ -44,7 +44,7 @@ function DocumentCourse(props) {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_CATEGORY',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -57,10 +57,10 @@ function DocumentCourse(props) {
 		try {
 			setIsLoading({
 				type: 'FETCH_DOCUMENT',
-				status: true,
+				status: true
 			});
 			const res = await documentApi.getAll({
-				CategoryID: id,
+				CategoryID: id
 			});
 			if (res.status === 200) {
 				setDocumentList(res.data.data);
@@ -73,7 +73,7 @@ function DocumentCourse(props) {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_DOCUMENT',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -81,9 +81,7 @@ function DocumentCourse(props) {
 	return (
 		<div>
 			<Card title="Tài liệu">
-				<Spin
-					spinning={isLoading.type === 'FETCH_CATEGORY' && isLoading.status}
-				>
+				<Spin spinning={isLoading.type === 'FETCH_CATEGORY' && isLoading.status}>
 					<div className="row">
 						<div className="col-3">
 							<div className="pb-3 font-weight-black">Giáo trình</div>
@@ -102,10 +100,7 @@ function DocumentCourse(props) {
 							</Menu>
 						</div>
 						<div className="col-9">
-							<FileExtension
-								isLoading={isLoading}
-								documentList={documentList}
-							/>
+							<FileExtension isLoading={isLoading} documentList={documentList} />
 						</div>
 					</div>
 				</Spin>
