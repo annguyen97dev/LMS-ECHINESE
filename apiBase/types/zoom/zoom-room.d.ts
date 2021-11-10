@@ -14,8 +14,6 @@ type IZoomRoom = IBaseApi<{
 	ZoomRoomPass: string;
 	IsRoomStart: boolean;
 	ZoomTeacherAPIID: number;
-	ZoomRoomID: string;
-	ZoomRoomPass: string;
 	Signature: string;
 	ApiKey: string;
 }>;

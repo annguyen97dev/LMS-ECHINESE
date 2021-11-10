@@ -40,6 +40,7 @@ type ICourseDetail = IBaseApi<{
 	AcademicUID: number;
 	TeacherLeaderUID: number;
 	TypeCourse: number;
+	SalaryOfLesson: number;
 }>;
 
 // CREATE COURSE ONLINE

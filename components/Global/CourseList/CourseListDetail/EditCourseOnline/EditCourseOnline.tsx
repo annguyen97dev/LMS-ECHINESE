@@ -75,17 +75,18 @@ const EditCourseOnline = (props) => {
 		const newStudyTimeList = [...optionListForADay.optionStudyTimeList];
 		let rs = false;
 		const studyTimeInDay = newStudyTimeList.filter((s) => scheduleList.map((sch) => sch.StudyTimeID).includes(+s.value));
-		// COMPARE STUDY TIME RETURN TRUE IF IN VALID
+		// COMPARE STUDY TIME IF ITS OVER FLOW  RETURN TRUE IF IN VALID
 		for (let i = 0; i < studyTimeInDay.length; i++) {
 			const timeObjBase = studyTimeInDay[i];
 			if (!timeObjBase.value) continue;
 			const s1 = +timeObjBase.options.TimeStart.replace(':', '');
 			const e1 = +timeObjBase.options.TimeEnd.replace(':', '');
-			studyTimeInDay.filter((st) => {
-				if (!st.value) return;
-				const s2 = +st.options.TimeStart.replace(':', '');
-				const e2 = +st.options.TimeEnd.replace(':', '');
-				if (timeObjBase.value === st.value) {
+			for (let z = 0; z < studyTimeInDay.length; z++) {
+				const otherTime = studyTimeInDay[z];
+				if (!otherTime.value) return;
+				const s2 = +otherTime.options.TimeStart.replace(':', '');
+				const e2 = +otherTime.options.TimeEnd.replace(':', '');
+				if (timeObjBase.value === otherTime.value) {
 					return;
 				}
 				if (
@@ -96,7 +97,7 @@ const EditCourseOnline = (props) => {
 				) {
 					rs = true;
 				}
-			});
+			}
 		}
 		return rs;
 	};
