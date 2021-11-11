@@ -13,6 +13,9 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import TestCustomerPoint from '~/components/Global/Customer/Service/TestCustomerPoint';
 import ExamAppointmentPoint from '../../ExamAppointment/ExamAppointmentPoint';
+import { CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
+import Link from 'next/link';
 
 let pageIndex = 1;
 
@@ -163,6 +166,10 @@ export default function ServiceAppointmentTest(props) {
 				{
 					title: 'Đã đăng kí khóa học',
 					value: 3
+				},
+				{
+					title: 'Đã hủy hẹn test',
+					value: 4
 				}
 			],
 			value: null
@@ -537,6 +544,10 @@ export default function ServiceAppointmentTest(props) {
 		);
 	};
 
+	const onUpdateData = () => {
+		setTodoApi({ ...todoApi });
+	};
+
 	const columns = [
 		{
 			title: 'Học viên',
@@ -545,7 +556,14 @@ export default function ServiceAppointmentTest(props) {
 			render: (a) => <p className="font-weight-blue">{a}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
-
+		// {
+		// 	title: 'Email',
+		// 	dataIndex: 'Email'
+		// },
+		{
+			title: 'SDT',
+			dataIndex: 'Mobile'
+		},
 		{
 			title: 'Trung tâm',
 			dataIndex: 'BranchName',
@@ -556,9 +574,15 @@ export default function ServiceAppointmentTest(props) {
 			title: 'Đề test',
 			dataIndex: 'ExamTopicnName',
 			render: (text, data: any) => (
-				<a href="" className="font-weight-black" onClick={(e) => moveToTest(e, data)}>
-					{text}
-				</a>
+				<Link
+					href={{
+						pathname: `/question-bank/exam-list/exam-detail/${data.ExamTopicID}`
+					}}
+				>
+					<a href="" className="font-weight-link">
+						{text}
+					</a>
+				</Link>
 			)
 		},
 		{
@@ -594,12 +618,16 @@ export default function ServiceAppointmentTest(props) {
 					value: 1
 				},
 				{
-					text: 'Chưa đăng kí',
+					text: 'Chờ đăng kí khóa học',
 					value: 2
 				},
 				{
-					text: 'Đã đăng kí',
+					text: 'Đã đăng kí khóa học',
 					value: 3
+				},
+				{
+					text: 'Đã hủy hẹn test',
+					value: 4
 				}
 			],
 			onFilter: (value, record) => record.Status === value,
@@ -608,8 +636,9 @@ export default function ServiceAppointmentTest(props) {
 					<>
 						{status == 0 && <span className="tag red">Chưa test</span>}
 						{status == 1 && <span className="tag blue">Đang chấm bài</span>}
-						{status == 2 && <span className="tag yellow">Chưa đăng kí</span>}
+						{status == 2 && <span className="tag yellow">Chờ đăng kí khóa học</span>}
 						{status == 3 && <span className="tag green">Đã đăng kí </span>}
+						{status == 4 && <span className="tag gray">Đã hủy hẹn test</span>}
 						{/* {apmReg == 1 ? (
               <span className="tag blue">Chưa đăng kí khóa học</span>
             ) : apmReg == 2 ? (
@@ -636,6 +665,7 @@ export default function ServiceAppointmentTest(props) {
 						dataExam={dataExam}
 					/>
 					<TestAddExam dataExam={dataExam} dataRow={data} onFetchData={() => setTodoApi({ ...todoApi })} />
+					{data.Status == 0 && <CancelTest onUpdateData={onUpdateData} dataRow={data} />}
 				</div>
 			)
 		}
@@ -681,3 +711,60 @@ export default function ServiceAppointmentTest(props) {
 	);
 }
 ServiceAppointmentTest.layout = LayoutBase;
+
+const CancelTest = (props) => {
+	const { onUpdateData, dataRow } = props;
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const { showNoti } = useWrap();
+	const [loading, setLoading] = useState(false);
+
+	const showModal = () => {
+		setIsModalVisible(true);
+	};
+
+	const handleOk = async () => {
+		let dataSubmit = {
+			ID: dataRow.ID,
+			Status: 4
+		};
+		setLoading(true);
+
+		try {
+			let res = await testCustomerApi.update(dataSubmit);
+			if (res.status == 200) {
+				showNoti('success', 'Hủy lịch hẹn test thành công!');
+				setIsModalVisible(false);
+				onUpdateData && onUpdateData();
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleCancel = () => {
+		setIsModalVisible(false);
+	};
+
+	return (
+		<>
+			<button className="btn btn-icon delete" onClick={showModal}>
+				<CloseOutlined />
+			</button>
+			<Modal
+				title={
+					<button className="btn btn-icon delete">
+						<QuestionCircleOutlined />
+					</button>
+				}
+				visible={isModalVisible}
+				onOk={handleOk}
+				onCancel={handleCancel}
+				okButtonProps={{ loading: loading }}
+			>
+				<p style={{ fontWeight: 500 }}>Bạn muốn hủy lịch hẹn test của học viên này?</p>
+			</Modal>
+		</>
+	);
+};

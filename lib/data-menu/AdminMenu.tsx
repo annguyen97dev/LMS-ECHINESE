@@ -208,6 +208,13 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/customer/student/student-list',
+						Route: '/customer/student/student-list',
+						Text: 'Dữ liệu học viên',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/customer/student/student-appointment',
 						Route: '/customer/student/student-appointment',
 						Text: 'HV chờ xếp lớp',
@@ -241,13 +248,7 @@ export const AdminChildMenu = [
 						Text: 'HV chuyển giao',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/student-list',
-						Route: '/customer/student/student-list',
-						Text: 'Dữ liệu học viên',
-						Icon: ''
-					},
+
 					{
 						ItemType: 'single',
 						Key: '/package/package-payment',
@@ -653,7 +654,14 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/package/package-set-result',
 						Route: '/package/package-set-result',
-						Text: 'Kết quả thi của học viên',
+						Text: 'Thi cử',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/package/course-exam',
+						Route: '/package/course-exam',
+						Text: 'Kiểm tra',
 						Icon: ''
 					},
 					{
@@ -662,21 +670,21 @@ export const AdminChildMenu = [
 						Route: '/package/pay-fix-list',
 						Text: 'Danh sách mua lượt chấm',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/package/package-student',
-						Route: '/package/package-student',
-						Text: 'Danh sách bộ đề học viên',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/package/package-store',
-						Route: '/package/package-store',
-						Text: 'Cửa hàng',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/package-student',
+					// 	Route: '/package/package-student',
+					// 	Text: 'Danh sách bộ đề học viên',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/package-store',
+					// 	Route: '/package/package-store',
+					// 	Text: 'Cửa hàng',
+					// 	Icon: ''
+					// }
 				]
 			},
 			{
@@ -713,14 +721,14 @@ export const AdminChildMenu = [
 				ItemType: 'single',
 				Key: '/question-bank/question-list',
 				Route: '/question-bank/question-list',
-				Text: 'Tạo câu hỏi & trả lời',
+				Text: 'Danh sách câu hỏi',
 				Icon: ''
 			},
 			{
 				ItemType: 'single',
 				Key: '/question-bank/exam-list',
 				Route: '/question-bank/exam-list',
-				Text: 'Tạo đề thi',
+				Text: 'Danh sách đề thi',
 				Icon: ''
 			}
 		]

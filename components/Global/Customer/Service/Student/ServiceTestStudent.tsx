@@ -8,7 +8,6 @@ import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
 
 import LayoutBase from '~/components/LayoutBase';
-import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 
 import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
@@ -101,6 +100,7 @@ export default function ServiceTestStudent(props) {
 	const [dataExam, setDataExam] = useState<IExamTopic[]>([]);
 	const [currentDate, setCurrentDate] = useState<any>(null);
 	const [isOpenNoti, setisOpenNoti] = useState(false);
+	const [contentNoti, setContentNoti] = useState('');
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ITestCustomer[]>([]);
@@ -149,12 +149,20 @@ export default function ServiceTestStudent(props) {
 					value: 0
 				},
 				{
-					title: 'Chưa đăng kí khóa học',
+					title: 'Đang chấm bài test',
 					value: 1
 				},
 				{
-					title: 'Đã đăng kí khóa học',
+					title: 'Chưa đăng kí khóa học',
 					value: 2
+				},
+				{
+					title: 'Đã đăng kí khóa học',
+					value: 3
+				},
+				{
+					title: 'Đã hủy hẹn test',
+					value: 4
 				}
 			],
 			value: null
@@ -437,6 +445,10 @@ export default function ServiceTestStudent(props) {
 	}, [todoApi]);
 
 	useEffect(() => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true
+		});
 		if (userInformation) {
 			!showfirst && (setTodoApi({ ...todoApi, UserInformationID: userInformation.UserInformationID }), setShowFirst(true));
 		}
@@ -472,15 +484,25 @@ export default function ServiceTestStudent(props) {
 		console.log('Test DAte: ', testDate);
 		if (new Date(currentDate) < testDate) {
 			setisOpenNoti(true);
+			setContentNoti('Chưa đến giờ làm bài test');
 		} else {
-			router.push({
-				pathname: '/doing-test/',
-				query: {
-					examID: data.ExamTopicID,
-					packageDetailID: data.ID,
-					type: 'test' // Kiểm tra đầu vào
+			if (data.Status == 0) {
+				router.push({
+					pathname: '/doing-test/',
+					query: {
+						examID: data.ExamTopicID,
+						packageDetailID: data.ID,
+						type: 'test' // Kiểm tra đầu vào
+					}
+				});
+			} else {
+				setisOpenNoti(true);
+				if (data.Status !== 4) {
+					setContentNoti('Bạn đã làm bài test này rồi!');
+				} else {
+					setContentNoti('Lịch hẹn test của bạn đã bị hủy');
 				}
-			});
+			}
 		}
 	};
 
@@ -533,10 +555,11 @@ export default function ServiceTestStudent(props) {
 		{
 			title: 'Đề test',
 			dataIndex: 'ExamTopicnName',
+
 			render: (text, data: any) =>
 				data.ExamTopicID !== 0 && (
 					<Tooltip title="Làm đề test">
-						<a href="" className="font-weight-black d-flex align-items-center" onClick={(e) => moveToTest(e, data)}>
+						<a href="" className="font-weight-link d-flex align-items-center" onClick={(e) => moveToTest(e, data)}>
 							<button className="btn btn-icon edit mr-2">
 								<EditOutlined />
 							</button>
@@ -562,12 +585,16 @@ export default function ServiceTestStudent(props) {
 					value: 0
 				},
 				{
-					text: 'Chưa đăng kí',
+					text: 'Đang chấm bài',
 					value: 1
 				},
 				{
-					text: 'Đã đăng kí',
+					text: 'Chờ đăng kí khóa học',
 					value: 2
+				},
+				{
+					text: 'Đã đăng kí khóa học',
+					value: 3
 				}
 			],
 			onFilter: (value, record) => record.Status === value,
@@ -575,15 +602,10 @@ export default function ServiceTestStudent(props) {
 				return (
 					<>
 						{status == 0 && <span className="tag red">Chưa test</span>}
-						{status == 1 && <span className="tag yellow">Chưa đăng kí</span>}
-						{status == 2 && <span className="tag green">Đã đăng kí </span>}
-						{/* {apmReg == 1 ? (
-              <span className="tag blue">Chưa đăng kí khóa học</span>
-            ) : apmReg == 2 ? (
-              <span className="tag green">Đã đăng kí khóa học</span>
-            ) : (
-              <span className="tag red">Chưa test</span>
-            )} */}
+						{status == 1 && <span className="tag blue">Đang chấm bài</span>}
+						{status == 2 && <span className="tag yellow">Chờ đăng kí khóa học</span>}
+						{status == 3 && <span className="tag green">Đã đăng kí khóa học</span>}
+						{status == 4 && <span className="tag gray">Đã hủy hẹn test</span>}
 					</>
 				);
 			}
@@ -617,19 +639,14 @@ export default function ServiceTestStudent(props) {
 
 	return (
 		<>
-			<NotiModal
-				isOpen={isOpenNoti}
-				isCancel={() => setisOpenNoti(false)}
-				isOk={() => setisOpenNoti(false)}
-				content="Chưa đến giờ làm đề test"
-			/>
+			<NotiModal isOpen={isOpenNoti} isCancel={() => setisOpenNoti(false)} isOk={() => setisOpenNoti(false)} content={contentNoti} />
 			<ExpandTable
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				loading={isLoading}
 				addClass="basic-header"
-				TitlePage="DS khách hẹn test"
+				TitlePage="Thông tin hẹn test"
 				// TitleCard={
 				//   <StudentAdviseForm
 				//     listData={listDataForm}

@@ -96,7 +96,7 @@ const Programs = () => {
 				setDataLevel(res.data.listLevel),
 				showNoti('success', res.data.message));
 
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu') && setDataSource([]);
+			res.status == 204 && setDataSource([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
