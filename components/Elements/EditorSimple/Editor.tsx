@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
 import ReactSummernote from 'react-summernote';
 import 'react-summernote/dist/react-summernote.css'; // import styles
 import 'react-summernote/lang/summernote-ru-RU'; // you can import any other locale
@@ -12,11 +12,12 @@ import 'bootstrap/js/src/dropdown';
 import 'bootstrap/js/src/tooltip';
 import { format } from 'path';
 import { data } from '~/lib/invoice/data';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 type dataTranslate = Array<{
 	noteID: number;
-	textSelect: '';
-	textTranslate: '';
+	textSelect: string;
+	textTranslate: string;
 }>;
 
 const EditorSummernote = (props) => {
@@ -27,6 +28,10 @@ const EditorSummernote = (props) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [dataTranslate, setDataTranslate] = useState<dataTranslate>([]);
 	const [isAddTranslate, setIsAddTranslate] = useState(false);
+	const [reloadContent, setReloadContent] = useState(false);
+	let inputTranslate = useRef(null);
+
+	console.log('Data translate: ', dataTranslate);
 
 	const showModal = (type) => {
 		setIsModalVisible(true);
@@ -50,6 +55,8 @@ const EditorSummernote = (props) => {
 
 	const handleCancel = () => {
 		setIsModalVisible(false);
+		setTextSelect(null);
+		setTextTranslate(null);
 	};
 
 	// GET TRANSLATE TEXT
@@ -67,7 +74,7 @@ const EditorSummernote = (props) => {
 
 	// HANDLE FIX TRANSLATE
 	const handleFixTranslate = () => {
-		let elementNote = document.querySelectorAll('.wrap-editor .text-note');
+		let elementNote = document.querySelectorAll('#editor-element .note-editable .text-note-of-translate');
 		elementNote.forEach((item, index) => {
 			let noteID = parseInt(item.getAttribute('data-note'));
 			let textItem = item.innerHTML;
@@ -75,15 +82,18 @@ const EditorSummernote = (props) => {
 			let indexData = dataTranslate.findIndex((e) => e.noteID === noteID);
 			if (dataTranslate[indexData].textTranslate !== textItem) {
 				item.innerHTML = dataTranslate[indexData].textTranslate;
+				item.setAttribute('title', dataTranslate[indexData].textTranslate);
 			}
 		});
+		setReloadContent(true);
 	};
 
 	// HANDLE ADD TRANSLATE
 	const handleAddTranslate = () => {
-		let elementP = document.querySelectorAll('.wrap-editor p');
+		let elementEditor = document.querySelectorAll('#editor-element .note-editable');
+		let elementP = document.querySelectorAll('#editor-element .note-editable p');
 
-		elementP.forEach((item) => {
+		const onAdd = (item) => {
 			let innerText = item.innerHTML;
 			if (innerText.includes(textSelect)) {
 				let noteID = null;
@@ -95,7 +105,7 @@ const EditorSummernote = (props) => {
 
 				item.innerHTML = innerText.replace(
 					textSelect,
-					`<input class="input-prevent"/><span class="text-normal">${textSelect}<span data-note="${noteID}" class="text-note">${textTranslate}</span></span><input class="input-prevent"/>`
+					`<input class="input-prevent-translate"/><span title="${textTranslate}" class="text-normal-of-translate">${textSelect}<span data-note="${noteID}" class="text-note-of-translate">${textTranslate}</span></span><input class="input-prevent-translate"/>`
 				);
 
 				dataTranslate.push({
@@ -105,14 +115,27 @@ const EditorSummernote = (props) => {
 				});
 				setDataTranslate([...dataTranslate]);
 			}
-		});
+		};
+
+		if (elementP.length > 0) {
+			elementP.forEach((item) => {
+				onAdd(item);
+			});
+		} else {
+			onAdd(elementEditor[0]);
+		}
+
 		setTextTranslate(null);
 		setTextSelect(null);
+		setReloadContent(true);
 	};
 
 	const onFixTextTranslate = (e, noteID) => {
 		let text = e.target.value;
 		let index = dataTranslate.findIndex((item) => item.noteID == noteID);
+
+		console.log('Index: ', index);
+
 		dataTranslate[index].textTranslate = text;
 		setDataTranslate([...dataTranslate]);
 	};
@@ -128,26 +151,12 @@ const EditorSummernote = (props) => {
 				setTextSelect(textSelect);
 			}
 		});
-
-		editorElement.addEventListener('click', (e) => {
-			console.log('TEST: ', e);
-		});
 	});
-
-	// ON FOCUS
-	const onFocus = (event) => {
-		console.log('Event: ', event);
-	};
 
 	// ON CHANGE
 	const onChange = (content) => {
 		getDataEditor(content);
 	};
-
-	// HANDLE RESET
-	useEffect(() => {
-		isReset && (ReactSummernote.reset(), setValueEditor(''));
-	}, [isReset]);
 
 	// UPLOAD IMAGES
 	const onImageUpload = async (fileList) => {
@@ -162,12 +171,61 @@ const EditorSummernote = (props) => {
 		}
 	};
 
+	useLayoutEffect(() => {
+		if (isModalVisible) {
+			inputTranslate.current && inputTranslate.current.select();
+		}
+	}, [isModalVisible]);
+
+	useEffect(() => {
+		if (reloadContent) {
+			let elementEditor = document.querySelectorAll('#editor-element .note-editable');
+			setValueEditor(elementEditor[0].innerHTML);
+			getDataEditor(elementEditor[0].innerHTML);
+			setReloadContent(false);
+		}
+	}, [reloadContent]);
+
+	// HANDLE RESET
+	useEffect(() => {
+		isReset && (ReactSummernote.reset(), setValueEditor(''));
+	}, [isReset]);
+
+	useEffect(() => {
+		let elementNote = document.querySelectorAll('#editor-element .note-editable .text-normal-of-translate');
+
+		console.log('Element Note: ', elementNote);
+
+		if (elementNote.length > 0) {
+			elementNote.forEach((item) => {
+				//@ts-ignore
+				let noteID = item.lastChild.attributes[0].nodeValue;
+				let textSelect = item.firstChild.nodeValue;
+				let textTranslate = item.lastChild.childNodes[0].nodeValue;
+				dataTranslate.push({
+					noteID: parseInt(noteID),
+					textSelect: textSelect,
+					textTranslate: textTranslate
+				});
+			});
+			setDataTranslate([...dataTranslate]);
+		}
+	}, []);
+
 	return (
 		<>
 			<Modal title="Phiên âm" visible={isModalVisible} okText="Lưu" cancelText="Hủy" onOk={handleOk} onCancel={handleCancel}>
 				{isAddTranslate ? (
 					textSelect ? (
-						<Input className="style-input" value={textTranslate} onChange={onChange_GetTranslateText} onKeyDown={onKeyDown} />
+						<Input
+							allowClear
+							id="input-translate"
+							className="style-input"
+							value={textTranslate}
+							onChange={onChange_GetTranslateText}
+							onKeyDown={onKeyDown}
+							ref={inputTranslate}
+						/>
 					) : (
 						<p style={{ fontWeight: 500 }}>Vui lòng chọn nội dung cần phiên âm</p>
 					)
@@ -180,7 +238,7 @@ const EditorSummernote = (props) => {
 							</thead>
 							<tbody>
 								{dataTranslate.map((item, index) => (
-									<tr>
+									<tr key={index}>
 										<td>{item.textSelect}</td>
 										<td className="text-center">
 											<input
@@ -189,6 +247,12 @@ const EditorSummernote = (props) => {
 												value={item.textTranslate}
 												onChange={(e) => {
 													onFixTextTranslate(e, item.noteID);
+												}}
+												onKeyDown={(e) => {
+													if (e.key === 'Enter') {
+														handleFixTranslate();
+														setIsModalVisible(false);
+													}
 												}}
 											/>
 										</td>
@@ -200,13 +264,14 @@ const EditorSummernote = (props) => {
 				)}
 			</Modal>
 			<div className="wrap-editor" id="editor-element">
-				<button className="btn-editor" onClick={() => showModal('add')}>
-					Phiên âm
+				<button className="btn-editor d-flex align-items-center" onClick={() => showModal('add')}>
+					<PlusOutlined className="mr-2" /> Thêm Phiên âm
 				</button>
-				<button className="btn-editor fix-translate" onClick={() => showModal('fix')}>
-					Sửa phiên âm
+				<button className="btn-editor fix-translate d-flex align-items-center" onClick={() => showModal('fix')}>
+					<EditOutlined className="mr-2" /> Sửa phiên âm
 				</button>
 				<ReactSummernote
+					value={valueEditor}
 					children={ReactHtmlParser(valueEditor)}
 					options={{
 						lang: 'vn',
@@ -224,7 +289,6 @@ const EditorSummernote = (props) => {
 					}}
 					onChange={(content) => onChange(content)}
 					onImageUpload={onImageUpload}
-					onFocus={onFocus}
 				/>
 			</div>
 		</>
