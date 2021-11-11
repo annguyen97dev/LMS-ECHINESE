@@ -1,28 +1,116 @@
 .ck-editor__editable_inline {
-  min-height: 180px !important;
+	min-height: 180px !important;
 }
 
 .summernote-style {
-  // .note-editable {
-  //   height: 200px !important;
-  // }
-  .note-btn {
-    padding: 0.25rem 0.5rem !important;
-    font-size: 1rem !important;
-    line-height: 1.5;
-  }
-  .note-editor.note-frame.fullscreen {
-    background-color: $white;
-  }
-  // .btn i {
-  //   font-size: 1rem;
-  // }
+	// .note-editable {
+	//   height: 200px !important;
+	// }
+	.note-btn {
+		padding: 0.25rem 0.5rem !important;
+		font-size: 1rem !important;
+		line-height: 1.5;
+	}
+	.note-editor.note-frame.fullscreen {
+		background-color: $white;
+	}
+	// .btn i {
+	//   font-size: 1rem;
+	// }
 }
 .ant-form-item-has-error .note-editor.note-frame {
-  border-color: #ff4d4f;
+	border-color: #ff4d4f;
 }
 .note-modal {
-  h4.modal-title {
-    display: none;
-  }
+	h4.modal-title {
+		display: none;
+	}
+}
+
+span.text-normal-of-translate {
+	position: relative;
+	margin-top: 7px;
+	display: inline-block;
+
+	span.text-note-of-translate {
+		position: absolute;
+		font-size: 11px;
+		font-style: italic;
+		// left: 50%;
+		// transform: translateX(-50%);
+		top: -48%;
+		color: #606060;
+		width: 100%;
+		left: 0;
+		transform: inherit;
+		text-align: center;
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.input-prevent-translate {
+	width: 1px;
+	border: none;
+	background: transparent;
+	box-shadow: none;
+
+	&:focus {
+		border: none;
+		background: transparent;
+		box-shadow: none;
+		outline: 0;
+	}
+}
+
+.btn-editor {
+	&:focus {
+		outline: 0;
+	}
+	&.fix-translate {
+		right: 20%;
+	}
+}
+
+.detail-translate {
+	table {
+		width: 100%;
+		border-collapse: collapse;
+
+		th {
+			color: #5e5e5e;
+		}
+
+		th,
+		td {
+			border: 1px solid #ddd;
+			padding: 8px;
+		}
+
+		input.show-text-translate {
+			border: 1px solid #dddddd;
+			border-radius: 0.375rem;
+			width: 90%;
+			margin: auto;
+			padding: 5px;
+
+			&:focus {
+				outline: 2px solid #eaeaea;
+			}
+		}
+	}
+}
+
+.wrap-editor {
+	&.custom {
+		.add-translate {
+			right: 20%;
+		}
+		.fix-translate {
+			right: 44%;
+		}
+	}
 }

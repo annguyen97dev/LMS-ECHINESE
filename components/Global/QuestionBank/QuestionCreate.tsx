@@ -68,8 +68,6 @@ const QuestionCreate = (props) => {
 
 	// Phân loại dạng câu hỏi để trả ra danh sách
 	const returnQuestionType = () => {
-		// console.log("Type is: ", todoApi.Type);
-
 		switch (todoApi.Type) {
 			/** Quesion Single */
 			case 1:
@@ -372,14 +370,11 @@ const QuestionCreate = (props) => {
 		});
 	};
 
-	console.log('Question Data: ', questionData);
-
 	// PICK IS TEST
 	const pickIsTest = (checked) => {
 		if (!dataExam) {
 			setIsTest(checked);
 			if (checked) {
-				console.log('Chạy vô đây');
 				setQuestionData({
 					...questionData,
 					CurriculumID: 0
@@ -534,23 +529,19 @@ const QuestionCreate = (props) => {
 
 		// kiểm tra mới vào đã chọn đầy đủ 4 trường hay chưa rồi mới show danh sách dạng câu hỏi
 		if (!showTypeQuetion.status) {
-			console.log('YEAHHHH');
 			if (
 				questionData.ExerciseGroupID !== null &&
 				questionData.SkillID !== null &&
 				questionData.Level !== null &&
 				isOpenTypeQuestion == true
 			) {
-				console.log('Chạy 1');
 				if (isTest) {
 					setShowTypeQuestion({
 						...showTypeQuetion,
 						status: true
 					});
 				} else {
-					console.log('chạy 2');
 					if (questionData.CurriculumID !== null && questionData.CurriculumID !== 0) {
-						console.log('chạy 3');
 						setShowTypeQuestion({
 							...showTypeQuetion,
 							status: true
@@ -560,8 +551,6 @@ const QuestionCreate = (props) => {
 			}
 		}
 	};
-
-	console.log('Show type quesion: ', showTypeQuetion);
 
 	// ON ADD NEW DATA
 	const addDataGroup = (dataAdd) => {
@@ -575,8 +564,6 @@ const QuestionCreate = (props) => {
 	};
 
 	const onAddData = (dataAdd) => {
-		console.log('DATA add outside: ', dataAdd);
-
 		if (!isGroup.status) {
 			addDataSingle(dataAdd);
 		} else {
@@ -589,13 +576,6 @@ const QuestionCreate = (props) => {
 		questionData.Content = '';
 		setQuestionData({ ...questionData });
 	};
-
-	// console.log("DATA SOURCE: ", dataSource);
-	// console.log("DATA GROUP: ", dataGroup);
-
-	// ON EDIT DATA
-
-	// console.log("Data Exercise: ", dataExercise);
 
 	const editDataGroup = (dataEdit) => {
 		let index = dataGroup.findIndex((item) => item.ID == dataEdit.ID);
@@ -620,8 +600,6 @@ const QuestionCreate = (props) => {
 	};
 
 	const onEditData = (dataEdit) => {
-		console.log('DATA edit outside ', dataEdit);
-
 		if (!isGroup.status) {
 			// Nếu là dạng câu hỏi nhiều đáp án thì phải xóa nó đi
 			editDataSingle(dataEdit);
@@ -645,7 +623,6 @@ const QuestionCreate = (props) => {
 	};
 
 	const removeDataGroup = (dataRemove) => {
-		console.log('Data remove outside: ', dataRemove);
 		if (dataRemove.isDeleteExercise) {
 			setDataExercise(dataRemove);
 		} else {
@@ -684,9 +661,6 @@ const QuestionCreate = (props) => {
 		const offsetHeight = boxEl.current.offsetHeight;
 		const scrollTop = boxEl.current.scrollTop;
 
-		// console.log("Height: ", scrollHeight - offsetHeight);
-		// console.log("Scroll: ", scrollTop);
-
 		if (scrollTop > scrollHeight - offsetHeight - 40) {
 			if (todoApi.pageIndex < totalPageIndex) {
 				setLoadingQuestion(true);
@@ -700,8 +674,6 @@ const QuestionCreate = (props) => {
 			}
 		}
 	};
-
-	// console.log("DATA exercise: ", dataSource);
 
 	useEffect(() => {
 		getDataProgram(); // Lấy data chương trình
@@ -725,7 +697,6 @@ const QuestionCreate = (props) => {
 
 	useEffect(() => {
 		if (dataExam) {
-			console.log('Data exam: ', dataExam);
 			if (dataExam.Type == 1) {
 				setIsTest(true);
 				questionData.CurriculumID = 0;
