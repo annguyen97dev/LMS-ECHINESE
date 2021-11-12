@@ -1,43 +1,43 @@
-import {Card} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
-import {branchApi, courseApi, programApi, staffApi} from '~/apiBase';
+import { Card } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { branchApi, courseApi, programApi, staffApi } from '~/apiBase';
 import TitlePage from '~/components/Elements/TitlePage';
 import CourseListFilterForm from '~/components/Global/CourseList/CourseListFilterForm';
 import PowerList from '~/components/Global/CourseList/PowerList';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr } from '~/utils/functions';
 import CourseListUpdate from './CourseListUpdate';
 
 const statusList = [
 	{
 		title: 'Sắp diễn ra',
-		value: 0,
+		value: 0
 	},
 	{
 		title: 'Đang diễn ra',
-		value: 1,
+		value: 1
 	},
 	{
 		title: 'Đã đóng',
-		value: 2,
-	},
+		value: 2
+	}
 ];
 const CourseList = () => {
 	const [courseList, setCourseList] = useState<ICourse[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [optionListForFilter, setOptionListForFilter] = useState({
 		statusList,
 		branchList: [],
-		programList: [],
+		programList: []
 	});
 	const [optionListForUpdate, setOptionListForUpdate] = useState({
 		academicList: [],
-		teacherLeadList: [],
+		teacherLeadList: []
 	});
 	// FILTER
 	const listFieldInit = {
@@ -47,11 +47,11 @@ const CourseList = () => {
 		CourseName: '',
 		Status: null,
 		BranchID: null,
-		ProgramID: null,
+		ProgramID: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: 10
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	// PAGINATION
@@ -60,18 +60,18 @@ const CourseList = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -80,41 +80,26 @@ const CourseList = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			...obj,
+			...obj
 		});
 	};
 	// FETCH DATA FOR FILTER FORM
 	const fetchDataForFilterForm = async () => {
 		try {
-			const res = await Promise.all([
-				branchApi.getAll({pageSize: 99999, pageIndex: 1}),
-				programApi.getAll({selectAll: true}),
-			])
+			const res = await Promise.all([branchApi.getAll({ pageSize: 99999, pageIndex: 1 }), programApi.getAll({ selectAll: true })])
 				.then(([branchRes, programRes]) => {
 					const newOptionList = {
 						branchList: [],
-						programList: [],
+						programList: []
 					};
-					branchRes.status === 200 &&
-						(newOptionList.branchList = fmSelectArr(
-							branchRes.data.data,
-							'BranchName',
-							'ID'
-						));
-					programRes.status === 200 &&
-						(newOptionList.programList = fmSelectArr(
-							programRes.data.data,
-							'ProgramName',
-							'ID'
-						));
+					branchRes.status === 200 && (newOptionList.branchList = fmSelectArr(branchRes.data.data, 'BranchName', 'ID'));
+					programRes.status === 200 && (newOptionList.programList = fmSelectArr(programRes.data.data, 'ProgramName', 'ID'));
 					setOptionListForFilter({
 						...optionListForFilter,
-						...newOptionList,
+						...newOptionList
 					});
 				})
-				.catch((err) =>
-					console.log('fetchDataForFilterForm - PromiseAll:', err)
-				);
+				.catch((err) => console.log('fetchDataForFilterForm - PromiseAll:', err));
 		} catch (error) {
 			showNoti('danger', error.message);
 		}
@@ -126,7 +111,7 @@ const CourseList = () => {
 	const fetchScheduleList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			let res = await courseApi.getAll(filters);
@@ -143,7 +128,7 @@ const CourseList = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -155,50 +140,40 @@ const CourseList = () => {
 	const fetchDataForUpdateForm = async (BranchID) => {
 		setIsLoading({
 			type: 'FETCH_DATA',
-			status: true,
+			status: true
 		});
 		try {
 			const res = await Promise.all([
-				staffApi.getAll({RoleID: 7, BranchID: BranchID}),
-				staffApi.getAll({RoleID: 2, BranchID: BranchID}),
+				staffApi.getAll({ RoleID: 7, BranchID: BranchID }),
+				staffApi.getAll({ RoleID: 2, BranchID: BranchID })
 			])
 				.then(([academicRes, teacherLeadRes]) => {
 					const newOptionList = {
-						academicList: [{title: '---Trống---', value: 0}],
-						teacherLeadList: [{title: '---Trống---', value: 0}],
+						academicList: [{ title: '---Trống---', value: 0 }],
+						teacherLeadList: [{ title: '---Trống---', value: 0 }]
 					};
 					academicRes.status === 200 &&
 						(newOptionList.academicList = [
 							...newOptionList.academicList,
-							...fmSelectArr(
-								academicRes.data.data,
-								'FullNameUnicode',
-								'UserInformationID'
-							),
+							...fmSelectArr(academicRes.data.data, 'FullNameUnicode', 'UserInformationID')
 						]);
 					teacherLeadRes.status === 200 &&
 						(newOptionList.teacherLeadList = [
 							...newOptionList.teacherLeadList,
-							...fmSelectArr(
-								teacherLeadRes.data.data,
-								'FullNameUnicode',
-								'UserInformationID'
-							),
+							...fmSelectArr(teacherLeadRes.data.data, 'FullNameUnicode', 'UserInformationID')
 						]);
 					setOptionListForUpdate({
 						...optionListForUpdate,
-						...newOptionList,
+						...newOptionList
 					});
 				})
-				.catch((err) =>
-					console.log('fetchDataForFilterForm - PromiseAll:', err)
-				);
+				.catch((err) => console.log('fetchDataForFilterForm - PromiseAll:', err));
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'FETCH_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -206,11 +181,11 @@ const CourseList = () => {
 	const onUpdateCourse = async (obj) => {
 		setIsLoading({
 			type: 'UPDATE_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
-			const {BranchID, ...newObj} = obj;
+			const { BranchID, ...newObj } = obj;
 			res = await courseApi.update(newObj);
 			if (res.status === 200) {
 				fetchScheduleList();
@@ -223,7 +198,7 @@ const CourseList = () => {
 		} finally {
 			setIsLoading({
 				type: 'UPDATE_DATA',
-				status: false,
+				status: false
 			});
 		}
 		return res;

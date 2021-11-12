@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
-import { Select } from 'antd';
+import { Select, Tooltip } from 'antd';
 import { studentApi } from './../../../apiBase/customer/student/student-list';
 import { courseOfStudentApi } from '~/apiBase/customer/parents/courses-of-student';
 import { numberWithCommas } from '~/utils/functions';
@@ -16,7 +16,7 @@ const CourseOfStudent = () => {
 	const [studentID, setStudentID] = useState(null);
 	const [loading, setLoading] = useState({
 		type: '',
-		loading: false
+		status: false
 	});
 
 	const studentParams = {
@@ -53,44 +53,50 @@ const CourseOfStudent = () => {
 		{
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
+			width: '15%',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Trung tâm',
+			width: '10%',
 			dataIndex: 'BranchName',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Môn học',
 			dataIndex: 'CourseName',
+			width: '30%',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Giá khóa học',
 			dataIndex: 'Price',
+			width: '10%',
 			render: (price, record) => <p>{numberWithCommas(price)}</p>
 		},
 		{
-			title: 'Kết quả kiểm tra',
+			title: 'Kết quả ',
 			dataIndex: 'Examresult',
-			render: (price, record) => <p>{price}</p>
+			width: '10%'
 		},
 		{
 			title: 'Ghi chú',
 			dataIndex: 'Note',
+			width: '15%',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Cam kết',
 			dataIndex: 'Commitment',
+			width: '10%',
 			render: (price, record) => <p>{price}</p>
 		}
 	];
 
 	const getStudents = async () => {
 		setLoading({
-			type: 'GET_STUDENT',
-			loading: true
+			type: 'GET_ALL',
+			status: true
 		});
 		try {
 			let res = await studentApi.getAll(studentParams);
@@ -106,16 +112,16 @@ const CourseOfStudent = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_STUDENT',
-				loading: false
+				type: 'GET_ALL',
+				status: false
 			});
 		}
 	};
 
 	const getCoursesOfStudent = async () => {
 		setLoading({
-			type: 'GET_COURSES',
-			loading: true
+			type: 'GET_ALL',
+			status: true
 		});
 		try {
 			let res = await courseOfStudentApi.getAll(todoApi);
@@ -129,8 +135,8 @@ const CourseOfStudent = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_COURSES',
-				loading: false
+				type: 'GET_ALL',
+				status: false
 			});
 		}
 	};

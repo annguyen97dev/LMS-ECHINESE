@@ -16,7 +16,7 @@ const ScheduleOfStudent = () => {
 	const [studentID, setStudentID] = useState(null);
 	const [loading, setLoading] = useState({
 		type: '',
-		loading: false
+		status: false
 	});
 
 	const studentParams = {
@@ -42,41 +42,49 @@ const ScheduleOfStudent = () => {
 		{
 			title: 'Tên môn học',
 			dataIndex: 'SubjectName',
+			width: 100,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Tiêu đề',
 			dataIndex: 'Title',
+			width: 150,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Trung tâm',
 			dataIndex: 'BranchName',
+			width: 150,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Thời gian bắt đầu',
 			dataIndex: 'StartTime',
+			width: 150,
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Thời gian kết thúc',
 			dataIndex: 'EndTime',
+			width: 150,
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Tên phòng',
 			dataIndex: 'RoomName',
+			width: 150,
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Zoom ID',
 			dataIndex: 'ZoomRoomID',
+			width: 150,
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Mật khẩu Zoom',
 			dataIndex: 'ZoomRoomPass',
+			width: 150,
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		}
 	];
@@ -88,7 +96,7 @@ const ScheduleOfStudent = () => {
 	const getStudents = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await studentApi.getAll(studentParams);
@@ -104,7 +112,7 @@ const ScheduleOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -112,7 +120,7 @@ const ScheduleOfStudent = () => {
 	const getStudentSchedule = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 
 		try {
@@ -127,7 +135,7 @@ const ScheduleOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -159,7 +167,7 @@ const ScheduleOfStudent = () => {
 				currentPage={currentPage}
 				totalPage={totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
-				loading={loading.loading}
+				loading={loading}
 				addClass="basic-header"
 				columns={columns}
 				dataSource={dataSource}

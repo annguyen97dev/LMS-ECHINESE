@@ -21,9 +21,9 @@ const ScoreOfStudent = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [studentID, setStudentID] = useState(null);
 	const [typeBtn, setTypeBtn] = useState(1);
-	const [loading, setLoading] = useState({
+	const [isLoading, setLoading] = useState({
 		type: '',
-		loading: false
+		status: false
 	});
 
 	const studentParams = {
@@ -270,26 +270,31 @@ const ScoreOfStudent = () => {
 	const columnsAppointment = [
 		{
 			title: 'Học viên',
+			width: 150,
 			dataIndex: 'FullNameUnicode',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Trung tâm',
+			width: 150,
 			dataIndex: 'TeacherName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Cố vấn',
+			width: 150,
 			dataIndex: 'CounselorsName',
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Học phí tối đa',
+			width: 200,
 			dataIndex: 'MaxTuitionOfStudent',
 			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY, h:mm:ss a')}</p>
 		},
 		{
 			title: 'Trạng thái',
+			width: 150,
 			dataIndex: 'StatusName',
 			render: (price, record) => <p>{price}</p>
 		}
@@ -298,31 +303,37 @@ const ScoreOfStudent = () => {
 	const columnsCourseExam = [
 		{
 			title: 'Học viên',
+			width: 150,
 			dataIndex: 'FullNameUnicode',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Tên môn học',
+			width: 650,
 			dataIndex: 'CourseName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Bài học',
+			width: 100,
 			dataIndex: 'Lesson',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Nội dung bài học',
+			width: 200,
 			dataIndex: 'LessonDetailContent',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Giáo viên',
+			width: 200,
 			dataIndex: 'TeacherName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Loại',
+			width: 150,
 			dataIndex: 'TypeName',
 			render: (price, record) => <p>{price}</p>
 		}
@@ -331,16 +342,19 @@ const ScoreOfStudent = () => {
 	const columnsSetPakege = [
 		{
 			title: 'Học viên',
+			width: 760,
 			dataIndex: 'StudentName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Cấp độ gói bài',
+			width: 340,
 			dataIndex: 'SetPackageLevel',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Số học sinh đã chấm',
+			width: 340,
 			dataIndex: 'AmountFixOfStudent',
 			render: (price, record) => <p>{price}</p>
 		}
@@ -354,7 +368,7 @@ const ScoreOfStudent = () => {
 	const getStudents = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await studentApi.getAll(studentParams);
@@ -370,7 +384,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -378,7 +392,7 @@ const ScoreOfStudent = () => {
 	const getScoreAppointment = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await scoreOfStudentApi.getAppointment(todoApi);
@@ -393,7 +407,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -401,7 +415,7 @@ const ScoreOfStudent = () => {
 	const getScoreExamResult = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await scoreOfStudentApi.getCourseExam(todoApi);
@@ -416,7 +430,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -424,7 +438,7 @@ const ScoreOfStudent = () => {
 	const getScoreSetPakage = async () => {
 		setLoading({
 			type: 'GET_ALL',
-			loading: true
+			status: true
 		});
 		try {
 			let res = await scoreOfStudentApi.getSetPakage(todoPakageApi);
@@ -439,7 +453,7 @@ const ScoreOfStudent = () => {
 		} finally {
 			setLoading({
 				type: 'GET_ALL',
-				loading: false
+				status: false
 			});
 		}
 	};
@@ -482,7 +496,8 @@ const ScoreOfStudent = () => {
 				currentPage={currentPage}
 				totalPage={totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
-				loading={loading}
+				// loading={loading}
+				loading={isLoading}
 				addClass="basic-header"
 				columns={(typeBtn == 1 && columnsAppointment) || (typeBtn == 2 && columnsCourseExam) || (typeBtn == 3 && columnsSetPakege)}
 				dataSource={(typeBtn == 1 && dataAppointment) || (typeBtn == 2 && dataExam) || (typeBtn == 3 && dataSetPakage)}

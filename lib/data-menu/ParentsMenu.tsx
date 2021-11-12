@@ -23,21 +23,21 @@ export const ParentsChildMenu = [
 			},
 			{
 				TypeItem: 'single',
-				Key: '/parents',
-				Route: '/parents/course-of-student/',
+				Key: '/parents/course-of-student',
+				Route: '/parents/course-of-student',
 				Icon: '',
 				Text: 'Các khóa học'
 			},
 			{
 				TypeItem: 'single',
-				Key: '/parents',
+				Key: '/parents/course-of-student-price',
 				Route: '/parents/course-of-student-price',
 				Icon: '',
 				Text: 'Công nợ'
 			},
 			{
 				TypeItem: 'single',
-				Key: '/parents',
+				Key: '/parents/schedule-of-student',
 				Route: '/parents/schedule-of-student',
 				Icon: '',
 				Text: 'Lịch học'
@@ -51,7 +51,7 @@ export const ParentsChildMenu = [
 			},
 			{
 				TypeItem: 'single',
-				Key: '/parents',
+				Key: '/parents/roll-up-student',
 				Route: '/parents/roll-up-student',
 				Icon: '',
 				Text: 'Chi tiêt điểm danh'

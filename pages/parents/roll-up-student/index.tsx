@@ -18,7 +18,7 @@ const RollUpStudent = () => {
 	const { Option } = Select;
 	const [loading, setLoading] = useState({
 		type: '',
-		loading: false
+		status: false
 	});
 
 	const studentParams = {
@@ -53,26 +53,36 @@ const RollUpStudent = () => {
 	const columns = [
 		{
 			title: 'Học viên',
+			// width: 200,
+			width: '15%',
 			dataIndex: 'FullNameUnicode',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Trung tâm',
+			// width: 150,
+			width: '15%',
 			dataIndex: 'BranchName',
 			render: (price, record) => <p className="font-weight-blue">{price}</p>
 		},
 		{
 			title: 'Môn học',
+			// width: 550,
+			width: '35%',
 			dataIndex: 'CourseName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Ghi chú',
+			// width: 300,
+			width: '20%',
 			dataIndex: 'Note',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Cam kết',
+			width: '15%',
+			// width: 200,
 			dataIndex: 'Commitment',
 			render: (price, record) => <p>{price}</p>
 		}
@@ -80,8 +90,8 @@ const RollUpStudent = () => {
 
 	const getStudents = async () => {
 		setLoading({
-			type: 'GET_STUDENT',
-			loading: true
+			type: 'GET_ALL',
+			status: true
 		});
 		try {
 			let res = await studentApi.getAll(studentParams);
@@ -97,16 +107,16 @@ const RollUpStudent = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_STUDENT',
-				loading: false
+				type: 'GET_ALL',
+				status: false
 			});
 		}
 	};
 
 	const getCoursesOfStudent = async () => {
 		setLoading({
-			type: 'GET_COURSES',
-			loading: true
+			type: 'GET_ALL',
+			status: true
 		});
 		try {
 			let res = await courseOfStudentApi.getAll(coursesParams);
@@ -120,8 +130,8 @@ const RollUpStudent = () => {
 		} catch (error) {
 		} finally {
 			setLoading({
-				type: 'GET_COURSES',
-				loading: false
+				type: 'GET_ALL',
+				status: false
 			});
 		}
 	};
