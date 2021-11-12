@@ -102,6 +102,8 @@ const ExpandTable = (props) => {
 		}
 	}, [props.dataSource]);
 
+	console.log('props.totalPage: ', props.totalPage);
+
 	return (
 		<>
 			<div className="wrap-table table-expand">

@@ -100,3 +100,7 @@ export function usePageVisibility(cb) {
 		};
 	}, [cb]);
 }
+
+export const parseToMoney = (value) => {
+	return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};

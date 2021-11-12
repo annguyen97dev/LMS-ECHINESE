@@ -13,4 +13,5 @@ type IVideoCourseList = IBaseApi<{
 	data: { data: object };
 	OriginalPrice: number;
 	SellPrice: number;
+	Quantity: number;
 }>;
