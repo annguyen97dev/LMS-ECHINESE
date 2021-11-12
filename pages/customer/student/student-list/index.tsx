@@ -465,6 +465,7 @@ const StudentData = () => {
 	// Columns
 	const columns = [
 		{
+			width: 120,
 			title: 'Mã học viên',
 			dataIndex: 'UserCode',
 			fixed: 'left',

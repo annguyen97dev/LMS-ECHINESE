@@ -30,6 +30,8 @@ type dataTranslate = Array<{
 
 const EditorSummernote = (props) => {
 	const { getDataEditor, isReset, questionContent, addQuestion, deleteSingleQuestion, deleteAllQuestion, questionData, visible } = props;
+
+	// -- For add space --
 	const [valueEditor, setValueEditor] = useState(questionContent);
 	const [propetyEditor, setPropetyEditor] = useState({
 		textNode: null,
@@ -40,12 +42,9 @@ const EditorSummernote = (props) => {
 		id: null,
 		key: ''
 	});
-	const [position, setPosition] = useState(null);
 	const [isAdd, setIsAdd] = useState(false);
 	const [reloadContent, setReloadContent] = useState(false);
-	// const [listID, setListID] = useState([]);
-	const [listInput, setListInput] = useState([]);
-	const [saveListInput, setSaveListInput] = useState([]);
+	const [listInput, setListInput] = useState<Array<number>>([]);
 	const [changePosition, setChangePosition] = useState(false);
 	const [saveID, setSaveID] = useState(null);
 
@@ -405,7 +404,7 @@ const EditorSummernote = (props) => {
 
 	// HANDLE RESET
 	useEffect(() => {
-		isReset && (ReactSummernote.reset(), setValueEditor(''));
+		isReset && (ReactSummernote.reset(), setValueEditor(''), setListInput([]));
 	}, [isReset]);
 
 	// Function any handle delete
@@ -435,6 +434,7 @@ const EditorSummernote = (props) => {
 		}
 
 		console.log('List Input: ', listInput);
+		console.log('New List: ', newList);
 
 		if (listInput.length > 0) {
 			let difID = listInput.filter((x) => !newList.includes(x.toString()));
@@ -466,11 +466,6 @@ const EditorSummernote = (props) => {
 			if (isEmpty) {
 				anyHandleDelete();
 			}
-			// if (editor[0].children.length == 1) {
-			//   if (editor[0].children[0].innerHTML == "<br>") {
-			//     anyHandleDelete();
-			//   }
-			// }
 		}
 
 		if (tagP.length > 0) {
@@ -643,31 +638,33 @@ const EditorSummernote = (props) => {
 			ReactSummernote.reset(), setValueEditor('');
 		} else {
 			let editor = document.querySelectorAll('.note-editable');
-			console.log('Value Editor: ', valueEditor);
-			console.log('Question data in Editor: ', questionData);
 
+			// Thay thẻ div = input
 			let cloneValueEditor = valueEditor;
 			if (questionData?.ExerciseList.length > 0) {
-				console.log('Chạy vô');
 				questionData.ExerciseList.forEach((item) => {
 					let indexInput: any = parseInt(item.inputID) + 1;
 					indexInput = indexInput.toString();
+
+					cloneValueEditor = cloneValueEditor.replace(
+						`<div ques-id="${item.ID}" id="${indexInput}" class='space-editor' role='textbox' aria-labelledby='txtboxLabel' aria-multiline='true' contentEditable="true">(${indexInput})</div>`,
+						`<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})">`
+					);
+
 					console.log(
-						'COI thử: ',
+						'Test: ',
 						`<div ques-id="${item.ID}" id="${indexInput}" class="space-editor" role="textbox" aria-labelledby="txtboxLabel" aria-multiline="true" contenteditable="true">(${indexInput})</div>`
 					);
-					cloneValueEditor = cloneValueEditor.replace(
-						`<div ques-id="${item.ID}" id="${indexInput}" class="space-editor" role="textbox" aria-labelledby="txtboxLabel" aria-multiline="true" contenteditable="true">(${indexInput})</div>`,
-						`<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})"/>`
-					);
+					console.log('Data Clone: ', cloneValueEditor);
 				});
-				console.log('CLONE DATA: ', cloneValueEditor);
+
 				editor[0].innerHTML = cloneValueEditor;
+				setValueEditor(valueEditor);
 			}
 
-			if (valueEditor.includes('<div ques-id')) {
-				editor[0].innerHTML = valueEditor.replace('<div ques-id', '<input ques-id');
-			}
+			// if (valueEditor.includes('<div ques-id')) {
+			// 	editor[0].innerHTML = valueEditor.replace('<div ques-id', '<input ques-id');
+			// }
 		}
 	}, [visible]);
 

@@ -96,7 +96,7 @@ const TypingForm = (props) => {
 				questionDataForm.ExerciseList[QuestionIndex].Enable = false;
 			}
 		} else {
-			showNoti('danger', 'Câu hỏi không tồn tại');
+			console.log('Câu hỏi không tồn tại');
 		}
 
 		setDataExercise([...dataExercise]);
@@ -229,18 +229,24 @@ const TypingForm = (props) => {
 
 	// SUBMIT AND CHANGE PARAGRAPH
 	const handleSubmitChange = async (dataSubmit) => {
+		console.log('Data Submit: ', dataSubmit);
 		let res = null;
 
 		let cloneParagraph = dataSubmit.Paragraph;
+
+		console.log('Lúc đầu: ', cloneParagraph);
 
 		dataSubmit.ExerciseList.forEach((item, index) => {
 			let indexInput: any = parseInt(item.inputID) + 1;
 			indexInput = indexInput.toString();
 			cloneParagraph = cloneParagraph.replace(
-				`<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})"/>`,
+				`<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})">`,
 				`<div ques-id="${item.ID}" id="${indexInput}" class='space-editor' role='textbox' aria-labelledby='txtboxLabel' aria-multiline='true' contentEditable="true">(${indexInput})</div>`
 			);
+			console.log('Coi thử nha: ', `<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})">`);
 		});
+
+		console.log('Lúc sau: ', cloneParagraph);
 
 		dataSubmit.Paragraph = cloneParagraph;
 
@@ -256,6 +262,9 @@ const TypingForm = (props) => {
 				}
 				showNoti('success', `Tạo câu hỏi thành công`);
 				setIsResetEditor(true);
+				setTimeout(() => {
+					setIsResetEditor(false);
+				}, 500);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

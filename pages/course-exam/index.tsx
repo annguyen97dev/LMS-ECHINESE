@@ -2,47 +2,21 @@ import { Switch, Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Eye, Tool } from 'react-feather';
-import { packageExaminerApi, studentApi } from '~/apiBase';
+import { packageExaminerApi, studentApi, teacherApi } from '~/apiBase';
 import { packageDetailApi } from '~/apiBase/package/package-detail';
-import { packageResultApi } from '~/apiBase/package/package-result';
 import { courseExamApi } from '~/apiBase/package/course-exam';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
-import PackagePickTeacher from '~/components/Global/Package/PackageResult/PackagePickTeacher';
 import PackageResultExpand from '~/components/Global/Package/PackageResult/PackageResultExpand';
-import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResult/PackageResultUpdateTeacher';
+
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-import { teacherApi } from '~/apiBase';
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import CourseExamDetail from '~/components/Global/CourseExam/CourseExamDetail';
 
 const CourseExam = () => {
-	const [dataTeacher, setDataTeacher] = useState([]);
-
-	// Get list teacher
-	const getListTeacher = async () => {
-		// setLoadingTeacher(true);
-		try {
-			let res = await packageExaminerApi.getAll({
-				selectAll: true
-			});
-
-			if (res.status === 200) {
-				let newData = res.data.data.map((item) => ({
-					title: item.TeacherName,
-					value: item.TeacherID
-				}));
-				setDataTeacher(newData);
-			}
-		} catch (error) {
-			console.log('Error Get List Teacher: ', error.message);
-		} finally {
-			// setLoadingTeacher(true);
-		}
-	};
-
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
@@ -58,99 +32,81 @@ const CourseExam = () => {
 	const columns = [
 		{
 			title: 'Học viên',
-			dataIndex: 'StudentName',
+			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-blue">{text}</p>
 		},
-
 		{
-			title: 'Đề thi',
-			dataIndex: 'ExamTopicName',
-			render: (text, data) => (
-				<Link
-					href={{
-						pathname: '/package/package-set-result/detail/[slug]',
-						query: { slug: `${data.ID}` }
-					}}
-				>
-					<a href="#" className="font-weight-black">
-						{text}
-					</a>
-				</Link>
-			)
-		},
-		{
-			title: 'Level',
-			dataIndex: 'SetPackageLevel',
+			title: 'Email',
+			dataIndex: 'Email',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
+		{
+			title: 'SDT',
+			dataIndex: 'Mobile',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		}
+
+		// {
+		// 	title: 'Đề thi',
+		// 	dataIndex: 'ExamTopicName',
+		// 	render: (text, data) => (
+		// 		<Link
+		// 			href={{
+		// 				pathname: '/package/package-set-result/detail/[slug]',
+		// 				query: { slug: `${data.ID}` }
+		// 			}}
+		// 		>
+		// 			<a href="#" className="font-weight-black">
+		// 				{text}
+		// 			</a>
+		// 		</Link>
+		// 	)
+		// },
+		// {
+		// 	title: 'Level',
+		// 	dataIndex: 'SetPackageLevel',
+		// 	render: (text) => <p className="font-weight-black">{text}</p>
+		// },
 		// {
 		// 	title: 'Hình thức',
 		// 	dataIndex: 'ExamTopicTypeName',
 		// 	render: (text) => <p className="font-weight-black">{text}</p>
 		// },
-		{
-			title: 'Giáo viên chấm bài',
-			dataIndex: 'TeacherName',
-			render: (text) => <p className="font-weight-blue">{text}</p>
-		},
-		{
-			title: 'Trạng thái chấm bài',
-			dataIndex: 'isDone',
-			render: (type) => (
-				<Fragment>
-					{type == true && <span className="tag green">Đã chấm xong</span>}
-					{type == false && <span className="tag gray">Chưa chấm xong</span>}
-				</Fragment>
-			)
-		},
-		{
-			title: 'Yêu cầu chấm bài',
-			dataIndex: 'isFixPaid',
-			align: 'center',
-			render: (type, data) => (
-				<>
-					{(data.StatusID == 3 || data.StatusID == 5 || data.StatusID == 1) && (
-						<Tooltip title="Chưa yêu cầu chấm">
-							<CloseOutlined className="delete custom" />
-						</Tooltip>
-					)}
-					{(data.isFixPaid || data.isReevaluate) &&
-						(data.StatusID == 2 ? (
-							<Tooltip title="Yêu cầu chấm bài">
-								<CheckOutlined className="success custom" />
-							</Tooltip>
-						) : (
-							data.StatusID == 4 && (
-								<Tooltip title="Yêu cầu chấm bài lại">
-									<RedoOutlined className="success custom" />
-								</Tooltip>
-							)
-						))}
-				</>
-			)
-		},
-		{
-			render: (data) => (
-				<>
-					<Link
-						href={{
-							pathname: '/package/package-set-result/detail/[slug]',
-							query: { slug: `${data.ID}` }
-						}}
-					>
-						<Tooltip title="Kết quả bộ đề chi tiết">
-							<button className="btn btn-icon">
-								<ExclamationCircleOutlined />
-							</button>
-						</Tooltip>
-					</Link>
-					{(data.StatusID == 2 || data.StatusID == 4) && (
-						<PackagePickTeacher dataRow={data} dataTeacher={dataTeacher} onFetchData={onFetchData} />
-					)}
-				</>
-			)
-		}
+		// {
+		// 	title: 'Giáo viên chấm bài',
+		// 	dataIndex: 'TeacherName',
+		// 	render: (text) => <p className="font-weight-blue">{text}</p>
+		// },
+		// {
+		// 	title: 'Trạng thái chấm bài',
+		// 	dataIndex: 'isDone',
+		// 	render: (type) => (
+		// 		<Fragment>
+		// 			{type == true && <span className="tag green">Đã chấm xong</span>}
+		// 			{type == false && <span className="tag gray">Chưa chấm xong</span>}
+		// 		</Fragment>
+		// 	)
+		// },
+
+		// {
+		// 	render: (data) => (
+		// 		<>
+		// 			<Link
+		// 				href={{
+		// 					pathname: '/package/package-set-result/detail/[slug]',
+		// 					query: { slug: `${data.ID}` }
+		// 				}}
+		// 			>
+		// 				<Tooltip title="Kết quả bài làm">
+		// 					<button className="btn btn-icon">
+		// 						<ExclamationCircleOutlined />
+		// 					</button>
+		// 				</Tooltip>
+		// 			</Link>
+		// 		</>
+		// 	)
+		// }
 	];
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemDetail, setItemDetail] = useState();
@@ -206,23 +162,6 @@ const CourseExam = () => {
 			],
 			value: null
 		},
-		// {
-		// 	name: 'ExamTopicType',
-		// 	title: 'Hình thức',
-		// 	col: 'col-12',
-		// 	type: 'select',
-		// 	optionList: [
-		// 		{
-		// 			value: 1,
-		// 			title: 'Trắc nghiệm'
-		// 		},
-		// 		{
-		// 			value: 2,
-		// 			title: 'Tự luận'
-		// 		}
-		// 	],
-		// 	value: null
-		// },
 		{
 			name: 'date-range',
 			title: 'Ngày tạo',
@@ -356,7 +295,7 @@ const CourseExam = () => {
 		});
 		(async () => {
 			try {
-				let res = await courseExamApi.getAll({ ...params, pageIndex: page });
+				let res = await courseExamApi.getAllStudent({ ...params, pageIndex: page });
 				//@ts-ignore
 				res.status == 200 && setPackageSetResult(res.data.data);
 				if (res.status == 204) {
@@ -379,7 +318,6 @@ const CourseExam = () => {
 	useEffect(() => {
 		getDataStudent();
 		getDataPackageDetail();
-		getListTeacher();
 	}, []);
 
 	useEffect(() => {
@@ -388,9 +326,9 @@ const CourseExam = () => {
 
 	const expandedRowRender = (data, index) => {
 		return (
-			<Fragment>
-				<PackageResultExpand infoID={data.ID} />
-			</Fragment>
+			<>
+				<CourseExamDetail studentID={data.UserInformationID} />
+			</>
 		);
 	};
 
@@ -401,26 +339,17 @@ const CourseExam = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="KẾT QUẢ BỘ ĐỀ"
+			TitlePage="Kết quả kiểm tra"
 			dataSource={packageSetResult}
 			columns={columns}
-			TitleCard={
-				<>
-					<PackageResultUpdateTeacher
-						reloadData={(firstPage) => {
-							setCurrentPage(1);
-							getDataSetCourseExam(firstPage);
-						}}
-					/>
-				</>
-			}
+			TitleCard={null}
 			Extra={
 				<div className="extra-table">
-					<FilterBase
+					{/* <FilterBase
 						dataFilter={dataFilter}
 						handleFilter={(listFilter: any) => handleFilter(listFilter)}
 						handleReset={handleReset}
-					/>
+					/> */}
 
 					<SortBox dataOption={sortOption} handleSort={(value) => handleSort(value)} />
 				</div>

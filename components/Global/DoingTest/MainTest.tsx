@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { useDoingTest } from '~/context/useDoingTest';
 import dynamic from 'next/dynamic';
 import DecideModal from '~/components/Elements/DecideModal';
+import { courseExamApi } from '~/apiBase/package/course-exam';
 
 const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQuestion'), {
 	loading: () => <p>...</p>,
@@ -17,8 +18,18 @@ const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQue
 
 const MainTest = (props) => {
 	const { getListQuestionID, getActiveID, activeID, listPicked } = useDoingTest();
-	const { examID, infoExam, packageDetailID, dataDoneTest, isDone, listIDFromDoneTest, listGroupIDFromDoneTest, closeMainTest, type } =
-		props;
+	const {
+		examID,
+		infoExam,
+		packageDetailID,
+		dataDoneTest,
+		isDone,
+		listIDFromDoneTest,
+		listGroupIDFromDoneTest,
+		closeMainTest,
+		type,
+		CurriculumDetailID
+	} = props;
 	const listTodoApi = {
 		pageIndex: 1,
 		pageSize: 999,
@@ -47,13 +58,6 @@ const MainTest = (props) => {
 	const [isLong, setIsLong] = useState(false);
 	const [isModalConfirm, setIsModalConfirm] = useState(false);
 	const [isModalSuccess, setIsModalSuccess] = useState(false);
-
-	// console.log("Info Exam is: ", infoExam);
-
-	console.log('DataQuestion: ', dataQuestion);
-	// console.log("Data Done Test: ", dataDoneTest);
-	// console.log("Space Question: ", spaceQuestion);
-	// console.log("List question ID: ", listQuestionID);
 
 	// --- GET LIST QUESTION ---
 	const getListQuestion = async () => {
@@ -290,15 +294,30 @@ const MainTest = (props) => {
 		// examination - Đề bán, đề thi
 		// check - Đề kiểm tra
 
-		const deleteOldElement = (data: ITestFirst) => {
-			data.ExamAppointmentResultDetailInfoList.forEach((item) => {
-				delete item['SetPackageExerciseStudentInfoList'];
-				item.ExamAppointmentExerciseStudentInfoList.forEach((ans) => {
-					delete ans['SetPackageExerciseAnswerStudentList'];
-				});
-			});
+		const deleteOldElement = (data: any, type: string) => {
+			let dataClone = { ...data };
+			switch (type) {
+				case 'test':
+					dataClone.ExamAppointmentResultDetailInfoList.forEach((item) => {
+						delete item['SetPackageExerciseStudentInfoList'];
+						item.ExamAppointmentExerciseStudentInfoList.forEach((ans) => {
+							delete ans['SetPackageExerciseAnswerStudentList'];
+						});
+					});
+					break;
+				case 'check':
+					dataClone.CourseExamresultDetailInfoList.forEach((item) => {
+						delete item['SetPackageExerciseStudentInfoList'];
+						item.CourseExamExerciseStudentInfoList.forEach((ans) => {
+							delete ans['SetPackageExerciseAnswerStudentList'];
+						});
+					});
+					break;
+				default:
+					break;
+			}
 
-			return data;
+			return dataClone;
 		};
 
 		switch (type) {
@@ -326,9 +345,38 @@ const MainTest = (props) => {
 					});
 				});
 
-				dataTestFirst = deleteOldElement(dataTestFirst);
+				dataTestFirst = deleteOldElement(dataTestFirst, 'test');
 				dataSubmit = { ...dataTestFirst };
 
+				break;
+
+			case 'check':
+				let dataCheck: ITestCheck = {
+					StudentID: null,
+					CourseID: null,
+					CurriculumDetailID: parseInt(CurriculumDetailID),
+					CourseExamresultDetailInfoList: []
+				};
+				dataCheck.StudentID = cloneData.StudentID;
+				dataCheck.CourseID = cloneData.SetPackageDetailID;
+				dataCheck.CourseExamresultDetailInfoList = [];
+
+				cloneData.SetPackageResultDetailInfoList.forEach((ques) => {
+					//@ts-ignore
+					ques.CourseExamExerciseStudentInfoList = [...ques.SetPackageExerciseStudentInfoList];
+					//@ts-ignore
+					dataCheck.CourseExamresultDetailInfoList.push(ques);
+
+					dataCheck.CourseExamresultDetailInfoList.forEach((item) => {
+						item.CourseExamExerciseStudentInfoList.forEach((ans) => {
+							//@ts-ignore
+							ans.CourseExamExerciseAnswerStudentList = [...ans.SetPackageExerciseAnswerStudentList];
+						});
+					});
+				});
+
+				// dataCheck = deleteOldElement(dataCheck, 'check');
+				dataSubmit = { ...dataCheck };
 				break;
 			case 'examination':
 				dataSubmit = { ...cloneData };
@@ -349,6 +397,13 @@ const MainTest = (props) => {
 				obj = {
 					pathname: '/customer/service/service-test-student/detail/[slug]',
 					query: { slug: data.ExamAppointmentID, examID: data.ExamTopicID, ExamAppointmentResultID: data.ID }
+				};
+				break;
+
+			case 'check':
+				obj = {
+					pathname: '/course-exam/detail/[slug]',
+					query: { slug: data.ID, examID: data.ExamTopicID, packageDetailID: data.CourseID }
 				};
 				break;
 
@@ -374,6 +429,10 @@ const MainTest = (props) => {
 			switch (type) {
 				case 'test': // Kiểm tra đầu vào
 					res = await examAppointmentResultApi.add(dataSubmit);
+					break;
+
+				case 'check': // Kiểm tra trong khóa học
+					res = await courseExamApi.add(dataSubmit);
 					break;
 
 				case 'examination': // Thi cử - đề bán

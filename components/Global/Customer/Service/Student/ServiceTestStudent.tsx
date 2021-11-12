@@ -488,7 +488,7 @@ export default function ServiceTestStudent(props) {
 		} else {
 			if (data.Status == 0) {
 				router.push({
-					pathname: '/doing-test/',
+					pathname: '/exam/exam-review',
 					query: {
 						examID: data.ExamTopicID,
 						packageDetailID: data.ID,
