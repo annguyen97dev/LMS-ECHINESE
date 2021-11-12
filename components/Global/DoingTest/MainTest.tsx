@@ -384,7 +384,7 @@ const MainTest = (props) => {
 			default:
 				break;
 		}
-		console.log('Data Submit is: ', dataSubmit);
+
 		return dataSubmit;
 	};
 
