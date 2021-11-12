@@ -1,7 +1,6 @@
 import { Switch, Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Eye, Tool } from 'react-feather';
 import { packageExaminerApi, studentApi } from '~/apiBase';
 import { packageDetailApi } from '~/apiBase/package/package-detail';
 import { packageResultApi } from '~/apiBase/package/package-result';
@@ -14,7 +13,6 @@ import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResul
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-import { teacherApi } from '~/apiBase';
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, RedoOutlined } from '@ant-design/icons';
 
 const PackageSetResult = () => {
@@ -104,6 +102,7 @@ const PackageSetResult = () => {
 			)
 		},
 		{
+			width: 150,
 			title: 'Yêu cầu chấm bài',
 			dataIndex: 'isFixPaid',
 			align: 'center',

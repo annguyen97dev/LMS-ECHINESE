@@ -782,3 +782,11 @@
 		font-weight: 500;
 	}
 }
+
+.box-typing {
+	.space-editor {
+		&:focus {
+			background: #fffaf3 !important;
+		}
+	}
+}

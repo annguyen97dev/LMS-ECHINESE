@@ -8,9 +8,14 @@ class CourseExamApi {
 			params: Params
 		});
 
+	getAllStudent = (Params: any) =>
+		instance.get<IApiResultData<ICourseExam[]>>('/api/CourseExamresultGetStudentExistResult', {
+			params: Params
+		});
+
 	getDetail = (id: number) => instance.get<IApiResultData<ICourseExam>>(`${url}/${id}`);
 
-	add = (data: ICourseExam) => instance.post(url, data);
+	add = (data: any) => instance.post(url, data);
 
 	update = (data: any) => instance.put(url, data, {});
 

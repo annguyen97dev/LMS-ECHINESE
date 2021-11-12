@@ -1,43 +1,32 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import {courseDetailApi, documentScheduleApi} from '~/apiBase';
+import { courseDetailApi, documentScheduleApi } from '~/apiBase';
 import TitlePage from '~/components/TitlePage';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 import CDCalendar from './Calendar';
 
 CourseDetailCalendar.propTypes = {
-	courseID: PropTypes.number,
+	courseID: PropTypes.number
 };
 CourseDetailCalendar.defaultProps = {
-	courseID: 0,
+	courseID: 0
 };
 
 function CourseDetailCalendar(props) {
-	const {courseID: ID} = props;
-	const {showNoti} = useWrap();
+	const { courseID: ID } = props;
+	const { showNoti } = useWrap();
 	const [calendarList, setCalendarList] = useState<ICourseDetailSchedule[]>([]);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	// -----------CALENDAR-----------
 	const calendarDateFormat = (calendarArr: ICourseDetailSchedule[]) => {
 		const rs = calendarArr.map((c, idx) => {
-			const {
-				ID,
-				CourseID,
-				CourseName,
-				RoomName,
-				BranchName,
-				TeacherName,
-				SubjectName,
-				StartTime,
-				EndTime,
-				LinkDocument,
-			} = c;
+			const { ID, CourseID, CourseName, RoomName, BranchName, TeacherName, SubjectName, StartTime, EndTime, LinkDocument } = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
 			const studyTime = `${studyTimeStart} - ${studyTimeEnd}`;
@@ -56,8 +45,8 @@ function CourseDetailCalendar(props) {
 					SubjectName,
 					LinkDocument,
 					//
-					StudyTimeName: studyTime,
-				},
+					StudyTimeName: studyTime
+				}
 			};
 		});
 		return rs;
@@ -66,9 +55,9 @@ function CourseDetailCalendar(props) {
 		try {
 			setIsLoading({
 				type: 'FETCH_COURSE_DETAIL_CALENDAR',
-				status: true,
+				status: true
 			});
-			const res = await courseDetailApi.getAll({CourseID: ID});
+			const res = await courseDetailApi.getAll({ CourseID: ID });
 			if (res.status === 200) {
 				setCalendarList(res.data.data);
 				setIsLoaded(true);
@@ -81,7 +70,7 @@ function CourseDetailCalendar(props) {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_COURSE_DETAIL_CALENDAR',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -90,30 +79,25 @@ function CourseDetailCalendar(props) {
 		fetchCalendarList();
 	}, []);
 
-	const onUploadDocument = async (data: {
-		CourseScheduleID: number;
-		File: Array<any>;
-	}) => {
+	const onUploadDocument = async (data: { CourseScheduleID: number; File: Array<any> }) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		try {
 			const formData = new FormData();
 			const newData = {
 				...data,
-				File: data.File[0].originFileObj,
+				File: data.File[0].originFileObj
 			};
 			Object.keys(newData).forEach((key) => formData.append(key, newData[key]));
 			const res = await documentScheduleApi.add(formData);
 			if (res.status === 200) {
 				const newCalendarList = [...calendarList];
-				const idx = newCalendarList.findIndex(
-					(c) => c.ID === newData.CourseScheduleID
-				);
+				const idx = newCalendarList.findIndex((c) => c.ID === newData.CourseScheduleID);
 				newCalendarList.splice(idx, 1, {
 					...newCalendarList[idx],
-					LinkDocument: res.data.data.LinkDocument,
+					LinkDocument: res.data.data.LinkDocument
 				});
 				setCalendarList(newCalendarList);
 				showNoti('success', res.data.message);
@@ -124,7 +108,7 @@ function CourseDetailCalendar(props) {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -135,11 +119,7 @@ function CourseDetailCalendar(props) {
 			<CDCalendar
 				isLoading={isLoading}
 				isUploadDocument={true}
-				isLoaded={
-					isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status
-						? false
-						: true
-				}
+				isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
 				eventList={calendarDateFormat(calendarList)}
 				handleUploadDocument={onUploadDocument}
 			/>

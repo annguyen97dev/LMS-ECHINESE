@@ -54,6 +54,13 @@ export const StudentChildMenu = [
 				Route: '/customer/service/service-test-student',
 				Icon: '',
 				Text: 'Thông tin hẹn test'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/course-exam-student',
+				Route: '/course-exam-student',
+				Icon: '',
+				Text: 'Bài kiểm tra'
 			}
 		]
 	},
@@ -81,7 +88,7 @@ export const StudentChildMenu = [
 				ItemType: 'single',
 				Key: '/package/package-result-student',
 				Route: '/package/package-result-student',
-				Text: 'Kết quả làm bài',
+				Text: 'Kết quả thi',
 				Icon: ''
 			},
 			{

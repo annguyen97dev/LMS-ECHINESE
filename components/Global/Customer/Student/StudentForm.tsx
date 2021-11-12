@@ -52,7 +52,7 @@ const StudentForm = (props) => {
 	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess } = props;
 	const router = useRouter();
 	const url = router.pathname;
-	console.log('List data Form: ', listDataForm);
+
 	const [isStudentDetail, setIsStudentDetail] = useState(url.includes('student-list') || url.includes('student-detail'));
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { showNoti } = useWrap();
