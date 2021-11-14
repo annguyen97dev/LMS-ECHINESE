@@ -10,10 +10,10 @@ export const TeacherParentMenu = [
 		TabName: 'tab-course',
 		Icon: <Airplay />
 	},
-	{
-		TabName: 'tab-package',
-		Icon: <FileText />
-	},
+	// {
+	// 	TabName: 'tab-package',
+	// 	Icon: <FileText />
+	// },
 	{
 		TabName: 'tab-student',
 		Icon: <User />
@@ -110,20 +110,20 @@ export const TeacherChildMenu = [
 			// },
 		]
 	},
-	{
-		MenuName: 'tab-package',
-		MenuTitle: 'Bộ đề',
-		MenuKey: '/package',
-		MenuItem: [
-			{
-				ItemType: 'single',
-				Key: '/package/package-result-teacher',
-				Route: '/package/package-result-teacher',
-				Text: 'Danh sách bài tập',
-				Icon: ''
-			}
-		]
-	},
+	// {
+	// 	MenuName: 'tab-package',
+	// 	MenuTitle: 'Bộ đề',
+	// 	MenuKey: '/package',
+	// 	MenuItem: [
+	// 		{
+	// 			ItemType: 'single',
+	// 			Key: '/package/package-result-teacher',
+	// 			Route: '/package/package-result-teacher',
+	// 			Text: 'Danh sách bài tập',
+	// 			Icon: ''
+	// 		}
+	// 	]
+	// },
 	{
 		MenuName: 'tab-student',
 		MenuTitle: 'Học viên',
@@ -151,13 +151,7 @@ export const TeacherChildMenu = [
 					}
 				]
 			},
-			{
-				ItemType: 'single',
-				Key: '/customer/service/service-info-student',
-				Route: '/customer/service/service-info-student',
-				Text: 'Thêm lịch hẹn test',
-				Icon: ''
-			},
+
 			{
 				ItemType: 'single',
 				Key: '/customer/feedback-list',
@@ -171,6 +165,20 @@ export const TeacherChildMenu = [
 				Route: '/customer/service/service-test-teacher',
 				Icon: '',
 				Text: 'Chấm bài hẹn test'
+			},
+			{
+				ItemType: 'single',
+				Key: '/package/package-result-teacher',
+				Route: '/package/package-result-teacher',
+				Text: 'Chấm đề thi',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/customer/student/course-exam',
+				Route: '/customer/student/course-exam',
+				Text: 'Chấm bài tập & kiểm tra',
+				Icon: ''
 			}
 		]
 	},

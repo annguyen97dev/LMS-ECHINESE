@@ -96,9 +96,11 @@ const CourseExamUpdate = (props) => {
 
 	return (
 		<>
-			<button className="btn btn-icon edit" onClick={showModal}>
-				<UndoOutlined />
-			</button>
+			<Tooltip title="Cập nhật">
+				<button className="btn btn-icon edit" onClick={showModal}>
+					<UndoOutlined />
+				</button>
+			</Tooltip>
 			<Modal
 				footer={
 					<div className="wp-100 text-center">

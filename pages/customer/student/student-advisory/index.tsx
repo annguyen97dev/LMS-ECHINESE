@@ -545,6 +545,7 @@ export default function StudentAdvisory() {
 			width: 200,
 			title: 'Trạng thái',
 			dataIndex: 'CustomerConsultationStatusName',
+
 			render: (text) => <p className="font-weight-black">{text}</p>
 			// filters: [
 			// 	{

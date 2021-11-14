@@ -16,6 +16,15 @@ const ExpandTable = (props) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [activeIndex, setActiveIndex] = useState(null);
 
+	const closeAllExpandFunc = () => {
+		setRowKeys([
+			{
+				currentPage: 1,
+				listKeys: []
+			}
+		]);
+	};
+
 	const selectRow = (record) => {
 		const selectedRowKeys = [];
 
@@ -68,11 +77,11 @@ const ExpandTable = (props) => {
 		} else {
 			rowK = [];
 		}
+
 		return rowK;
 	};
 
 	const onExpand = (expand, record) => {
-		console.log('Expand: ', expand);
 		if (typeof props.handleExpand != 'undefined') {
 			props.handleExpand(record);
 		}
@@ -106,6 +115,12 @@ const ExpandTable = (props) => {
 			setDataSource(dataClone);
 		}
 	}, [props.dataSource]);
+
+	useEffect(() => {
+		if (props.closeAllExpand) {
+			closeAllExpandFunc();
+		}
+	}, [props.closeAllExpand]);
 
 	return (
 		<>
@@ -141,7 +156,8 @@ const ExpandTable = (props) => {
 								setActiveIndex(index);
 							}
 						})}
-						expandable={props.expandable}
+						expandable={rowKeys[0].listKeys.length > 0 && props.expandable}
+						expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
 						onExpandedRowsChange={onChangeExpand}
 						onExpand={onExpand}
 						expandedRowKeys={returnRowKeys()}

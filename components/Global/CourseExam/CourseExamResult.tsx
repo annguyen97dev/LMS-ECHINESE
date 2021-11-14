@@ -14,7 +14,7 @@ import { courseExamResultApi } from '~/apiBase/package/course-exam-result';
 
 const CourseExamResult = () => {
 	const {} = useDoneTest();
-	const { teacherMarking: teacherMarking, slug: slug, type } = router.query;
+	const { teacherMarking: teacherMarking, slug: slug, type: type, courseExamID: courseExamID } = router.query;
 	const { getDoneTestData, doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const [detailResult, setDetailResult] = useState([]);
 	const [visibleNofi, setVisibleNofi] = useState(false);
@@ -58,12 +58,14 @@ const CourseExamResult = () => {
 							setPackageExerciseStudentsList: []
 						};
 						res.data.data.forEach((item) => {
-							item.CourseExamExerciseStudent.forEach((ques) => {
-								newDataMarking.setPackageExerciseStudentsList.push({
-									ID: ques.ID,
-									Point: null
+							if (item.SkillID == 2 || item.SkillID == 4) {
+								item.CourseExamExerciseStudent.forEach((ques) => {
+									newDataMarking.setPackageExerciseStudentsList.push({
+										ID: ques.ID,
+										Point: null
+									});
 								});
-							});
+							}
 						});
 						getDataMarking({ ...newDataMarking });
 					}
@@ -165,7 +167,7 @@ const CourseExamResult = () => {
 				/>
 			) : (
 				<div className="test-wrapper done-test">
-					<TitlePage title="Kết quả bộ đề chi tiết" />
+					<TitlePage title="Kết quả bài làm" />
 					<div className="row">
 						<div className="col-md-10 col-12">
 							<Card

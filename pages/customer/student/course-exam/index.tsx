@@ -9,16 +9,14 @@ import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
 import PackageResultExpand from '~/components/Global/Package/PackageResult/PackageResultExpand';
-import { packageResultApi } from '~/apiBase/package/package-result';
+
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import CourseExamDetail from '~/components/Global/CourseExam/CourseExamDetail';
-import PackageResultList from '~/components/Global/Package/PackageResult/PackageResultList';
 
-const PackageResultPage = () => {
-	const [closeAllExpand, setCloseAllExpand] = useState(false);
+const CourseExam = () => {
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
@@ -48,7 +46,6 @@ const PackageResultPage = () => {
 			dataIndex: 'Mobile',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
-
 		{
 			title: 'Trạng thái',
 			dataIndex: 'isDone',
@@ -213,10 +210,6 @@ const PackageResultPage = () => {
 			...listParamsDefault,
 			sortType: option.title.sortType
 		});
-		setCloseAllExpand(true);
-		setTimeout(() => {
-			setCloseAllExpand(false);
-		}, 500);
 	};
 
 	const { showNoti, pageSize } = useWrap();
@@ -252,44 +245,44 @@ const PackageResultPage = () => {
 		setDataFilter([...dataFilter]);
 	};
 
-	// const getDataStudent = async () => {
-	// 	try {
-	// 		let res = await studentApi.getAll({ pageSize: pageSize, pageIndex: 1 });
-	// 		if (res.status == 200) {
-	// 			const newData = res.data.data.map((item) => ({
-	// 				title: item.FullNameUnicode,
-	// 				value: item.UserInformationID
-	// 			}));
-	// 			setDataFunc('StudentID', newData);
-	// 		}
+	const getDataStudent = async () => {
+		try {
+			let res = await studentApi.getAll({ pageSize: pageSize, pageIndex: 1 });
+			if (res.status == 200) {
+				const newData = res.data.data.map((item) => ({
+					title: item.FullNameUnicode,
+					value: item.UserInformationID
+				}));
+				setDataFunc('StudentID', newData);
+			}
 
-	// 		res.status == 204 && showNoti('danger', 'Không có dữ liệu học sinh này!');
-	// 	} catch (error) {
-	// 		showNoti('danger', error.message);
-	// 	} finally {
-	// 	}
-	// };
+			res.status == 204 && showNoti('danger', 'Không có dữ liệu học sinh này!');
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+		}
+	};
 
-	// const getDataPackageDetail = async () => {
-	// 	try {
-	// 		let res = await packageDetailApi.getAll({
-	// 			pageSize: 99999,
-	// 			pageIndex: 1
-	// 		});
-	// 		if (res.status == 200) {
-	// 			const newData = res.data.data.map((item) => ({
-	// 				title: item.SetPackageName,
-	// 				value: item.ID
-	// 			}));
-	// 			setDataFunc('SetPackageDetailID', newData);
-	// 		}
+	const getDataPackageDetail = async () => {
+		try {
+			let res = await packageDetailApi.getAll({
+				pageSize: 99999,
+				pageIndex: 1
+			});
+			if (res.status == 200) {
+				const newData = res.data.data.map((item) => ({
+					title: item.SetPackageName,
+					value: item.ID
+				}));
+				setDataFunc('SetPackageDetailID', newData);
+			}
 
-	// 		res.status == 204 && showNoti('danger', 'Không có dữ liệu bộ đề này!');
-	// 	} catch (error) {
-	// 		showNoti('danger', error.message);
-	// 	} finally {
-	// 	}
-	// };
+			res.status == 204 && showNoti('danger', 'Không có dữ liệu bộ đề này!');
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+		}
+	};
 
 	const getPagination = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
@@ -312,10 +305,11 @@ const PackageResultPage = () => {
 		});
 		(async () => {
 			try {
-				let res = await packageResultApi.getAllStudent({ ...params, pageIndex: page });
+				let res = await courseExamApi.getAllStudent({ ...params, pageIndex: page });
 				//@ts-ignore
 				res.status == 200 && setPackageSetResult(res.data.data);
 				if (res.status == 204) {
+					showNoti('danger', 'Không tìm thấy dữ liệu!');
 					setCurrentPage(1);
 					setParams(listParamsDefault);
 					setPackageSetResult([]);
@@ -331,19 +325,19 @@ const PackageResultPage = () => {
 		})();
 	};
 
-	// useEffect(() => {
-	// 	getDataStudent();
-	// 	getDataPackageDetail();
-	// }, []);
+	useEffect(() => {
+		getDataStudent();
+		getDataPackageDetail();
+	}, []);
 
 	useEffect(() => {
 		getDataSetCourseExam(currentPage);
 	}, [params]);
 
-	const expandedRowRender = (data) => {
+	const expandedRowRender = (data, index) => {
 		return (
 			<>
-				<PackageResultList studentID={data.UserInformationID} />
+				<CourseExamDetail studentID={data.UserInformationID} />
 			</>
 		);
 	};
@@ -372,9 +366,8 @@ const PackageResultPage = () => {
 			}
 			handleExpand={(data) => setItemDetail(data)}
 			expandable={{ expandedRowRender }}
-			closeAllExpand={closeAllExpand}
 		/>
 	);
 };
-PackageResultPage.layout = LayoutBase;
-export default PackageResultPage;
+CourseExam.layout = LayoutBase;
+export default CourseExam;

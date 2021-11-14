@@ -83,8 +83,6 @@ const TeacherForm = (props) => {
 
 	const schema = isUpdate ? schemaBase.concat(schemaUpdate) : schemaBase;
 
-	console.log('optionBranchList: ', optionBranchList);
-
 	const defaultValuesInit = {
 		AreaID: null,
 		Branch: undefined,

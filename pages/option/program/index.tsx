@@ -272,13 +272,12 @@ const Programs = () => {
 
 	// -------------- GET PAGE_NUMBER -----------------
 	const getPagination = (pageNumber: number) => {
-		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 
 		setTodoApi({
 			...todoApi,
 			// ...listFieldSearch,
-			pageIndex: pageIndex
+			pageIndex: pageNumber
 		});
 	};
 

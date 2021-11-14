@@ -562,7 +562,7 @@ const MainTest = (props) => {
 	}, [activeID]);
 
 	return (
-		<div className="test-wrapper doing-test">
+		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
 			{/* Modal báo thành công **/}
 			<Modal title="Thông báo" footer={null} className="" visible={isModalSuccess}>
 				<div className="modal-submit-success-test">

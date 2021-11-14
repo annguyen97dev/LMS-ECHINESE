@@ -10,7 +10,7 @@ class CourseExamResultApi {
 
 	getDetail = (id: number) => instance.get<IApiResultData<ICourseExamResult>>(`${url}/${id}`);
 
-	updatePoint = (data: any) => instance.put('/api/SetPackageExerciseStudent', data, {});
+	updatePoint = (data: any) => instance.put('/api/CourseExamExerciseStudent', data, {});
 }
 
 export const courseExamResultApi = new CourseExamResultApi();

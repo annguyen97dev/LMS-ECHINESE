@@ -37,7 +37,7 @@ const Teacher = () => {
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: pageSize,
-		sort: -1,
+		sort: 1,
 		sortType: false,
 		AreaID: '',
 		FullNameUnicode: '',
@@ -48,7 +48,7 @@ const Teacher = () => {
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
+		sort: 1,
 		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);

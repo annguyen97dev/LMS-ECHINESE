@@ -28,8 +28,9 @@ const CourseList = () => {
 		type: '',
 		status: false
 	});
+	const [isShowUpdate, setIsShowUpdate] = useState(false);
 	const [totalPage, setTotalPage] = useState(null);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [optionListForFilter, setOptionListForFilter] = useState({
 		statusList,
 		branchList: [],
@@ -104,9 +105,7 @@ const CourseList = () => {
 			showNoti('danger', error.message);
 		}
 	};
-	useEffect(() => {
-		fetchDataForFilterForm();
-	}, []);
+
 	// GET DATA IN FIRST TIME
 	const fetchScheduleList = async () => {
 		setIsLoading({
@@ -203,6 +202,17 @@ const CourseList = () => {
 		}
 		return res;
 	};
+
+	useEffect(() => {
+		if (userInformation) {
+			const role = userInformation.RoleID;
+			if (role == 1 || role == 5) {
+				fetchDataForFilterForm();
+				setIsShowUpdate(true);
+			}
+		}
+	}, [userInformation]);
+
 	return (
 		<div className="course-list-page">
 			<div className="row">
@@ -229,12 +239,16 @@ const CourseList = () => {
 									currentPage={filters.pageIndex}
 									getPagination={getPagination}
 								>
-									<CourseListUpdate
-										isLoading={isLoading}
-										optionList={optionListForUpdate}
-										handleOnUpdateCourse={onUpdateCourse}
-										handleFetchDataForUpdateForm={fetchDataForUpdateForm}
-									/>
+									{isShowUpdate ? (
+										<CourseListUpdate
+											isLoading={isLoading}
+											optionList={optionListForUpdate}
+											handleOnUpdateCourse={onUpdateCourse}
+											handleFetchDataForUpdateForm={fetchDataForUpdateForm}
+										/>
+									) : (
+										<></>
+									)}
 								</PowerList>
 							</div>
 						</Card>
