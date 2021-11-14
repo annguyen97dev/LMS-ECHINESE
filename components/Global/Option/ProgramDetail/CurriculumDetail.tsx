@@ -32,7 +32,7 @@ const CurriculumDetail = (props) => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ICurriculumDetail[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, isAdmin } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -194,25 +194,31 @@ const CurriculumDetail = (props) => {
 			key: 'subjectname',
 			className: 'text-center',
 			render: (text, data, index) => (
-				<Select
-					loading={data.ID == loadingSelect.id && loadingSelect.status}
-					value={returnValue(data.ID)}
-					style={{ width: '100%', margin: 'auto' }}
-					className="style-input"
-					showSearch
-					optionFilterProp="children"
-					defaultValue={data.SubjectID}
-					onChange={(value) => updateSubject(value, data, index)}
-				>
-					<Option key="none" value={0}>
-						Trống
-					</Option>
-					{dataSubject?.map((item, index) => (
-						<Option key={index} value={item.ID}>
-							{item.SubjectName}
-						</Option>
-					))}
-				</Select>
+				<>
+					{isAdmin ? (
+						<Select
+							loading={data.ID == loadingSelect.id && loadingSelect.status}
+							value={returnValue(data.ID)}
+							style={{ width: '100%', margin: 'auto' }}
+							className="style-input"
+							showSearch
+							optionFilterProp="children"
+							defaultValue={data.SubjectID}
+							onChange={(value) => updateSubject(value, data, index)}
+						>
+							<Option key="none" value={0}>
+								Trống
+							</Option>
+							{dataSubject?.map((item, index) => (
+								<Option key={index} value={item.ID}>
+									{item.SubjectName}
+								</Option>
+							))}
+						</Select>
+					) : (
+						<p className="font-weight-black">{text}</p>
+					)}
+				</>
 			)
 		},
 		{
@@ -254,13 +260,15 @@ const CurriculumDetail = (props) => {
 			className: 'text-center',
 			render: (text, data) => (
 				<>
-					<AddCurriculumForm
-						curriculumDetailID={data.ID}
-						dataExamTopic={dataExamTopic}
-						dataCurriculumDetail={dataSource}
-						callFrom="main"
-						onFetchData={() => setTodoApi({ ...todoApi })}
-					/>
+					{isAdmin && (
+						<AddCurriculumForm
+							curriculumDetailID={data.ID}
+							dataExamTopic={dataExamTopic}
+							dataCurriculumDetail={dataSource}
+							callFrom="main"
+							onFetchData={() => setTodoApi({ ...todoApi })}
+						/>
+					)}
 					<DetailsModal
 						curriculumDetailID={data.ID}
 						dataExamTopic={dataExamTopic}
@@ -273,17 +281,29 @@ const CurriculumDetail = (props) => {
 	];
 
 	return (
-		<div>
-			<NestedTable
-				currentPage={currentPage}
-				totalPage={totalPage && totalPage}
-				getPagination={(pageNumber: number) => getPagination(pageNumber)}
-				addClass="table-curriculum-detail"
-				loading={isLoading}
-				dataSource={dataSource}
-				columns={columns}
-			/>
-		</div>
+		<>
+			{isAdmin ? (
+				<NestedTable
+					currentPage={currentPage}
+					totalPage={totalPage && totalPage}
+					getPagination={(pageNumber: number) => getPagination(pageNumber)}
+					addClass="table-curriculum-detail"
+					loading={isLoading}
+					dataSource={dataSource}
+					columns={columns}
+				/>
+			) : (
+				<PowerTable
+					currentPage={currentPage}
+					totalPage={totalPage && totalPage}
+					getPagination={(pageNumber: number) => getPagination(pageNumber)}
+					addClass="table-curriculum-detail"
+					loading={isLoading}
+					dataSource={dataSource}
+					columns={columns}
+				/>
+			)}
+		</>
 	);
 };
 

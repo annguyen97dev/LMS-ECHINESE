@@ -107,7 +107,6 @@ const Curriculum = () => {
 	// ---------------- GET DATA SUBJECT -------------
 
 	const getDataSubject = async () => {
-		console.log('Chạy vô đây');
 		try {
 			let res = await subjectApi.getAll({
 				ProgramID: programID,

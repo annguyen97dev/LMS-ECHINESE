@@ -12,9 +12,7 @@ const TypingList = (props) => {
 	const [listInput, setListInput] = useState([]);
 	const [listCorrectAnswer, setListCorrectAnswer] = useState([]);
 	const [isActive, setIsActive] = useState(null);
-
-	// console.log("List ID Là: ", listQuestionID);
-	// console.log("Data question: ", dataQuestion);
+	const [loadFirst, setLoadFirst] = useState(false);
 
 	useEffect(() => {
 		if (dataQuestion.Paragraph !== '') {
@@ -117,11 +115,12 @@ const TypingList = (props) => {
 									indexQuestionDetail
 								].SetPackageExerciseAnswerStudentList.length > 0
 							) {
-								if (!isActive) {
+								if (!loadFirst) {
 									item.innerHTML =
 										packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
 											indexQuestionDetail
 										].SetPackageExerciseAnswerStudentList[0].AnswerContent;
+									setLoadFirst(true);
 								} else {
 									if (activeID === isActive) {
 										item.innerHTML =
@@ -247,9 +246,9 @@ const TypingList = (props) => {
 					setIsActive(quesID);
 
 					const input = event.target as HTMLElement;
-					if (listInput.includes(input.innerHTML)) {
-						input.innerHTML = '';
-					}
+					// if (listInput.includes(input.innerHTML)) {
+					// 	input.innerHTML = '';
+					// }
 				});
 
 				item.addEventListener('keyup', (event) => {

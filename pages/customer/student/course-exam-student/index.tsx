@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { courseExamApi } from '~/apiBase/package/course-exam';
 import { useWrap } from '~/context/wrap';
 import Link from 'next/link';
-import NestedTable from '~/components/Elements/NestedTable';
-import { Tooltip } from 'antd';
+import { Tooltip, Select } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { teacherApi } from '~/apiBase';
 import CourseExamPoint from '~/components/Global/CourseExam/CourseExamPoint';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 
 const CouseExamStudent = (props) => {
+	const { Option } = Select;
 	const { studentID } = props;
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ICourseExam[]>([]);
@@ -86,7 +85,7 @@ const CouseExamStudent = (props) => {
 			render: (text, data) => (
 				<Link
 					href={{
-						pathname: '/course-exam-student/detail/[slug]',
+						pathname: '/customer/student/course-exam-student/detail/[slug]',
 						query: { slug: `${data.ID}` }
 					}}
 				>
@@ -126,6 +125,17 @@ const CouseExamStudent = (props) => {
 		{
 			title: 'Trạng thái chấm bài',
 			dataIndex: 'isDone',
+			filters: [
+				{
+					text: 'Chưa chấm xong',
+					value: 0
+				},
+				{
+					text: 'Đã chấm xong',
+					value: 1
+				}
+			],
+			onFilter: (value, record) => record.isDone === value,
 			render: (type) => (
 				<>
 					{type == true && <span className="tag green">Đã chấm xong</span>}
@@ -139,7 +149,7 @@ const CouseExamStudent = (props) => {
 				<>
 					<Link
 						href={{
-							pathname: '/course-exam-student/detail/[slug]',
+							pathname: '/customer/student/course-exam-student/detail/[slug]',
 							query: { slug: `${data.ID}` }
 						}}
 					>
@@ -170,15 +180,36 @@ const CouseExamStudent = (props) => {
 		}
 	}, [userInformation]);
 
+	function handleChange(value) {
+		if (value === 0) {
+			setTodoApi({
+				...todoApi,
+				Type: null
+			});
+		} else {
+			setTodoApi({
+				...todoApi,
+				Type: value
+			});
+		}
+	}
+
 	return (
 		<>
 			<PowerTable
+				Extra={
+					<Select className="style-input" defaultValue={0} style={{ width: 150 }} onChange={handleChange}>
+						<Option value={0}>Tất cả</Option>
+						<Option value={1}>Bài tập</Option>
+						<Option value={2}>Bài kiểm tra</Option>
+					</Select>
+				}
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				loading={isLoading}
 				addClass="basic-header"
-				TitlePage=""
+				TitlePage="Bài kiểm tra"
 				dataSource={dataSource}
 				columns={columns}
 			/>

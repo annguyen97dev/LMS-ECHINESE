@@ -165,7 +165,7 @@ const CourseExamResult = () => {
 				/>
 			) : (
 				<div className="test-wrapper done-test">
-					<TitlePage title="Kết quả bộ đề chi tiết" />
+					<TitlePage title="Kết quả bài làm" />
 					<div className="row">
 						<div className="col-md-10 col-12">
 							<Card

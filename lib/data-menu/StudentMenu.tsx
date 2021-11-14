@@ -57,11 +57,25 @@ export const StudentChildMenu = [
 			},
 			{
 				TypeItem: 'single',
-				Key: '/course-exam-student',
-				Route: '/course-exam-student',
+				Key: '/course/course-list/',
+				Route: '/course/course-list/',
 				Icon: '',
-				Text: 'Bài kiểm tra'
+				Text: 'Khóa học của bạn'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/customer/student/course-exam-student',
+				Route: '/customer/student/course-exam-student',
+				Icon: '',
+				Text: 'Bài kiểm tra & bài tập'
 			}
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/customer/student/lesson-detail',
+			// 	Route: '/customer/student/lesson-detail',
+			// 	Icon: '',
+			// 	Text: 'Nội dung buổi học'
+			// }
 		]
 	},
 	{

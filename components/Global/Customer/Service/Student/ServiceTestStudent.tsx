@@ -547,12 +547,14 @@ export default function ServiceTestStudent(props) {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: 150,
 			title: 'Trung tâm',
 			dataIndex: 'BranchName',
 
 			render: (a) => <p className="font-weight-black">{a}</p>
 		},
 		{
+			width: 150,
 			title: 'Đề test',
 			dataIndex: 'ExamTopicnName',
 

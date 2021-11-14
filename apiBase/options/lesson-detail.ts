@@ -1,21 +1,26 @@
-import { instance } from "~/apiBase/instance";
+import { instance } from '~/apiBase/instance';
 
-const url = "/api/LessonDetail"
+const url = '/api/LessonDetail';
 class LessonDetailApi {
-  update = (data: any) => instance.put(url , data, {});
+	getAll = (todoApi: object) =>
+		instance.get<IApiResultData<ILessonDetail[]>>(url, {
+			params: todoApi
+		});
 
-  add = (data: any) => instance.post(url , data, {});
+	update = (data: any) => instance.put(url, data, {});
 
-  UploadDocument(data) {
-    const formdata = new FormData();
-    formdata.append("file", data);
-    return instance.post("/api/UploadDocumentLessonDetail", formdata);
-  }
-  UploadHtml(data) {
-    const formdata = new FormData();
-    formdata.append("file", data);
-    return instance.post("/api/UploadHTML5LessonDetail", formdata);
-  }
+	add = (data: any) => instance.post(url, data, {});
+
+	UploadDocument(data) {
+		const formdata = new FormData();
+		formdata.append('file', data);
+		return instance.post('/api/UploadDocumentLessonDetail', formdata);
+	}
+	UploadHtml(data) {
+		const formdata = new FormData();
+		formdata.append('file', data);
+		return instance.post('/api/UploadHTML5LessonDetail', formdata);
+	}
 }
 
 export const lessonDetailApi = new LessonDetailApi();
