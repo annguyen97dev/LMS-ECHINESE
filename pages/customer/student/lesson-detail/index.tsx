@@ -7,6 +7,7 @@ import LayoutBase from '~/components/LayoutBase';
 import { useRouter } from 'next/router';
 import { courseApi, subjectApi } from '~/apiBase';
 import CurriculumDetail from '~/components/Global/Option/ProgramDetail/CurriculumDetail';
+import TitlePage from '~/components/Elements/TitlePage';
 
 const LessonDetail = () => {
 	const router = useRouter();
@@ -15,7 +16,7 @@ const LessonDetail = () => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState(null);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, isAdmin } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -136,6 +137,7 @@ const LessonDetail = () => {
 
 	return (
 		<>
+			<TitlePage title={'Chi tiết buổi học'} />
 			{/* <ExpandTable
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
@@ -146,7 +148,7 @@ const LessonDetail = () => {
 				dataSource={dataSource}
 				columns={columns}
 			/> */}
-			<CurriculumDetail curriculumID={dataSource?.CurriculumID} dataSubject={null} />
+			{dataSource && <CurriculumDetail curriculumID={dataSource?.CurriculumID} dataSubject={null} />}
 		</>
 	);
 };

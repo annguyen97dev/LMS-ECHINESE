@@ -21,6 +21,7 @@ let listFieldSearch = {
 const CurriculumDetail = (props) => {
 	const { Option } = Select;
 	const router = useRouter();
+	const { courseID: courseID } = router.query;
 	// const curriculumID = parseInt(router.query.slug as string);
 	const { curriculumID, dataSubject } = props;
 
@@ -148,12 +149,10 @@ const CurriculumDetail = (props) => {
 
 	// -------------- GET PAGE_NUMBER -----------------
 	const getPagination = (pageNumber: number) => {
-		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
-			...todoApi
-			// ...listFieldSearch,
-			// pageIndex: pageIndex,
+			...todoApi,
+			pageIndex: pageNumber
 		});
 	};
 
@@ -270,10 +269,12 @@ const CurriculumDetail = (props) => {
 						/>
 					)}
 					<DetailsModal
+						isAdmin={isAdmin}
 						curriculumDetailID={data.ID}
 						dataExamTopic={dataExamTopic}
 						dataCurriculumDetail={dataSource}
 						onFetchData={() => setTodoApi({ ...todoApi })}
+						courseID={courseID}
 					/>
 				</>
 			)

@@ -5,6 +5,7 @@ import { useDoneTest } from '~/context/useDoneTest';
 import { useWrap } from '~/context/wrap';
 import { Modal, Input, Spin, Button } from 'antd';
 import { examAppointmentResultApi } from '~/apiBase';
+import { courseExamResultApi } from '~/apiBase/package/course-exam-result';
 
 const { TextArea } = Input;
 
@@ -45,6 +46,16 @@ const DoneMarkingExam = (props) => {
 				dataSubmit = { ...dataTest };
 				break;
 
+			case 'check':
+				let dataCheck = {
+					CourseExamresultID: dataMarking.SetPackageResultID,
+					Note: dataMarking.Note,
+					courseExamExerciseStudentList: [...dataMarking.setPackageExerciseStudentsList]
+				};
+
+				dataSubmit = { ...dataCheck };
+				break;
+
 			default:
 				dataSubmit = { ...dataMarking };
 				break;
@@ -55,9 +66,9 @@ const DoneMarkingExam = (props) => {
 
 	const handleMarkingExam = async () => {
 		setLoading(true);
+		let dataSubmit = remakeData();
 
 		console.log('Data Submit: ', dataMarking);
-		let dataSubmit = remakeData();
 
 		let res = null;
 
@@ -65,6 +76,10 @@ const DoneMarkingExam = (props) => {
 			switch (type) {
 				case 'test':
 					res = await examAppointmentResultApi.updatePoint(dataSubmit);
+					break;
+
+				case 'check':
+					res = await courseExamResultApi.updatePoint(dataSubmit);
 					break;
 
 				default:

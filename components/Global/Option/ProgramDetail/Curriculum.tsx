@@ -245,12 +245,14 @@ const Curriculum = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: 120,
 			title: 'Thời gian học',
 			dataIndex: 'TimeOfLesson',
 			key: 'timeoflesson',
 			className: 'text-center'
 		},
 		{
+			width: 120,
 			title: 'Số buổi học',
 			dataIndex: 'Lesson',
 			key: 'lesson',

@@ -659,8 +659,8 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
-						Key: '/course-exam',
-						Route: '/course-exam',
+						Key: '/customer/student/course-exam',
+						Route: '/customer/student/course-exam',
 						Text: 'Kiểm tra',
 						Icon: ''
 					},

@@ -4,7 +4,7 @@ import { useWrap } from '~/context/wrap';
 import Link from 'next/link';
 import NestedTable from '~/components/Elements/NestedTable';
 import { Tooltip } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, FormOutlined } from '@ant-design/icons';
 import CourseExamPoint from './CourseExamPoint';
 import { teacherApi } from '~/apiBase';
 import CourseExamUpdate from './CourseExamUpdate';
@@ -13,7 +13,7 @@ const CourseExamDetail = (props) => {
 	const { studentID } = props;
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ICourseExam[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -106,16 +106,36 @@ const CourseExamDetail = (props) => {
 			title: 'Đề thi',
 			dataIndex: 'ExamTopicName',
 			render: (text, data) => (
-				<Link
-					href={{
-						pathname: '/course-exam/detail/[slug]',
-						query: { slug: `${data.ID}` }
-					}}
-				>
-					<a href="#" className="font-weight-black">
-						{text}
-					</a>
-				</Link>
+				<>
+					{userInformation.RoleID !== 2 ? (
+						<Link
+							href={{
+								pathname: '/course-exam/detail/[slug]',
+								query: { slug: `${data.ID}` }
+							}}
+						>
+							<a href="#" className="font-weight-black">
+								{text}
+							</a>
+						</Link>
+					) : (
+						<Link
+							href={{
+								pathname: '/course-exam/detail/[slug]',
+								query: {
+									slug: `${data.ID}`,
+									teacherMarking: data.TeacherID,
+									packageResultID: data.ID,
+									type: 'check'
+								}
+							}}
+						>
+							<a href="#" className="font-weight-black">
+								{text}
+							</a>
+						</Link>
+					)}
+				</>
 			)
 		},
 		{
@@ -148,6 +168,17 @@ const CourseExamDetail = (props) => {
 		{
 			title: 'Trạng thái chấm bài',
 			dataIndex: 'isDone',
+			filters: [
+				{
+					text: 'Đã chấm xong',
+					value: true
+				},
+				{
+					text: 'Chưa chấm xong',
+					value: false
+				}
+			],
+			onFilter: (value, record) => record.isDone === value,
 			render: (type) => (
 				<>
 					{type == true && <span className="tag green">Đã chấm xong</span>}
@@ -159,19 +190,41 @@ const CourseExamDetail = (props) => {
 		{
 			render: (data) => (
 				<>
-					<CourseExamUpdate dataTeacher={dataTeacher} dataRow={data} onFetchData={() => setTodoApi({ ...todoApi })} />
-					<Link
-						href={{
-							pathname: '/course-exam/detail/[slug]',
-							query: { slug: `${data.ID}` }
-						}}
-					>
-						<Tooltip title="Chi tiết bài làm">
-							<button className="btn btn-icon">
-								<ExclamationCircleOutlined />
-							</button>
-						</Tooltip>
-					</Link>
+					{userInformation.RoleID !== 2 ? (
+						<>
+							<CourseExamUpdate dataTeacher={dataTeacher} dataRow={data} onFetchData={() => setTodoApi({ ...todoApi })} />
+							<Link
+								href={{
+									pathname: '/course-exam/detail/[slug]',
+									query: { slug: `${data.ID}` }
+								}}
+							>
+								<Tooltip title="Chi tiết bài làm">
+									<button className="btn btn-icon">
+										<ExclamationCircleOutlined />
+									</button>
+								</Tooltip>
+							</Link>
+						</>
+					) : (
+						<Link
+							href={{
+								pathname: '/course-exam/detail/[slug]',
+								query: {
+									slug: `${data.ID}`,
+									teacherMarking: data.TeacherID,
+									packageResultID: data.ID,
+									type: 'check'
+								}
+							}}
+						>
+							<Tooltip title="Chấm bài ngay">
+								<button className="btn btn-icon edit">
+									<FormOutlined />
+								</button>
+							</Tooltip>
+						</Link>
+					)}
 				</>
 			)
 		}

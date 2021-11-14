@@ -8,6 +8,11 @@ class PackageResultApi {
 			params: Params
 		});
 
+	getAllStudent = (Params: any) =>
+		instance.get<IApiResultData<any>>('/api/SetPackageResultGetStudentExistResult', {
+			params: Params
+		});
+
 	getDetail = (id: number) => instance.get<IApiResultData<ISetPackageResult>>(`${url}/${id}`);
 
 	add = (data: ISetPackageResult) => instance.post(url, data);
