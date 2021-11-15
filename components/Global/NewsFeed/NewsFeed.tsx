@@ -142,42 +142,29 @@ const NewsFeed = () => {
 				userBranchApi.getAll({ getbytokenID: true }),
 				groupNewsFeedApi.getAll({ selectAll: true })
 			]);
-			// if (team.status === 200 && group.status === 200) {
-			// 	const teamOptionList = fmSelectArr(team.data.data, 'BranchName', 'BranchID');
-			// 	const groupOptionList = fmSelectArr(group.data.data, 'Name', 'ID');
-			// 	setOptionList({
-			// 		teamOptionList,
-			// 		groupOptionList
-			// 	});
-			// } else {
-			// 	setOptionList({
-			// 		teamOptionList: [],
-			// 		groupOptionList: []
-			// 	});
-			// }
 			if (team.status === 200) {
 				const teamOptionList = fmSelectArr(team.data.data, 'BranchName', 'BranchID');
-				setOptionList({
-					...optionList,
+				setOptionList((prevState) => ({
+					...prevState,
 					teamOptionList
-				});
+				}));
 			} else {
-				setOptionList({
-					...optionList,
+				setOptionList((prevState) => ({
+					...prevState,
 					teamOptionList: []
-				});
+				}));
 			}
 			if (group.status === 200) {
 				const groupOptionList = fmSelectArr(group.data.data, 'Name', 'ID');
-				setOptionList({
-					...optionList,
+				setOptionList((prevState) => ({
+					...prevState,
 					groupOptionList
-				});
+				}));
 			} else {
-				setOptionList({
-					...optionList,
+				setOptionList((prevState) => ({
+					...prevState,
 					groupOptionList: []
-				});
+				}));
 			}
 		} catch (error) {
 			console.log('fetchOptionList', error.message);
@@ -614,11 +601,17 @@ const NewsFeed = () => {
 					GroupNewsFeedID: idGroup
 				})
 			]);
-			if (info.status === 200 && userList.status === 200) {
-				setInfoGroup({
-					info: info.data.data,
+			if (info.status === 200) {
+				setInfoGroup((prevState) => ({
+					...prevState,
+					info: info.data.data
+				}));
+			}
+			if (userList.status === 200) {
+				setInfoGroup((prevState) => ({
+					...prevState,
 					userList: userList.data.data
-				});
+				}));
 			}
 		} catch (error) {
 			console.log('fetchInfoGroup', error.message);
