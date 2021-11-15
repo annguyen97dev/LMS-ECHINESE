@@ -380,7 +380,7 @@ const CourseOfStudentPrice = () => {
 
 		{
 			width: 130,
-			render: (data, record: ICourseOfStudentPrice) => (
+			render: (data, record: any) => (
 				<div onClick={(e) => e.stopPropagation()}>
 					<Link
 						href={{

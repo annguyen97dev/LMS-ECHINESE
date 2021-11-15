@@ -1,11 +1,11 @@
-import {instance} from '~/apiBase/instance';
+import { instance } from '~/apiBase/instance';
 
 const url = '/api/ExamAppointmentResult/';
 export const examAppointmentResultApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<IExamAppointmentResult[]>>(url, {
-			params,
+			params
 		});
 	},
 	// Lấy theo id
@@ -24,4 +24,14 @@ export const examAppointmentResultApi = {
 	delete(data) {
 		return instance.put(url, data);
 	},
+
+	getResultExam(params) {
+		return instance.get<any>('/api/ExamAppointmentResultDetail', {
+			params
+		});
+	},
+
+	updatePoint(data) {
+		return instance.put('/api/ExamAppointmentExerciseStudent', data);
+	}
 };

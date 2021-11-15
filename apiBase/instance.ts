@@ -62,7 +62,9 @@ const checkResponse = (error) => {
 	switch (error.response.status) {
 		case 401:
 			// showNoti('danger', 'Bạn không có quyền truy cập');
-			signIn();
+			setTimeout(() => {
+				signIn();
+			}, 1000);
 			break;
 		case 403:
 			alert('Bạn không có quyền thực hiện');

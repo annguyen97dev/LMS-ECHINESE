@@ -144,7 +144,7 @@ const ChoiceList = (props) => {
 			}
 			return true;
 		});
-		console.log('INDEX: ', checked);
+
 		return checked;
 	};
 

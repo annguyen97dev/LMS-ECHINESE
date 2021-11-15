@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PowerTable from '~/components/PowerTable';
 import { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
-import { curriculumApi, programApi, subjectApi, curriculumDetailApi, examTopicApi } from '~/apiBase';
+import { curriculumApi, programApi, subjectApi } from '~/apiBase';
 import CurriculumForm from '~/components/Global/Option/CurriculumForm';
 import { Tooltip } from 'antd';
 import Link from 'next/link';
@@ -107,7 +107,6 @@ const Curriculum = () => {
 	// ---------------- GET DATA SUBJECT -------------
 
 	const getDataSubject = async () => {
-		console.log('Chạy vô đây');
 		try {
 			let res = await subjectApi.getAll({
 				ProgramID: programID,
@@ -246,12 +245,14 @@ const Curriculum = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: 120,
 			title: 'Thời gian học',
 			dataIndex: 'TimeOfLesson',
 			key: 'timeoflesson',
 			className: 'text-center'
 		},
 		{
+			width: 120,
 			title: 'Số buổi học',
 			dataIndex: 'Lesson',
 			key: 'lesson',

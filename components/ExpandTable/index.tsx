@@ -14,6 +14,16 @@ const ExpandTable = (props) => {
 		}
 	]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [activeIndex, setActiveIndex] = useState(null);
+
+	const closeAllExpandFunc = () => {
+		setRowKeys([
+			{
+				currentPage: 1,
+				listKeys: []
+			}
+		]);
+	};
 
 	const selectRow = (record) => {
 		const selectedRowKeys = [];
@@ -49,7 +59,8 @@ const ExpandTable = (props) => {
 	};
 
 	const onChangeExpand = (expandedRows) => {
-		console.log('Expand Rows: ', expandedRows);
+		setActiveIndex(parseInt(expandedRows[expandedRows.length - 1]));
+
 		if (rowKeys.some((object) => object['currentPage'] == currentPage)) {
 			let index = rowKeys.findIndex((item) => item.currentPage == currentPage);
 			rowKeys[index].listKeys = expandedRows;
@@ -66,6 +77,7 @@ const ExpandTable = (props) => {
 		} else {
 			rowK = [];
 		}
+
 		return rowK;
 	};
 
@@ -89,6 +101,8 @@ const ExpandTable = (props) => {
 		hideSelectAll: true
 	};
 
+	const onSelect = () => {};
+
 	useEffect(() => {
 		if (props.TitlePage) {
 			getTitlePage(props.TitlePage);
@@ -102,7 +116,15 @@ const ExpandTable = (props) => {
 		}
 	}, [props.dataSource]);
 
+<<<<<<< HEAD
 	console.log('props.totalPage: ', props.totalPage);
+=======
+	useEffect(() => {
+		if (props.closeAllExpand) {
+			closeAllExpandFunc();
+		}
+	}, [props.closeAllExpand]);
+>>>>>>> 42160c405840b7e869239ca433ac3be763c4d4d0
 
 	return (
 		<>
@@ -116,7 +138,7 @@ const ExpandTable = (props) => {
 					<Table
 						loading={props.loading?.type == 'GET_ALL' && props.loading?.status}
 						bordered={props.haveBorder ? props.haveBorder : false}
-						scroll={props.noScroll ? { x: 'max-content' } : { x: 600 }}
+						scroll={{ x: 'max-content', y: 450 }}
 						columns={props.columns}
 						dataSource={dataSource}
 						size="middle"
@@ -128,13 +150,18 @@ const ExpandTable = (props) => {
 							onChange: (pageNumber, pageSize) => changePagination(pageNumber, pageSize),
 							current: props.currentPage && props.currentPage
 						}}
-						rowSelection={rowSelection}
-						onRow={(record) => ({
+						// rowSelection={rowSelection}
+						rowClassName={(record, index) =>
+							index == activeIndex ? 'table-row-active' : index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+						}
+						onRow={(record, index) => ({
 							onClick: () => {
 								selectRow(record);
+								setActiveIndex(index);
 							}
 						})}
-						expandable={props.expandable}
+						expandable={rowKeys[0].listKeys.length > 0 && props.expandable}
+						expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
 						onExpandedRowsChange={onChangeExpand}
 						onExpand={onExpand}
 						expandedRowKeys={returnRowKeys()}

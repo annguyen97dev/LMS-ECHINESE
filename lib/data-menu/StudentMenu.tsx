@@ -47,7 +47,35 @@ export const StudentChildMenu = [
 				Icon: '',
 				Route: '/course/schedule-study-student',
 				Text: 'Lịch học'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/customer/service/service-test-student',
+				Route: '/customer/service/service-test-student',
+				Icon: '',
+				Text: 'Thông tin hẹn test'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/course/course-list/',
+				Route: '/course/course-list/',
+				Icon: '',
+				Text: 'Khóa học của bạn'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/customer/student/course-exam-student',
+				Route: '/customer/student/course-exam-student',
+				Icon: '',
+				Text: 'Bài kiểm tra & bài tập'
 			}
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/customer/student/lesson-detail',
+			// 	Route: '/customer/student/lesson-detail',
+			// 	Icon: '',
+			// 	Text: 'Nội dung buổi học'
+			// }
 		]
 	},
 	{
@@ -74,7 +102,7 @@ export const StudentChildMenu = [
 				ItemType: 'single',
 				Key: '/package/package-result-student',
 				Route: '/package/package-result-student',
-				Text: 'Kết quả làm bài',
+				Text: 'Kết quả thi',
 				Icon: ''
 			},
 			{

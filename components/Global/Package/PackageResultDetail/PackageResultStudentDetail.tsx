@@ -2,17 +2,15 @@ import { Card, Popover, Radio, Skeleton, Spin, Tooltip } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Bookmark } from 'react-feather';
 import { packageResultDetailApi } from '~/apiBase/package/package-result-detail';
-import LayoutBase from '~/components/LayoutBase';
 import { useWrap } from '~/context/wrap';
 import TitlePage from '~/components/Elements/TitlePage';
 import router from 'next/router';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import ListQuestion from '~/components/Global/DoingTest/ListQuestion';
 import { useDoneTest } from '~/context/useDoneTest';
-import { AlignLeftOutlined, FormOutlined, ProfileOutlined, RedoOutlined } from '@ant-design/icons';
+import { ProfileOutlined, RedoOutlined } from '@ant-design/icons';
 import MainTest from '../../DoingTest/MainTest';
-import DoneMarkingExam from '../../ExamList/MarkingExam/DoneMarkingExam';
-import { doingTestApi } from '~/apiBase';
+import { doingTestApi, testCustomerApi } from '~/apiBase';
 import Link from 'next/link';
 
 const PackageResultStudentDetail = () => {
@@ -43,8 +41,8 @@ const PackageResultStudentDetail = () => {
 	const [loadingInfoTest, setLoadingInfoTest] = useState(false);
 
 	// ---- Get Router ----
-	const { examID: examID } = router.query;
-	const { packageDetailID: packageDetailID } = router.query;
+
+	const { packageDetailID: packageDetailID, examID: examID } = router.query;
 	const SetPackageResultID = router.query.slug as string;
 
 	const getInfoTest = async () => {
@@ -60,7 +58,8 @@ const PackageResultStudentDetail = () => {
 				});
 			}
 		} catch (error) {
-			showNoti('danger', error.message);
+			// showNoti('danger', error.message);
+			console.log('error', error.message);
 		} finally {
 			setLoadingInfoTest(false);
 		}
@@ -73,6 +72,7 @@ const PackageResultStudentDetail = () => {
 
 		try {
 			let res = await packageResultDetailApi.getAll(params);
+
 			//@ts-ignore
 			if (res.status == 200) {
 				convertDataDoneTest(res.data.data);
@@ -86,12 +86,14 @@ const PackageResultStudentDetail = () => {
 							setPackageExerciseStudentsList: []
 						};
 						res.data.data.forEach((item) => {
-							item.SetPackageExerciseStudent.forEach((ques) => {
-								newDataMarking.setPackageExerciseStudentsList.push({
-									ID: ques.ID,
-									Point: 0
+							if (item.ExerciseType == 2) {
+								item.SetPackageExerciseStudent.forEach((ques) => {
+									newDataMarking.setPackageExerciseStudentsList.push({
+										ID: ques.ID,
+										Point: 0
+									});
 								});
-							});
+							}
 						});
 						getDataMarking({ ...newDataMarking });
 					}
@@ -123,6 +125,8 @@ const PackageResultStudentDetail = () => {
 			setLoading(false);
 		}
 	};
+
+	//
 
 	const convertDataDoneTest = (data) => {
 		let cloneData = [...data];
@@ -256,11 +260,13 @@ const PackageResultStudentDetail = () => {
 												<span className="number">
 													{loadingInfoTest ? (
 														<Skeleton paragraph={false} loading={true} title={true} active />
-													) : (
+													) : infoTest ? (
 														infoTest?.ReadingCorrect +
 														infoTest?.ListeningCorrect +
 														'/' +
 														infoTest?.TotalQuestion
+													) : (
+														''
 													)}
 												</span>
 											</div>

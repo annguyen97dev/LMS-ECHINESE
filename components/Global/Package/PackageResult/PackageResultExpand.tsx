@@ -13,8 +13,6 @@ const PackageResultExpand = (props) => {
 	const [detail, setDetail] = useState<ISetPackageResult>([]);
 	const { showNoti } = useWrap();
 
-	console.log('DATA DETAIL: ', detail);
-
 	const fetchDetailInfo = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
@@ -85,11 +83,7 @@ const PackageResultExpand = (props) => {
 		}
 	];
 
-	return (
-		<div className="container-fluid">
-			<NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />
-		</div>
-	);
+	return <NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />;
 };
 
 export default PackageResultExpand;

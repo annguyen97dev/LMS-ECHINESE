@@ -12,7 +12,9 @@ import 'bootstrap/js/src/tooltip';
 import { format } from 'path';
 import index from '~/components/LoginForm';
 import IdiomsForm from '~/components/Global/Option/IdiomsForm';
+import { BorderOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 // import "bootstrap/dist/css/bootstrap.css";
+import { Modal, Button, Input } from 'antd';
 
 // let keys = "";
 let arrKey = [];
@@ -20,8 +22,16 @@ let countEnter = 0;
 let indexChar = 0;
 let textReplace = '';
 
+type dataTranslate = Array<{
+	noteID: number;
+	textSelect: string;
+	textTranslate: string;
+}>;
+
 const EditorSummernote = (props) => {
-	const { getDataEditor, isReset, questionContent, addQuestion, deleteSingleQuestion, deleteAllQuestion, exerciseList, visible } = props;
+	const { getDataEditor, isReset, questionContent, addQuestion, deleteSingleQuestion, deleteAllQuestion, questionData, visible } = props;
+
+	// -- For add space --
 	const [valueEditor, setValueEditor] = useState(questionContent);
 	const [propetyEditor, setPropetyEditor] = useState({
 		textNode: null,
@@ -32,27 +42,154 @@ const EditorSummernote = (props) => {
 		id: null,
 		key: ''
 	});
-	const [position, setPosition] = useState(null);
 	const [isAdd, setIsAdd] = useState(false);
 	const [reloadContent, setReloadContent] = useState(false);
-	// const [listID, setListID] = useState([]);
-	const [listInput, setListInput] = useState([]);
-	const [saveListInput, setSaveListInput] = useState([]);
+	const [listInput, setListInput] = useState<Array<number>>([]);
 	const [changePosition, setChangePosition] = useState(false);
 	const [saveID, setSaveID] = useState(null);
 
+	// -- For translate --
+	const [textSelect, setTextSelect] = useState(null);
+	const [textTranslate, setTextTranslate] = useState(null);
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [dataTranslate, setDataTranslate] = useState<dataTranslate>([]);
+	const [isAddTranslate, setIsAddTranslate] = useState(false);
+	const [reloadTranslate, setReloadTranslate] = useState(false);
+
 	// console.log("Propety: ", propetyEditor);
 	// console.log("Value editor: ", valueEditor);
-	console.log('Count Enter: ', countEnter);
+	// console.log('Count Enter: ', countEnter);
 	// console.log("Position is: ", position);
-	console.log('Key Editor: ', keyEditor);
+	// console.log('Key Editor: ', keyEditor);
 	// console.log("List Input: ", listInput);
 	// console.log("Is Focus: ", isFocus);
 	// console.log("Index Char:  ", indexChar);
-	console.log('List input: ', listInput);
+	// console.log('List input: ', listInput);
 	// console.log("Text Replace: ", textReplace);
-	console.log('Save Id is: ', saveID);
+	// console.log('Save Id is: ', saveID);
 
+	// ================= FOR TRANSLATE ===================
+	const showModal = (type) => {
+		setIsModalVisible(true);
+		if (type == 'add') {
+			setIsAddTranslate(true);
+		} else {
+			setIsAddTranslate(false);
+		}
+	};
+
+	const handleOk = () => {
+		if (isAddTranslate) {
+			if (textSelect) {
+				handleAddTranslate();
+			}
+		} else {
+			handleFixTranslate();
+		}
+		setIsModalVisible(false);
+	};
+
+	const handleCancel = () => {
+		setIsModalVisible(false);
+		setTextSelect(null);
+		setTextTranslate(null);
+	};
+
+	// GET TRANSLATE TEXT
+	const onChange_GetTranslateText = (e) => {
+		let text = e.target.value;
+		setTextTranslate(text);
+	};
+
+	const onKeyDownInput = (e) => {
+		if (e.key === 'Enter') {
+			handleAddTranslate();
+			setIsModalVisible(false);
+		}
+	};
+
+	// HANDLE FIX TRANSLATE
+	const handleFixTranslate = () => {
+		let elementNote = document.querySelectorAll('#editor-element .note-editable .text-note-of-translate');
+		elementNote.forEach((item, index) => {
+			let noteID = parseInt(item.getAttribute('data-note'));
+			let textItem = item.innerHTML;
+
+			let indexData = dataTranslate.findIndex((e) => e.noteID === noteID);
+			if (dataTranslate[indexData].textTranslate !== textItem) {
+				item.innerHTML = dataTranslate[indexData].textTranslate;
+				item.setAttribute('title', dataTranslate[indexData].textTranslate);
+			}
+		});
+		setReloadTranslate(true);
+	};
+
+	// HANDLE ADD TRANSLATE
+	const handleAddTranslate = () => {
+		let elementEditor = document.querySelectorAll('#editor-element .note-editable');
+		let elementP = document.querySelectorAll('#editor-element .note-editable p');
+
+		const onAdd = (item) => {
+			let innerText = item.innerHTML;
+			if (innerText.includes(textSelect)) {
+				let noteID = null;
+				if (dataTranslate.length < 1) {
+					noteID = 0;
+				} else {
+					noteID = dataTranslate[dataTranslate.length - 1].noteID + 1;
+				}
+
+				item.innerHTML = innerText.replace(
+					textSelect,
+					`<input class="input-prevent-translate"/><span title="${textTranslate}" class="text-normal-of-translate">${textSelect}<span data-note="${noteID}" class="text-note-of-translate">${textTranslate}</span></span><input class="input-prevent-translate"/>`
+				);
+
+				dataTranslate.push({
+					noteID: noteID,
+					textSelect: textSelect,
+					textTranslate: textTranslate
+				});
+				setDataTranslate([...dataTranslate]);
+			}
+		};
+
+		if (elementP.length > 0) {
+			elementP.forEach((item) => {
+				onAdd(item);
+			});
+		} else {
+			onAdd(elementEditor[0]);
+		}
+
+		setTextTranslate(null);
+		setTextSelect(null);
+		setReloadTranslate(true);
+	};
+
+	const onFixTextTranslate = (e, noteID) => {
+		let text = e.target.value;
+		let index = dataTranslate.findIndex((item) => item.noteID == noteID);
+
+		console.log('Index: ', index);
+
+		dataTranslate[index].textTranslate = text;
+		setDataTranslate([...dataTranslate]);
+	};
+
+	useEffect(() => {
+		let getNodes = (str) => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
+
+		let editorElement = document.getElementById('editor-element');
+		editorElement.addEventListener('mouseup', (e) => {
+			var sel = window.getSelection && window.getSelection();
+			if (sel && sel.rangeCount > 0) {
+				let textSelect = window.getSelection().toString();
+				setTextSelect(textSelect);
+			}
+		});
+	});
+
+	// ================= FOR ADD SPACE ===================
 	const formatKey = (e) => {
 		switch (e.keyCode) {
 			case 16:
@@ -104,14 +241,11 @@ const EditorSummernote = (props) => {
 			}
 		}
 
-		console.log('New arr: ', newArr);
-
 		return newArr;
 	};
 
 	// ON KEY UP
 	const onKeyDown = (e) => {
-		console.log('E KEY UP: ', e);
 		let node = null;
 		let id = null;
 
@@ -154,7 +288,6 @@ const EditorSummernote = (props) => {
 
 	// ON FOCUS
 	const onFocus = (e) => {
-		console.log('E in focus: ', e);
 		countEnter = e.target.id;
 
 		// setKeyEditor({
@@ -174,17 +307,16 @@ const EditorSummernote = (props) => {
 			textNode = range.startContainer;
 
 			offset = range.startOffset;
+			//@ts-ignore
 		} else if (document.caretPositionFromPoint) {
+			//@ts-ignore
 			range = document.caretPositionFromPoint(e.clientX, e.clientY);
 
 			textNode = range.offsetNode;
 			offset = range.offset;
 		} else {
-			console.log('Not support caretPositionFromPoint');
 			return;
 		}
-
-		console.log('Range: ', range);
 
 		if (range.startContainer.previousSibling || range.startContainer.nextSibling) {
 			textReplace = range.startContainer.textContent;
@@ -272,13 +404,11 @@ const EditorSummernote = (props) => {
 
 	// HANDLE RESET
 	useEffect(() => {
-		isReset && (ReactSummernote.reset(), setValueEditor(''));
+		isReset && (ReactSummernote.reset(), setValueEditor(''), setListInput([]));
 	}, [isReset]);
 
 	// Function any handle delete
 	const anyHandleDelete = () => {
-		console.log('On delete all');
-
 		setListInput([]);
 		countEnter = 0;
 		arrKey = [];
@@ -295,8 +425,6 @@ const EditorSummernote = (props) => {
 		let tagP = document.querySelectorAll('.note-editable p'); // Get node element in editor
 		let spaceEditor = document.querySelectorAll('.note-editable .space-editor');
 
-		console.log('List Editor: ', editor);
-
 		// Check space is deleted
 		let newList = [];
 		if (spaceEditor) {
@@ -305,13 +433,15 @@ const EditorSummernote = (props) => {
 			});
 		}
 
+		console.log('List Input: ', listInput);
+		console.log('New List: ', newList);
+
 		if (listInput.length > 0) {
 			let difID = listInput.filter((x) => !newList.includes(x.toString()));
-			// console.log("New List: ", newList);
-			// console.log("Input list: ", listInput);
-			// console.log("difID: ", difID);
+
+			console.log('DIF ID: ', difID);
+
 			if (difID.length > 0) {
-				console.log('Xóa 1 item');
 				deleteSingleQuestion && deleteSingleQuestion(difID[0]); // xóa câu hỏi ở ngoài
 				let indexID = listInput.indexOf(difID[0]);
 				listInput.splice(indexID, 1);
@@ -323,26 +453,18 @@ const EditorSummernote = (props) => {
 		}
 		// Check delete all
 		if (editor[0].childNodes.length == 0) {
-			console.log('Delete all 1');
 			anyHandleDelete();
 		} else {
 			let isEmpty = true;
 			editor[0].childNodes.forEach((item, index) => {
 				let node = editor[0].children[index];
-				// console.log("node là: ", node);
 				if (node?.innerHTML !== '<br>' && node?.innerHTML !== ' ') {
 					isEmpty = false;
 				}
 			});
 			if (isEmpty) {
-				console.log('Delete all 2');
 				anyHandleDelete();
 			}
-			// if (editor[0].children.length == 1) {
-			//   if (editor[0].children[0].innerHTML == "<br>") {
-			//     anyHandleDelete();
-			//   }
-			// }
 		}
 
 		if (tagP.length > 0) {
@@ -399,26 +521,22 @@ const EditorSummernote = (props) => {
 					if (item.id === keyEditor.id) {
 						let content = item.innerHTML;
 						content = content.replace('&nbsp;', ' ');
-						console.log('Content: ', content);
 						// --- Check empty key ---
 						if (keyEditor.key == '') {
 							// TH1: nếu trong text đã có input, sau khi click gần đó thì vị trí bắt đầu tính từ input trở đi nên phải kiểm tra
 							if (content.includes('space-editor')) {
-								console.log('Add Space 1');
 								let arrTextReplace = textReplace.split('');
-								// console.log("ArrText: ", arrTextReplace);
+
 								arrTextReplace.splice(
 									indexChar,
 									0,
 									`<input id="${inputID}" class='space-editor' placeholder="(${indexInput + 1})">`
 								);
-								console.log('arrText: ', arrTextReplace);
+
 								let stringTextReplace = arrTextReplace.join('');
-								// console.log("Content trước đó: ", content);
-								console.log('String convert: ', stringTextReplace);
+
 								content = content.replace(textReplace, stringTextReplace);
 							} else {
-								console.log('Add Space 2');
 								let newContent = content.split('');
 								newContent.splice(
 									indexChar,
@@ -427,10 +545,7 @@ const EditorSummernote = (props) => {
 								);
 								content = newContent.join('');
 							}
-
-							// console.log("Content is: ", content);
 						} else {
-							console.log('Add Space 3');
 							content = content.replace(
 								keyEditor.key,
 								keyEditor.key + `<input id="${inputID}" class='space-editor' placeholder="(${indexInput + 1})">`
@@ -453,7 +568,6 @@ const EditorSummernote = (props) => {
 	// ========================== RELOAD CONTENT =======================================
 	useEffect(() => {
 		let spaceEditor = document.querySelectorAll('.note-editable .space-editor');
-		// console.log("Space Editor: ", spaceEditor);
 
 		// Trường hợp các câu hỏi đã có id mới và cần làm mới lại
 		if (saveID == null) {
@@ -479,7 +593,6 @@ const EditorSummernote = (props) => {
 			let newList = [];
 			spaceEditor.forEach((item, index) => {
 				newList.push(parseInt(item.id));
-				console.log('item: ', item);
 				if (parseInt(item.id) === listInput[listInput.length - 1]) {
 					addQuestion && addQuestion(listInput[listInput.length - 1]);
 				}
@@ -491,11 +604,20 @@ const EditorSummernote = (props) => {
 		}
 	}, [reloadContent]);
 
+	useEffect(() => {
+		if (reloadTranslate) {
+			let allContentNode = document.querySelectorAll('.note-editable');
+			let allContent = allContentNode[0].innerHTML;
+			getDataEditor(allContent);
+			setValueEditor(allContent);
+			setReloadTranslate(false);
+		}
+	}, [reloadTranslate]);
+
 	// ================ CHECK AND CHANGE POSITION WHEN DELTE 1 INPUT ===================
 	useEffect(() => {
 		let spaceEditor = document.querySelectorAll('.note-editable .space-editor');
 		if (changePosition) {
-			console.log('Change position');
 			if (spaceEditor.length > 0) {
 				spaceEditor.forEach((item, index) => {
 					if (listInput.includes(parseInt(item.id))) {
@@ -509,40 +631,144 @@ const EditorSummernote = (props) => {
 	}, [changePosition]);
 
 	useEffect(() => {
-		console.log('Visible is: ', visible);
 		if (!visible) {
 			ReactSummernote.reset(), setValueEditor('');
+		} else {
+			let editor = document.querySelectorAll('.note-editable');
+
+			// Thay thẻ div = input
+			let cloneValueEditor = valueEditor;
+			if (questionData?.ExerciseList.length > 0) {
+				questionData.ExerciseList.forEach((item) => {
+					let indexInput: any = parseInt(item.inputID) + 1;
+					indexInput = indexInput.toString();
+
+					cloneValueEditor = cloneValueEditor.replace(
+						`<div ques-id="${item.ID}" id="${indexInput}" class='space-editor' role='textbox' aria-labelledby='txtboxLabel' aria-multiline='true' contentEditable="true">(${indexInput})</div>`,
+						`<input id="${item.inputID}" class="space-editor" placeholder="(${indexInput})">`
+					);
+
+					console.log(
+						'Test: ',
+						`<div ques-id="${item.ID}" id="${indexInput}" class="space-editor" role="textbox" aria-labelledby="txtboxLabel" aria-multiline="true" contenteditable="true">(${indexInput})</div>`
+					);
+					console.log('Data Clone: ', cloneValueEditor);
+				});
+
+				editor[0].innerHTML = cloneValueEditor;
+				setValueEditor(valueEditor);
+			}
+
+			// if (valueEditor.includes('<div ques-id')) {
+			// 	editor[0].innerHTML = valueEditor.replace('<div ques-id', '<input ques-id');
+			// }
 		}
 	}, [visible]);
 
+	useEffect(() => {
+		let elementNote = document.querySelectorAll('#editor-element .note-editable .text-normal-of-translate');
+
+		if (elementNote.length > 0) {
+			elementNote.forEach((item) => {
+				//@ts-ignore
+				let noteID = item.lastChild.attributes[0].nodeValue;
+				let textSelect = item.firstChild.nodeValue;
+				let textTranslate = item.lastChild.childNodes[0].nodeValue;
+				dataTranslate.push({
+					noteID: parseInt(noteID),
+					textSelect: textSelect,
+					textTranslate: textTranslate
+				});
+			});
+			setDataTranslate([...dataTranslate]);
+		}
+	}, []);
+
 	return (
-		<div className="wrap-editor custom">
-			<button className="btn-editor" onClick={handleAddSpace}>
-				Thêm input
-			</button>
-			<ReactSummernote
-				value={valueEditor}
-				children={ReactHtmlParser(valueEditor)}
-				// onFocus={onFocus}
-				options={{
-					lang: 'vn',
-					height: 220,
-					dialogsInBody: true,
-					toolbar: [
-						['style', ['style']],
-						['font', ['bold', 'underline', 'clear']],
-						['fontname', ['fontname']],
-						['para', ['ul', 'ol', 'paragraph']],
-						['table', ['table']],
-						['insert', ['link', 'picture', 'video']],
-						['view', ['fullscreen', 'codeview']]
-					]
-				}}
-				onChange={(content) => onChange(content)}
-				onKeyDown={onKeyDown}
-				onImageUpload={onImageUpload}
-			/>
-		</div>
+		<>
+			<Modal title="Phiên âm" visible={isModalVisible} okText="Lưu" cancelText="Hủy" onOk={handleOk} onCancel={handleCancel}>
+				{isAddTranslate ? (
+					textSelect ? (
+						<Input
+							autoFocus
+							allowClear
+							id="input-translate"
+							className="style-input"
+							value={textTranslate}
+							onChange={onChange_GetTranslateText}
+							onKeyDown={onKeyDownInput}
+						/>
+					) : (
+						<p style={{ fontWeight: 500 }}>Vui lòng chọn nội dung cần phiên âm</p>
+					)
+				) : (
+					<div className="detail-translate">
+						<table>
+							<thead>
+								<th className="text-center">Nội dung</th>
+								<th className="text-center">Phiên âm</th>
+							</thead>
+							<tbody>
+								{dataTranslate.map((item, index) => (
+									<tr key={index}>
+										<td>{item.textSelect}</td>
+										<td className="text-center">
+											<input
+												className="show-text-translate"
+												type="text"
+												value={item.textTranslate}
+												onChange={(e) => {
+													onFixTextTranslate(e, item.noteID);
+												}}
+												onKeyDown={(e) => {
+													if (e.key === 'Enter') {
+														handleFixTranslate();
+														setIsModalVisible(false);
+													}
+												}}
+											/>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				)}
+			</Modal>
+			<div className="wrap-editor custom" id="editor-element">
+				<button className="btn-editor add-translate d-flex align-items-center" onClick={() => showModal('add')}>
+					<PlusOutlined className="mr-2" /> Thêm Phiên âm
+				</button>
+				<button className="btn-editor fix-translate d-flex align-items-center" onClick={() => showModal('fix')}>
+					<EditOutlined className="mr-2" /> Sửa phiên âm
+				</button>
+				<button className="btn-editor d-flex align-items-center" onClick={handleAddSpace}>
+					<BorderOutlined className="mr-2" /> Thêm input
+				</button>
+				<ReactSummernote
+					value={valueEditor}
+					children={ReactHtmlParser(valueEditor)}
+					// onFocus={onFocus}
+					options={{
+						lang: 'vn',
+						height: 220,
+						dialogsInBody: true,
+						toolbar: [
+							['style', ['style']],
+							['font', ['bold', 'underline', 'clear']],
+							['fontname', ['fontname']],
+							['para', ['ul', 'ol', 'paragraph']],
+							['table', ['table']],
+							['insert', ['link', 'picture', 'video']],
+							['view', ['fullscreen', 'codeview']]
+						]
+					}}
+					onChange={(content) => onChange(content)}
+					onKeyDown={onKeyDown}
+					onImageUpload={onImageUpload}
+				/>
+			</div>
+		</>
 	);
 };
 

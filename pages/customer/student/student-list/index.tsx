@@ -5,11 +5,13 @@ import { Eye } from 'react-feather';
 import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi, staffApi, studentApi } from '~/apiBase';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
-import StudentForm from '~/components/Global/Customer/Student/StudentForm';
+import ExpandTable from '~/components/ExpandTable';
+import CourseOfStudentDetail from '~/components/Global/Customer/Student/CourseOfStudentDetail';
+import ResetPassStudent from '~/components/Global/Customer/Student/ResetPassStudent';
+
 import StudentFormModal from '~/components/Global/Customer/Student/StudentFormModal';
-import StudentFormModa from '~/components/Global/Customer/Student/StudentFormModal';
+
 import LayoutBase from '~/components/LayoutBase';
-import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 
@@ -290,16 +292,14 @@ const StudentData = () => {
 
 					res.status == 200 && getDataTolist(res.data.data, item.name);
 
-					res.status == 204 && showNoti('danger', item.text + ' Không có dữ liệu');
+					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
-					showNoti('danger', error.message);
+					console.log(error.message);
 				} finally {
 				}
 			})();
 		});
 	};
-
-	console.log('Todoapi: ', todoApi);
 
 	// GET DATA SOURCE
 	const getDataSource = async () => {
@@ -311,7 +311,7 @@ const StudentData = () => {
 		try {
 			let res = await studentApi.getAll(todoApi);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu') && setDataSource([]);
+			res.status == 204 && setDataSource([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -459,53 +459,32 @@ const StudentData = () => {
 	// EXPAND ROW
 
 	const expandedRowRender = (data, index) => {
-		return (
-			<>
-				<StudentForm
-					index={index}
-					dataRow={data}
-					listDataForm={checkEmptyData && listDataForm}
-					_handleSubmit={(dataSubmit, index) => {
-						let newDataSource = [...dataSource];
-						newDataSource.splice(index, 1, {
-							...dataSubmit,
-							AreaName: dataSubmit.AreaID && listDataForm.Area.find((item) => item.value == dataSubmit.AreaID).title,
-							SourceInformationName:
-								dataSubmit.SourceInformationID &&
-								listDataForm.SourceInformation.find((item) => item.value == dataSubmit.SourceInformationID).title
-						});
-						console.log('NEW DATA: ', newDataSource);
-						setDataSource(newDataSource);
-					}}
-				/>
-			</>
-		);
+		return <CourseOfStudentDetail studentID={data.UserInformationID} />;
 	};
 
 	// Columns
 	const columns = [
 		{
+			width: 120,
 			title: 'Mã học viên',
 			dataIndex: 'UserCode',
+			fixed: 'left',
 			render: (UserCode) => <p className="font-weight-black">{UserCode}</p>
 		},
 		{
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
+			fixed: 'left',
 			render: (nameStudent) => <p className="font-weight-blue">{nameStudent}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Tên tiếng Trung',
+			width: 150,
 			dataIndex: 'ChineseName',
 			render: (text) => <p className="font-weight-blue">{text}</p>
 		},
-		{
-			title: 'Tỉnh/TP',
-			dataIndex: 'AreaName'
 
-			// ...FilterColumn("city")
-		},
 		{
 			title: 'SĐT',
 			dataIndex: 'Mobile'
@@ -518,16 +497,16 @@ const StudentData = () => {
 			title: 'Nguồn',
 			dataIndex: 'SourceInformationName'
 		},
-		{
-			title: 'Facebook',
-			dataIndex: 'LinkFaceBook',
-			render: (link) =>
-				link && (
-					<a className="font-weight-black" href={link} target="_blank">
-						Link
-					</a>
-				)
-		},
+		// {
+		// 	title: 'Facebook',
+		// 	dataIndex: 'LinkFaceBook',
+		// 	render: (link) =>
+		// 		link && (
+		// 			<a className="font-weight-black" href={link} target="_blank">
+		// 				Link
+		// 			</a>
+		// 		)
+		// },
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusID',
@@ -538,7 +517,7 @@ const StudentData = () => {
 		},
 		{
 			title: '',
-			width: 100,
+			width: 150,
 			render: (record, _, index) => (
 				<div onClick={(e) => e.stopPropagation()}>
 					<StudentFormModal
@@ -546,7 +525,6 @@ const StudentData = () => {
 						dataRow={record}
 						listDataForm={checkEmptyData && listDataForm}
 						_handleSubmit={(dataSubmit, index) => {
-							console.log('Data submit la: ', dataSubmit);
 							let newDataSource = [...dataSource];
 							newDataSource.splice(index, 1, {
 								...dataSubmit,
@@ -557,6 +535,7 @@ const StudentData = () => {
 							setDataSource(newDataSource);
 						}}
 					/>
+					<ResetPassStudent dataRow={record} />
 					<Link
 						href={{
 							pathname: '/customer/student/student-list/student-detail/[slug]',
@@ -575,7 +554,7 @@ const StudentData = () => {
 	];
 
 	return (
-		<PowerTable
+		<ExpandTable
 			currentPage={currentPage}
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -594,6 +573,7 @@ const StudentData = () => {
 					<SortBox handleSort={(value) => handleSort(value)} dataOption={dataOption} />
 				</div>
 			}
+			expandable={{ expandedRowRender }}
 		/>
 	);
 };

@@ -2,38 +2,32 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { examDetailApi } from '~/apiBase';
 import { useWrap } from './wrap';
 
-type answerDetail = {
-	AnswerID: number;
-	AnswerContent: string;
-	FileAudio: string;
-};
+// type answerDetail = {
+// 	AnswerID: number;
+// 	AnswerContent: string;
+// 	FileAudio: string;
+// };
 
-type questionDetail = {
-	ExerciseID: number;
-	SetPackageExerciseAnswerStudentList: Array<answerDetail>;
-};
+// type questionDetail = {
+// 	ExerciseID: number;
+// 	SetPackageExerciseAnswerStudentList: Array<answerDetail>;
+// };
 
-type packageResultDetail = {
-	ExamTopicDetailID: number;
-	ExerciseGroupID: number;
-	Level: number;
-	Type: number;
-	SkillID: number;
-	SetPackageExerciseStudentInfoList: Array<questionDetail>;
-};
-
-type packageResult = {
-	StudentID: number;
-	SetPackageDetailID: number;
-	SetPackageResultDetailInfoList: Array<packageResultDetail>;
-};
+// type packageResultDetail = {
+// 	ExamTopicDetailID: number;
+// 	ExerciseGroupID: number;
+// 	Level: number;
+// 	Type: number;
+// 	SkillID: number;
+// 	SetPackageExerciseStudentInfoList: Array<questionDetail>;
+// };
 
 export type IProps = {
 	getListQuestionID: Function;
 	getActiveID: Function;
 	getPackageResult: Function;
 	getListPicked: Function;
-	packageResult: packageResult;
+	packageResult: ITestExamination;
 	activeID: number;
 	listQuestionID: Array<Number>;
 	listPicked: Array<Number>;
@@ -53,7 +47,7 @@ const DoingTestContext = createContext<IProps>({
 export const DoingTestProvider = ({ children }) => {
 	const [listQuestionID, setListQuestionID] = useState([]);
 	const [activeID, setActiveID] = useState(null);
-	const [packageResult, setPackageResult] = useState<packageResult>({
+	const [packageResult, setPackageResult] = useState<ITestExamination>({
 		StudentID: null,
 		SetPackageDetailID: null,
 		SetPackageResultDetailInfoList: []
@@ -82,7 +76,7 @@ export const DoingTestProvider = ({ children }) => {
 	};
 
 	// --- GET PACKAGE RESULT ---
-	const getPackageResult = (data: packageResult) => {
+	const getPackageResult = (data: ITestExamination) => {
 		setPackageResult(data);
 	};
 

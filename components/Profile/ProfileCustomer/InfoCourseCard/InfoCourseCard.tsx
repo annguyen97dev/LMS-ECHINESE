@@ -1,28 +1,28 @@
-import {Collapse} from 'antd';
+import { Collapse } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {courseStudentApi} from '~/apiBase';
-import {useWrap} from '~/context/wrap';
+import React, { useEffect, useState } from 'react';
+import { courseStudentApi } from '~/apiBase';
+import { useWrap } from '~/context/wrap';
 import RollUpTable from './RollUpTable';
 
 InfoCourseCard.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 InfoCourseCard.defaultProps = {
-	studentID: 0,
+	studentID: 0
 };
-const {Panel} = Collapse;
+const { Panel } = Collapse;
 function InfoCourseCard(props) {
-	const {studentID} = props;
+	const { studentID } = props;
 	const [courseStudent, setCourseStudent] = useState<ICourseOfStudent[]>([]);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 
 	const getCourseOfStudent = async () => {
 		try {
 			const res = await courseStudentApi.getAll({
 				pageSize: 9999,
 				pageIndex: 1,
-				UserInformationID: studentID,
+				UserInformationID: studentID
 			});
 			if (res.status === 200) {
 				setCourseStudent(res.data.data);
@@ -38,7 +38,7 @@ function InfoCourseCard(props) {
 
 	return (
 		<Collapse accordion className="info-course-card">
-			{courseStudent.map((item: ICourseOfStudent, index) => (
+			{courseStudent.map((item: any, index) => (
 				<Panel header={item.CourseName} key={index}>
 					{/* ĐIỂM DANH TRONG KHÓA HỌC */}
 					<RollUpTable courseID={item.CourseID} studentID={studentID} />

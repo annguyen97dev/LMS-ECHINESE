@@ -18,7 +18,7 @@ function InfoTestCard(props) {
 		type: null,
 		status: false
 	});
-	const [exam, setExam] = useState<IExamAppointmentResult[]>(null);
+	const [exam, setExam] = useState<any>(null);
 
 	const getExamAppointmentResult = async () => {
 		try {
@@ -26,9 +26,9 @@ function InfoTestCard(props) {
 				type: 'GET_ALL',
 				status: true
 			});
-			const res = await examAppointmentResultApi.getById(studentID);
+			const res = await examAppointmentResultApi.getAll({ selectAll: true, UserInformationID: studentID });
 			if (res.status === 200) {
-				setExam([res.data.data]);
+				setExam(res.data.data);
 			} else if (res.status === 204) {
 				setExam([]);
 			}
@@ -59,8 +59,17 @@ function InfoTestCard(props) {
 		{ title: 'Viết', dataIndex: 'WritingPoint' },
 		{
 			title: 'Trạng thái',
-			dataIndex: 'StatusName',
-			render: (statusName) => <p className="font-weight-black">{statusName}</p>
+			dataIndex: 'StatusID',
+			render: (status) => {
+				return (
+					<>
+						{status == 0 && <span className="tag red">Chưa test</span>}
+						{status == 1 && <span className="tag blue">Đang chấm bài</span>}
+						{status == 2 && <span className="tag yellow">Chưa đăng kí</span>}
+						{status == 3 && <span className="tag green">Đã đăng kí </span>}
+					</>
+				);
+			}
 		}
 	];
 

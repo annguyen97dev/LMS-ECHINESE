@@ -34,7 +34,7 @@ const SpeakingList = (props) => {
 		return text;
 	};
 
-	console.log('Data question: ', dataQuestion);
+	// console.log('Data question: ', dataQuestion);
 
 	// Chấp nhận xóa câu hỏi
 	const handleOk = async (quesItem) => {

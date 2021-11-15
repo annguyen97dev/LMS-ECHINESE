@@ -1,0 +1,131 @@
+import React, { useEffect, useState } from 'react';
+import { staffSalaryApi } from '~/apiBase/staff-manage/staff-salary';
+import NestedTable from '~/components/Elements/NestedTable';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
+
+const SalaryStaffNested = (props) => {
+	const { showNoti, pageSize } = useWrap();
+	const { staffID } = props;
+	const [dataSource, setDataSource] = useState([]);
+	const listTodoApi = {
+		pageSize: pageSize,
+		pageIndex: 1,
+		StaffID: staffID
+	};
+	const [currentPage, setCurrentPage] = useState(1);
+	const [todoApi, setTodoApi] = useState(listTodoApi);
+	const [totalPage, setTotalPage] = useState(null);
+	const [loading, setLoading] = useState({
+		type: 'GET_ALL',
+		status: false
+	});
+
+	const getDataSource = async () => {
+		setLoading({
+			type: 'GET_ALL',
+			status: true
+		});
+		try {
+			let res = await staffSalaryApi.getAll(todoApi);
+			res.status == 200 && setDataSource(res.data.data);
+			res.status == 204 && setDataSource([]);
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setLoading({
+				type: 'GET_ALL',
+				status: false
+			});
+		}
+	};
+
+	// -------------- GET PAGE_NUMBER -----------------
+	const getPagination = (pageNumber: number) => {
+		setCurrentPage(pageNumber);
+		setTodoApi({
+			...todoApi,
+			pageIndex: pageNumber
+		});
+	};
+
+	const columns = [
+		// {
+		// 	title: 'Nhân viên',
+		// 	dataIndex: 'StaffName',
+		// 	render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>
+		// },
+		{
+			title: 'Tháng',
+			dataIndex: 'Month',
+			render: (price, record: IStaffSalary) => <p>{price}</p>
+		},
+		{
+			title: 'Năm',
+			dataIndex: 'Year',
+			render: (price, record: IStaffSalary) => <p>{price}</p>
+		},
+
+		{
+			title: 'Thưởng',
+			dataIndex: 'Bonus',
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+		},
+		{
+			title: 'Ghi Chú',
+			dataIndex: 'NoteBonus',
+			render: (price, record: any) => <p>{price}</p>
+		},
+		{
+			title: 'Ngày nghỉ',
+			dataIndex: 'CountOff',
+			render: (price, record: any) => <p>{price}</p>
+		},
+		{
+			title: 'Trạng Thái',
+			dataIndex: 'StatusName',
+			render: (price, record: any) => (
+				<>
+					{record.StatusID == 1 && <span className="tag red">{price}</span>}
+					{record.StatusID == 3 && <span className="tag yellow">{price}</span>}
+					{record.StatusID == 4 && <span className="tag blue">{price}</span>}
+					{record.StatusID == 5 && <span className="tag green">{price}</span>}
+				</>
+			)
+		},
+		{
+			title: 'Tăng Lương',
+			dataIndex: 'AdvanceSalary',
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+		},
+		{
+			title: 'Lương Tháng',
+			dataIndex: 'Salary',
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+		},
+		{
+			title: 'Lương Tổng',
+			dataIndex: 'TotalSalary',
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+		}
+	];
+
+	useEffect(() => {
+		getDataSource();
+	}, [todoApi]);
+
+	return (
+		<>
+			<NestedTable
+				loading={loading}
+				addClass="basic-header"
+				dataSource={dataSource}
+				columns={columns}
+				haveBorder={true}
+				getPagination={(pageNumber: number) => getPagination(pageNumber)}
+			/>
+		</>
+	);
+};
+
+export default SalaryStaffNested;

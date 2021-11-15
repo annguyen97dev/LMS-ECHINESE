@@ -1,17 +1,8 @@
-import {Spin, Tabs} from 'antd';
+import { Spin, Tabs } from 'antd';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import React from 'react';
-import {
-	Activity,
-	Bell,
-	Book,
-	Calendar,
-	CheckCircle,
-	Edit,
-	FileText,
-	Flag,
-} from 'react-feather';
+import { Activity, Bell, Book, Calendar, CheckCircle, Edit, FileText, Flag } from 'react-feather';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
@@ -20,10 +11,10 @@ import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
 import Transcript from './Transcript/Transcript';
 
-const {TabPane} = Tabs;
+const { TabPane } = Tabs;
 const CourseListDetail = () => {
 	const router = useRouter();
-	const {slug: ID, type} = router.query;
+	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
 	return (
 		<div className="course-dt page-no-scroll">
@@ -59,10 +50,7 @@ const CourseListDetail = () => {
 					}
 					key="2"
 				>
-					<div
-						className="d-flex align-items-center justify-content-center"
-						style={{height: 200}}
-					>
+					<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
 						<Spin size="large" />
 					</div>
 				</TabPane>

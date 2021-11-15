@@ -366,7 +366,7 @@ const MenuDefault = ({
 			</div>
 			<div className="menu-parent">
 				<div className="menu-parent-logo">
-					<Link href="/dashboard">
+					<Link href="/newfeeds">
 						<a> {/* <img className="logo-img" src="/images/logo.png"></img> */}</a>
 					</Link>
 				</div>
@@ -493,7 +493,7 @@ const MenuDefault = ({
 							<Menu
 								key={indexMenu}
 								onOpenChange={onOpenChange}
-								selectedKeys={[getRouter == '/' ? '/dashboard' : getRouter]}
+								selectedKeys={[getRouter == '/' ? '/newfeeds' : getRouter]}
 								openKeys={[subMenuActive]}
 								mode="inline"
 								theme="light"

@@ -1,54 +1,47 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Checkbox, Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Checkbox, Form, Modal, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {DollarSign} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { DollarSign } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import CheckboxField from '~/components/FormControl/CheckboxField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import RadioField from '~/components/FormControl/RadioField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
-import {numberWithCommas} from '~/utils/functions';
-import {radioCommonPropTypes} from '~/utils/proptypes';
+import { numberWithCommas } from '~/utils/functions';
+import { radioCommonPropTypes } from '~/utils/proptypes';
 
 RequestRefundsForm.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	studentObj: PropTypes.object,
 	getInfoCourse: PropTypes.func,
 	courseListOfStudent: PropTypes.array,
 	paymentMethodOptionList: radioCommonPropTypes,
-	onSubmit: PropTypes.func,
+	onSubmit: PropTypes.func
 };
 
 RequestRefundsForm.defaultProps = {
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	studentObj: {},
 	getInfoCourse: null,
 	courseListOfStudent: [],
 	paymentMethodOptionList: [],
-	onSubmit: null,
+	onSubmit: null
 };
 
 function RequestRefundsForm(props) {
-	const {
-		isLoading,
-		studentObj,
-		getInfoCourse,
-		courseListOfStudent,
-		paymentMethodOptionList,
-		onSubmit,
-	} = props;
+	const { isLoading, studentObj, getInfoCourse, courseListOfStudent, paymentMethodOptionList, onSubmit } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [courseIDList, setCourseIDList] = useState<number[]>([]);
 	const [customErrorCheckbox, setCustomErrorCheckbox] = useState({
 		message: '',
-		hasError: false,
+		hasError: false
 	});
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -62,7 +55,7 @@ function RequestRefundsForm(props) {
 		Price: yup.string().required('Bạn không được để trống'),
 		PaymentMethodsID: yup.number().oneOf([1, 2], 'Bạn không được để trống'),
 		Reason: yup.string(),
-		isExpulsion: yup.bool(),
+		isExpulsion: yup.bool()
 	});
 
 	const defaultValuesInit = {
@@ -70,44 +63,41 @@ function RequestRefundsForm(props) {
 		Price: '',
 		PaymentMethodsID: 1,
 		Reason: '',
-		isExpulsion: false,
+		isExpulsion: false
 	};
 
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
-		const {errors} = form.formState;
+		const { errors } = form.formState;
 		const hasError = errors['ListCourseOfStudentID'];
 		const listCourseID = form.watch('ListCourseOfStudentID');
 		if (hasError) {
 			setCustomErrorCheckbox({
 				hasError,
-				message: errors['ListCourseOfStudentID']?.message,
+				message: errors['ListCourseOfStudentID']?.message
 			});
 		}
 		if (listCourseID?.length) {
 			setCustomErrorCheckbox({
 				hasError: false,
-				message: '',
+				message: ''
 			});
 		}
 	}, [form.watch('ListCourseOfStudentID'), form.formState.errors]);
 
 	useEffect(() => {
-		isModalVisible &&
-			studentObj.ID &&
-			getInfoCourse &&
-			getInfoCourse(studentObj.ID);
+		isModalVisible && studentObj.ID && getInfoCourse && getInfoCourse(studentObj.ID);
 	}, [isModalVisible]);
 
 	const checkOnSubmit = (data) => {
 		if (!onSubmit) return;
 		onSubmit(data).then((res) => {
 			if (res?.status === 200) {
-				form.reset({...defaultValuesInit});
+				form.reset({ ...defaultValuesInit });
 				closeModal();
 				setCourseIDList([]);
 			}
@@ -120,27 +110,15 @@ function RequestRefundsForm(props) {
 					<DollarSign />
 				</button>
 			</Tooltip>
-			<Modal
-				title="Thông tin yêu cầu hoàn tiền"
-				visible={isModalVisible}
-				onCancel={closeModal}
-				footer={null}
-				width={600}
-			>
+			<Modal title="Thông tin yêu cầu hoàn tiền" visible={isModalVisible} onCancel={closeModal} footer={null} width={600}>
 				<div className="request-refund-form">
 					<Form layout="vertical" onFinish={form.handleSubmit(checkOnSubmit)}>
 						<div className="row">
 							<div className="col-12">
 								<div
 									className={`refund-branch ${
-										isLoading.type === 'FETCH_INFO_COURSE' && isLoading.status
-											? 'custom-loading'
-											: ''
-									} ${
-										customErrorCheckbox.hasError
-											? 'ant-form-item-with-help ant-form-item-has-error'
-											: ''
-									}`}
+										isLoading.type === 'FETCH_INFO_COURSE' && isLoading.status ? 'custom-loading' : ''
+									} ${customErrorCheckbox.hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
 								>
 									<Checkbox.Group
 										{...form.register('ListCourseOfStudentID')}
@@ -151,7 +129,7 @@ function RequestRefundsForm(props) {
 											setCourseIDList(arrID);
 										}}
 									>
-										{courseListOfStudent.map((c: ICourseOfStudent) => {
+										{courseListOfStudent.map((c: any) => {
 											return (
 												<div className="refund-branch-item" key={c.ID}>
 													<Checkbox value={c.ID} />
@@ -159,20 +137,15 @@ function RequestRefundsForm(props) {
 														<p className="name">{c.CourseName}</p>
 														<ul className="list">
 															<li className="price">
-																Giá:{' '}
-																<span>{numberWithCommas(c.Price)} VNĐ</span>
+																Giá: <span>{numberWithCommas(c.Price)} VNĐ</span>
 															</li>
 															<li className="date-start">
 																Ngày bắt đầu:
-																<span>
-																	{moment(c.StartDay).format('DD/MM/YYYY')}
-																</span>
+																<span>{moment(c.StartDay).format('DD/MM/YYYY')}</span>
 															</li>
 															<li className="date-end">
 																Ngày kết thúc:
-																<span>
-																	{moment(c.EndDay).format('DD/MM/YYYY')}
-																</span>
+																<span>{moment(c.EndDay).format('DD/MM/YYYY')}</span>
 															</li>
 														</ul>
 													</div>
@@ -206,20 +179,10 @@ function RequestRefundsForm(props) {
 								/>
 							</div>
 							<div className="col-12">
-								<TextAreaField
-									form={form}
-									name="Reason"
-									label="Lý do"
-									placeholder="Nhập lý do"
-									rows={5}
-								/>
+								<TextAreaField form={form} name="Reason" label="Lý do" placeholder="Nhập lý do" rows={5} />
 							</div>
 							<div className="col-12">
-								<CheckboxField
-									form={form}
-									name="isExpulsion"
-									text="Xóa học viên ra khỏi lớp"
-								/>
+								<CheckboxField form={form} name="isExpulsion" text="Xóa học viên ra khỏi lớp" />
 							</div>
 							<div className="col-12">
 								<button
@@ -228,9 +191,7 @@ function RequestRefundsForm(props) {
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									Xác nhận
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

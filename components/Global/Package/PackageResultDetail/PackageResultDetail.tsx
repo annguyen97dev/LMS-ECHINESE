@@ -12,10 +12,11 @@ import { useDoneTest } from '~/context/useDoneTest';
 import { AlignLeftOutlined, FormOutlined, ProfileOutlined } from '@ant-design/icons';
 import MainTest from '../../DoingTest/MainTest';
 import DoneMarkingExam from '../../ExamList/MarkingExam/DoneMarkingExam';
+import { examAppointmentResultApi } from '~/apiBase';
 
 const PackageResultDetail = () => {
 	const {} = useDoneTest();
-	const { teacherMarking: teacherMarking } = router.query;
+	const { teacherMarking: teacherMarking, slug: slug, type } = router.query;
 	const { getDoneTestData, doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const [detailResult, setDetailResult] = useState([]);
 	const [visibleNofi, setVisibleNofi] = useState(false);
@@ -24,7 +25,7 @@ const PackageResultDetail = () => {
 	const paramsDefault = {
 		pageSize: 999,
 		pageIndex: 1,
-		SetPackageResultID: parseInt(router.query.slug as string),
+		SetPackageResultID: parseInt(slug as string),
 		ExerciseType: teacherMarking ? 2 : null
 	};
 	const [params, setParams] = useState(paramsDefault);
@@ -45,6 +46,7 @@ const PackageResultDetail = () => {
 
 		try {
 			let res = await packageResultDetailApi.getAll(params);
+
 			//@ts-ignore
 			if (res.status == 200) {
 				convertDataDoneTest(res.data.data);
@@ -53,7 +55,7 @@ const PackageResultDetail = () => {
 				if (teacherMarking) {
 					if (!dataMarking) {
 						let newDataMarking = {
-							SetPackageResultID: parseInt(router.query.slug as string),
+							SetPackageResultID: parseInt(slug as string),
 							Note: '',
 							setPackageExerciseStudentsList: []
 						};
@@ -200,7 +202,11 @@ const PackageResultDetail = () => {
 													title=""
 													trigger="hover"
 												>
-													<DoneMarkingExam isMarked={isMarked} onDoneMarking={() => setParams({ ...params })} />
+													<DoneMarkingExam
+														type={type}
+														isMarked={isMarked}
+														onDoneMarking={() => setParams({ ...params })}
+													/>
 												</Popover>
 											</>
 										)

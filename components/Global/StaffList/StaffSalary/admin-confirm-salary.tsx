@@ -1,7 +1,7 @@
 import { Tooltip, Modal, Form, Spin, Input, Select } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { RotateCcw } from 'react-feather';
-import { teacherSalaryApi } from '~/apiBase/staff-manage/teacher-salary';
+import { staffSalaryApi } from '~/apiBase/staff-manage/staff-salary';
 import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
 
@@ -17,6 +17,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 		AdvanceSalary: record.AdvanceSalary,
 		Bonus: record.Bonus,
 		NoteBonus: record.NoteBonus,
+		CountOff: record.CountOff, //Số ngày off,
 		isClosing: true, //true- chốt lương (khi chốt lương thì mặc định status là 3)
 		StatusID: 3, //4-Đã xác nhận
 		isDonePaid: record.isDonePaid //true-thanh toán lương (khi thanh toán trang thái là 5)
@@ -29,11 +30,8 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 	const _onSubmit = async (value) => {
 		setSubmitLoading({ type: 'UPLOADING', loading: true });
 		try {
-			let res = await teacherSalaryApi.update({
-				...dataForm,
-				StatusID: reConfirm.StatusID == 1 ? 3 : reConfirm.StatusID == 3 ? 3 : 5
-			});
-			// let res = await teacherSalaryApi.update({ ...dataForm, StatusID: 1 });
+			let res = await staffSalaryApi.update({ ...dataForm, StatusID: reConfirm.StatusID == 1 ? 3 : reConfirm.StatusID == 3 ? 3 : 5 });
+			// let res = await staffSalaryApi.update({ ...dataForm, StatusID: 1 });
 			if (res.status == 200) {
 				form.resetFields();
 				params && setParams({ ...params });
@@ -61,6 +59,13 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 			});
 		}
 	};
+
+	const selectStatus =
+		(reConfirm.StatusID == 1 && 'Yêu cầu xác nhận') ||
+		(reConfirm.StatusID == 3 && 'Yêu cầu xác nhận') ||
+		(reConfirm.StatusID == 4 && 'Đã xác nhận') ||
+		(reConfirm.StatusID == 5 && 'Đã thanh toán');
+
 	return (
 		<>
 			{record.StatusID == 5 ? (
@@ -96,7 +101,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						{reConfirm.StatusID == 4 ? (
 							<>
 								<div className="col-12 mb-3">
-									<h4 className="font-weight-blue">Xác nhận thanh toán lương cho giáo viên!</h4>
+									<h4 className="font-weight-blue">Xác nhận thanh toán lương cho nhân viên!</h4>
 								</div>
 							</>
 						) : (
@@ -111,6 +116,18 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 											placeholder="Thêm lương thưởng"
 											className="style-input"
 											defaultValue={dataForm.AdvanceSalary}
+										/>
+									</Form.Item>
+								</div>
+								<div className="col-12">
+									<Form.Item label="Ngày Nghỉ" name="CountOff">
+										<Input
+											onChange={(event) => {
+												setDataForm({ ...dataForm, CountOff: Number(event.target.value) });
+											}}
+											name="CountOff"
+											className="style-input"
+											defaultValue={dataForm.CountOff}
 										/>
 									</Form.Item>
 								</div>
@@ -146,26 +163,9 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 											disabled={true}
 											style={{ width: '100%' }}
 											className="style-input"
-											defaultValue={
-												(record.StatusID == 1 && 'Yêu cầu xác nhận') ||
-												(record.StatusID == 3 && 'Yêu cầu xác nhận') ||
-												(record.StatusID == 4 && 'Đã xác nhận') ||
-												(record.StatusID == 5 && 'Đã thanh toán')
-											}
+											defaultValue={selectStatus}
 										>
-											<Option
-												value={
-													(record.StatusID == 1 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 3 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 4 && 'Đã xác nhận') ||
-													(record.StatusID == 5 && 'Đã thanh toán')
-												}
-											>
-												{(record.StatusID == 1 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 3 && 'Yêu cầu xác nhận') ||
-													(record.StatusID == 4 && 'Đã xác nhận') ||
-													(record.StatusID == 5 && 'Đã thanh toán')}
-											</Option>
+											<Option value={selectStatus}>{selectStatus}</Option>
 										</Select>
 									</Form.Item>
 								</div>
@@ -187,7 +187,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						)}
 
 						{record.StatusID == 4 &&
-							(reConfirm.StatusID ? (
+							(reConfirm.StatusID == 3 ? (
 								<div className="col-12 ">
 									<a className="font-weight-blue" onClick={onChangeReConfirm}>
 										Hủy gửi yêu cầu xác nhận lại

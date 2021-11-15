@@ -1,8 +1,25 @@
+import { RetweetOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi, staffApi, staffSalaryApi } from '~/apiBase';
+import {
+	areaApi,
+	branchApi,
+	jobApi,
+	parentsApi,
+	puroseApi,
+	resetPasswordApi,
+	sourceInfomationApi,
+	staffApi,
+	staffSalaryApi
+} from '~/apiBase';
+
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
+import NotiModal from '~/components/Elements/NotiModal/NotiModal';
 import SortBox from '~/components/Elements/SortBox';
+import ExpandTable from '~/components/ExpandTable';
+import ResetPassForm from '~/components/Global/StaffList/ResetPassForm';
+import SalaryStaffNested from '~/components/Global/StaffList/SalaryStaffNested';
 // import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from '~/components/Global/StaffList/StaffForm';
 import LayoutBase from '~/components/LayoutBase';
@@ -172,11 +189,12 @@ const StaffList = () => {
 		Counselors: []
 	});
 
+	const [isOpenReset, setIsOpenReset] = useState(false);
+
 	// ------ BASE USESTATE TABLE -------
-	const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
-	const [dataArea, setDataArea] = useState<IArea[]>([]);
+
 	const [dataSource, setDataSource] = useState<IStaff[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: pageIndex,
@@ -595,15 +613,18 @@ const StaffList = () => {
 	const columns = [
 		{
 			title: 'Mã nhân viên',
-			dataIndex: 'UserCode'
+			dataIndex: 'UserCode',
+			fixed: 'left'
 		},
 		{
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
+			fixed: 'left',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: 150,
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
 			render: (text) => <p className="font-weight-black">{text}</p>
@@ -620,6 +641,7 @@ const StaffList = () => {
 			)
 		},
 		{
+			width: 100,
 			title: 'Giới tính',
 			dataIndex: 'Gender',
 			render: (gender) => <>{gender == 0 ? 'Nữ' : gender == 1 ? 'Nam' : 'Khác'}</>
@@ -641,11 +663,13 @@ const StaffList = () => {
 			dataIndex: 'RoleName'
 		},
 		{
+			width: 150,
 			title: 'Ngày nhận việc',
 			dataIndex: 'Jobdate',
 			render: (date: any) => date && moment(date).format('DD/MM/YYYY')
 		},
 		{
+			width: 150,
 			title: 'Facebook',
 			dataIndex: 'LinkFaceBook',
 			render: (link) =>
@@ -667,27 +691,36 @@ const StaffList = () => {
 			align: 'center',
 			width: 100,
 			render: (text, data, index) => (
-				<div onClick={(e) => e.stopPropagation()}>
-					<StaffForm
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.UserInformationID}
-						isLoading={isLoading}
-						onSubmit={(data: any) => onSubmit(data)}
-						onSubmitSalary={(data: any) => onSubmitSalary(data)}
-						listDataForm={listDataForm}
-					/>
-				</div>
+				<>
+					<div onClick={(e) => e.stopPropagation()}>
+						<StaffForm
+							getIndex={() => setIndexRow(index)}
+							index={index}
+							rowData={data}
+							rowID={data.UserInformationID}
+							isLoading={isLoading}
+							onSubmit={(data: any) => onSubmit(data)}
+							onSubmitSalary={(data: any) => onSubmitSalary(data)}
+							listDataForm={listDataForm}
+						/>
+						<ResetPassForm dataRow={data} />
+					</div>
+				</>
 			)
 		}
 	];
 
-	console.log('Data Source: ', dataSource);
+	const expandedRowRender = (data) => {
+		return (
+			<>
+				<SalaryStaffNested staffID={data.UserInformationID} />
+			</>
+		);
+	};
 
 	return (
 		<>
-			<PowerTable
+			<ExpandTable
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -707,6 +740,7 @@ const StaffList = () => {
 						<SortBox handleSort={(value) => handleSort(value)} dataOption={dataOption} />
 					</div>
 				}
+				expandable={{ expandedRowRender }}
 			/>
 		</>
 	);

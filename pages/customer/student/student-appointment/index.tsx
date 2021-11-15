@@ -1,348 +1,338 @@
-import { Tooltip } from "antd";
-import Link from "next/link";
-import React, { Fragment, useEffect, useState } from "react";
-import { branchApi, programApi } from "~/apiBase";
-import FilterBase from "~/components/Elements/FilterBase/FilterBase";
-import SortBox from "~/components/Elements/SortBox";
-import LayoutBase from "~/components/LayoutBase";
-import FilterColumn from "~/components/Tables/FilterColumn";
-import { useWrap } from "~/context/wrap";
-import { courseRegistrationApi } from "~/apiBase/customer/student/course-registration";
-import CourseRegForm from "~/components/Global/Customer/Student/CourseRegistration/CourseRegForm";
-import { Checkbox } from "antd";
-import { Eye } from "react-feather";
-import PowerTable from "~/components/PowerTable";
+import { Tooltip } from 'antd';
+import Link from 'next/link';
+import React, { Fragment, useEffect, useState } from 'react';
+import { branchApi, programApi } from '~/apiBase';
+import FilterBase from '~/components/Elements/FilterBase/FilterBase';
+import SortBox from '~/components/Elements/SortBox';
+import LayoutBase from '~/components/LayoutBase';
+import FilterColumn from '~/components/Tables/FilterColumn';
+import { useWrap } from '~/context/wrap';
+import { courseRegistrationApi } from '~/apiBase/customer/student/course-registration';
+import CourseRegForm from '~/components/Global/Customer/Student/CourseRegistration/CourseRegForm';
+import { Checkbox } from 'antd';
+import { Eye } from 'react-feather';
+import PowerTable from '~/components/PowerTable';
 
 const CourseRegistration = () => {
-  const [listStudent, setListStudent] = useState([]);
-  const [listChecked, setListChecked] = useState([]);
+	const [listStudent, setListStudent] = useState([]);
+	const [listChecked, setListChecked] = useState([]);
 
-  const onSearch = (data) => {
-    setCurrentPage(1);
-    setParams({
-      ...listParamsDefault,
-      FullNameUnicode: data,
-    });
-  };
+	const onSearch = (data) => {
+		setCurrentPage(1);
+		setParams({
+			...listParamsDefault,
+			FullNameUnicode: data
+		});
+	};
 
-  const handleReset = () => {
-    setCurrentPage(1);
-    setParams(listParamsDefault);
-  };
+	const handleReset = () => {
+		setCurrentPage(1);
+		setParams(listParamsDefault);
+	};
 
-  function onChange(e, ID) {
-    const checked = e.target.checked;
-    // setIsChecked(true);
+	function onChange(e, ID) {
+		const checked = e.target.checked;
 
-    let indexStudent = listChecked.findIndex((item) => item.id == ID);
-    listChecked[indexStudent].checked = checked;
+		console.log('Current ID: ', ID);
 
-    if (checked) {
-      listStudent.push(ID);
-    } else {
-      let index = listStudent.indexOf(ID);
-      listStudent.splice(index, 1);
-    }
-    setListStudent([...listStudent]);
-    setListChecked([...listChecked]);
-  }
+		// setIsChecked(true);
 
-  const columns = [
-    {
-      title: "Học viên",
-      dataIndex: "FullNameUnicode",
-      ...FilterColumn("FullNameUnicode", onSearch, handleReset, "text"),
-      render: (text) => <p className="font-weight-blue">{text}</p>,
-    },
-    {
-      title: "Trung tâm",
-      dataIndex: "BranchName",
-      render: (text) => <p className="font-weight-black">{text}</p>,
-    },
-    {
-      title: "Chương trình học",
-      dataIndex: "ProgramName",
-      render: (text) => <p className="font-weight-black">{text}</p>,
-    },
-    {
-      title: "Ca học",
-      dataIndex: "StudyTimeName",
-    },
-    {
-      // render: (data) => (
-      //   <Fragment>
-      //     <CourseRegForm
-      //       infoDetail={data}
-      //       infoId={data.ID}
-      //       reloadData={(firstPage) => {
-      //         getDataCourseReg(firstPage);
-      //       }}
-      //       currentPage={currentPage}
-      //     />
-      //   </Fragment>
-      // ),
+		let indexStudent = listChecked.findIndex((item) => item.id == ID);
+		listChecked[indexStudent].checked = checked;
 
-      render: (text, data, index) => (
-        <div className="d-flex align-items-center">
-          <Link
-            href={{
-              pathname:
-                "/customer/student/student-appointment/student-detail/[slug]",
-              query: { slug: data.UserInformationID },
-            }}
-          >
-            <Tooltip title="Xem chi tiết">
-              <button className="btn btn-icon">
-                <Eye />
-              </button>
-            </Tooltip>
-          </Link>
+		if (checked) {
+			listStudent.push(ID);
+		} else {
+			let index = listStudent.indexOf(ID);
+			listStudent.splice(index, 1);
+		}
+		setListStudent([...listStudent]);
+		setListChecked([...listChecked]);
+	}
 
-          <Checkbox
-            style={{ marginLeft: "5px" }}
-            checked={
-              data.ID == listChecked[index]?.id && listChecked[index].checked
-            }
-            onChange={(value) => onChange(value, data.ID)}
-          ></Checkbox>
-        </div>
-      ),
-    },
-  ];
-  const [currentPage, setCurrentPage] = useState(1);
-  const { showNoti, pageSize } = useWrap();
-  const listParamsDefault = {
-    pageSize: pageSize,
-    pageIndex: currentPage,
-    sort: null,
-    sortType: null,
-    fromDate: null,
-    toDate: null,
-    BranchID: null,
-    ProgramID: null,
-    StudyTimeID: null,
-    FullNameUnicode: null,
-  };
+	console.log('List Checked: ', listChecked);
+	console.log('List Student: ', listStudent);
 
-  const sortOption = [
-    {
-      dataSort: {
-        sortType: null,
-      },
-      value: 1,
-      text: "Mới cập nhật",
-    },
-    {
-      dataSort: {
-        sortType: true,
-      },
-      value: 2,
-      text: "Từ dưới lên",
-    },
-  ];
+	const columns = [
+		{
+			title: 'Học viên',
+			dataIndex: 'FullNameUnicode',
+			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+			render: (text) => <p className="font-weight-blue">{text}</p>
+		},
+		{
+			title: 'Trung tâm',
+			dataIndex: 'BranchName',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Chương trình học',
+			dataIndex: 'ProgramName',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Ca học',
+			dataIndex: 'StudyTimeName'
+		},
+		{
+			render: (text, data, index) => (
+				<div className="d-flex align-items-center">
+					<Link
+						href={{
+							pathname: '/customer/student/student-appointment/student-detail/[slug]',
+							query: { slug: data.UserInformationID }
+						}}
+					>
+						<Tooltip title="Xem chi tiết">
+							<button className="btn btn-icon">
+								<Eye />
+							</button>
+						</Tooltip>
+					</Link>
 
-  const [dataFilter, setDataFilter] = useState([
-    {
-      name: "BranchID",
-      title: "Trung tâm",
-      col: "col-12",
-      type: "select",
-      optionList: null,
-      value: null,
-    },
-    {
-      name: "ProgramID",
-      title: "Chương trình học",
-      col: "col-12",
-      type: "select",
-      optionList: null,
-      value: null,
-    },
-    {
-      name: "date-range",
-      title: "Ngày tạo",
-      col: "col-12",
-      type: "date-range",
-      value: null,
-    },
-  ]);
+					<Checkbox
+						style={{ marginLeft: '5px' }}
+						// checked={data.ID == listChecked[index]?.id && listChecked[index].checked}
+						checked={listStudent.includes(data.ID) ? true : false}
+						onChange={(value) => onChange(value, data.ID)}
+					></Checkbox>
+				</div>
+			)
+		}
+	];
 
-  const handleFilter = (listFilter) => {
-    let newListFilter = {
-      pageIndex: 1,
-      fromDate: null,
-      toDate: null,
-      BranchID: null,
-      ProgramID: null,
-    };
-    listFilter.forEach((item, index) => {
-      let key = item.name;
-      Object.keys(newListFilter).forEach((keyFilter) => {
-        if (keyFilter == key) {
-          newListFilter[key] = item.value;
-        }
-      });
-    });
-    setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
-  };
+	const [currentPage, setCurrentPage] = useState(1);
+	const { showNoti, pageSize } = useWrap();
+	const listParamsDefault = {
+		pageSize: pageSize,
+		pageIndex: currentPage,
+		sort: null,
+		sortType: null,
+		fromDate: null,
+		toDate: null,
+		BranchID: null,
+		ProgramID: null,
+		StudyTimeID: null,
+		FullNameUnicode: null
+	};
 
-  const handleSort = async (option) => {
-    setParams({
-      ...listParamsDefault,
-      sortType: option.title.sortType,
-    });
-  };
+	const sortOption = [
+		{
+			dataSort: {
+				sortType: null
+			},
+			value: 1,
+			text: 'Mới cập nhật'
+		},
+		{
+			dataSort: {
+				sortType: true
+			},
+			value: 2,
+			text: 'Từ dưới lên'
+		}
+	];
 
-  const [params, setParams] = useState(listParamsDefault);
+	const [dataFilter, setDataFilter] = useState([
+		{
+			name: 'BranchID',
+			title: 'Trung tâm',
+			col: 'col-12',
+			type: 'select',
+			optionList: null,
+			value: null
+		},
+		{
+			name: 'ProgramID',
+			title: 'Chương trình học',
+			col: 'col-12',
+			type: 'select',
+			optionList: null,
+			value: null
+		},
+		{
+			name: 'date-range',
+			title: 'Ngày tạo',
+			col: 'col-12',
+			type: 'date-range',
+			value: null
+		}
+	]);
 
-  const [totalPage, setTotalPage] = useState(null);
-  const [courseReg, setCourseReg] = useState<ICourseRegistration[]>([]);
-  const [isLoading, setIsLoading] = useState({
-    type: "GET_ALL",
-    status: false,
-  });
+	const handleFilter = (listFilter) => {
+		let newListFilter = {
+			pageIndex: 1,
+			fromDate: null,
+			toDate: null,
+			BranchID: null,
+			ProgramID: null
+		};
+		listFilter.forEach((item, index) => {
+			let key = item.name;
+			Object.keys(newListFilter).forEach((keyFilter) => {
+				if (keyFilter == key) {
+					newListFilter[key] = item.value;
+				}
+			});
+		});
+		setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
+	};
 
-  const setDataFunc = (name, data) => {
-    dataFilter.every((item, index) => {
-      if (item.name == name) {
-        item.optionList = data;
-        return false;
-      }
-      return true;
-    });
-    setDataFilter([...dataFilter]);
-  };
+	const handleSort = async (option) => {
+		setParams({
+			...listParamsDefault,
+			sortType: option.title.sortType
+		});
+	};
 
-  const getDataCenter = async () => {
-    try {
-      let res = await branchApi.getAll({ pageSize: 99999, pageIndex: 1 });
-      if (res.status == 200) {
-        const newData = res.data.data.map((item) => ({
-          title: item.BranchName,
-          value: item.ID,
-        }));
-        setDataFunc("BranchID", newData);
-      }
+	const [params, setParams] = useState(listParamsDefault);
 
-      res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-    }
-  };
+	const [totalPage, setTotalPage] = useState(null);
+	const [courseReg, setCourseReg] = useState<ICourseRegistration[]>([]);
+	const [isLoading, setIsLoading] = useState({
+		type: 'GET_ALL',
+		status: false
+	});
 
-  const getDataProgram = async () => {
-    try {
-      let res = await programApi.getAll({ pageSize: 99999, pageIndex: 1 });
-      if (res.status == 200) {
-        const newData = res.data.data.map((item) => ({
-          title: item.ProgramName,
-          value: item.ID,
-        }));
-        setDataFunc("ProgramID", newData);
-      }
+	const setDataFunc = (name, data) => {
+		dataFilter.every((item, index) => {
+			if (item.name == name) {
+				item.optionList = data;
+				return false;
+			}
+			return true;
+		});
+		setDataFilter([...dataFilter]);
+	};
 
-      res.status == 204 && showNoti("danger", "Trung tâm Không có dữ liệu");
-    } catch (error) {
-      showNoti("danger", error.message);
-    } finally {
-    }
-  };
+	const getDataCenter = async () => {
+		try {
+			let res = await branchApi.getAll({ pageSize: 99999, pageIndex: 1 });
+			if (res.status == 200) {
+				const newData = res.data.data.map((item) => ({
+					title: item.BranchName,
+					value: item.ID
+				}));
+				setDataFunc('BranchID', newData);
+			}
 
-  useEffect(() => {
-    getDataCenter();
-    getDataProgram();
-  }, []);
+			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+		}
+	};
 
-  const getPagination = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    setParams({
-      ...params,
-      pageIndex: currentPage,
-    });
-  };
+	const getDataProgram = async () => {
+		try {
+			let res = await programApi.getAll({ pageSize: 99999, pageIndex: 1 });
+			if (res.status == 200) {
+				const newData = res.data.data.map((item) => ({
+					title: item.ProgramName,
+					value: item.ID
+				}));
+				setDataFunc('ProgramID', newData);
+			}
 
-  const getDataCourseReg = (page: any) => {
-    setIsLoading({
-      type: "GET_ALL",
-      status: true,
-    });
-    (async () => {
-      try {
-        let res = await courseRegistrationApi.getAll({
-          ...params,
-          pageIndex: page,
-        });
-        //@ts-ignore
-        if (res.status == 200) {
-          setCourseReg(res.data.data);
-          res.data.data.forEach((item) => {
-            listChecked.push({
-              id: item.ID,
-              checked: false,
-            });
-            setListChecked([...listChecked]);
-          });
-        }
+			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+		}
+	};
 
-        if (res.status == 204) {
-          showNoti("danger", "Không tìm thấy dữ liệu!");
-          setCurrentPage(1);
-          setParams(listParamsDefault);
-          setCourseReg([]);
-        } else setTotalPage(res.data.totalRow);
-      } catch (error) {
-        showNoti("danger", error.message);
-      } finally {
-        setIsLoading({
-          type: "GET_ALL",
-          status: false,
-        });
-      }
-    })();
-  };
+	useEffect(() => {
+		getDataCenter();
+		getDataProgram();
+	}, []);
 
-  useEffect(() => {
-    getDataCourseReg(currentPage);
-  }, [params]);
+	const getPagination = (pageNumber: number) => {
+		setCurrentPage(pageNumber);
+		setParams({
+			...params,
+			pageIndex: currentPage
+		});
+	};
 
-  return (
-    <PowerTable
-      currentPage={currentPage}
-      loading={isLoading}
-      totalPage={totalPage && totalPage}
-      getPagination={(pageNumber: number) => getPagination(pageNumber)}
-      addClass="basic-header"
-      TitlePage="DANH SÁCH HỌC VIÊN hẹn đăng kí"
-      dataSource={courseReg}
-      columns={columns}
-      Extra={
-        <div className="extra-table">
-          <FilterBase
-            dataFilter={dataFilter}
-            handleFilter={(listFilter: any) => handleFilter(listFilter)}
-            handleReset={handleReset}
-          />
+	const getDataCourseReg = (page: any) => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true
+		});
+		(async () => {
+			try {
+				let res = await courseRegistrationApi.getAll({
+					...params,
+					pageIndex: page
+				});
+				//@ts-ignore
+				if (res.status == 200) {
+					setCourseReg(res.data.data);
+					res.data.data.forEach((item) => {
+						listChecked.push({
+							id: item.ID,
+							checked: false
+						});
+						setListChecked([...listChecked]);
+						setListStudent([]);
+					});
+				}
 
-          <SortBox
-            dataOption={sortOption}
-            handleSort={(value) => handleSort(value)}
-          />
-        </div>
-      }
-      TitleCard={
-        <CourseRegForm
-          // infoDetail={data}
-          // infoId={data.ID}
-          listStudent={listStudent}
-          reloadData={(firstPage) => {
-            getDataCourseReg(firstPage);
-          }}
-          currentPage={currentPage}
-        />
-      }
-    />
-  );
+				if (res.status == 204) {
+					showNoti('danger', 'Không tìm thấy dữ liệu!');
+					setCurrentPage(1);
+					setParams(listParamsDefault);
+					setCourseReg([]);
+				} else setTotalPage(res.data.totalRow);
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false
+				});
+			}
+		})();
+	};
+
+	useEffect(() => {
+		getDataCourseReg(currentPage);
+	}, [params]);
+
+	return (
+		<PowerTable
+			currentPage={currentPage}
+			loading={isLoading}
+			totalPage={totalPage && totalPage}
+			getPagination={(pageNumber: number) => getPagination(pageNumber)}
+			addClass="basic-header"
+			TitlePage="DANH SÁCH HỌC VIÊN hẹn đăng kí"
+			dataSource={courseReg}
+			columns={columns}
+			Extra={
+				<div className="extra-table">
+					<FilterBase
+						dataFilter={dataFilter}
+						handleFilter={(listFilter: any) => handleFilter(listFilter)}
+						handleReset={handleReset}
+					/>
+
+					<SortBox dataOption={sortOption} handleSort={(value) => handleSort(value)} />
+				</div>
+			}
+			TitleCard={
+				<CourseRegForm
+					// infoDetail={data}
+					// infoId={data.ID}
+					listStudent={listStudent}
+					reloadData={(firstPage) => {
+						getDataCourseReg(firstPage);
+					}}
+					currentPage={currentPage}
+				/>
+			}
+		/>
+	);
 };
 CourseRegistration.layout = LayoutBase;
 export default CourseRegistration;

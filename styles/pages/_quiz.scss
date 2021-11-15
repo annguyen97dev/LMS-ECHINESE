@@ -24,6 +24,11 @@
 		// 	padding-bottom: 20px;
 		// 	border-bottom: 1px dotted #e2e2e2;
 		// }
+		.box-typing {
+			.space-editor {
+				width: auto;
+			}
+		}
 		.wrap-group-list {
 			.box-detail {
 				padding: 0 10px;
@@ -50,7 +55,7 @@
 
 	.wrap-list-answer-typing {
 		border-top: 1px solid #f0f0f0;
-		padding-top: 30px;
+		padding-top: 20px;
 
 		.list-answer-typing {
 			list-style-type: none;
@@ -722,15 +727,13 @@
 
 	.tooltip-answer {
 		position: absolute;
-		top: 0;
 		color: white;
 		padding: 5px 10px;
 		border-radius: 0.375rem;
 		z-index: 9999;
 		background: #22bf7e;
-		top: -135%;
+		bottom: -135%;
 		left: 0;
-		width: 100%;
 		display: none;
 	}
 
@@ -780,5 +783,13 @@
 		margin-bottom: 0;
 		font-size: 16px;
 		font-weight: 500;
+	}
+}
+
+.box-typing {
+	.space-editor {
+		&:focus {
+			background: #fffaf3 !important;
+		}
 	}
 }

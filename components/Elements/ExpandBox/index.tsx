@@ -1,8 +1,8 @@
-import {Card, Spin, Tooltip} from 'antd';
+import { Card, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React from 'react';
-import {File} from 'react-feather';
+import { File } from 'react-feather';
 
 export default function ExpandBox() {
 	return (
@@ -32,17 +32,16 @@ export default function ExpandBox() {
 }
 
 export function ExpandPaymentRow(props: {
-	isLoading: {type: string; status: boolean};
-	dataRow: ICourseOfStudentPrice;
+	isLoading: { type: string; status: boolean };
+	// dataRow: ICourseOfStudentPrice;
+	dataRow: any;
 	infoInvoiceList?: IInvoice[];
 }) {
-	const {isLoading, dataRow, infoInvoiceList} = props;
-	const {Course} = dataRow;
+	const { isLoading, dataRow, infoInvoiceList } = props;
+	const { Course } = dataRow;
 	return (
 		<div className="feedback-detail-text">
-			<Spin
-				spinning={isLoading.type === 'FETCH_INFO_INVOICE' && isLoading.status}
-			>
+			<Spin spinning={isLoading.type === 'FETCH_INFO_INVOICE' && isLoading.status}>
 				<table className="tb-expand">
 					<thead>
 						<tr>
@@ -60,15 +59,11 @@ export function ExpandPaymentRow(props: {
 											<Link
 												key={item.ID}
 												href={{
-													pathname:
-														'/course/course-list/course-list-detail/[slug]',
-													query: {slug: item.ID, type: item.TypeCourse},
+													pathname: '/course/course-list/course-list-detail/[slug]',
+													query: { slug: item.ID, type: item.TypeCourse }
 												}}
 											>
-												<a
-													title={item.CourseName}
-													className="font-weight-black d-block"
-												>
+												<a title={item.CourseName} className="font-weight-black d-block">
 													{item.CourseName}
 												</a>
 											</Link>
@@ -76,19 +71,15 @@ export function ExpandPaymentRow(props: {
 									</div>
 								</td>
 							) : null}
-							<td>
-								{(infoInvoiceList && infoInvoiceList[0]?.Reason) ||
-									'Không có lý do'}
-							</td>
+							<td>{(infoInvoiceList && infoInvoiceList[0]?.Reason) || 'Không có lý do'}</td>
 							<td>
 								{infoInvoiceList &&
 									infoInvoiceList.map((v) => (
 										<Link
 											key={v.ID}
 											href={{
-												pathname:
-													'/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',
-												query: {slug: v.ID},
+												pathname: '/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',
+												query: { slug: v.ID }
 											}}
 										>
 											<Tooltip title={moment(v.CreatedOn).format('DD/MM/YYYY')}>
@@ -107,18 +98,12 @@ export function ExpandPaymentRow(props: {
 	);
 }
 
-export function ExpandRefundRow(props: {
-	isLoading: {type: string; status: boolean};
-	dataRow: IRefunds;
-	infoVoucherList?: IVoucher[];
-}) {
-	const {isLoading, dataRow, infoVoucherList} = props;
-	const {Reason, RefundsDetail, PaymentMethodsName} = dataRow;
+export function ExpandRefundRow(props: { isLoading: { type: string; status: boolean }; dataRow: IRefunds; infoVoucherList?: IVoucher[] }) {
+	const { isLoading, dataRow, infoVoucherList } = props;
+	const { Reason, RefundsDetail, PaymentMethodsName } = dataRow;
 	return (
 		<div className="feedback-detail-text">
-			<Spin
-				spinning={isLoading.type === 'FETCH_INFO_VOUCHER' && isLoading.status}
-			>
+			<Spin spinning={isLoading.type === 'FETCH_INFO_VOUCHER' && isLoading.status}>
 				<table className="tb-expand">
 					<thead>
 						<tr>
@@ -137,15 +122,11 @@ export function ExpandRefundRow(props: {
 											<Link
 												key={item.CourseID}
 												href={{
-													pathname:
-														'/course/course-list/course-list-detail/[slug]',
-													query: {slug: item.CourseID, type: item.TypeCourse},
+													pathname: '/course/course-list/course-list-detail/[slug]',
+													query: { slug: item.CourseID, type: item.TypeCourse }
 												}}
 											>
-												<a
-													title={item.CourseName}
-													className="font-weight-black d-block"
-												>
+												<a title={item.CourseName} className="font-weight-black d-block">
 													{item.CourseName}
 												</a>
 											</Link>
@@ -161,9 +142,8 @@ export function ExpandRefundRow(props: {
 										<Link
 											key={v.ID}
 											href={{
-												pathname:
-													'/customer/finance/finance-cashier-payment/invoice-detail/[slug]',
-												query: {slug: v.ID},
+												pathname: '/customer/finance/finance-cashier-payment/invoice-detail/[slug]',
+												query: { slug: v.ID }
 											}}
 										>
 											<Tooltip title={moment(v.CreatedOn).format('DD/MM/YYYY')}>
@@ -193,21 +173,9 @@ export function ExpandBoxWarning(props) {
 					<th>Cảnh báo</th>
 				</tr>
 				<tr>
-					<td>
-						{props.dataRow.Note != null
-							? props.dataRow.Note
-							: 'Không có nội dung'}
-					</td>
-					<td>
-						{props.dataRow.Commitment != null
-							? props.dataRow.Commitment
-							: 'Không có nội dung'}
-					</td>
-					<td>
-						{props.dataRow.WarningNote != null
-							? props.dataRow.WarningNote
-							: 'Không có nội dung'}
-					</td>
+					<td>{props.dataRow.Note != null ? props.dataRow.Note : 'Không có nội dung'}</td>
+					<td>{props.dataRow.Commitment != null ? props.dataRow.Commitment : 'Không có nội dung'}</td>
+					<td>{props.dataRow.WarningNote != null ? props.dataRow.WarningNote : 'Không có nội dung'}</td>
 				</tr>
 			</table>
 		</div>
@@ -219,19 +187,14 @@ export function ExpandBoxPost() {
 		<div className="feedback-detail-text">
 			<>
 				<Card>
-					Thư giới thiệu là một phần quan trọng trong yêu cầu tuyển sinh của
-					nhiều trường đại học trên thế giới, cho dù bạn đi học đại học hay thạc
-					sĩ. Song song với bài luận cá nhân, thư giới thiệu góp phần cung cấp
-					cái nhìn toàn diện về năng lực và tiềm năng của chúng ta. Và tất nhiên
-					để cạnh tranh được với những thí sinh khác, chúng ta cần khác biệt,
-					nổi trội so với phần đông. Anh đã từng viết rất nhiều thư giới thiệu
-					cho học sinh, kể cả học sinh cấp 3, đại học hay thậm chí là người đi
-					làm. Anh hiểu được cách các bạn đang hiểu nhầm mục đích của thư giới
-					thiệu và phản ánh sự hiểu nhầm đó vào nội dung của thư. Anh cũng hiểu
-					một thư giới thiệu xuất sắc cần phải đảm bảo những yếu tố như thế nào.
-					Nên hôm nay anh sẽ đưa ra 3 tiêu chí giúp mọi người lên ý tưởng cho
-					một (hoặc) nhiều bức thư giới thiệu mà thực sự sẽ để lại ấn tượng cho
-					người đọc nhé.
+					Thư giới thiệu là một phần quan trọng trong yêu cầu tuyển sinh của nhiều trường đại học trên thế giới, cho dù bạn đi học
+					đại học hay thạc sĩ. Song song với bài luận cá nhân, thư giới thiệu góp phần cung cấp cái nhìn toàn diện về năng lực và
+					tiềm năng của chúng ta. Và tất nhiên để cạnh tranh được với những thí sinh khác, chúng ta cần khác biệt, nổi trội so với
+					phần đông. Anh đã từng viết rất nhiều thư giới thiệu cho học sinh, kể cả học sinh cấp 3, đại học hay thậm chí là người
+					đi làm. Anh hiểu được cách các bạn đang hiểu nhầm mục đích của thư giới thiệu và phản ánh sự hiểu nhầm đó vào nội dung
+					của thư. Anh cũng hiểu một thư giới thiệu xuất sắc cần phải đảm bảo những yếu tố như thế nào. Nên hôm nay anh sẽ đưa ra
+					3 tiêu chí giúp mọi người lên ý tưởng cho một (hoặc) nhiều bức thư giới thiệu mà thực sự sẽ để lại ấn tượng cho người
+					đọc nhé.
 				</Card>
 			</>
 		</div>

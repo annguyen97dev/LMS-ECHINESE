@@ -9,6 +9,7 @@ export const fmSelectArr = (arr: Array<{ [key: string]: any }>, title: string, v
 			value: x[value],
 			options: options.reduce((obj, o) => ({ ...obj, [o]: x[o] }), {})
 		}));
+
 export const clearOptionsDuplicate = (arr: IOptionCommon[]) => {
 	return arr.reduce((newArr, o) => {
 		if (!newArr.some((o2) => o2.value === o.value)) {

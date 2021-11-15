@@ -1,20 +1,15 @@
-import {List, Avatar, Tag, Divider} from 'antd';
-import ModalUpdate from './CourseListUpdate';
+import { List, Avatar, Tag, Divider } from 'antd';
 import Link from 'next/link';
-import {cloneElement, useState} from 'react';
+import { cloneElement, useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import CourseListUpdate from './CourseListUpdate';
-import {numberWithCommas} from '~/utils/functions';
+import { numberWithCommas } from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+
 const PowerList = (props) => {
-	const {
-		dataSource,
-		isLoading,
-		totalPage,
-		currentPage,
-		getPagination,
-		children,
-	} = props;
+	const { dataSource, isLoading, totalPage, currentPage, getPagination, children } = props;
+	const { userInformation } = useWrap();
 	const checkGetPagination = (page) => {
 		if (!getPagination) return;
 		getPagination(page);
@@ -23,6 +18,26 @@ const PowerList = (props) => {
 		const rs = ['yellow', 'green', 'gray'];
 		return <span className={`tag ${rs[vl]}`}>{ctn}</span>;
 	};
+
+	const returnPathName = (ID, TypeCourse) => {
+		let role = userInformation.RoleID;
+		let path = null;
+
+		if (role == 1 || role == 5) {
+			path = {
+				pathname: '/course/course-list/course-list-detail/[slug]',
+				query: { slug: ID, type: TypeCourse }
+			};
+		} else {
+			path = {
+				pathname: '/customer/student/lesson-detail',
+				query: { courseID: ID }
+			};
+		}
+
+		return path;
+	};
+
 	return (
 		<List
 			loading={isLoading?.type === 'GET_ALL' && isLoading?.status}
@@ -30,7 +45,7 @@ const PowerList = (props) => {
 				onChange: checkGetPagination,
 				total: totalPage,
 				size: 'small',
-				current: currentPage,
+				current: currentPage
 			}}
 			// 0 sắp diễn ra, 1 đang diễn ra, 2 đã đóng
 			//       AcademicName: "Nguyễn Phi Hùng"
@@ -69,22 +84,17 @@ const PowerList = (props) => {
 				TotalStudents,
 				TypeCourse,
 				TypeCourseName,
-				BranchID,
+				BranchID
 			}: ICourse) => (
 				<List.Item
 					extra={cloneElement(children, {
-						courseObj: {ID, BranchID, AcademicUID, TeacherLeaderUID},
+						courseObj: { ID, BranchID, AcademicUID, TeacherLeaderUID }
 					})}
 				>
 					<List.Item.Meta
 						avatar={checkStatus(Status, StatusName)}
 						title={
-							<Link
-								href={{
-									pathname: '/course/course-list/course-list-detail/[slug]',
-									query: {slug: ID, type: TypeCourse},
-								}}
-							>
+							<Link href={returnPathName(ID, TypeCourse)}>
 								<a>{CourseName}</a>
 							</Link>
 						}
@@ -95,8 +105,7 @@ const PowerList = (props) => {
 										<span>Học vụ: </span> <span>{AcademicName || 'Trống'}</span>
 									</li>
 									<li>
-										<span>Quản lý: </span>{' '}
-										<span>{TeacherLeaderName || 'Trống'}</span>
+										<span>Quản lý: </span> <span>{TeacherLeaderName || 'Trống'}</span>
 									</li>
 									<li>
 										<span>Giáo viên: </span> <span>{TeacherName}</span>
@@ -105,8 +114,7 @@ const PowerList = (props) => {
 										<span>Hình thức: </span> <span>{TypeCourseName}</span>
 									</li>
 									<li>
-										<span>Học phí: </span>{' '}
-										<span>{numberWithCommas(Price)} VNĐ</span>
+										<span>Học phí: </span> <span>{numberWithCommas(Price)} VNĐ</span>
 									</li>
 								</ul>
 								<ul className="list-hor">
@@ -114,8 +122,7 @@ const PowerList = (props) => {
 										Số buổi học: <span>{TotalDays}</span>
 									</li>
 									<li>
-										Khai giảng:{' '}
-										<span>{moment(StartDay).format('DD/MM/YYYY')}</span>
+										Khai giảng: <span>{moment(StartDay).format('DD/MM/YYYY')}</span>
 									</li>
 									<li>
 										Bế giảng: <span>{moment(EndDay).format('DD/MM/YYYY')}</span>
@@ -139,17 +146,17 @@ PowerList.propTypes = {
 	currentPage: PropTypes.number,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	children: PropTypes.element,
 	//
-	getPagination: PropTypes.func,
+	getPagination: PropTypes.func
 };
 PowerList.defaultProps = {
 	totalPage: 1,
 	currentPage: 1,
-	isLoading: {type: '', status: false},
-	getPagination: null,
+	isLoading: { type: '', status: false },
+	getPagination: null
 };
 
 export default PowerList;

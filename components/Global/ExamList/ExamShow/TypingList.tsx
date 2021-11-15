@@ -11,9 +11,8 @@ const TypingList = (props) => {
 	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
 	const [listInput, setListInput] = useState([]);
 	const [listCorrectAnswer, setListCorrectAnswer] = useState([]);
-
-	// console.log("List ID Là: ", listQuestionID);
-	// console.log("Data question: ", dataQuestion);
+	const [isActive, setIsActive] = useState(null);
+	const [loadFirst, setLoadFirst] = useState(false);
 
 	useEffect(() => {
 		if (dataQuestion.Paragraph !== '') {
@@ -61,8 +60,8 @@ const TypingList = (props) => {
 	};
 
 	const handleChangeText = (text, quesID) => {
-		getActiveID(quesID);
 		getListPicked(quesID);
+
 		// Find index
 		let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
 
@@ -116,13 +115,23 @@ const TypingList = (props) => {
 									indexQuestionDetail
 								].SetPackageExerciseAnswerStudentList.length > 0
 							) {
-								item.innerHTML =
-									packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
-										indexQuestionDetail
-									].SetPackageExerciseAnswerStudentList[0].AnswerContent;
+								if (!loadFirst) {
+									item.innerHTML =
+										packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
+											indexQuestionDetail
+										].SetPackageExerciseAnswerStudentList[0].AnswerContent;
+									setLoadFirst(true);
+								} else {
+									if (activeID === isActive) {
+										item.innerHTML =
+											packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
+												indexQuestionDetail
+											].SetPackageExerciseAnswerStudentList[0].AnswerContent;
+									}
+								}
 							}
 
-							// Tìm và active đúng ô input
+							//Tìm và active đúng ô input
 							item.classList.remove('active-type-input');
 							if (quesID === activeID) {
 								item.classList.add('active-type-input');
@@ -136,8 +145,6 @@ const TypingList = (props) => {
 				let spaceEditor = document.querySelectorAll('.box-typing  .space-editor');
 
 				let tooltipAns = document.querySelectorAll('.box-typing .tooltip-answer');
-
-				console.log('Tooltip: ', tooltipAns);
 
 				spaceEditor.forEach((item) => {
 					item.setAttribute('contenteditable', 'false');
@@ -234,10 +241,14 @@ const TypingList = (props) => {
 				let quesID = parseInt(item.getAttribute('ques-id'));
 
 				item.addEventListener('click', (event) => {
+					event.preventDefault();
+					getActiveID(quesID);
+					setIsActive(quesID);
+
 					const input = event.target as HTMLElement;
-					if (listInput.includes(input.innerHTML)) {
-						input.innerHTML = '';
-					}
+					// if (listInput.includes(input.innerHTML)) {
+					// 	input.innerHTML = '';
+					// }
 				});
 
 				item.addEventListener('keyup', (event) => {

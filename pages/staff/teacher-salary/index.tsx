@@ -1,5 +1,5 @@
 import { InputNumber, Spin, Tooltip, Select, Popconfirm } from 'antd';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
 import { teacherSalaryApi } from '~/apiBase/staff-manage/teacher-salary';
@@ -13,7 +13,9 @@ import { useWrap } from '~/context/wrap';
 import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
-import ConfirmForm from './confirm-form';
+import SalaryOfTeacherDetail from '../../../components/Global/Teacher/TeacherSalary/salary-of-teacher-detail';
+import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
+import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/confirm-form';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -43,45 +45,176 @@ const SalaryReview = () => {
 	const paramDefault = {
 		pageIndex: currentPage,
 		pageSize: pageSize,
-		sortType: true,
-		selectAll: true,
+		// selectAll: true,
 		Year: new Date().getFullYear(),
-		Month: new Date().getMonth() + 1,
+		Month: new Date().getMonth(),
 		TeacherName: null,
 		TeacherID: null,
-		StatusID: null
+		StatusID: null,
+		sort: null,
+		sortType: null
 	};
 	const [params, setParams] = useState(paramDefault);
+
+	let listFieldSearch = {
+		pageIndex: 1,
+		TeacherName: null
+	};
+	// SORT
+	const sortOptionList = [
+		{
+			dataSort: {
+				sort: 0,
+				sortType: false
+			},
+			value: 1,
+			text: 'Tên giảm dần'
+		},
+		{
+			dataSort: {
+				sort: 0,
+				sortType: true
+			},
+			value: 2,
+			text: 'Tên tăng dần '
+		},
+		{
+			dataSort: {
+				sort: 1,
+				sortType: false
+			},
+			value: 3,
+			text: 'Lương tổng giảm dần'
+		},
+		{
+			dataSort: {
+				sort: 1,
+				sortType: true
+			},
+			value: 4,
+			text: 'Lương tổng tăng dần '
+		}
+	];
+
+	let refValue = useRef({
+		pageIndex: 1,
+		pageSize: pageSize,
+		sort: -1,
+		sortType: false
+	});
+
+	// ------------ ON SEARCH -----------------------
+
+	const checkField = (valueSearch, dataIndex) => {
+		let newList = { ...listFieldSearch };
+		Object.keys(newList).forEach(function (key) {
+			if (key != dataIndex) {
+				if (key != 'pageIndex') {
+					newList[key] = null;
+				}
+			} else {
+				newList[key] = valueSearch;
+			}
+		});
+
+		return newList;
+	};
+
+	const onSearch = (valueSearch, dataIndex) => {
+		let clearKey = checkField(valueSearch, dataIndex);
+
+		setParams({
+			...params,
+			...clearKey
+		});
+	};
+
+	// HANDLE RESET
+	const resetListFieldSearch = () => {
+		Object.keys(listFieldSearch).forEach(function (key) {
+			if (key != 'pageIndex') {
+				listFieldSearch[key] = null;
+			}
+		});
+	};
+
+	const handleReset = () => {
+		setParams({
+			...paramDefault,
+			pageIndex: 1
+		});
+		setCurrentPage(1), resetListFieldSearch();
+	};
+
+	// SORT
+	const onSort = (option) => {
+		refValue.current = {
+			...refValue.current,
+			sort: option.title.sort,
+			sortType: option.title.sortType
+		};
+		setParams({ ...params, sort: option.title.sort, sortType: option.title.sortType });
+		// setFilters({
+		// 	...listFieldInit,
+		// 	...refValue.current
+		// });
+	};
 
 	const columns = [
 		{
 			title: 'Giáo viên',
+			width: 150,
 			dataIndex: 'TeacherName',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{price}</p>,
+			...FilterColumn('TeacherName', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Năm',
+			width: 80,
 			dataIndex: 'Year',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Tháng',
+			width: 80,
 			dataIndex: 'Month',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
 		{
 			title: 'Thưởng',
+			width: 150,
 			dataIndex: 'Bonus',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
+			width: 107,
 			dataIndex: 'NoteBonus',
-			render: (price, record: any) => <p className="font-weight-blue">{price}</p>
+			render: (price, record: any) => <p>{price}</p>
 		},
 		{
 			title: 'Trạng Thái',
+			width: 200,
 			dataIndex: 'StatusName',
+			filters: [
+				{
+					text: 'Chưa chốt lương',
+					value: 1
+				},
+				{
+					text: 'Đã gửi yêu cầu xác nhận',
+					value: 3
+				},
+				{
+					text: 'Đã xác nhận',
+					value: 4
+				},
+				{
+					text: 'Đã nhận lương',
+					value: 5
+				}
+			],
+			onFilter: (value, record) => record.StatusID === value,
 			render: (price, record: any) => (
 				<>
 					{record.StatusID == 1 && <span className="tag red">{price}</span>}
@@ -92,22 +225,32 @@ const SalaryReview = () => {
 			)
 		},
 		{
-			title: 'Tăng Lương',
+			title: 'Lương Ứng',
+			width: 150,
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tháng',
+			width: 150,
 			dataIndex: 'Salary',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <SalaryOfTeacherDetail price={price} record={record} />
+		},
+		{
+			title: 'Lương Chấm Bài',
+			width: 150,
+			dataIndex: 'SalaryFixExam',
+			render: (price, record: ITeacherSalary) => <TecherFixExam price={price} record={record} />
 		},
 		{
 			title: 'Lương Tổng',
+			width: 150,
 			dataIndex: 'TotalSalary',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
+			width: 100,
 			render: (text, record) => (
 				<ConfirmForm
 					isLoading={isLoading}
@@ -129,6 +272,7 @@ const SalaryReview = () => {
 			let res = await teacherSalaryApi.getAll({ ...params, pageIndex: page });
 			if (res.status == 200) {
 				setPayRoll(res.data.data);
+				setTotalPage(res.data.totalRow);
 			}
 			if (res.status == 204) {
 				setPayRoll([]);
@@ -225,13 +369,22 @@ const SalaryReview = () => {
 				</Popconfirm>
 			}
 			Extra={
-				<Select onChange={onChangeMonth} disabled={false} className="style-input" defaultValue={months[new Date().getMonth()]}>
-					{months.map((item, index) => (
-						<Option key={index} value={index + 1}>
-							{item}
-						</Option>
-					))}
-				</Select>
+				<div className="extra-table">
+					<Select
+						onChange={onChangeMonth}
+						style={{ width: 200 }}
+						disabled={false}
+						className="style-input"
+						defaultValue={months[new Date().getMonth() - 1]}
+					>
+						{months.map((item, index) => (
+							<Option key={index} value={index + 1}>
+								{item}
+							</Option>
+						))}
+					</Select>
+					<SortBox space={true} width={200} handleSort={onSort} dataOption={sortOptionList} />
+				</div>
 			}
 		/>
 	);

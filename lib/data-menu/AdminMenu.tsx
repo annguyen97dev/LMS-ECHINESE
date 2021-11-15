@@ -187,6 +187,27 @@ export const AdminChildMenu = [
 				SubMenuList: [
 					{
 						ItemType: 'single',
+						Key: '/customer/student/student-advisory',
+						Route: '/customer/student/student-advisory',
+						Text: 'Khách hàng',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/customer/service/service-info-student',
+						Route: '/customer/service/service-info-student',
+						Text: 'Thêm lịch hẹn test',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/customer/service/service-appointment-test',
+						Route: '/customer/service/service-appointment-test',
+						Text: 'Khách hẹn test',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/customer/student/student-list',
 						Route: '/customer/student/student-list',
 						Text: 'Dữ liệu học viên',
@@ -194,51 +215,52 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
-						Key: '/customer/student/exchange-student',
-						Route: '/customer/student/exchange-student',
-						Text: 'Học viên chuyển giao',
+						Key: '/customer/student/student-appointment',
+						Route: '/customer/student/student-appointment',
+						Text: 'HV chờ xếp lớp',
 						Icon: ''
 					},
 					{
 						ItemType: 'single',
 						Key: '/customer/student/student-course',
 						Route: '/customer/student/student-course',
-						Text: 'Học viên trong khóa',
+						Text: 'HV trong khóa',
 						Icon: ''
 					},
 					{
 						ItemType: 'single',
 						Key: '/customer/student/student-change-course',
 						Route: '/customer/student/student-change-course',
-						Text: 'Học viên chuyển khóa',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/student-appointment',
-						Route: '/customer/student/student-appointment',
-						Text: 'Học viên hẹn đăng ký',
+						Text: 'HV chuyển khóa',
 						Icon: ''
 					},
 					{
 						ItemType: 'single',
 						Key: '/customer/student/student-reserve',
 						Route: '/customer/student/student-reserve',
-						Text: 'Học viên bảo lưu',
+						Text: 'HV bảo lưu',
 						Icon: ''
 					},
 					{
 						ItemType: 'single',
-						Key: '/customer/student/student-advisory',
-						Route: '/customer/student/student-advisory',
-						Text: 'Danh sách khách hàng',
+						Key: '/customer/student/exchange-student',
+						Route: '/customer/student/exchange-student',
+						Text: 'HV chuyển giao',
 						Icon: ''
 					},
+
 					{
 						ItemType: 'single',
 						Key: '/package/package-payment',
 						Route: '/package/package-payment',
-						Text: 'Danh sách học viên mua bộ đề',
+						Text: 'HV mua bộ đề',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/customer/service/service-customer-exam',
+						Route: '/customer/service/service-customer-exam',
+						Text: 'HV đăng kí thi',
 						Icon: ''
 					}
 				]
@@ -258,56 +280,36 @@ export const AdminChildMenu = [
 					}
 				]
 			},
-			{
-				ItemType: 'sub-menu',
-				Key: 'sub-list-course-child-2',
-				Icon: '<span class="anticon"><img src="/images/icons/info.svg"></span>',
-				TitleSub: 'Thi, hẹn test và dịch vụ',
-				SubMenuList: [
-					// {
-					//   ItemType: "single",
-					//   Key: "/customer/service/service-customer",
-					//   Route: "/customer/service/service-customer",
-					//   Text: "Khách mua dịch vụ",
-					//   Icon: "",
-					// },
-					{
-						ItemType: 'single',
-						Key: '/customer/service/service-customer-exam',
-						Route: '/customer/service/service-customer-exam',
-						Text: 'Danh sách đăng kí thi',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/customer/service/service-info-student',
-						Route: '/customer/service/service-info-student',
-						Text: 'Thêm lịch hẹn test',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/customer/service/service-appointment-test',
-						Route: '/customer/service/service-appointment-test',
-						Text: 'Danh sách khách hẹn test',
-						Icon: ''
-					},
-					// {
-					//   ItemType: "single",
-					//   Key: "/customer/service/service-package-customer",
-					//   Route: "/customer/service/service-package-customer",
-					//   Text: "Danh sách khách mua gói",
-					//   Icon: "",
-					// },
-					{
-						ItemType: 'single',
-						Key: '/customer/service/service-package-result',
-						Route: '/customer/service/service-package-result',
-						Text: 'Danh sách kết quả đợt thi',
-						Icon: ''
-					}
-				]
-			},
+			// {
+			// 	ItemType: 'sub-menu',
+			// 	Key: 'sub-list-course-child-2',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/info.svg"></span>',
+			// 	TitleSub: 'Thi, hẹn test và dịch vụ',
+			// 	SubMenuList: [
+			// 		{
+			// 		  ItemType: "single",
+			// 		  Key: "/customer/service/service-customer",
+			// 		  Route: "/customer/service/service-customer",
+			// 		  Text: "Khách mua dịch vụ",
+			// 		  Icon: "",
+			// 		},
+
+			// 		{
+			// 		  ItemType: "single",
+			// 		  Key: "/customer/service/service-package-customer",
+			// 		  Route: "/customer/service/service-package-customer",
+			// 		  Text: "Danh sách khách mua gói",
+			// 		  Icon: "",
+			// 		},
+			// 		{
+			// 			ItemType: 'single',
+			// 			Key: '/customer/service/service-package-result',
+			// 			Route: '/customer/service/service-package-result',
+			// 			Text: 'Danh sách kết quả đợt thi',
+			// 			Icon: ''
+			// 		}
+			// 	]
+			// },
 			{
 				ItemType: 'sub-menu',
 				Key: 'sub-list-course-child-3',
@@ -467,20 +469,7 @@ export const AdminChildMenu = [
 			// 	Text: 'Bảng lương nhân viên',
 			// 	Icon: ''
 			// },
-			{
-				ItemType: 'single',
-				Key: '/staff/teacher-salary',
-				Route: '/staff/teacher-salary',
-				Text: 'Bảng lương giáo viên',
-				Icon: ''
-			},
-			{
-				ItemType: 'single',
-				Key: '/staff/admin-salary-staff',
-				Route: '/staff/admin-salary-staff',
-				Text: 'Bảng lương nhân viên',
-				Icon: ''
-			},
+
 			{
 				ItemType: 'sub-menu',
 				Key: 'sub-list-staff-child-2',
@@ -539,6 +528,27 @@ export const AdminChildMenu = [
 					// },
 					// add more
 				]
+			},
+			{
+				ItemType: 'single',
+				Key: '/staff/teacher-salary',
+				Route: '/staff/teacher-salary',
+				Text: 'Bảng lương giáo viên',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/staff/admin-salary-staff',
+				Route: '/staff/admin-salary-staff',
+				Text: 'Bảng lương nhân viên',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/feedback',
+				Route: '/feedback',
+				Text: 'Phản hồi',
+				Icon: ''
 			},
 			{
 				ItemType: 'sub-menu',
@@ -644,7 +654,14 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/package/package-set-result',
 						Route: '/package/package-set-result',
-						Text: 'Kết quả thi của học viên',
+						Text: 'Thi cử',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/customer/student/course-exam',
+						Route: '/customer/student/course-exam',
+						Text: 'Kiểm tra',
 						Icon: ''
 					},
 					{
@@ -653,21 +670,21 @@ export const AdminChildMenu = [
 						Route: '/package/pay-fix-list',
 						Text: 'Danh sách mua lượt chấm',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/package/package-student',
-						Route: '/package/package-student',
-						Text: 'Danh sách bộ đề học viên',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/package/package-store',
-						Route: '/package/package-store',
-						Text: 'Cửa hàng',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/package-student',
+					// 	Route: '/package/package-student',
+					// 	Text: 'Danh sách bộ đề học viên',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/package/package-store',
+					// 	Route: '/package/package-store',
+					// 	Text: 'Cửa hàng',
+					// 	Icon: ''
+					// }
 				]
 			},
 			{
@@ -704,14 +721,14 @@ export const AdminChildMenu = [
 				ItemType: 'single',
 				Key: '/question-bank/question-list',
 				Route: '/question-bank/question-list',
-				Text: 'Tạo câu hỏi & trả lời',
+				Text: 'Danh sách câu hỏi',
 				Icon: ''
 			},
 			{
 				ItemType: 'single',
 				Key: '/question-bank/exam-list',
 				Route: '/question-bank/exam-list',
-				Text: 'Tạo đề thi',
+				Text: 'Danh sách đề thi',
 				Icon: ''
 			}
 		]
@@ -931,6 +948,21 @@ export const AdminChildMenu = [
 						Key: '/option/faq',
 						Route: '/option/faq',
 						Text: 'Câu hỏi thường gặp',
+						Icon: ''
+					}
+				]
+			},
+			{
+				ItemType: 'sub-menu',
+				Key: 'sub-tab-option-5',
+				Icon: '',
+				TitleSub: 'Sản phẩm',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/option/product-type',
+						Route: '/option/product-type',
+						Text: 'Cấu hình sản phẩm',
 						Icon: ''
 					}
 				]

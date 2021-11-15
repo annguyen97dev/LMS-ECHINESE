@@ -1013,6 +1013,7 @@ hr {
 	padding: 0;
 	transition: 0.3s;
 	margin: 0 5px;
+	line-height: 0;
 	// width: 45px;
 	// height: 45px;
 	// display: flex;
@@ -1381,10 +1382,10 @@ hr {
 	margin-left: 3px;
 	font-style: italic;
 }
-// .font-weight-green {
-//   font-weight: 500;
-//   color: #2e9e0a;
-// }
+.font-weight-link {
+	font-weight: 500;
+	color: #3281ba;
+}
 
 .form-error {
 	display: block;
@@ -2147,4 +2148,22 @@ hr {
 			color: green;
 		}
 	}
+}
+.file-100 {
+	.ant-upload {
+		width: 100%;
+		button {
+			width: 100%;
+		}
+	}
+}
+.link-upload {
+	font-style: italic;
+}
+.btn-nostyle {
+	border: none;
+	background: none;
+}
+.style-link {
+	color: #447aac;
 }
