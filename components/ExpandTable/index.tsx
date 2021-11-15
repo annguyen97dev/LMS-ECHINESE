@@ -116,15 +116,11 @@ const ExpandTable = (props) => {
 		}
 	}, [props.dataSource]);
 
-<<<<<<< HEAD
-	console.log('props.totalPage: ', props.totalPage);
-=======
 	useEffect(() => {
 		if (props.closeAllExpand) {
 			closeAllExpandFunc();
 		}
 	}, [props.closeAllExpand]);
->>>>>>> 42160c405840b7e869239ca433ac3be763c4d4d0
 
 	return (
 		<>
