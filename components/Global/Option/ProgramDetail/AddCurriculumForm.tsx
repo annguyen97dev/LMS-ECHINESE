@@ -238,7 +238,7 @@ export const AddCurriculumForm = (props) => {
 							onClick={() => {
 								callBack(false);
 							}}
-							className="btn mb-2 btn-success"
+							className="btn btn-success"
 							style={{ marginRight: -5 }}
 						>
 							<i className="far fa-plus-circle mr-2"></i>Thêm mới
