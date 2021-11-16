@@ -152,16 +152,17 @@ export const DetailsModal = (props) => {
 			getDetails();
 		} catch (err) {
 			console.log(err);
+			getDetails();
 		}
 	};
 
-	const showConfirm = (param) => {
+	const showConfirm = (param, ID) => {
 		confirm({
 			title: 'Xóa dữ liệu',
 			icon: <ExclamationCircleOutlined />,
 			content: `Bạn thật sự muốn xóa "${param}"?`,
 			onOk() {
-				handleDelete();
+				handleDelete(ID);
 			},
 			onCancel() {
 				console.log('Cancel');
@@ -185,10 +186,10 @@ export const DetailsModal = (props) => {
 		await postUpdate(temp);
 	};
 
-	const handleDelete = async () => {
+	const handleDelete = async (ID) => {
 		setLoading(true);
 		let temp = await {
-			ID: selected.ID,
+			ID: ID,
 			Enable: false
 		};
 		await postUpdate(temp);
@@ -280,7 +281,7 @@ export const DetailsModal = (props) => {
 			>
 				<div className="row m-0">{item.Content !== '' ? item.Content : 'Không có tiêu đề'}</div>
 
-				<i onClick={() => showConfirm(item.Content)} className="far fa-trash-alt mr-2 ic-trash"></i>
+				<i onClick={() => showConfirm(item.Content, item.ID)} className="far fa-trash-alt mr-2 ic-trash"></i>
 			</div>
 		);
 	};
