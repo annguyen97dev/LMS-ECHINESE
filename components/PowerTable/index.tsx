@@ -80,6 +80,7 @@ const PowerTable = React.memo((props: any) => {
 								pagination={{
 									pageSize: 30,
 									pageSizeOptions: ['30'],
+									showTotal: () => <div className="font-weight-black">Tổng cộng: {props.totalPage}</div>,
 									onShowSizeChange: onShowSizeChange,
 									total: props.totalPage && props.totalPage,
 									onChange: (pageNumber, pageSize) => changePagination(pageNumber, pageSize),

@@ -55,7 +55,7 @@ const SalaryReview = () => {
 		{
 			title: 'Lương tháng',
 			render: (text) => (
-				<p className="font-weight-blue">
+				<p className="font-weight-primary">
 					{text.Month}-{text.Year}
 				</p>
 			)
@@ -78,7 +78,9 @@ const SalaryReview = () => {
 			title: 'Tổng lương',
 			dataIndex: 'TotalSalary',
 			render: (price, record: IPayRoll) => (
-				<p className="font-weight-blue">{price ? numberWithCommas(price) : numberWithCommas(record.ActualSalary + record.Bonus)}</p>
+				<p className="font-weight-primary">
+					{price ? numberWithCommas(price) : numberWithCommas(record.ActualSalary + record.Bonus)}
+				</p>
 			)
 		}
 	];

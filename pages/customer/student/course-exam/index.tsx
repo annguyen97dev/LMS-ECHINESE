@@ -34,7 +34,7 @@ const CourseExam = () => {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Email',
@@ -86,7 +86,7 @@ const CourseExam = () => {
 		// {
 		// 	title: 'Giáo viên chấm bài',
 		// 	dataIndex: 'TeacherName',
-		// 	render: (text) => <p className="font-weight-blue">{text}</p>
+		// 	render: (text) => <p className="font-weight-primary">{text}</p>
 		// },
 		// {
 		// 	title: 'Trạng thái chấm bài',

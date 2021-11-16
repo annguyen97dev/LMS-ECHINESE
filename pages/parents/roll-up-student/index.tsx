@@ -56,14 +56,14 @@ const RollUpStudent = () => {
 			// width: 200,
 			width: '15%',
 			dataIndex: 'FullNameUnicode',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Trung tâm',
 			// width: 150,
 			width: '15%',
 			dataIndex: 'BranchName',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Môn học',

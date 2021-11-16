@@ -366,7 +366,7 @@ const CourseOfStudentPrice = () => {
 		{
 			title: 'Số tiền còn lại',
 			dataIndex: 'MoneyInDebt',
-			render: (price) => <p className="font-weight-blue">{numberWithCommas(price)}</p>
+			render: (price) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Hình thức',

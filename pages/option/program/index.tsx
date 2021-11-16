@@ -305,7 +305,7 @@ const Programs = () => {
 			dataIndex: 'ProgramName',
 			...FilterColumn('ProgramName', onSearch, handleReset, 'text'),
 			render: (text) => {
-				return <p className="font-weight-blue">{text}</p>;
+				return <p className="font-weight-primary">{text}</p>;
 			}
 		},
 		{

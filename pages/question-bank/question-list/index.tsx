@@ -670,7 +670,7 @@
 //           >
 //             {!showListQuestion ? (
 //               <>
-//                 <p className="font-weight-blue text-center">
+//                 <p className="font-weight-primary text-center">
 //                   Vui lòng chọn môn học và dạng câu hỏi
 //                 </p>
 //                 <div className="img-load">
@@ -847,12 +847,12 @@
 // QuestionList.layout = LayoutBase;
 // export default QuestionList;
 
-import React from "react";
-import QuestionCreate from "~/components/Global/QuestionBank/QuestionCreate";
-import LayoutBase from "~/components/LayoutBase";
+import React from 'react';
+import QuestionCreate from '~/components/Global/QuestionBank/QuestionCreate';
+import LayoutBase from '~/components/LayoutBase';
 
 const QuestionList = () => {
-  return <QuestionCreate />;
+	return <QuestionCreate />;
 };
 
 QuestionList.layout = LayoutBase;

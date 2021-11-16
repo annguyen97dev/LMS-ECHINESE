@@ -300,7 +300,9 @@ const StudentForm = (props) => {
 
 	// ----------- SUBMI FORM ------------
 	const onSubmit = async (data: any) => {
-		data.Branch = data.Branch.toString();
+		if (data.Branch) {
+			data.Branch = data.Branch.toString();
+		}
 
 		setIsLoading({
 			type: 'ADD_DATA',
@@ -347,7 +349,11 @@ const StudentForm = (props) => {
 
 			res?.status == 200 && (showNoti('success', 'Tìm kiếm thành công'), handleDataRow(res.data.data[0]), setIsSearch(true));
 			res?.status == 204 &&
-				(showNoti('danger', 'Không tìm thấy email'), form.reset(defaultValuesInit), setIsSearch(false), setImageUrl(''));
+				(showNoti('danger', 'Không tìm thấy email'),
+				form.reset(defaultValuesInit),
+				form.setValue('Email', valueEmail),
+				setIsSearch(false),
+				setImageUrl(''));
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -361,10 +367,12 @@ const StudentForm = (props) => {
 	const handleDataRow = (data) => {
 		let arrBranch = [];
 		let cloneRowData = { ...data };
-		cloneRowData.Branch.forEach((item, index) => {
-			arrBranch.push(item.ID);
-		});
-		cloneRowData.Branch = arrBranch;
+		if (cloneRowData.Branch) {
+			cloneRowData.Branch.forEach((item, index) => {
+				arrBranch.push(item.ID);
+			});
+			cloneRowData.Branch = arrBranch;
+		}
 
 		form.reset(cloneRowData);
 		cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, 'DistrictID');
@@ -457,7 +465,7 @@ const StudentForm = (props) => {
 									<InputTextField
 										form={form}
 										name="ChineseName"
-										label="Tên tiêng Trung"
+										label="Tên tiếng Trung"
 										placeholder="Nhập tên tiếng Trung"
 									/>
 								</div>
@@ -577,6 +585,7 @@ const StudentForm = (props) => {
 												name="ExamAppointmentTime"
 												label="Giờ hẹn test"
 												placeholder="Chọn giờ hẹn test"
+												isRequired={true}
 											/>
 										</div>
 										<div className="col-md-6 col-12">
@@ -586,6 +595,7 @@ const StudentForm = (props) => {
 												name="AppointmentDate"
 												label="Ngày hẹn test"
 												placeholder="Chọn ngày hẹn test"
+												isRequired={true}
 											/>
 										</div>
 										<div className="col-md-6 col-12">

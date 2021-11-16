@@ -1,23 +1,23 @@
-import {Tooltip} from 'antd';
+import { Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
-import React, {useEffect, useState} from 'react';
-import {Eye} from 'react-feather';
-import {branchApi, courseApi} from '~/apiBase';
-import {courseStudentPriceApi} from '~/apiBase/customer/student/course-student-price';
+import React, { useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
+import { branchApi, courseApi } from '~/apiBase';
+import { courseStudentPriceApi } from '~/apiBase/customer/student/course-student-price';
 import NestedTable from '~/components/Elements/NestedTable';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 import CourseOfStudentPriceForm from '../Finance/CourseOfStudentPrice/CourseStudentPriceForm';
 
 const StudentPay = (props) => {
-	const {CourseOfStudentPriceID} = props;
+	const { CourseOfStudentPriceID } = props;
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
 			...listParamsDefault,
-			FullNameUnicode: data,
+			FullNameUnicode: data
 		});
 	};
 
@@ -30,7 +30,7 @@ const StudentPay = (props) => {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>,
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Khóa học',
@@ -43,26 +43,22 @@ const StudentPay = (props) => {
 						</a>
 					))}
 				</>
-			),
+			)
 		},
 		{
 			title: 'Trung tâm',
 			dataIndex: 'PayBranchName',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Số tiền còn lại',
 			dataIndex: 'MoneyInDebt',
-			render: (text) => (
-				<p className="font-weight-blue">
-					{Intl.NumberFormat('en-US').format(text)}
-				</p>
-			),
+			render: (text) => <p className="font-weight-primary">{Intl.NumberFormat('en-US').format(text)}</p>
 		},
 		{
 			title: 'Ngày hẹn trả',
 			dataIndex: 'PayDate',
-			render: (date) => moment(date).format('DD/MM/YYYY'),
+			render: (date) => moment(date).format('DD/MM/YYYY')
 		},
 
 		{
@@ -70,9 +66,8 @@ const StudentPay = (props) => {
 				<>
 					<Link
 						href={{
-							pathname:
-								'/customer/finance/finance-customer-debts/student-detail/[slug]',
-							query: {slug: 2},
+							pathname: '/customer/finance/finance-customer-debts/student-detail/[slug]',
+							query: { slug: 2 }
 						}}
 					>
 						<Tooltip title="Xem thông tin học viên">
@@ -100,8 +95,8 @@ const StudentPay = (props) => {
 						handleSubmit={onUpdateStudentPay(record.ID)}
 					/> */}
 				</>
-			),
-		},
+			)
+		}
 	];
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -115,24 +110,24 @@ const StudentPay = (props) => {
 		PayBranchID: null,
 		CourseID: null,
 		FullNameUnicode: null,
-		DonePaid: null,
+		DonePaid: null
 	};
 
 	const sortOption = [
 		{
 			dataSort: {
-				sortType: null,
+				sortType: null
 			},
 			value: 1,
-			text: 'Mới cập nhật',
+			text: 'Mới cập nhật'
 		},
 		{
 			dataSort: {
-				sortType: true,
+				sortType: true
 			},
 			value: 2,
-			text: 'Từ dưới lên',
-		},
+			text: 'Từ dưới lên'
+		}
 	];
 
 	const [dataFilter, setDataFilter] = useState([
@@ -142,7 +137,7 @@ const StudentPay = (props) => {
 			col: 'col-12',
 			type: 'select',
 			optionList: null,
-			value: null,
+			value: null
 		},
 		{
 			name: 'CourseID',
@@ -150,15 +145,15 @@ const StudentPay = (props) => {
 			col: 'col-12',
 			type: 'select',
 			optionList: null,
-			value: null,
+			value: null
 		},
 		{
 			name: 'date-range',
 			title: 'Ngày tạo',
 			col: 'col-12',
 			type: 'date-range',
-			value: null,
-		},
+			value: null
+		}
 	]);
 
 	const handleFilter = (listFilter) => {
@@ -168,7 +163,7 @@ const StudentPay = (props) => {
 			toDate: null,
 			BranchID: null,
 			CourseID: null,
-			DonePaid: null,
+			DonePaid: null
 		};
 		listFilter.forEach((item, index) => {
 			let key = item.name;
@@ -178,25 +173,23 @@ const StudentPay = (props) => {
 				}
 			});
 		});
-		setParams({...listParamsDefault, ...newListFilter, pageIndex: 1});
+		setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
 	};
 
 	const handleSort = async (option) => {
 		setParams({
 			...listParamsDefault,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		});
 	};
 
 	const [params, setParams] = useState(listParamsDefault);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
-	const [courseStudentPrice, setCourseStudentPrice] = useState<
-		ICourseOfStudentPrice[]
-	>([]);
+	const [courseStudentPrice, setCourseStudentPrice] = useState<ICourseOfStudentPrice[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
 
 	const setDataFunc = (name, data) => {
@@ -212,11 +205,11 @@ const StudentPay = (props) => {
 
 	const getDataCenter = async () => {
 		try {
-			let res = await branchApi.getAll({pageSize: 99999, pageIndex: 1});
+			let res = await branchApi.getAll({ pageSize: 99999, pageIndex: 1 });
 			if (res.status == 200) {
 				const newData = res.data.data.map((item) => ({
 					title: item.BranchName,
-					value: item.ID,
+					value: item.ID
 				}));
 				setDataFunc('PayBranchID', newData);
 			}
@@ -230,11 +223,11 @@ const StudentPay = (props) => {
 
 	const getDataCourse = async () => {
 		try {
-			let res = await courseApi.getAll({pageSize: 99999, pageIndex: 1});
+			let res = await courseApi.getAll({ pageSize: 99999, pageIndex: 1 });
 			if (res.status == 200) {
 				const newData = res.data.data.map((item) => ({
 					title: item.CourseName,
-					value: item.ID,
+					value: item.ID
 				}));
 				setDataFunc('CourseID', newData);
 			}
@@ -257,14 +250,14 @@ const StudentPay = (props) => {
 		setParams({
 			...params,
 			pageSize,
-			pageIndex: currentPage,
+			pageIndex: currentPage
 		});
 	};
 
 	const getDataCourseStudentPrice = (page: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		(async () => {
 			try {
@@ -286,7 +279,7 @@ const StudentPay = (props) => {
 			} finally {
 				setIsLoading({
 					type: 'GET_ALL',
-					status: false,
+					status: false
 				});
 			}
 		})();

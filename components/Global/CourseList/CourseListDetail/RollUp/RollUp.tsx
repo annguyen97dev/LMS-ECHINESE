@@ -1,15 +1,15 @@
-import {Input, Select} from 'antd';
+import { Input, Select } from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {rollUpApi} from '~/apiBase/course-detail/roll-up';
+import React, { useEffect, useState } from 'react';
+import { rollUpApi } from '~/apiBase/course-detail/roll-up';
 import PowerTable from '~/components/PowerTable';
-import {useDebounce} from '~/context/useDebounce';
-import {useWrap} from '~/context/wrap';
+import { useDebounce } from '~/context/useDebounce';
+import { useWrap } from '~/context/wrap';
 
 RollUp.propTypes = {
-	courseID: PropTypes.number,
+	courseID: PropTypes.number
 };
 interface IStudentRollUp {
 	ID: number;
@@ -36,38 +36,38 @@ type TypeDataRollUp = {
 	StudentList: IStudentRollUp[];
 };
 function RollUp(props) {
-	const {courseID} = props;
-	const {showNoti} = useWrap();
+	const { courseID } = props;
+	const { showNoti } = useWrap();
 	const [dataRollUp, setDataRollUp] = useState<TypeDataRollUp>({
 		RollUp: [],
 		ScheduleList: [],
-		StudentList: [],
+		StudentList: []
 	});
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const {Option} = Select;
+	const { Option } = Select;
 	const rollUpStatusOptionList = [
-		{value: 0, title: '---Chọn trạng thái---'},
-		{title: 'Có mặt', value: 1},
-		{title: 'Vắng có phép', value: 2},
-		{title: 'Vắng không phép', value: 3},
-		{title: 'Đi muộn', value: 4},
-		{title: 'Về sớm', value: 5},
-		{title: 'Nghỉ lễ', value: 6},
+		{ value: 0, title: '---Chọn trạng thái---' },
+		{ title: 'Có mặt', value: 1 },
+		{ title: 'Vắng có phép', value: 2 },
+		{ title: 'Vắng không phép', value: 3 },
+		{ title: 'Đi muộn', value: 4 },
+		{ title: 'Về sớm', value: 5 },
+		{ title: 'Nghỉ lễ', value: 6 }
 	];
 	const leaningStatusOptionList = [
-		{value: 0, title: '---Chọn học lực---'},
-		{title: 'Giỏi', value: 1},
-		{title: 'Khá', value: 2},
-		{title: 'Trung bình', value: 3},
-		{title: 'Kém', value: 4},
-		{title: 'Theo dõi đặc biệt', value: 5},
-		{title: 'Có cố gắng', value: 6},
-		{title: 'Không cố gắng', value: 7},
-		{title: 'Không nhận xét', value: 8},
+		{ value: 0, title: '---Chọn học lực---' },
+		{ title: 'Giỏi', value: 1 },
+		{ title: 'Khá', value: 2 },
+		{ title: 'Trung bình', value: 3 },
+		{ title: 'Kém', value: 4 },
+		{ title: 'Theo dõi đặc biệt', value: 5 },
+		{ title: 'Có cố gắng', value: 6 },
+		{ title: 'Không cố gắng', value: 7 },
+		{ title: 'Không nhận xét', value: 8 }
 	];
 	// FILTER
 	const [filters, setFilters] = useState({
@@ -75,30 +75,26 @@ function RollUp(props) {
 		pageIndex: 1,
 		CourseID: courseID,
 		CourseScheduleID: 0,
-		StudentID: 0,
+		StudentID: 0
 	});
 	const getPagination = (pageNumber: number) => {
 		setFilters({
 			...filters,
-			pageIndex: pageNumber,
+			pageIndex: pageNumber
 		});
 	};
 	const onSelectCourseSchedule = (CourseScheduleID: number) => {
 		setFilters({
 			...filters,
-			CourseScheduleID,
+			CourseScheduleID
 		});
 	};
-	const onChangeValue = async (
-		key: string,
-		vl: number | string | boolean,
-		idx: number
-	) => {
+	const onChangeValue = async (key: string, vl: number | string | boolean, idx: number) => {
 		try {
 			const newStudentList = [...dataRollUp.StudentList];
 			const student: IStudentRollUp = {
 				...newStudentList[idx],
-				[key]: vl,
+				[key]: vl
 			};
 			let dataChange = {
 				BranchID: dataRollUp.ScheduleList[1].options.BranchID,
@@ -109,12 +105,12 @@ function RollUp(props) {
 				LearningStatusID: student.LearningStatusID,
 				Note: student.Note,
 				Warning: student.Warning,
-				[key]: vl,
+				[key]: vl
 			};
 			let res = await rollUpApi.update([dataChange]);
 			if (res.status === 200) {
 				newStudentList.splice(idx, 1, student);
-				setDataRollUp({...dataRollUp, StudentList: newStudentList});
+				setDataRollUp({ ...dataRollUp, StudentList: newStudentList });
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -125,23 +121,21 @@ function RollUp(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await rollUpApi.getAll(filters);
 			if (res.status === 200) {
-				const {RollUp, ScheduleList, StudentList, TotalRow} = res.data;
+				const { RollUp, ScheduleList, StudentList, TotalRow } = res.data;
 				const fmScheduleList = ScheduleList.map((item, index) => {
 					const date = moment(item.StartTime).format('DD/MM/YYYY');
 					const startTime = moment(item.StartTime).format('HH:mm');
 					const endTime = moment(item.EndTime).format('HH:mm');
 					return {
 						value: item.ID,
-						title: `${
-							item.RoomName ? `[${item.RoomName}]` : ''
-						}[${date}] ${startTime} - ${endTime}`,
+						title: `${item.RoomName ? `[${item.RoomName}]` : ''}[${date}] ${startTime} - ${endTime}`,
 						options: {
-							BranchID: item.BranchID,
-						},
+							BranchID: item.BranchID
+						}
 					};
 				});
 				const fmStudentList = StudentList.map((s) => {
@@ -154,20 +148,17 @@ function RollUp(props) {
 						StatusID: studentRollUp?.StatusID || 0,
 						StatusName: studentRollUp?.StatusName || '',
 						LearningStatusID: studentRollUp?.LearningStatusID || 0,
-						LearningStatusName: studentRollUp?.LearningStatusName || '',
+						LearningStatusName: studentRollUp?.LearningStatusName || ''
 					};
 					return {
 						...s,
-						...moreInfo,
+						...moreInfo
 					};
 				});
 				setDataRollUp({
 					RollUp,
-					ScheduleList: [
-						{value: 0, title: '---Chọn ca học---'},
-						...fmScheduleList,
-					],
-					StudentList: filters.CourseScheduleID ? fmStudentList : [],
+					ScheduleList: [{ value: 0, title: '---Chọn ca học---' }, ...fmScheduleList],
+					StudentList: filters.CourseScheduleID ? fmStudentList : []
 				});
 				setTotalPage(TotalRow);
 			}
@@ -179,7 +170,7 @@ function RollUp(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -190,7 +181,7 @@ function RollUp(props) {
 		{
 			title: 'Học viên',
 			dataIndex: 'StudentName',
-			render: (text) => <p className="font-weight-blue">{text}</p>,
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Điểm danh',
@@ -199,7 +190,7 @@ function RollUp(props) {
 				return (
 					<Select
 						key={item.RollUpID}
-						style={{width: 200}}
+						style={{ width: 200 }}
 						value={status}
 						className="style-input"
 						onChange={(vl) => debounceOnChangeValue('StatusID', vl, idx)}
@@ -211,7 +202,7 @@ function RollUp(props) {
 						))}
 					</Select>
 				);
-			},
+			}
 		},
 		{
 			title: 'Học lực',
@@ -220,12 +211,10 @@ function RollUp(props) {
 				return (
 					<Select
 						key={item.RollUpID}
-						style={{width: 200}}
+						style={{ width: 200 }}
 						value={status}
 						className="style-input"
-						onChange={(vl) =>
-							debounceOnChangeValue('LearningStatusID', vl, idx)
-						}
+						onChange={(vl) => debounceOnChangeValue('LearningStatusID', vl, idx)}
 					>
 						{leaningStatusOptionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>
@@ -234,7 +223,7 @@ function RollUp(props) {
 						))}
 					</Select>
 				);
-			},
+			}
 		},
 		{
 			title: 'Đánh giá',
@@ -244,14 +233,14 @@ function RollUp(props) {
 					<Input
 						key={item.RollUpID}
 						defaultValue={note}
-						style={{width: 200}}
+						style={{ width: 200 }}
 						placeholder="Nhập đánh giá"
 						className="style-input"
 						allowClear={true}
 						onChange={(e) => debounceOnChangeValue('Note', e.target.value, idx)}
 					/>
 				);
-			},
+			}
 		},
 		{
 			title: 'Cảnh cáo',
@@ -262,13 +251,11 @@ function RollUp(props) {
 					<Checkbox
 						disabled={warning}
 						checked={warning}
-						onChange={(e) =>
-							debounceOnChangeValue('Warning', e.target.checked, idx)
-						}
+						onChange={(e) => debounceOnChangeValue('Warning', e.target.checked, idx)}
 					/>
 				);
-			},
-		},
+			}
+		}
 	];
 	return (
 		<PowerTable
@@ -286,7 +273,7 @@ function RollUp(props) {
 					<div>
 						<Select
 							defaultValue={0}
-							style={{width: 280, paddingLeft: 20, marginBottom: 0}}
+							style={{ width: 280, paddingLeft: 20, marginBottom: 0 }}
 							className="style-input"
 							onChange={onSelectCourseSchedule}
 						>

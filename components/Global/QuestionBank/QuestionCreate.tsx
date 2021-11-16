@@ -18,6 +18,7 @@ import QuestionDrag from '~/components/Global/QuestionBank/QuestionShow/Question
 import QuestionMap from '~/components/Global/QuestionBank/QuestionShow/QuestionMap';
 import QuestionSpeaking from './QuestionShow/QuestionSpeaking';
 import ImportExcel from './Elements/ImportExcel';
+import { DownloadOutlined } from '@ant-design/icons';
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -316,7 +317,7 @@ const QuestionCreate = (props) => {
 				ProgramID: id
 			});
 			res.status == 200 && setDataCurriculum(res.data.data);
-			res.status == 204 && showNoti('danger', 'Môn học không có dữ liệu');
+			res.status == 204 && showNoti('danger', 'Giáo trình không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -716,18 +717,18 @@ const QuestionCreate = (props) => {
 			changeBoxType(null, 1, 'Lựa chọn một');
 			isOpenTypeQuestion = true;
 		} else {
-			setValueProgram(31);
-			getDataCurriculum(31);
-			setValueCurriculum(23);
-			questionData.CurriculumID = 23;
-			questionData.Level = 1;
-			questionData.SkillID = 3;
-			setQuestionData({ ...questionData });
-			setValueSkill(3);
-			setValueLevel(1);
-			setValueType(0);
-			changeBoxType(null, 1, 'Lựa chọn một');
-			isOpenTypeQuestion = true;
+			// setValueProgram(31);
+			// getDataCurriculum(31);
+			// setValueCurriculum(23);
+			// questionData.CurriculumID = 23;
+			// questionData.Level = 1;
+			// questionData.SkillID = 3;
+			// setQuestionData({ ...questionData });
+			// setValueSkill(3);
+			// setValueLevel(1);
+			// setValueType(0);
+			// changeBoxType(null, 1, 'Lựa chọn một');
+			// isOpenTypeQuestion = true;
 		}
 		setShowTypeQuestion({
 			type: 1,
@@ -769,6 +770,17 @@ const QuestionCreate = (props) => {
 						}
 						extra={
 							<>
+								<Tooltip title="Tải file excel mẫu">
+									<a
+										className="btn btn-light mr-2 btn-have-icon"
+										href="https://lmsv2.monamedia.net/Upload/Exercise/Excel.xls"
+									>
+										<span className="d-flex align-items-center">
+											<DownloadOutlined className="mr-2" />
+											File mẫu
+										</span>
+									</a>
+								</Tooltip>
 								<ImportExcel onFetchData={onFetchData} />
 								<CreateQuestionForm
 									questionData={questionData}
@@ -781,8 +793,8 @@ const QuestionCreate = (props) => {
 					>
 						{!showListQuestion ? (
 							<>
-								<p className="font-weight-blue text-center">
-									{dataExam ? 'Vui lòng chọn dạng câu hỏi' : 'Vui lòng chọn môn học và dạng câu hỏi'}
+								<p className="font-weight-primary text-center">
+									{dataExam ? 'Vui lòng chọn dạng câu hỏi' : 'Vui lòng chọn giáo trình và dạng câu hỏi'}
 								</p>
 								<div className="img-load">
 									<img src="/images/study-min.jpg" alt="" />

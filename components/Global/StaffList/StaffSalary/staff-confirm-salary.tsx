@@ -74,7 +74,7 @@ const ConfirmForm = ({ isLoading, record, setParams, params, roleID }) => {
 			{roleID == 5 ? (
 				<>
 					{record.StatusID == 5 ? (
-						<p className="font-weight-blue">Đã nhận lương</p>
+						<p className="font-weight-primary">Đã nhận lương</p>
 					) : (
 						<button
 							className="btn btn-icon edit"
@@ -106,7 +106,7 @@ const ConfirmForm = ({ isLoading, record, setParams, params, roleID }) => {
 								{reConfirm.StatusID == 4 ? (
 									<>
 										<div className="col-12 mb-3">
-											<h4 className="font-weight-blue">Xác nhận thanh toán lương cho nhân viên!</h4>
+											<h4 className="font-weight-primary">Xác nhận thanh toán lương cho nhân viên!</h4>
 										</div>
 									</>
 								) : (
@@ -194,13 +194,13 @@ const ConfirmForm = ({ isLoading, record, setParams, params, roleID }) => {
 								{record.StatusID == 4 &&
 									(reConfirm.StatusID == 3 ? (
 										<div className="col-12 ">
-											<a className="font-weight-blue" onClick={onChangeReConfirm}>
+											<a className="font-weight-primary" onClick={onChangeReConfirm}>
 												Hủy gửi yêu cầu xác nhận lại
 											</a>
 										</div>
 									) : (
 										<div className="col-12 ">
-											<a className="font-weight-blue" onClick={onChangeReConfirm}>
+											<a className="font-weight-primary" onClick={onChangeReConfirm}>
 												Gửi yêu cầu xác nhận lại
 											</a>
 										</div>
@@ -217,7 +217,7 @@ const ConfirmForm = ({ isLoading, record, setParams, params, roleID }) => {
 				</>
 			) : (
 				<>
-					{record.StatusID == 1 && <p className="font-weight-blue">Chưa xác nhận lương</p>}
+					{record.StatusID == 1 && <p className="font-weight-primary">Chưa xác nhận lương</p>}
 					{record.StatusID == 3 && (
 						<button
 							className="btn btn-icon edit"
@@ -230,8 +230,8 @@ const ConfirmForm = ({ isLoading, record, setParams, params, roleID }) => {
 							</Tooltip>
 						</button>
 					)}
-					{record.StatusID == 4 && <p className="font-weight-blue">Đã xác nhận</p>}
-					{record.StatusID == 5 && <p className="font-weight-blue">Đã nhận lương</p>}
+					{record.StatusID == 4 && <p className="font-weight-primary">Đã xác nhận</p>}
+					{record.StatusID == 5 && <p className="font-weight-primary">Đã nhận lương</p>}
 
 					<Modal title={'Xác Nhận Lương'} onCancel={() => setIsVisible(false)} visible={isVisible} footer={false}>
 						<Form form={form} layout="vertical" onFinish={_onSubmit}>

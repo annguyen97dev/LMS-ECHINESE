@@ -322,7 +322,7 @@ const PackageResultTeacher = () => {
 			title: 'Học viên',
 			dataIndex: 'StudentName',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 
 		{
@@ -359,7 +359,7 @@ const PackageResultTeacher = () => {
 			dataIndex: 'TeacherName',
 			render: (text, data) => (
 				<p
-					className="font-weight-blue"
+					className="font-weight-primary"
 					style={{ color: data.TeacherID == userInformation?.UserInformationID ? '#205286' : '#dd4667' }}
 				>
 					{text}

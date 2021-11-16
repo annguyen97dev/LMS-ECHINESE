@@ -598,7 +598,7 @@ const ParentsList = () => {
 			render: (branch) => (
 				<>
 					{branch.map((item) => (
-						<p className="font-weight-blue d-block">{item.BranchName}</p>
+						<p className="font-weight-primary d-block">{item.BranchName}</p>
 					))}
 				</>
 			)

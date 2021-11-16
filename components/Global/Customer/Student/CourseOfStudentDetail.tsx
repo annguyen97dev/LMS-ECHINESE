@@ -42,7 +42,7 @@ const CourseOfStudentDetail = (props) => {
 		{
 			title: 'Khóa học',
 			dataIndex: 'CourseName',
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Giáo viên',

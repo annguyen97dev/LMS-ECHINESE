@@ -47,7 +47,7 @@ export const AdminChildMenu = [
 				Key: '/dashboard',
 				Route: '/dashboard',
 				Icon: '',
-				Text: 'Trang chủ'
+				Text: 'Thống kê'
 			},
 			{
 				TypeItem: 'single',
@@ -69,13 +69,13 @@ export const AdminChildMenu = [
 				Icon: '<span class="anticon"><img src="/images/icons/study-course.svg" ></span>',
 				TitleSub: 'Quản lí khóa học',
 				SubMenuList: [
-					{
-						ItemType: 'single',
-						Key: '/course/create-course',
-						Route: '/course/create-course',
-						Text: 'Tạo khóa học',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/course/create-course',
+					// 	Route: '/course/create-course',
+					// 	Text: 'Tạo khóa học',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/course/create-course-online',
@@ -779,6 +779,13 @@ export const AdminChildMenu = [
 						Route: '/option/exam',
 						Text: 'Đợt thi',
 						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/option/services',
+						Route: '/option/services',
+						Text: 'Dịch vụ',
+						Icon: ''
 					}
 				]
 			},
@@ -858,13 +865,7 @@ export const AdminChildMenu = [
 						Text: 'Nghề nghiệp',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/option/services',
-						Route: '/option/services',
-						Text: 'Dịch vụ',
-						Icon: ''
-					},
+
 					{
 						ItemType: 'single',
 						Key: '/option/consultation-status',
@@ -951,22 +952,22 @@ export const AdminChildMenu = [
 						Icon: ''
 					}
 				]
-			},
-			{
-				ItemType: 'sub-menu',
-				Key: 'sub-tab-option-5',
-				Icon: '',
-				TitleSub: 'Sản phẩm',
-				SubMenuList: [
-					{
-						ItemType: 'single',
-						Key: '/option/product-type',
-						Route: '/option/product-type',
-						Text: 'Cấu hình sản phẩm',
-						Icon: ''
-					}
-				]
 			}
+			// {
+			// 	ItemType: 'sub-menu',
+			// 	Key: 'sub-tab-option-5',
+			// 	Icon: '',
+			// 	TitleSub: 'Sản phẩm',
+			// 	SubMenuList: [
+			// 		{
+			// 			ItemType: 'single',
+			// 			Key: '/option/product-type',
+			// 			Route: '/option/product-type',
+			// 			Text: 'Cấu hình sản phẩm',
+			// 			Icon: ''
+			// 		}
+			// 	]
+			// }
 		]
 		// MenuItem: [
 		// 	{

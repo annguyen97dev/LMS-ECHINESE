@@ -96,7 +96,7 @@ function RefundsTable(props) {
 			title: 'Số tiền',
 			dataIndex: 'Price',
 			render: (price) => {
-				return <p className="font-weight-blue">{numberWithCommas(price)}</p>;
+				return <p className="font-weight-primary">{numberWithCommas(price)}</p>;
 			}
 		},
 		{

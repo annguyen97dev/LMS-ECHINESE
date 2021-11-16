@@ -53,7 +53,7 @@ const SalaryStaffNested = (props) => {
 		// {
 		// 	title: 'Nhân viên',
 		// 	dataIndex: 'StaffName',
-		// 	render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>
+		// 	render: (price, record: IStaffSalary) => <p className="font-weight-primary">{price}</p>
 		// },
 		{
 			title: 'Tháng',

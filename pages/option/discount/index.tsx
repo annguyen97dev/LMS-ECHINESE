@@ -271,9 +271,9 @@ const Discount = () => {
 			dataIndex: 'Discount',
 			render: (text, record) => {
 				if (record.DiscountType == 2) {
-					return <p className="font-weight-blue">{text}%</p>;
+					return <p className="font-weight-primary">{text}%</p>;
 				} else {
-					return <p className="font-weight-blue">{Intl.NumberFormat('ja-JP').format(text)}</p>;
+					return <p className="font-weight-primary">{Intl.NumberFormat('ja-JP').format(text)}</p>;
 				}
 			}
 		},

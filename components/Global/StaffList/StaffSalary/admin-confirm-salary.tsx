@@ -69,7 +69,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 	return (
 		<>
 			{record.StatusID == 5 ? (
-				<p className="font-weight-blue">Đã nhận lương</p>
+				<p className="font-weight-primary">Đã nhận lương</p>
 			) : (
 				<button
 					className="btn btn-icon edit"
@@ -101,7 +101,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						{reConfirm.StatusID == 4 ? (
 							<>
 								<div className="col-12 mb-3">
-									<h4 className="font-weight-blue">Xác nhận thanh toán lương cho nhân viên!</h4>
+									<h4 className="font-weight-primary">Xác nhận thanh toán lương cho nhân viên!</h4>
 								</div>
 							</>
 						) : (
@@ -189,13 +189,13 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						{record.StatusID == 4 &&
 							(reConfirm.StatusID == 3 ? (
 								<div className="col-12 ">
-									<a className="font-weight-blue" onClick={onChangeReConfirm}>
+									<a className="font-weight-primary" onClick={onChangeReConfirm}>
 										Hủy gửi yêu cầu xác nhận lại
 									</a>
 								</div>
 							) : (
 								<div className="col-12 ">
-									<a className="font-weight-blue" onClick={onChangeReConfirm}>
+									<a className="font-weight-primary" onClick={onChangeReConfirm}>
 										Gửi yêu cầu xác nhận lại
 									</a>
 								</div>

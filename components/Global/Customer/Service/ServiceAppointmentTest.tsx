@@ -553,7 +553,7 @@ export default function ServiceAppointmentTest(props) {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			fixed: 'left',
-			render: (a) => <p className="font-weight-blue">{a}</p>,
+			render: (a) => <p className="font-weight-primary">{a}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
 		// {

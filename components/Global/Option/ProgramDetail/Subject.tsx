@@ -182,7 +182,6 @@ const Subject = () => {
 	const checkField = (valueSearch, dataIndex) => {
 		let newList = { ...listFieldSearch };
 		Object.keys(newList).forEach(function (key) {
-			console.log('key: ', key);
 			if (key != dataIndex) {
 				if (key != 'pageIndex') {
 					newList[key] = null;
@@ -252,8 +251,6 @@ const Subject = () => {
 	useEffect(() => {
 		getDataProgram();
 	}, []);
-
-	console.log('DATA program bên này: ', dataProgram);
 
 	const columns = [
 		{

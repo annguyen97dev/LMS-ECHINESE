@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Checkbox, Spin, Modal, Skeleton } from 'antd';
-import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { Card, Checkbox, Spin, Modal, Skeleton, Button } from 'antd';
+import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { examDetailApi, examTopicApi, doingTestApi, examAppointmentResultApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import CountDown from '~/components/Elements/CountDown/CountDown';
@@ -10,6 +10,7 @@ import { useDoingTest } from '~/context/useDoingTest';
 import dynamic from 'next/dynamic';
 import DecideModal from '~/components/Elements/DecideModal';
 import { courseExamApi } from '~/apiBase/package/course-exam';
+import TimeUpModal from './TimeUpModal';
 
 const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQuestion'), {
 	loading: () => <p>...</p>,
@@ -58,6 +59,7 @@ const MainTest = (props) => {
 	const [isLong, setIsLong] = useState(false);
 	const [isModalConfirm, setIsModalConfirm] = useState(false);
 	const [isModalSuccess, setIsModalSuccess] = useState(false);
+	const [openTimeUpModal, setOpenTimeUpModal] = useState(false);
 
 	// --- GET LIST QUESTION ---
 	const getListQuestion = async () => {
@@ -258,9 +260,12 @@ const MainTest = (props) => {
 
 	// --- TIME UP ---
 	const timeUp = () => {
-		// setHandleclick(false);
-		// setShowPopup(true);
-		alert('Hết giờ làm bài');
+		setOpenTimeUpModal(true);
+
+		setTimeout(() => {
+			setOpenTimeUpModal(false);
+			onSubmit_DoingTest();
+		}, 1500);
 	};
 
 	// --- ACTION SHOW MODAL ---
@@ -563,6 +568,8 @@ const MainTest = (props) => {
 
 	return (
 		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
+			{/** Modal báo hết giờ làm bài */}
+			<TimeUpModal isVisible={openTimeUpModal} />
 			{/* Modal báo thành công **/}
 			<Modal title="Thông báo" footer={null} className="" visible={isModalSuccess}>
 				<div className="modal-submit-success-test">

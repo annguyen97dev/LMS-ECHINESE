@@ -189,7 +189,7 @@ const ChoiceList = (props) => {
 					<div className="box-detail">
 						<div className="box-title">
 							<span className={`title-ques `}>{returnPosition(ques.ExerciseID)}</span>
-							{ques.LinkAudio !== '' && (
+							{ques.LinkAudio !== '' && ques.LinkAudio !== null && (
 								<audio controls>
 									<source src={ques.LinkAudio} type="audio/mpeg" />
 								</audio>

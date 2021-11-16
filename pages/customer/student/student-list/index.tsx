@@ -475,14 +475,14 @@ const StudentData = () => {
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
 			fixed: 'left',
-			render: (nameStudent) => <p className="font-weight-blue">{nameStudent}</p>,
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Tên tiếng Trung',
 			width: 150,
 			dataIndex: 'ChineseName',
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 
 		{

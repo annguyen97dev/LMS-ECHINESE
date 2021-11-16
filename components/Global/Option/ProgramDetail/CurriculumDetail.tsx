@@ -23,7 +23,7 @@ const CurriculumDetail = (props) => {
 	const router = useRouter();
 	const { courseID: courseID } = router.query;
 	// const curriculumID = parseInt(router.query.slug as string);
-	const { curriculumID, dataSubject } = props;
+	const { curriculumID, dataSubject, loadingOut } = props;
 
 	const [saveValue, setSaveValue] = useState([]);
 	const [loadingSelect, setLoadingSelect] = useState({
@@ -157,10 +157,10 @@ const CurriculumDetail = (props) => {
 	};
 
 	const getLessonID = async () => {
-		setIsLoading({
-			type: 'ADD_DATA',
-			status: true
-		});
+		// setIsLoading({
+		// 	type: 'ADD_DATA',
+		// 	status: true
+		// });
 
 		try {
 			let res = await examTopicApi.getAll(examTopic);
@@ -172,10 +172,10 @@ const CurriculumDetail = (props) => {
 			}
 		} catch (error) {
 		} finally {
-			setIsLoading({
-				type: 'ADD_DATA',
-				status: false
-			});
+			// setIsLoading({
+			// 	type: 'ADD_DATA',
+			// 	status: false
+			// });
 		}
 	};
 
@@ -184,7 +184,12 @@ const CurriculumDetail = (props) => {
 		getDataSource();
 		getLessonID();
 	}, [todoApi]);
-	// console.log(dataSource);
+
+	useEffect(() => {
+		if (loadingOut.status && loadingOut.type === 'GET_ALL') {
+			getDataSource();
+		}
+	}, [loadingOut]);
 
 	const columns = [
 		{

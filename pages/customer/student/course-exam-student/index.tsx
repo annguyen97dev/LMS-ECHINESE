@@ -120,7 +120,7 @@ const CouseExamStudent = (props) => {
 		{
 			title: 'Giáo viên chấm bài',
 			dataIndex: 'TeacherName',
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Trạng thái chấm bài',

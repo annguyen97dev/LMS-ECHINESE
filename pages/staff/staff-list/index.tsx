@@ -373,7 +373,7 @@ const StaffList = () => {
 
 					res.status == 200 && getDataTolist(res.data.data, item.name);
 
-					res.status == 204 && showNoti('danger', item.text + ' Không có dữ liệu');
+					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
 					showNoti('danger', error.message);
 				} finally {
@@ -635,7 +635,7 @@ const StaffList = () => {
 			render: (branch) => (
 				<>
 					{branch.map((item) => (
-						<p className="font-weight-blue d-block">{item.BranchName}</p>
+						<p className="font-weight-primary d-block">{item.BranchName}</p>
 					))}
 				</>
 			)

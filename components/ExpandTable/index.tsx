@@ -143,6 +143,7 @@ const ExpandTable = (props) => {
 							pageSizeOptions: ['30'],
 							onShowSizeChange: onShowSizeChange,
 							total: props.totalPage && props.totalPage,
+							showTotal: () => <div className="font-weight-black">Tổng cộng: {props.totalPage}</div>,
 							onChange: (pageNumber, pageSize) => changePagination(pageNumber, pageSize),
 							current: props.currentPage && props.currentPage
 						}}

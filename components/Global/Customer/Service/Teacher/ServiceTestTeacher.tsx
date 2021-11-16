@@ -514,7 +514,7 @@ export default function ServiceTestTeacher(props) {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 
-			render: (a) => <p className="font-weight-blue">{a}</p>,
+			render: (a) => <p className="font-weight-primary">{a}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
 

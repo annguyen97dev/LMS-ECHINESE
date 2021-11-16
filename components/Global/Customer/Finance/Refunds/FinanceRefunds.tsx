@@ -253,7 +253,7 @@ const FinanceRefund = () => {
 			title: 'Số tiền',
 			dataIndex: 'Price',
 			render: (Price) => {
-				return <p className="font-weight-blue">{numberWithCommas(Price)}</p>;
+				return <p className="font-weight-primary">{numberWithCommas(Price)}</p>;
 			}
 		},
 		{
