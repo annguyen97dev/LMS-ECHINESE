@@ -126,3 +126,30 @@
 		width: 100%;
 	}
 }
+
+.vc-teach-modal {
+	&_header {
+		margin-left: -15px;
+		margin-right: -15px;
+	}
+	&_search {
+		width: 500px;
+		border-radius: 6;
+		// @include max-media(2000px) {
+		// 	width: 400px;
+		// 	margin-top: 15px;
+		// }
+		@include max-media(1000px) {
+			width: 80vw;
+			margin-bottom: -15px;
+			margin-top: 15px;
+		}
+	}
+	&_search-feedback {
+		width: 500px;
+		border-radius: 6;
+		@include max-media(1000px) {
+			width: 80vw;
+		}
+	}
+}
