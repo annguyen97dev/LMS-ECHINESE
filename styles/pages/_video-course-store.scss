@@ -153,3 +153,17 @@
 		}
 	}
 }
+
+.vc-stu {
+	&_line {
+		margin-left: -25px;
+		margin-right: -25px;
+		color: #efefef;
+		background: #efefef;
+	}
+	&_footer {
+		height: 50px;
+		width: 100%;
+		background: #000;
+	}
+}

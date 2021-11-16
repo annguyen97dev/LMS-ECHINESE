@@ -3,55 +3,19 @@ import 'antd/dist/antd.css';
 import { List, Card, Modal, notification, Tooltip, Input } from 'antd';
 import LayoutBase from '~/components/LayoutBase';
 import { useWrap } from '~/context/wrap';
-import Link from 'next/link';
 import { VideoCourseCardApi, VideoCourseStoreApi } from '~/apiBase/video-course-store';
 import { parseToMoney } from '~/utils/functions';
-import ExpandTable from '~/components/ExpandTable';
 import RenderItemCardStudent from '~/components/VideoCourse/RenderItemCourseStudent';
-// import columnsVideoCourse from '~/lib/video-course/columns-video-course-list';
-import FilterProgram from '~/components/Global/Option/FilterTable/FilterProgram';
-import SortBox from '~/components/Elements/SortBox';
 import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
-import FilterBox from '~/components/Elements/FilterBox';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import FilterVideoCourses from '~/components/Global/Option/FilterTable/FilterVideoCourses';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { Eye } from 'react-feather';
 import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
+import CourseVideoTable from '~/components/CourseVideoTable';
 
 const key = 'updatable';
 const { Search } = Input;
-
-const dataOption = [
-	{
-		dataSort: {
-			sort: 0,
-			sortType: true
-		},
-		text: 'Tên A - Z '
-	},
-	{
-		dataSort: {
-			sort: 0,
-			sortType: false
-		},
-		text: 'Tên Z - A'
-	},
-	{
-		dataSort: {
-			sort: 2,
-			sortType: true
-		},
-		text: 'Học phí A - Z '
-	},
-	{
-		dataSort: {
-			sort: 2,
-			sortType: false
-		},
-		text: 'Học phí Z - A '
-	}
-];
 
 let pageIndex = 1;
 
@@ -61,13 +25,8 @@ const VideoCourseStore = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [rerender, setRender] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
-	const [isLoading, setIsLoading] = useState({
-		type: '',
-		status: false
-	});
+	const [isLoading, setIsLoading] = useState({ type: 'GET_ALL', status: true });
 	const [totalPage, setTotalPage] = useState(null);
-	const [indexRow, setIndexRow] = useState(null);
-
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: pageIndex,
@@ -77,9 +36,7 @@ const VideoCourseStore = () => {
 		fromDate: null,
 		toDate: null
 	};
-
 	const [todoApi, setTodoApi] = useState(listTodoApi);
-
 	const [dataCurriculum, setDataCurriculum] = useState([]);
 	const [category, setCategory] = useState([]);
 	const [categoryLevel, setCategoryLevel] = useState([]);
@@ -99,34 +56,30 @@ const VideoCourseStore = () => {
 		}, 1000);
 	};
 
-	useEffect(() => {
-		setIsLoading({ type: 'GET_ALL', status: true });
-	}, []);
-
 	// FIRST GET DATA
 	useEffect(() => {
 		if (userInformation !== null) {
-			// ADMIN & HOC SINH
+			// ADMIN & HOC VIEN
 			getAllArea();
 		}
 	}, [userInformation]);
 
 	//GET DATA
 	const getAllArea = async () => {
+		// ADMIN & HOC VIEN
 		setIsLoading({ type: 'GET_ALL', status: true });
+		getCategory();
 		try {
 			if (userInformation.RoleID == 1) {
 				// ADMIN
 				const res = await VideoCourseStoreApi.getAll(todoApi);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
-				if (userInformation.RoleID == 1) {
-					getCategory();
-					getCategoryLevel();
-				}
+				getCurriculum();
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
-				const res = await VideoCourseStoreApi.getAllForStudent(todoApi);
+				// HOC VIEN
+				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 9 });
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
@@ -154,7 +107,7 @@ const VideoCourseStore = () => {
 			const res = await VideoCourseCategoryApi.getAll(temp);
 			res.status == 200 && setCategory(res.data.data);
 			setRender(res + '');
-			getCurriculum();
+			getCategoryLevel();
 		} catch (err) {}
 	};
 
@@ -178,11 +131,10 @@ const VideoCourseStore = () => {
 			const res = await VideoCourseCardApi.add(data);
 			res.status == 200 && setShowModal(true);
 			res.status !== 200 && openNotification();
-			getAllArea();
 		} catch (error) {}
 	};
 
-	// HANDLE AD TO CARD
+	// HANDLE AD TO CARD (STUDENT)
 	const addToCard = (p) => {
 		let temp = {
 			VideoCourseID: p.ID,
@@ -193,6 +145,7 @@ const VideoCourseStore = () => {
 
 	// CREATE NEW COURSE
 	const createNewCourse = async (param) => {
+		setIsLoading({ type: 'GET_ALL', status: false });
 		let temp = {
 			CategoryID: param.CategoryID,
 			LevelID: param.LevelID,
@@ -212,15 +165,15 @@ const VideoCourseStore = () => {
 
 	// UPDATE COURSE
 	const updateCourse = async (param) => {
+		setIsLoading({ type: 'GET_ALL', status: false });
 		let temp = {
 			ID: param.ID,
-			// CategoryID: param.,
-			// LevelID: param.2,
+			CategoryID: null,
+			LevelID: null,
 			VideoCourseName: param.VideoCourseName,
-			ImageThumbnails: param.ImageThumbnails,
+			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice
-			// TagArray: param.TagArray
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);
@@ -228,20 +181,6 @@ const VideoCourseStore = () => {
 			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
 			getAllArea();
 		} catch (error) {}
-	};
-
-	const [cardData, setCardData] = useState([]);
-
-	// HANDLE SORT
-	const handleSort = async (option) => {
-		let newTodoApi = {
-			...listTodoApi,
-			pageIndex: 1,
-			sort: option.title.sort,
-			sortType: option.title.sortType
-		};
-		setCurrentPage(1), setTodoApi(newTodoApi);
-		getAllArea();
 	};
 
 	useEffect(() => {
@@ -301,7 +240,19 @@ const VideoCourseStore = () => {
 			key: 'CreatedOn'
 		},
 		{
-			title: 'Số lượng video',
+			title: 'Loại',
+			dataIndex: 'CategoryName',
+			key: 'CategoryName',
+			align: 'center'
+		},
+		{
+			title: 'Cấp độ',
+			dataIndex: 'LevelName',
+			key: 'LevelName',
+			align: 'center'
+		},
+		{
+			title: 'video',
 			dataIndex: 'TotalVideoCourseSold',
 			key: 'TotalVideoCourseSold',
 			align: 'center'
@@ -330,7 +281,7 @@ const VideoCourseStore = () => {
 			key: 'action',
 			render: (Action, data, index) => (
 				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					<Link
+					{/* <Link
 						href={{
 							// pathname: '/option/program/program-detail/[slug]',
 							query: { slug: data.ID }
@@ -341,13 +292,13 @@ const VideoCourseStore = () => {
 								<Eye />
 							</button>
 						</Tooltip>
-					</Link>
+					</Link> */}
 
 					<div>
 						<ModalCreateVideoCourse
 							dataLevel={categoryLevel}
 							dataCategory={category}
-							getIndex={() => setIndexRow(index)}
+							getIndex={() => {}}
 							_onSubmitEdit={(data: any) => updateCourse(data)}
 							programID={data.ID}
 							rowData={data}
@@ -361,12 +312,54 @@ const VideoCourseStore = () => {
 		}
 	];
 
+	const expandedRowRender = () => {
+		return (
+			<>
+				<div className="feedback-detail-text" style={{ backgroundColor: 'red' }}>
+					asd asd asdqw tw qgasgdas dnb{' '}
+				</div>
+			</>
+		);
+	};
+
+	// CARD EXTRA
+	const Extra = () => {
+		return (
+			<div className="row m-0 vc-store_extra-table">
+				<div className="row m-0">
+					<div className="row m-0 st-fb-100w ">
+						<div>
+							<FilterVideoCourses
+								handleReset={handleReset}
+								dataLevel={categoryLevel}
+								dataCategory={category}
+								handleFilter={(value: any) => handleFilter(value)}
+							/>
+						</div>
+						<Search
+							className="fb-btn-search style-input vc-teach-modal_search"
+							size="large"
+							placeholder="input search text"
+							onSearch={(e) => {
+								handleSearch(e);
+							}}
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	};
+
 	// RENDER
 	return (
 		<div className="">
 			<p className="video-course-list-title">Khóa Học Video</p>
 			{userInformation !== null && (
-				<Card className="video-course-list">
+				<Card
+					loading={isLoading.status}
+					className="video-course-list"
+					title={userInformation.RoleID == 1 ? null : <div className="m-2">{Extra()}</div>}
+				>
 					{userInformation.RoleID == 3 && (
 						<>
 							<List
@@ -374,8 +367,13 @@ const VideoCourseStore = () => {
 								dataSource={data}
 								grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }}
 								renderItem={(item) => <RenderItemCardStudent addToCard={addToCard} item={item} />}
+								pagination={{
+									onChange: getPagination,
+									total: totalPage,
+									size: 'small',
+									current: pageIndex
+								}}
 							/>
-
 							<Modal
 								title="Têm vào giỏ hàng"
 								visible={showModal}
@@ -400,53 +398,31 @@ const VideoCourseStore = () => {
 						</>
 					)}
 
+					{/* admin */}
 					{userInformation.RoleID == 1 && (
 						<>
-							<ExpandTable
+							<CourseVideoTable
 								totalPage={totalPage && totalPage}
 								getPagination={(pageNumber: number) => getPagination(pageNumber)}
 								currentPage={currentPage}
 								columns={columnsVideoCourse}
 								dataSource={data}
 								loading={isLoading}
-								TitlePage="Feedback List"
 								TitleCard={
-									<ModalCreateVideoCourse
-										dataLevel={categoryLevel}
-										dataCategory={category}
-										dataCurriculum={dataCurriculum}
-										_onSubmit={(data: any) => createNewCourse(data)}
-										showAdd={false}
-										isLoading={false}
-									/>
-								}
-								Extra={
-									<div className="row m-0 vc-store_extra-table">
-										<div className="row m-0">
-											<div className="row m-0 st-fb-100w st-fb-flex-end-row">
-												<FilterVideoCourses
-													handleReset={handleReset}
-													dataLevel={categoryLevel}
-													dataCategory={category}
-													handleFilter={(value: any) => handleFilter(value)}
-												/>
-												<Search
-													className="fb-btn-search style-input"
-													size="large"
-													placeholder="input search text"
-													onSearch={(e) => {
-														handleSearch(e);
-													}}
-													style={{ width: 500, borderRadius: 6 }}
-												/>
-											</div>
-										</div>
+									<div className="vc-teach-modal_header">
+										<ModalCreateVideoCourse
+											dataLevel={categoryLevel}
+											dataCategory={category}
+											dataCurriculum={dataCurriculum}
+											_onSubmit={(data: any) => createNewCourse(data)}
+											showAdd={false}
+											isLoading={false}
+										/>
 									</div>
 								}
-								// expandable={{ expandedRowRender }}
-							>
-								{/* <FilterBox /> */}
-							</ExpandTable>
+								Extra={Extra()}
+								expandable={() => expandedRowRender}
+							></CourseVideoTable>
 						</>
 					)}
 				</Card>

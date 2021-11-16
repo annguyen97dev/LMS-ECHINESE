@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button } from 'antd';
 import { RotateCcw } from 'react-feather';
 import { useForm } from 'react-hook-form';
-import { UploadOutlined, PaperClipOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { useWrap } from '~/context/wrap';
 import { newsFeedApi } from '~/apiBase';
 
@@ -77,6 +77,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		}
 	}, [isModalVisible]);
 
+	// on change isModalVisible
 	React.useEffect(() => {
 		if (!isModalVisible) {
 			setVideoCourseName('');
@@ -87,6 +88,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		}
 	}, [isModalVisible]);
 
+	// Call api upload image
 	const uploadFile = async (file) => {
 		setLoading(true);
 		try {
@@ -220,7 +222,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									<div className="col-md-6 col-12">
 										<Form.Item
 											name="Curriculum"
-											label=" "
+											label=" " // CHỔ NÀY BÙA ĐỀ HIỆN CÁI TOOLTIP. XÓA KHOẢN TRẮNG MẤT LUÔN TOOLTIP
 											tooltip={{
 												title: 'Chỉ hiển thị giáo trình có video',
 												icon: (
