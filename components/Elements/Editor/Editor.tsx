@@ -458,7 +458,6 @@ const EditorSummernote = (props) => {
 			let isEmpty = true;
 			editor[0].childNodes.forEach((item, index) => {
 				let node = editor[0].children[index];
-
 				if (node?.innerHTML !== '<br>' && node?.innerHTML !== ' ') {
 					isEmpty = false;
 				}
@@ -522,7 +521,6 @@ const EditorSummernote = (props) => {
 					if (item.id === keyEditor.id) {
 						let content = item.innerHTML;
 						content = content.replace('&nbsp;', ' ');
-
 						// --- Check empty key ---
 						if (keyEditor.key == '') {
 							// TH1: nếu trong text đã có input, sau khi click gần đó thì vị trí bắt đầu tính từ input trở đi nên phải kiểm tra
@@ -595,7 +593,6 @@ const EditorSummernote = (props) => {
 			let newList = [];
 			spaceEditor.forEach((item, index) => {
 				newList.push(parseInt(item.id));
-
 				if (parseInt(item.id) === listInput[listInput.length - 1]) {
 					addQuestion && addQuestion(listInput[listInput.length - 1]);
 				}

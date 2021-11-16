@@ -227,14 +227,13 @@ const FeedbackList = () => {
 							<div className="extra-table">
 								<div className="row m-0 st-fb-100w st-fb-flex-end-row">
 									<Search
-										className="fb-btn-search style-input"
+										className="fb-btn-search style-input vc-teach-modal_search-feedback "
 										size="large"
 										placeholder="input search text"
 										onSearch={() => {}}
 										onChange={(e) => {
 											onSearch(e.target.value);
 										}}
-										style={{ width: 500, borderRadius: 6 }}
 									/>
 								</div>
 

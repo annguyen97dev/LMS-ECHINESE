@@ -139,7 +139,7 @@ const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelete, onEd
 
 	const handleSubmitEdit = () => {
 		setTitle('');
-		onEdit({ item: itemEdit, content: newContent });
+		onEdit({ item: itemEdit, title: title, content: newContent });
 
 		setShowAdd(false);
 		setContent('');
@@ -147,14 +147,6 @@ const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelete, onEd
 			setTypeInput(0);
 			setShowAdd(true);
 		}, 0);
-	};
-
-	const formatTime = (seconds) => {
-		let minutes: any = Math.floor(seconds / 60);
-		minutes = minutes >= 10 ? minutes : '0' + minutes;
-		seconds = Math.floor(seconds % 60);
-		seconds = seconds >= 10 ? seconds : '0' + seconds;
-		return minutes + ':' + seconds;
 	};
 
 	return (
@@ -193,6 +185,7 @@ const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelete, onEd
 							<button
 								onClick={() => {
 									setTitle('');
+									setContent('');
 									setTypeInput(0);
 									setShowAdd(false);
 								}}
@@ -204,7 +197,8 @@ const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelete, onEd
 
 						<Tooltip title="Thêm ghi chú">
 							<button onClick={typeInput === 0 ? handleCreateNew : handleSubmitEdit} className="btn ml-3 mt-3 btn-success">
-								<i className="fas fa-plus-circle mr-2"></i>Thêm
+								<i className="fas fa-plus-circle mr-2"></i>
+								{typeInput === 0 ? 'Thêm' : 'Lưu'}
 							</button>
 						</Tooltip>
 					</div>
@@ -228,7 +222,8 @@ const VocabularyTab: FC<props> = ({ dataNote, createNew, onPress, onDelete, onEd
 							setItemEdit(p);
 							setTypeInput(1);
 							setShowAdd(false);
-							setContent(p.note);
+							setTitle(p.Title);
+							setContent(p.TextContent);
 							setTimeout(() => {
 								setShowAdd(true);
 							}, 0);
