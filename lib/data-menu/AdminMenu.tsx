@@ -590,14 +590,14 @@ export const AdminChildMenu = [
 						Route: '/staff/saler-revenue',
 						Text: 'Doanh thu tư vấn viên',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/staff/config-bounus',
-						Route: '/staff/config-bounus',
-						Text: 'Cấu hình thưởng',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/staff/config-bounus',
+					// 	Route: '/staff/config-bounus',
+					// 	Text: 'Cấu hình thưởng',
+					// 	Icon: ''
+					// }
 				]
 			},
 			{

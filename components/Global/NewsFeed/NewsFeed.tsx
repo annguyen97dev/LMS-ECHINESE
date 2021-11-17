@@ -23,6 +23,7 @@ import RemoveUser from '~/components/Global/NewsFeed/NewsFeedGroupComponents/Rem
 import DeleteNewsFeed from '~/components/Global/NewsFeed/NewsFeedItemComponents/DeleteNewsFeed';
 import NewsFeedItem from '~/components/Global/NewsFeed/NewsFeedItemComponents/NewsFeedItem';
 import SideBarNewsFeed from '~/components/Global/NewsFeed/SideBarNewsFeed';
+import { useDebounce } from '~/context/useDebounce';
 import { useWrap } from '~/context/wrap';
 import { Roles } from '~/lib/roles/listRoles';
 import { fmSelectArr } from '~/utils/functions';
@@ -288,6 +289,7 @@ const NewsFeed = () => {
 			return res;
 		} catch (error) {
 			console.log('onCreateNewsFeed', error.message);
+			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
@@ -325,9 +327,8 @@ const NewsFeed = () => {
 				const { NewsFeedFile: oldNewsFeedFileList } = newsFeedList[idx];
 
 				let newFileUploadList = null;
-				console.log(data);
-				if (TypeFile === 2 && oldNewsFeedFileList?.length && NewsFeedFile?.length) {
-					newFileUploadList = [...oldNewsFeedFileList, ...NewsFeedFile].reduce((arr, f) => {
+				if (TypeFile === 2) {
+					newFileUploadList = [...(oldNewsFeedFileList || []), ...(NewsFeedFile || [])].reduce((arr, f) => {
 						// CLEAR DUPLICATE OLD FILE
 						if (arr.some((newFile) => newFile.ID && newFile.ID === f.ID)) {
 							return arr;
@@ -423,6 +424,19 @@ const NewsFeed = () => {
 			console.log('fetchBackgroundNewsFeed', error.message);
 		}
 	};
+	// --------------BACK TO HOME PAGE--------------
+	const onBackToHomePage = useDebounce(
+		() => {
+			setFiltersData({
+				name: null,
+				idTeam: null,
+				idGroup: null
+			});
+			reset();
+		},
+		200,
+		[]
+	);
 	// --------------FILTER--------------
 	const loadMore = () => {
 		// PAGE INDEX >= 2, OTHERWISE DUPLICATE CALL API
@@ -432,6 +446,10 @@ const NewsFeed = () => {
 		}
 	};
 	const onFilters = (field: string, value: string | number) => {
+		if (filtersData[field] === value) {
+			onBackToHomePage();
+			return;
+		}
 		const newFilters: FiltersData = {
 			name: null,
 			idTeam: null,
@@ -850,7 +868,6 @@ const NewsFeed = () => {
 								optionList={optionList}
 							/>
 						)}
-
 						<ListNewsFeed>
 							{newsFeedList.map((item: INewsFeed, idx) => {
 								const isUserLiked = idListUserLiked.includes(item.ID);
@@ -939,6 +956,7 @@ const NewsFeed = () => {
 					<SideBarNewsFeed
 						optionList={optionList}
 						filtersData={filtersData}
+						handleBack={onBackToHomePage}
 						handleFilters={onFilters}
 						// CREATE GROUP
 						groupFormComponent={

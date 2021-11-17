@@ -97,7 +97,6 @@ function CDCalendar(props) {
 
 	const checkTypeButtonStudyZoom = (data: { idx: number; btnID: number; btnName: string; scheduleID: number; dataDetail: any }) => {
 		const { btnID, btnName, dataDetail } = data;
-
 		if (!btnID) return;
 		// HỌC VIÊN
 		if (userInformation?.RoleID === 3) {
@@ -110,6 +109,13 @@ function CDCalendar(props) {
 							checkHandleStudyZoom(data);
 						}}
 					>
+						{btnName}
+					</Button>
+				);
+			}
+			if (btnID === 3) {
+				return (
+					<Button disabled size="middle" className="mt-3 btn-light w-100">
 						{btnName}
 					</Button>
 				);

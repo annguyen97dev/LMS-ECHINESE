@@ -1,13 +1,16 @@
-import {Spin} from 'antd';
+import { Spin } from 'antd';
+import { signIn, useSession } from 'next-auth/client';
 import Head from 'next/head';
-import {useRouter} from 'next/router';
-import React, {useEffect, useState} from 'react';
-import {scheduleZoomApi} from '~/apiBase';
-import {useWrap} from '~/context/wrap';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { scheduleZoomApi } from '~/apiBase';
+import { useWrap } from '~/context/wrap';
 
 function ZoomView() {
 	const router = useRouter();
-	const {slug: ScheduleID} = router.query;
+	const { slug: ScheduleID } = router.query;
+	const [session, loading] = useSession();
+	let path: string = router.pathname;
 
 	const [dataZoom, setDataZoom] =
 		useState<{
@@ -18,7 +21,7 @@ function ZoomView() {
 			userName: string;
 		}>(null);
 
-	const {userInformation} = useWrap();
+	const { userInformation } = useWrap();
 
 	const fetchInfoRoomZoom = async () => {
 		try {
@@ -26,24 +29,14 @@ function ZoomView() {
 			const parseID = parseInt(ScheduleID.toString());
 			const res = await scheduleZoomApi.getById(parseID);
 			if (res.status === 200) {
-				const {
-					ZoomRoomID,
-					ZoomRoomPass,
-					SignatureTeacher,
-					SignatureStudent,
-					ApiKey,
-				} = res.data.data;
+				const { ZoomRoomID, ZoomRoomPass, SignatureTeacher, SignatureStudent, ApiKey } = res.data.data;
 				setDataZoom({
 					apiKey: ApiKey,
 					signature:
-						SignatureTeacher && SignatureStudent
-							? userInformation.RoleID === 2
-								? SignatureTeacher
-								: SignatureStudent
-							: '',
+						SignatureTeacher && SignatureStudent ? (userInformation.RoleID === 2 ? SignatureTeacher : SignatureStudent) : '',
 					meetingNumber: ZoomRoomID,
 					passWord: ZoomRoomPass,
-					userName: userInformation.FullNameUnicode,
+					userName: userInformation.FullNameUnicode
 				});
 			}
 		} catch (error) {
@@ -55,23 +48,35 @@ function ZoomView() {
 		fetchInfoRoomZoom();
 	}, [userInformation]);
 
+	useEffect(() => {
+		if (typeof session !== 'undefined') {
+			if (session == null) {
+				// console.log("Test path: ", path.search("signin") < 0);
+				if (path.search('signin') < 0) {
+					signIn();
+				}
+			}
+		}
+	}, [session]);
+
 	const initZoom = async () => {
 		if (!dataZoom) return;
 		const module = await import('@zoomus/websdk');
 		// DECLARE MODULE
-		const {ZoomMtg} = module;
+		const { ZoomMtg } = module;
 		ZoomMtg.setZoomJSLib('https://source.zoom.us/1.9.9/lib', '/av');
 		ZoomMtg.preLoadWasm();
 		ZoomMtg.prepareWebSDK();
 
 		// SHOW LAYOUT ZOOM
-		document
-			.getElementById('zmmtg-root')
-			?.setAttribute('style', 'display:block;');
-
+		document.getElementById('zmmtg-root')?.setAttribute('style', 'display:block;');
+		let leaveUrl = 'http://localhost:3000/';
+		if (typeof window !== 'undefined') {
+			leaveUrl = window.location.origin;
+		}
 		// INIT MEETING
 		ZoomMtg.init({
-			leaveUrl: 'http://localhost:3000/',
+			leaveUrl,
 			isSupportAV: true,
 			success: (success) => {
 				// JOIN MEETING
@@ -80,7 +85,7 @@ function ZoomView() {
 					success: (success) => {},
 					error: (error) => {
 						console.log(error);
-					},
+					}
 				});
 				// ZoomMtg.inMeetingServiceListener('onUserJoin', function (data) {
 				// 	console.log('onUserJoin', data);
@@ -113,7 +118,7 @@ function ZoomView() {
 			},
 			error: (error) => {
 				console.log(error);
-			},
+			}
 		});
 	};
 
@@ -124,25 +129,13 @@ function ZoomView() {
 	return (
 		<>
 			<Head>
-				<link
-					type="text/css"
-					rel="stylesheet"
-					href="https://source.zoom.us/1.9.9/css/bootstrap.css"
-				/>
-				<link
-					type="text/css"
-					rel="stylesheet"
-					href="https://source.zoom.us/1.9.9/css/react-select.css"
-				/>
+				<link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.9/css/bootstrap.css" />
+				<link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.9/css/react-select.css" />
 			</Head>
-			<div
-				className="zoom-view"
-				style={{height: '100vh', width: '100vw', position: 'relative'}}
-			>
+			<div className="zoom-view" style={{ height: '100vh', width: '100vw', position: 'relative' }}>
 				<Spin size="large" />
 			</div>
 		</>
 	);
 }
-
 export default ZoomView;

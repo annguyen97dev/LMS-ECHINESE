@@ -118,8 +118,7 @@
 			overflow-x: hidden;
 			font-size: 25px;
 			font-weight: 500;
-			min-height: 45px;
-			max-height: 300px !important;
+			height: 150px !important;
 			border-color: transparent;
 			@include max-media(500px) {
 				font-size: 20px;
@@ -671,6 +670,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		text-align: center;
 		font-size: 25px;
 		font-weight: bold;
 		color: #000;
@@ -1082,6 +1082,7 @@
 			margin: 0;
 		}
 		.ant-input {
+			height: 300px !important;
 			text-align: center;
 			background-color: transparent;
 			transition: none;
@@ -1162,9 +1163,8 @@
 }
 .select-color-nf {
 	position: absolute;
-	top: 12px;
+	top: -18px;
 	right: 12px;
-	margin-bottom: 20px;
 	.btn-color-nf {
 		width: 35px;
 		height: 35px;

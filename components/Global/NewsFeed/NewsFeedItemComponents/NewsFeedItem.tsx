@@ -1,15 +1,11 @@
-import {Image, Popover, Spin} from 'antd';
+import { Image, Popover, Spin } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {
-	MessageCircle,
-	MoreHorizontal,
-	Navigation,
-	ThumbsUp,
-} from 'react-feather';
-import {fmDateFromNow} from '~/utils/functions';
+import React, { useState } from 'react';
+import { MessageCircle, MoreHorizontal, Navigation, ThumbsUp } from 'react-feather';
+import { fmDateFromNow } from '~/utils/functions';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
+import Linkify from 'react-linkify';
 
 NewsFeedItem.propTypes = {
 	// FILTER SEARCH HANDLE
@@ -46,24 +42,24 @@ NewsFeedItem.propTypes = {
 				Type: PropTypes.number,
 				TypeName: PropTypes.string,
 				UID: PropTypes.string,
-				Thumnail: PropTypes.string,
+				Thumnail: PropTypes.string
 			})
 		),
 		NewsFeedBranch: PropTypes.arrayOf(
 			PropTypes.shape({
 				ID: PropTypes.number,
 				BranchID: PropTypes.number,
-				BranchName: PropTypes.string,
+				BranchName: PropTypes.string
 			})
-		),
+		)
 	}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	userComment: PropTypes.object,
 	//COMPONENT
-	moreActionComponent: PropTypes.element,
+	moreActionComponent: PropTypes.element
 };
 NewsFeedItem.defaultProps = {
 	// FILTER SEARCH HANDLE
@@ -94,12 +90,12 @@ NewsFeedItem.defaultProps = {
 		isLike: false,
 		LikeCount: 0,
 		NewsFeedFile: [],
-		NewsFeedBranch: [],
+		NewsFeedBranch: []
 	},
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	userComment: {},
 	//COMPONENT
-	moreActionComponent: null,
+	moreActionComponent: null
 };
 function NewsFeedItem(props) {
 	const {
@@ -119,7 +115,7 @@ function NewsFeedItem(props) {
 		isLoading,
 		userComment,
 		// COMPONENT
-		moreActionComponent,
+		moreActionComponent
 	} = props;
 	const [showComments, setShowComments] = useState(false);
 	const [commentList, setCommentList] = useState<INewsFeedComment[]>([]);
@@ -140,10 +136,7 @@ function NewsFeedItem(props) {
 		handleUserLikeNewsFeed(ID);
 	};
 	// COMMENT
-	const checkHandleComment = (data: {
-		CommentContent: string;
-		NewsFeedID: number;
-	}) => {
+	const checkHandleComment = (data: { CommentContent: string; NewsFeedID: number }) => {
 		if (!handleComment) return;
 		return handleComment(data).then((res) => {
 			if (res?.status === 200) {
@@ -174,13 +167,7 @@ function NewsFeedItem(props) {
 			return (
 				<div className="more-than-3-images">
 					{imageList.slice(0, 2).map((item, index) => (
-						<Image
-							key={index}
-							src={item.NameFile}
-							preview={false}
-							width={'50%'}
-							onClick={() => setVisible(true)}
-						/>
+						<Image key={index} src={item.NameFile} preview={false} width={'50%'} onClick={() => setVisible(true)} />
 					))}
 					<div className="preview-total" onClick={() => setVisible(true)}>
 						+ {imageList.length - 2}
@@ -192,13 +179,7 @@ function NewsFeedItem(props) {
 			return (
 				<div className="two-images">
 					{imageList.map((item, index) => (
-						<Image
-							key={index}
-							src={item.NameFile}
-							preview={false}
-							width={'50%'}
-							onClick={() => setVisible(true)}
-						/>
+						<Image key={index} src={item.NameFile} preview={false} width={'50%'} onClick={() => setVisible(true)} />
 					))}
 				</div>
 			);
@@ -207,13 +188,7 @@ function NewsFeedItem(props) {
 			return (
 				<div className="one-image">
 					{imageList.map((item, index) => (
-						<Image
-							key={index}
-							src={item.NameFile}
-							preview={false}
-							width={'100%'}
-							onClick={() => setVisible(true)}
-						/>
+						<Image key={index} src={item.NameFile} preview={false} width={'100%'} onClick={() => setVisible(true)} />
 					))}
 				</div>
 			);
@@ -225,11 +200,11 @@ function NewsFeedItem(props) {
 			return (
 				<div className="newsfeed-images">
 					{checkUIImageList(imageList)}
-					<div style={{display: 'none'}}>
+					<div style={{ display: 'none' }}>
 						<Image.PreviewGroup
 							preview={{
 								visible,
-								onVisibleChange: (vis) => setVisible(vis),
+								onVisibleChange: (vis) => setVisible(vis)
 							}}
 						>
 							{imageList.map((item, index) => (
@@ -285,10 +260,18 @@ function NewsFeedItem(props) {
 					className="newsfeed-background"
 					style={{
 						color: item.Color,
-						backgroundImage: `url(${backgroundFile.NameFile})`,
+						backgroundImage: `url(${backgroundFile.NameFile})`
 					}}
 				>
-					{item.Content}
+					<Linkify
+						componentDecorator={(decoratedHref, decoratedText, key) => (
+							<a target="blank" href={decoratedHref} key={key}>
+								{decoratedText}
+							</a>
+						)}
+					>
+						<span>{item.Content}</span>
+					</Linkify>
 				</div>
 			);
 		}
@@ -303,40 +286,25 @@ function NewsFeedItem(props) {
 						</div>
 						<div className="name-user">
 							<div className="name">
-								<a onClick={checkHandleFilters('name', item.FullNameUnicode)}>
-									{item.FullNameUnicode}
-								</a>
+								<a onClick={checkHandleFilters('name', item.FullNameUnicode)}>{item.FullNameUnicode}</a>
 								<span className="share-point">
 									<Navigation />
 								</span>
 								{item.GroupNewsFeedName ? (
 									<ul>
-										<li
-											onClick={checkHandleFilters(
-												'idGroup',
-												item.GroupNewsFeedID
-											)}
-										>
-											{item.GroupNewsFeedName}
-										</li>
+										<li onClick={checkHandleFilters('idGroup', item.GroupNewsFeedID)}>{item.GroupNewsFeedName}</li>
 									</ul>
 								) : (
 									<ul>
 										{item.NewsFeedBranch.map((item, idx) => (
-											<li
-												key={idx}
-												className="item-branch"
-												onClick={checkHandleFilters('idTeam', item.BranchID)}
-											>
+											<li key={idx} className="item-branch" onClick={checkHandleFilters('idTeam', item.BranchID)}>
 												{item.BranchName}
 											</li>
 										))}
 									</ul>
 								)}
 							</div>
-							<span className="newsfeed-time">
-								{fmDateFromNow(item.CreatedOn)}
-							</span>
+							<span className="newsfeed-time">{fmDateFromNow(item.CreatedOn)}</span>
 						</div>
 					</div>
 					<div className="newsfeed-more">
@@ -358,10 +326,18 @@ function NewsFeedItem(props) {
 					<div
 						className="newsfeed-content"
 						style={{
-							color: item.Color,
+							color: item.Color
 						}}
 					>
-						<span>{item.Content}</span>
+						<Linkify
+							componentDecorator={(decoratedHref, decoratedText, key) => (
+								<a target="blank" href={decoratedHref} key={key} style={{ fontWeight: 500 }}>
+									{decoratedText}
+								</a>
+							)}
+						>
+							<span>{item.Content}</span>
+						</Linkify>
 					</div>
 				)}
 				{/* SHOW IMAGE OR FILE */}
@@ -411,12 +387,7 @@ function NewsFeedItem(props) {
 					</div>
 				</div>
 				<div className={showComments ? 'newsfeed-comments' : 'hide'}>
-					<CommentForm
-						isLoading={isLoading}
-						userComment={userComment}
-						handleComment={checkHandleComment}
-						newsFeedID={item.ID}
-					/>
+					<CommentForm isLoading={isLoading} userComment={userComment} handleComment={checkHandleComment} newsFeedID={item.ID} />
 					{commentList.length > 0 && (
 						<ul className="list-comments">
 							{commentList.map((cmt, index) => (
@@ -430,13 +401,11 @@ function NewsFeedItem(props) {
 							))}
 						</ul>
 					)}
-					{!commentList.length &&
-						isLoading.type === `FETCH_COMMENT_${item.ID}` &&
-						isLoading.status && (
-							<div className="text-center">
-								<Spin />
-							</div>
-						)}
+					{!commentList.length && isLoading.type === `FETCH_COMMENT_${item.ID}` && isLoading.status && (
+						<div className="text-center">
+							<Spin />
+						</div>
+					)}
 				</div>
 			</div>
 		</li>
