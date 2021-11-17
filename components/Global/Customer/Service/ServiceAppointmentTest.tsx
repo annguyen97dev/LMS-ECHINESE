@@ -469,7 +469,7 @@ export default function ServiceAppointmentTest(props) {
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
-		console.log('Todoapi: ', todoApi);
+
 		setTodoApi({
 			...todoApi,
 			// ...listFieldSearch,
@@ -520,8 +520,6 @@ export default function ServiceAppointmentTest(props) {
 		}
 	};
 
-	console.log('User ID là: ', userID);
-
 	const expandedRowRender = (record) => {
 		// return record.Note ? record.Note : "Không có ghi chú";
 		// return (
@@ -556,10 +554,10 @@ export default function ServiceAppointmentTest(props) {
 			render: (a) => <p className="font-weight-primary">{a}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
-		// {
-		// 	title: 'Email',
-		// 	dataIndex: 'Email'
-		// },
+		{
+			title: 'Email',
+			dataIndex: 'Email'
+		},
 		{
 			title: 'SDT',
 			dataIndex: 'Mobile'
