@@ -24,7 +24,6 @@ const TimeUpModal = (props) => {
 					<p className="font-weight-black">Hệ thống sẽ tự nộp bài ngay bây giờ</p>
 				</div>
 			</Modal>
-			;
 		</>
 	);
 };

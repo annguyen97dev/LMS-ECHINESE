@@ -248,11 +248,18 @@ const SalaryReview = () => {
 			)
 		},
 		{
+			title: 'Lương cơ bản',
+			width: 150,
+			dataIndex: 'BasicSalary',
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+		},
+		{
 			title: 'Tăng Lương',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
+
 		{
 			title: 'Lương Tháng',
 			width: 150,

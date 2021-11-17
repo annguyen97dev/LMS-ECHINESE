@@ -115,7 +115,7 @@ const RankResult = (props) => {
 	// GET EXAM LIST
 	const getExamList = async () => {
 		try {
-			let res = await examTopicApi.getAll({ selectAll: true });
+			let res = await examTopicApi.getAll({ selectAll: true, Type: 2 });
 			res.status == 200 && setDataExam(res.data.data);
 		} catch (error) {
 			showNoti('danger', error.message);

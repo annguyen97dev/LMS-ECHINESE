@@ -7,7 +7,7 @@ class StudentAdviseApi {
 			params: todoApi
 		});
 
-	getWithID = (ID: number) => instance.get<IApiResult<IStudentAdvise[]>>(url + ID);
+	getWithID = (ID: number) => instance.get<IApiResultData<IStudentAdvise>>(url + ID);
 
 	add = (data: IStudent) => instance.post(url, data, {});
 

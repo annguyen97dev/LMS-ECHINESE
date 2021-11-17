@@ -14,7 +14,7 @@ import { useWrap } from '~/context/wrap';
 import TestCustomerPoint from '~/components/Global/Customer/Service/TestCustomerPoint';
 import ExamAppointmentPoint from '../../ExamAppointment/ExamAppointmentPoint';
 import { CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
+import { Modal, Tooltip } from 'antd';
 import Link from 'next/link';
 
 let pageIndex = 1;
@@ -749,9 +749,11 @@ const CancelTest = (props) => {
 
 	return (
 		<>
-			<button className="btn btn-icon delete" onClick={showModal}>
-				<CloseOutlined />
-			</button>
+			<Tooltip title="Hủy lịch hẹn">
+				<button className="btn btn-icon delete" onClick={showModal}>
+					<CloseOutlined />
+				</button>
+			</Tooltip>
 			<Modal
 				title={
 					<button className="btn btn-icon delete">

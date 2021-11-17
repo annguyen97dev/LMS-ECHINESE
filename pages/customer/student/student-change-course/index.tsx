@@ -137,7 +137,7 @@ export default function StudentCourseChange() {
 				setTotalPage(res.data.totalRow);
 			}
 
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
+			res.status == 204 && setDataCourse([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -254,24 +254,27 @@ export default function StudentCourseChange() {
 			render: (course) => <p className="font-weight-black">{course}</p>
 		},
 		{
+			width: 150,
 			title: 'Trung tâm',
-			dataIndex: 'Branch'
+			dataIndex: 'BranchName'
 		},
 		{
+			width: 180,
 			title: 'Ghi chú',
 			dataIndex: 'Note'
 		},
 		{
+			width: 150,
 			title: 'Cam kết',
-			dataIndex: 'Commited'
+			dataIndex: 'Commitment'
 		},
 		{
 			title: '',
-			render: () => (
+			render: (data) => (
 				<Link
 					href={{
 						pathname: '/customer/student/student-change-course/student-detail/[slug]',
-						query: { slug: 2 }
+						query: { slug: data.UserInformationID }
 					}}
 				>
 					<Tooltip title="Xem chi tiết">

@@ -579,26 +579,29 @@ const ParentsList = () => {
 	const columns = [
 		{
 			title: 'Mã phụ huynh',
-			dataIndex: 'UserCode'
+			dataIndex: 'UserCode',
+			render: (text) => <p className="font-weight-black">{text}</p>,
+			fixed: 'left'
 		},
 		{
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>,
+			fixed: 'left'
 		},
-		{
-			title: 'Tên tiếng Trung',
-			dataIndex: 'ChineseName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
+		// {
+		// 	title: 'Tên tiếng Trung',
+		// 	dataIndex: 'ChineseName',
+		// 	render: (text) => <p className="font-weight-black">{text}</p>
+		// },
 		{
 			title: 'Trung tâm',
 			dataIndex: 'Branch',
 			render: (branch) => (
 				<>
 					{branch.map((item) => (
-						<p className="font-weight-primary d-block">{item.BranchName}</p>
+						<p className="font-weight-black d-block">{item.BranchName}</p>
 					))}
 				</>
 			)
@@ -620,16 +623,16 @@ const ParentsList = () => {
 			title: 'SĐT',
 			dataIndex: 'Mobile'
 		},
-		{
-			title: 'Facebook',
-			dataIndex: 'LinkFaceBook',
-			render: (link) =>
-				link && (
-					<a className="font-weight-black" href={link} target="_blank">
-						Link
-					</a>
-				)
-		},
+		// {
+		// 	title: 'Facebook',
+		// 	dataIndex: 'LinkFaceBook',
+		// 	render: (link) =>
+		// 		link && (
+		// 			<a className="font-weight-black" href={link} target="_blank">
+		// 				Link
+		// 			</a>
+		// 		)
+		// },
 
 		{
 			title: 'Trạng thái',

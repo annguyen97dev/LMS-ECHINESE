@@ -13,14 +13,22 @@ let returnSchema = {};
 let schema = null;
 
 const StudentAdvisoryMail = (props) => {
-	const { onFetchData, dataSource, loadingOutside, dataRow, listCustomer, resetListCustomer } = props;
+	const { onFetchData, dataSource, loadingOutside, dataRow, listCustomer, resetListCustomer, showCheckBox } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { showNoti } = useWrap();
 	const [listSendEmail, setListSendEmail] = useState([]);
 
 	const showModal = () => {
-		setIsModalVisible(true);
+		if (!dataRow) {
+			if (listCustomer.length < 1) {
+				showCheckBox();
+			} else {
+				setIsModalVisible(true);
+			}
+		} else {
+			setIsModalVisible(true);
+		}
 	};
 
 	const handleOk = () => {
@@ -92,6 +100,7 @@ const StudentAdvisoryMail = (props) => {
 				form.reset(defaultValuesInit);
 				resetListCustomer && resetListCustomer();
 				onFetchData && onFetchData();
+				showCheckBox && showCheckBox();
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -110,8 +119,6 @@ const StudentAdvisoryMail = (props) => {
 	// 		}
 	// 	}
 	// }, [listCustomer]);
-
-	console.log('ListSend: ', listSendEmail);
 
 	useEffect(() => {
 		if (isModalVisible) {

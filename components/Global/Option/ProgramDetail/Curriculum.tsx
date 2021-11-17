@@ -241,13 +241,15 @@ const Curriculum = () => {
 		{
 			title: 'ID',
 			dataIndex: 'ID',
-			render: (id) => <p className="font-weight-black">{id}</p>
+			render: (id) => <p className="font-weight-black">{id}</p>,
+			fixed: 'left'
 		},
 		{
 			title: 'Giáo trình',
 			dataIndex: 'CurriculumName',
 			key: 'curriculumname',
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text) => <p className="font-weight-black">{text}</p>,
+			fixed: 'left'
 		},
 		{
 			width: 120,

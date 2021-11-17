@@ -91,6 +91,7 @@ function ProfileCustomer(props) {
 	const [isSubmit, setIsSubmit] = useState(false);
 	const [loadingForm, setLoadingForm] = useState(false);
 	const [activeKey, setActiveKey] = useState(1);
+	const [isUpdateInfo, setIsUpdateInfo] = useState(false);
 
 	// FOR STUDENT FORM
 	// ------------- ADD data to list --------------
@@ -245,6 +246,15 @@ function ProfileCustomer(props) {
 		getDataStudentForm(listApi);
 	}, []);
 
+	useEffect(() => {
+		if (isUpdateInfo) {
+			getInfoCustomer();
+			setIsSubmit(false);
+			setLoadingForm(false);
+			setIsUpdateInfo(!isUpdateInfo);
+		}
+	}, [isUpdateInfo]);
+
 	return (
 		<div className="page-no-scroll">
 			<div className="row">
@@ -256,58 +266,62 @@ function ProfileCustomer(props) {
 							<>
 								<div className="row">
 									<div className="col-12 d-flex align-items-center justify-content-center">
-										<Avatar size={100} src={<img src={info?.Avatar ? info.Avatar : '/images/user.png'} />} />
+										<Avatar size={70} src={<img src={info?.Avatar ? info.Avatar : '/images/user.png'} />} />
 									</div>
 								</div>
-								<div className="row pt-5">
-									<div className="col-2">
+								<div className="row pt-4 align-items-center">
+									<div className="col-2 box-icon">
 										<UserOutlined />
 									</div>
 									<div className="col-10  d-flex ">{info?.FullNameUnicode}</div>
 								</div>
-								<div className="row pt-4">
-									<div className="col-2">
+								<div className="row pt-4 align-items-center">
+									<div className="col-2 box-icon">
 										<DeploymentUnitOutlined />
 									</div>
 									<div className="col-10  d-flex ">{info?.JobName}</div>
 								</div>
-								<div className="row pt-4">
-									<div className="col-2">
+								<div className="row pt-4 align-items-center">
+									<div className="col-2 box-icon">
 										<WhatsAppOutlined />
 									</div>
 									<div className="col-10  d-flex ">{info?.Mobile}</div>
 								</div>
-								<div className="row pt-4">
-									<div className="col-2">
+								<div className="row pt-4 align-items-center">
+									<div className="col-2 box-icon">
 										<MailOutlined />
 									</div>
-									<div className="col-10  d-flex ">{info?.Email}</div>
+									<div className="col-10  limit-text">{info?.Email}</div>
 								</div>
-								<div className="row pt-4">
-									<div className="col-2">
+								<div className="row pt-4 align-items-center">
+									<div className="col-2 box-icon">
 										<AimOutlined />
 									</div>
 									<div className="col-10  d-flex ">{info?.Branch.map((b) => b.BranchName).join(', ')}</div>
 								</div>
-								<div className="row mt-3">
+								<div className="row mt-3 align-items-center">
 									<div className="col-12">
 										<Divider>Thông tin khác</Divider>
 										<ul className="info-dif-user">
 											<li>
 												<p className="title">Nhu cầu học</p>
-												<p className="text">{info?.AcademicPurposesName}</p>
+												<p className="text">{info?.AcademicPurposesName ? info?.AcademicPurposesName : 'Trống'}</p>
 											</li>
 											<li>
 												<p className="title">Người tư vấn</p>
-												<p className="text">{info?.CounselorsName}</p>
+												<p className="text">{info?.CounselorsName ? info?.CounselorsName : 'Trống'}</p>
 											</li>
 											<li>
 												<p className="title">Ngày tạo tài khoản</p>
-												<p className="text">{moment(info?.CreatedOn).format('DD/MM/YYYY')}</p>
+												<p className="text">
+													{moment(info?.CreatedOn).format('DD/MM/YYYY')
+														? moment(info?.CreatedOn).format('DD/MM/YYYY')
+														: 'Trống'}
+												</p>
 											</li>
 											<li>
 												<p className="title">Được tạo bởi</p>
-												<p className="text">{info?.CreatedBy}</p>
+												<p className="text">{info?.CreatedBy ? info?.CreatedBy : 'Trống'}</p>
 											</li>
 										</ul>
 									</div>
@@ -337,7 +351,7 @@ function ProfileCustomer(props) {
 										isSubmitOutSide={isSubmit}
 										dataRow={info}
 										listDataForm={checkEmptyData && listDataForm}
-										isSuccess={() => (setLoadingForm(false), setIsSubmit(false))}
+										isSuccess={() => setIsUpdateInfo(true)}
 									/>
 								)}
 							</TabPane>

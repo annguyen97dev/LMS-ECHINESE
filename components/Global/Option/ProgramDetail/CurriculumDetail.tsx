@@ -271,6 +271,7 @@ const CurriculumDetail = (props) => {
 							dataCurriculumDetail={dataSource}
 							callFrom="main"
 							onFetchData={() => setTodoApi({ ...todoApi })}
+							dataRow={data}
 						/>
 					)}
 					<DetailsModal

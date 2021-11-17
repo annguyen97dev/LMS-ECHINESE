@@ -28,6 +28,7 @@ const CourseStudent = () => {
 	};
 	const columns = [
 		{
+			width: 200,
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
@@ -54,6 +55,7 @@ const CourseStudent = () => {
 			)
 		},
 		{
+			width: 200,
 			title: 'Cam kết ',
 			dataIndex: 'Commitment'
 		},
@@ -233,7 +235,7 @@ const CourseStudent = () => {
 				setDataFunc('BranchID', newData);
 			}
 
-			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
+			res.status == 204 && console.log('Trung tâm Không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -251,7 +253,7 @@ const CourseStudent = () => {
 				setDataFunc('CourseID', newData);
 			}
 
-			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
+			res.status == 204 && console.log('Khóa học Không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -282,7 +284,7 @@ const CourseStudent = () => {
 				//@ts-ignore
 				res.status == 200 && setCourseStudent(res.data.data);
 				if (res.status == 204) {
-					showNoti('danger', 'Không tìm thấy dữ liệu!');
+					setCourseStudent([]);
 					setCurrentPage(1);
 					setParams(listParamsDefault);
 				} else setTotalPage(res.data.totalRow);

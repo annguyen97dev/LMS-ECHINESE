@@ -391,8 +391,8 @@ const StaffList = () => {
 
 		try {
 			let res = await staffApi.getAll(todoApi);
-			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu') && setDataSource([]);
+			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow));
+			res.status == 204 && setDataSource([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -482,8 +482,6 @@ const StaffList = () => {
 		} else {
 			data.Branch = '';
 		}
-
-		console.log('DATA SUBMIT STAFF: ', data);
 
 		setIsLoading({
 			type: 'ADD_DATA',

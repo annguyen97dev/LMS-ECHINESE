@@ -2169,3 +2169,16 @@ hr {
 }
 .btn-have-icon {
 }
+.limit-text {
+	display: inline;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+.info-profile-left {
+	.box-icon {
+		line-height: 0;
+	}
+}

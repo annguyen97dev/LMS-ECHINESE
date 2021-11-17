@@ -494,6 +494,7 @@ const StudentData = () => {
 			dataIndex: 'Email'
 		},
 		{
+			width: 150,
 			title: 'Nguồn',
 			dataIndex: 'SourceInformationName'
 		},

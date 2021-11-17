@@ -78,6 +78,10 @@ const ExpandTable = (props) => {
 			rowK = [];
 		}
 
+		if (rowK.length > 1) {
+			rowK.splice(rowK.length - 2, 1);
+		}
+
 		return rowK;
 	};
 

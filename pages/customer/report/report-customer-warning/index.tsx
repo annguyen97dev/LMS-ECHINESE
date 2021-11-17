@@ -90,15 +90,10 @@ export default function ReportWarning() {
 			try {
 				let res = await warningApi.getAll(todoApi);
 				if (res.status == 204) {
-					showNoti('danger', 'Không có dữ liệu');
-					handleReset();
 					setDataTable([]);
 				}
 				if (res.status == 200) {
 					setDataTable(res.data.data);
-					if (res.data.data.length < 1) {
-						handleReset();
-					}
 					setTotalPage(res.data.totalRow);
 				}
 			} catch (error) {

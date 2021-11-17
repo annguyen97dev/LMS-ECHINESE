@@ -262,6 +262,7 @@ const Subject = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: '50%',
 			title: 'Bổ sung',
 			dataIndex: 'Additional',
 			key: 'additional',
@@ -287,7 +288,8 @@ const Subject = () => {
 	];
 
 	const expandableObj = {
-		expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
+		// expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
+		expandedRowRender: () => '',
 		expandedRowKeys: activeRow,
 		onExpand: (expanded, record) => {
 			if (expanded) {

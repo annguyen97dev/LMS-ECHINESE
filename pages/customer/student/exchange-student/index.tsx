@@ -552,7 +552,7 @@ const StudentExchange = () => {
 					<Link
 						href={{
 							pathname: '/customer/student/student-list/student-detail/[slug]',
-							query: { slug: 2 }
+							query: { slug: data.UserInformationID }
 						}}
 					>
 						<Tooltip title="Xem chi tiết">

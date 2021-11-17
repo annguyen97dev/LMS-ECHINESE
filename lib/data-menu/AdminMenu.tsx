@@ -352,20 +352,20 @@ export const AdminChildMenu = [
 						Text: 'Thông tin thanh toán',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/finance/finance-cashier-refund',
-						Route: '/customer/finance/finance-cashier-refund',
-						Text: 'Yêu cầu hoàn tiền',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/customer/finance/finance-cashier-payment',
-						Route: '/customer/finance/finance-cashier-payment',
-						Text: 'Phiếu chi',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/finance/finance-cashier-refund',
+					// 	Route: '/customer/finance/finance-cashier-refund',
+					// 	Text: 'Yêu cầu hoàn tiền',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/finance/finance-cashier-payment',
+					// 	Route: '/customer/finance/finance-cashier-payment',
+					// 	Text: 'Phiếu chi',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						key: '/customer/finance/finance-cashier-invoice',
@@ -445,7 +445,7 @@ export const AdminChildMenu = [
 						Route: '/staff/staff-list',
 						Text: 'Danh sách nhân viên',
 						Icon: ''
-					},
+					}
 					// {
 					//   ItemType: "single",
 					//   Key: "/staff/saler-list",
@@ -453,13 +453,13 @@ export const AdminChildMenu = [
 					//   Text: "Danh sách Salers",
 					//   Icon: "",
 					// },
-					{
-						ItemType: 'single',
-						Key: '/staff/feedback-list',
-						Route: '/staff/feedback-list',
-						Text: 'Duyệt feedback',
-						Icon: ''
-					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/staff/feedback-list',
+					// 	Route: '/staff/feedback-list',
+					// 	Text: 'Duyệt feedback',
+					// 	Icon: ''
+					// }
 				]
 			},
 			// {

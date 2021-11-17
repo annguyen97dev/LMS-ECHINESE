@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Select, Upload, message, Input, Radio, Spin, Tooltip } from 'antd';
+import { Modal, Button, Form, Select, Upload, message, Input, Radio, Spin, Tooltip, Checkbox } from 'antd';
 import { PlusOutlined, UndoOutlined, UploadOutlined } from '@ant-design/icons';
 import { RotateCcw } from 'react-feather';
 import { useWrap } from '~/context/wrap';
@@ -9,7 +9,7 @@ import CurriculumDetail from './CurriculumDetail';
 import { useRouter } from 'next/router';
 
 export const AddCurriculumForm = (props) => {
-	const { curriculumDetailID, dataExamTopic, dataCurriculumDetail, onFetchData, callFrom, callBack } = props;
+	const { curriculumDetailID, dataExamTopic, dataCurriculumDetail, onFetchData, callFrom, callBack, dataRow } = props;
 	const router = useRouter();
 
 	const [visible, setVisible] = useState(false);
@@ -29,7 +29,8 @@ export const AddCurriculumForm = (props) => {
 		LinkDocument: '',
 		LinkHtml: '',
 		Description: '',
-		ExamTopicID: 21
+		ExamTopicID: 21,
+		IsPreview: false
 	});
 	const [exam, setExam] = useState({
 		ID: curriculumDetailID,
@@ -357,7 +358,15 @@ export const AddCurriculumForm = (props) => {
 										</Form.Item>
 									</div>
 								</div>
-
+								<div className="row">
+									<div className="col-12">
+										<Form.Item label="" name="isPreview">
+											<Checkbox onChange={(e) => setLesson({ ...lesson, IsPreview: e.target.checked })}>
+												Cho xem trước video
+											</Checkbox>
+										</Form.Item>
+									</div>
+								</div>
 								<div className="row">
 									<div className="col-12">
 										<Form.Item label="Ghi chú" name="Notice">

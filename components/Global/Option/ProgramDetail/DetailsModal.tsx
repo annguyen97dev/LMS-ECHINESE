@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Modal, Input, Tooltip, List, Form, Upload, Button, Spin } from 'antd';
+import { Modal, Input, Tooltip, List, Form, Upload, Button, Spin, Skeleton } from 'antd';
 import { Info } from 'react-feather';
 import { LessonDetail } from '~/apiBase/curriculum-detais';
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
@@ -309,6 +309,11 @@ export const DetailsModal = (props) => {
 			<Modal title="Thông tin chương trình dạy" visible={visible} onCancel={handleCancel} footer={false} width={1200}>
 				<div className="wrap-modal-curriculum ">
 					<div className="row container">
+						{/* {isLoading && (
+							<div style={{ padding: '20px' }}>
+								<Skeleton />
+							</div>
+						)} */}
 						<div className="list">
 							<List
 								loading={isLoading}
@@ -332,6 +337,7 @@ export const DetailsModal = (props) => {
 						{!showList && (
 							<div className="p-4 details">
 								<Spin spinning={isLoading}>
+									{/* <Skeleton loading={isLoading}> */}
 									{data.length !== 0 && (
 										<div className="row p-0 m-0 mt-2 mb-3 edit-details">
 											{enableEdit && (

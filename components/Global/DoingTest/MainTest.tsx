@@ -350,7 +350,7 @@ const MainTest = (props) => {
 					});
 				});
 
-				dataTestFirst = deleteOldElement(dataTestFirst, 'test');
+				// dataTestFirst = deleteOldElement(dataTestFirst, 'test');
 				dataSubmit = { ...dataTestFirst };
 
 				break;
@@ -427,6 +427,8 @@ const MainTest = (props) => {
 		setIsModalConfirm(false);
 		setLoadingSubmit(true);
 		let dataSubmit = remakeData();
+
+		console.log('Data Submit: ', dataSubmit);
 
 		let res = null;
 

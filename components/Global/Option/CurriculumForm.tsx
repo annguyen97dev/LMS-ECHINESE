@@ -136,12 +136,7 @@ const CurriculumForm = React.memo((props: any) => {
 									name="Lesson"
 									rules={[{ required: true, message: 'Bạn không được để trống' }]}
 								>
-									<Input
-										type="number"
-										placeholder=""
-										className="style-input"
-										onChange={(e) => setValue('Lesson', parseInt(e.target.value))}
-									/>
+									<Input placeholder="" className="style-input" onChange={(e) => setValue('Lesson', e.target.value)} />
 								</Form.Item>
 							</div>
 						</div>
@@ -153,26 +148,14 @@ const CurriculumForm = React.memo((props: any) => {
 									rules={[{ required: true, message: 'Bạn không được để trống' }]}
 								>
 									<Input
-										type="number"
 										placeholder="số phút(VD: 120)"
 										className="style-input"
-										onChange={(e) => setValue('TimeOfLesson', parseInt(e.target.value))}
+										onChange={(e) => setValue('TimeOfLesson', e.target.value)}
 									/>
 								</Form.Item>
 							</div>
 						</div>
-						<div className="row">
-							<div className="col-12">
-								<Form.Item label="Phần trăm xem video tối thiểu" name="MinViewPercent">
-									<Input
-										type="number"
-										placeholder="Nhập số, VD: 30 (tương ứng 30%)"
-										className="style-input"
-										onChange={(e) => setValue('MinViewPercen', parseInt(e.target.value))}
-									/>
-								</Form.Item>
-							</div>
-						</div>
+
 						<div className="row ">
 							<div className="col-12 mt-3">
 								<button type="submit" className="btn btn-primary w-100">

@@ -123,6 +123,7 @@ export default function StudentAdvisory() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [listCustomer, setListCustomer] = useState([]);
+	const [showCheckbox, setShowCheckbox] = useState(false);
 
 	// ------ LIST FILTER -------
 	const [dataFilter, setDataFilter] = useState([
@@ -565,7 +566,7 @@ export default function StudentAdvisory() {
 			title: 'Trạng thái',
 			dataIndex: 'CustomerConsultationStatusName',
 
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text, data) => <p className="font-weight-black">{text}</p>
 			// filters: [
 			// 	{
 			// 		text: 'Chưa tư vấn',
@@ -620,6 +621,13 @@ export default function StudentAdvisory() {
 								</button>
 							</Popconfirm>
 						)} */}
+						{showCheckbox && (
+							<Checkbox
+								className="mr-1"
+								checked={listCustomer.includes(data.ID) ? true : false}
+								onChange={(value) => onChange_sendEmail(value, data.ID)}
+							></Checkbox>
+						)}
 						<StudentAdviseForm
 							getIndex={() => setIndexRow(index)}
 							index={index}
@@ -629,23 +637,19 @@ export default function StudentAdvisory() {
 							isLoading={isLoading}
 							_onSubmit={(data: any) => _onSubmit(data)}
 						/>
+
 						<StudentAdvisoryMail
 							loadingOutside={isLoading}
 							dataSource={dataSource}
 							onFetchData={() => setTodoApi({ ...todoApi })}
 							dataRow={data}
+							listCustomer={listCustomer}
 						/>
-						<Checkbox
-							className="ml-1"
-							checked={listCustomer.includes(data.ID) ? true : false}
-							onChange={(value) => onChange_sendEmail(value, data.ID)}
-						>
-							Checkbox
-						</Checkbox>
 						{text == 2 && (
 							<Link
 								href={{
-									pathname: '/customer/service/service-info-student/'
+									pathname: '/customer/service/service-info-student/',
+									query: { customerID: data.ID }
 								}}
 							>
 								<Tooltip title="Hẹn test">
@@ -689,6 +693,7 @@ export default function StudentAdvisory() {
 					)} */}
 
 					<StudentAdvisoryMail
+						showCheckBox={() => setShowCheckbox(!showCheckbox)}
 						loadingOutside={isLoading}
 						dataSource={dataSource}
 						onFetchData={() => setTodoApi({ ...todoApi })}

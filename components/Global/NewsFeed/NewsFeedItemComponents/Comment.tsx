@@ -1,14 +1,14 @@
-import {Spin} from 'antd';
+import { Spin } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {fmDateFromNow} from '~/utils/functions';
+import React, { useState } from 'react';
+import { fmDateFromNow } from '~/utils/functions';
 import CommentForm from './CommentForm';
 import ReplyComment from './ReplyComment';
 
 Comment.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	dataComment: PropTypes.shape({
 		Avatar: PropTypes.string,
@@ -17,13 +17,13 @@ Comment.propTypes = {
 		FullNameUnicode: PropTypes.string,
 		NewsFeedID: PropTypes.number,
 		CommentContent: PropTypes.string,
-		isReply: PropTypes.bool,
+		isReply: PropTypes.bool
 	}),
 	fetchReplyComment: PropTypes.func,
-	handleReplyComment: PropTypes.func,
+	handleReplyComment: PropTypes.func
 };
 Comment.defaultProps = {
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	dataComment: {
 		Avatar: '',
 		ID: 0,
@@ -31,18 +31,16 @@ Comment.defaultProps = {
 		FullNameUnicode: '',
 		NewsFeedID: 0,
 		CommentContent: '',
-		isReply: false,
+		isReply: false
 	},
 	fetchReplyComment: null,
-	handleReplyComment: null,
+	handleReplyComment: null
 };
 
 function Comment(props) {
-	const {dataComment, fetchReplyComment, isLoading, handleReplyComment} = props;
+	const { dataComment, fetchReplyComment, isLoading, handleReplyComment } = props;
 	const [addCommentAction, setCommentAction] = useState(false);
-	const [replyCommentList, setReplyCommentList] = useState<
-		INewsFeedCommentReply[]
-	>([]);
+	const [replyCommentList, setReplyCommentList] = useState<INewsFeedCommentReply[]>([]);
 
 	const handleCommentsAction = () => {
 		setCommentAction(!addCommentAction);
@@ -74,39 +72,23 @@ function Comment(props) {
 		<li className="item-comment">
 			<div className="info-current-user">
 				<div className="avatar">
-					<img src={dataComment.Avatar || '/images/user.jpg'} alt="avatar" />
+					<img src={dataComment.Avatar || '/images/user.png'} alt="avatar" />
 				</div>
 				<div className="content-comment">
 					<div className="box-comment">
-						<p className="name-comment font-weight-black">
-							{dataComment.FullNameUnicode}
-						</p>
+						<p className="name-comment font-weight-black">{dataComment.FullNameUnicode}</p>
 						{dataComment.CommentContent}
 					</div>
 					<a className="a-reply" onClick={handleCommentsAction}>
 						Phản hồi
 					</a>
-					<span className="time-comment">
-						{fmDateFromNow(dataComment.CreatedOn)}
-					</span>
-					{replyCommentList.length > 0 && (
-						<ReplyComment replyCommentList={replyCommentList} />
-					)}
+					<span className="time-comment">{fmDateFromNow(dataComment.CreatedOn)}</span>
+					{replyCommentList.length > 0 && <ReplyComment replyCommentList={replyCommentList} />}
 					{dataComment.isReply && !replyCommentList.length && (
-						<div>
-							{dataComment.isReply && (
-								<a onClick={() => checkFetchReplyComment(dataComment.ID)}>
-									Xem các phản hồi
-								</a>
-							)}
-						</div>
+						<div>{dataComment.isReply && <a onClick={() => checkFetchReplyComment(dataComment.ID)}>Xem các phản hồi</a>}</div>
 					)}
 					{addCommentAction && (
-						<CommentForm
-							isReplay={true}
-							newsFeedCommentID={dataComment.ID}
-							handleComment={checkHandleReplyComment}
-						/>
+						<CommentForm isReplay={true} newsFeedCommentID={dataComment.ID} handleComment={checkHandleReplyComment} />
 					)}
 
 					{!replyCommentList.length &&

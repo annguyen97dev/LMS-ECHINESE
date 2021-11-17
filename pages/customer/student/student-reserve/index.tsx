@@ -2,7 +2,6 @@ import { Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Info, Move } from 'react-feather';
 import { areaApi, branchApi, parentsApi, programApi } from '~/apiBase';
 import { courseReserveApi } from '~/apiBase/customer/student/course-reserve';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';

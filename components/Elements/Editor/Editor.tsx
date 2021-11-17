@@ -191,6 +191,7 @@ const EditorSummernote = (props) => {
 
 	// ================= FOR ADD SPACE ===================
 	const formatKey = (e) => {
+		console.log('KEY CODE: ', e.keyCode);
 		switch (e.keyCode) {
 			case 16:
 				console.log('key 16');
@@ -433,9 +434,6 @@ const EditorSummernote = (props) => {
 			});
 		}
 
-		console.log('List Input: ', listInput);
-		console.log('New List: ', newList);
-
 		if (listInput.length > 0) {
 			let difID = listInput.filter((x) => !newList.includes(x.toString()));
 
@@ -489,6 +487,11 @@ const EditorSummernote = (props) => {
 			});
 		} else {
 			// check trường hợp trong editable là SPAN
+			editor[0].addEventListener('click', (e) => {
+				onFocus(e);
+				arrKey = [];
+				return false;
+			});
 		}
 	}, [valueEditor]);
 
@@ -497,6 +500,7 @@ const EditorSummernote = (props) => {
 		return str.replace(re, ' ');
 	}
 
+	console.log('Key editor outside: ', keyEditor);
 	// ========================== HANDLE ADD INPUT =======================================
 	useEffect(() => {
 		if (isAdd) {
@@ -510,10 +514,15 @@ const EditorSummernote = (props) => {
 			if (tagP.length == 0) {
 				let content = editable[0].innerHTML;
 
+				console.log('Check content trong này: ', content);
+
 				content = content.replace(
 					keyEditor.key,
 					keyEditor.key + `<input id="${inputID}" class='space-editor' placeholder="(${indexInput + 1})">`
 				);
+
+				console.log('Key editor: ', keyEditor.key);
+				console.log('Content lúc sau: ', content);
 
 				editable[0].innerHTML = content;
 			} else {
@@ -584,6 +593,8 @@ const EditorSummernote = (props) => {
 		}
 
 		if (reloadContent) {
+			arrKey = [];
+			setKeyEditor({ ...keyEditor, key: '' });
 			let allContentNode = document.querySelectorAll('.note-editable');
 			let allContent = allContentNode[0].innerHTML;
 			getDataEditor(allContent);
