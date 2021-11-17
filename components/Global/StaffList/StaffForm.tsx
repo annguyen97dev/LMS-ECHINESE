@@ -9,6 +9,7 @@ import { districtApi, wardApi } from '~/apiBase';
 import AvatarBase from '~/components/Elements/AvatarBase';
 import UploadFile from '~/components/Elements/UploadFile/UploadFile';
 import DateField from '~/components/FormControl/DateField';
+import InputPreventText from '~/components/FormControl/InputPreventText';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
@@ -466,14 +467,14 @@ const StaffForm = (props) => {
 									<InputTextField form={form} name="ChineseName" label="Tên tiêng Trung" />
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField form={form} name="Mobile" label="Số điện thoại" isRequired={true} />
+									<InputPreventText form={form} name="Mobile" label="Số điện thoại" isRequired={true} />
 								</div>
 
 								<div className="col-md-6 col-12">
 									<DateField form={form} name="DOB" label="Ngày sinh" />
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField form={form} name="CMND" label="Số CMND" />
+									<InputPreventText form={form} name="CMND" label="Số CMND" />
 								</div>
 								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="CMNDRegister" label="Nơi cấp CMND" />

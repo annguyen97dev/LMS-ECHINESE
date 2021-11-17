@@ -251,7 +251,6 @@ const Teacher = () => {
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				showNoti('danger', 'Không tìm thấy');
 				setTeacherList([]);
 			}
 		} catch (error) {

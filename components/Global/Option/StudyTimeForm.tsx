@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Spin, Tooltip, Select, TimePicker } from 'antd';
+import { Modal, Form, Input, Spin, Tooltip, Select, TimePicker, InputNumber } from 'antd';
 import { useForm } from 'react-hook-form';
 import { gradeApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
@@ -37,6 +37,10 @@ const StudyTimeForm = (props) => {
 				Object.keys(rowData).forEach(function (key) {
 					setValue(key, rowData[key]);
 				});
+
+				rowData.TimeStart = moment(rowData.TimeStart, 'HH:mm');
+
+				console.log('Row Data: ', rowData);
 				form.setFieldsValue(rowData);
 			}
 		}
@@ -90,11 +94,10 @@ const StudyTimeForm = (props) => {
 						<div className="row">
 							<div className="col-12">
 								<Form.Item name="Time" label="Thời gian" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
-									<Input
+									<InputNumber
 										placeholder="Số phút, VD: 120"
 										className="style-input"
-										onChange={(e) => setValue('Time', e.target.value)}
-										allowClear={true}
+										onChange={(e) => setValue('Time', e)}
 									/>
 								</Form.Item>
 							</div>
