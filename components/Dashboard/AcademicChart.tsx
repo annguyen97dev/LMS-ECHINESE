@@ -39,7 +39,7 @@ const AcademicChart = ({
 						<XAxis dataKey="Day" />
 						<YAxis type="number" tickFormatter={formatYAxis} />
 						<CartesianGrid strokeDasharray="3 3" />
-						<Tooltip formatter={format} labelFormatter={(value) => `Ngày ${value}`} />
+						{/* <Tooltip formatter={format} labelFormatter={(value) => `Ngày ${value}`} /> */}
 						<Legend />
 						<Bar dataKey="Amount" fill="#0080FF" name="Học viên đã đăng kí" />
 					</BarChart>
