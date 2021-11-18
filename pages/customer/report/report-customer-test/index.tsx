@@ -198,7 +198,7 @@ export default function ReportTest() {
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
-			render: (a) => <p className="font-weight-blue">{a}</p>
+			render: (a) => <p className="font-weight-primary">{a}</p>
 		},
 		{ title: 'SĐT', dataIndex: 'Mobile' },
 		{ title: 'Email', dataIndex: 'Email' },

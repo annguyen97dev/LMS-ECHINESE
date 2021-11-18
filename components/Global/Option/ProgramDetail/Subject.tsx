@@ -182,7 +182,6 @@ const Subject = () => {
 	const checkField = (valueSearch, dataIndex) => {
 		let newList = { ...listFieldSearch };
 		Object.keys(newList).forEach(function (key) {
-			console.log('key: ', key);
 			if (key != dataIndex) {
 				if (key != 'pageIndex') {
 					newList[key] = null;
@@ -253,8 +252,6 @@ const Subject = () => {
 		getDataProgram();
 	}, []);
 
-	console.log('DATA program bên này: ', dataProgram);
-
 	const columns = [
 		{
 			title: 'Môn học',
@@ -265,6 +262,7 @@ const Subject = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: '50%',
 			title: 'Bổ sung',
 			dataIndex: 'Additional',
 			key: 'additional',
@@ -290,7 +288,8 @@ const Subject = () => {
 	];
 
 	const expandableObj = {
-		expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
+		// expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
+		expandedRowRender: () => '',
 		expandedRowKeys: activeRow,
 		onExpand: (expanded, record) => {
 			if (expanded) {

@@ -1,25 +1,12 @@
-import {Form, Select} from 'antd';
+import { Form, Select } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Controller} from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 const SelectField = (props) => {
-	const {
-		form,
-		name,
-		label,
-		optionList,
-		placeholder,
-		disabled,
-		mode,
-		onChangeSelect,
-		isLoading,
-		style,
-		className,
-		isRequired,
-	} = props;
-	const {Option} = Select;
-	const {errors} = form.formState;
+	const { form, name, label, optionList, placeholder, disabled, mode, onChangeSelect, isLoading, style, className, isRequired } = props;
+	const { Option } = Select;
+	const { errors } = form.formState;
 	const hasError = errors[name];
 	const checkOnChangeSelect = (value) => {
 		if (!onChangeSelect) return;
@@ -30,15 +17,13 @@ const SelectField = (props) => {
 		<Form.Item
 			style={style}
 			label={label}
-			className={`${className} ${
-				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
-			}`}
+			className={`${className} ${hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
 			required={isRequired}
 		>
 			<Controller
 				name={name}
 				control={form.control}
-				render={({field}) => {
+				render={({ field }) => {
 					return (
 						<Select
 							{...field}
@@ -46,7 +31,7 @@ const SelectField = (props) => {
 							className="style-input"
 							showSearch
 							loading={isLoading}
-							style={{width: '100%'}}
+							style={{ width: '100%' }}
 							placeholder={placeholder}
 							optionFilterProp="children"
 							disabled={disabled}
@@ -78,10 +63,8 @@ SelectField.propTypes = {
 	name: PropTypes.string.isRequired,
 	optionList: PropTypes.arrayOf(
 		PropTypes.shape({
-			title: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-				.isRequired,
-			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-				.isRequired,
+			title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
 		})
 	),
 	label: PropTypes.string,
@@ -92,7 +75,7 @@ SelectField.propTypes = {
 	isLoading: PropTypes.bool,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
-	isRequired: PropTypes.bool,
+	isRequired: PropTypes.bool
 };
 SelectField.defaultProps = {
 	optionList: [],
@@ -104,6 +87,6 @@ SelectField.defaultProps = {
 	isLoading: false,
 	style: {},
 	className: '',
-	isRequired: false,
+	isRequired: false
 };
 export default SelectField;

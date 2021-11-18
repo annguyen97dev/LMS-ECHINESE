@@ -117,7 +117,7 @@ const PackageResultTeacher = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [textHeader, setTextHeader] = useState('Danh sách bài tập');
+	const [textHeader, setTextHeader] = useState('Bài tập chờ xử lí');
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: currentPage,
@@ -127,11 +127,12 @@ const PackageResultTeacher = () => {
 		toDate: null,
 		StudentID: null,
 		SetPackageDetailID: null,
-		isDone: null,
 		StudentName: null,
-		TeacherID: null,
+
 		isFixPaid: null,
-		StatusID: null
+		StatusID: null,
+		isDone: false,
+		TeacherID: userInformation?.UserInformationID
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [dataFilter, setDataFilter] = useState([
@@ -321,7 +322,7 @@ const PackageResultTeacher = () => {
 			title: 'Học viên',
 			dataIndex: 'StudentName',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 
 		{
@@ -358,7 +359,7 @@ const PackageResultTeacher = () => {
 			dataIndex: 'TeacherName',
 			render: (text, data) => (
 				<p
-					className="font-weight-blue"
+					className="font-weight-primary"
 					style={{ color: data.TeacherID == userInformation?.UserInformationID ? '#205286' : '#dd4667' }}
 				>
 					{text}
@@ -376,7 +377,8 @@ const PackageResultTeacher = () => {
 			)
 		},
 		{
-			title: 'Yêu cầu chấm bài',
+			width: 120,
+			title: 'Yêu cầu chấm',
 			dataIndex: 'isFixPaid',
 			align: 'center',
 			render: (type, data) => (
@@ -402,6 +404,7 @@ const PackageResultTeacher = () => {
 			)
 		},
 		{
+			width: 120,
 			title: 'Nhận chấm bài',
 			align: 'center',
 			render: (data) =>
@@ -449,8 +452,19 @@ const PackageResultTeacher = () => {
 	};
 
 	useEffect(() => {
-		getDataSource();
+		if (userInformation) {
+			getDataSource();
+		}
 	}, [todoApi]);
+
+	useEffect(() => {
+		if (userInformation) {
+			setTodoApi({
+				...todoApi,
+				TeacherID: userInformation.UserInformationID
+			});
+		}
+	}, [userInformation]);
 
 	return (
 		<>

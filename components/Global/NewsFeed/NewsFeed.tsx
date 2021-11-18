@@ -142,16 +142,40 @@ const NewsFeed = () => {
 				userBranchApi.getAll({ getbytokenID: true }),
 				groupNewsFeedApi.getAll({ selectAll: true })
 			]);
-			if (team.status === 200 && group.status === 200) {
+			// if (team.status === 200 && group.status === 200) {
+			// 	const teamOptionList = fmSelectArr(team.data.data, 'BranchName', 'BranchID');
+			// 	const groupOptionList = fmSelectArr(group.data.data, 'Name', 'ID');
+			// 	setOptionList({
+			// 		teamOptionList,
+			// 		groupOptionList
+			// 	});
+			// } else {
+			// 	setOptionList({
+			// 		teamOptionList: [],
+			// 		groupOptionList: []
+			// 	});
+			// }
+			if (team.status === 200) {
 				const teamOptionList = fmSelectArr(team.data.data, 'BranchName', 'BranchID');
+				setOptionList({
+					...optionList,
+					teamOptionList
+				});
+			} else {
+				setOptionList({
+					...optionList,
+					teamOptionList: []
+				});
+			}
+			if (group.status === 200) {
 				const groupOptionList = fmSelectArr(group.data.data, 'Name', 'ID');
 				setOptionList({
-					teamOptionList,
+					...optionList,
 					groupOptionList
 				});
 			} else {
 				setOptionList({
-					teamOptionList: [],
+					...optionList,
 					groupOptionList: []
 				});
 			}

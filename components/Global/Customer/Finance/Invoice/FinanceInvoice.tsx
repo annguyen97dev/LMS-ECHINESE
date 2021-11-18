@@ -130,11 +130,11 @@ function FinanceInvoice() {
 	};
 	// GET DATA TABLE
 	const fetchInvoiceList = async () => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true
+		});
 		try {
-			setIsLoading({
-				type: 'GET_ALL',
-				status: true
-			});
 			const res = await invoiceApi.getAll(filters);
 			if (res.status === 200) {
 				setInvoiceList(res.data.data);
@@ -156,12 +156,14 @@ function FinanceInvoice() {
 		fetchInvoiceList();
 	}, [filters]);
 
+	console.log('Loading: ', isLoading);
+
 	const fetchBrach = async () => {
 		try {
-			setIsLoading({
-				type: 'FETCH_BRANCH',
-				status: true
-			});
+			// setIsLoading({
+			// 	type: 'FETCH_BRANCH',
+			// 	status: true
+			// });
 			const res = await branchApi.getAll({ selectAll: true });
 			if (res.status === 200) {
 				const fmOpTionBranch = fmSelectArr(res.data.data, 'BranchName', 'ID');
@@ -170,10 +172,10 @@ function FinanceInvoice() {
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
-			setIsLoading({
-				type: 'FETCH_BRANCH',
-				status: false
-			});
+			// setIsLoading({
+			// 	type: 'FETCH_BRANCH',
+			// 	status: false
+			// });
 		}
 	};
 	useEffect(() => {

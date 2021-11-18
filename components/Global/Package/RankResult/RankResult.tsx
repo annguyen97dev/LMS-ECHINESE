@@ -115,7 +115,7 @@ const RankResult = (props) => {
 	// GET EXAM LIST
 	const getExamList = async () => {
 		try {
-			let res = await examTopicApi.getAll({ selectAll: true });
+			let res = await examTopicApi.getAll({ selectAll: true, Type: 2 });
 			res.status == 200 && setDataExam(res.data.data);
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -262,7 +262,7 @@ const RankResult = (props) => {
 			title: 'Học viên',
 			dataIndex: 'StudentName',
 			render: (text, data) => (
-				<p className="font-weight-blue d-flex align-items-center">
+				<p className="font-weight-primary d-flex align-items-center">
 					{data.Rank == 1 && <img width="15px" className="logo-img mr-2" src="/images/king.png"></img>} {text}
 				</p>
 			)

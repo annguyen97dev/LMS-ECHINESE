@@ -182,7 +182,7 @@ const SalaryReview = () => {
 			title: 'Nhân viên',
 			width: 150,
 			dataIndex: 'StaffName',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>,
+			render: (price, record: IStaffSalary) => <p className="font-weight-primary">{price}</p>,
 			...FilterColumn('StaffName', onSearch, handleReset, 'text')
 		},
 		{
@@ -248,11 +248,18 @@ const SalaryReview = () => {
 			)
 		},
 		{
+			title: 'Lương cơ bản',
+			width: 150,
+			dataIndex: 'BasicSalary',
+			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+		},
+		{
 			title: 'Tăng Lương',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
+
 		{
 			title: 'Lương Tháng',
 			width: 150,
@@ -352,7 +359,7 @@ const SalaryReview = () => {
 
 	const renderTitle = () => {
 		return (
-			<p className="font-weight-blue">
+			<p className="font-weight-primary">
 				Xác nhận tình lương từ 01-{params.Month}-{params.Year} đến {daysInMonth(params.Month, params.Year)}-{params.Month}-
 				{params.Year} ?
 			</p>

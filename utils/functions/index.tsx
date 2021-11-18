@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { useEffect, useRef } from 'react';
 //  ---------EXPORT TO ARRAY FOR SELECT FIELD---------
 export const fmSelectArr = (arr: Array<{ [key: string]: any }>, title: string, value: string, options = []) =>
 	arr
@@ -46,3 +47,61 @@ export const fmDateFromNow = (date) => {
 	return formattedDate;
 };
 export const parsePriceStrToNumber = (str: number | string) => parseInt(str.toString().replace(/\D/g, '')) || 0;
+
+// GET VISIBLE STATUS
+export function usePageVisibility(cb) {
+	const timeoutId = useRef(null);
+
+	let delay = 0;
+
+	const browserCompatApi = () => {
+		let hidden, visibilityChange;
+		if ('hidden' in document) {
+			hidden = 'hidden';
+			visibilityChange = 'visibilitychange';
+		} else if ('mozHidden' in document) {
+			// Firefox up to v17
+			hidden = 'mozHidden';
+			visibilityChange = 'mozvisibilitychange';
+		} else if ('webkitHidden' in document) {
+			// Chrome up to v32, Android up to v4.4, Blackberry up to v10
+			hidden = 'webkitHidden';
+			visibilityChange = 'webkitvisibilitychange';
+		}
+		return {
+			hidden,
+			visibilityChange
+		};
+	};
+
+	const cleanupTimeout = () => clearTimeout(timeoutId.current);
+
+	useEffect(() => {
+		const { hidden, visibilityChange } = browserCompatApi();
+
+		if (typeof cb !== 'function') throw new Error('callback must be a function');
+
+		const handleVisibilityChange = () => {
+			if (delay) {
+				if (typeof delay !== 'number' || delay < 0) {
+					throw new Error('delay must be a positive integer');
+				}
+
+				if (timeoutId.current) cleanupTimeout();
+				timeoutId.current = setTimeout(() => cb(!document[hidden]), delay);
+			} else {
+				cb(!document[hidden]);
+			}
+		};
+
+		document.addEventListener(visibilityChange, handleVisibilityChange);
+
+		return () => {
+			document.removeEventListener(visibilityChange, handleVisibilityChange);
+		};
+	}, [cb]);
+}
+
+export const parseToMoney = (value) => {
+	return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};

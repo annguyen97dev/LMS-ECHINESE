@@ -16,6 +16,15 @@ const ExpandTable = (props) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [activeIndex, setActiveIndex] = useState(null);
 
+	const closeAllExpandFunc = () => {
+		setRowKeys([
+			{
+				currentPage: 1,
+				listKeys: []
+			}
+		]);
+	};
+
 	const selectRow = (record) => {
 		const selectedRowKeys = [];
 
@@ -68,11 +77,15 @@ const ExpandTable = (props) => {
 		} else {
 			rowK = [];
 		}
+
+		if (rowK.length > 1) {
+			rowK.splice(rowK.length - 2, 1);
+		}
+
 		return rowK;
 	};
 
 	const onExpand = (expand, record) => {
-		console.log('Expand: ', expand);
 		if (typeof props.handleExpand != 'undefined') {
 			props.handleExpand(record);
 		}
@@ -107,6 +120,12 @@ const ExpandTable = (props) => {
 		}
 	}, [props.dataSource]);
 
+	useEffect(() => {
+		if (props.closeAllExpand) {
+			closeAllExpandFunc();
+		}
+	}, [props.closeAllExpand]);
+
 	return (
 		<>
 			<div className="wrap-table table-expand">
@@ -128,6 +147,7 @@ const ExpandTable = (props) => {
 							pageSizeOptions: ['30'],
 							onShowSizeChange: onShowSizeChange,
 							total: props.totalPage && props.totalPage,
+							showTotal: () => <div className="font-weight-black">Tổng cộng: {props.totalPage}</div>,
 							onChange: (pageNumber, pageSize) => changePagination(pageNumber, pageSize),
 							current: props.currentPage && props.currentPage
 						}}
@@ -141,7 +161,8 @@ const ExpandTable = (props) => {
 								setActiveIndex(index);
 							}
 						})}
-						expandable={props.expandable}
+						expandable={rowKeys[0].listKeys.length > 0 && props.expandable}
+						expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
 						onExpandedRowsChange={onChangeExpand}
 						onExpand={onExpand}
 						expandedRowKeys={returnRowKeys()}

@@ -1,14 +1,14 @@
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Provider as AuthProvider} from 'next-auth/client';
+import { Provider as AuthProvider } from 'next-auth/client';
 import Head from 'next/head';
-import {useRouter} from 'next/router';
-import React, {useEffect} from 'react';
-import {WrapProvider} from '~/context/wrap';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+import { WrapProvider } from '~/context/wrap';
 import '../styles/global.scss';
 
-export default function App({Component, pageProps}) {
-	const {session} = pageProps;
+export default function App({ Component, pageProps }) {
+	const { session } = pageProps;
 
 	const router = useRouter();
 
@@ -32,32 +32,12 @@ export default function App({Component, pageProps}) {
 		<>
 			<Head>
 				<title>MONA LMS V2</title>
-				<meta
-					name="viewport"
-					content="initial-scale=1.0, width=device-width, maximum-scale=1"
-				/>
+				<meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1" />
 				<meta name="robots" content="noindex" />
-				<link
-					rel="stylesheet"
-					href="https://www.amcharts.com/lib/3/plugins/export/export.css"
-					type="text/css"
-					media="all"
-				/>
-				<link
-					rel="stylesheet"
-					type="text/css"
-					href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx.common.css"
-				/>
-				<link
-					rel="stylesheet"
-					type="text/css"
-					href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx.light.css"
-				/>
-				<link
-					rel="stylesheet"
-					type="text/css"
-					href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx-gantt.min.css"
-				/>
+				<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+				<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx.common.css" />
+				<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx.light.css" />
+				<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx-gantt.min.css" />
 
 				{/* <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script> */}
 				<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>

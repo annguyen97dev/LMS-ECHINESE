@@ -18,6 +18,7 @@ import QuestionDrag from '~/components/Global/QuestionBank/QuestionShow/Question
 import QuestionMap from '~/components/Global/QuestionBank/QuestionShow/QuestionMap';
 import QuestionSpeaking from './QuestionShow/QuestionSpeaking';
 import ImportExcel from './Elements/ImportExcel';
+import { DownloadOutlined } from '@ant-design/icons';
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -68,8 +69,6 @@ const QuestionCreate = (props) => {
 
 	// Phân loại dạng câu hỏi để trả ra danh sách
 	const returnQuestionType = () => {
-		// console.log("Type is: ", todoApi.Type);
-
 		switch (todoApi.Type) {
 			/** Quesion Single */
 			case 1:
@@ -318,7 +317,7 @@ const QuestionCreate = (props) => {
 				ProgramID: id
 			});
 			res.status == 200 && setDataCurriculum(res.data.data);
-			res.status == 204 && showNoti('danger', 'Môn học không có dữ liệu');
+			res.status == 204 && showNoti('danger', 'Giáo trình không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -372,14 +371,11 @@ const QuestionCreate = (props) => {
 		});
 	};
 
-	console.log('Question Data: ', questionData);
-
 	// PICK IS TEST
 	const pickIsTest = (checked) => {
 		if (!dataExam) {
 			setIsTest(checked);
 			if (checked) {
-				console.log('Chạy vô đây');
 				setQuestionData({
 					...questionData,
 					CurriculumID: 0
@@ -534,23 +530,19 @@ const QuestionCreate = (props) => {
 
 		// kiểm tra mới vào đã chọn đầy đủ 4 trường hay chưa rồi mới show danh sách dạng câu hỏi
 		if (!showTypeQuetion.status) {
-			console.log('YEAHHHH');
 			if (
 				questionData.ExerciseGroupID !== null &&
 				questionData.SkillID !== null &&
 				questionData.Level !== null &&
 				isOpenTypeQuestion == true
 			) {
-				console.log('Chạy 1');
 				if (isTest) {
 					setShowTypeQuestion({
 						...showTypeQuetion,
 						status: true
 					});
 				} else {
-					console.log('chạy 2');
 					if (questionData.CurriculumID !== null && questionData.CurriculumID !== 0) {
-						console.log('chạy 3');
 						setShowTypeQuestion({
 							...showTypeQuetion,
 							status: true
@@ -560,8 +552,6 @@ const QuestionCreate = (props) => {
 			}
 		}
 	};
-
-	console.log('Show type quesion: ', showTypeQuetion);
 
 	// ON ADD NEW DATA
 	const addDataGroup = (dataAdd) => {
@@ -575,8 +565,6 @@ const QuestionCreate = (props) => {
 	};
 
 	const onAddData = (dataAdd) => {
-		console.log('DATA add outside: ', dataAdd);
-
 		if (!isGroup.status) {
 			addDataSingle(dataAdd);
 		} else {
@@ -589,13 +577,6 @@ const QuestionCreate = (props) => {
 		questionData.Content = '';
 		setQuestionData({ ...questionData });
 	};
-
-	// console.log("DATA SOURCE: ", dataSource);
-	// console.log("DATA GROUP: ", dataGroup);
-
-	// ON EDIT DATA
-
-	// console.log("Data Exercise: ", dataExercise);
 
 	const editDataGroup = (dataEdit) => {
 		let index = dataGroup.findIndex((item) => item.ID == dataEdit.ID);
@@ -620,8 +601,6 @@ const QuestionCreate = (props) => {
 	};
 
 	const onEditData = (dataEdit) => {
-		console.log('DATA edit outside ', dataEdit);
-
 		if (!isGroup.status) {
 			// Nếu là dạng câu hỏi nhiều đáp án thì phải xóa nó đi
 			editDataSingle(dataEdit);
@@ -645,7 +624,6 @@ const QuestionCreate = (props) => {
 	};
 
 	const removeDataGroup = (dataRemove) => {
-		console.log('Data remove outside: ', dataRemove);
 		if (dataRemove.isDeleteExercise) {
 			setDataExercise(dataRemove);
 		} else {
@@ -684,9 +662,6 @@ const QuestionCreate = (props) => {
 		const offsetHeight = boxEl.current.offsetHeight;
 		const scrollTop = boxEl.current.scrollTop;
 
-		// console.log("Height: ", scrollHeight - offsetHeight);
-		// console.log("Scroll: ", scrollTop);
-
 		if (scrollTop > scrollHeight - offsetHeight - 40) {
 			if (todoApi.pageIndex < totalPageIndex) {
 				setLoadingQuestion(true);
@@ -700,8 +675,6 @@ const QuestionCreate = (props) => {
 			}
 		}
 	};
-
-	// console.log("DATA exercise: ", dataSource);
 
 	useEffect(() => {
 		getDataProgram(); // Lấy data chương trình
@@ -725,7 +698,6 @@ const QuestionCreate = (props) => {
 
 	useEffect(() => {
 		if (dataExam) {
-			console.log('Data exam: ', dataExam);
 			if (dataExam.Type == 1) {
 				setIsTest(true);
 				questionData.CurriculumID = 0;
@@ -745,18 +717,18 @@ const QuestionCreate = (props) => {
 			changeBoxType(null, 1, 'Lựa chọn một');
 			isOpenTypeQuestion = true;
 		} else {
-			setValueProgram(31);
-			getDataCurriculum(31);
-			setValueCurriculum(23);
-			questionData.CurriculumID = 23;
-			questionData.Level = 1;
-			questionData.SkillID = 3;
-			setQuestionData({ ...questionData });
-			setValueSkill(3);
-			setValueLevel(1);
-			setValueType(0);
-			changeBoxType(null, 1, 'Lựa chọn một');
-			isOpenTypeQuestion = true;
+			// setValueProgram(31);
+			// getDataCurriculum(31);
+			// setValueCurriculum(23);
+			// questionData.CurriculumID = 23;
+			// questionData.Level = 1;
+			// questionData.SkillID = 3;
+			// setQuestionData({ ...questionData });
+			// setValueSkill(3);
+			// setValueLevel(1);
+			// setValueType(0);
+			// changeBoxType(null, 1, 'Lựa chọn một');
+			// isOpenTypeQuestion = true;
 		}
 		setShowTypeQuestion({
 			type: 1,
@@ -798,6 +770,17 @@ const QuestionCreate = (props) => {
 						}
 						extra={
 							<>
+								<Tooltip title="Tải file excel mẫu">
+									<a
+										className="btn btn-light mr-2 btn-have-icon"
+										href="https://lmsv2.monamedia.net/Upload/Exercise/Excel.xls"
+									>
+										<span className="d-flex align-items-center">
+											<DownloadOutlined className="mr-2" />
+											File mẫu
+										</span>
+									</a>
+								</Tooltip>
 								<ImportExcel onFetchData={onFetchData} />
 								<CreateQuestionForm
 									questionData={questionData}
@@ -810,8 +793,8 @@ const QuestionCreate = (props) => {
 					>
 						{!showListQuestion ? (
 							<>
-								<p className="font-weight-blue text-center">
-									{dataExam ? 'Vui lòng chọn dạng câu hỏi' : 'Vui lòng chọn môn học và dạng câu hỏi'}
+								<p className="font-weight-primary text-center">
+									{dataExam ? 'Vui lòng chọn dạng câu hỏi' : 'Vui lòng chọn giáo trình và dạng câu hỏi'}
 								</p>
 								<div className="img-load">
 									<img src="/images/study-min.jpg" alt="" />

@@ -24,7 +24,7 @@ const StudentAdvisoryNote = (props) => {
 		{
 			title: 'Tạo ngày',
 			dataIndex: 'CreatedOn',
-			render: (date) => <p>{moment(date).format('DD/MM/YYYY')}</p>
+			render: (date) => <p>{moment(date).format('DD/MM/YYYY HH:mm')}</p>
 		},
 		{
 			title: 'Người tạo',

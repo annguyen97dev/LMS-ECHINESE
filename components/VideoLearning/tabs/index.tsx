@@ -4,6 +4,7 @@ import { Tabs } from 'antd';
 import VideoQuestion from '~/components/VideoLearning/tabs/question';
 import VideoInfomation from '~/components/VideoLearning/tabs/video-information';
 import VocabularyTab from '~/components/VideoLearning/tabs/vocabulary';
+import NotificationTab from './notification';
 
 const { TabPane } = Tabs;
 
@@ -16,14 +17,11 @@ const titlePages = {
 	page6: 'Thông báo'
 };
 
-function callback(key) {
-	console.log(key);
-}
-
 type vType = {
-	params: { name: string; description: string };
+	params: { Title: string; Description: string };
 	dataNote: any[];
 	onCreateNew: any;
+	createNewNotification: any;
 	onPress: any;
 	onDelete: any;
 	onEdit: any;
@@ -31,6 +29,8 @@ type vType = {
 	dataQA: any[];
 	videoRef: { current: { currentTime: '' } };
 	addNewQuest: any;
+	onEditQuest: any;
+	dataNotification: any[];
 };
 
 const VideoTabs: FC<vType> = ({
@@ -43,11 +43,14 @@ const VideoTabs: FC<vType> = ({
 	onPauseVideo,
 	videoRef,
 	dataQA,
-	addNewQuest
+	addNewQuest,
+	onEditQuest,
+	dataNotification,
+	createNewNotification
 }) => {
 	return (
-		<Tabs onChange={callback} type="card">
-			<TabPane tab={titlePages.page1} key="1">
+		<Tabs className="" tabBarStyle={{ paddingLeft: 20, paddingRight: 20 }}>
+			<TabPane className="vl-tabs" tab={titlePages.page1} key="1">
 				<VideoInfomation params={params} />
 			</TabPane>
 			<TabPane tab={titlePages.page2} key="2">
@@ -76,10 +79,27 @@ const VideoTabs: FC<vType> = ({
 				Content of Tab Pane 3
 			</TabPane>
 			<TabPane tab={titlePages.page4} key="5">
-				<VideoQuestion params={dataQA} addNew={addNewQuest} />
+				<VideoQuestion onEdit={onEditQuest} params={dataQA} addNew={addNewQuest} />
 			</TabPane>
 			<TabPane tab={titlePages.page6} key="6">
-				Content of Tab Pane 3
+				<NotificationTab
+					dataNotification={dataNotification}
+					createNew={(p) => {
+						onCreateNew(p);
+					}}
+					onPress={(p) => {
+						onPress(p);
+					}}
+					onDelete={(p) => {
+						onDelete(p);
+					}}
+					onEdit={(p) => {
+						onEdit(p);
+					}}
+					onPauseVideo={onPauseVideo}
+					videoRef={videoRef}
+					createNewNotification={createNewNotification}
+				/>
 			</TabPane>
 		</Tabs>
 	);

@@ -1,23 +1,23 @@
-import {Form, Input, InputNumber, Modal, Select, Spin, Tooltip} from 'antd';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
-import {useWrap} from '~/context/wrap';
+import { Form, Input, InputNumber, Modal, Select, Spin, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
+import { useWrap } from '~/context/wrap';
 
 const StaffSalaryForm = (props) => {
-	const {Option} = Select;
+	const { Option } = Select;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [form] = Form.useForm();
 	const [isTeacher, setIsTeacher] = useState(false);
 
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 
 	const {
 		register,
 		handleSubmit,
 		setValue,
-		formState: {isSubmitting, errors, isSubmitted},
+		formState: { isSubmitting, errors, isSubmitted }
 	} = useForm();
 	// const { showNoti } = useWrap();
 
@@ -35,6 +35,7 @@ const StaffSalaryForm = (props) => {
 		if (typeof data.Salary == 'string') {
 			data.Salary = Number(data.Salary.replace(/\$\s?|(,*)/g, ''));
 		}
+
 		let res = props._onSubmit(data);
 		res.then(function (rs: any) {
 			rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
@@ -43,6 +44,8 @@ const StaffSalaryForm = (props) => {
 
 	useEffect(() => {
 		if (isModalVisible) {
+			form.setFieldsValue({ Style: 1 });
+			setValue('Style', 1);
 			if (props.rowData) {
 				if (props.rowData.RoleID === 2) {
 					setIsTeacher(true);
@@ -57,9 +60,11 @@ const StaffSalaryForm = (props) => {
 	useEffect(() => {
 		if (props.dataIDStaff && props.dataStaff.length === 1) {
 			form.setFieldsValue({
-				Staff: props.dataIDStaff,
+				Staff: props.dataIDStaff
 			});
 			setValue('UserInformationID', props.dataIDStaff);
+			form.setFieldsValue({ Style: 1 });
+			setValue('Style', 1);
 		}
 	}, [props.dataIDStaff]);
 	return (
@@ -88,23 +93,9 @@ const StaffSalaryForm = (props) => {
 			)}
 			{/*  */}
 			<Modal
-				title={
-					<>
-						{props.showAdd
-							? 'Thêm Lương Nhân Viên'
-							: 'Cập Nhật Lương Nhân Viên'}
-					</>
-				}
-				visible={
-					props.isOpenModalFromOutSide
-						? props.isOpenModalFromOutSide
-						: isModalVisible
-				}
-				onCancel={() =>
-					props.openModalFromOutSide
-						? props.openModalFromOutSide()
-						: setIsModalVisible(false)
-				}
+				title={<>{props.showAdd ? 'Thêm Lương Nhân Viên' : 'Cập Nhật Lương Nhân Viên'}</>}
+				visible={props.isOpenModalFromOutSide ? props.isOpenModalFromOutSide : isModalVisible}
+				onCancel={() => (props.openModalFromOutSide ? props.openModalFromOutSide() : setIsModalVisible(false))}
 				footer={null}
 			>
 				<div className="container-fluid">
@@ -115,9 +106,7 @@ const StaffSalaryForm = (props) => {
 									<Form.Item
 										label="Nhân viên"
 										name="Staff"
-										rules={[
-											{required: true, message: 'Bạn không được để trống'},
-										]}
+										rules={[{ required: true, message: 'Bạn không được để trống' }]}
 									>
 										<Select
 											className="style-input"
@@ -127,11 +116,7 @@ const StaffSalaryForm = (props) => {
 										>
 											{props.dataStaff &&
 												props.dataStaff.map((row) => (
-													<Option
-														key={row.UserInformationID}
-														value={row.UserInformationID}
-														role={row.RoleID}
-													>
+													<Option key={row.UserInformationID} value={row.UserInformationID} role={row.RoleID}>
 														{row.FullNameUnicode}
 													</Option>
 												))}
@@ -139,11 +124,7 @@ const StaffSalaryForm = (props) => {
 									</Form.Item>
 								) : (
 									<Form.Item label="Ghi chú" name="Note">
-										<Input
-											placeholder="Note"
-											className="style-input"
-											allowClear={true}
-										/>
+										<Input placeholder="Note" className="style-input" allowClear={true} />
 									</Form.Item>
 								)}
 							</div>
@@ -154,38 +135,29 @@ const StaffSalaryForm = (props) => {
 								{isTeacher || props.showInTeacherView ? (
 									<Form.Item
 										label="Loại"
-										name="Salary Type"
-										rules={[
-											{required: true, message: 'Bạn không được để trống'},
-										]}
+										name="Style"
+										rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										initialValue={props.rowData?.StyleName}
 									>
 										<Select
 											className="style-input"
-											placeholder="Salary Type"
+											placeholder="Style"
 											allowClear={true}
 											onChange={(value) => setValue('Style', value)}
+											disabled
 										>
-											<Option value="1">Tính lương theo tháng</Option>
-											<Option value="2">Tính lương theo giờ</Option>
+											<Option value={1}>Tính lương theo tháng</Option>
 										</Select>
 									</Form.Item>
 								) : (
 									<Form.Item
 										label="Loại"
-										name="Salary Type default"
-										rules={[
-											{required: true, message: 'Bạn không được để trống'},
-										]}
+										name="Style"
+										rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										initialValue="Tính lương theo tháng"
 									>
-										<Select
-											className="style-input"
-											placeholder="Salary Type"
-											allowClear={true}
-											disabled
-										>
-											<Option value="1">Tính lương theo tháng</Option>
+										<Select className="style-input" placeholder="Salary Type" allowClear={true} disabled>
+											<Option value={1}>Tính lương theo tháng</Option>
 										</Select>
 									</Form.Item>
 								)}
@@ -198,14 +170,12 @@ const StaffSalaryForm = (props) => {
 								<Form.Item
 									label="Mức Lương"
 									name="Salary Const"
-									rules={[{required: true, message: 'Bạn không được để trống'}]}
+									rules={[{ required: true, message: 'Bạn không được để trống' }]}
 									initialValue={props.rowData?.Salary}
 								>
 									<InputNumber
 										className="ant-input style-input w-100"
-										formatter={(value) =>
-											`${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-										}
+										formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 										parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
 										onChange={(value) => setValue('Salary', value)}
 									/>
@@ -218,13 +188,10 @@ const StaffSalaryForm = (props) => {
 								<button
 									type="submit"
 									className="btn btn-primary w-100"
-									disabled={
-										props.isLoading.type == 'ADD_DATA' && props.isLoading.status
-									}
+									disabled={props.isLoading.type == 'ADD_DATA' && props.isLoading.status}
 								>
 									Lưu
-									{props.isLoading.type == 'ADD_DATA' &&
-										props.isLoading.status && <Spin className="loading-base" />}
+									{props.isLoading.type == 'ADD_DATA' && props.isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

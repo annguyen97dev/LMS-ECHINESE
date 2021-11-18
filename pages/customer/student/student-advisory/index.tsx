@@ -8,7 +8,7 @@ import { useWrap } from '~/context/wrap';
 import StudentAdviseForm from '~/components/Global/Customer/Student/StudentAdviseForm';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import Link from 'next/link';
-import { Popconfirm, Tooltip } from 'antd';
+import { Checkbox, Popconfirm, Tooltip } from 'antd';
 import { CalendarOutlined, UserAddOutlined } from '@ant-design/icons';
 import ExpandTable from '~/components/ExpandTable';
 import StudentAdvisoryNote from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryNote';
@@ -122,6 +122,8 @@ export default function StudentAdvisory() {
 	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [todoApi, setTodoApi] = useState(listTodoApi);
+	const [listCustomer, setListCustomer] = useState([]);
+	const [showCheckbox, setShowCheckbox] = useState(false);
 
 	// ------ LIST FILTER -------
 	const [dataFilter, setDataFilter] = useState([
@@ -317,6 +319,7 @@ export default function StudentAdvisory() {
 					newDataSource.splice(indexRow, 1, {
 						...dataSubmit,
 						AreaName: listDataForm.Area.find((item) => item.value == dataSubmit.AreaID)?.title,
+						CounselorsName: listDataForm.Counselors.find((item) => item.value == dataSubmit.CounselorsID)?.title,
 						SourceInformationName:
 							dataSubmit.SourceInformationID &&
 							listDataForm.SourceInformation.find((item) => item.value == dataSubmit.SourceInformationID).title
@@ -483,6 +486,23 @@ export default function StudentAdvisory() {
 		}
 	};
 
+	const onChange_sendEmail = (e, ID) => {
+		let checked = e.target.checked;
+		if (checked) {
+			listCustomer.push(ID);
+		} else {
+			let index = listCustomer.indexOf(ID);
+			listCustomer.splice(index, 1);
+		}
+		setListCustomer([...listCustomer]);
+	};
+
+	console.log('List Customer: ', listCustomer);
+
+	const resetListCustomer = () => {
+		setListCustomer([]);
+	};
+
 	// ============== USE EFFECT - FETCH DATA ===================
 	useEffect(() => {
 		getDataSource();
@@ -512,12 +532,12 @@ export default function StudentAdvisory() {
 			dataIndex: 'CustomerName',
 			...FilterColumn('CustomerName', onSearch, handleReset, 'text'),
 			fixed: 'left',
-			render: (a) => <p className="font-weight-blue">{a}</p>
+			render: (a) => <p className="font-weight-primary">{a}</p>
 		},
 		// {
 		// 	title: 'Tên tiếng Trung',
 		// 	dataIndex: 'ChineseName',
-		// 	render: (a) => <p className="font-weight-blue">{a}</p>
+		// 	render: (a) => <p className="font-weight-primary">{a}</p>
 		// },
 		// {
 		//   title: "Tỉnh/TP",
@@ -545,7 +565,8 @@ export default function StudentAdvisory() {
 			width: 200,
 			title: 'Trạng thái',
 			dataIndex: 'CustomerConsultationStatusName',
-			render: (text) => <p className="font-weight-black">{text}</p>
+
+			render: (text, data) => <p className="font-weight-black">{text}</p>
 			// filters: [
 			// 	{
 			// 		text: 'Chưa tư vấn',
@@ -600,6 +621,13 @@ export default function StudentAdvisory() {
 								</button>
 							</Popconfirm>
 						)} */}
+						{showCheckbox && (
+							<Checkbox
+								className="mr-1"
+								checked={listCustomer.includes(data.ID) ? true : false}
+								onChange={(value) => onChange_sendEmail(value, data.ID)}
+							></Checkbox>
+						)}
 						<StudentAdviseForm
 							getIndex={() => setIndexRow(index)}
 							index={index}
@@ -609,16 +637,19 @@ export default function StudentAdvisory() {
 							isLoading={isLoading}
 							_onSubmit={(data: any) => _onSubmit(data)}
 						/>
+
 						<StudentAdvisoryMail
 							loadingOutside={isLoading}
 							dataSource={dataSource}
 							onFetchData={() => setTodoApi({ ...todoApi })}
 							dataRow={data}
+							listCustomer={listCustomer}
 						/>
 						{text == 2 && (
 							<Link
 								href={{
-									pathname: '/customer/service/service-info-student/'
+									pathname: '/customer/service/service-info-student/',
+									query: { customerID: data.ID }
 								}}
 							>
 								<Tooltip title="Hẹn test">
@@ -644,10 +675,10 @@ export default function StudentAdvisory() {
 			TitlePage="Danh sách khách hàng"
 			TitleCard={
 				<div className="d-flex align-items-center justify-content-end">
-					<button className="btn btn-secondary mr-2" onClick={showGroupCustomer}>
+					{/* <button className="btn btn-secondary mr-2" onClick={showGroupCustomer}>
 						{!showGroup ? 'Nhóm khách hàng' : 'Hiện tất cả'}
-					</button>
-					{!showGroup ? (
+					</button> */}
+					{/* {!showGroup ? (
 						<StudentAdviseForm
 							listData={checkEmptyData && listDataForm}
 							isLoading={isLoading}
@@ -659,7 +690,21 @@ export default function StudentAdvisory() {
 							dataSource={dataSource}
 							onFetchData={() => setTodoApi({ ...todoApi })}
 						/>
-					)}
+					)} */}
+
+					<StudentAdvisoryMail
+						showCheckBox={() => setShowCheckbox(!showCheckbox)}
+						loadingOutside={isLoading}
+						dataSource={dataSource}
+						onFetchData={() => setTodoApi({ ...todoApi })}
+						listCustomer={listCustomer}
+						resetListCustomer={() => resetListCustomer()}
+					/>
+					<StudentAdviseForm
+						listData={checkEmptyData && listDataForm}
+						isLoading={isLoading}
+						_onSubmit={(data: any) => _onSubmit(data)}
+					/>
 				</div>
 			}
 			dataSource={dataSource}

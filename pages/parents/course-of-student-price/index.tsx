@@ -52,14 +52,14 @@ const CourseOfStudentPrice = () => {
 		{
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>,
+			render: (price, record) => <p className="font-weight-primary">{price}</p>,
 			width: '15%'
 		},
 		{
 			title: 'Trung tâm',
 			dataIndex: 'PayBranchName',
 			width: '10%',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Trả trước',
@@ -183,7 +183,7 @@ const CourseOfStudentPrice = () => {
 		{
 			title: 'Loại lớp học',
 			dataIndex: 'TypeCourseName',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		}
 	];
 

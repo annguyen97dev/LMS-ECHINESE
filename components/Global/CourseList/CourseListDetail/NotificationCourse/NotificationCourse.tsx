@@ -1,38 +1,37 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {notificationCourseApi} from '~/apiBase/course-detail/notification-course';
+import React, { useEffect, useState } from 'react';
+import { notificationCourseApi } from '~/apiBase/course-detail/notification-course';
 import PowerTable from '~/components/PowerTable';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 import NotificationCourseForm from './NotificationCourseForm';
 
 NotificationCourse.propTypes = {
-	courseID: PropTypes.number,
+	courseID: PropTypes.number
 };
 NotificationCourse.defaultProps = {
-	courseID: 0,
+	courseID: 0
 };
 function NotificationCourse(props) {
-	const {courseID} = props;
-	const {showNoti} = useWrap();
-	const [notificationList, setNotificationList] =
-		useState<INotificationCourse[]>();
+	const { courseID } = props;
+	const { showNoti } = useWrap();
+	const [notificationList, setNotificationList] = useState<INotificationCourse[]>();
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const listFieldInit = {
 		pageSize: 10,
 		pageIndex: 1,
-		CourseID: courseID,
+		CourseID: courseID
 	};
 	const [filters, setFilters] = useState(listFieldInit);
 	// PAGINATION
 	const getPagination = (pageIndex: number) => {
 		setFilters({
 			...filters,
-			pageIndex,
+			pageIndex
 		});
 	};
 
@@ -40,7 +39,7 @@ function NotificationCourse(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await notificationCourseApi.getAll(filters);
 			if (res.status === 200) {
@@ -52,7 +51,7 @@ function NotificationCourse(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -61,24 +60,21 @@ function NotificationCourse(props) {
 		getDataNotificationCourse();
 	}, [filters]);
 
-	const onSubmit = async (data: {
-		NotificationTitle: string;
-		NotificationContent: string;
-	}) => {
+	const onSubmit = async (data: { NotificationTitle: string; NotificationContent: string }) => {
 		try {
 			setIsLoading({
 				type: 'ADD_NOTI',
-				status: true,
+				status: true
 			});
 			const newData = {
 				...data,
-				CourseID: courseID,
+				CourseID: courseID
 			};
 			const res = await notificationCourseApi.add(newData);
 			if (res.status === 200) {
 				showNoti('success', res.data.message);
 				setFilters({
-					...listFieldInit,
+					...listFieldInit
 				});
 				return true;
 			}
@@ -87,7 +83,7 @@ function NotificationCourse(props) {
 		} finally {
 			setIsLoading({
 				type: 'ADD_NOTI',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -96,21 +92,21 @@ function NotificationCourse(props) {
 		{
 			title: 'Thông báo',
 			dataIndex: 'NotificationTitle',
-			render: (text) => <p className="font-weight-blue">{text}</p>,
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Nội dung',
-			dataIndex: 'NotificationContent',
+			dataIndex: 'NotificationContent'
 		},
 		{
 			title: 'Người tạo',
-			dataIndex: 'CreatedBy',
+			dataIndex: 'CreatedBy'
 		},
 		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
-			render: (CreatedOn) => moment(CreatedOn).format('DD/MM/YYYY'),
-		},
+			render: (CreatedOn) => moment(CreatedOn).format('DD/MM/YYYY')
+		}
 	];
 
 	return (
@@ -120,9 +116,7 @@ function NotificationCourse(props) {
 			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
-			TitleCard={
-				<NotificationCourseForm isLoading={isLoading} handleSubmit={onSubmit} />
-			}
+			TitleCard={<NotificationCourseForm isLoading={isLoading} handleSubmit={onSubmit} />}
 			dataSource={notificationList}
 			columns={columns}
 			Extra="Thông báo khóa học"

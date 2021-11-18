@@ -173,7 +173,7 @@ export default function Header({
 	return (
 		<header className={`app-header ${openMenuMobile ? 'mobile' : ''}`}>
 			<div className={`app-header-logo ${!isOpen ? 'close-app' : countOpen > 0 ? 'open' : 'open-no-ani'}`}>
-				<Link href="/dashboard">
+				<Link href="/">
 					{/* <a style={{ display: !isOpen ? "none" : "block" }}>Mona Media</a> */}
 					<a href="#">
 						{' '}

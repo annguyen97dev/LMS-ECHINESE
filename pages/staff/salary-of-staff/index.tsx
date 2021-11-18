@@ -192,7 +192,7 @@ const SalaryStaffReview = () => {
 			title: 'Nhân viên',
 			width: 150,
 			dataIndex: 'StaffName',
-			render: (price, record: IStaffSalary) => <p className="font-weight-blue">{price}</p>,
+			render: (price, record: IStaffSalary) => <p className="font-weight-primary">{price}</p>,
 			...FilterColumn('StaffName', onSearch, handleReset, 'text')
 		},
 		{
@@ -352,7 +352,7 @@ const SalaryStaffReview = () => {
 
 	const renderTitle = () => {
 		return (
-			<p className="font-weight-blue">
+			<p className="font-weight-primary">
 				Xác nhận tình lương từ 01-{params.Month}-{params.Year} đến {daysInMonth(params.Month, params.Year)}-{params.Month}-
 				{params.Year} ?
 			</p>

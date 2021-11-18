@@ -1,83 +1,100 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { Tabs, Drawer } from 'antd';
-
-import { CircularProgressbar } from 'react-circular-progressbar';
-import { CircularProgressbarWithChildren } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import HeaderVideo from '~/components/VideoLearning/header';
 import VideoTabs from '~/components/VideoLearning/tabs';
 import VideoList from '~/components/VideoLearning/list-video';
 import { VideoCourseOfStudent, VideoCourseInteraction, VideoCourses } from '~/apiBase/video-learning';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
+import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
+import { usePageVisibility } from '~/utils/functions';
 
-const { TabPane } = Tabs;
+const useUnload = (fn) => {
+	const cb = useRef(fn); // init with fn, so that type checkers won't assume that current might be undefined
 
-const fakeData = {
-	name: 'ReactJS cho người mới bắt đầu 2020',
-	description:
-		'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure',
-	videos: [
-		{
-			id: '01',
-			name: 'ReactJS cho người mới bắt đầu 2020',
-			time: '20 phút',
-			listVideo: [
-				{
-					id: '01',
-					link: 'https://www.youtube.com/embed/ab9IxJ2UHm8',
-					name: 'ReactJS cho người mới bắt đầu 2020',
-					time: '10 phút'
-				},
-				{
-					id: '02',
-					link: 'https://www.youtube.com/embed/JniKUskqKxI',
-					name: 'ReactJS cho người mới bắt đầu 2020',
-					time: '10 phút'
-				}
-			]
-		}
-	]
+	useEffect(() => {
+		cb.current = fn;
+	}, [fn]);
+
+	useEffect(() => {
+		const onUnload = (...args) => cb.current?.(...args);
+
+		window.addEventListener('beforeunload', onUnload);
+
+		return () => window.removeEventListener('beforeunload', onUnload);
+	}, []);
+};
+
+const useBeforeUnload = (fn) => {
+	window.onbeforeunload = function () {
+		fn();
+		return 'Bạn thật sự muốn đóng video đang xem?';
+	};
 };
 
 const VideoLearning = () => {
 	const router = useRouter();
 	const ref = useRef<HTMLDivElement>(null);
-
 	const { titlePage, userInformation } = useWrap();
 
 	const videoStudy = useRef(null);
 	const boxVideo = useRef(null);
-
 	const [currentVideo, setCurrentVideo] = useState('');
-
 	const [data, setData] = useState([]);
-
-	// const [valueNote, setValueNote] = useState("");
 	const [render, setRender] = useState('');
-
-	const [eWidth, setWidth] = useState('100%');
-
-	const [size, setSize] = useState([0, 0]);
-
 	const [videos, setVideos] = useState([]);
-
 	const [dataQA, setDataQA] = useState([]);
-
-	const [currentLession, setCurrentLession] = useState({ ID: '' });
+	const [dataNotification, setDataNotification] = useState([]);
+	const [currentLession, setCurrentLession] = useState({ ID: '', Title: '', Description: '', Type: 0, SectionID: '', Second: 0 });
 
 	useEffect(() => {
 		if (router.query.course !== undefined) {
 			getVideos();
-			// getListQA(0); // jqhư eghjq danm damns dbnahjsd hjáhhjd ahgyqưgeh qưbanbsdna sgh
-			// console.log("userInformation: ", userInformation.UserAccountID);
 		}
 	}, []);
 
-	useEffect(() => {
-		setWidth(ref.current.offsetWidth.toString());
-	}, [size]);
+	// RELOAD TAB
+	useUnload((e) => {
+		updateTime();
+		e.preventDefault();
+		e.returnValue = '';
+	});
+
+	// CLOSE WINDOW OR TAB
+	if (typeof window !== 'undefined') {
+		useBeforeUnload(() => updateTime());
+	}
+
+	console.log('render: ');
+
+	// HANDLE VISIT PAGE
+	const handleVisibilityChange = (visible) => {
+		if (videoStudy.current !== null) {
+			if (videoStudy.current.currentTime !== 0) {
+				updateTime();
+			}
+		}
+	};
+
+	usePageVisibility(handleVisibilityChange);
+
+	const updateTime = async () => {
+		if (videoStudy.current !== null) {
+			if (videoStudy.current.currentTime !== 0 && currentLession.ID !== '') {
+				let temp = {
+					VideoCourseOfStudentID: router.query.course,
+					SectionID: currentLession.SectionID,
+					LessonID: currentLession.ID,
+					IsSeen: videoStudy.current.duration / 2 < videoStudy.current.currentTime ? 'True' : 'False', // True - False: đánh dấu đã xem video
+					TimeWatched: videoStudy.current.currentTime // (giây) Thời gian đã xem video
+				};
+				try {
+					const res = await VideoCourseOfStudent.UpdateSeenAndTimeWatchedVideo(temp);
+				} catch (error) {}
+			}
+		}
+	};
 
 	//GET DATA
 	const getVideos = async () => {
@@ -99,18 +116,12 @@ const VideoLearning = () => {
 			Title: '',
 			sort: 0
 		};
-
 		try {
 			const res = await VideoCourseInteraction.ListQA(temp);
 			res.status == 200 && res.data.data !== undefined ? setDataQA(res.data.data) : setDataQA([]);
-		} catch (err) {
-			// showNoti("danger", err);
-		}
+		} catch (err) {}
+		getListNotification(router.query.course);
 	};
-
-	useEffect(() => {
-		console.log('data: ', data);
-	}, [data]);
 
 	//GET DATA
 	const getListNote = async (LessonDetailID) => {
@@ -122,20 +133,25 @@ const VideoLearning = () => {
 			searchCreateby: userInformation.UserAccountID,
 			sort: 0
 		};
-
 		try {
 			const res = await VideoCourseInteraction.ListNote(temp);
-
 			res.status == 200 && res.data.data !== undefined ? setData(res.data.data) : setData([]);
-
 			setRender(res + '');
-		} catch (err) {
-			// showNoti("danger", err);
-		}
-
+		} catch (err) {}
 		getListQA(LessonDetailID);
 	};
 
+	//GET DATA NOTIFICATION
+	const getListNotification = async (videocourseID) => {
+		try {
+			const res = await VideoCourseInteraction.ListListAnnouncement(videocourseID);
+			res.status == 200 && res.data.data !== undefined ? setDataNotification(res.data.data) : setDataNotification([]);
+			res.status == 204 && setDataNotification([]);
+			setRender(res + '');
+		} catch (err) {}
+	};
+
+	// CALL API CREATE NEW QUESTION
 	const addNewQuestion = async (comment, title) => {
 		try {
 			let temp = {
@@ -145,32 +161,40 @@ const VideoLearning = () => {
 				TextContent: comment,
 				Type: 1
 			};
-
 			await VideoCourseInteraction.add(temp);
 			getListQA(currentLession.ID);
 		} catch (error) {}
 	};
 
+	// CALL API CREATE NEW QUESTION
+	const addNewNotification = async (param) => {
+		try {
+			let curTime = videoStudy.current.currentTime;
+			let temp = {
+				VideoCourseID: router.query.course,
+				LessonDetailID: currentLession.ID,
+				Title: param.title,
+				TextContent: param.newContent,
+				TimeNote: curTime,
+				Type: 3
+			};
+			await VideoCourseInteraction.add(temp);
+			getListNotification(router.query.course);
+		} catch (error) {}
+	};
+
+	// DRAWER VIDEO LIST STATE
 	const [visible, setVisible] = useState(false);
 
+	// OPEN DRAWER VIDEO LIST
 	const showDrawer = () => {
 		setVisible(!visible);
 	};
 
+	// CLOSE DRAWER VIDEO LIST
 	const onClose = () => {
 		setVisible(false);
 	};
-
-	useLayoutEffect(() => {
-		setCurrentVideo('linkVideo');
-
-		function updateSize() {
-			setSize([window.innerWidth, window.innerHeight]);
-		}
-		window.addEventListener('resize', updateSize);
-		updateSize();
-		return () => window.removeEventListener('resize', updateSize);
-	}, []);
 
 	const formatTime = (seconds) => {
 		let minutes: any = Math.floor(seconds / 60);
@@ -180,38 +204,43 @@ const VideoLearning = () => {
 		return minutes + ':' + seconds;
 	};
 
-	// --- Remove item ---
-	const removeItem = (id) => {
-		data.forEach((item, index, arr) => {
-			if (item.id === id) {
-				arr.splice(index, 1);
-			}
-		});
-		let dataTest = data.filter((item) => {
-			return item.id != id;
-		});
-
-		setData(dataTest);
-		console.log('Data after remove: ', dataTest);
+	// DELETE NOTE
+	const removeItem = async (id) => {
+		let temp = {
+			ID: id,
+			Type: 3
+		};
+		try {
+			await VideoNoteApi.update(temp);
+		} catch (error) {}
+		getListNote(currentLession.ID);
 	};
 
-	// --- HANDLE FIXED ---
-	const handleFixed = (id, note) => {
-		data.forEach((item, index, arr) => {
-			if (item.id === id) {
-				item.note = note;
-			}
-		});
-		let dataTest = data.map((item) => {
-			if (item.id === id) {
-				item.note = note;
-			}
-			return item;
-		});
+	// POST DATA EDIT NOTE
+	const handleFixed = async (id, title, note) => {
+		let temp = {
+			ID: id,
+			Title: title,
+			TextContent: note
+		};
+		try {
+			await VideoNoteApi.update(temp);
+		} catch (error) {}
+		getListNote(currentLession.ID);
+	};
 
-		setData(dataTest);
-		// setShowForm(false);
-		console.log('DATA after fixed: ', dataTest);
+	// HANDLE EDIT QUESTION
+	const handleEditQuestion = async (id, title, content) => {
+		let temp = {
+			ID: id,
+			Title: title,
+			TextContent: content,
+			Type: 1
+		};
+		try {
+			await VideoNoteApi.update(temp);
+		} catch (error) {}
+		getListNote(currentLession.ID);
 	};
 
 	// --- Calculator position of line note  inside video ---
@@ -225,12 +254,10 @@ const VideoLearning = () => {
 		return position;
 	};
 
-	// --- Handle Submit ---
+	// CREATE NEW NOTE
 	const handleSubmit = async (param) => {
 		try {
 			let curTime = videoStudy.current.currentTime;
-			let position = calPosition(curTime);
-
 			let temp = {
 				VideoCourseID: router.query.course,
 				LessonDetailID: currentLession.ID,
@@ -239,7 +266,6 @@ const VideoLearning = () => {
 				TimeNote: curTime,
 				Type: 2
 			};
-
 			await VideoCourseInteraction.add(temp);
 			getListNote(currentLession.ID);
 		} catch (error) {}
@@ -259,30 +285,34 @@ const VideoLearning = () => {
 					<div className="wrap-video pl-3">
 						<div ref={ref} className="wrap-video__video">
 							<div className="box-video" ref={boxVideo}>
-								<video ref={videoStudy} controls>
-									<track default kind="captions" />
-									{/* VIDIEO LINK IN SRC */}
-									<source src="/static/video/video.mp4" type="video/mp4" />
-									Your browser does not support HTML video.
-								</video>
+								{currentLession.Type === 0 ? (
+									<video src={currentVideo} ref={videoStudy} controls>
+										<track default kind="captions" />
+									</video>
+								) : (
+									<iframe
+										src="http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html"
+										title="cc"
+									></iframe>
+								)}
 
-								{/* {data.length > 0
-                  ? data.map((item) => (
-                      <a
-                        href="/#"
-                        key={item.id}
-                        style={{ left: item.position + "%" }}
-                        className="marked"
-                        onClick={moveToCurTime}
-                      >
-                        <div data-time={item.curTime}></div>
-                      </a>
-                    ))
-                  : ""} */}
+								{data.length > 0 && currentLession.Type === 0
+									? data.map((item) => (
+											<a
+												href="/#"
+												key={item.ID}
+												style={{ left: item.TimeNote + '%' }}
+												className="marked"
+												// onClick={moveToCurTime}
+											>
+												<div data-time={item.TimeNote}></div>
+											</a>
+									  ))
+									: ''}
 							</div>
 
 							<VideoTabs
-								params={fakeData}
+								params={currentLession}
 								dataNote={data}
 								dataQA={dataQA}
 								onCreateNew={(p) => {
@@ -292,11 +322,10 @@ const VideoLearning = () => {
 									videoStudy.current.currentTime = p.TimeNote;
 								}}
 								onDelete={(p) => {
-									removeItem(p.id);
+									removeItem(p.ID);
 								}}
 								onEdit={(p) => {
-									console.log(p);
-									handleFixed(p.item.id, p.content);
+									handleFixed(p.item.ID, p.title, p.content);
 								}}
 								onPauseVideo={() => {
 									handlePause();
@@ -304,6 +333,13 @@ const VideoLearning = () => {
 								videoRef={videoStudy}
 								addNewQuest={(p) => {
 									addNewQuestion(p.comment, p.title);
+								}}
+								onEditQuest={(e) => {
+									handleEditQuestion(e.item.ID, e.title, e.content);
+								}}
+								dataNotification={dataNotification}
+								createNewNotification={(e) => {
+									addNewNotification(e);
 								}}
 							/>
 						</div>
@@ -314,14 +350,15 @@ const VideoLearning = () => {
 					<div className="wrap-menu">
 						<VideoList
 							onPress={(p) => {
-								console.log(p);
+								console.log('VideoList - onPress: ', p);
 
 								setCurrentLession(p);
-
-								// getListQA(p.ID);
 								getListNote(p.ID);
 
-								setCurrentVideo(p.LinkVideo);
+								const temp =
+									'http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html';
+
+								p.Type === 0 ? setCurrentVideo(p.LinkVideo) : setCurrentVideo(temp);
 							}}
 							videos={videos}
 						/>
@@ -344,7 +381,9 @@ const VideoLearning = () => {
 				<div className="wrap-menu-drawer">
 					<VideoList
 						onPress={(p) => {
-							setCurrentVideo(p);
+							setCurrentLession(p);
+							getListNote(p.ID);
+							setCurrentVideo(p.LinkVideo);
 						}}
 						videos={videos}
 					/>

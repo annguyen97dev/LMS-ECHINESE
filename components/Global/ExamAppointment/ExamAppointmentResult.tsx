@@ -46,8 +46,6 @@ const ExamAppointmentResult = () => {
 	const [infoTest, setInfoTest] = useState(null);
 	const [loadingInfoTest, setLoadingInfoTest] = useState(false);
 
-	console.log('Info Test: ', infoTest);
-
 	const getInfoTest = async () => {
 		setLoadingInfoTest(true);
 		try {

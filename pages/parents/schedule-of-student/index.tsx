@@ -79,13 +79,13 @@ const ScheduleOfStudent = () => {
 			title: 'Zoom ID',
 			dataIndex: 'ZoomRoomID',
 			width: 150,
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Mật khẩu Zoom',
 			dataIndex: 'ZoomRoomPass',
 			width: 150,
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		}
 	];
 

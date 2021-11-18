@@ -32,6 +32,12 @@ const RenderItem: FC<props> = ({ item, onPress, data }) => {
 	const [subVideos, setSubVideos] = useState([]);
 	const [reRender, setRender] = useState('');
 
+	useEffect(() => {
+		if (data.indexOf(item) === 0) {
+			handleClick();
+		}
+	}, [data]);
+
 	// CLICK ITEM TO SHOW SUBITEM
 	const handleClick = () => {
 		setShow(!isShow);
@@ -73,21 +79,23 @@ const RenderItem: FC<props> = ({ item, onPress, data }) => {
 					</span>
 				</div>
 
-				<div>{isShow ? <i className="far fa-chevron-up" /> : <i className="far fa-chevron-down" />}</div>
+				<div className="mr-2">{isShow ? <i className="far fa-chevron-up" /> : <i className="far fa-chevron-down" />}</div>
 			</div>
 
 			{isShow && (
 				<List
 					itemLayout="horizontal"
 					dataSource={subVideos || []}
-					renderItem={(item) => (
+					renderItem={(i) => (
 						<RenderItemSub
 							onPress={(p) => {
 								setRender(p.ID);
 								onPress(p);
 							}}
 							data={data}
-							item={item}
+							item={i}
+							subData={subVideos}
+							section={item}
 						/>
 					)}
 				/>

@@ -1359,7 +1359,7 @@ hr {
 	}
 }
 
-.font-weight-blue {
+.font-weight-primary {
 	font-weight: 500;
 	color: $primary-color;
 	margin-bottom: 0;
@@ -2103,7 +2103,7 @@ hr {
 }
 .textarea-editor {
 	.note-editable {
-		height: 270px;
+		height: 270px !important;
 	}
 }
 
@@ -2159,4 +2159,26 @@ hr {
 }
 .link-upload {
 	font-style: italic;
+}
+.btn-nostyle {
+	border: none;
+	background: none;
+}
+.style-link {
+	color: #447aac;
+}
+.btn-have-icon {
+}
+.limit-text {
+	display: inline;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+.info-profile-left {
+	.box-icon {
+		line-height: 0;
+	}
 }

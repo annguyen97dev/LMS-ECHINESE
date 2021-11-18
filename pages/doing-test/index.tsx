@@ -150,7 +150,7 @@ const DoingTest = () => {
 	const [infoExam, setInfoExam] = useState<IExamTopic>(null);
 	const router = useRouter();
 	const { examID: examID } = router.query;
-	const { packageDetailID: packageDetailID, type: type } = router.query;
+	const { packageDetailID: packageDetailID, type: type, CurriculumDetailID: CurriculumDetailID } = router.query;
 
 	// --- GET INFO EXAM ---
 	const getInfoExam = async () => {
@@ -201,7 +201,16 @@ const DoingTest = () => {
 	return (
 		<>
 			<DoingTestProvider>
-				{showTest && <MainTest packageDetailID={packageDetailID} infoExam={infoExam} examID={examID} isDone={false} type={type} />}
+				{showTest && (
+					<MainTest
+						packageDetailID={packageDetailID}
+						infoExam={infoExam}
+						examID={examID}
+						isDone={false}
+						type={type}
+						CurriculumDetailID={CurriculumDetailID}
+					/>
+				)}
 				<Modal title="Chú ý!" visible={isModalVisible} okText="Đồng ý" cancelText="Đóng" onOk={handleOk} onCancel={handleCancel}>
 					<p style={{ fontWeight: 500 }}>Bạn chưa chọn đề thi. Chuyển đến trang bộ đề?</p>
 				</Modal>

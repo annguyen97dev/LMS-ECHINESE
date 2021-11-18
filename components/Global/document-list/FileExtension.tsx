@@ -19,8 +19,8 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 
 	return (
 		<div className="card-file-box">
-			<div className="col-12 d-flex justify-content-between align-items-center">
-				<div className="pb-3 font-weight-black">Tài liệu</div>
+			<div className="col-12 d-flex justify-content-end align-items-center">
+				{/* <div className="pb-3 font-weight-black">Tài liệu</div> */}
 				<div className="d-flex">
 					<Search placeholder="Tìm giáo trình" onSearch={onSearch} size="large" style={{ width: 200 }} className="mr-1 " />
 					<DocListModal

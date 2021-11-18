@@ -24,6 +24,7 @@ type IScheduleZoom = {
 	IsOff: true;
 	IsExam: boolean;
 	ExamTopicID: number;
+	CurriculumsDetailID: number;
 };
 
 type IScheduleZoomDetail = {

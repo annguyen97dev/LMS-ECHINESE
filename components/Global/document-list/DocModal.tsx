@@ -67,7 +67,7 @@ const DocModal = ({ type, cateID, onFetchData, CategoryName }) => {
 					}}
 					className="btn btn-warning"
 				>
-					Thêm danh mục
+					Thêm mới
 				</button>
 			)}
 			{type == 'EDIT_DOC' && (
@@ -135,8 +135,8 @@ const DocModal = ({ type, cateID, onFetchData, CategoryName }) => {
 								</div>
 							))}
 
-						<div className="col-12 mt-3">
-							<button type="submit" className="btn btn-primary w-100">
+						<div className="col-12 mt-3 text-center">
+							<button type="submit" className="btn btn-primary">
 								{type == 'DELETE_DOC' ? 'Xóa' : 'Lưu'}
 								{submitLoading.type == 'UPLOADING' && submitLoading.loading && <Spin className="loading-base" />}
 							</button>

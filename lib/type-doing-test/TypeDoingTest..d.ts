@@ -18,6 +18,27 @@ type ITestFirst = {
 	}>;
 };
 
+type ITestCheck = {
+	StudentID: number;
+	CourseID: number;
+	CurriculumDetailID: number;
+	CourseExamresultDetailInfoList: Array<{
+		ExamTopicDetailID: number;
+		ExerciseGroupID: number;
+		Level: number;
+		Type: number;
+		SkillID: number;
+		CourseExamExerciseStudentInfoList: Array<{
+			ExerciseID: number;
+			CourseExamExerciseAnswerStudentList: Array<{
+				AnswerID: number;
+				AnswerContent: string;
+				FileAudio: string;
+			}>;
+		}>;
+	}>;
+};
+
 type ITestExamination = {
 	StudentID: number;
 	SetPackageDetailID: number;

@@ -54,13 +54,13 @@ const CourseOfStudent = () => {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			width: '15%',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Trung tâm',
 			width: '10%',
 			dataIndex: 'BranchName',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Môn học',

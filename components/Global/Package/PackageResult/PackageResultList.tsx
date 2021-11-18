@@ -1,11 +1,9 @@
 import { Switch, Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Eye, Tool } from 'react-feather';
 import { packageExaminerApi, studentApi } from '~/apiBase';
 import { packageDetailApi } from '~/apiBase/package/package-detail';
 import { packageResultApi } from '~/apiBase/package/package-result';
-import { courseExamApi } from '~/apiBase/package/course-exam';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
@@ -15,10 +13,12 @@ import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResul
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-import { teacherApi } from '~/apiBase';
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import NestedTable from '~/components/Elements/NestedTable';
+import PackageResultPoint from './PackageResultPoint';
 
-const CourseExam = () => {
+const PackageResultList = (props) => {
+	const { studentID } = props;
 	const [dataTeacher, setDataTeacher] = useState([]);
 
 	// Get list teacher
@@ -57,13 +57,6 @@ const CourseExam = () => {
 	};
 	const columns = [
 		{
-			title: 'Học viên',
-			dataIndex: 'StudentName',
-			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-blue">{text}</p>
-		},
-
-		{
 			title: 'Đề thi',
 			dataIndex: 'ExamTopicName',
 			render: (text, data) => (
@@ -80,6 +73,11 @@ const CourseExam = () => {
 			)
 		},
 		{
+			title: 'Tổng điểm',
+			dataIndex: 'PointTotal',
+			render: (point, data) => <PackageResultPoint infoID={data.ID} point={point} detailID={data.ID} />
+		},
+		{
 			title: 'Level',
 			dataIndex: 'SetPackageLevel',
 			render: (text) => <p className="font-weight-black">{text}</p>
@@ -92,11 +90,22 @@ const CourseExam = () => {
 		{
 			title: 'Giáo viên chấm bài',
 			dataIndex: 'TeacherName',
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Trạng thái chấm bài',
 			dataIndex: 'isDone',
+			filters: [
+				{
+					text: 'Đã chấm xong',
+					value: true
+				},
+				{
+					text: 'Chưa chấm xong',
+					value: false
+				}
+			],
+			onFilter: (value, record) => record.isDone === value,
 			render: (type) => (
 				<Fragment>
 					{type == true && <span className="tag green">Đã chấm xong</span>}
@@ -105,6 +114,7 @@ const CourseExam = () => {
 			)
 		},
 		{
+			width: 150,
 			title: 'Yêu cầu chấm bài',
 			dataIndex: 'isFixPaid',
 			align: 'center',
@@ -271,7 +281,7 @@ const CourseExam = () => {
 		sortType: null,
 		fromDate: null,
 		toDate: null,
-		StudentID: null,
+		StudentID: studentID,
 		SetPackageDetailID: null,
 		isDone: null,
 		StudentName: null,
@@ -335,6 +345,12 @@ const CourseExam = () => {
 		}
 	};
 
+	useEffect(() => {
+		getDataStudent();
+		getDataPackageDetail();
+		getListTeacher();
+	}, []);
+
 	const getPagination = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
 		setParams({
@@ -349,14 +365,14 @@ const CourseExam = () => {
 		});
 	};
 
-	const getDataSetCourseExam = (page: any) => {
+	const getDataSetPackageResult = (page: any) => {
 		setIsLoading({
 			type: 'GET_ALL',
 			status: true
 		});
 		(async () => {
 			try {
-				let res = await courseExamApi.getAll({ ...params, pageIndex: page });
+				let res = await packageResultApi.getAll({ ...params, pageIndex: page });
 				//@ts-ignore
 				res.status == 200 && setPackageSetResult(res.data.data);
 				if (res.status == 204) {
@@ -377,13 +393,7 @@ const CourseExam = () => {
 	};
 
 	useEffect(() => {
-		getDataStudent();
-		getDataPackageDetail();
-		getListTeacher();
-	}, []);
-
-	useEffect(() => {
-		getDataSetCourseExam(currentPage);
+		getDataSetPackageResult(currentPage);
 	}, [params]);
 
 	const expandedRowRender = (data, index) => {
@@ -395,7 +405,7 @@ const CourseExam = () => {
 	};
 
 	return (
-		<ExpandTable
+		<NestedTable
 			currentPage={currentPage}
 			loading={isLoading}
 			totalPage={totalPage && totalPage}
@@ -409,7 +419,7 @@ const CourseExam = () => {
 					<PackageResultUpdateTeacher
 						reloadData={(firstPage) => {
 							setCurrentPage(1);
-							getDataSetCourseExam(firstPage);
+							getDataSetPackageResult(firstPage);
 						}}
 					/>
 				</>
@@ -426,9 +436,9 @@ const CourseExam = () => {
 				</div>
 			}
 			handleExpand={(data) => setItemDetail(data)}
-			expandable={{ expandedRowRender }}
+			// expandable={{ expandedRowRender }}
 		/>
 	);
 };
-CourseExam.layout = LayoutBase;
-export default CourseExam;
+PackageResultList.layout = LayoutBase;
+export default PackageResultList;

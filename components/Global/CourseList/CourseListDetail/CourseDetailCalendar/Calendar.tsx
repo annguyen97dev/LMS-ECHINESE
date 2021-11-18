@@ -7,6 +7,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import CloseZoomRoom from '~/components/Global/ManageZoom/ZoomRoom/CloseZoomRoom';
 import { useWrap } from '~/context/wrap';
+import CostList from '~/pages/staff/cost-list';
 import CourseDetailUploadFile from './CourseDetailUploadFile';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
@@ -82,8 +83,21 @@ function CDCalendar(props) {
 		handleStudyZoom(data);
 	};
 
-	const checkTypeButtonStudyZoom = (data: { idx: number; btnID: number; btnName: string; scheduleID: number }) => {
-		const { btnID, btnName } = data;
+	const moveToTest = (data) => {
+		router.push({
+			pathname: '/exam/exam-review',
+			query: {
+				examID: data.ExamTopicID,
+				packageDetailID: data.CourseID,
+				type: 'check', // Kiểm tra,
+				CurriculumDetailID: data.CurriculumsDetailID
+			}
+		});
+	};
+
+	const checkTypeButtonStudyZoom = (data: { idx: number; btnID: number; btnName: string; scheduleID: number; dataDetail: any }) => {
+		const { btnID, btnName, dataDetail } = data;
+
 		if (!btnID) return;
 		// HỌC VIÊN
 		if (userInformation?.RoleID === 3) {
@@ -106,7 +120,7 @@ function CDCalendar(props) {
 						size="middle"
 						className="mt-3 btn-success w-100"
 						onClick={() => {
-							console.log('Go to test page');
+							moveToTest(dataDetail);
 						}}
 					>
 						{btnName}
@@ -175,8 +189,11 @@ function CDCalendar(props) {
 			ButtonID: btnID,
 			ButtonName: btnName,
 			idx,
-			IsExam
+			IsExam,
+			CurriculumDetailID
 		} = event.resource;
+
+		const dataDetail = event.resource;
 		const content = (
 			<div className="course-dt-event-info">
 				<ul>
@@ -225,7 +242,8 @@ function CDCalendar(props) {
 								idx,
 								btnID,
 								btnName,
-								scheduleID: ID
+								scheduleID: ID,
+								dataDetail
 							})}
 						</li>
 					)}
@@ -267,8 +285,11 @@ function CDCalendar(props) {
 			ButtonID: btnID,
 			ButtonName: btnName,
 			idx,
-			IsExam
+			IsExam,
+			CurriculumsDetailID
 		} = event.resource;
+
+		const dataDetail = event.resource;
 		return (
 			<div className="course-dt-event">
 				<div className="time">Ca: {StudyTimeName}</div>
@@ -312,7 +333,8 @@ function CDCalendar(props) {
 									idx,
 									btnID,
 									btnName,
-									scheduleID: ID
+									scheduleID: ID,
+									dataDetail
 								})}
 							</li>
 						)}
@@ -322,6 +344,8 @@ function CDCalendar(props) {
 		);
 	};
 	const styleDay = ({ event }) => {
+		const dataDetail = event.resource;
+
 		const {
 			ID,
 			CourseID,
@@ -336,7 +360,8 @@ function CDCalendar(props) {
 			ButtonID: btnID,
 			ButtonName: btnName,
 			idx,
-			IsExam
+			IsExam,
+			CurriculumsDetailID
 		} = event.resource;
 		const content = (
 			<div className="course-dt-event-info">
@@ -386,7 +411,8 @@ function CDCalendar(props) {
 								idx,
 								btnID,
 								btnName,
-								scheduleID: ID
+								scheduleID: ID,
+								dataDetail
 							})}
 						</li>
 					)}

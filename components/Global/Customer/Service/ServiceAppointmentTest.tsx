@@ -14,7 +14,7 @@ import { useWrap } from '~/context/wrap';
 import TestCustomerPoint from '~/components/Global/Customer/Service/TestCustomerPoint';
 import ExamAppointmentPoint from '../../ExamAppointment/ExamAppointmentPoint';
 import { CloseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Modal } from 'antd';
+import { Modal, Tooltip } from 'antd';
 import Link from 'next/link';
 
 let pageIndex = 1;
@@ -469,7 +469,7 @@ export default function ServiceAppointmentTest(props) {
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
-		console.log('Todoapi: ', todoApi);
+
 		setTodoApi({
 			...todoApi,
 			// ...listFieldSearch,
@@ -520,8 +520,6 @@ export default function ServiceAppointmentTest(props) {
 		}
 	};
 
-	console.log('User ID là: ', userID);
-
 	const expandedRowRender = (record) => {
 		// return record.Note ? record.Note : "Không có ghi chú";
 		// return (
@@ -553,13 +551,13 @@ export default function ServiceAppointmentTest(props) {
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			fixed: 'left',
-			render: (a) => <p className="font-weight-blue">{a}</p>,
+			render: (a) => <p className="font-weight-primary">{a}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
-		// {
-		// 	title: 'Email',
-		// 	dataIndex: 'Email'
-		// },
+		{
+			title: 'Email',
+			dataIndex: 'Email'
+		},
 		{
 			title: 'SDT',
 			dataIndex: 'Mobile'
@@ -749,9 +747,11 @@ const CancelTest = (props) => {
 
 	return (
 		<>
-			<button className="btn btn-icon delete" onClick={showModal}>
-				<CloseOutlined />
-			</button>
+			<Tooltip title="Hủy lịch hẹn">
+				<button className="btn btn-icon delete" onClick={showModal}>
+					<CloseOutlined />
+				</button>
+			</Tooltip>
 			<Modal
 				title={
 					<button className="btn btn-icon delete">

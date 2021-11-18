@@ -488,7 +488,7 @@ export default function ServiceTestStudent(props) {
 		} else {
 			if (data.Status == 0) {
 				router.push({
-					pathname: '/doing-test/',
+					pathname: '/exam/exam-review',
 					query: {
 						examID: data.ExamTopicID,
 						packageDetailID: data.ID,
@@ -532,7 +532,7 @@ export default function ServiceTestStudent(props) {
 		// 	title: 'Học viên',
 		// 	dataIndex: 'FullNameUnicode',
 
-		// 	render: (a) => <p className="font-weight-blue">{a}</p>,
+		// 	render: (a) => <p className="font-weight-primary">{a}</p>,
 		// 	...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		// },
 
@@ -547,22 +547,22 @@ export default function ServiceTestStudent(props) {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: 150,
 			title: 'Trung tâm',
 			dataIndex: 'BranchName',
 
 			render: (a) => <p className="font-weight-black">{a}</p>
 		},
 		{
+			width: 150,
 			title: 'Đề test',
 			dataIndex: 'ExamTopicnName',
 
 			render: (text, data: any) =>
+				data.Status == 0 &&
 				data.ExamTopicID !== 0 && (
 					<Tooltip title="Làm đề test">
 						<a href="" className="font-weight-link d-flex align-items-center" onClick={(e) => moveToTest(e, data)}>
-							<button className="btn btn-icon edit mr-2">
-								<EditOutlined />
-							</button>
 							{text}
 						</a>
 					</Tooltip>
@@ -631,6 +631,16 @@ export default function ServiceTestStudent(props) {
 								</button>
 							</Tooltip>
 						</Link>
+					)}
+
+					{data.Status == 0 && data.ExamTopicID !== 0 && (
+						<Tooltip title="Làm đề test">
+							<button className="btn btn-icon edit mr-2">
+								<a href="" className="font-weight-link d-flex align-items-center" onClick={(e) => moveToTest(e, data)}>
+									<EditOutlined />
+								</a>
+							</button>
+						</Tooltip>
 					)}
 				</>
 			)

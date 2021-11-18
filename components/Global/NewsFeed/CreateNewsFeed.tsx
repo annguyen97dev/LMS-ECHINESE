@@ -1,21 +1,21 @@
-import {FileImageFilled, GroupOutlined, TeamOutlined} from '@ant-design/icons';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Popover, Skeleton, Spin, Tooltip} from 'antd';
+import { FileImageFilled, GroupOutlined, TeamOutlined } from '@ant-design/icons';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Popover, Skeleton, Spin, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {SketchPicker} from 'react-color';
-import {Edit2, Image, Send, Users} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { SketchPicker } from 'react-color';
+import { Edit2, Image, Send, Users } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
 import UploadFileField from '~/components/FormControl/UploadFileField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 CreateNewsFeed.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	isUpdate: PropTypes.bool,
 	dataUser: PropTypes.object,
@@ -25,12 +25,12 @@ CreateNewsFeed.propTypes = {
 	backgroundList: PropTypes.arrayOf(
 		PropTypes.shape({
 			ID: PropTypes.number,
-			FileName: PropTypes.string,
+			FileName: PropTypes.string
 		})
 	),
 	optionList: PropTypes.shape({
 		teamOptionList: optionCommonPropTypes,
-		groupOptionList: optionCommonPropTypes,
+		groupOptionList: optionCommonPropTypes
 	}),
 	itemUpdate: PropTypes.shape({
 		ID: PropTypes.number,
@@ -55,25 +55,25 @@ CreateNewsFeed.propTypes = {
 				Type: PropTypes.number,
 				TypeName: PropTypes.string,
 				UID: PropTypes.string,
-				Thumnail: PropTypes.string,
+				Thumnail: PropTypes.string
 			})
 		),
 		NewsFeedBranch: PropTypes.arrayOf(
 			PropTypes.shape({
 				ID: PropTypes.number,
 				BranchID: PropTypes.number,
-				BranchName: PropTypes.string,
+				BranchName: PropTypes.string
 			})
-		),
+		)
 	}),
 	filtersData: PropTypes.shape({
 		name: PropTypes.string,
 		idTeam: PropTypes.number,
-		idGroup: PropTypes.number,
-	}),
+		idGroup: PropTypes.number
+	})
 };
 CreateNewsFeed.defaultProps = {
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	isUpdate: false,
 	dataUser: {},
 	handleUploadFile: null,
@@ -82,7 +82,7 @@ CreateNewsFeed.defaultProps = {
 	backgroundList: [],
 	optionList: {
 		teamOptionList: [],
-		groupOptionList: [],
+		groupOptionList: []
 	},
 	itemUpdate: {
 		ID: 0,
@@ -101,13 +101,13 @@ CreateNewsFeed.defaultProps = {
 		isLike: false,
 		LikeCount: 0,
 		NewsFeedFile: [],
-		NewsFeedBranch: [],
+		NewsFeedBranch: []
 	},
 	filtersData: {
 		name: '',
 		idTeam: 0,
-		idGroup: 0,
-	},
+		idGroup: 0
+	}
 };
 
 const colorList = [
@@ -125,7 +125,7 @@ const colorList = [
 	'#4A4A4A',
 	'#9B9B9B',
 	'#000',
-	'#FFF',
+	'#FFF'
 ];
 function CreateNewsFeed(props) {
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
@@ -144,10 +144,12 @@ function CreateNewsFeed(props) {
 		backgroundList,
 		fetchBackgroundNewsFeed,
 		optionList,
-		filtersData,
+		filtersData
 	} = props;
-	const {teamOptionList, groupOptionList} = optionList;
-	const {name, idTeam, idGroup} = filtersData;
+	const { teamOptionList, groupOptionList } = optionList;
+	const { name, idTeam, idGroup } = filtersData;
+
+	console.log('Option List: ', optionList);
 
 	const defaultValuesInit = {
 		Content: '',
@@ -155,25 +157,21 @@ function CreateNewsFeed(props) {
 		TypeFile: 0,
 		NewsFeedFile: null,
 		BranchList: undefined, //TEAM
-		GroupNewsFeedID: null, //GROUP
+		GroupNewsFeedID: null //GROUP
 	};
 
 	const schemaBase = yup.object().shape({
 		Content: yup.string().nullable(),
 		Color: yup.string().nullable(),
 		TypeFile: yup.number().nullable(),
-		NewsFeedFile: yup.array().nullable(),
+		NewsFeedFile: yup.array().nullable()
 	});
 	const checkSchema = () => {
 		if (chooseArea === 'team') {
 			return yup
 				.object()
 				.shape({
-					BranchList: yup
-						.array()
-						.min(1, 'Bạn phải chọn ít nhất 1 trung tâm')
-						.nullable()
-						.required('Bạn không được để trống'),
+					BranchList: yup.array().min(1, 'Bạn phải chọn ít nhất 1 trung tâm').nullable().required('Bạn không được để trống')
 				})
 				.concat(schemaBase);
 		}
@@ -181,11 +179,7 @@ function CreateNewsFeed(props) {
 			return yup
 				.object()
 				.shape({
-					GroupNewsFeedID: yup
-						.number()
-						.nullable()
-						.min(1, 'Bạn phải chọn ít nhất 1 nhóm')
-						.required('Bạn không được để trống'),
+					GroupNewsFeedID: yup.number().nullable().min(1, 'Bạn phải chọn ít nhất 1 nhóm').required('Bạn không được để trống')
 				})
 				.concat(schemaBase);
 		}
@@ -193,7 +187,7 @@ function CreateNewsFeed(props) {
 
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(checkSchema()),
+		resolver: yupResolver(checkSchema())
 	});
 
 	const showModal = () => {
@@ -261,10 +255,10 @@ function CreateNewsFeed(props) {
 			form.reset({
 				...defaultValuesInit,
 				BranchList: form.getValues('BranchList'),
-				GroupNewsFeedID: form.getValues('GroupNewsFeedID'),
+				GroupNewsFeedID: form.getValues('GroupNewsFeedID')
 			});
 		} else {
-			form.reset({...defaultValuesInit});
+			form.reset({ ...defaultValuesInit });
 			setChooseAreaFunc('team');
 		}
 	};
@@ -288,7 +282,7 @@ function CreateNewsFeed(props) {
 	useEffect(() => {
 		const newValues: any = {
 			BranchList: undefined, //TEAM
-			GroupNewsFeedID: null, //GROUP
+			GroupNewsFeedID: null //GROUP
 		};
 		// CREATE NEWS FEED IN TEAM OR GROUP DO NOT TO SELECT AGAIN
 		if (idTeam) {
@@ -313,8 +307,8 @@ function CreateNewsFeed(props) {
 					{
 						url: backgroundUrl,
 						NameFile: backgroundUrl,
-						UID: Math.floor(Math.random() * 130698),
-					},
+						UID: Math.floor(Math.random() * 130698)
+					}
 				]);
 			}
 		}
@@ -328,19 +322,12 @@ function CreateNewsFeed(props) {
 
 	useEffect(() => {
 		if (isUpdate && typeof itemUpdate === 'object' && itemUpdate !== null) {
-			const {
-				Content,
-				TypeFile,
-				Color,
-				NewsFeedFile,
-				GroupNewsFeedID,
-				NewsFeedBranch,
-			} = itemUpdate;
+			const { Content, TypeFile, Color, NewsFeedFile, GroupNewsFeedID, NewsFeedBranch } = itemUpdate;
 			const newValues: any = {
 				ID: itemUpdate.ID,
 				Content,
 				TypeFile,
-				Color,
+				Color
 			};
 			// COLOR
 			if (Color) {
@@ -348,29 +335,25 @@ function CreateNewsFeed(props) {
 			}
 			// BACKGROUND
 			if (TypeFile === 1) {
-				const {NameFile} = NewsFeedFile[0];
+				const { NameFile } = NewsFeedFile[0];
 				newValues.NewsFeedFile = [
 					{
 						...NewsFeedFile[0],
-						url: NameFile,
-					},
+						url: NameFile
+					}
 				];
 				onToggleBackgroundList();
 				setBackgroundUrl(NameFile);
 			}
 			// FILE LIST
-			if (
-				TypeFile === 2 &&
-				Array.isArray(NewsFeedFile) &&
-				NewsFeedFile.length
-			) {
-				const typeName = {2: 'image/*', 3: 'audio/*', 4: 'video/*'};
+			if (TypeFile === 2 && Array.isArray(NewsFeedFile) && NewsFeedFile.length) {
+				const typeName = { 2: 'image/*', 3: 'audio/*', 4: 'video/*' };
 				newValues.NewsFeedFile = NewsFeedFile.map((f) => ({
 					...f,
 					uid: f.UID,
 					url: f.NameFile,
 					name: f.NameFile ? f.NameFile.slice(f.NameFile.lastIndexOf('/')) : '',
-					type: typeName[f.Type],
+					type: typeName[f.Type]
 				}));
 				toggleUploadFile();
 			}
@@ -415,21 +398,13 @@ function CreateNewsFeed(props) {
 							</button>
 						</div>
 						<div className="item-func">
-							<button
-								type="button"
-								className={`btn ${idTeam ? 'disable' : 'btn-light'}`}
-								onClick={onToggleSelectBranch}
-							>
+							<button type="button" className={`btn ${idTeam ? 'disable' : 'btn-light'}`} onClick={onToggleSelectBranch}>
 								<Users color="#ffc107" />
 								<span>Chia sẻ nhóm</span>
 							</button>
 						</div>
 						<div className="item-func">
-							<button
-								type="button"
-								className="btn btn-light"
-								onClick={showModal}
-							>
+							<button type="button" className="btn btn-light" onClick={showModal}>
 								<Send color="#00afef" />
 								<span>Đăng bài</span>
 							</button>
@@ -438,7 +413,7 @@ function CreateNewsFeed(props) {
 				</div>
 			)}
 			<Modal
-				style={{top: 50}}
+				style={{ top: 50 }}
 				title="Tạo bài viết"
 				visible={isVisibleModal}
 				footer={null}
@@ -446,10 +421,7 @@ function CreateNewsFeed(props) {
 				className="modal-create-nf"
 			>
 				<div className="wrap-create-nf">
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleSubmit)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-12">
 								<div className="info-current-user">
@@ -461,21 +433,15 @@ function CreateNewsFeed(props) {
 									</div>
 								</div>
 							</div>
-							<div
-								className={`col-12 newsfeed-control ${
-									isShowBackgroundList ? 'have-bg' : ''
-								}`}
-							>
+							<div className={`col-12 newsfeed-control ${isShowBackgroundList ? 'have-bg' : ''}`}>
 								<div
 									className={`${isShowBackgroundList ? 'bg' : ''}`}
 									style={{
-										backgroundImage: `${
-											isShowBackgroundList ? 'url(' + backgroundUrl + ')' : ''
-										}`,
+										backgroundImage: `${isShowBackgroundList ? 'url(' + backgroundUrl + ')' : ''}`
 									}}
 								>
 									<TextAreaField
-										style={{color: color}}
+										style={{ color: color }}
 										form={form}
 										name="Content"
 										className="text-area-nf"
@@ -492,12 +458,7 @@ function CreateNewsFeed(props) {
 										// trigger="focus"
 										content={
 											<div className="list-color-nf">
-												<SketchPicker
-													colors={colorList}
-													color={color}
-													triangle="hide"
-													onChange={onChangeColor}
-												/>
+												<SketchPicker colors={colorList} color={color} triangle="hide" onChange={onChangeColor} />
 											</div>
 										}
 										placement="bottomRight"
@@ -511,26 +472,19 @@ function CreateNewsFeed(props) {
 							<div className="col-12">
 								<div className="select-background-nf">
 									<div
-										className={`btn-bg-nf ${
-											isShowBackgroundList ? 'active' : ''
-										} ${isUpdate ? 'disable' : ''}`}
+										className={`btn-bg-nf ${isShowBackgroundList ? 'active' : ''} ${isUpdate ? 'disable' : ''}`}
 										onClick={onToggleBackgroundList}
 									>
-										<img
-											src="/images/icon-background-newsfeed.png"
-											alt="icon"
-										/>
+										<img src="/images/icon-background-newsfeed.png" alt="icon" />
 									</div>
 									<ul className={isShowBackgroundList ? 'list-bg-nf' : 'hide'}>
 										{backgroundList.length ? (
 											backgroundList.map((bg, index) => (
 												<li
 													key={index}
-													style={{backgroundImage: `url(${bg.FileName})`}}
+													style={{ backgroundImage: `url(${bg.FileName})` }}
 													onClick={(e) => setBackgroundUrl(bg.FileName)}
-													className={`item-bg-nf ${
-														backgroundUrl === bg.FileName ? 'active' : ''
-													}`}
+													className={`item-bg-nf ${backgroundUrl === bg.FileName ? 'active' : ''}`}
 												/>
 											))
 										) : (
@@ -553,12 +507,7 @@ function CreateNewsFeed(props) {
 
 							{isOpenUploadFile && (
 								<div className="col-12">
-									<UploadFileField
-										form={form}
-										name="NewsFeedFile"
-										max={5}
-										handleUploadFile={checkHandleUploadFile}
-									/>
+									<UploadFileField form={form} name="NewsFeedFile" max={5} handleUploadFile={checkHandleUploadFile} />
 								</div>
 							)}
 							<div className="col-12">
@@ -571,12 +520,10 @@ function CreateNewsFeed(props) {
 											<div className="item-option">
 												<Tooltip title="Thêm Ảnh/Video">
 													<div
-														className={`btn ${
-															isOpenUploadFile ? 'active' : ''
-														} ${isUpdate ? 'disable' : ''}`}
+														className={`btn ${isOpenUploadFile ? 'active' : ''} ${isUpdate ? 'disable' : ''}`}
 														onClick={toggleUploadFile}
 													>
-														<FileImageFilled style={{color: '#10ca93'}} />
+														<FileImageFilled style={{ color: '#10ca93' }} />
 													</div>
 												</Tooltip>
 											</div>
@@ -584,19 +531,12 @@ function CreateNewsFeed(props) {
 												<Tooltip title="Chia sẻ vào trung tâm">
 													<div
 														// FILTER NEWS FEED => DISABLE BUTTON IF DO NOT HAVE ID TEAM
-														className={`btn ${activeChooseBtn(
-															'team',
-															chooseArea
-														)} ${
-															!idTeam && !idGroup
-																? ''
-																: idGroup
-																? 'disable'
-																: ''
+														className={`btn ${activeChooseBtn('team', chooseArea)} ${
+															!idTeam && !idGroup ? '' : idGroup ? 'disable' : ''
 														}`}
 														onClick={() => setChooseAreaFunc('team')}
 													>
-														<GroupOutlined style={{color: '#ffc107'}} />
+														<GroupOutlined style={{ color: '#ffc107' }} />
 													</div>
 												</Tooltip>
 											</div>
@@ -604,15 +544,12 @@ function CreateNewsFeed(props) {
 												<Tooltip title="Chia sẻ vào nhóm">
 													<div
 														// FILTER NEWS FEED => DISABLE BUTTON IF DO NOT HAVE ID GROUP
-														className={`btn ${activeChooseBtn(
-															'group',
-															chooseArea
-														)} ${
+														className={`btn ${activeChooseBtn('group', chooseArea)} ${
 															!idTeam && !idGroup ? '' : idTeam ? 'disable' : ''
 														}`}
 														onClick={() => setChooseAreaFunc('group')}
 													>
-														<TeamOutlined style={{color: '#00afef'}} />
+														<TeamOutlined style={{ color: '#00afef' }} />
 													</div>
 												</Tooltip>
 											</div>
@@ -627,11 +564,7 @@ function CreateNewsFeed(props) {
 													name="BranchList"
 													mode="multiple"
 													placeholder="Chọn trung tâm"
-													optionList={
-														idTeam
-															? teamOptionList.filter((t) => t.value === idTeam)
-															: teamOptionList
-													}
+													optionList={idTeam ? teamOptionList.filter((t) => t.value === idTeam) : teamOptionList}
 												/>
 											) : (
 												<SelectField
@@ -641,11 +574,7 @@ function CreateNewsFeed(props) {
 													placeholder="Chọn nhóm"
 													disabled={isUpdate ? true : false}
 													optionList={
-														idGroup
-															? groupOptionList.filter(
-																	(t) => t.value === idGroup
-															  )
-															: groupOptionList
+														idGroup ? groupOptionList.filter((t) => t.value === idGroup) : groupOptionList
 													}
 												/>
 											)}
@@ -663,9 +592,7 @@ function CreateNewsFeed(props) {
 									disabled={isLoading.type === 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Cập nhật' : 'Đăng'}
-									{isLoading.type === 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type === 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

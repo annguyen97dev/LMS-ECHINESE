@@ -1,4 +1,4 @@
-import {dataService} from 'lib/customer/dataCustomer';
+import { dataService } from 'lib/customer/dataCustomer';
 import React from 'react';
 import SortBox from '~/components/Elements/SortBox';
 import FilterTable from '~/components/Global/CourseList/FilterTable';
@@ -15,26 +15,26 @@ export default function CustomerServicePackage() {
 			title: 'Học viên',
 			dataIndex: 'nameStudent',
 			...FilterColumn('nameStudent'),
-			render: (a) => <p className="font-weight-blue">{a}</p>,
+			render: (a) => <p className="font-weight-primary">{a}</p>
 		},
 		{
 			title: 'Tên set',
 			dataIndex: 'pkgName',
 			...FilterColumn('pkgName'),
-			render: (a) => <p className="font-weight-black">{a}</p>,
+			render: (a) => <p className="font-weight-black">{a}</p>
 		},
 		{
 			title: 'Giá tiền',
 			dataIndex: 'testCost',
 			...FilterColumn('testCost'),
-			render: (a) => <p className="font-weight-black">{a}</p>,
+			render: (a) => <p className="font-weight-black">{a}</p>
 		},
 		{
 			title: 'Giảm giá',
 			dataIndex: 'pkgDiscount',
-			...FilterColumn('pkgDiscount'),
+			...FilterColumn('pkgDiscount')
 		},
-		{title: 'Ngày mua', dataIndex: 'apmDate', ...FilterDateColumn('apmDate')},
+		{ title: 'Ngày mua', dataIndex: 'apmDate', ...FilterDateColumn('apmDate') },
 		{
 			title: 'Trạng thái',
 			dataIndex: 'pgkPayment',
@@ -52,19 +52,19 @@ export default function CustomerServicePackage() {
 			filters: [
 				{
 					text: 'Đã thanh toán',
-					value: 'Đã thanh toán',
+					value: 'Đã thanh toán'
 				},
 				{
 					text: 'Chưa thanh toán',
-					value: 'Chưa thanh toán',
-				},
+					value: 'Chưa thanh toán'
+				}
 			],
-			onFilter: (value, record) => record.pgkPayment.indexOf(value) === 0,
+			onFilter: (value, record) => record.pgkPayment.indexOf(value) === 0
 		},
 		{
 			title: '',
-			render: () => <PaymentService />,
-		},
+			render: () => <PaymentService />
+		}
 	];
 
 	return (
