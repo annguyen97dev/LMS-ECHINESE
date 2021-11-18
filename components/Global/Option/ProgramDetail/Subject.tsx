@@ -33,7 +33,8 @@ const dataOption = [
 	}
 ];
 
-const Subject = () => {
+const Subject = (props) => {
+	const { key } = props;
 	const router = useRouter();
 	const programID = parseInt(router.query.slug as string);
 
@@ -246,7 +247,7 @@ const Subject = () => {
 	// ============== USE EFFECT - FETCH DATA ===================
 	useEffect(() => {
 		getDataSource();
-	}, [todoApi]);
+	}, [todoApi, key]);
 
 	useEffect(() => {
 		getDataProgram();
@@ -307,7 +308,7 @@ const Subject = () => {
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
-				addClass="table-fix-column"
+				addClass="table-fix-column table-small"
 				loading={isLoading}
 				TitleCard={<SubjectForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
 				dataSource={dataSource}

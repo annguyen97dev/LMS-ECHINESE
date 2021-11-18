@@ -211,8 +211,7 @@ const ExamServicesForm = React.memo((props: any) => {
 										onChange={(e) => onChange_Price(e, 'priceFirst')}
 									/> */}
 									<InputNumber
-										type="number"
-										className="ant-input style-input w-100 hide-icon"
+										className="ant-input style-input w-100"
 										formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 										parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
 										onChange={(value) => setValue('InitialPrice', value)}

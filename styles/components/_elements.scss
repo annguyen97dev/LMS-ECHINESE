@@ -952,26 +952,26 @@ textarea.ant-input {
 // 		}
 // 	}
 
-// 	.table-medium {
-// 		width: 75%;
-// 		@include max-media(800px) {
-// 			width: 100%;
-// 		}
-// 	}
+.table-medium {
+	width: 75%;
+	@include max-media(800px) {
+		width: 100%;
+	}
+}
 
-// 	.table-small {
-// 		width: 72%;
-// 		@include max-media(800px) {
-// 			width: 100%;
-// 		}
-// 	}
+.table-small {
+	width: 50%;
+	@include max-media(800px) {
+		width: 100%;
+	}
+}
 
-// 	.table-super-small {
-// 		width: 50%;
-// 		@include max-media(800px) {
-// 			width: 100%;
-// 		}
-// 	}
+.table-super-small {
+	width: 50%;
+	@include max-media(800px) {
+		width: 100%;
+	}
+}
 
 // 	.ant-table-empty .ant-table-content {
 // 		overflow: hidden !important;

@@ -29,14 +29,14 @@ export const AddCurriculumForm = (props) => {
 		LinkDocument: '',
 		LinkHtml: '',
 		Description: '',
-		ExamTopicID: 21,
+		ExamTopicID: null,
 		IsPreview: false
 	});
 	const [exam, setExam] = useState({
 		ID: curriculumDetailID,
-		SubjectID: 25, //int:mã môn học (Nhập 0 nếu xóa Subject)
+		SubjectID: dataRow.SubjectID, //int:mã môn học (Nhập 0 nếu xóa Subject)
 		IsExam: true,
-		ExamTopicID: 1
+		ExamTopicID: null
 	});
 
 	const [isLoading, setIsLoading] = useState({
@@ -57,8 +57,11 @@ export const AddCurriculumForm = (props) => {
 	};
 
 	const handleSelectStatus = (value) => {
-		console.log(value);
-		value === 'Kiểm tra' ? setStatus(true) : setStatus(false);
+		if (value === 'Kiểm tra') {
+			setStatus(true);
+		} else {
+			setStatus(false);
+		}
 	};
 
 	const handleOk = () => {
@@ -76,7 +79,6 @@ export const AddCurriculumForm = (props) => {
 	};
 
 	const _onSubmit = async (dataSubmit: any) => {
-		console.log('Data Submit: ', dataSubmit);
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
@@ -89,8 +91,6 @@ export const AddCurriculumForm = (props) => {
 				res = await curriculumDetailApi.update(exam);
 
 				if (res.status == 200) {
-					// setDataSource(newDataSource);
-					// getDataSubject();
 					showNoti('success', res.data.message);
 					form.resetFields();
 					setVisible(false);
@@ -263,7 +263,7 @@ export const AddCurriculumForm = (props) => {
 					<div className="row mb-4">
 						<div className="col-12">
 							<Select
-								disabled={false}
+								disabled={true}
 								style={{ width: '100%' }}
 								className="style-input"
 								showSearch

@@ -66,7 +66,7 @@ const StaffForm = (props) => {
 	const [imageUrl, setImageUrl] = useState(null);
 	// const [statusAdd, setStatusAdd] = useState("add-staff");
 	const [disableCenter, setDisableCenter] = useState(false);
-	const [statusAdd, setStatusAdd] = useState('add-staff');
+	const [statusAdd, setStatusAdd] = useState('');
 	const [dataStaff, setDataStaff] = useState(null);
 	const [submitSalary, setSubmitSalary] = useState(true);
 

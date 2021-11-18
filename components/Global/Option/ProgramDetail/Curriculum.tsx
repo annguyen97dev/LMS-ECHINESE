@@ -35,7 +35,8 @@ const dataOption = [
 	}
 ];
 
-const Curriculum = () => {
+const Curriculum = (props) => {
+	const { key } = props;
 	const router = useRouter();
 	const programID = parseInt(router.query.slug as string);
 
@@ -216,7 +217,7 @@ const Curriculum = () => {
 	// ============== USE EFFECT - FETCH DATA ===================
 	useEffect(() => {
 		getDataSource();
-	}, [todoApi]);
+	}, [todoApi, key]);
 
 	useEffect(() => {
 		getDataProgram();
@@ -224,10 +225,6 @@ const Curriculum = () => {
 	}, []);
 
 	// EXPANDED ROW RENDER
-
-	const selectSubject = (value) => {
-		console.log('Value: ', value);
-	};
 
 	const expandedRowRender = () => {
 		return (
@@ -245,6 +242,7 @@ const Curriculum = () => {
 			fixed: 'left'
 		},
 		{
+			width: '50%',
 			title: 'Giáo trình',
 			dataIndex: 'CurriculumName',
 			key: 'curriculumname',
@@ -270,18 +268,6 @@ const Curriculum = () => {
 			key: 'action',
 			render: (text, data, index) => (
 				<>
-					{/* <Link
-            href={{
-              pathname: "/option/program/curriculum-detail/[slug]",
-              query: { slug: data.ID },
-            }}
-          >
-            <Tooltip title="Chi tiết chương trình">
-              <button className="btn btn-icon">
-                <Info />
-              </button>
-            </Tooltip>
-          </Link> */}
 					<CurriculumForm
 						dataProgram={dataProgram}
 						getIndex={() => setIndexRow(index)}
@@ -300,6 +286,7 @@ const Curriculum = () => {
 	return (
 		<div>
 			<ExpandTable
+				addClass="table-medium"
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -381,7 +368,9 @@ const PickAllSubject = (props) => {
 				<p className="font-weight-black mb-2">Chọn môn học</p>
 				<Select className="w-100 style-input" onChange={handleChange_Subject}>
 					{dataSubject?.map((item) => (
-						<Option value={item.ID}>{item.SubjectName}</Option>
+						<Option key={item.ID} value={item.ID}>
+							{item.SubjectName}
+						</Option>
 					))}
 				</Select>
 			</Modal>

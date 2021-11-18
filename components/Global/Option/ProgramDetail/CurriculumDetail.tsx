@@ -4,13 +4,14 @@ import { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
 import { curriculumDetailApi, examTopicApi, subjectApi } from '~/apiBase';
 import CurriculumForm from '~/components/Global/Option/CurriculumForm';
-import { Tooltip, Select, Button } from 'antd';
+import { Tooltip, Select, Button, Switch } from 'antd';
 import Link from 'next/link';
 import { Info } from 'react-feather';
 import NestedTable from '~/components/Elements/NestedTable';
 import { PlusOutlined } from '@ant-design/icons';
 import AddCurriculumForm from './AddCurriculumForm';
 import DetailsModal from './DetailsModal';
+import AddExamForm from './AddExamForm';
 
 let pageIndex = 1;
 
@@ -54,6 +55,12 @@ const CurriculumDetail = (props) => {
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [dataExamTopic, setDataExamTopic] = useState(null);
+
+	const [currentCheckID, setCurrentCheckID] = useState<number>(null);
+	const [loadingCheck, setLoadingCheck] = useState({
+		id: null,
+		status: false
+	});
 
 	// GET DATA COURSE
 	const getDataSource = async () => {
@@ -156,12 +163,42 @@ const CurriculumDetail = (props) => {
 		});
 	};
 
-	const getLessonID = async () => {
-		// setIsLoading({
-		// 	type: 'ADD_DATA',
-		// 	status: true
-		// });
+	const onChange_typeLesson = async (ID, checked) => {
+		let res = null;
 
+		setLoadingCheck({
+			id: ID,
+			status: true
+		});
+		try {
+			if (checked) {
+				res = await curriculumDetailApi.update({ ID: ID, isExam: true });
+			} else {
+				res = await curriculumDetailApi.update({ ID: ID, isExam: false });
+			}
+
+			if (res.status == 200) {
+				showNoti('success', checked ? 'Đã chuyển sang kiểm tra' : 'Đã tắt kiểm tra');
+
+				setTodoApi({ ...todoApi });
+
+				if (checked) {
+					setCurrentCheckID(ID);
+				} else {
+					setCurrentCheckID(null);
+				}
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setLoadingCheck({
+				id: ID,
+				status: false
+			});
+		}
+	};
+
+	const getLessonID = async () => {
 		try {
 			let res = await examTopicApi.getAll(examTopic);
 			if (res.status == 200) {
@@ -172,10 +209,6 @@ const CurriculumDetail = (props) => {
 			}
 		} catch (error) {
 		} finally {
-			// setIsLoading({
-			// 	type: 'ADD_DATA',
-			// 	status: false
-			// });
 		}
 	};
 
@@ -185,8 +218,15 @@ const CurriculumDetail = (props) => {
 		getLessonID();
 	}, [todoApi]);
 
+	// useEffect(() => {
+	// 	setIsOpenCheck(true);
+	// 	setTimeout(() => {
+	// 		setIsOpenCheck(false);
+	// 	}, 500);
+	// }, [currentCheckID]);
+
 	useEffect(() => {
-		if (loadingOut.status && loadingOut.type === 'GET_ALL') {
+		if (loadingOut && loadingOut.status && loadingOut.type === 'GET_ALL') {
 			getDataSource();
 		}
 	}, [loadingOut]);
@@ -232,7 +272,17 @@ const CurriculumDetail = (props) => {
 			className: 'text-center',
 			render: (text, data) => (
 				<div>
-					<p>{data?.IsExam ? 'Kiểm tra' : 'Buổi học'}</p>
+					{isAdmin ? (
+						<Switch
+							checked={data.IsExam}
+							checkedChildren="Kiểm tra"
+							unCheckedChildren="Kiểm tra"
+							onChange={(checked) => onChange_typeLesson(data.ID, checked)}
+							loading={loadingCheck.id == data.ID && loadingCheck.status}
+						/>
+					) : (
+						<p>{data?.IsExam ? 'Kiểm tra' : 'Buổi học'}</p>
+					)}
 				</div>
 			)
 		},
@@ -264,7 +314,7 @@ const CurriculumDetail = (props) => {
 			className: 'text-center',
 			render: (text, data) => (
 				<>
-					{isAdmin && (
+					{/* {isAdmin && (
 						<AddCurriculumForm
 							curriculumDetailID={data.ID}
 							dataExamTopic={dataExamTopic}
@@ -273,15 +323,25 @@ const CurriculumDetail = (props) => {
 							onFetchData={() => setTodoApi({ ...todoApi })}
 							dataRow={data}
 						/>
+					)} */}
+					{!data.IsExam ? (
+						<DetailsModal
+							isAdmin={isAdmin}
+							curriculumDetailID={data.ID}
+							dataExamTopic={dataExamTopic}
+							dataCurriculumDetail={dataSource}
+							onFetchData={() => setTodoApi({ ...todoApi })}
+							courseID={courseID}
+							dataRow={data}
+						/>
+					) : (
+						<AddExamForm
+							dataExamTopic={dataExamTopic}
+							dataRow={data}
+							onFetchData={() => (setTodoApi({ ...todoApi }), setCurrentCheckID(null))}
+							currentCheckID={currentCheckID}
+						/>
 					)}
-					<DetailsModal
-						isAdmin={isAdmin}
-						curriculumDetailID={data.ID}
-						dataExamTopic={dataExamTopic}
-						dataCurriculumDetail={dataSource}
-						onFetchData={() => setTodoApi({ ...todoApi })}
-						courseID={courseID}
-					/>
 				</>
 			)
 		}
