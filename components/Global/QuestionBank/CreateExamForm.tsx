@@ -132,10 +132,14 @@ const CreateExamForm = (props) => {
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
 					break;
 				case 'ProgramID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					if (!isTest) {
+						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					}
 					break;
 				case 'CurriculumID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					if (!isTest) {
+						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					}
 					break;
 				case 'Code':
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
