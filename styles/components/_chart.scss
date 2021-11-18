@@ -1,8 +1,13 @@
 .dashboard__chart {
-  &-container {
-    height: 190px !important;
-  }
-  &-title {
-    height: 32px !important;
-  }
+	&-container {
+		height: 190px !important;
+	}
+	&-title {
+		height: 32px !important;
+	}
+}
+.chart-comment {
+	.ant-card-head-title {
+		white-space: inherit;
+	}
 }

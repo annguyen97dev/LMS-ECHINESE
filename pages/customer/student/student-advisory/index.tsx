@@ -259,7 +259,7 @@ export default function StudentAdvisory() {
 
 					res.status == 200 && getDataTolist(res.data.data, item.name);
 
-					res.status == 204 && showNoti('danger', item.text + ' Không có dữ liệu');
+					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
 					// showNoti('danger', error.message);
 					console.log(error.message);
@@ -337,6 +337,7 @@ export default function StudentAdvisory() {
 				});
 			}
 		} else {
+			dataSubmit.CounselorsID = 0;
 			try {
 				res = await studentAdviseApi.add(dataSubmit);
 				res?.status == 200 && afterPost(res.data.message);

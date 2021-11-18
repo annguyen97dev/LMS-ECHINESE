@@ -28,7 +28,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 		SourceInformationID: null, //int ID nguồn khách
 		CustomerConsultationStatusID: null, // tình trạng tư vấn
 		ProgramID: null,
-		CounselorsID: ''
+		CounselorsID: null
 	};
 
 	(function returnSchemaFunc() {
