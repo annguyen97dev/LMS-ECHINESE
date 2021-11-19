@@ -258,11 +258,11 @@ const WrittingList = (props) => {
 										<u>Bài viết đã làm</u>
 									</h6>
 								) : (
-									<h6 className="text-underline">Bấm vào nút bên dưới để làm bài tự luận</h6>
+									isDoingTest && <h6 className="text-underline">Bấm vào nút bên dưới để làm bài tự luận</h6>
 								)}
 								{<div className="content-of-student">{ReactHtmlParser(contentOfStudent)}</div>}
 
-								{!doneTestData && (
+								{!doneTestData && isDoingTest && (
 									<div className="writting-editor mt-2">
 										<WrittingModal
 											contentOfStudent={contentOfStudent}

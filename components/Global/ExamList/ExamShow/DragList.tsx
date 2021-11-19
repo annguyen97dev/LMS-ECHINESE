@@ -14,8 +14,9 @@ const DragList = (props) => {
 	const [dataAnswer, setDataAnswer] = useState([]);
 	const [listCorrectAnswer, setListCorrectAnswer] = useState([]);
 	// console.log("Data question in drag: ", dataQuestion);
-	console.log('Data Answer is: ', dataAnswer);
+	// console.log('Data Answer is: ', dataAnswer);
 	// console.log("DATA QUESTION IN DRAG: ", dataQuestionClone);
+	console.log('List QuestionID: ', listQuestionID);
 
 	if (isDoingTest) {
 		var indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
@@ -29,14 +30,20 @@ const DragList = (props) => {
 				spaceEditor.forEach((item, index) => {
 					let quesID = parseInt(item.getAttribute('ques-id'));
 
+					console.log('Check Ques ID: ', quesID);
+
 					// Sắp xếp lại thứ tự các ô input trong đoạn văn
 					let indexQues = null;
 					if (listQuestionID.includes(quesID)) {
 						indexQues = listQuestionID.indexOf(quesID);
+						console.log('Index Ques: ', indexQues);
 					}
 
-					if (indexQues) {
+					if (indexQues && indexQues > -1) {
+						console.log('Index Ques after: ', indexQues);
 						let positionSpace = document.querySelectorAll('.drag-list .position-space');
+
+						console.log('Position space: ', positionSpace);
 
 						if (positionSpace.length < spaceEditor.length) {
 							let span = document.createElement('span');
