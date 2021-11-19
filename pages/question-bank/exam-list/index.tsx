@@ -331,7 +331,16 @@ const ExamList = (props) => {
 												<div className="wrap-set">
 													<div className="wrap-set-content">
 														<div className="box-title">
-															<h6 className="set-title">{item.Name}</h6>
+															<h6 className="set-title">
+																<Link
+																	href={{
+																		pathname: '/question-bank/exam-list/exam-detail/[slug]',
+																		query: { slug: item.ID }
+																	}}
+																>
+																	<a href="">{item.Name}</a>
+																</Link>
+															</h6>
 															<p className="code">
 																<span>Mã: </span> {item.Code}
 															</p>

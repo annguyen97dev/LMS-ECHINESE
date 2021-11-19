@@ -60,16 +60,16 @@ const CurriculumForm = React.memo((props: any) => {
 	return (
 		<>
 			{rowID ? (
-				<button
-					className="btn btn-icon edit"
-					onClick={() => {
-						setIsModalVisible(true);
-					}}
-				>
-					<Tooltip title="Cập nhật">
+				<Tooltip title="Cập nhật">
+					<button
+						className="btn btn-icon edit"
+						onClick={() => {
+							setIsModalVisible(true);
+						}}
+					>
 						<RotateCcw />
-					</Tooltip>
-				</button>
+					</button>
+				</Tooltip>
 			) : (
 				<button
 					className="btn btn-warning add-new"

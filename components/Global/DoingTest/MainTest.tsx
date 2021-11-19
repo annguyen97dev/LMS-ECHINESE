@@ -61,6 +61,8 @@ const MainTest = (props) => {
 	const [isModalSuccess, setIsModalSuccess] = useState(false);
 	const [openTimeUpModal, setOpenTimeUpModal] = useState(false);
 
+	console.log('Data Question nha: ', dataQuestion);
+
 	// --- GET LIST QUESTION ---
 	const getListQuestion = async () => {
 		let cloneListQuestionID = [...listQuestionID];
@@ -130,10 +132,13 @@ const MainTest = (props) => {
 
 	// -- CHECK IS SINGLE
 	const checkIsSingle = (indexCurrent) => {
+		console.log('doooo');
+		console.log('current page: ', indexCurrent);
 		if (indexCurrent !== spaceQuestion.start && indexCurrent !== 0 && indexCurrent !== spaceQuestion.end) {
 			if (spaceQuestion.end - spaceQuestion.start == 2) {
 				if (indexCurrent > spaceQuestion.start && indexCurrent < spaceQuestion.end) {
 					indexCurrent = indexCurrent - 1;
+					console.log('doooo 2');
 				}
 			}
 		}
@@ -149,6 +154,7 @@ const MainTest = (props) => {
 					});
 					return false;
 				} else {
+					console.log('doooo 3');
 					setSpaceQuestion({
 						start: indexCurrent,
 						end: index + 1
@@ -159,6 +165,13 @@ const MainTest = (props) => {
 
 			return true;
 		});
+
+		if (indexCurrent + 1 === dataQuestion.length) {
+			setSpaceQuestion({
+				start: indexCurrent,
+				end: indexCurrent + 1
+			});
+		}
 	};
 
 	// -- CHECK IS GROUP --
@@ -256,7 +269,7 @@ const MainTest = (props) => {
 		}
 	}
 
-	console.log('List Preview: ', listPreview);
+	// console.log('List Preview: ', listPreview);
 
 	// --- TIME UP ---
 	const timeUp = () => {

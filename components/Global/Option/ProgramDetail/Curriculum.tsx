@@ -265,6 +265,7 @@ const Curriculum = (props) => {
 		},
 
 		{
+			width: 130,
 			key: 'action',
 			render: (text, data, index) => (
 				<>
