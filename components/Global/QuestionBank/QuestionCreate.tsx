@@ -36,7 +36,7 @@ const listTodoApi = {
 const listAlphabet = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'];
 
 const QuestionCreate = (props) => {
-	const { dataExam } = props;
+	const { dataExam, isOpenModal } = props;
 	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState(false);
 	const [dataProgram, setDataProgram] = useState<IProgram[]>(null);
@@ -66,6 +66,8 @@ const QuestionCreate = (props) => {
 	const [dataExercise, setDataExercise] = useState();
 	const [isTest, setIsTest] = useState(false);
 	const [loadingProgram, setLoadingProgram] = useState(false);
+
+	console.log('Data ');
 
 	// Phân loại dạng câu hỏi để trả ra danh sách
 	const returnQuestionType = () => {
@@ -239,8 +241,11 @@ const QuestionCreate = (props) => {
 		}
 	};
 
+	console.log('Todo Api: ', todoApi);
+
 	// GET DATA SOURCE - DATA EXERCISE
 	const getDataSource = async () => {
+		console.log('Chạy data source');
 		let res = null;
 		try {
 			if (!isGroup.status) {
@@ -327,6 +332,8 @@ const QuestionCreate = (props) => {
 
 	// CHỌN DẠNG CÂU HỎI (CHOICE, MULTIPLE,...)
 	const changeBoxType = (e: any, Type: number, TypeName: string) => {
+		console.log('Chạy vô box type');
+
 		e?.preventDefault();
 
 		questionData.Type = Type;
@@ -658,6 +665,7 @@ const QuestionCreate = (props) => {
 
 	// ON SCROLL
 	const onScroll = () => {
+		console.log('Chạy vào on scroll');
 		const scrollHeight = boxEl.current.scrollHeight;
 		const offsetHeight = boxEl.current.offsetHeight;
 		const scrollTop = boxEl.current.scrollTop;
@@ -680,8 +688,10 @@ const QuestionCreate = (props) => {
 		getDataProgram(); // Lấy data chương trình
 	}, []);
 
+	console.log('Question Data: ', questionData);
+
 	useEffect(() => {
-		if (questionData.Type !== 0) {
+		if (todoApi.Type && todoApi.Type !== 0) {
 			getDataSource();
 		}
 		questionData.Content = '';
@@ -697,6 +707,7 @@ const QuestionCreate = (props) => {
 	}, [todoApi]);
 
 	useEffect(() => {
+		console.log('chạy dô');
 		if (dataExam) {
 			if (dataExam.Type == 1) {
 				setIsTest(true);
@@ -735,6 +746,15 @@ const QuestionCreate = (props) => {
 			status: true
 		});
 	}, [dataExam]);
+
+	console.log('Data Source: ', dataSource);
+
+	useEffect(() => {
+		if (!isOpenModal) {
+			console.log('Chạy dô đây');
+			setDataSource([]);
+		}
+	}, [isOpenModal]);
 
 	return (
 		<div className="question-create">

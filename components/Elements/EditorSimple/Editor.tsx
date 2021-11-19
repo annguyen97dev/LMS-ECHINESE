@@ -21,7 +21,7 @@ type dataTranslate = Array<{
 }>;
 
 const EditorSummernote = (props) => {
-	const { getDataEditor, questionContent, isReset } = props;
+	const { getDataEditor, questionContent, isReset, isTranslate } = props;
 	const [valueEditor, setValueEditor] = useState(questionContent);
 	const [textSelect, setTextSelect] = useState(null);
 	const [textTranslate, setTextTranslate] = useState(null);
@@ -30,8 +30,6 @@ const EditorSummernote = (props) => {
 	const [isAddTranslate, setIsAddTranslate] = useState(false);
 	const [reloadContent, setReloadContent] = useState(false);
 	let inputTranslate = useRef(null);
-
-	console.log('Data translate: ', dataTranslate);
 
 	const showModal = (type) => {
 		setIsModalVisible(true);
@@ -264,12 +262,17 @@ const EditorSummernote = (props) => {
 				)}
 			</Modal>
 			<div className="wrap-editor" id="editor-element">
-				<button className="btn-editor d-flex align-items-center" onClick={() => showModal('add')}>
-					<PlusOutlined className="mr-2" /> Thêm Phiên âm
-				</button>
-				<button className="btn-editor fix-translate d-flex align-items-center" onClick={() => showModal('fix')}>
-					<EditOutlined className="mr-2" /> Sửa phiên âm
-				</button>
+				{isTranslate && (
+					<>
+						<button className="btn-editor d-flex align-items-center" onClick={() => showModal('add')}>
+							<PlusOutlined className="mr-2" /> Thêm Phiên âm
+						</button>
+						<button className="btn-editor fix-translate d-flex align-items-center" onClick={() => showModal('fix')}>
+							<EditOutlined className="mr-2" /> Sửa phiên âm
+						</button>
+					</>
+				)}
+
 				<ReactSummernote
 					value={valueEditor}
 					children={ReactHtmlParser(valueEditor)}

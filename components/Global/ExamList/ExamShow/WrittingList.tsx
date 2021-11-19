@@ -69,7 +69,12 @@ const WrittingModal = (props) => {
 				onCancel={handleCancel}
 			>
 				{isModalVisible && (
-					<EditorSimple handleChange={(value) => handleGetDataEditor(value)} isReset={isReset} questionContent={contentEditor} />
+					<EditorSimple
+						isTranslate={false}
+						handleChange={(value) => handleGetDataEditor(value)}
+						isReset={isReset}
+						questionContent={contentEditor}
+					/>
 				)}
 			</Modal>
 

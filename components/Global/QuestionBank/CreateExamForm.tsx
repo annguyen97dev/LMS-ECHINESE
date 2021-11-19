@@ -132,10 +132,14 @@ const CreateExamForm = (props) => {
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
 					break;
 				case 'ProgramID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					if (!isTest) {
+						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					}
 					break;
 				case 'CurriculumID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					if (!isTest) {
+						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					}
 					break;
 				case 'Code':
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
@@ -269,7 +273,7 @@ const CreateExamForm = (props) => {
 								onChangeSelect={(value) => handleChange_selectProgram(value)}
 								isLoading={loadingProgram}
 								optionList={dataProgram}
-								isRequired={true}
+								isRequired={!isTest ? true : false}
 							/>
 						</div>
 						<div className="col-md-6 col-12">
@@ -280,7 +284,7 @@ const CreateExamForm = (props) => {
 								label="Giáo trình"
 								isLoading={loadingCurriculum}
 								optionList={dataCurriculum}
-								isRequired={true}
+								isRequired={!isTest ? true : false}
 							/>
 						</div>
 						<div className="col-md-6 col-12">

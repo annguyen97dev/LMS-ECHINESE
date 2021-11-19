@@ -61,8 +61,6 @@ const MainTest = (props) => {
 	const [isModalSuccess, setIsModalSuccess] = useState(false);
 	const [openTimeUpModal, setOpenTimeUpModal] = useState(false);
 
-	console.log('Data Question nha: ', dataQuestion);
-
 	// --- GET LIST QUESTION ---
 	const getListQuestion = async () => {
 		let cloneListQuestionID = [...listQuestionID];
@@ -132,13 +130,10 @@ const MainTest = (props) => {
 
 	// -- CHECK IS SINGLE
 	const checkIsSingle = (indexCurrent) => {
-		console.log('doooo');
-		console.log('current page: ', indexCurrent);
 		if (indexCurrent !== spaceQuestion.start && indexCurrent !== 0 && indexCurrent !== spaceQuestion.end) {
 			if (spaceQuestion.end - spaceQuestion.start == 2) {
 				if (indexCurrent > spaceQuestion.start && indexCurrent < spaceQuestion.end) {
 					indexCurrent = indexCurrent - 1;
-					console.log('doooo 2');
 				}
 			}
 		}
@@ -154,7 +149,6 @@ const MainTest = (props) => {
 					});
 					return false;
 				} else {
-					console.log('doooo 3');
 					setSpaceQuestion({
 						start: indexCurrent,
 						end: index + 1
@@ -176,7 +170,6 @@ const MainTest = (props) => {
 
 	// -- CHECK IS GROUP --
 	const checkIsGroup = (page: number) => {
-		console.log('page: ', page);
 		let exerciseID = listQuestionID[page - 1];
 
 		dataQuestion.every((item, index) => {
@@ -235,7 +228,6 @@ const MainTest = (props) => {
 
 	// - Next Page
 	const onChange_NextPage = (e) => {
-		console.log('Active ID in next: ', activeID);
 		listQuestionID.every((item, index) => {
 			if (item === activeID) {
 				if (index === listQuestionID.length - 1) {
@@ -254,8 +246,6 @@ const MainTest = (props) => {
 		});
 	};
 
-	console.log('space question: ', spaceQuestion);
-
 	// - Preview
 	function onChange_preview(e) {
 		const checked = e.target.checked;
@@ -264,12 +254,9 @@ const MainTest = (props) => {
 			setListPreview([...listPreview]);
 		} else {
 			let newListPreview = listPreview.filter((item) => (item! -= activeID));
-			console.log('NEW LIST NUMBER: ', newListPreview);
 			setListPreview([...newListPreview]);
 		}
 	}
-
-	// console.log('List Preview: ', listPreview);
 
 	// --- TIME UP ---
 	const timeUp = () => {
@@ -441,8 +428,6 @@ const MainTest = (props) => {
 		setLoadingSubmit(true);
 		let dataSubmit = remakeData();
 
-		console.log('Data Submit: ', dataSubmit);
-
 		let res = null;
 
 		try {
@@ -510,11 +495,11 @@ const MainTest = (props) => {
 	}, [listQuestionID]);
 
 	// Use to check
-	useEffect(() => {
-		if (spaceQuestion.start !== null && spaceQuestion.end !== null) {
-			dataQuestion.slice(spaceQuestion.start, spaceQuestion.end).map((item) => console.log('ITEM ACTIVE: ', item));
-		}
-	}, [spaceQuestion]);
+	// useEffect(() => {
+	// 	if (spaceQuestion.start !== null && spaceQuestion.end !== null) {
+	// 		dataQuestion.slice(spaceQuestion.start, spaceQuestion.end).map((item) => console.log('ITEM ACTIVE: ', item));
+	// 	}
+	// }, [spaceQuestion]);
 
 	useEffect(() => {
 		if (userInformation) {

@@ -16,7 +16,7 @@ const DragList = (props) => {
 	// console.log("Data question in drag: ", dataQuestion);
 	// console.log('Data Answer is: ', dataAnswer);
 	// console.log("DATA QUESTION IN DRAG: ", dataQuestionClone);
-	console.log('List QuestionID: ', listQuestionID);
+	const [isDrop, setIsDrop] = useState(false);
 
 	if (isDoingTest) {
 		var indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
@@ -30,20 +30,14 @@ const DragList = (props) => {
 				spaceEditor.forEach((item, index) => {
 					let quesID = parseInt(item.getAttribute('ques-id'));
 
-					console.log('Check Ques ID: ', quesID);
-
 					// Sắp xếp lại thứ tự các ô input trong đoạn văn
 					let indexQues = null;
 					if (listQuestionID.includes(quesID)) {
 						indexQues = listQuestionID.indexOf(quesID);
-						console.log('Index Ques: ', indexQues);
 					}
 
-					if (indexQues && indexQues > -1) {
-						console.log('Index Ques after: ', indexQues);
+					if (indexQues !== null) {
 						let positionSpace = document.querySelectorAll('.drag-list .position-space');
-
-						console.log('Position space: ', positionSpace);
 
 						if (positionSpace.length < spaceEditor.length) {
 							let span = document.createElement('span');
@@ -56,12 +50,16 @@ const DragList = (props) => {
 
 							item.innerHTML = `${(indexQues + 1).toString()}`;
 							item.before(span);
+						} else {
+							if (item.innerHTML == '') {
+								item.innerHTML = `${(indexQues + 1).toString()}`;
+							}
 						}
 					}
 				});
 			}
 		}
-	}, [listQuestionID]);
+	}, [listQuestionID, dataAnswer]);
 
 	// ---- ALL ACTION IN DOING TEST ----
 
@@ -69,7 +67,7 @@ const DragList = (props) => {
 	const drop = (ev) => {
 		ev.preventDefault();
 		var data = ev.dataTransfer.getData('text');
-		ev.target.appendChild(document.getElementById(data));
+		data && ev.target.appendChild(document.getElementById(data));
 
 		let nodeList = [...ev.target.childNodes];
 
@@ -158,7 +156,12 @@ const DragList = (props) => {
 							item.classList.remove('space-left');
 							item.classList.remove('is-hover');
 
+							// Active input
 							getActiveID(parseInt(item.getAttribute('ques-id')));
+
+							// Đổi trạng thái để useeffect chứa active không chạy lại nữa
+							setIsDrop(true);
+
 							getListPicked(parseInt(item.getAttribute('ques-id')));
 
 							const actionDragAndDrop = () => {
@@ -205,11 +208,14 @@ const DragList = (props) => {
 												element.html = dataAnswer[iQuestion].html;
 												element.ansID = dataAnswer[iQuestion].ansID;
 												element.text = dataAnswer[iQuestion].text;
+
+												return false;
 											}
 											return true;
 										});
 									} else {
 										// -- Thay thế cái mới và trả về vùng chứa câu trả lời
+
 										if (dataAnswer[indexQues].html && dataAnswer[indexQues].ansID) {
 											let getNodes = (str) => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
 
@@ -246,6 +252,8 @@ const DragList = (props) => {
 			}
 		}
 	}, []);
+
+	console.log('DATA ANSWER: ', dataAnswer);
 
 	// -- UPDATE AFTER DROP AND DRAG
 	useEffect(() => {
@@ -297,6 +305,31 @@ const DragList = (props) => {
 								let node = getNodes(dataAnswer[indexFind].html);
 								item.appendChild(node[0]);
 								item.classList.add('auto');
+							}
+						}
+
+						const checkAndReplace = () => {
+							dataAnswer.forEach((ans, index) => {
+								if (quesID === ans.quesID) {
+									if (ans.ansID !== null) {
+										// -- TRẢ VỀ KQ CŨ
+										let getNodes = (str) => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
+										let node = getNodes(
+											`<div class="drag-list-answer" draggable="true" id="${ans.ansID}"><span>${ans.text}</span></div>`
+										);
+										item.innerHTML = '';
+										item.appendChild(node[0]);
+										item.classList.add('auto');
+									}
+								}
+							});
+						};
+
+						if (item.children.length == 0) {
+							checkAndReplace();
+						} else {
+							if (item.children[0].nodeName !== 'DIV') {
+								checkAndReplace();
 							}
 						}
 					});
@@ -361,7 +394,7 @@ const DragList = (props) => {
 	// Hiện lại những câu đã trả lời sau khi quay lai
 	useEffect(() => {
 		if (!doneTestData) {
-			if (isDoingTest) {
+			if (isDoingTest && !isDrop) {
 				let newDataQuestion: any = { ...dataQuestion };
 
 				// console.log("New DATA: ", newDataQuestion);
@@ -483,6 +516,8 @@ const DragList = (props) => {
 									id: ques.ExerciseAnswer[0].ExerciseAnswerID,
 									content: ques.ExerciseAnswer[0].ExerciseAnswerContent
 								});
+
+								setListCorrectAnswer([...listCorrectAnswer]);
 							}
 
 							return false;
@@ -511,13 +546,9 @@ const DragList = (props) => {
 				let spaceEditor = document.querySelectorAll('.test-wrapper .drag-list .space-editor');
 				let tooltipAns = document.querySelectorAll('.test-wrapper .drag-list .tooltip-answer');
 
-				console.log('LIST TOOLTIP: ', tooltipAns);
-
 				spaceEditor.forEach((item) => {
 					// Mouse over
 					item.addEventListener('mouseover', () => {
-						console.log('IS HOVERRRRR');
-
 						let quesID = item.getAttribute('ques-id');
 						tooltipAns.forEach((e) => {
 							if (e.id === quesID) {
