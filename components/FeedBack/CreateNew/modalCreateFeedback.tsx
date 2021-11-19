@@ -130,11 +130,12 @@ function ModalCreateFeedback(props) {
 						/>
 					</div>
 
-					<div className="mb-0">
+					<div className="mb-0" style={{ paddingTop: 35 }}>
 						<EditorSimple
 							handleChange={(value) => {
 								setContent(value);
 							}}
+							// isTranslate={false}
 							isReset={isReset}
 							questionContent={content}
 						/>
