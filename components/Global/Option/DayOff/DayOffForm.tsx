@@ -1,39 +1,32 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
 
 const DayOffForm = (props) => {
-	const {
-		handleCreateDayOff,
-		isUpdate,
-		handleUpdateDayOff,
-		updateObj,
-		isLoading,
-		indexUpdateObj,
-	} = props;
+	const { handleCreateDayOff, isUpdate, handleUpdateDayOff, updateObj, isLoading, indexUpdateObj } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 	const schema = yup.object().shape({
 		DayOff: yup.string().required('Bạn không được để trống'),
-		DayOffName: yup.string().required('Bạn không được để trống'),
+		DayOffName: yup.string().required('Bạn không được để trống')
 	});
 
 	const defaultValuesInit = {
 		DayOff: moment().format('YYYY/MM/DD'),
-		DayOffName: '',
+		DayOffName: ''
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
@@ -57,7 +50,7 @@ const DayOffForm = (props) => {
 				handleCreateDayOff(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
-						form.reset({...defaultValuesInit});
+						form.reset({ ...defaultValuesInit });
 					}
 				});
 				break;
@@ -79,36 +72,17 @@ const DayOffForm = (props) => {
 					Thêm mới
 				</button>
 			)}
-			<Modal
-				title={isUpdate ? 'Update Day Off' : 'Create Day Off'}
-				visible={isModalVisible}
-				onCancel={closeModal}
-				footer={null}
-			>
+			<Modal title={isUpdate ? 'Cập nhật ngày nghỉ' : 'Thêm ngày nghỉ'} visible={isModalVisible} onCancel={closeModal} footer={null}>
 				<div>
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(dayOffSwitchFunc)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(dayOffSwitchFunc)}>
 						<div className="row">
 							<div className="col-12">
-								<DateField
-									form={form}
-									name="DayOff"
-									label="Day off"
-									placeholder="Nhập ngày nghỉ"
-								/>
+								<DateField form={form} name="DayOff" label="Ngày nghỉ" placeholder="Nhập ngày nghỉ" />
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-12">
-								<TextAreaField
-									form={form}
-									name="DayOffName"
-									label="Note"
-									rows={2}
-									placeholder="Nhập ghi chú"
-								/>
+								<TextAreaField form={form} name="DayOffName" label="Ghi chú" rows={2} placeholder="Nhập ghi chú" />
 							</div>
 						</div>
 						<div className="row mt-3">
@@ -118,10 +92,8 @@ const DayOffForm = (props) => {
 									className="btn btn-primary w-100"
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
-									{isUpdate ? 'Update' : 'Create'}
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									Lưu
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
@@ -138,16 +110,16 @@ DayOffForm.propTypes = {
 	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
-	indexUpdateObj: PropTypes.number,
+	indexUpdateObj: PropTypes.number
 };
 DayOffForm.defaultProps = {
 	handleCreateDayOff: null,
 	isUpdate: false,
 	handleUpdateDayOff: null,
 	updateObj: {},
-	isLoading: {type: '', status: false},
-	indexUpdateObj: -1,
+	isLoading: { type: '', status: false },
+	indexUpdateObj: -1
 };
 export default DayOffForm;

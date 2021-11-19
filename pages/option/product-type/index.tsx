@@ -26,7 +26,7 @@ const ProductType = () => {
 			title: 'Tên loại',
 			dataIndex: 'Name',
 			// width: 30,
-			render: (text) => <p className="font-weight-blue">{text}</p>
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Ngày tạo',

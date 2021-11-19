@@ -78,6 +78,10 @@ const ExpandTable = (props) => {
 			rowK = [];
 		}
 
+		if (rowK.length > 1) {
+			rowK.splice(rowK.length - 2, 1);
+		}
+
 		return rowK;
 	};
 
@@ -143,6 +147,7 @@ const ExpandTable = (props) => {
 							pageSizeOptions: ['30'],
 							onShowSizeChange: onShowSizeChange,
 							total: props.totalPage && props.totalPage,
+							showTotal: () => <div className="font-weight-black">Tổng cộng: {props.totalPage}</div>,
 							onChange: (pageNumber, pageSize) => changePagination(pageNumber, pageSize),
 							current: props.currentPage && props.currentPage
 						}}

@@ -1,21 +1,12 @@
-import {
-	Card,
-	Checkbox,
-	DatePicker,
-	Form,
-	Select,
-	Spin,
-	Table,
-	Tabs,
-} from 'antd';
-import React, {useEffect} from 'react';
-import {useForm} from 'react-hook-form';
-import {useWrap} from '~/context/wrap';
+import { Card, Checkbox, DatePicker, Form, Select, Spin, Table, Tabs } from 'antd';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useWrap } from '~/context/wrap';
 
-const {RangePicker} = DatePicker;
+const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
 
-const {TabPane} = Tabs;
+const { TabPane } = Tabs;
 
 const columns = [
 	{
@@ -24,8 +15,8 @@ const columns = [
 		dataIndex: 'ProgramName',
 		// key: "classname",
 
-		render: (text) => <p className="font-weight-blue">{text}</p>,
-	},
+		render: (text) => <p className="font-weight-primary">{text}</p>
+	}
 ];
 
 const TeacherProfile = (props) => {
@@ -34,24 +25,17 @@ const TeacherProfile = (props) => {
 		register,
 		handleSubmit,
 		setValue,
-		formState: {isSubmitting, errors, isSubmitted},
+		formState: { isSubmitting, errors, isSubmitted }
 	} = useForm();
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 
 	// --- GET DATA USER
 	// let dataUser = null;
 	// if (props.dataUser) {
 	//   dataUser = props.dataUser;
 	// }
-	const {
-		dataUser,
-		isLoading,
-		updateTeacherID,
-		userID,
-		dataSubject,
-		updateTeacherForSubject,
-	} = props;
-	const {Option} = Select;
+	const { dataUser, isLoading, updateTeacherID, userID, dataSubject, updateTeacherForSubject } = props;
+	const { Option } = Select;
 
 	const onSubmit = handleSubmit((data) => {
 		console.log('Data submit:', data);
@@ -69,8 +53,8 @@ const TeacherProfile = (props) => {
 		const columns = [];
 		const data = [
 			{
-				Subject: 'Subject',
-			},
+				Subject: 'Subject'
+			}
 		];
 
 		for (let i = 0; i < Object.keys(record.Subject).length; i++) {
@@ -84,7 +68,7 @@ const TeacherProfile = (props) => {
 						checked={record.Subject[i].IsSelected ? true : false}
 						onChange={onChangeCheckBox}
 					/>
-				),
+				)
 			});
 		}
 
@@ -92,7 +76,7 @@ const TeacherProfile = (props) => {
 			// console.log(`checked = ${e.target.value}`);
 			const data = {
 				UserInformationID: userID,
-				SubjectID: e.target.value,
+				SubjectID: e.target.value
 			};
 			console.log('Data submit:', data);
 			let res = updateTeacherForSubject(data);
@@ -104,12 +88,7 @@ const TeacherProfile = (props) => {
 		if (Object.keys(record.Subject).length) {
 			return (
 				<div className="mini-table">
-					<Table
-						columns={columns}
-						dataSource={data}
-						pagination={false}
-						className="tb-expand"
-					/>
+					<Table columns={columns} dataSource={data} pagination={false} className="tb-expand" />
 				</div>
 			);
 		} else {
@@ -264,10 +243,9 @@ const TeacherProfile = (props) => {
 											dataSource={dataSubject}
 											columns={columns}
 											size="middle"
-											scroll={{x: 600}}
+											scroll={{ x: 600 }}
 											expandable={{
-												expandedRowRender: (record) =>
-													expandedRowRender(record),
+												expandedRowRender: (record) => expandedRowRender(record)
 											}}
 											pagination={false}
 										/>

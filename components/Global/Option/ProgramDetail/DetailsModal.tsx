@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Modal, Input, Tooltip, List, Form, Upload, Button, Spin } from 'antd';
+import { Modal, Input, Tooltip, List, Form, Upload, Button, Spin, Skeleton } from 'antd';
 import { Info } from 'react-feather';
 import { LessonDetail } from '~/apiBase/curriculum-detais';
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
@@ -14,7 +14,7 @@ const { confirm } = Modal;
 
 export const DetailsModal = (props) => {
 	const router = useRouter();
-	const { curriculumDetailID, courseID, dataExamTopic, dataCurriculumDetail, onFetchData, isAdmin } = props;
+	const { curriculumDetailID, courseID, dataExamTopic, dataCurriculumDetail, dataRow } = props;
 
 	const { showNoti } = useWrap();
 	const { TextArea } = Input;
@@ -24,12 +24,13 @@ export const DetailsModal = (props) => {
 	const [enableEdit, setEdit] = useState(false);
 	const [showListUploadHtml, setShowListUploadHtml] = useState(false);
 	const [showListUploadDoc, setShowListUploadDoc] = useState(false);
-	const [showPopover, setShowPopover] = useState(false);
 
 	const [showList, setShowList] = useState(true);
 	const [size, setSize] = useState([0, 0]);
 
 	const [isLoading, setLoading] = useState(true);
+
+	console.log('Data: ', data);
 
 	// DATA OF SELECTED LIST ITEM
 	const [selected, dispatch] = React.useReducer(
@@ -310,6 +311,11 @@ export const DetailsModal = (props) => {
 			<Modal title="Thông tin chương trình dạy" visible={visible} onCancel={handleCancel} footer={false} width={1200}>
 				<div className="wrap-modal-curriculum ">
 					<div className="row container">
+						{/* {isLoading && (
+							<div style={{ padding: '20px' }}>
+								<Skeleton />
+							</div>
+						)} */}
 						<div className="list">
 							<List
 								loading={isLoading}
@@ -330,53 +336,193 @@ export const DetailsModal = (props) => {
 							</div>
 						)}
 
-						{!showList && (
+						{
 							<div className="p-4 details">
-								<Spin spinning={isLoading}>
-									{data.length !== 0 && (
-										<div className="row p-0 m-0 mt-2 mb-3 edit-details">
-											{enableEdit && (
-												<Tooltip className="group-button_btn-add mt-1" title="Hủy bỏ">
-													<button
-														onClick={() => {
-															setEdit(false);
-														}}
-														className="btn mb-2 btn-primary"
-													>
-														<i className="far fa-times-circle mr-2"></i>Hủy
-													</button>
-												</Tooltip>
-											)}
+								{!enableEdit && (
+									<div className="group-button">
+										<div className="group-button_btn-add">
+											<AddCurriculumForm
+												callBack={(e) => {
+													setVisible(e);
 
-											{!enableEdit ? (
-												<div className="group-button">
-													<div className="group-button_btn-add">
-														<AddCurriculumForm
-															callBack={(e) => {
-																setVisible(e);
-
-																if (e) {
-																	getDetails();
-																}
+													if (e) {
+														getDetails();
+													}
+												}}
+												callFrom="modal"
+												curriculumDetailID={curriculumDetailID}
+												dataExamTopic={dataExamTopic}
+												dataCurriculumDetail={dataCurriculumDetail}
+												dataRow={dataRow}
+											/>
+										</div>
+									</div>
+								)}
+								{!showList && (
+									<Spin spinning={isLoading}>
+										{/* <Skeleton loading={isLoading}> */}
+										{/* {data.length !== 0 && (
+											<div className="row p-0 m-0 mt-2 mb-3 edit-details">
+												{enableEdit && (
+													<Tooltip className="group-button_btn-add mt-1" title="Hủy bỏ">
+														<button
+															onClick={() => {
+																setEdit(false);
 															}}
-															callFrom="modal"
-															curriculumDetailID={curriculumDetailID}
-															dataExamTopic={dataExamTopic}
-															dataCurriculumDetail={dataCurriculumDetail}
-														/>
-													</div>
+															className="btn mb-2 btn-primary"
+														>
+															<i className="far fa-times-circle mr-2"></i>Hủy
+														</button>
+													</Tooltip>
+												)}
+											</div>
+										)} */}
+										{data.length !== 0 ? (
+											<div className="mt-2">
+												<div className="row p-0 m-0  hide-if-800">
+													<Tooltip title="Hiển thị danh sách">
+														<button
+															onClick={() => {
+																setShowList(true);
+															}}
+															className="btn mb-3 btn-light"
+														>
+															<i className="far fa-list-alt mr-2"></i>Danh sách
+														</button>
+													</Tooltip>
+												</div>
 
+												<Input
+													className="item-info"
+													prefix="Nội dung:"
+													value={selected.Content}
+													disabled={!enableEdit}
+													onChange={(p) => {
+														dispatch({ type: 'Content', data: p.target.value });
+													}}
+												/>
+												<Input
+													className="item-info"
+													prefix="Link video:"
+													value={selected.LinkVideo}
+													disabled={!enableEdit}
+													onChange={(p) => {
+														dispatch({ type: 'LinkVideo', data: p.target.value });
+													}}
+												/>
+
+												<div className="row m-0">
+													{!enableEdit ? (
+														<Input
+															className="item-info"
+															prefix="Link document:"
+															value={selected.LinkDocument}
+															disabled={!enableEdit}
+															onChange={(p) => {
+																dispatch({
+																	type: 'LinkDocument',
+																	data: p.target.value
+																});
+															}}
+														/>
+													) : (
+														<Form.Item className="mr-3">
+															<Upload
+																onChange={onChangeUploadLinkDocument}
+																showUploadList={showListUploadDoc}
+																maxCount={1}
+															>
+																<Button className="item-info item-info__Upload" icon={<UploadOutlined />}>
+																	Bấm để tải lên tài liệu
+																</Button>
+															</Upload>
+														</Form.Item>
+													)}
+
+													{!enableEdit ? (
+														<Input
+															className="item-info"
+															prefix="Link html:"
+															value={selected.LinkHtml}
+															disabled={!enableEdit}
+															onChange={(p) => {
+																dispatch({
+																	type: 'LinkHtml',
+																	data: p.target.value
+																});
+															}}
+														/>
+													) : (
+														<Form.Item>
+															<Upload
+																onChange={onChangeUploadLinkHTML}
+																showUploadList={showListUploadHtml}
+																maxCount={1}
+															>
+																<Button className="item-info item-info__Upload" icon={<UploadOutlined />}>
+																	Bấm để tải lên file html
+																</Button>
+															</Upload>
+														</Form.Item>
+													)}
+												</div>
+
+												<Form.Item>
+													<p style={{ color: !enableEdit ? '#bebebe' : '#000' }}>Ghi chú</p>
+													<TextArea
+														rows={4}
+														placeholder=""
+														value={selected.Description}
+														onChange={(p) => {
+															dispatch({
+																type: 'Description',
+																data: p.target.value
+															});
+														}}
+														disabled={!enableEdit}
+													/>
+												</Form.Item>
+
+												<Input
+													className="item-info"
+													prefix="Tổng thời lượng:"
+													value={
+														selected.SecondVideo === '' || selected.SecondVideo === undefined
+															? 'Không rõ'
+															: selected.SecondVideo
+													}
+													disabled
+												/>
+
+												<div className="text-right mt-3">
+													<button className="btn btn-secondary" onClick={() => moveToTest(selected)}>
+														Làm bài tập
+													</button>
 													<Tooltip title="Chỉnh sửa thông tin">
 														{size[0] > 470 ? (
-															<button
-																onClick={() => {
-																	setEdit(true);
-																}}
-																className="btn btn-warning"
-																style={{ marginLeft: 11, color: '#fff' }}
-															>
-																<i className="far fa-edit mr-2"></i>Chỉnh sửa
-															</button>
+															data?.length > 0 &&
+															(enableEdit ? (
+																<Tooltip className="group-button_btn-add" title="Hủy bỏ">
+																	<button
+																		onClick={() => {
+																			setEdit(false);
+																		}}
+																		className="btn ml-2 btn-primary"
+																	>
+																		<i className="far fa-times-circle mr-2"></i>Hủy
+																	</button>
+																</Tooltip>
+															) : (
+																<button
+																	onClick={() => {
+																		setEdit(true);
+																	}}
+																	className="btn btn-warning"
+																	style={{ marginLeft: 11, color: '#fff' }}
+																>
+																	<i className="far fa-edit mr-2"></i>Chỉnh sửa
+																</button>
+															))
 														) : (
 															<button
 																onClick={() => {
@@ -389,175 +535,28 @@ export const DetailsModal = (props) => {
 															</button>
 														)}
 													</Tooltip>
-
-													{/* <Tooltip title="Xóa item đã chọn">
-													{size[0] > 470 ? (
-														<button
-															onClick={() => {
-																handleDelete();
-															}}
-															className="btn mb-2 btn-primary"
-															style={{ marginLeft: 12 }}
-														>
-															<i className="far fa-trash-alt mr-2"></i>Xóa
-														</button>
-													) : (
-														<button
-															onClick={() => {
-																handleDelete();
-															}}
-															className="btn ml-4 btn-primary"
-															style={{ marginTop: marginTop }}
-														>
-															<i className="far fa-trash-alt mr-2"></i>Xóa
-														</button>
+													{enableEdit && (
+														<Tooltip className="group-button_btn-add" title="Lưu thông tin">
+															<button
+																onClick={() => {
+																	setEdit(false);
+																	handleUpdate();
+																}}
+																className="btn ml-2 btn-success"
+															>
+																<i className="far fa-save mr-2"></i>Lưu
+															</button>
+														</Tooltip>
 													)}
-												</Tooltip> */}
 												</div>
-											) : (
-												<Tooltip className="group-button_btn-add mt-1" title="Lưu thông tin">
-													<button
-														onClick={() => {
-															setEdit(false);
-															handleUpdate();
-														}}
-														className="btn ml-3 mb-2 btn-success"
-													>
-														<i className="far fa-save mr-2"></i>Lưu
-													</button>
-												</Tooltip>
-											)}
-										</div>
-									)}
-									{data.length !== 0 ? (
-										<div className="mt-2">
-											<div className="row p-0 m-0  hide-if-800">
-												<Tooltip title="Hiển thị danh sách">
-													<button
-														onClick={() => {
-															setShowList(true);
-														}}
-														className="btn mb-3 btn-light"
-													>
-														<i className="far fa-list-alt mr-2"></i>Danh sách
-													</button>
-												</Tooltip>
 											</div>
-
-											<Input
-												className="item-info"
-												prefix="Nội dung:"
-												value={selected.Content}
-												disabled={!enableEdit}
-												onChange={(p) => {
-													dispatch({ type: 'Content', data: p.target.value });
-												}}
-											/>
-											<Input
-												className="item-info"
-												prefix="Link video:"
-												value={selected.LinkVideo}
-												disabled={!enableEdit}
-												onChange={(p) => {
-													dispatch({ type: 'LinkVideo', data: p.target.value });
-												}}
-											/>
-
-											<div className="row m-0">
-												{!enableEdit ? (
-													<Input
-														className="item-info"
-														prefix="Link document:"
-														value={selected.LinkDocument}
-														disabled={!enableEdit}
-														onChange={(p) => {
-															dispatch({
-																type: 'LinkDocument',
-																data: p.target.value
-															});
-														}}
-													/>
-												) : (
-													<Form.Item className="mr-3">
-														<Upload
-															onChange={onChangeUploadLinkDocument}
-															showUploadList={showListUploadDoc}
-															maxCount={1}
-														>
-															<Button className="item-info item-info__Upload" icon={<UploadOutlined />}>
-																Bấm để tải lên tài liệu
-															</Button>
-														</Upload>
-													</Form.Item>
-												)}
-
-												{!enableEdit ? (
-													<Input
-														className="item-info"
-														prefix="Link html:"
-														value={selected.LinkHtml}
-														disabled={!enableEdit}
-														onChange={(p) => {
-															dispatch({
-																type: 'LinkHtml',
-																data: p.target.value
-															});
-														}}
-													/>
-												) : (
-													<Form.Item>
-														<Upload
-															onChange={onChangeUploadLinkHTML}
-															showUploadList={showListUploadHtml}
-															maxCount={1}
-														>
-															<Button className="item-info item-info__Upload" icon={<UploadOutlined />}>
-																Bấm để tải lên file html
-															</Button>
-														</Upload>
-													</Form.Item>
-												)}
-											</div>
-
-											<Form.Item>
-												<p style={{ color: !enableEdit ? '#bebebe' : '#000' }}>Ghi chú</p>
-												<TextArea
-													rows={4}
-													placeholder=""
-													value={selected.Description}
-													onChange={(p) => {
-														dispatch({
-															type: 'Description',
-															data: p.target.value
-														});
-													}}
-													disabled={!enableEdit}
-												/>
-											</Form.Item>
-
-											<Input
-												className="item-info"
-												prefix="Tổng thời lượng:"
-												value={
-													selected.SecondVideo === '' || selected.SecondVideo === undefined
-														? 'Không rõ'
-														: selected.SecondVideo
-												}
-												disabled
-											/>
-
-											<div className="text-right">
-												<button className="btn btn-secondary mt-2" onClick={() => moveToTest(selected)}>
-													Làm bài tập
-												</button>
-											</div>
-										</div>
-									) : (
-										<div>{/* <Empty description={false} /> */}</div>
-									)}
-								</Spin>
+										) : (
+											<div>{/* <Empty description={false} /> */}</div>
+										)}
+									</Spin>
+								)}
 							</div>
-						)}
+						}
 					</div>
 				</div>
 			</Modal>

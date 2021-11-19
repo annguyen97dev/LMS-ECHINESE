@@ -31,8 +31,6 @@ const CreateExamForm = (props) => {
 	const { onFetchData, dataItem } = props;
 	const { showNoti } = useWrap();
 	const [visible, setVisible] = useState(false);
-	const [value, setValue] = React.useState(1);
-	const [openAns, setOpenAns] = useState(false);
 	const [dataProgram, setDataProgram] = useState<dataOject[]>([]);
 	const [dataCurriculum, setDataCurriculum] = useState<dataOject[]>([]);
 	const [loadingCurriculum, setLoadingCurriculum] = useState(false);
@@ -124,6 +122,28 @@ const CreateExamForm = (props) => {
 		returnSchema = { ...defaultValuesInit };
 		Object.keys(returnSchema).forEach(function (key) {
 			switch (key) {
+				case 'Type':
+					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					break;
+				case 'Name':
+					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					break;
+				case 'Time':
+					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					break;
+				case 'ProgramID':
+					if (!isTest) {
+						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					}
+					break;
+				case 'CurriculumID':
+					if (!isTest) {
+						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					}
+					break;
+				case 'Code':
+					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					break;
 				default:
 					// returnSchema[key] = yup.mixed().required("Bạn không được để trống");
 					return;
@@ -221,6 +241,7 @@ const CreateExamForm = (props) => {
 								name="Type"
 								label="Dạng đề thi"
 								onChangeSelect={(value) => handleChange_type(value)}
+								isRequired={true}
 								optionList={[
 									{
 										value: 1,
@@ -238,10 +259,10 @@ const CreateExamForm = (props) => {
 							/>
 						</div>
 						<div className="col-md-6 col-12">
-							<InputTextField form={form} name="Name" label="Tên đề thi" />
+							<InputTextField form={form} name="Name" label="Tên đề thi" isRequired={true} />
 						</div>
 						<div className="col-md-6 col-12">
-							<InputTextField form={form} name="Code" label="Mã đề thi" />
+							<InputTextField form={form} name="Code" label="Mã đề thi" isRequired={true} />
 						</div>
 						<div className="col-md-6 col-12">
 							<SelectField
@@ -252,6 +273,7 @@ const CreateExamForm = (props) => {
 								onChangeSelect={(value) => handleChange_selectProgram(value)}
 								isLoading={loadingProgram}
 								optionList={dataProgram}
+								isRequired={true}
 							/>
 						</div>
 						<div className="col-md-6 col-12">
@@ -262,10 +284,11 @@ const CreateExamForm = (props) => {
 								label="Giáo trình"
 								isLoading={loadingCurriculum}
 								optionList={dataCurriculum}
+								isRequired={true}
 							/>
 						</div>
 						<div className="col-md-6 col-12">
-							<InputTextField form={form} name="Time" label="Thời gian" />
+							<InputTextField form={form} name="Time" label="Thời gian làm bài" isRequired={true} />
 						</div>
 
 						<div className="col-12">

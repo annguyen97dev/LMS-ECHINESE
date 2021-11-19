@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Form, Spin, Tooltip } from 'antd';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,13 +13,22 @@ let returnSchema = {};
 let schema = null;
 
 const StudentAdvisoryMail = (props) => {
-	const { onFetchData, dataSource, loadingOutside, dataRow } = props;
+	const { onFetchData, dataSource, loadingOutside, dataRow, listCustomer, resetListCustomer, showCheckBox } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { showNoti } = useWrap();
+	const [listSendEmail, setListSendEmail] = useState([]);
 
 	const showModal = () => {
-		setIsModalVisible(true);
+		if (!dataRow) {
+			if (listCustomer.length < 1) {
+				showCheckBox();
+			} else {
+				setIsModalVisible(true);
+			}
+		} else {
+			setIsModalVisible(true);
+		}
 	};
 
 	const handleOk = () => {
@@ -73,7 +82,7 @@ const StudentAdvisoryMail = (props) => {
 		if (!dataRow) {
 			dataSubmit = {
 				...data,
-				customerIDs: listID()
+				customerIDs: listSendEmail
 			};
 		} else {
 			dataSubmit = {
@@ -89,6 +98,9 @@ const StudentAdvisoryMail = (props) => {
 				showNoti('success', 'Gửi email thành công');
 				setIsModalVisible(false);
 				form.reset(defaultValuesInit);
+				resetListCustomer && resetListCustomer();
+				onFetchData && onFetchData();
+				showCheckBox && showCheckBox();
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -97,14 +109,36 @@ const StudentAdvisoryMail = (props) => {
 		}
 	};
 
+	// useEffect(() => {
+	// 	if (listCustomer?.length > 0) {
+	// 		if (!dataRow) {
+	// 			setListSendEmail([...listCustomer]);
+	// 		} else {
+	// 			listSendEmail.push(dataRow.ID);
+	// 			setListSendEmail([...listSendEmail]);
+	// 		}
+	// 	}
+	// }, [listCustomer]);
+
+	useEffect(() => {
+		if (isModalVisible) {
+			if (!dataRow) {
+				listCustomer.length > 0 ? setListSendEmail([...listCustomer]) : setListSendEmail([]);
+			} else {
+				listSendEmail.push(dataRow.ID);
+				setListSendEmail([...listSendEmail]);
+			}
+		}
+	}, [isModalVisible]);
+
 	return (
 		<div>
 			{!dataRow ? (
-				<button className="btn btn-warning" onClick={showModal}>
+				<button className="btn btn-secondary mr-2" onClick={showModal}>
 					Gửi mail
 				</button>
 			) : (
-				<Tooltip title="Gửi mail">
+				<Tooltip title="Gửi mail cá nhân">
 					<button className="btn btn-icon" onClick={showModal}>
 						<SendOutlined />
 					</button>
@@ -118,8 +152,8 @@ const StudentAdvisoryMail = (props) => {
 				onOk={handleOk}
 				onCancel={handleCancel}
 			>
-				{loadingOutside.status ? (
-					<p>Chờ chút bạn đang thao tác quá nhanh</p>
+				{listSendEmail?.length < 1 ? (
+					<p className="font-weight-black">Vui lòng chọn khách để gửi mail!</p>
 				) : (
 					<Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
 						<div className="row">

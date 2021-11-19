@@ -15,6 +15,8 @@ export type IProps = {
 	userInformation: IUser;
 	pageSize: number;
 	isAdmin: boolean;
+	reloadNotification: boolean;
+	handleReloadNoti: Function;
 };
 
 const WrapContext = createContext<IProps>({
@@ -25,7 +27,9 @@ const WrapContext = createContext<IProps>({
 	getDataUser: () => {},
 	userInformation: null,
 	pageSize: 30,
-	isAdmin: false
+	isAdmin: false,
+	reloadNotification: false,
+	handleReloadNoti: Function
 });
 
 // const initialState = {
@@ -51,6 +55,8 @@ export const WrapProvider = ({ children }) => {
 	});
 	const [userInfo, setUserInfo] = useState<IUser>(null);
 	const [isAdmin, setIsAdmin] = useState(false);
+	const [reloadNotification, setReloadNotification] = useState(false);
+
 	// --- Get Title Page ---
 	const getTitlePage = (title) => {
 		setTitlePage(title);
@@ -109,6 +115,11 @@ export const WrapProvider = ({ children }) => {
 		}
 	};
 
+	// --- Handle Reload Notification ---
+	const handleReloadNoti = () => {
+		setReloadNotification(!reloadNotification);
+	};
+
 	useEffect(() => {
 		// console.log('Session: ', session);
 		if (loading && typeof session !== 'undefined' && session !== null) {
@@ -129,7 +140,9 @@ export const WrapProvider = ({ children }) => {
 					showNoti,
 					getDataUser,
 					userInformation: userInfo,
-					isAdmin: isAdmin
+					isAdmin: isAdmin,
+					reloadNotification: reloadNotification,
+					handleReloadNoti: handleReloadNoti
 				}}
 			>
 				<ToastContainer

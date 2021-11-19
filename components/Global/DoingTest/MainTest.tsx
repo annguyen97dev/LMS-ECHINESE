@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Checkbox, Spin, Modal, Skeleton } from 'antd';
-import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { Card, Checkbox, Spin, Modal, Skeleton, Button } from 'antd';
+import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { examDetailApi, examTopicApi, doingTestApi, examAppointmentResultApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import CountDown from '~/components/Elements/CountDown/CountDown';
@@ -10,6 +10,7 @@ import { useDoingTest } from '~/context/useDoingTest';
 import dynamic from 'next/dynamic';
 import DecideModal from '~/components/Elements/DecideModal';
 import { courseExamApi } from '~/apiBase/package/course-exam';
+import TimeUpModal from './TimeUpModal';
 
 const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQuestion'), {
 	loading: () => <p>...</p>,
@@ -58,6 +59,9 @@ const MainTest = (props) => {
 	const [isLong, setIsLong] = useState(false);
 	const [isModalConfirm, setIsModalConfirm] = useState(false);
 	const [isModalSuccess, setIsModalSuccess] = useState(false);
+	const [openTimeUpModal, setOpenTimeUpModal] = useState(false);
+
+	console.log('Data Question nha: ', dataQuestion);
 
 	// --- GET LIST QUESTION ---
 	const getListQuestion = async () => {
@@ -128,10 +132,13 @@ const MainTest = (props) => {
 
 	// -- CHECK IS SINGLE
 	const checkIsSingle = (indexCurrent) => {
+		console.log('doooo');
+		console.log('current page: ', indexCurrent);
 		if (indexCurrent !== spaceQuestion.start && indexCurrent !== 0 && indexCurrent !== spaceQuestion.end) {
 			if (spaceQuestion.end - spaceQuestion.start == 2) {
 				if (indexCurrent > spaceQuestion.start && indexCurrent < spaceQuestion.end) {
 					indexCurrent = indexCurrent - 1;
+					console.log('doooo 2');
 				}
 			}
 		}
@@ -147,6 +154,7 @@ const MainTest = (props) => {
 					});
 					return false;
 				} else {
+					console.log('doooo 3');
 					setSpaceQuestion({
 						start: indexCurrent,
 						end: index + 1
@@ -157,6 +165,13 @@ const MainTest = (props) => {
 
 			return true;
 		});
+
+		if (indexCurrent + 1 === dataQuestion.length) {
+			setSpaceQuestion({
+				start: indexCurrent,
+				end: indexCurrent + 1
+			});
+		}
 	};
 
 	// -- CHECK IS GROUP --
@@ -254,13 +269,16 @@ const MainTest = (props) => {
 		}
 	}
 
-	console.log('List Preview: ', listPreview);
+	// console.log('List Preview: ', listPreview);
 
 	// --- TIME UP ---
 	const timeUp = () => {
-		// setHandleclick(false);
-		// setShowPopup(true);
-		alert('Hết giờ làm bài');
+		setOpenTimeUpModal(true);
+
+		setTimeout(() => {
+			setOpenTimeUpModal(false);
+			onSubmit_DoingTest();
+		}, 1500);
 	};
 
 	// --- ACTION SHOW MODAL ---
@@ -345,7 +363,7 @@ const MainTest = (props) => {
 					});
 				});
 
-				dataTestFirst = deleteOldElement(dataTestFirst, 'test');
+				// dataTestFirst = deleteOldElement(dataTestFirst, 'test');
 				dataSubmit = { ...dataTestFirst };
 
 				break;
@@ -422,6 +440,8 @@ const MainTest = (props) => {
 		setIsModalConfirm(false);
 		setLoadingSubmit(true);
 		let dataSubmit = remakeData();
+
+		console.log('Data Submit: ', dataSubmit);
 
 		let res = null;
 
@@ -563,6 +583,8 @@ const MainTest = (props) => {
 
 	return (
 		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
+			{/** Modal báo hết giờ làm bài */}
+			<TimeUpModal isVisible={openTimeUpModal} />
 			{/* Modal báo thành công **/}
 			<Modal title="Thông báo" footer={null} className="" visible={isModalSuccess}>
 				<div className="modal-submit-success-test">

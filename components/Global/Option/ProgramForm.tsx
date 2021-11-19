@@ -180,6 +180,9 @@ const ProgramForm = React.memo((props: any) => {
 										<Option key={2} value={2}>
 											Offline
 										</Option>
+										<Option key={3} value={3}>
+											Video
+										</Option>
 									</Select>
 								</Form.Item>
 							</div>
@@ -199,7 +202,7 @@ const ProgramForm = React.memo((props: any) => {
 								<Form.Item
 									name="Description"
 									label="Mô tả"
-									rules={[{ required: true, message: 'Bạn không được để trống' }]}
+									// rules={[{ required: true, message: 'Bạn không được để trống' }]}
 								>
 									<TextArea rows={4} placeholder="" onChange={(e) => setValue('Description', e.target.value)} />
 								</Form.Item>

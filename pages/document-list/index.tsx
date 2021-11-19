@@ -65,11 +65,11 @@ const DocumentList = (props) => {
 
 	return (
 		<div className="h-100">
-			<Card title="Tài liệu" className="h-100">
+			<Card title="Tài liệu" className="h-100 card-document-list">
 				<div className="row">
-					<div className="col-3">
-						<div className="pb-3 col-12 d-flex justify-content-between align-items-center">
-							<div className=" font-weight-black">Giáo trình</div>
+					<div className="col-3 document-menu">
+						<div className="pb-3 col-12 d-flex justify-content-between align-items-center box-header">
+							<div className="title">Danh sách</div>
 							<DocModal
 								type="ADD_DOC"
 								CategoryName={null}
@@ -92,16 +92,15 @@ const DocumentList = (props) => {
 										style={{ cursor: 'pointer' }}
 										className="title doc__list-menu"
 										onClick={() => {
-											console.log('clicked', cate.ID);
 											setActiveID(cate.ID);
 											getDocList(cate.ID);
 											setDocInfo({ CategoryID: cate.ID, DocumentName: cate.CategoryName });
 											setCategoryID(cate.ID);
 										}}
 									>
-										<Folder /> {cate.CategoryName}
+										<Folder /> <p>{cate.CategoryName}</p>
 									</div>
-									<div className="action-btn">
+									<div className="action-btn text-right">
 										<DocModal
 											type="EDIT_DOC"
 											CategoryName={cate.CategoryName}

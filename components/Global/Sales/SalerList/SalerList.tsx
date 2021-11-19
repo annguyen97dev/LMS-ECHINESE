@@ -1,11 +1,11 @@
 import moment from 'moment';
-import React, {useEffect, useRef, useState} from 'react';
-import {areaApi, branchApi, districtApi, staffApi, wardApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { areaApi, branchApi, districtApi, staffApi, wardApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr } from '~/utils/functions';
 import TeacherFilterForm from '../../Teacher/Teacher/TeacherFilterForm';
 import SalerListForm from './SalerListForm';
 
@@ -18,21 +18,21 @@ const SalerList = () => {
 	}>({
 		areaList: [],
 		districtList: [],
-		wardList: [],
+		wardList: []
 	});
 	const [branchList, setBranchList] = useState([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
+		sort: 1,
 		sortType: false,
 
 		AreaID: '',
@@ -40,58 +40,58 @@ const SalerList = () => {
 		fromDate: '',
 		toDate: '',
 		StatusID: null,
-		RoleID: 6,
+		RoleID: 6
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
-		sort: -1,
-		sortType: false,
+		sort: 1,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	const optionGenderList = [
-		{title: 'Nữ', value: 0},
-		{title: 'Nam', value: 1},
-		{title: 'Khác', value: 2},
+		{ title: 'Nữ', value: 0 },
+		{ title: 'Nam', value: 1 },
+		{ title: 'Khác', value: 2 }
 	];
 	const optionStatusList = [
-		{title: 'Hoạt động', value: 0},
-		{title: 'Khóa', value: 1},
+		{ title: 'Hoạt động', value: 0 },
+		{ title: 'Khóa', value: 1 }
 	];
 	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Tên tăng dần',
+			text: 'Tên tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Tên giảm dần',
+			text: 'Tên giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Ngày nhận việc tăng dần',
+			text: 'Ngày nhận việc tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Ngày nhận việc giảm dần',
-		},
+			text: 'Ngày nhận việc giảm dần'
+		}
 	];
 	// FILTER
 	const onFilter = (obj) => {
@@ -100,7 +100,7 @@ const SalerList = () => {
 			...refValue.current,
 			pageIndex: 1,
 			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
-			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
+			toDate: moment(obj.toDate).format('YYYY/MM/DD')
 		});
 	};
 	// PAGINATION
@@ -109,11 +109,11 @@ const SalerList = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -121,11 +121,11 @@ const SalerList = () => {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -133,7 +133,7 @@ const SalerList = () => {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -143,20 +143,20 @@ const SalerList = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 	// GET AREA
 	const fetchAreaList = async () => {
 		try {
 			const res = await areaApi.getAll({
-				selectAll: true,
+				selectAll: true
 			});
 			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
 				const newAreaList = fmSelectArr(res.data.data, 'AreaName', 'AreaID');
 				setOptionAreaSystemList({
 					...optionAreaSystemList,
-					areaList: newAreaList,
+					areaList: newAreaList
 				});
 			}
 		} catch (error) {
@@ -170,18 +170,14 @@ const SalerList = () => {
 	const fetchDistrictByAreaID = async (id: number) => {
 		try {
 			const res = await districtApi.getAll({
-				AreaID: id,
+				AreaID: id
 			});
 			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
-				const newDistrictList = fmSelectArr(
-					res.data.data,
-					'DistrictName',
-					'ID'
-				);
+				const newDistrictList = fmSelectArr(res.data.data, 'DistrictName', 'ID');
 				setOptionAreaSystemList({
 					...optionAreaSystemList,
 					districtList: newDistrictList,
-					wardList: [],
+					wardList: []
 				});
 			}
 		} catch (error) {
@@ -190,30 +186,30 @@ const SalerList = () => {
 	};
 	// WARD BY DISTRICT
 	const fetchWardByDistrictID = async (id: number) => {
-		setIsLoading({type: 'FETCH_WARD_BY_DISTRICT', status: true});
+		setIsLoading({ type: 'FETCH_WARD_BY_DISTRICT', status: true });
 		try {
 			const res = await wardApi.getAll({
-				DistrictID: id,
+				DistrictID: id
 			});
 			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
 				const newWardList = fmSelectArr(res.data.data, 'WardName', 'ID');
 				setOptionAreaSystemList({
 					...optionAreaSystemList,
-					wardList: newWardList,
+					wardList: newWardList
 				});
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
-			setIsLoading({type: 'FETCH_WARD_BY_DISTRICT', status: false});
+			setIsLoading({ type: 'FETCH_WARD_BY_DISTRICT', status: false });
 		}
 	};
 	// BRANCH BY AREA
 	const fetchBranchByAreaId = async (id: number) => {
-		setIsLoading({type: 'FETCH_DATA_BY_AREA', status: true});
+		setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: true });
 		try {
 			let res = await branchApi.getAll({
-				areaID: id,
+				areaID: id
 			});
 			if (res.status === 200 && res.data.totalRow) {
 				const newBranchList = fmSelectArr(res.data.data, 'BranchName', 'ID');
@@ -225,14 +221,14 @@ const SalerList = () => {
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
-			setIsLoading({type: 'FETCH_DATA_BY_AREA', status: false});
+			setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: false });
 		}
 	};
 	// GET DATA IN FIRST TIME
 	const fetchSalerList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			let res = await staffApi.getAll(filters);
@@ -251,7 +247,7 @@ const SalerList = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -263,12 +259,12 @@ const SalerList = () => {
 		try {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: true,
+				status: true
 			});
 			const newSaler = {
 				...data,
 				Branch: data.Branch.join(','),
-				RoleID: 6,
+				RoleID: 6
 			};
 			const res = await staffApi.add(newSaler);
 			if (res.status === 200) {
@@ -281,7 +277,7 @@ const SalerList = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -289,13 +285,13 @@ const SalerList = () => {
 	const onUpdateTeacher = async (newObj: any, idx: number) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
 			const newSalerAPI = {
 				...newObj,
-				Branch: newObj.Branch.join(','),
+				Branch: newObj.Branch.join(',')
 			};
 			res = await staffApi.update(newSalerAPI);
 			if (res.status === 200) {
@@ -304,11 +300,11 @@ const SalerList = () => {
 					.filter((ob) => newObj.Branch.some((nb) => nb === ob.value))
 					.map((b) => ({
 						ID: b.value,
-						BranchName: b.title,
+						BranchName: b.title
 					}));
 				newSalerList.splice(idx, 1, {
 					...newObj,
-					Branch: newBranch,
+					Branch: newBranch
 				});
 				setSalerList(newSalerList);
 				showNoti('success', res.data.message);
@@ -318,7 +314,7 @@ const SalerList = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 			return res;
 		}
@@ -328,59 +324,40 @@ const SalerList = () => {
 			title: 'Họ và tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
-			className:
-				activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Tỉnh/Thành phố',
 			dataIndex: 'AreaName',
-			...FilterColumn(
-				'AreaID',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionAreaSystemList.areaList
-			),
+			...FilterColumn('AreaID', onSearch, onResetSearch, 'select', optionAreaSystemList.areaList),
 			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : '',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Giới tính',
 			dataIndex: 'Gender',
-			render: (genderID) =>
-				optionGenderList.find((o) => o.value === genderID).title,
+			render: (genderID) => optionGenderList.find((o) => o.value === genderID).title
 		},
 		{
 			title: 'SĐT',
-			dataIndex: 'Mobile',
+			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email',
+			dataIndex: 'Email'
 		},
 		{
 			title: 'Ngày nhận việc',
 			dataIndex: 'Jobdate',
-			render: (date) => date && moment(date).format('DD/MM/YYYY'),
+			render: (date) => date && moment(date).format('DD/MM/YYYY')
 		},
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusID',
 			align: 'center',
-			...FilterColumn(
-				'StatusID',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionStatusList
-			),
-			render: (status) =>
-				status ? (
-					<span className="tag gray">Khóa</span>
-				) : (
-					<span className="tag green">Hoạt động</span>
-				),
+			...FilterColumn('StatusID', onSearch, onResetSearch, 'select', optionStatusList),
+			render: (status) => (status ? <span className="tag gray">Khóa</span> : <span className="tag green">Hoạt động</span>)
 		},
 		{
 			align: 'center',
@@ -400,8 +377,8 @@ const SalerList = () => {
 					//
 					handleSubmit={onUpdateTeacher}
 				/>
-			),
-		},
+			)
+		}
 	];
 
 	return (
@@ -432,10 +409,7 @@ const SalerList = () => {
 				}
 				Extra={
 					<div className="extra-table">
-						<TeacherFilterForm
-							handleFilter={onFilter}
-							handleResetFilter={onResetSearch}
-						/>
+						<TeacherFilterForm handleFilter={onFilter} handleResetFilter={onResetSearch} />
 						<SortBox handleSort={onSort} dataOption={sortOptionList} />
 					</div>
 				}

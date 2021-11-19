@@ -9,7 +9,9 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import UploadFile from '~/components/Elements/UploadFile/UploadFile';
 import DateField from '~/components/FormControl/DateField';
+import InputNumberField from '~/components/FormControl/InputNumberField';
 import InputPassField from '~/components/FormControl/InputPassField';
+import InputPreventText from '~/components/FormControl/InputPreventText';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
@@ -57,13 +59,6 @@ const TeacherForm = (props) => {
 		FullNameUnicode: yup.string().required('Bạn không được để trống'),
 		Jobdate: yup.string().required('Bạn không được để trống'),
 		Email: yup.string().email('Email không đúng định dạng').required('Bạn không được để trống'),
-		Mobile: yup
-			.string()
-			.required('Bạn không được để trống')
-			.matches(
-				/^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\d)(\s|\.)?(\d{3})(\s|\.)?(\d{3})$/,
-				'Sdt không đúng định dạng'
-			),
 		Address: yup.string()
 	});
 	const schemaUpdate = yup.object().shape({
@@ -78,7 +73,14 @@ const TeacherForm = (props) => {
 		CMNDRegister: yup.string().nullable(),
 		Extension: yup.string().nullable(),
 		StatusID: yup.number().nullable().oneOf([0, 1]),
-		Password: yup.string().nullable()
+		Password: yup.string().nullable(),
+		Mobile: yup
+			.string()
+			.required('Bạn không được để trống')
+			.matches(
+				/^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\d)(\s|\.)?(\d{3})(\s|\.)?(\d{3})$/,
+				'Sdt không đúng định dạng'
+			)
 	});
 
 	const schema = isUpdate ? schemaBase.concat(schemaUpdate) : schemaBase;
@@ -281,13 +283,13 @@ const TeacherForm = (props) => {
 									/>
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField form={form} name="Mobile" label="Số điện thoại" placeholder="Nhập số điện thoại" />
+									<InputPreventText form={form} name="Mobile" label="Số điện thoại" placeholder="Nhập số điện thoại" />
 								</div>
 								<div className="col-md-6 col-12">
 									<DateField form={form} name="DOB" label="Ngày sinh" placeholder="Chọn ngày sinh" />
 								</div>
 								<div className="col-md-6 col-12">
-									<InputTextField form={form} name="CMND" label="Số CMND" placeholder="Nhập số CMND" />
+									<InputPreventText form={form} name="CMND" label="Số CMND" placeholder="Nhập số CMND" />
 								</div>
 								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="CMNDRegister" label="Nơi cấp CMND" placeholder="Nhập nơi cấp CMND" />
@@ -473,7 +475,7 @@ const TeacherForm = (props) => {
 										label="Tên tiếng Trung"
 										placeholder="Nhập tên tiếng Trung"
 									/>
-									<InputTextField
+									<InputPreventText
 										form={form}
 										name="Mobile"
 										label="Số điện thoại"

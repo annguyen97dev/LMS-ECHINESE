@@ -532,7 +532,7 @@ export default function ServiceTestStudent(props) {
 		// 	title: 'Học viên',
 		// 	dataIndex: 'FullNameUnicode',
 
-		// 	render: (a) => <p className="font-weight-blue">{a}</p>,
+		// 	render: (a) => <p className="font-weight-primary">{a}</p>,
 		// 	...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		// },
 
@@ -559,12 +559,10 @@ export default function ServiceTestStudent(props) {
 			dataIndex: 'ExamTopicnName',
 
 			render: (text, data: any) =>
+				data.Status == 0 &&
 				data.ExamTopicID !== 0 && (
 					<Tooltip title="Làm đề test">
 						<a href="" className="font-weight-link d-flex align-items-center" onClick={(e) => moveToTest(e, data)}>
-							<button className="btn btn-icon edit mr-2">
-								<EditOutlined />
-							</button>
 							{text}
 						</a>
 					</Tooltip>
@@ -633,6 +631,16 @@ export default function ServiceTestStudent(props) {
 								</button>
 							</Tooltip>
 						</Link>
+					)}
+
+					{data.Status == 0 && data.ExamTopicID !== 0 && (
+						<Tooltip title="Làm đề test">
+							<button className="btn btn-icon edit mr-2">
+								<a href="" className="font-weight-link d-flex align-items-center" onClick={(e) => moveToTest(e, data)}>
+									<EditOutlined />
+								</a>
+							</button>
+						</Tooltip>
 					)}
 				</>
 			)

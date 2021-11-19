@@ -138,22 +138,22 @@ const RegCoursePayment = (props: any) => {
 		{
 			title: 'Tổng thanh toán',
 			dataIndex: 'Price',
-			render: (price) => <p className="font-weight-blue">{Intl.NumberFormat('en-US').format(price)}</p>
+			render: (price) => <p className="font-weight-primary">{Intl.NumberFormat('en-US').format(price)}</p>
 		},
 		{
 			title: 'Giảm giá',
 			dataIndex: 'Reduced',
-			render: (price) => <p className="font-weight-blue">{Intl.NumberFormat('en-US').format(price)}</p>
+			render: (price) => <p className="font-weight-primary">{Intl.NumberFormat('en-US').format(price)}</p>
 		},
 		{
 			title: 'Đã thanh toán',
 			dataIndex: 'Paid',
-			render: (price) => <p className="font-weight-blue">{Intl.NumberFormat('en-US').format(price)}</p>
+			render: (price) => <p className="font-weight-primary">{Intl.NumberFormat('en-US').format(price)}</p>
 		},
 		{
 			title: 'Số tiền còn lại',
 			dataIndex: 'MoneyInDebt',
-			render: (price) => <p className="font-weight-blue">{Intl.NumberFormat('en-US').format(price)}</p>
+			render: (price) => <p className="font-weight-primary">{Intl.NumberFormat('en-US').format(price)}</p>
 		},
 		{
 			title: 'Hình thức',

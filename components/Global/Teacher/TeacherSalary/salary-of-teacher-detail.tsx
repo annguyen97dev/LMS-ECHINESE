@@ -26,12 +26,12 @@ const SalaryOfTeacherDetail = ({ price, record }) => {
 		{
 			title: 'Giáo viên',
 			dataIndex: 'TeacherName',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Môn học',
 			dataIndex: 'CourseName',
-			render: (price, record) => <p className="font-weight-blue">{price}</p>
+			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Số bài học',
@@ -75,7 +75,7 @@ const SalaryOfTeacherDetail = ({ price, record }) => {
 	return (
 		<>
 			<button
-				className="font-weight-blue btn btn-icon edit"
+				className="font-weight-primary btn btn-icon edit"
 				onClick={() => {
 					setVisible(true);
 				}}

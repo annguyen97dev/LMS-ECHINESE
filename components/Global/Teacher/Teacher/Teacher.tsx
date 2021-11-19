@@ -251,7 +251,6 @@ const Teacher = () => {
 					setTotalPage(res.data.totalRow);
 				}
 			} else if (res.status === 204) {
-				showNoti('danger', 'Không tìm thấy');
 				setTeacherList([]);
 			}
 		} catch (error) {
@@ -381,17 +380,19 @@ const Teacher = () => {
 		{
 			title: 'Mã giáo viên',
 			dataIndex: 'UserCode',
-			fixed: 'left'
+			fixed: 'left',
+			render: (code) => <p className="font-weight-black">{code}</p>
 		},
 		{
 			title: 'Họ và tên',
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
 			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
-			render: (text) => <p className="font-weight-black">{text}</p>,
+			render: (text) => <p className="font-weight-primary">{text}</p>,
 			fixed: 'left'
 		},
 		{
+			width: 120,
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
 			render: (text) => <p className="font-weight-black">{text}</p>
@@ -403,6 +404,7 @@ const Teacher = () => {
 			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : ''
 		},
 		{
+			width: 120,
 			title: 'Giới tính',
 			dataIndex: 'Gender',
 			render: (genderID) => optionGenderList.find((o) => o.value === genderID).title

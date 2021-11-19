@@ -453,7 +453,16 @@ textarea.ant-input {
 	&.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
 		color: rgba($color: #000000, $alpha: 0.8);
 	}
-
+	&.hide-icon {
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+		input[type='number'] {
+			-moz-appearance: textfield;
+		}
+	}
 	.ant-select-selection-item-remove {
 		user-select: none;
 		line-height: 14px;
@@ -943,26 +952,26 @@ textarea.ant-input {
 // 		}
 // 	}
 
-// 	.table-medium {
-// 		width: 75%;
-// 		@include max-media(800px) {
-// 			width: 100%;
-// 		}
-// 	}
+.table-medium {
+	width: 75%;
+	@include max-media(800px) {
+		width: 100%;
+	}
+}
 
-// 	.table-small {
-// 		width: 72%;
-// 		@include max-media(800px) {
-// 			width: 100%;
-// 		}
-// 	}
+.table-small {
+	width: 50%;
+	@include max-media(800px) {
+		width: 100%;
+	}
+}
 
-// 	.table-super-small {
-// 		width: 50%;
-// 		@include max-media(800px) {
-// 			width: 100%;
-// 		}
-// 	}
+.table-super-small {
+	width: 50%;
+	@include max-media(800px) {
+		width: 100%;
+	}
+}
 
 // 	.ant-table-empty .ant-table-content {
 // 		overflow: hidden !important;
@@ -1359,7 +1368,7 @@ hr {
 	}
 }
 
-.font-weight-blue {
+.font-weight-primary {
 	font-weight: 500;
 	color: $primary-color;
 	margin-bottom: 0;
@@ -2103,7 +2112,7 @@ hr {
 }
 .textarea-editor {
 	.note-editable {
-		height: 270px;
+		height: 270px !important;
 	}
 }
 
@@ -2166,4 +2175,19 @@ hr {
 }
 .style-link {
 	color: #447aac;
+}
+.btn-have-icon {
+}
+.limit-text {
+	display: inline;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+.info-profile-left {
+	.box-icon {
+		line-height: 0;
+	}
 }

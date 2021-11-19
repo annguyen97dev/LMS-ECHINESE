@@ -107,7 +107,7 @@ function PaymentCourseTable(props) {
 			title: 'Số tiền còn lại',
 			dataIndex: 'MoneyInDebt',
 			render: (price) => {
-				return <p className="font-weight-blue">{numberWithCommas(price)}</p>;
+				return <p className="font-weight-primary">{numberWithCommas(price)}</p>;
 			}
 		},
 		{

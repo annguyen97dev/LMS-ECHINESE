@@ -5,7 +5,7 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 
 const TimePickerField = (props) => {
-	const { form, name, label, placeholder, disabled, style, className } = props;
+	const { form, name, label, placeholder, disabled, style, className, isRequired } = props;
 	const { errors } = form.formState;
 	const hasError = errors[name];
 
@@ -16,6 +16,7 @@ const TimePickerField = (props) => {
 			style={style}
 			label={label}
 			className={`${className} ${hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
+			required={isRequired}
 		>
 			<Controller
 				name={name}
@@ -53,14 +54,16 @@ TimePickerField.propTypes = {
 	placeholder: PropTypes.string,
 	disabled: PropTypes.bool,
 	style: PropTypes.shape({}),
-	className: PropTypes.string
+	className: PropTypes.string,
+	isRequired: PropTypes.bool
 };
 TimePickerField.defaultProps = {
 	label: '',
 	placeholder: '',
 	disabled: false,
 	style: {},
-	className: ''
+	className: '',
+	isRequired: false
 };
 
 export default TimePickerField;

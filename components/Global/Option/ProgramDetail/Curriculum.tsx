@@ -4,12 +4,13 @@ import { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
 import { curriculumApi, programApi, subjectApi } from '~/apiBase';
 import CurriculumForm from '~/components/Global/Option/CurriculumForm';
-import { Tooltip } from 'antd';
+import { Modal, Select, Tooltip } from 'antd';
 import Link from 'next/link';
 import { Info } from 'react-feather';
 import ExpandTable from '~/components/ExpandTable';
 import CurriculumDetail from './CurriculumDetail';
 import { resolveSoa } from 'dns';
+import { DiffOutlined, SnippetsOutlined } from '@ant-design/icons';
 
 let pageIndex = 1;
 
@@ -34,7 +35,8 @@ const dataOption = [
 	}
 ];
 
-const Curriculum = () => {
+const Curriculum = (props) => {
+	const { key } = props;
 	const router = useRouter();
 	const programID = parseInt(router.query.slug as string);
 
@@ -160,7 +162,6 @@ const Curriculum = () => {
 					getDataSubject();
 				}
 			} catch (error) {
-				console.log('error: ', error);
 				showNoti('danger', error.message);
 			} finally {
 				setIsLoading({
@@ -216,7 +217,7 @@ const Curriculum = () => {
 	// ============== USE EFFECT - FETCH DATA ===================
 	useEffect(() => {
 		getDataSource();
-	}, [todoApi]);
+	}, [todoApi, key]);
 
 	useEffect(() => {
 		getDataProgram();
@@ -225,24 +226,28 @@ const Curriculum = () => {
 
 	// EXPANDED ROW RENDER
 
-	const selectSubject = (value) => {
-		console.log('Value: ', value);
-	};
-
 	const expandedRowRender = () => {
 		return (
 			<>
-				<CurriculumDetail dataSubject={dataSubject} programID={programID} curriculumID={curriculumID} />
+				<CurriculumDetail loadingOut={isLoading} dataSubject={dataSubject} programID={programID} curriculumID={curriculumID} />
 			</>
 		);
 	};
 
 	const columns = [
 		{
+			title: 'ID',
+			dataIndex: 'ID',
+			render: (id) => <p className="font-weight-black">{id}</p>,
+			fixed: 'left'
+		},
+		{
+			width: '50%',
 			title: 'Giáo trình',
 			dataIndex: 'CurriculumName',
 			key: 'curriculumname',
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text) => <p className="font-weight-black">{text}</p>,
+			fixed: 'left'
 		},
 		{
 			width: 120,
@@ -260,22 +265,12 @@ const Curriculum = () => {
 		},
 
 		{
+			width: 130,
 			key: 'action',
 			render: (text, data, index) => (
 				<>
-					{/* <Link
-            href={{
-              pathname: "/option/program/curriculum-detail/[slug]",
-              query: { slug: data.ID },
-            }}
-          >
-            <Tooltip title="Chi tiết chương trình">
-              <button className="btn btn-icon">
-                <Info />
-              </button>
-            </Tooltip>
-          </Link> */}
 					<CurriculumForm
+						dataProgram={dataProgram}
 						getIndex={() => setIndexRow(index)}
 						index={index}
 						rowData={data}
@@ -283,6 +278,7 @@ const Curriculum = () => {
 						isLoading={isLoading}
 						_onSubmit={(data: any) => _onSubmit(data)}
 					/>
+					<PickAllSubject dataSubject={dataSubject} curriculumID={data.ID} onFetchData={() => setTodoApi({ ...todoApi })} />
 				</>
 			)
 		}
@@ -290,28 +286,8 @@ const Curriculum = () => {
 
 	return (
 		<div>
-			{/* <PowerTable
-        currentPage={currentPage}
-        totalPage={totalPage && totalPage}
-        getPagination={(pageNumber: number) => getPagination(pageNumber)}
-        addClass="table-fix-column"
-        loading={isLoading}
-        TitleCard={
-          <CurriculumForm
-            dataProgram={dataProgram}
-            isLoading={isLoading}
-            _onSubmit={(data: any) => _onSubmit(data)}
-          />
-        }
-        dataSource={dataSource}
-        columns={columns}
-        Extra={
-
-          "Giáo trình"
-        }
-      /> */}
-
 			<ExpandTable
+				addClass="table-medium"
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -328,3 +304,77 @@ const Curriculum = () => {
 };
 
 export default Curriculum;
+
+const PickAllSubject = (props) => {
+	const { Option } = Select;
+	const { dataSubject, curriculumID, onFetchData } = props;
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [valueSubject, setValueSubject] = useState(false);
+	const { showNoti } = useWrap();
+	const [loading, setLoading] = useState(false);
+
+	const showModal = () => {
+		setIsModalVisible(true);
+	};
+
+	const handleOk = async () => {
+		setLoading(true);
+
+		let dataSubmit = {
+			ID: curriculumID,
+			SubjectID: valueSubject
+		};
+
+		try {
+			let res = await curriculumApi.addSubject(dataSubmit);
+			if (res.status === 200) {
+				showNoti('success', 'Thêm môn học thành công');
+				setIsModalVisible(false);
+				onFetchData();
+				setValueSubject(null);
+			} else {
+				showNoti('danger', 'Đường truyền mạng đang không ổn định');
+			}
+		} catch (error) {
+			showNoti('error', error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleCancel = () => {
+		setIsModalVisible(false);
+	};
+
+	const handleChange_Subject = (value) => {
+		setValueSubject(value);
+	};
+
+	return (
+		<>
+			<Tooltip title="Thêm môn học cho tất cả các buổi">
+				<button className="btn btn-icon view" onClick={showModal}>
+					<DiffOutlined />
+				</button>
+			</Tooltip>
+			<Modal
+				title="Thêm môn học"
+				visible={isModalVisible}
+				okButtonProps={{ loading: loading }}
+				onOk={handleOk}
+				onCancel={handleCancel}
+				okText="Lưu"
+				cancelText="Hủy"
+			>
+				<p className="font-weight-black mb-2">Chọn môn học</p>
+				<Select className="w-100 style-input" onChange={handleChange_Subject}>
+					{dataSubject?.map((item) => (
+						<Option key={item.ID} value={item.ID}>
+							{item.SubjectName}
+						</Option>
+					))}
+				</Select>
+			</Modal>
+		</>
+	);
+};

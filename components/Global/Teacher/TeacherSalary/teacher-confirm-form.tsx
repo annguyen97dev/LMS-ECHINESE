@@ -41,7 +41,7 @@ const ConfirmForm = ({ isLoading, record, setParams, params }) => {
 
 	return (
 		<>
-			{record.StatusID == 1 && <p className="font-weight-blue">Chưa xác nhận lương</p>}
+			{record.StatusID == 1 && <p className="font-weight-primary">Chưa xác nhận lương</p>}
 			{record.StatusID == 3 && (
 				<button
 					className="btn btn-icon edit"
@@ -54,8 +54,8 @@ const ConfirmForm = ({ isLoading, record, setParams, params }) => {
 					</Tooltip>
 				</button>
 			)}
-			{record.StatusID == 4 && <p className="font-weight-blue">Đã xác nhận</p>}
-			{record.StatusID == 5 && <p className="font-weight-blue">Đã nhận lương</p>}
+			{record.StatusID == 4 && <p className="font-weight-primary">Đã xác nhận</p>}
+			{record.StatusID == 5 && <p className="font-weight-primary">Đã nhận lương</p>}
 
 			<Modal title={'Xác Nhận Lương'} onCancel={() => setIsVisible(false)} visible={isVisible} footer={false}>
 				<Form form={form} layout="vertical" onFinish={_onSubmit}>

@@ -91,11 +91,7 @@ const Programs = () => {
 
 		try {
 			let res = await programApi.getAll(todoApi);
-			res.status == 200 &&
-				(setDataSource(res.data.data),
-				setTotalPage(res.data.totalRow),
-				setDataLevel(res.data.listLevel),
-				showNoti('success', res.data.message));
+			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), setDataLevel(res.data.listLevel));
 
 			res.status == 204 && setDataSource([]);
 		} catch (error) {
@@ -116,7 +112,7 @@ const Programs = () => {
 				pageSize: Number.MAX_SAFE_INTEGER
 			});
 			res.status == 200 && setDataGrade(res.data.data);
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu');
+			res.status == 204 && setDataGrade([]);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -125,7 +121,7 @@ const Programs = () => {
 
 	// ---------------- AFTER SUBMIT -----------------
 	const afterPost = (mes) => {
-		showNoti('success', mes);
+		showNoti('success', 'Thêm mới thành công');
 
 		setTodoApi({
 			...listTodoApi,
@@ -154,7 +150,7 @@ const Programs = () => {
 						GradeName: dataGrade.find((item) => item.ID === dataSubmit.GradeID).GradeName
 					});
 					setDataSource(newDataSource);
-					showNoti('success', res.data.message);
+					showNoti('success', 'Cập nhật thành công');
 				}
 			} catch (error) {
 				console.log('error: ', error);
@@ -306,7 +302,7 @@ const Programs = () => {
 			dataIndex: 'ProgramName',
 			...FilterColumn('ProgramName', onSearch, handleReset, 'text'),
 			render: (text) => {
-				return <p className="font-weight-blue">{text}</p>;
+				return <p className="font-weight-primary">{text}</p>;
 			}
 		},
 		{

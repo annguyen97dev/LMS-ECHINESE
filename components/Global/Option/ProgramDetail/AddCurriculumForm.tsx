@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Select, Upload, message, Input, Radio, Spin, Tooltip } from 'antd';
+import { Modal, Button, Form, Select, Upload, message, Input, Radio, Spin, Tooltip, Checkbox } from 'antd';
 import { PlusOutlined, UndoOutlined, UploadOutlined } from '@ant-design/icons';
 import { RotateCcw } from 'react-feather';
 import { useWrap } from '~/context/wrap';
@@ -9,7 +9,7 @@ import CurriculumDetail from './CurriculumDetail';
 import { useRouter } from 'next/router';
 
 export const AddCurriculumForm = (props) => {
-	const { curriculumDetailID, dataExamTopic, dataCurriculumDetail, onFetchData, callFrom, callBack } = props;
+	const { curriculumDetailID, dataExamTopic, dataCurriculumDetail, onFetchData, callFrom, callBack, dataRow } = props;
 	const router = useRouter();
 
 	const [visible, setVisible] = useState(false);
@@ -29,13 +29,14 @@ export const AddCurriculumForm = (props) => {
 		LinkDocument: '',
 		LinkHtml: '',
 		Description: '',
-		ExamTopicID: 21
+		ExamTopicID: null,
+		IsPreview: false
 	});
 	const [exam, setExam] = useState({
 		ID: curriculumDetailID,
-		SubjectID: 25, //int:mã môn học (Nhập 0 nếu xóa Subject)
+		SubjectID: dataRow.SubjectID, //int:mã môn học (Nhập 0 nếu xóa Subject)
 		IsExam: true,
-		ExamTopicID: 1
+		ExamTopicID: null
 	});
 
 	const [isLoading, setIsLoading] = useState({
@@ -56,8 +57,11 @@ export const AddCurriculumForm = (props) => {
 	};
 
 	const handleSelectStatus = (value) => {
-		console.log(value);
-		value === 'Kiểm tra' ? setStatus(true) : setStatus(false);
+		if (value === 'Kiểm tra') {
+			setStatus(true);
+		} else {
+			setStatus(false);
+		}
 	};
 
 	const handleOk = () => {
@@ -75,7 +79,6 @@ export const AddCurriculumForm = (props) => {
 	};
 
 	const _onSubmit = async (dataSubmit: any) => {
-		console.log('Data Submit: ', dataSubmit);
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
@@ -88,8 +91,6 @@ export const AddCurriculumForm = (props) => {
 				res = await curriculumDetailApi.update(exam);
 
 				if (res.status == 200) {
-					// setDataSource(newDataSource);
-					// getDataSubject();
 					showNoti('success', res.data.message);
 					form.resetFields();
 					setVisible(false);
@@ -262,7 +263,7 @@ export const AddCurriculumForm = (props) => {
 					<div className="row mb-4">
 						<div className="col-12">
 							<Select
-								disabled={false}
+								disabled={true}
 								style={{ width: '100%' }}
 								className="style-input"
 								showSearch
@@ -357,7 +358,15 @@ export const AddCurriculumForm = (props) => {
 										</Form.Item>
 									</div>
 								</div>
-
+								<div className="row">
+									<div className="col-12">
+										<Form.Item label="" name="isPreview">
+											<Checkbox onChange={(e) => setLesson({ ...lesson, IsPreview: e.target.checked })}>
+												Cho xem trước video
+											</Checkbox>
+										</Form.Item>
+									</div>
+								</div>
 								<div className="row">
 									<div className="col-12">
 										<Form.Item label="Ghi chú" name="Notice">

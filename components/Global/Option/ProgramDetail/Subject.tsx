@@ -33,7 +33,8 @@ const dataOption = [
 	}
 ];
 
-const Subject = () => {
+const Subject = (props) => {
+	const { key } = props;
 	const router = useRouter();
 	const programID = parseInt(router.query.slug as string);
 
@@ -182,7 +183,6 @@ const Subject = () => {
 	const checkField = (valueSearch, dataIndex) => {
 		let newList = { ...listFieldSearch };
 		Object.keys(newList).forEach(function (key) {
-			console.log('key: ', key);
 			if (key != dataIndex) {
 				if (key != 'pageIndex') {
 					newList[key] = null;
@@ -247,13 +247,11 @@ const Subject = () => {
 	// ============== USE EFFECT - FETCH DATA ===================
 	useEffect(() => {
 		getDataSource();
-	}, [todoApi]);
+	}, [todoApi, key]);
 
 	useEffect(() => {
 		getDataProgram();
 	}, []);
-
-	console.log('DATA program bên này: ', dataProgram);
 
 	const columns = [
 		{
@@ -265,6 +263,7 @@ const Subject = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: '50%',
 			title: 'Bổ sung',
 			dataIndex: 'Additional',
 			key: 'additional',
@@ -290,7 +289,8 @@ const Subject = () => {
 	];
 
 	const expandableObj = {
-		expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
+		// expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
+		expandedRowRender: () => '',
 		expandedRowKeys: activeRow,
 		onExpand: (expanded, record) => {
 			if (expanded) {
@@ -308,7 +308,7 @@ const Subject = () => {
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
-				addClass="table-fix-column"
+				addClass="table-fix-column table-small"
 				loading={isLoading}
 				TitleCard={<SubjectForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
 				dataSource={dataSource}

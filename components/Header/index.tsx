@@ -258,7 +258,14 @@ export default function Header({
 										{session?.user ? (
 											<div className="user-wrap">
 												<div className="user-img">
-													<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+													<img
+														src={
+															dataUser?.Avatar && dataUser?.Avatar !== ''
+																? dataUser.Avatar
+																: '/images/user.png'
+														}
+														alt=""
+													/>
 												</div>
 												<div className="user-info">
 													<p className="user-name">{dataUser?.FullNameUnicode}</p>

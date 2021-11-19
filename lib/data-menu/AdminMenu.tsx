@@ -47,7 +47,7 @@ export const AdminChildMenu = [
 				Key: '/dashboard',
 				Route: '/dashboard',
 				Icon: '',
-				Text: 'Trang chủ'
+				Text: 'Thống kê'
 			},
 			{
 				TypeItem: 'single',
@@ -69,13 +69,13 @@ export const AdminChildMenu = [
 				Icon: '<span class="anticon"><img src="/images/icons/study-course.svg" ></span>',
 				TitleSub: 'Quản lí khóa học',
 				SubMenuList: [
-					{
-						ItemType: 'single',
-						Key: '/course/create-course',
-						Route: '/course/create-course',
-						Text: 'Tạo khóa học',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/course/create-course',
+					// 	Route: '/course/create-course',
+					// 	Text: 'Tạo khóa học',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/course/create-course-online',
@@ -352,20 +352,20 @@ export const AdminChildMenu = [
 						Text: 'Thông tin thanh toán',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/finance/finance-cashier-refund',
-						Route: '/customer/finance/finance-cashier-refund',
-						Text: 'Yêu cầu hoàn tiền',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/customer/finance/finance-cashier-payment',
-						Route: '/customer/finance/finance-cashier-payment',
-						Text: 'Phiếu chi',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/finance/finance-cashier-refund',
+					// 	Route: '/customer/finance/finance-cashier-refund',
+					// 	Text: 'Yêu cầu hoàn tiền',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/finance/finance-cashier-payment',
+					// 	Route: '/customer/finance/finance-cashier-payment',
+					// 	Text: 'Phiếu chi',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						key: '/customer/finance/finance-cashier-invoice',
@@ -445,7 +445,7 @@ export const AdminChildMenu = [
 						Route: '/staff/staff-list',
 						Text: 'Danh sách nhân viên',
 						Icon: ''
-					},
+					}
 					// {
 					//   ItemType: "single",
 					//   Key: "/staff/saler-list",
@@ -453,13 +453,13 @@ export const AdminChildMenu = [
 					//   Text: "Danh sách Salers",
 					//   Icon: "",
 					// },
-					{
-						ItemType: 'single',
-						Key: '/staff/feedback-list',
-						Route: '/staff/feedback-list',
-						Text: 'Duyệt feedback',
-						Icon: ''
-					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/staff/feedback-list',
+					// 	Route: '/staff/feedback-list',
+					// 	Text: 'Duyệt feedback',
+					// 	Icon: ''
+					// }
 				]
 			},
 			// {
@@ -779,6 +779,13 @@ export const AdminChildMenu = [
 						Route: '/option/exam',
 						Text: 'Đợt thi',
 						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/option/services',
+						Route: '/option/services',
+						Text: 'Dịch vụ',
+						Icon: ''
 					}
 				]
 			},
@@ -858,13 +865,7 @@ export const AdminChildMenu = [
 						Text: 'Nghề nghiệp',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/option/services',
-						Route: '/option/services',
-						Text: 'Dịch vụ',
-						Icon: ''
-					},
+
 					{
 						ItemType: 'single',
 						Key: '/option/consultation-status',
@@ -951,22 +952,22 @@ export const AdminChildMenu = [
 						Icon: ''
 					}
 				]
-			},
-			{
-				ItemType: 'sub-menu',
-				Key: 'sub-tab-option-5',
-				Icon: '',
-				TitleSub: 'Sản phẩm',
-				SubMenuList: [
-					{
-						ItemType: 'single',
-						Key: '/option/product-type',
-						Route: '/option/product-type',
-						Text: 'Cấu hình sản phẩm',
-						Icon: ''
-					}
-				]
 			}
+			// {
+			// 	ItemType: 'sub-menu',
+			// 	Key: 'sub-tab-option-5',
+			// 	Icon: '',
+			// 	TitleSub: 'Sản phẩm',
+			// 	SubMenuList: [
+			// 		{
+			// 			ItemType: 'single',
+			// 			Key: '/option/product-type',
+			// 			Route: '/option/product-type',
+			// 			Text: 'Cấu hình sản phẩm',
+			// 			Icon: ''
+			// 		}
+			// 	]
+			// }
 		]
 		// MenuItem: [
 		// 	{

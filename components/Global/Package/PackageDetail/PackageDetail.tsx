@@ -1,42 +1,38 @@
-import {Tooltip} from 'antd';
+import { Tooltip } from 'antd';
 import Link from 'next/link';
-import {useRouter} from 'next/router';
-import React, {useEffect, useRef, useState} from 'react';
-import {Eye} from 'react-feather';
-import {examTopicApi, packageApi} from '~/apiBase';
-import {packageDetailApi} from '~/apiBase/package/package-detail';
+import { useRouter } from 'next/router';
+import React, { useEffect, useRef, useState } from 'react';
+import { Eye } from 'react-feather';
+import { examTopicApi, packageApi } from '~/apiBase';
+import { packageDetailApi } from '~/apiBase/package/package-detail';
 import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import PowerTable from '~/components/PowerTable';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr } from '~/utils/functions';
 import PackageDetailForm from './PackageDetailForm/PackageDetailForm';
 
 const PackageDetail = () => {
 	const router = useRouter();
-	const {slug: ID} = router.query;
-	const [packageDetailList, setPackageDetailList] = useState<
-		ISetPackageDetail[]
-	>([]);
+	const { slug: ID } = router.query;
+	const [packageDetailList, setPackageDetailList] = useState<ISetPackageDetail[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [packageInfo, setPackageInfo] = useState<IPackage>(null);
-	const [optionExamTopicList, setOptionExamTopicList] = useState<
-		IOptionCommon[]
-	>([]);
+	const [optionExamTopicList, setOptionExamTopicList] = useState<IOptionCommon[]>([]);
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: 10,
 
-		SetPackageID: ID,
+		SetPackageID: ID
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: 10
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	// PAGINATION
@@ -45,25 +41,25 @@ const PackageDetail = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// GET DATA IN FIRST TIME
 	const fetchPackageDetailList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			let res = await packageDetailApi.getAll(filters);
@@ -80,14 +76,14 @@ const PackageDetail = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
 	const fetchPackage = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			let res = await packageApi.getByID(ID);
@@ -101,17 +97,17 @@ const PackageDetail = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
 	const fetchExam = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
-			let res = await examTopicApi.getAll({selectAll: true});
+			let res = await examTopicApi.getAll({ selectAll: true, Type: 2 });
 			if (res.status === 200) {
 				const fmOptionExamTopicList = fmSelectArr(res.data.data, 'Name', 'ID');
 				setOptionExamTopicList(fmOptionExamTopicList);
@@ -123,7 +119,7 @@ const PackageDetail = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -137,18 +133,15 @@ const PackageDetail = () => {
 		fetchPackageDetailList();
 	}, [filters]);
 
-	const onCreatePackageDetail = async (data: {
-		Name: string;
-		ExamTopicID: number;
-	}) => {
+	const onCreatePackageDetail = async (data: { Name: string; ExamTopicID: number }) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		try {
 			const newPackageDetail = {
 				SetPackageID: packageInfo.ID,
-				ExamTopicID: data.ExamTopicID,
+				ExamTopicID: data.ExamTopicID
 			};
 			const res = await packageDetailApi.add(newPackageDetail);
 			if (res.status === 200) {
@@ -161,7 +154,7 @@ const PackageDetail = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -169,13 +162,13 @@ const PackageDetail = () => {
 		return async () => {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: true,
+				status: true
 			});
 			try {
 				const delObj = packageDetailList[idx];
 				const newDelObj = {
 					...delObj,
-					Enable: false,
+					Enable: false
 				};
 				const res = await packageDetailApi.update(newDelObj);
 				res.status === 200 && showNoti('success', res.data.message);
@@ -184,13 +177,13 @@ const PackageDetail = () => {
 						? (setFilters({
 								...listFieldInit,
 								...refValue.current,
-								pageIndex: 1,
+								pageIndex: 1
 						  }),
 						  setPackageDetailList([]))
 						: setFilters({
 								...filters,
 								...refValue.current,
-								pageIndex: filters.pageIndex - 1,
+								pageIndex: filters.pageIndex - 1
 						  });
 					return;
 				}
@@ -200,7 +193,7 @@ const PackageDetail = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -208,25 +201,25 @@ const PackageDetail = () => {
 	const columns = [
 		{
 			title: 'Tên đề thi',
-			dataIndex: 'ExamTopicName',
+			dataIndex: 'ExamTopicName'
 		},
 		{
 			title: 'Môn',
-			dataIndex: 'SubjectName',
+			dataIndex: 'SubjectName'
 		},
 		{
 			title: 'Level',
 			dataIndex: 'SetPackageLevel',
-			render: (SetPackageLevel) => `HSK ${SetPackageLevel}`,
+			render: (SetPackageLevel) => `HSK ${SetPackageLevel}`
 		},
 		{
 			title: 'Thời gian',
 			dataIndex: 'Time',
-			render: (time) => `${time} phút`,
+			render: (time) => `${time} phút`
 		},
 		{
 			title: 'Hình thức',
-			dataIndex: 'TypeName',
+			dataIndex: 'TypeName'
 		},
 		{
 			align: 'center',
@@ -234,8 +227,7 @@ const PackageDetail = () => {
 				<>
 					<Link
 						href={{
-							pathname: '/exam/exam-review/[slug]',
-							query: {slug: packageItem.ExamTopicID},
+							pathname: `/question-bank/exam-list/exam-detail/${packageItem.ExamTopicID}`
 						}}
 					>
 						<Tooltip title="Chi tiết đề thi">
@@ -246,8 +238,8 @@ const PackageDetail = () => {
 					</Link>
 					<DeleteTableRow handleDelete={onDeletePackageDetail(idx)} />
 				</>
-			),
-		},
+			)
+		}
 	];
 	return (
 		<>
