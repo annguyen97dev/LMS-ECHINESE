@@ -1,11 +1,11 @@
-import {instance} from '~/apiBase/instance';
+import { instance } from '~/apiBase/instance';
 
 const url = '/api/ZoomRoomSchedule/';
 export const zoomRoomApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<IZoomRoom[]>>(url, {
-			params,
+			params
 		});
 	},
 	// Lấy theo id
@@ -32,4 +32,7 @@ export const zoomRoomApi = {
 	closeRoom(scheduleID: number) {
 		return instance.put(`api/CloseRoom/${scheduleID}`);
 	},
+	getRecord(scheduleID: number) {
+		return instance.get<IApiResultData<IZoomRecord[]>>(`api/GetRecording/${scheduleID}`);
+	}
 };

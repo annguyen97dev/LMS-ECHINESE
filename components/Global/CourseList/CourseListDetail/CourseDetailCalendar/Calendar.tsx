@@ -6,8 +6,8 @@ import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import CloseZoomRoom from '~/components/Global/ManageZoom/ZoomRoom/CloseZoomRoom';
+import ZoomRecordModal from '~/components/Global/ManageZoom/ZoomRoom/ZoomRecordModal';
 import { useWrap } from '~/context/wrap';
-import CostList from '~/pages/staff/cost-list';
 import CourseDetailUploadFile from './CourseDetailUploadFile';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
@@ -31,6 +31,8 @@ CDCalendar.propTypes = {
 	isUploadDocument: PropTypes.bool,
 	handleUploadDocument: PropTypes.func,
 	//
+	isGetRecordList: PropTypes.bool,
+	//
 	isStudyZoom: PropTypes.bool,
 	fetchStudyZoom: PropTypes.func,
 	handleStudyZoom: PropTypes.func,
@@ -43,6 +45,8 @@ CDCalendar.defaultProps = {
 	//
 	isUploadDocument: false,
 	handleUploadDocument: null,
+	//
+	isGetRecordList: false,
 	//
 	isStudyZoom: false,
 	fetchStudyZoom: null,
@@ -58,19 +62,36 @@ function CDCalendar(props) {
 		isUploadDocument,
 		handleUploadDocument,
 		//
+		isGetRecordList,
+		//
 		isStudyZoom,
 		fetchStudyZoom,
 		handleStudyZoom,
 		handleEndStudyZoom
 	} = props;
 	const [courseScheduleID, setCourseScheduleID] = useState(0);
-	const [isModalVisible, setIsModalVisible] = useState(false);
-	const openModal = () => setIsModalVisible(true);
-	const closeModal = () => setIsModalVisible(false);
+	const [isModalVisible, setIsModalVisible] = useState<{
+		type: 'record' | 'document' | '';
+		status: boolean;
+	}>({
+		type: '',
+		status: false
+	});
+	const openModal = (type: 'record' | 'document') =>
+		setIsModalVisible({
+			type,
+			status: true
+		});
+	const closeModal = () =>
+		setIsModalVisible({
+			type: '',
+			status: false
+		});
 	const { userInformation } = useWrap();
-	const middlewareUploadImage = (ID) => {
-		setCourseScheduleID(+ID);
-		openModal();
+
+	const middlewareOpenModal = (ID: number, type: 'record' | 'document') => {
+		setCourseScheduleID(ID);
+		openModal(type);
 	};
 
 	const checkFetchStudyZoom = (date) => {
@@ -235,9 +256,22 @@ function CDCalendar(props) {
 							)}
 						</li>
 					)}
+					{isGetRecordList && (
+						<li>
+							<span>Bản ghi buổi học: </span>
+							<a onClick={() => middlewareOpenModal(parseInt(ID), 'record')}>
+								<i>Xem</i>
+							</a>
+							{/* <ZoomRecordModal scheduleID={ID} /> */}
+						</li>
+					)}
 					{isUploadDocument && (
 						<li>
-							<Button size="middle" className="mt-3 btn-warning w-100" onClick={() => middlewareUploadImage(ID)}>
+							<Button
+								size="middle"
+								className="mt-3 btn-warning w-100"
+								onClick={() => middlewareOpenModal(parseInt(ID), 'document')}
+							>
 								Thêm tài liệu
 							</Button>
 						</li>
@@ -406,7 +440,11 @@ function CDCalendar(props) {
 					)}
 					{isUploadDocument && (
 						<li>
-							<Button size="middle" className="mt-3 btn-warning w-100" onClick={() => middlewareUploadImage(ID)}>
+							<Button
+								size="middle"
+								className="mt-3 btn-warning w-100"
+								onClick={() => middlewareOpenModal(parseInt(ID), 'document')}
+							>
 								Thêm tài liệu
 							</Button>
 						</li>
@@ -492,10 +530,17 @@ function CDCalendar(props) {
 			{isUploadDocument && (
 				<CourseDetailUploadFile
 					isLoading={isLoading}
-					isModalVisible={isModalVisible}
+					isModalVisible={isModalVisible.type === 'document' && isModalVisible.status}
 					handleCloseModal={closeModal}
 					handleUploadDocument={handleUploadDocument}
 					courseScheduleID={courseScheduleID}
+				/>
+			)}
+			{isGetRecordList && (
+				<ZoomRecordModal
+					scheduleID={courseScheduleID}
+					isOpenModal={isModalVisible.type === 'record' && isModalVisible.status}
+					onCloseModal={closeModal}
 				/>
 			)}
 		</div>

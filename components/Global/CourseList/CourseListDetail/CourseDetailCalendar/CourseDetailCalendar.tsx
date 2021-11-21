@@ -118,6 +118,7 @@ function CourseDetailCalendar(props) {
 			<TitlePage title="Chi tiết khóa học" />
 			<CDCalendar
 				isLoading={isLoading}
+				isGetRecordList={true}
 				isUploadDocument={true}
 				isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
 				eventList={calendarDateFormat(calendarList)}
