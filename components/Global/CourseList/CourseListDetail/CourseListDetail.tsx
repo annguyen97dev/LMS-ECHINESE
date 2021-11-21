@@ -9,13 +9,17 @@ import StudentsList from '~/components/Global/CourseList/CourseListDetail/Studen
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
-import Transcript from './Transcript/Transcript';
+import { useWrap } from '~/context/wrap';
+import ScheduleStudyStudent from '../../ScheduleStudyStudent/ScheduleStudyStudent';
+import CurriculumDetail from '../../Option/ProgramDetail/CurriculumDetail';
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
+	const { userInformation, isAdmin } = useWrap();
 	const router = useRouter();
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
+
 	return (
 		<div className="course-dt page-no-scroll">
 			<Tabs
@@ -39,32 +43,50 @@ const CourseListDetail = () => {
 					}
 					key="1"
 				>
-					<CourseDetailCalendar courseID={parseIntID} />
+					{isAdmin ? <CourseDetailCalendar courseID={parseIntID} /> : <ScheduleStudyStudent />}
 				</TabPane>
-				<TabPane
-					tab={
-						<>
-							<Edit />
-							<span title="Chỉnh sửa"> Chỉnh sửa</span>
-						</>
-					}
-					key="2"
-				>
-					<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
-						<Spin size="large" />
-					</div>
-				</TabPane>
-				<TabPane
-					tab={
-						<>
-							<Book />
-							<span title="Học viên"> Học viên</span>
-						</>
-					}
-					key="3"
-				>
-					<StudentsList courseID={parseIntID} />
-				</TabPane>
+				{!isAdmin && (
+					<TabPane
+						tab={
+							<>
+								<Calendar />
+								<span title="Giáo trình">Giáo trình</span>
+							</>
+						}
+						key="10"
+					>
+						<CurriculumDetail />
+					</TabPane>
+				)}
+				{isAdmin && (
+					<TabPane
+						tab={
+							<>
+								<Edit />
+								<span title="Chỉnh sửa"> Chỉnh sửa</span>
+							</>
+						}
+						key="2"
+					>
+						<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+							<Spin size="large" />
+						</div>
+					</TabPane>
+				)}
+
+				{isAdmin && (
+					<TabPane
+						tab={
+							<>
+								<Book />
+								<span title="Học viên"> Học viên</span>
+							</>
+						}
+						key="3"
+					>
+						<StudentsList courseID={parseIntID} />
+					</TabPane>
+				)}
 				<TabPane
 					tab={
 						<>
@@ -76,7 +98,7 @@ const CourseListDetail = () => {
 				>
 					<RollUp courseID={parseIntID} />
 				</TabPane>
-				<TabPane
+				{/* <TabPane
 					tab={
 						<>
 							<Activity />
@@ -86,7 +108,7 @@ const CourseListDetail = () => {
 					key="5"
 				>
 					<Transcript />
-				</TabPane>
+				</TabPane> */}
 				<TabPane
 					tab={
 						<>
@@ -102,7 +124,7 @@ const CourseListDetail = () => {
 					tab={
 						<>
 							<Flag />
-							<span title="Phản hồi"> Phản hồi</span>
+							<span title="Phản hồi">Lộ trình</span>
 						</>
 					}
 					key="7"

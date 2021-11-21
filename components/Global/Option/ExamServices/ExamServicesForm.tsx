@@ -18,6 +18,10 @@ const ExamServicesForm = React.memo((props: any) => {
 	const { showNoti } = useWrap();
 	const [loading, setLoading] = useState(false);
 	const { setValue } = useForm();
+	const [valuePrice, setValuePrice] = useState({
+		priceFirst: null,
+		priceBuy: null
+	});
 
 	const [services, setServices] = useState<IService>();
 
@@ -50,6 +54,16 @@ const ExamServicesForm = React.memo((props: any) => {
 
 	const onSubmit = async (data: any) => {
 		setLoading(true);
+
+		console.log('Data Submi before: ', data);
+
+		data.InitialPrice = parseInt(data.InitialPrice.replace(/,/g, ''));
+		data.Price = parseInt(data.Price.replace(/,/g, ''));
+		data.DayOfExam = moment(data.DayOfExam).format('YYYY/MM/DD');
+		data.TimeExam = moment(data.TimeExam).format('HH:mm');
+
+		console.log('Data Submit: ', data);
+
 		if (examServicesId) {
 			try {
 				let res = await examServiceApi.update({
@@ -67,8 +81,8 @@ const ExamServicesForm = React.memo((props: any) => {
 			try {
 				let res = await examServiceApi.add({
 					...data,
-					Enable: true,
-					TimeExam: moment(data.TimeExam).format('LT')
+					Enable: true
+					// TimeExam: moment(data.TimeExam).format('LT')
 				});
 				afterSubmit(res?.data.message);
 				reloadData(1);
@@ -86,13 +100,47 @@ const ExamServicesForm = React.memo((props: any) => {
 		setIsModalVisible(false);
 	};
 
+	const onChange_Price = (e, type: string) => {
+		let convertValue = e.target.value.toString();
+		let value = parseInt(convertValue.replace(/\,/g, ''), 10);
+
+		switch (type) {
+			case 'priceFirst':
+				if (!isNaN(value)) {
+					form.setFieldsValue({ InitialPrice: value.toLocaleString() });
+				} else {
+					form.setFieldsValue({ InitialPrice: '' });
+				}
+
+				break;
+			case 'priceBuy':
+				if (!isNaN(value)) {
+					form.setFieldsValue({ Price: value.toLocaleString() });
+				} else {
+					form.setFieldsValue({ Price: '' });
+				}
+
+				break;
+
+			default:
+				break;
+		}
+	};
+
 	useEffect(() => {
 		if (examServicesDetail) {
-			examServicesDetail.InitialPrice = parseInt(examServicesDetail.InitialPrice);
+			// examServicesDetail.InitialPrice = numberWithCommas(examServicesDetail.InitialPrice);
+			// examServicesDetail.Price = numberWithCommas(examServicesDetail.Price);
+			let cloneTimeExam = examServicesDetail.TimeExam.split(' ');
+
+			console.log('Check time: ', cloneTimeExam);
+
 			form.setFieldsValue({
 				...examServicesDetail,
-				DayOfExam: null,
-				TimeExam: ''
+				DayOfExam: moment(examServicesDetail.DayOfExam),
+				TimeExam: moment(cloneTimeExam[0], 'HH:mm'),
+				InitialPrice: numberWithCommas(examServicesDetail.InitialPrice),
+				Price: numberWithCommas(examServicesDetail.Price)
 			});
 		}
 	}, [isModalVisible]);
@@ -154,7 +202,7 @@ const ExamServicesForm = React.memo((props: any) => {
 									label="Ngày thi"
 									rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}
 								>
-									<DatePicker className="style-input" onChange={(e) => setValue('DayOfExam', e)} />
+									<DatePicker format={'DD/MM/YYYY'} className="style-input" onChange={(e) => setValue('DayOfExam', e)} />
 								</Form.Item>
 							</div>
 						</div>
@@ -174,7 +222,7 @@ const ExamServicesForm = React.memo((props: any) => {
 									<TimePicker
 										format="HH:mm"
 										className="style-input"
-										onChange={(value) => setValue('TimeExam', moment(value).format('LT'))}
+										// onChange={(value, timeString) => form.setFieldsValue ('TimeExam', timeString)}
 									/>
 								</Form.Item>
 							</div>
@@ -204,18 +252,18 @@ const ExamServicesForm = React.memo((props: any) => {
 									label="Giá vốn"
 									rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}
 								>
-									{/* <Input
-										value={valuePrice.priceFirst}
+									<Input
+										// value={valuePrice.priceFirst}
 										placeholder="Giá vốn"
 										className="style-input w-100"
 										onChange={(e) => onChange_Price(e, 'priceFirst')}
-									/> */}
-									<InputNumber
+									/>
+									{/* <InputNumber
 										className="ant-input style-input w-100"
 										formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 										parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
 										onChange={(value) => setValue('InitialPrice', value)}
-									/>
+									/> */}
 								</Form.Item>
 							</div>
 						</div>
@@ -227,18 +275,18 @@ const ExamServicesForm = React.memo((props: any) => {
 									label="Giá bán"
 									rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}
 								>
-									{/* <Input
+									<Input
 										value={valuePrice.priceBuy}
 										placeholder="Giá bán"
 										className="style-input"
 										onChange={(e) => onChange_Price(e, 'priceBuy')}
-									/> */}
-									<InputNumber
+									/>
+									{/* <InputNumber
 										className="ant-input style-input w-100"
 										formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 										parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
 										onChange={(value) => setValue('Price', value)}
-									/>
+									/> */}
 								</Form.Item>
 							</div>
 						</div>

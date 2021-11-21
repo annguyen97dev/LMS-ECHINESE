@@ -11,6 +11,7 @@ import ExpandTable from '~/components/ExpandTable';
 import CurriculumDetail from './CurriculumDetail';
 import { resolveSoa } from 'dns';
 import { DiffOutlined, SnippetsOutlined } from '@ant-design/icons';
+import DeleteItem from '~/components/Tables/DeleteItem';
 
 let pageIndex = 1;
 
@@ -203,6 +204,25 @@ const Curriculum = (props) => {
 		setCurrentPage(1), resetListFieldSearch();
 	};
 
+	// -------------- HANDLE DELETE --------------
+	const handleDelete = async (data) => {
+		console.log('DATA DELTETE: ', data);
+		try {
+			let res = await curriculumApi.update({
+				ID: data.ID,
+				Enable: false
+			});
+			if (res.status === 200) {
+				showNoti('success', 'Xóa thành công');
+				setTodoApi({ ...todoApi });
+			} else {
+				showNoti('danger', 'Đường truyền mạng đang không ổn định');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		}
+	};
+
 	// -------------- GET PAGE_NUMBER -----------------
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
@@ -279,6 +299,7 @@ const Curriculum = (props) => {
 						_onSubmit={(data: any) => _onSubmit(data)}
 					/>
 					<PickAllSubject dataSubject={dataSubject} curriculumID={data.ID} onFetchData={() => setTodoApi({ ...todoApi })} />
+					<DeleteItem onDelete={() => handleDelete(data)} />
 				</>
 			)
 		}
