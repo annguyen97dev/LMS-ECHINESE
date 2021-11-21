@@ -9,7 +9,7 @@ import { courseApi, subjectApi } from '~/apiBase';
 import CurriculumDetail from '~/components/Global/Option/ProgramDetail/CurriculumDetail';
 import TitlePage from '~/components/Elements/TitlePage';
 
-const LessonDetailPage = () => {
+const LessonDetail = () => {
 	const router = useRouter();
 	const { courseID: courseID } = router.query;
 	const [dataSubject, setDataSubject] = useState<ISubject[]>();
@@ -153,5 +153,4 @@ const LessonDetailPage = () => {
 	);
 };
 
-LessonDetailPage.layout = LayoutBase;
-export default LessonDetailPage;
+export default LessonDetail;
