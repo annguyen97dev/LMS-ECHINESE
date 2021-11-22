@@ -119,7 +119,7 @@ function MenuFeedBack(props) {
 				/>
 			</Card>
 
-			<Card className="card-newsfeed student-fb__wrap-list" bordered={false}>
+			<Card className="card-newsfeed" bordered={false}>
 				<div className="card-newsfeed-wrap__label">
 					<p className="card-newsfeed__label font-weight-black">Danh sách phản hồi</p>
 				</div>

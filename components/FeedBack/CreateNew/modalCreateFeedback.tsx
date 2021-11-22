@@ -120,7 +120,7 @@ function ModalCreateFeedback(props) {
 							<Checkbox onChange={onPressCheckbox} checked={isPrioritized} />
 						</div>
 					</div>
-					<div className="row m-0 mt-3 mb-3 st-fb-center">
+					<div className="row m-0 mt-3 st-fb-center">
 						<span className="c-feedback__title mr-5">Tiêu đề:</span>
 						<Input
 							value={title}
@@ -130,12 +130,12 @@ function ModalCreateFeedback(props) {
 						/>
 					</div>
 
-					<div className="mb-0" style={{ paddingTop: 35 }}>
+					<div className="mb-0" style={{ paddingTop: 15 }}>
 						<EditorSimple
 							handleChange={(value) => {
 								setContent(value);
 							}}
-							// isTranslate={false}
+							// isTranslate={true}
 							isReset={isReset}
 							questionContent={content}
 						/>

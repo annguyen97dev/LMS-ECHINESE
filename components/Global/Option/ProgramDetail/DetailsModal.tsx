@@ -147,7 +147,7 @@ export const DetailsModal = (props) => {
 		try {
 			const res = await LessonDetail.getAll(curriculumDetailID);
 			//@ts-ignore
-			res.status == 200 && setData(res.data.data.obj);
+			res.status == 200 && setData(res.data.data);
 		} catch (err) {
 			console.log(err);
 		}
