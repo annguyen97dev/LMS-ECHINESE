@@ -46,7 +46,6 @@ const CurriculumDetail = (props) => {
 		Type: 3
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const listTodoApi = {
 		pageSize: pageSize,
@@ -61,6 +60,8 @@ const CurriculumDetail = (props) => {
 		id: null,
 		status: false
 	});
+
+	console.log('Check Data Subject: ', dataSubject);
 
 	// GET DATA COURSE
 	const getDataSource = async () => {
@@ -240,25 +241,27 @@ const CurriculumDetail = (props) => {
 			render: (text, data, index) => (
 				<>
 					{isAdmin ? (
-						<Select
-							loading={data.ID == loadingSelect.id && loadingSelect.status}
-							value={returnValue(data.ID)}
-							style={{ width: '100%', margin: 'auto' }}
-							className="style-input"
-							showSearch
-							optionFilterProp="children"
-							defaultValue={data.SubjectID}
-							onChange={(value) => updateSubject(value, data, index)}
-						>
-							<Option key="none" value={0}>
-								Trống
-							</Option>
-							{/* {dataSubject?.map((item, index) => (
-								<Option key={index} value={item.ID}>
-									{item.SubjectName}
+						dataSubject && (
+							<Select
+								loading={data.ID == loadingSelect.id && loadingSelect.status}
+								value={returnValue(data.ID)}
+								style={{ width: '100%', margin: 'auto' }}
+								className="style-input"
+								showSearch
+								optionFilterProp="children"
+								defaultValue={data.SubjectID}
+								onChange={(value) => updateSubject(value, data, index)}
+							>
+								<Option key="none" value={0}>
+									Trống
 								</Option>
-							))} */}
-						</Select>
+								{dataSubject?.map((item, index) => (
+									<Option key={index} value={item.ID}>
+										{item.SubjectName}
+									</Option>
+								))}
+							</Select>
+						)
 					) : (
 						<p className="font-weight-black">{text}</p>
 					)}
