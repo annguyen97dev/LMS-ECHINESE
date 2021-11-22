@@ -26,14 +26,15 @@
 	.doc__list-menu {
 		color: $blue;
 	}
-	background-color: #e6f7ff;
+	background-color: #e6f7ff !important;
 }
 
 .doc__list-action {
-	z-index: 22;
-	position: absolute;
-	bottom: 20px;
-	right: 10px;
+	// z-index: 22;
+	// position: absolute;
+	// bottom: 20px;
+	// right: 10px;
+	padding: 0 20px 20px 20px;
 }
 .card-document-list {
 	.box-header {
@@ -50,8 +51,11 @@
 .document-menu {
 	background: #fafafa;
 	border-radius: 0.375rem;
-	padding: 22px 10px;
-
+	padding: 22px 0;
+	.ant-dropdown-trigger {
+		background-color: #fafafa;
+		width: 10%;
+	}
 	.ant-menu {
 		border-right: none !important;
 	}

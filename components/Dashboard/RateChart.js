@@ -30,7 +30,7 @@ const RateChart = ({ dataPie, statisticalRate, isLoading }) => {
 						<div>
 							<h4>ĐÁNH GIÁ</h4>
 						</div>
-						<div>Biểu đồ thống kê lượt đánh giá của học viên</div>
+						<div>Biểu đồ lượt đánh giá tư vấn viên</div>
 					</>
 				}
 				style={{

@@ -1,9 +1,10 @@
+import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { Tooltip, Modal, Form, Spin, Input, Select } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { RotateCcw } from 'react-feather';
 import { teacherSalaryApi } from '~/apiBase/staff-manage/teacher-salary';
 import { useWrap } from '~/context/wrap';
-import { numberWithCommas } from '~/utils/functions';
+import { numberWithCommas, parsePriceStrToNumber } from '~/utils/functions';
 
 const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }) => {
 	const { Option } = Select;
@@ -11,6 +12,10 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 	const [form] = Form.useForm();
 	const { showNoti } = useWrap();
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
+	const [errorMess, setErrorMess] = useState({
+		AdvanceSalary: '',
+		Bonus: ''
+	});
 
 	const [dataForm, setDataForm] = useState({
 		ID: record.ID,
@@ -109,29 +114,40 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						) : (
 							<>
 								<div className="col-12">
-									<Form.Item label="Tăng Lương" name="AdvanceSalary">
+									<Form.Item label="Lương tạm ứng" name="AdvanceSalary">
 										<Input
 											onChange={(event) => {
-												setDataForm({ ...dataForm, AdvanceSalary: Number(event.target.value) });
+												console.log(parsePriceStrToNumber(event.target.value));
+												setDataForm({ ...dataForm, AdvanceSalary: parsePriceStrToNumber(event.target.value) });
+												// isNaN(Number(event.target.value))
+												// 	? setErrorMess({ ...errorMess, AdvanceSalary: 'Hãy nhập số!' })
+												// 	: setErrorMess({ ...errorMess, AdvanceSalary: '' });
 											}}
 											name="AdvanceSalary"
-											placeholder="Thêm lương thưởng"
+											placeholder="Thêm lương tạm ứng"
 											className="style-input"
-											defaultValue={dataForm.AdvanceSalary}
+											value={numberWithCommas(dataForm.AdvanceSalary)}
+											defaultValue={numberWithCommas(dataForm.AdvanceSalary)}
 										/>
+										<p className="font-weight-primary">{errorMess.AdvanceSalary}</p>
 									</Form.Item>
 								</div>
 								<div className="col-12">
 									<Form.Item label="Thưởng" name="Bonus">
 										<Input
 											onChange={(event) => {
-												setDataForm({ ...dataForm, Bonus: Number(event.target.value) });
+												setDataForm({ ...dataForm, Bonus: parsePriceStrToNumber(event.target.value) });
+												// isNaN(Number(event.target.value))
+												// 	? setErrorMess({ ...errorMess, Bonus: 'Hãy nhập số!' })
+												// 	: setErrorMess({ ...errorMess, Bonus: '' });
 											}}
 											name="Bonus"
 											placeholder="Thêm tiền thưởng"
 											className="style-input"
-											defaultValue={dataForm.Bonus}
+											value={numberWithCommas(dataForm.Bonus)}
+											defaultValue={numberWithCommas(dataForm.Bonus)}
 										/>
+										<p className="font-weight-primary">{errorMess.Bonus}</p>
 									</Form.Item>
 								</div>
 								<div className="col-12">
@@ -143,7 +159,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 											name="NoteBonus"
 											placeholder="Thêm ghi chú"
 											className="style-input"
-											defaultValue={dataForm.NoteBonus}
+											defaultValue={numberWithCommas(dataForm.NoteBonus)}
 										/>
 									</Form.Item>
 								</div>
