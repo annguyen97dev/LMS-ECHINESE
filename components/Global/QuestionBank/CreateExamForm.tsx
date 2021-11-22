@@ -273,7 +273,7 @@ const CreateExamForm = (props) => {
 								onChangeSelect={(value) => handleChange_selectProgram(value)}
 								isLoading={loadingProgram}
 								optionList={dataProgram}
-								isRequired={true}
+								isRequired={!isTest ? true : false}
 							/>
 						</div>
 						<div className="col-md-6 col-12">
@@ -284,7 +284,7 @@ const CreateExamForm = (props) => {
 								label="Giáo trình"
 								isLoading={loadingCurriculum}
 								optionList={dataCurriculum}
-								isRequired={true}
+								isRequired={!isTest ? true : false}
 							/>
 						</div>
 						<div className="col-md-6 col-12">

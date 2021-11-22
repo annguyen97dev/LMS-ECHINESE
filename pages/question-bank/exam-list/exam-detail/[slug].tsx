@@ -97,8 +97,6 @@ const ExamDetail = () => {
 	// console.log("List question: ", listQuestionID);
 	// console.log("List Group ID: ", listGroupID);
 
-	console.log('COIIIII Loading: ', isLoading);
-
 	// ---- GET LIST EXAM ----
 	const getListExam = async () => {
 		try {

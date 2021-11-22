@@ -342,28 +342,34 @@ const CourseOfStudentPrice = () => {
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
 			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
-			render: (name) => <p className="font-weight-black">{name}</p>
+			render: (name) => <p className="font-weight-black">{name}</p>,
+			fixed: 'left'
 		},
 		{
-			title: 'Trung tâm thanh toán',
-			dataIndex: 'PayBranchName'
+			title: 'Trung tâm',
+			dataIndex: 'PayBranchName',
+			fixed: 'left'
 		},
 		{
+			width: 180,
 			title: 'Tổng thanh toán',
 			dataIndex: 'Price',
 			render: (price) => <p>{numberWithCommas(price)}</p>
 		},
 		{
+			width: 180,
 			title: 'Giảm giá',
 			dataIndex: 'Reduced',
 			render: (price) => <p>{numberWithCommas(price)}</p>
 		},
 		{
+			width: 180,
 			title: 'Đã thanh toán',
 			dataIndex: 'Paid',
 			render: (price) => <p>{numberWithCommas(price)}</p>
 		},
 		{
+			width: 180,
 			title: 'Số tiền còn lại',
 			dataIndex: 'MoneyInDebt',
 			render: (price) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
@@ -377,7 +383,18 @@ const CourseOfStudentPrice = () => {
 			dataIndex: 'PayDate',
 			render: (date) => (date ? moment(date).format('DD/MM/YYYY') : '')
 		},
-
+		{
+			title: 'Trạng thái',
+			dataIndex: 'DonePaid',
+			render: (status) => {
+				return (
+					<>
+						{status && <span className="tag green">Đã thanh toán</span>}
+						{!status && <span className="tag red">Chưa thanh toán</span>}
+					</>
+				);
+			}
+		},
 		{
 			width: 130,
 			render: (data, record: any) => (
@@ -405,14 +422,14 @@ const CourseOfStudentPrice = () => {
 							handleSubmit={onUpdateCourseOfStudentPrice(record.ID)}
 						/>
 					)}
-					<RequestRefundForm
+					{/* <RequestRefundForm
 						isLoading={isLoading}
 						studentObj={data}
 						getInfoCourse={getInfoCourse}
 						paymentMethodOptionList={paymentMethodOptionList}
 						courseListOfStudent={courseListOfStudent}
 						onSubmit={onCreateRequestRefund}
-					/>
+					/> */}
 				</div>
 			)
 		}

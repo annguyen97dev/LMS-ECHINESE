@@ -64,7 +64,6 @@ const StaffForm = (props) => {
 	});
 	const [listData, setListData] = useState<listData>(listDataForm);
 	const [imageUrl, setImageUrl] = useState(null);
-	// const [statusAdd, setStatusAdd] = useState("add-staff");
 	const [disableCenter, setDisableCenter] = useState(false);
 	const [statusAdd, setStatusAdd] = useState('');
 	const [dataStaff, setDataStaff] = useState(null);
@@ -148,8 +147,6 @@ const StaffForm = (props) => {
 	};
 
 	const getDataWithID = async (ID, name) => {
-		console.log('NAME is: ', name);
-
 		let res = null;
 		setLoadingSelect({
 			status: true,
@@ -610,7 +607,7 @@ const StaffForm = (props) => {
 										form={form}
 										name="Branch"
 										label="Tên trung tâm"
-										optionList={listData.Branch}
+										optionList={listDataForm.Branch}
 										disabled={disableCenter}
 										isRequired={true}
 									/>

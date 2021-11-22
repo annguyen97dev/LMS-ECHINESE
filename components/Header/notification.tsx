@@ -162,8 +162,6 @@ const Notifiaction = () => {
 		}
 	}, [reloadNotification]);
 
-	console.log('Reload Noti: ', reloadNotification);
-
 	return (
 		<>
 			<Modal

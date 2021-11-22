@@ -26,7 +26,7 @@ const optionGender = [
 		title: 'Nam'
 	},
 	{
-		value: 0,
+		value: 2,
 		title: 'Khác'
 	}
 ];

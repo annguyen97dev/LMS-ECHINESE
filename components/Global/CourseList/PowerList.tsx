@@ -23,6 +23,8 @@ const PowerList = (props) => {
 		let role = userInformation.RoleID;
 		let path = null;
 
+		console.log('Type Course: ', TypeCourse);
+
 		if (role == 1 || role == 5) {
 			path = {
 				pathname: '/course/course-list/course-list-detail/[slug]',
@@ -30,8 +32,9 @@ const PowerList = (props) => {
 			};
 		} else {
 			path = {
-				pathname: '/customer/student/lesson-detail',
-				query: { courseID: ID }
+				// pathname: '/customer/student/lesson-detail',
+				pathname: '/course/course-list/course-list-detail/[slug]',
+				query: { slug: ID, courseID: ID }
 			};
 		}
 
