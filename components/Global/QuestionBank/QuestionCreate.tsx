@@ -688,8 +688,6 @@ const QuestionCreate = (props) => {
 		getDataProgram(); // Lấy data chương trình
 	}, []);
 
-	console.log('Question Data: ', questionData);
-
 	useEffect(() => {
 		if (todoApi.Type && todoApi.Type !== 0) {
 			getDataSource();
@@ -793,7 +791,7 @@ const QuestionCreate = (props) => {
 								<Tooltip title="Tải file excel mẫu">
 									<a
 										className="btn btn-light mr-2 btn-have-icon"
-										href="https://lmsv2.monamedia.net/Upload/Exercise/Excel.xls"
+										href="https://lmsv2.monamedia.net/Upload/Exercise/Excel.xlsx"
 									>
 										<span className="d-flex align-items-center">
 											<DownloadOutlined className="mr-2" />
