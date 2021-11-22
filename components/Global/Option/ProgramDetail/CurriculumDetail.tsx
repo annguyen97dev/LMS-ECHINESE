@@ -253,11 +253,11 @@ const CurriculumDetail = (props) => {
 							<Option key="none" value={0}>
 								Trống
 							</Option>
-							{/* {dataSubject?.map((item, index) => (
+							{dataSubject?.map((item, index) => (
 								<Option key={index} value={item.ID}>
 									{item.SubjectName}
 								</Option>
-							))} */}
+							))}
 						</Select>
 					) : (
 						<p className="font-weight-black">{text}</p>
