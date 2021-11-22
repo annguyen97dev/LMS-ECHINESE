@@ -16,7 +16,7 @@ export const DetailsModal = (props) => {
 	const router = useRouter();
 	const { curriculumDetailID, courseID, dataExamTopic, dataCurriculumDetail, dataRow } = props;
 
-	const { showNoti } = useWrap();
+	const { showNoti, isAdmin } = useWrap();
 	const { TextArea } = Input;
 
 	const [visible, setVisible] = useState(false);
@@ -29,8 +29,6 @@ export const DetailsModal = (props) => {
 	const [size, setSize] = useState([0, 0]);
 
 	const [isLoading, setLoading] = useState(true);
-
-	console.log('Data: ', data);
 
 	// DATA OF SELECTED LIST ITEM
 	const [selected, dispatch] = React.useReducer(
@@ -337,7 +335,7 @@ export const DetailsModal = (props) => {
 
 						{
 							<div className="p-4 details">
-								{!enableEdit && (
+								{isAdmin && !enableEdit && (
 									<div className="group-button">
 										<div className="group-button_btn-add">
 											<AddCurriculumForm
@@ -497,44 +495,46 @@ export const DetailsModal = (props) => {
 													<button className="btn btn-secondary" onClick={() => moveToTest(selected)}>
 														Làm bài tập
 													</button>
-													<Tooltip title="Chỉnh sửa thông tin">
-														{size[0] > 470 ? (
-															data?.length > 0 &&
-															(enableEdit ? (
-																<Tooltip className="group-button_btn-add" title="Hủy bỏ">
+													{isAdmin && (
+														<Tooltip title="Chỉnh sửa thông tin">
+															{size[0] > 470 ? (
+																data?.length > 0 &&
+																(enableEdit ? (
+																	<Tooltip className="group-button_btn-add" title="Hủy bỏ">
+																		<button
+																			onClick={() => {
+																				setEdit(false);
+																			}}
+																			className="btn ml-2 btn-primary"
+																		>
+																			<i className="far fa-times-circle mr-2"></i>Hủy
+																		</button>
+																	</Tooltip>
+																) : (
 																	<button
 																		onClick={() => {
-																			setEdit(false);
+																			setEdit(true);
 																		}}
-																		className="btn ml-2 btn-primary"
+																		className="btn btn-warning"
+																		style={{ marginLeft: 11, color: '#fff' }}
 																	>
-																		<i className="far fa-times-circle mr-2"></i>Hủy
+																		<i className="far fa-edit mr-2"></i>Chỉnh sửa
 																	</button>
-																</Tooltip>
+																))
 															) : (
 																<button
 																	onClick={() => {
 																		setEdit(true);
 																	}}
-																	className="btn btn-warning"
-																	style={{ marginLeft: 11, color: '#fff' }}
+																	className="btn btn-info"
+																	style={{ marginLeft: 11, marginTop: marginTop }}
 																>
 																	<i className="far fa-edit mr-2"></i>Chỉnh sửa
 																</button>
-															))
-														) : (
-															<button
-																onClick={() => {
-																	setEdit(true);
-																}}
-																className="btn btn-info"
-																style={{ marginLeft: 11, marginTop: marginTop }}
-															>
-																<i className="far fa-edit mr-2"></i>Chỉnh sửa
-															</button>
-														)}
-													</Tooltip>
-													{enableEdit && (
+															)}
+														</Tooltip>
+													)}
+													{isAdmin && enableEdit && (
 														<Tooltip className="group-button_btn-add" title="Lưu thông tin">
 															<button
 																onClick={() => {

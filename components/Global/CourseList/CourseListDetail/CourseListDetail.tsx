@@ -12,6 +12,7 @@ import TimelineCourse from './Timeline/Timeline';
 import { useWrap } from '~/context/wrap';
 import ScheduleStudyStudent from '../../ScheduleStudyStudent/ScheduleStudyStudent';
 import CurriculumDetail from '../../Option/ProgramDetail/CurriculumDetail';
+import LessonDetail from '../LessonDetail';
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
@@ -55,7 +56,7 @@ const CourseListDetail = () => {
 						}
 						key="10"
 					>
-						<CurriculumDetail />
+						<LessonDetail />
 					</TabPane>
 				)}
 				{isAdmin && (
