@@ -52,7 +52,7 @@ const DocumentList = (props) => {
 	const getDocList = async (ID) => {
 		setIsLoading({ type: 'GET_ALL', loading: true });
 		try {
-			let res = await documentListApi.getAll(ID);
+			let res = await documentListApi.getAll({ CategoryID: ID, DocumentName: '' });
 			if (res.status == 200) {
 				setDocList(res.data.data);
 			}
@@ -159,6 +159,7 @@ const DocumentList = (props) => {
 								docList={docList}
 								isLoading={isLoading}
 								docInfo={docInfo}
+								categoryID={categoryID}
 								onFetchData={() => {
 									getDocList(categoryID);
 								}}
