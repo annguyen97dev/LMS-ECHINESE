@@ -15,6 +15,8 @@ import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
 import ConfirmForm from '../../../components/Global/StaffList/StaffSalary/admin-confirm-salary';
+import { Input } from 'antd';
+import { Form } from 'antd';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -26,6 +28,12 @@ const SalaryReview = () => {
 		type: 'GET_ALL',
 		status: false
 	});
+	const [form] = Form.useForm();
+	const [workDays, setWorkDays] = useState({
+		days: 0,
+		messError: ''
+	});
+	console.log(workDays);
 	const months = [
 		'Tháng 1',
 		'Tháng 2',
@@ -201,7 +209,7 @@ const SalaryReview = () => {
 			title: 'Thưởng',
 			width: 150,
 			dataIndex: 'Bonus',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
@@ -214,6 +222,12 @@ const SalaryReview = () => {
 			width: 90,
 			dataIndex: 'CountOff',
 			render: (price, record: any) => <p>{price}</p>
+		},
+		{
+			title: 'Lương ngày nghỉ',
+			width: 150,
+			dataIndex: 'SalaryOff',
+			render: (price, record: any) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Trạng Thái',
@@ -251,26 +265,19 @@ const SalaryReview = () => {
 			title: 'Lương cơ bản',
 			width: 150,
 			dataIndex: 'BasicSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
-			title: 'Tăng Lương',
+			title: 'Lương tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
-		},
-
-		{
-			title: 'Lương Tháng',
-			width: 150,
-			dataIndex: 'Salary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tổng',
 			width: 150,
 			dataIndex: 'TotalSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -316,11 +323,13 @@ const SalaryReview = () => {
 			status: true
 		});
 		try {
-			let res = await staffSalaryApi.postSalaryClosing();
-			console.log(res);
+			let res = await staffSalaryApi.postSalaryClosing(workDays.days);
 			setParams({ ...params });
 			if (res.status == 200) {
-				showNoti('success', 'Thành công');
+				showNoti('success', 'Thành công!');
+			}
+			if (res.status == 204) {
+				showNoti('success', 'Lương đã được tính rồi!');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -381,17 +390,31 @@ const SalaryReview = () => {
 			dataSource={payRoll}
 			columns={columns}
 			TitleCard={
-				<Popconfirm
-					title={renderTitle}
-					visible={visible}
-					onConfirm={postSalaryOfTeacherClosing}
-					onCancel={handleCancel}
-					okButtonProps={{ loading: isLoading.status }}
-				>
-					<button onClick={showPopconfirm} className="btn btn-warning add-new">
-						Tính lương tháng trước
-					</button>
-				</Popconfirm>
+				<>
+					<div className="d-flex justify-content-end align-items-center">
+						<Input
+							onChange={(event) => {
+								setWorkDays({ ...workDays, days: Number(event.target.value) });
+							}}
+							className="style-input"
+							style={{ width: 150, marginRight: 5 }}
+							name="wordDays"
+							placeholder="Nhập ngày công"
+						/>
+
+						<Popconfirm
+							title={renderTitle}
+							visible={visible}
+							onConfirm={postSalaryOfTeacherClosing}
+							onCancel={handleCancel}
+							okButtonProps={{ loading: isLoading.status }}
+						>
+							<button onClick={showPopconfirm} className="btn btn-warning add-new">
+								Tính lương tháng trước
+							</button>
+						</Popconfirm>
+					</div>
+				</>
 			}
 			Extra={
 				<>

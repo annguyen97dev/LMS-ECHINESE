@@ -17,21 +17,8 @@ import CourseChart from '~/components/Dashboard/CourseChart';
 import { Skeleton } from 'antd';
 
 const Dashboard = () => {
-	const listTodoApi = {
-		branch: 0,
-		StartYear: 2017,
-		EndYear: 2022,
-		Year: 2021,
-		Month: 9
-	};
 	const [statisticalTotal, setStatisticalTotal] = useState<IStatistical[]>([]);
 	const [statisticalCourse, setStatisticalCourse] = useState<IStatCourse[]>([]);
-	const [statisticalRevenueYear, setStatisticalRevenueYear] = useState<IStatRevenueYear[]>([]);
-	const [statisticalRevenueMonth, setStatisticalRevenueMonth] = useState<IStatRevenueMonth[]>([]);
-	const [statisticalRevenueDay, setStatisticalRevenueDay] = useState<IStatRevenueDay[]>([]);
-	const [statisticalStudentYear, setStatisticalStudentYear] = useState<IStatStudentYear[]>([]);
-	const [statisticalStudentMonth, setStatisticalStudentMonth] = useState<IStatStudentMonth[]>([]);
-	const [statisticalStudentDay, setStatisticalStudentDay] = useState<IStatStudentDay[]>([]);
 	const [statisticalRate, setStatisticalRate] = useState<IStatRate[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
@@ -42,15 +29,8 @@ const Dashboard = () => {
 		branch: 0,
 		StartYear: 2017,
 		EndYear: 2022,
-		Year: 2021,
-		Month: 9
-	});
-	const [todoApiStudent, setTodoApiStudent] = useState({
-		branch: 0,
-		StartYear: 2017,
-		EndYear: 2022,
-		Year: 2021,
-		Month: 9
+		Year: new Date().getFullYear(),
+		Month: new Date().getMonth() + 1
 	});
 
 	const getStatisticalTotal = async () => {
@@ -59,6 +39,9 @@ const Dashboard = () => {
 			let res = await statisticalApi.getStatisticalTotal(todoApi);
 			if (res.status == 200) {
 				setStatisticalTotal(res.data.data);
+			}
+			if (res.status == 204) {
+				setStatisticalTotal([]);
 			}
 		} catch (error) {
 			// showNoti("danger", "lỗi tải dữ liệu statistical total");
@@ -74,100 +57,13 @@ const Dashboard = () => {
 			if (res.status == 200) {
 				setStatisticalCourse(res.data.data);
 			}
+			if (res.status == 204) {
+				setStatisticalCourse([]);
+			}
 		} catch (error) {
 			// showNoti("danger", "lỗi tải dữ liệu thống kê khóa học");
 		} finally {
 			setIsLoading({ status: 'STAT_GET_COURSE', loading: false });
-		}
-	};
-
-	const getStatisticalRevenueYear = async () => {
-		setIsLoading({ status: 'GET_STAT_REVENUE', loading: true });
-		try {
-			let res = await statisticalApi.getStatisticalRevenueYear(todoApi);
-			console.log(res.data);
-			if (res.status == 200) {
-				setStatisticalRevenueYear(res.data.data);
-			}
-		} catch (error) {
-			// showNoti("danger", "get data statistical revenue year error");
-		} finally {
-			setIsLoading({ status: 'GET_STAT_REVENUE', loading: false });
-		}
-	};
-
-	const getStatisticalRevenueMonth = async () => {
-		setIsLoading({ status: 'GET_STAT_REVENUE', loading: true });
-		try {
-			let res = await statisticalApi.getStatisticalRevenueMonth(todoApi);
-			console.log(res.data);
-			if (res.status == 200) {
-				setStatisticalRevenueMonth(res.data.data);
-			}
-		} catch (error) {
-			// showNoti("danger", "get data revenue day faile");
-		} finally {
-			setIsLoading({ status: 'GET_STAT_REVENUE', loading: false });
-		}
-	};
-
-	const getStatisticalRevenueDay = async () => {
-		setIsLoading({ status: 'GET_STAT_REVENUE', loading: true });
-		try {
-			let res = await statisticalApi.getStatisticalRevenueDay(todoApi);
-			console.log(res.data);
-			if (res.status == 200) {
-				setStatisticalRevenueDay(res.data.data);
-			}
-		} catch (error) {
-			// showNoti("danger", "get data revenue day faile");
-		} finally {
-			setIsLoading({ status: 'GET_STAT_REVENUE', loading: false });
-		}
-	};
-
-	const getStatisticalStudentYear = async () => {
-		setIsLoading({ status: 'GET_STAT_STUDENT', loading: true });
-		try {
-			let res = await statisticalApi.getStatisticalStudentYear(todoApiStudent);
-			console.log(res.data);
-			if (res.status == 200) {
-				setStatisticalStudentYear(res.data.data);
-			}
-		} catch (error) {
-			// showNoti("danger", "get data student year faile");
-		} finally {
-			setIsLoading({ status: 'GET_STAT_STUDENT', loading: false });
-		}
-	};
-
-	const getStatisticalStudentMonth = async () => {
-		setIsLoading({ status: 'GET_STAT_STUDENT', loading: true });
-		try {
-			let res = await statisticalApi.getStatisticalStudentMonth(todoApiStudent);
-			console.log(res.data);
-			if (res.status == 200) {
-				setStatisticalStudentMonth(res.data.data);
-			}
-		} catch (error) {
-			// showNoti("danger", "get data student Month faile");
-		} finally {
-			setIsLoading({ status: 'GET_STAT_STUDENT', loading: false });
-		}
-	};
-
-	const getStatisticalStudentDay = async () => {
-		setIsLoading({ status: 'GET_STAT_STUDENT', loading: true });
-		try {
-			let res = await statisticalApi.getStatisticalStudentDay(todoApiStudent);
-			console.log(res.data);
-			if (res.status == 200) {
-				setStatisticalStudentDay(res.data.data);
-			}
-		} catch (error) {
-			// showNoti("danger", "get data student Day faile");
-		} finally {
-			setIsLoading({ status: 'GET_STAT_STUDENT', loading: false });
 		}
 	};
 
@@ -178,6 +74,9 @@ const Dashboard = () => {
 			console.log(res.data);
 			if (res.status == 200) {
 				setStatisticalRate(res.data.data);
+			}
+			if (res.status == 204) {
+				setStatisticalRate([]);
 			}
 		} catch (error) {
 			// showNoti("danger", "get data student Day faile");
@@ -191,18 +90,6 @@ const Dashboard = () => {
 		getStatisticalRate();
 		getStatisticalCourse();
 	}, []);
-
-	useEffect(() => {
-		getStatisticalRevenueYear();
-		getStatisticalRevenueMonth();
-		getStatisticalRevenueDay();
-	}, [todoApi]);
-
-	useEffect(() => {
-		getStatisticalStudentYear();
-		getStatisticalStudentMonth();
-		getStatisticalStudentDay();
-	}, [todoApiStudent]);
 
 	const renderStatisticalTotal = () => {
 		if (isLoading.status === 'STAT_GET_ALL' && isLoading.loading == true) {
@@ -394,14 +281,7 @@ const Dashboard = () => {
 			return (
 				<div className="row pt-5">
 					<div className="col-12">
-						<RevenueChart
-							statisticalRevenueYear={statisticalRevenueYear}
-							statisticalRevenueMonth={statisticalRevenueMonth}
-							statisticalRevenueDay={statisticalRevenueDay}
-							setTodoApi={setTodoApi}
-							isLoading={isLoading}
-							todoApi={todoApi}
-						/>
+						<RevenueChart />
 					</div>
 				</div>
 			);
@@ -412,20 +292,13 @@ const Dashboard = () => {
 		if (isLoading.status === 'GET_STAT_STUDENT' && isLoading.loading == true) {
 			return (
 				<div className="col-md-8 col-12">
-					<Skeleton active />;
+					<Skeleton active />
 				</div>
 			);
 		} else {
 			return (
 				<div className="col-md-8 col-12">
-					<AcademicChart
-						statisticalStudentYear={statisticalStudentYear}
-						statisticalStudentMonth={statisticalStudentMonth}
-						statisticalStudentDay={statisticalStudentDay}
-						isLoading={isLoading}
-						todoApiStudent={todoApiStudent}
-						setTodoApiStudent={setTodoApiStudent}
-					/>
+					<AcademicChart />
 				</div>
 			);
 		}

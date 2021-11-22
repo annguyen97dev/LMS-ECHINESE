@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Select, Card, Radio } from 'antd';
+import { statisticalApi } from '~/apiBase/statistical/statistical-total';
 
-const AcademicChart = ({
-	statisticalStudentYear,
-	statisticalStudentMonth,
-	statisticalStudentDay,
-	isLoading,
-	todoApiStudent,
-	setTodoApiStudent
-}) => {
+const AcademicChart = () => {
+	const [statisticalStudentYear, setStatisticalStudentYear] = useState<IStatStudentYear[]>([]);
+	const [statisticalStudentMonth, setStatisticalStudentMonth] = useState<IStatStudentMonth[]>([]);
+	const [statisticalStudentDay, setStatisticalStudentDay] = useState<IStatStudentDay[]>([]);
 	const [typeView, setTypeView] = useState(1);
+	const [isLoading, setIsLoading] = useState({
+		status: '',
+		loading: false
+	});
+	const [todoApiStudent, setTodoApiStudent] = useState({
+		branch: 0,
+		StartYear: 2017,
+		EndYear: 2022,
+		Year: new Date().getFullYear(),
+		Month: new Date().getMonth() + 1
+	});
+
 	const onChange = (e) => {
 		setTypeView(e.target.value);
 	};
@@ -39,7 +48,7 @@ const AcademicChart = ({
 						<XAxis dataKey="Day" />
 						<YAxis type="number" tickFormatter={formatYAxis} />
 						<CartesianGrid strokeDasharray="3 3" />
-						{/* <Tooltip formatter={format} labelFormatter={(value) => `Ngày ${value}`} /> */}
+						<Tooltip formatter={formatTooltip} labelFormatter={(value) => `Ngày ${value}`} />
 						<Legend />
 						<Bar dataKey="Amount" fill="#0080FF" name="Học viên đã đăng kí" />
 					</BarChart>
@@ -127,6 +136,57 @@ const AcademicChart = ({
 			);
 		}
 	};
+
+	const getStatisticalStudentYear = async () => {
+		setIsLoading({ status: 'GET_STAT_STUDENT', loading: true });
+		try {
+			let res = await statisticalApi.getStatisticalStudentYear(todoApiStudent);
+			console.log(res.data);
+			if (res.status == 200) {
+				setStatisticalStudentYear(res.data.data);
+			}
+		} catch (error) {
+			// showNoti("danger", "get data student year faile");
+		} finally {
+			setIsLoading({ status: 'GET_STAT_STUDENT', loading: false });
+		}
+	};
+
+	const getStatisticalStudentMonth = async () => {
+		setIsLoading({ status: 'GET_STAT_STUDENT', loading: true });
+		try {
+			let res = await statisticalApi.getStatisticalStudentMonth(todoApiStudent);
+			console.log(res.data);
+			if (res.status == 200) {
+				setStatisticalStudentMonth(res.data.data);
+			}
+		} catch (error) {
+			// showNoti("danger", "get data student Month faile");
+		} finally {
+			setIsLoading({ status: 'GET_STAT_STUDENT', loading: false });
+		}
+	};
+
+	const getStatisticalStudentDay = async () => {
+		setIsLoading({ status: 'GET_STAT_STUDENT', loading: true });
+		try {
+			let res = await statisticalApi.getStatisticalStudentDay(todoApiStudent);
+			console.log(res.data);
+			if (res.status == 200) {
+				setStatisticalStudentDay(res.data.data);
+			}
+		} catch (error) {
+			// showNoti("danger", "get data student Day faile");
+		} finally {
+			setIsLoading({ status: 'GET_STAT_STUDENT', loading: false });
+		}
+	};
+
+	useEffect(() => {
+		getStatisticalStudentYear();
+		getStatisticalStudentMonth();
+		getStatisticalStudentDay();
+	}, [todoApiStudent]);
 
 	return (
 		<>

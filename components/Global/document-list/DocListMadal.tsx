@@ -7,12 +7,11 @@ import { UploadOutlined } from '@ant-design/icons';
 import { lessonDetailApi } from '~/apiBase/options/lesson-detail';
 import { documentListApi } from '~/apiBase/document-list/document-list';
 
-const DocListModal = ({ type, docInfo, onFetchDataForm, docID }) => {
+const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 	const [isVisible, setIsVisible] = useState(false);
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
 	const [form] = Form.useForm();
 	const { showNoti } = useWrap();
-	const [linkFile, setLinkFile] = useState({});
 
 	const addDocument = async (value) => {
 		let dataUpdate = {
@@ -70,8 +69,6 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID }) => {
 			updateDocument(value);
 		}
 	};
-
-	useEffect(() => {}, []);
 
 	return (
 		<>
@@ -154,7 +151,7 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID }) => {
 											name="CategoryName"
 											placeholder="Tên giáo trình"
 											className="style-input"
-											// defaultValue={CategoryName}
+											defaultValue={docName}
 										/>
 									</Form.Item>
 								</div>
