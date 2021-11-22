@@ -193,10 +193,15 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										</Form.Item>
 									</div>
 								)}
+
 								{!programID && (
 									<div className="col-md-6 col-12">
 										<Form.Item
-											label="Loại"
+											label={
+												<div>
+													Loại <button className="btn btn-primary">+</button>
+												</div>
+											}
 											name="Type"
 											rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										>
@@ -218,6 +223,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										</Form.Item>
 									</div>
 								)}
+
 								{!programID && (
 									<div className="col-md-6 col-12">
 										<Form.Item
@@ -254,6 +260,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										</Form.Item>
 									</div>
 								)}
+
 								{!programID && (
 									<div className="col-md-6 col-12">
 										<Form.Item
@@ -278,6 +285,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										</Form.Item>
 									</div>
 								)}
+
 								<div className="col-md-6 col-12">
 									<Form.Item
 										name="OriginalPrice"
@@ -293,6 +301,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										/>
 									</Form.Item>
 								</div>
+
 								<div className="col-md-6 col-12">
 									<Form.Item
 										name="SellPrice"
@@ -308,6 +317,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										/>
 									</Form.Item>
 								</div>
+
 								{!programID && (
 									<div className="col-12">
 										<Form.Item

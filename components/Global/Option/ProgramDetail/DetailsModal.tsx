@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Modal, Input, Tooltip, List, Form, Upload, Button, Spin, Skeleton } from 'antd';
+import { Modal, Input, Tooltip, List, Form, Upload, Button, Spin, Select } from 'antd';
 import { Info } from 'react-feather';
 import { LessonDetail } from '~/apiBase/curriculum-detais';
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
@@ -8,8 +8,8 @@ import { useWrap } from '~/context/wrap';
 import AddCurriculumForm from './AddCurriculumForm';
 import { useRouter } from 'next/router';
 
+const { Option } = Select;
 let currentItem: string = '';
-
 const { confirm } = Modal;
 
 export const DetailsModal = (props) => {
@@ -74,6 +74,11 @@ export const DetailsModal = (props) => {
 						...prevState,
 						ExamTopicID: action.data
 					};
+				case 'ExamTopicName':
+					return {
+						...prevState,
+						ExamTopicName: action.data
+					};
 				case 'Description':
 					return {
 						...prevState,
@@ -95,10 +100,15 @@ export const DetailsModal = (props) => {
 			Content: '',
 			MinuteVideo: 0,
 			ExamTopicID: 0,
+			ExamTopicName: '',
 			Description: '',
 			CurriculumDetailID: null
 		}
 	);
+
+	useEffect(() => {
+		console.log('selected: ', selected);
+	}, [selected]);
 
 	// INIT DATA AFTER GET FROM API
 	useEffect(() => {
@@ -136,6 +146,7 @@ export const DetailsModal = (props) => {
 		setLoading(true);
 		try {
 			const res = await LessonDetail.getAll(curriculumDetailID);
+			//@ts-ignore
 			res.status == 200 && setData(res.data.data);
 		} catch (err) {
 			console.log(err);
@@ -151,16 +162,17 @@ export const DetailsModal = (props) => {
 			getDetails();
 		} catch (err) {
 			console.log(err);
+			getDetails();
 		}
 	};
 
-	const showConfirm = (param) => {
+	const showConfirm = (param, ID) => {
 		confirm({
 			title: 'Xóa dữ liệu',
 			icon: <ExclamationCircleOutlined />,
 			content: `Bạn thật sự muốn xóa "${param}"?`,
 			onOk() {
-				handleDelete();
+				handleDelete(ID);
 			},
 			onCancel() {
 				console.log('Cancel');
@@ -170,7 +182,7 @@ export const DetailsModal = (props) => {
 
 	const handleUpdate = async () => {
 		setLoading(true);
-		let temp = await {
+		let temp = {
 			ID: selected.ID,
 			Content: selected.Content,
 			LinkVideo: selected.LinkVideo,
@@ -184,10 +196,10 @@ export const DetailsModal = (props) => {
 		await postUpdate(temp);
 	};
 
-	const handleDelete = async () => {
+	const handleDelete = async (ID) => {
 		setLoading(true);
 		let temp = await {
-			ID: selected.ID,
+			ID: ID,
 			Enable: false
 		};
 		await postUpdate(temp);
@@ -214,6 +226,7 @@ export const DetailsModal = (props) => {
 		dispatch({ type: 'Content', data: param.Content });
 		dispatch({ type: 'MinuteVideo', data: param.MinuteVideo });
 		dispatch({ type: 'ExamTopicID', data: param.ExamTopicID });
+		dispatch({ type: 'ExamTopicName', data: param.ExamTopicName });
 		dispatch({ type: 'Description', data: param.Description });
 		dispatch({ type: 'CurriculumDetailID', data: param.CurriculumDetailID });
 	};
@@ -228,7 +241,6 @@ export const DetailsModal = (props) => {
 		try {
 			let res = await lessonDetailApi.UploadDocument(info.file.originFileObj);
 			if (res.status == 200) {
-				console.log(res.data.data);
 				dispatch({
 					type: 'LinkDocument',
 					data: res.data.data
@@ -252,7 +264,6 @@ export const DetailsModal = (props) => {
 
 		try {
 			let res = await lessonDetailApi.UploadHtml(info.file.originFileObj);
-			console.log(res.data.data);
 			dispatch({
 				type: 'LinkHtml',
 				data: res.data.data
@@ -279,13 +290,12 @@ export const DetailsModal = (props) => {
 			>
 				<div className="row m-0">{item.Content !== '' ? item.Content : 'Không có tiêu đề'}</div>
 
-				<i onClick={() => showConfirm(item.Content)} className="far fa-trash-alt mr-2 ic-trash"></i>
+				<i onClick={() => showConfirm(item.Content, item.ID)} className="far fa-trash-alt mr-2 ic-trash"></i>
 			</div>
 		);
 	};
 
 	const moveToTest = (data) => {
-		console.log('Data: ', data);
 		router.push({
 			pathname: '/exam/exam-review',
 			query: {
@@ -296,6 +306,10 @@ export const DetailsModal = (props) => {
 			}
 		});
 	};
+
+	useEffect(() => {
+		console.log('dataExam: ', dataExamTopic);
+	}, [dataExamTopic]);
 
 	// RENDER
 	return (
@@ -323,12 +337,7 @@ export const DetailsModal = (props) => {
 						</div>
 
 						{showList && (
-							<div
-								onClick={() => {
-									setShowList(false);
-								}}
-								className="list-2"
-							>
+							<div onClick={() => setShowList(false)} className="list-2">
 								<List itemLayout="horizontal" dataSource={data} renderItem={(item) => <RenderItem item={item} />} />
 							</div>
 						)}
@@ -398,6 +407,7 @@ export const DetailsModal = (props) => {
 														dispatch({ type: 'Content', data: p.target.value });
 													}}
 												/>
+
 												<Input
 													className="item-info"
 													prefix="Link video:"
@@ -408,7 +418,7 @@ export const DetailsModal = (props) => {
 													}}
 												/>
 
-												<div className="row m-0">
+												<div className="row m-0 group-row">
 													{!enableEdit ? (
 														<Input
 															className="item-info"
@@ -462,10 +472,40 @@ export const DetailsModal = (props) => {
 															</Upload>
 														</Form.Item>
 													)}
+
+													{/* 81361 123761278361826371783127   1783 17823 7812 78 78 72 71637812683617817 78132 73781267317 */}
+
+													{!enableEdit ? (
+														<Input
+															className="item-info"
+															prefix="Đề kiểm tra:"
+															value={selected.ExamTopicName}
+															disabled={!enableEdit}
+														/>
+													) : (
+														<Select
+															defaultValue={
+																selected.ExamTopicID !== null
+																	? `${selected.ExamTopicName}`
+																	: 'Chọn đề kiểm tra'
+															}
+															//@ts-ignore
+															onChange={(e, a) => dispatch({ type: 'ExamTopicID', data: a.key })}
+															className="ml-3 select"
+														>
+															{dataExamTopic.map((item, index) => {
+																return (
+																	<Option value={item.Name} key={item.ID}>
+																		{item.Name}
+																	</Option>
+																);
+															})}
+														</Select>
+													)}
 												</div>
 
 												<Form.Item>
-													<p style={{ color: !enableEdit ? '#bebebe' : '#000' }}>Ghi chú</p>
+													<p style={{ color: !enableEdit ? 'rgba(0, 0, 0, 0.7)' : '#000' }}>Ghi chú</p>
 													<TextArea
 														rows={4}
 														placeholder=""

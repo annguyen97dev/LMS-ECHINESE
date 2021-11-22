@@ -65,9 +65,6 @@ function MenuFeedBack(props) {
 		return getNum(nDate.getDate()) + '-' + getNum(nDate.getMonth() + 1) + '-' + nDate.getFullYear();
 	};
 
-	const cat =
-		'https://live-production.wcms.abc-cdn.net.au/09fc4d971d2ae450966dd606be4d3587?impolicy=wcms_crop_resize&cropH=1152&cropW=2048&xPos=0&yPos=417&width=862&height=485';
-
 	const Menu = () => (
 		<>
 			<Card className="card-newsfeed" bordered={false}>
@@ -122,7 +119,7 @@ function MenuFeedBack(props) {
 				/>
 			</Card>
 
-			<Card className="card-newsfeed student-fb__wrap-list" bordered={false}>
+			<Card className="card-newsfeed" bordered={false}>
 				<div className="card-newsfeed-wrap__label">
 					<p className="card-newsfeed__label font-weight-black">Danh sách phản hồi</p>
 				</div>
@@ -131,7 +128,12 @@ function MenuFeedBack(props) {
 					{feedbackList.map((item, index) => (
 						<li key={index} className={currentItem === item.ID ? 'active' : ''} onClick={() => handleClickItem(item)}>
 							<div className="row m-0 student-fb__i-fb">
-								<Avatar size={36} className="student-fb__i-avt mr-3" src={userInformation.Avatar} />
+								{userInformation.Avatar !== null && userInformation.Avatar !== '' ? (
+									<Avatar size={36} className="student-fb__i-avt mr-3" src={userInformation.Avatar} />
+								) : (
+									<Avatar size={36} className="student-fb__i-avt mr-3" src={<img src="/images/user.png" alt="" />} />
+								)}
+
 								<div className="st-fb-colum st-fb-fw">
 									<div className="row m-0 st-fb-rsb">
 										<span className="student-fb__i-name">{item.CreatedBy}</span>

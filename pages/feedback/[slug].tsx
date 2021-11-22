@@ -143,7 +143,11 @@ const FeedbackListDetail = (props) => {
 					<Card className="info-profile-left">
 						<div className="row">
 							<div className="col-12 d-flex align-items-center justify-content-center flex-wrap">
-								<Avatar size={64} src={<img src={createdBy.Avatar} />} />
+								{createdBy.Avatar !== null && createdBy.Avatar !== '' ? (
+									<Avatar size={64} src={<img src={createdBy.Avatar} />} />
+								) : (
+									<Avatar size={64} src={<img src="/images/user.png" alt="" />} />
+								)}
 
 								{/* <Rate
 									value={currentInfomation.Rate}
@@ -159,26 +163,32 @@ const FeedbackListDetail = (props) => {
 							</div>
 						</div>
 
-						<div className="row pt-3 st-fb-center ">
-							<div className="col-2">
-								<UserOutlined />
+						{createdBy.FullNameUnicode !== null && (
+							<div className="row pt-3 st-fb-center ">
+								<div className="col-2">
+									<UserOutlined />
+								</div>
+								<div className="col-10  d-flex ">{createdBy.FullNameUnicode}</div>
 							</div>
-							<div className="col-10  d-flex ">{createdBy.FullNameUnicode}</div>
-						</div>
+						)}
 
-						<div className="row pt-4 st-fb-center ">
-							<div className="col-2">
-								<DeploymentUnitOutlined />
+						{createdBy.JobName !== null && (
+							<div className="row pt-4 st-fb-center ">
+								<div className="col-2">
+									<DeploymentUnitOutlined />
+								</div>
+								<div className="col-10  d-flex ">{createdBy?.JobName}</div>
 							</div>
-							<div className="col-10  d-flex ">{createdBy.JobName}</div>
-						</div>
+						)}
 
-						<div className="row pt-4 st-fb-center ">
-							<div className="col-2">
-								<WhatsAppOutlined />
+						{createdBy.Mobile !== null && (
+							<div className="row pt-4 st-fb-center ">
+								<div className="col-2">
+									<WhatsAppOutlined />
+								</div>
+								<div className="col-10  d-flex ">{createdBy.Mobile}</div>
 							</div>
-							<div className="col-10  d-flex ">{createdBy.Mobile}</div>
-						</div>
+						)}
 
 						<div className="row pt-4 st-fb-center">
 							<div className="col-2">
@@ -187,28 +197,37 @@ const FeedbackListDetail = (props) => {
 							<div className="col-10  d-flex ">{createdBy.Email}</div>
 						</div>
 
-						<div className="row pt-4 st-fb-center ">
-							<div className="col-2">
-								<AimOutlined />
+						{createdBy.WardName !== null && createdBy.CMNDRegister !== null && (
+							<div className="row pt-4 st-fb-center ">
+								<div className="col-2">
+									<AimOutlined />
+								</div>
+								<div className="col-10  d-flex ">
+									{createdBy?.WardName} {createdBy.CMNDRegister !== null ? ', ' + createdBy?.CMNDRegister : ''}
+								</div>
 							</div>
-							<div className="col-10  d-flex ">
-								{createdBy.WardName}, {createdBy.CMNDRegister}
-							</div>
-						</div>
+						)}
 
 						<hr />
 
 						<div className="row">
 							<ul className="list-info-bonus">
-								<li>
-									<b>Trung tâm: </b> <span>{getBranch(createdBy.Branch)}</span>
-								</li>
-								<li>
-									<b>Học vụ:</b> <span>{createdBy.AcademicPurposesName}</span>
-								</li>
-								<li>
-									<b>Cố vấn:</b> <span>{createdBy.CounselorsName !== null ? createdBy.CounselorsName : 'Không có'}</span>
-								</li>
+								{createdBy.Branch !== null && (
+									<li>
+										<b>Trung tâm: </b> <span>{getBranch(createdBy.Branch)}</span>
+									</li>
+								)}
+								{createdBy.AcademicPurposesName !== null && (
+									<li>
+										<b>Học vụ:</b> <span>{createdBy.AcademicPurposesName}</span>
+									</li>
+								)}
+								{createdBy.CounselorsName !== null && (
+									<li>
+										<b>Cố vấn:</b>{' '}
+										<span>{createdBy.CounselorsName !== null ? createdBy.CounselorsName : 'Không có'}</span>
+									</li>
+								)}
 							</ul>
 						</div>
 					</Card>
@@ -222,7 +241,7 @@ const FeedbackListDetail = (props) => {
 									<div className="st-fb-column">
 										<span className="m-feedback__date">{getDateString(currentInfomation.CreatedOn)}</span>
 										<span className="m-feedback__name">{currentInfomation.Title}</span>
-										<span className="m-feedback__content">{currentInfomation.ContentFeedBack}</span>
+										<span className="m-feedback__content">{ReactHtmlParser(currentInfomation.ContentFeedBack)}</span>
 									</div>
 
 									<div style={{ flex: 1 }} />

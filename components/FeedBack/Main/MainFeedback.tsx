@@ -1,4 +1,4 @@
-import { Card, Drawer, Empty, Rate, Tooltip } from 'antd';
+import { Avatar, Card, Drawer, Empty, Rate, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useWrap } from '~/context/wrap';
@@ -103,6 +103,7 @@ function MainFeedback(props) {
 
 	// ADD DATA REPLY TO SELECTED FEEDBACK
 	const addReply = async () => {
+		setReset(true);
 		let temp = {
 			FeedbackID: current.ID,
 			Content: content
@@ -112,6 +113,7 @@ function MainFeedback(props) {
 			// res.status == 200 && setReply(res.data.data);
 			getReply(current.ID);
 		} catch (error) {}
+		setReset(false);
 	};
 
 	// HANDLE RATE
@@ -185,7 +187,15 @@ function MainFeedback(props) {
 							{reply.map((item, index) => (
 								<li key={index} className={currentItem === item.ID ? 'active' : ''} onClick={() => {}}>
 									<div className="row m-0 student-fb__i-fb">
-										<img className="student-fb__i-avt mr-3" src={item.Avatar} alt="" width="50" height="50" />
+										{item.Avatarr !== null && item.Avatar !== '' ? (
+											<Avatar size={36} className="student-fb__i-avt mr-3" src={userInformation.Avatar} />
+										) : (
+											<Avatar
+												size={36}
+												className="student-fb__i-avt mr-3"
+												src={<img src="/images/user.png" alt="" />}
+											/>
+										)}
 										<div className="st-fb-colum st-fb-fw">
 											<div className="row m-0 st-fb-rsb">
 												<span className="student-fb__i-name">{item.FullName}</span>
@@ -204,18 +214,14 @@ function MainFeedback(props) {
 									handleChange={(value) => {
 										setContent(value);
 									}}
+									isTranslate={false}
 									isReset={isReset}
 									questionContent={content}
 								/>
 
 								<div className="row wrap-vocab__create-new__button-group">
 									<Tooltip title="Thêm ghi chú">
-										<button
-											onClick={() => {
-												addReply();
-											}}
-											className="btn ml-3 mt-3 btn-primary"
-										>
+										<button onClick={() => addReply()} className="btn ml-3 mt-3 btn-primary">
 											<i className="fas fa-plus-circle mr-2"></i>Thêm nhận xét
 										</button>
 									</Tooltip>
