@@ -1,10 +1,10 @@
-import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
-import {Form, Upload} from 'antd';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Form, Upload } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {Controller} from 'react-hook-form';
-import {studentApi} from '~/apiBase';
-import {useWrap} from '~/context/wrap';
+import React, { useState } from 'react';
+import { Controller } from 'react-hook-form';
+import { studentApi } from '~/apiBase';
+import { useWrap } from '~/context/wrap';
 
 interface RcFile extends File {
 	uid: string;
@@ -34,12 +34,12 @@ type IFileList = {
 	fileList: IFile[];
 };
 const UploadAvatarField = (props) => {
-	const {form, name, label, disabled, style, className} = props;
+	const { form, name, label, disabled, style, className } = props;
 
 	const [imgUrl, setImgUrl] = useState('');
 	const [loadingImage, setLoadingImage] = useState(false);
-	const {showNoti} = useWrap();
-	const {errors} = form.formState;
+	const { showNoti } = useWrap();
+	const { errors } = form.formState;
 	const hasError = errors[name];
 
 	const handleUploadAvatar = async (file: IFile) => {
@@ -66,10 +66,7 @@ const UploadAvatarField = (props) => {
 		const validTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp'];
 		const isValidType = validTypeList.includes(file.type);
 		if (!isValidType) {
-			showNoti(
-				'danger',
-				`${file.name} không đúng định dạng (jpg | jpeg | png | bmp).`
-			);
+			showNoti('danger', `${file.name} không đúng định dạng (jpg | jpeg | png | bmp).`);
 		}
 		return isValidType;
 	};
@@ -77,9 +74,7 @@ const UploadAvatarField = (props) => {
 	const UploadButton = (props) => {
 		return (
 			<>
-				<div className={`bg-upload  ${loadingImage && 'loading'}`}>
-					{loadingImage ? <LoadingOutlined /> : <PlusOutlined />}
-				</div>
+				<div className={`bg-upload  ${loadingImage && 'loading'}`}>{loadingImage ? <LoadingOutlined /> : <PlusOutlined />}</div>
 			</>
 		);
 	};
@@ -88,14 +83,12 @@ const UploadAvatarField = (props) => {
 		<Form.Item
 			style={style}
 			label={label}
-			className={`${className} ${
-				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
-			}`}
+			className={`${className} ${hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
 		>
 			<Controller
 				name={name}
 				control={form.control}
-				render={({field}) => {
+				render={({ field }) => {
 					return (
 						<Upload
 							name={field.name}
@@ -107,9 +100,7 @@ const UploadAvatarField = (props) => {
 							showUploadList={false}
 							beforeUpload={beforeUpload}
 							onChange={(obj) => {
-								handleUploadAvatar(obj.file).then(
-									(res) => res?.status === 200 && field.onChange(res.data.data)
-								);
+								handleUploadAvatar(obj.file).then((res) => res?.status === 200 && field.onChange(res.data.data));
 							}}
 						>
 							<img
@@ -119,7 +110,7 @@ const UploadAvatarField = (props) => {
 									width: '100%',
 									height: '100%',
 									objectFit: 'cover',
-									display: imgUrl || field.value ? 'block' : 'none',
+									display: imgUrl || field.value ? 'block' : 'none'
 								}}
 							/>
 							<UploadButton />
@@ -141,12 +132,12 @@ UploadAvatarField.propTypes = {
 	label: PropTypes.string,
 	disabled: PropTypes.bool,
 	style: PropTypes.shape({}),
-	className: PropTypes.string,
+	className: PropTypes.string
 };
 UploadAvatarField.defaultProps = {
 	label: '',
 	disabled: false,
 	style: {},
-	className: '',
+	className: ''
 };
 export default UploadAvatarField;
