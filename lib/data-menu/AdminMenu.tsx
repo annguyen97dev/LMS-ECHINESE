@@ -54,7 +54,7 @@ export const AdminChildMenu = [
 				Key: '/newsfeed',
 				Route: '/newsfeed',
 				Icon: '',
-				Text: 'Newsfeed'
+				Text: 'Tin tức'
 			}
 		]
 	},
@@ -120,20 +120,20 @@ export const AdminChildMenu = [
 			//     Route: "/course/schedule-study-teacher",
 			//     Text: "Lịch dạy giáo viên",
 			//   },
-			{
-				TypeItem: 'single',
-				Key: '/course/course-list-report',
-				Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
-				Route: '/course/course-list-report',
-				Text: 'Danh sách khóa học - báo cáo'
-			},
-			{
-				TypeItem: 'single',
-				Key: '/course/course-buy',
-				Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
-				Route: '/course/course-buy',
-				Text: 'Danh sách khóa học - mua bán'
-			},
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-list-report',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-list-report',
+			// 	Text: 'Danh sách khóa học - báo cáo'
+			// },
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-buy',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-buy',
+			// 	Text: 'Danh sách khóa học - mua bán'
+			// },
 			{
 				TypeItem: 'single',
 				Key: '/course/register-course',
