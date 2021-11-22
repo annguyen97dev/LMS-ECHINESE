@@ -5,6 +5,7 @@ import { MessageCircle, MoreHorizontal, Navigation, ThumbsUp } from 'react-feath
 import { fmDateFromNow } from '~/utils/functions';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
+import Linkify from 'react-linkify';
 
 NewsFeedItem.propTypes = {
 	// FILTER SEARCH HANDLE
@@ -262,7 +263,15 @@ function NewsFeedItem(props) {
 						backgroundImage: `url(${backgroundFile.NameFile})`
 					}}
 				>
-					{item.Content}
+					<Linkify
+						componentDecorator={(decoratedHref, decoratedText, key) => (
+							<a target="blank" href={decoratedHref} key={key}>
+								{decoratedText}
+							</a>
+						)}
+					>
+						<span>{item.Content}</span>
+					</Linkify>
 				</div>
 			);
 		}
@@ -320,7 +329,15 @@ function NewsFeedItem(props) {
 							color: item.Color
 						}}
 					>
-						<span>{item.Content}</span>
+						<Linkify
+							componentDecorator={(decoratedHref, decoratedText, key) => (
+								<a target="blank" href={decoratedHref} key={key} style={{ fontWeight: 500 }}>
+									{decoratedText}
+								</a>
+							)}
+						>
+							<span>{item.Content}</span>
+						</Linkify>
 					</div>
 				)}
 				{/* SHOW IMAGE OR FILE */}

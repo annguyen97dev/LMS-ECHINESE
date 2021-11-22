@@ -1,4 +1,4 @@
-import { InputNumber, Spin, Tooltip, Select, Popconfirm } from 'antd';
+import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
@@ -16,6 +16,7 @@ import { numberWithCommas } from '~/utils/functions';
 import SalaryOfTeacherDetail from '../../../components/Global/Teacher/TeacherSalary/salary-of-teacher-detail';
 import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
 import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/confirm-form';
+import { isBuffer } from 'util';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -184,7 +185,7 @@ const SalaryReview = () => {
 			title: 'Thưởng',
 			width: 150,
 			dataIndex: 'Bonus',
-			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
@@ -225,10 +226,16 @@ const SalaryReview = () => {
 			)
 		},
 		{
-			title: 'Lương Ứng',
+			title: 'Lương tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
+		},
+		{
+			title: 'Lương cơ bản',
+			width: 150,
+			dataIndex: 'BasicSalary',
+			render: (price, record: ITeacherSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tháng',
@@ -246,7 +253,7 @@ const SalaryReview = () => {
 			title: 'Lương Tổng',
 			width: 150,
 			dataIndex: 'TotalSalary',
-			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -293,8 +300,13 @@ const SalaryReview = () => {
 		});
 		try {
 			let res = await teacherSalaryApi.postSalaryClosing();
-			console.log(res);
-			setParams({ ...params });
+			if (res.status == 200) {
+				setParams({ ...params });
+				showNoti('success', 'Thành công!');
+			}
+			if (res.status == 204) {
+				showNoti('success', 'Lương đã được tính rồi!');
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {

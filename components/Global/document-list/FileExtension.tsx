@@ -17,6 +17,19 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 		}
 	};
 
+	const iconFile = (link) => {
+		return (
+			<>
+				{link.split('.').slice(-1) == 'pdf' && <img src="/images/pdf.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'png' && <img src="/images/png.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'doc' && <img src="/images/doc.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'jpg' && <img src="/images/jpg.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'gif' && <img src="/images/gif.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'xlsx' && <img src="/images/xls.svg" alt="icon" />}
+			</>
+		);
+	};
+
 	return (
 		<div className="card-file-box">
 			<div className="col-12 d-flex justify-content-end align-items-center">
@@ -30,19 +43,18 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 							onFetchData();
 						}}
 						docID={null}
+						docName={null}
 					/>
 				</div>
 			</div>
 			<Spin spinning={isLoading.type === 'GET_ALL' && isLoading.loading}>
-				{docList?.length ? (
+				{docList?.length && (
 					<div className="row">
 						{docList.map((doc: IDocumentList, idx) => (
 							<div className="col-12 col-md-4" key={idx}>
 								<div className="file-man-box">
 									<a href={doc.DocumentLink} download={doc.DocumentLink} target="_blank">
-										<div className="file-img-box">
-											<img src="/images/doc.svg" alt="icon" />
-										</div>
+										<div className="file-img-box">{iconFile(doc.DocumentLink)}</div>
 										<div className="file-man-title">
 											<div className="d-flex justify-content-between align-align-items-center">
 												<p className="mb-0 text-overflow">{doc.DocumentName || 'Tài liệu không có tiêu đề'}</p>
@@ -52,7 +64,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 											</p>
 										</div>
 									</a>
-									<div className="d-flex doc__list-action">
+									<div className="d-flex doc__list-action justify-content-end">
 										<DocListModal
 											type="EDIT_DOC"
 											docInfo={docInfo}
@@ -60,6 +72,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 												onFetchData();
 											}}
 											docID={doc.ID}
+											docName={doc.DocumentName}
 										/>
 										<DocListModal
 											type="DELETE_DOC"
@@ -68,14 +81,13 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 												onFetchData();
 											}}
 											docID={doc.ID}
+											docName={doc.DocumentName}
 										/>
 									</div>
 								</div>
 							</div>
 						))}
 					</div>
-				) : (
-					<p className="empty-document">Không tìm thấy tài liệu trong giáo trình này!</p>
 				)}
 			</Spin>
 		</div>

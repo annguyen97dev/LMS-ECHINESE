@@ -100,10 +100,16 @@ const SalaryReview = () => {
 			)
 		},
 		{
-			title: 'Lương Ứng',
+			title: 'Lương tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: ITeacherSalary) => <p>{price}</p>
+		},
+		{
+			title: 'Lương cơ bản',
+			width: 150,
+			dataIndex: 'BasicSalary',
+			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tháng',

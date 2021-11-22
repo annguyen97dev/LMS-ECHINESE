@@ -1,6 +1,4 @@
-type IStatRevenueYear = IBaseApi<
-  {
-    Year: number;
-    Revenue: number;
-  }[]
->;
+type IStatRevenueYear = IBaseApi<{
+	Year: number;
+	Revenue: number;
+}>;

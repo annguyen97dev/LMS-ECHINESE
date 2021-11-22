@@ -1,9 +1,9 @@
-import { Tooltip, Modal, Form, Spin, Input, Select } from 'antd';
+import { Tooltip, Modal, Form, Spin, Input, Select, Button } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { RotateCcw } from 'react-feather';
 import { staffSalaryApi } from '~/apiBase/staff-manage/staff-salary';
 import { useWrap } from '~/context/wrap';
-import { numberWithCommas } from '~/utils/functions';
+import { numberWithCommas, parsePriceStrToNumber } from '~/utils/functions';
 
 const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }) => {
 	const { Option } = Select;
@@ -11,6 +11,12 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 	const [form] = Form.useForm();
 	const { showNoti } = useWrap();
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
+	const [errorMess, setErrorMess] = useState({
+		AdvanceSalary: '',
+		CountOff: '',
+		Bonus: '',
+		BtnDisable: true
+	});
 
 	const [dataForm, setDataForm] = useState({
 		ID: record.ID,
@@ -107,41 +113,47 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						) : (
 							<>
 								<div className="col-12">
-									<Form.Item label="Tăng Lương" name="AdvanceSalary">
+									<Form.Item label="Lương tạm ứng" name="AdvanceSalary">
 										<Input
 											onChange={(event) => {
-												setDataForm({ ...dataForm, AdvanceSalary: Number(event.target.value) });
+												setDataForm({ ...dataForm, AdvanceSalary: parsePriceStrToNumber(event.target.value) });
 											}}
 											name="AdvanceSalary"
-											placeholder="Thêm lương thưởng"
+											placeholder="Thêm lương tạm ứng"
 											className="style-input"
-											defaultValue={dataForm.AdvanceSalary}
+											value={numberWithCommas(dataForm.AdvanceSalary)}
+											defaultValue={numberWithCommas(dataForm.AdvanceSalary)}
 										/>
+										<p className="font-weight-primary">{errorMess.AdvanceSalary}</p>
 									</Form.Item>
 								</div>
 								<div className="col-12">
 									<Form.Item label="Ngày Nghỉ" name="CountOff">
 										<Input
 											onChange={(event) => {
-												setDataForm({ ...dataForm, CountOff: Number(event.target.value) });
+												setDataForm({ ...dataForm, CountOff: parsePriceStrToNumber(event.target.value) });
 											}}
 											name="CountOff"
 											className="style-input"
-											defaultValue={dataForm.CountOff}
+											value={numberWithCommas(dataForm.CountOff)}
+											defaultValue={numberWithCommas(dataForm.CountOff)}
 										/>
+										<p className="font-weight-primary">{errorMess.CountOff}</p>
 									</Form.Item>
 								</div>
 								<div className="col-12">
 									<Form.Item label="Thưởng" name="Bonus">
 										<Input
 											onChange={(event) => {
-												setDataForm({ ...dataForm, Bonus: Number(event.target.value) });
+												setDataForm({ ...dataForm, Bonus: parsePriceStrToNumber(event.target.value) });
 											}}
 											name="Bonus"
 											placeholder="Thêm tiền thưởng"
 											className="style-input"
-											defaultValue={dataForm.Bonus}
+											value={numberWithCommas(dataForm.Bonus)}
+											defaultValue={numberWithCommas(dataForm.Bonus)}
 										/>
+										<p className="font-weight-primary">{errorMess.Bonus}</p>
 									</Form.Item>
 								</div>
 								<div className="col-12">
@@ -201,7 +213,15 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 								</div>
 							))}
 						<div className="col-12 mt-3">
-							<button type="submit" className="btn btn-primary w-100">
+							<button
+								disabled={
+									errorMess.AdvanceSalary.length > 0 || errorMess.Bonus.length > 0 || errorMess.CountOff.length > 0
+										? true
+										: false
+								}
+								type="submit"
+								className="btn btn-primary w-100"
+							>
 								Lưu
 								{submitLoading.type == 'UPLOADING' && submitLoading.loading && <Spin className="loading-base" />}
 							</button>

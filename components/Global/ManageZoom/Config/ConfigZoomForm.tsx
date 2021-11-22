@@ -1,9 +1,9 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 
@@ -12,20 +12,20 @@ ConfigZoomForm.propTypes = {
 	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
-	handleSubmit: PropTypes.func,
+	handleSubmit: PropTypes.func
 };
 ConfigZoomForm.defaultProps = {
 	isUpdate: false,
 	updateObj: {},
-	isLoading: {type: '', status: false},
-	handleSubmit: null,
+	isLoading: { type: '', status: false },
+	handleSubmit: null
 };
 
 const ImageInstructions = (props) => {
 	const [imageVisible, setImageVisible] = useState(false);
-	const {step} = props;
+	const { step } = props;
 	return (
 		<>
 			<button
@@ -37,24 +37,11 @@ const ImageInstructions = (props) => {
 			>
 				Xem ảnh
 			</button>
-			<Modal
-				visible={imageVisible}
-				onCancel={() => setImageVisible(false)}
-				footer={null}
-				width={1000}
-			>
-				{step === 1 && (
-					<img src="/images/zoomIns1.png" alt="img" style={{width: '100%'}} />
-				)}
-				{step === 2 && (
-					<img src="/images/zoomIns2.png" alt="img" style={{width: '100%'}} />
-				)}
-				{step === 3 && (
-					<img src="/images/zoomIns3.png" alt="img" style={{width: '100%'}} />
-				)}
-				{step === 4 && (
-					<img src="/images/zoomIns4.png" alt="img" style={{width: '100%'}} />
-				)}
+			<Modal visible={imageVisible} onCancel={() => setImageVisible(false)} footer={null} width={1000}>
+				{step === 1 && <img src="/images/zoomIns1.png" alt="img" style={{ width: '100%' }} />}
+				{step === 2 && <img src="/images/zoomIns2.png" alt="img" style={{ width: '100%' }} />}
+				{step === 3 && <img src="/images/zoomIns3.png" alt="img" style={{ width: '100%' }} />}
+				{step === 4 && <img src="/images/zoomIns4.png" alt="img" style={{ width: '100%' }} />}
 			</Modal>
 		</>
 	);
@@ -64,22 +51,18 @@ const MoreInfo = () => (
 	<div className="col-12">
 		<div>
 			1. Đăng kí tài khoản Zoom Developer
-			<a
-				href="https://zoom.us/signin"
-				target="_blank"
-				style={{paddingLeft: '5px', textDecoration: 'underline'}}
-			>
+			<a href="https://marketplace.zoom.us/" target="_blank" style={{ paddingLeft: '5px', textDecoration: 'underline' }}>
 				tại đây
 			</a>
 		</div>
 		<ul>
-			<li style={{marginBottom: 5}}>
+			<li style={{ marginBottom: 5 }}>
 				Chọn đăng ký/đăng nhập bằng Google.
 				<span>
 					<ImageInstructions step={1} />
 				</span>
 			</li>
-			<li>
+			{/* <li>
 				Tài khoản mail cũng là tài khoản cấu hình cần nhập. Có thể xem
 				<a
 					target="_blank"
@@ -87,20 +70,19 @@ const MoreInfo = () => (
 					style={{
 						paddingLeft: '5px',
 						textDecoration: 'underline',
-						color: 'blue',
+						color: 'blue'
 					}}
 				>
 					tại đây
 				</a>
 				. (Chọn show Sign-In Email và Copy)
-			</li>
+			</li> */}
 		</ul>
 		<div>
-			2. Sau khi đăng nhập ➝ Chọn "Develop" góc trên bên trái ➝ Build App ➝
-			Create App JWT. <ImageInstructions step={2} />
+			2. Sau khi đăng nhập ➝ Chọn "Develop" góc trên bên trái ➝ Build App ➝ Create App JWT. <ImageInstructions step={2} />
 		</div>
 		<ul>
-			<li style={{marginBottom: 5}}>
+			<li style={{ marginBottom: 5 }}>
 				Tại mục Information: nhập App Name và Company Name.
 				<ImageInstructions step={3} />
 			</li>
@@ -113,7 +95,7 @@ const MoreInfo = () => (
 );
 
 function ConfigZoomForm(props) {
-	const {isUpdate, isLoading, updateObj, handleSubmit} = props;
+	const { isUpdate, isLoading, updateObj, handleSubmit } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -129,34 +111,26 @@ function ConfigZoomForm(props) {
 		APIKey: yup
 			.string()
 			.required('Bạn không được để trống')
-			.test(
-				'len',
-				'API Key là dãy ký tự dài 22 ký tự',
-				(val) => val.length === 22
-			),
+			.test('len', 'API Key là dãy ký tự dài 22 ký tự', (val) => val.length === 22),
 		APISecret: yup
 			.string()
 			.required('Bạn không được để trống')
-			.test(
-				'len',
-				'API Secret là dãy ký tự dài 36 ký tự',
-				(val) => val.length === 36
-			),
+			.test('len', 'API Secret là dãy ký tự dài 36 ký tự', (val) => val.length === 36)
 	});
 	const defaultValuesInit = {
 		UserZoom: '',
 		APIKey: '',
-		APISecret: '',
+		APISecret: ''
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
 		if (isUpdate && updateObj) {
 			form.reset({
-				...updateObj,
+				...updateObj
 			});
 		}
 	}, [updateObj]);
@@ -168,7 +142,7 @@ function ConfigZoomForm(props) {
 				closeModal();
 				setMoreInfo(false);
 				if (!isUpdate) {
-					form.reset({...defaultValuesInit});
+					form.reset({ ...defaultValuesInit });
 				}
 			}
 		});
@@ -189,7 +163,7 @@ function ConfigZoomForm(props) {
 			)}
 
 			<Modal
-				style={{top: 25}}
+				style={{ top: 25 }}
 				title={isUpdate ? 'Cập nhật cấu hình' : 'Thêm cấu hình'}
 				visible={isModalVisible}
 				onCancel={closeModal}
@@ -197,41 +171,21 @@ function ConfigZoomForm(props) {
 				width={800}
 			>
 				<div>
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleSubmit)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="UserZoom"
-									label="Tài khoản"
-									placeholder="Nhập tài khoản"
-								/>
+								<InputTextField form={form} name="UserZoom" label="Tài khoản" placeholder="Nhập tài khoản" />
 							</div>
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="APIKey"
-									label="API Key"
-									placeholder="Nhập API Key"
-								/>
+								<InputTextField form={form} name="APIKey" label="API Key" placeholder="Nhập API Key" />
 							</div>
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="APISecret"
-									label="API Secret"
-									placeholder="Nhập API secret"
-								/>
+								<InputTextField form={form} name="APISecret" label="API Secret" placeholder="Nhập API secret" />
 							</div>
 							<div className="instructions" onClick={showMoreInfo}>
 								<div className="col-12 d-flex">
 									<i className="far fa-question-circle" />
-									<div style={{marginTop: '-4px', paddingLeft: '6px'}}>
-										Hướng dẫn
-									</div>
+									<div style={{ marginTop: '-4px', paddingLeft: '6px' }}>Hướng dẫn</div>
 								</div>
 							</div>
 
@@ -244,9 +198,7 @@ function ConfigZoomForm(props) {
 									disabled={isLoading.type === 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Cập nhật' : 'Thêm cấu hình'}
-									{isLoading.type === 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type === 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

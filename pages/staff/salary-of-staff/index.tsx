@@ -1,4 +1,4 @@
-import { InputNumber, Spin, Tooltip, Select, Popconfirm } from 'antd';
+import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input } from 'antd';
 import { useSession } from 'next-auth/client';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { RotateCcw } from 'react-feather';
@@ -28,6 +28,10 @@ const SalaryStaffReview = () => {
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
 		status: false
+	});
+	const [workDays, setWorkDays] = useState({
+		days: 0,
+		messError: ''
 	});
 
 	const { Option } = Select;
@@ -258,7 +262,7 @@ const SalaryStaffReview = () => {
 			)
 		},
 		{
-			title: 'Tăng Lương',
+			title: 'Lương tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
@@ -313,7 +317,7 @@ const SalaryStaffReview = () => {
 			status: true
 		});
 		try {
-			let res = await staffSalaryApi.postSalaryClosing();
+			let res = await staffSalaryApi.postSalaryClosing(workDays);
 			setParams({ ...params });
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -390,17 +394,31 @@ const SalaryStaffReview = () => {
 			columns={columns}
 			TitleCard={
 				roleID == 5 && (
-					<Popconfirm
-						title={renderTitle}
-						visible={visible}
-						onConfirm={postSalaryOfTeacherClosing}
-						onCancel={handleCancel}
-						okButtonProps={{ loading: isLoading.status }}
-					>
-						<button onClick={showPopconfirm} className="btn btn-warning add-new">
-							Tính lương tháng trước
-						</button>
-					</Popconfirm>
+					<>
+						<div className="d-flex justify-content-end align-items-center">
+							<Input
+								onChange={(event) => {
+									setWorkDays({ ...workDays, days: Number(event.target.value) });
+								}}
+								className="style-input"
+								style={{ width: 150, marginRight: 5 }}
+								name="wordDays"
+								placeholder="Nhập ngày công"
+							/>
+
+							<Popconfirm
+								title={renderTitle}
+								visible={visible}
+								onConfirm={postSalaryOfTeacherClosing}
+								onCancel={handleCancel}
+								okButtonProps={{ loading: isLoading.status }}
+							>
+								<button onClick={showPopconfirm} className="btn btn-warning add-new">
+									Tính lương tháng trước
+								</button>
+							</Popconfirm>
+						</div>
+					</>
 				)
 			}
 			Extra={

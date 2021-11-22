@@ -1,6 +1,6 @@
-import {Card, Spin} from 'antd';
+import { Card, Spin } from 'antd';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	branchApi,
 	checkBranchScheduleStudy,
@@ -8,11 +8,11 @@ import {
 	courseDetailApi,
 	roomApi,
 	studyTimeApi,
-	teacherApi,
+	teacherApi
 } from '~/apiBase';
 import TitlePage from '~/components/TitlePage';
-import {useWrap} from '~/context/wrap';
-import {fmSelectArr} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr } from '~/utils/functions';
 import CDCalendar from '../CourseList/CourseListDetail/CourseDetailCalendar/Calendar';
 import CheckBranch from './Form/CheckBranch';
 import CheckOneTeacher from './Form/CheckOneTeacher';
@@ -40,45 +40,49 @@ type infoSearch = {
 	toDate: string;
 };
 const ScheduleStudy = () => {
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [optionList, setOptionList] = useState<IOptionList>({
 		branchList: [],
 		studyTimeList: [],
 		roomList: [],
-		teacherList: [],
+		teacherList: []
 	});
 	const [dataList, setDataList] = useState<IDataList>({
 		list: [],
-		type: '',
+		type: ''
 	});
 	const [infoSearch, setInfoSearch] = useState<infoSearch>(null);
 	const fetchData = async () => {
 		setIsLoading({
 			type: 'FETCH_DATA',
-			status: true,
+			status: true
 		});
 		try {
-			Promise.all([
-				branchApi.getAll({pageSize: 99999, pageIndex: 1}),
-				studyTimeApi.getAll({selectAll: true}),
-			]).then((res) => {
-				const [branchList, studyTimeList] = res.map((r) => r.data.data);
-				setOptionList({
-					...optionList,
-					branchList: fmSelectArr(branchList, 'BranchName', 'ID'),
-					studyTimeList: fmSelectArr(studyTimeList, 'Name', 'ID'),
-				});
+			Promise.all([branchApi.getAll({ pageSize: 99999, pageIndex: 1 }), studyTimeApi.getAll({ selectAll: true })]).then((res) => {
+				const [branchList, studyTimeList] = res.map((r) => (r.status === 200 ? r.data.data : []));
+				if (branchList.length) {
+					setOptionList({
+						...optionList,
+						branchList: fmSelectArr(branchList, 'BranchName', 'ID')
+					});
+				}
+				if (studyTimeList.length) {
+					setOptionList({
+						...optionList,
+						studyTimeList: fmSelectArr(studyTimeList, 'Name', 'ID')
+					});
+				}
 			});
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'FETCH_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -89,21 +93,21 @@ const ScheduleStudy = () => {
 	const fetchRoomByBranchID = async (ID: number) => {
 		setIsLoading({
 			type: 'FETCH_ROOM',
-			status: true,
+			status: true
 		});
 		try {
-			const res = await roomApi.getAll({BranchID: ID, pageSize: 99999});
+			const res = await roomApi.getAll({ BranchID: ID, pageSize: 99999 });
 			if (res.status === 200) {
 				const fmRoomList = fmSelectArr(res.data.data, 'RoomName', 'RoomID');
 				setOptionList({
 					...optionList,
-					roomList: fmRoomList,
+					roomList: fmRoomList
 				});
 			}
 			if (res.status === 204) {
 				setOptionList({
 					...optionList,
-					roomList: [],
+					roomList: []
 				});
 			}
 		} catch (error) {
@@ -111,32 +115,28 @@ const ScheduleStudy = () => {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_ROOM',
-				status: false,
+				status: false
 			});
 		}
 	};
 	const fetchTeacherByBranchID = async (ID: number) => {
 		setIsLoading({
 			type: 'FETCH_TEACHER',
-			status: true,
+			status: true
 		});
 		try {
-			const res = await teacherApi.getAll({BranchID: ID, pageSize: 99999});
+			const res = await teacherApi.getAll({ BranchID: ID, pageSize: 99999 });
 			if (res.status === 200) {
-				const fmTeacherList = fmSelectArr(
-					res.data.data,
-					'FullNameUnicode',
-					'UserInformationID'
-				);
+				const fmTeacherList = fmSelectArr(res.data.data, 'FullNameUnicode', 'UserInformationID');
 				setOptionList({
 					...optionList,
-					teacherList: fmTeacherList,
+					teacherList: fmTeacherList
 				});
 			}
 			if (res.status === 204) {
 				setOptionList({
 					...optionList,
-					teacherList: [],
+					teacherList: []
 				});
 			}
 		} catch (error) {
@@ -144,43 +144,35 @@ const ScheduleStudy = () => {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_TEACHER',
-				status: false,
+				status: false
 			});
 		}
 	};
 
 	// Room
-	const onCheckRoom = async (value: {
-		BranchID: number;
-		RoomID: number;
-		StartTime: string;
-		EndTime: string;
-	}) => {
+	const onCheckRoom = async (value: { BranchID: number; RoomID: number; StartTime: string; EndTime: string }) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
-			const {RoomID, StartTime, EndTime, BranchID} = value;
+			const { RoomID, StartTime, EndTime, BranchID } = value;
 			const fmObj = {
 				RoomID,
 				StartTime: moment(StartTime).format('YYYY/MM/DD'),
-				EndTime: moment(EndTime).format('YYYY/MM/DD'),
+				EndTime: moment(EndTime).format('YYYY/MM/DD')
 			};
 			res = await courseDetailApi.getAll(fmObj);
 			if (res.status === 200) {
 				setInfoSearch({
 					title: 'Kiểm tra phòng',
-					branchName:
-						optionList.branchList.find((b) => b.value === BranchID)?.title ||
-						'',
-					roomName:
-						optionList.roomList.find((b) => b.value === RoomID)?.title || '',
+					branchName: optionList.branchList.find((b) => b.value === BranchID)?.title || '',
+					roomName: optionList.roomList.find((b) => b.value === RoomID)?.title || '',
 					fromDate: moment(StartTime).format('DD/MM/YYYY'),
-					toDate: moment(EndTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY')
 				});
-				setDataList({list: res.data.data, type: ''});
+				setDataList({ list: res.data.data, type: '' });
 				showNoti('success', res.data.message);
 			}
 			if (res.status === 204) {
@@ -191,7 +183,7 @@ const ScheduleStudy = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 		return res;
@@ -207,30 +199,26 @@ const ScheduleStudy = () => {
 	const onCheckOneTeacher = async (value: IGetTeacher) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
-			const {TeacherID, StartTime, EndTime, BranchID} = value;
+			const { TeacherID, StartTime, EndTime, BranchID } = value;
 			const fmObj = {
 				TeacherID: +TeacherID.toString(),
 				StartTime: moment(StartTime).format('YYYY/MM/DD'),
-				EndTime: moment(EndTime).format('YYYY/MM/DD'),
+				EndTime: moment(EndTime).format('YYYY/MM/DD')
 			};
 			res = await courseDetailApi.getAll(fmObj);
 			if (res.status === 200) {
 				setInfoSearch({
 					title: 'Lịch giáo viên',
-					teacherName:
-						optionList.teacherList.find((b) => b.value === TeacherID)?.title ||
-						'',
-					branchName:
-						optionList.branchList.find((b) => b.value === BranchID)?.title ||
-						'',
+					teacherName: optionList.teacherList.find((b) => b.value === TeacherID)?.title || '',
+					branchName: optionList.branchList.find((b) => b.value === BranchID)?.title || '',
 					fromDate: moment(StartTime).format('DD/MM/YYYY'),
-					toDate: moment(EndTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY')
 				});
-				setDataList({list: res.data.data, type: ''});
+				setDataList({ list: res.data.data, type: '' });
 				showNoti('success', res.data.message);
 			}
 			if (res.status === 204) {
@@ -241,7 +229,7 @@ const ScheduleStudy = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 		return res;
@@ -249,18 +237,7 @@ const ScheduleStudy = () => {
 	// CALENDAR FORMAT
 	const calendarFm = (calendarArr: ICourseDetailSchedule[]) => {
 		const rs = calendarArr.map((c, idx) => {
-			const {
-				ID,
-				CourseID,
-				CourseName,
-				RoomName,
-				BranchName,
-				TeacherName,
-				SubjectName,
-				StartTime,
-				EndTime,
-				LinkDocument,
-			} = c;
+			const { ID, CourseID, CourseName, RoomName, BranchName, TeacherName, SubjectName, StartTime, EndTime, LinkDocument } = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
 			const studyTime = `${studyTimeStart} - ${studyTimeEnd}`;
@@ -279,8 +256,8 @@ const ScheduleStudy = () => {
 					SubjectName,
 					LinkDocument,
 					//
-					StudyTimeName: studyTime,
-				},
+					StudyTimeName: studyTime
+				}
 			};
 		});
 		return rs;
@@ -291,27 +268,25 @@ const ScheduleStudy = () => {
 	const onCheckEmptyManyTeacher = async (value: IGetTeacher) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
-			const {TeacherID, StudyTimeID, StartTime, EndTime, BranchID} = value;
+			const { TeacherID, StudyTimeID, StartTime, EndTime, BranchID } = value;
 			const fmObj = {
 				TeacherID: TeacherID.toString(),
 				StudyTimeID: StudyTimeID.join(','),
 				StartTime: moment(StartTime).format('YYYY/MM/DD'),
-				EndTime: moment(EndTime).format('YYYY/MM/DD'),
+				EndTime: moment(EndTime).format('YYYY/MM/DD')
 			};
 			res = await checkTeacherScheduleStudy.getAll(fmObj);
 			if (res.status === 200) {
-				setDataList({list: res.data.data, type: 'CheckManyTeacher'});
+				setDataList({ list: res.data.data, type: 'CheckManyTeacher' });
 				setInfoSearch({
 					title: 'Lịch nhiều giáo viên',
-					branchName:
-						optionList.branchList.find((b) => b.value === BranchID)?.title ||
-						'',
+					branchName: optionList.branchList.find((b) => b.value === BranchID)?.title || '',
 					fromDate: moment(StartTime).format('DD/MM/YYYY'),
-					toDate: moment(EndTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY')
 				});
 				showNoti('success', res.data.message);
 			}
@@ -323,7 +298,7 @@ const ScheduleStudy = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 		return res;
@@ -348,7 +323,7 @@ const ScheduleStudy = () => {
 		const newCalendarArr = [...calendarArr];
 		for (let i = 0; i < newCalendarArr.length; i++) {
 			const c = newCalendarArr[i];
-			const {Date, StudyTimeID, StudyTimeName, StartTime} = c;
+			const { Date, StudyTimeID, StudyTimeName, StartTime } = c;
 			const fmDateTimeStamp = moment(StartTime).format('X');
 			const fmDate = moment(Date).format('YYYY/MM/DD');
 			const fmStudyTime = `${StudyTimeID}-${StudyTimeName}-${fmDateTimeStamp}`;
@@ -366,33 +341,27 @@ const ScheduleStudy = () => {
 		return rs;
 	};
 	//Branch
-	const onCheckScheduleOfBranch = async (value: {
-		BranchID: number;
-		StartTime: string;
-		EndTime: string;
-	}) => {
+	const onCheckScheduleOfBranch = async (value: { BranchID: number; StartTime: string; EndTime: string }) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res;
 		try {
-			const {BranchID, StartTime, EndTime} = value;
+			const { BranchID, StartTime, EndTime } = value;
 			const fmObj = {
 				BranchID,
 				StartTime: moment(StartTime).format('YYYY/MM/DD'),
-				EndTime: moment(EndTime).format('YYYY/MM/DD'),
+				EndTime: moment(EndTime).format('YYYY/MM/DD')
 			};
 			res = await checkBranchScheduleStudy.getAll(fmObj);
 			if (res.status === 200) {
-				setDataList({list: res.data.data, type: 'CheckBranch'});
+				setDataList({ list: res.data.data, type: 'CheckBranch' });
 				setInfoSearch({
 					title: 'Lịch trung tâm',
-					branchName:
-						optionList.branchList.find((b) => b.value === BranchID)?.title ||
-						'',
+					branchName: optionList.branchList.find((b) => b.value === BranchID)?.title || '',
 					fromDate: moment(StartTime).format('DD/MM/YYYY'),
-					toDate: moment(EndTime).format('DD/MM/YYYY'),
+					toDate: moment(EndTime).format('DD/MM/YYYY')
 				});
 				showNoti('success', res.data.message);
 			}
@@ -404,7 +373,7 @@ const ScheduleStudy = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 		return res;
@@ -414,7 +383,7 @@ const ScheduleStudy = () => {
 			onCheckScheduleOfBranch({
 				BranchID: parseInt(optionList.branchList[0].value.toString()),
 				StartTime: moment().format('YYYY/MM/DD'),
-				EndTime: moment().add(1, 'months').format('YYYY/MM/DD'),
+				EndTime: moment().add(1, 'months').format('YYYY/MM/DD')
 			});
 		}
 	}, [optionList.branchList]);
@@ -447,7 +416,7 @@ const ScheduleStudy = () => {
 		const newCalendarArr = [...calendarArr];
 		for (let i = 0; i < newCalendarArr.length; i++) {
 			const c = newCalendarArr[i];
-			const {StartTime, StudyTimeID, RoomName, RoomID, StudyTimeName} = c;
+			const { StartTime, StudyTimeID, RoomName, RoomID, StudyTimeName } = c;
 			const fmDate = moment(StartTime).format('YYYY/MM/DD');
 			const fmRoomName = `${RoomID}-${RoomName}-${RoomID}`;
 			if (rs[fmDate]) {
@@ -480,11 +449,7 @@ const ScheduleStudy = () => {
 				<Card
 					extra={
 						<div className="card-list-btn">
-							<CheckBranch
-								isLoading={isLoading}
-								optionList={optionList}
-								handleSubmit={onCheckScheduleOfBranch}
-							/>
+							<CheckBranch isLoading={isLoading} optionList={optionList} handleSubmit={onCheckScheduleOfBranch} />
 							{/* */}
 							<CheckRoom
 								isLoading={isLoading}
@@ -508,29 +473,19 @@ const ScheduleStudy = () => {
 						</div>
 					}
 				>
-					<Spin
-						size="large"
-						spinning={isLoading.type === 'ADD_DATA' && isLoading.status}
-					>
+					<Spin size="large" spinning={isLoading.type === 'ADD_DATA' && isLoading.status}>
 						{infoSearch && (
 							<h4 className="font-weight-black mb-3">
 								{infoSearch.title && `[${infoSearch.title}]`}
 								{infoSearch.branchName && `[${infoSearch.branchName}]`}
 								{infoSearch.teacherName && `[${infoSearch.teacherName}]`}
-								{infoSearch.roomName && `[${infoSearch.roomName}]`} |{' '}
-								{infoSearch.fromDate} - {infoSearch.toDate}
+								{infoSearch.roomName && `[${infoSearch.roomName}]`} | {infoSearch.fromDate} - {infoSearch.toDate}
 							</h4>
 						)}
-						{dataList.type === 'CheckBranch' ||
-						dataList.type === 'CheckManyTeacher' ? (
-							<ScheduleStudyList
-								dataSource={fmList(dataList.type, dataList.list)}
-							/>
+						{dataList.type === 'CheckBranch' || dataList.type === 'CheckManyTeacher' ? (
+							<ScheduleStudyList dataSource={fmList(dataList.type, dataList.list)} />
 						) : (
-							<CDCalendar
-								isLoaded={true}
-								eventList={calendarFm(dataList.list)}
-							/>
+							<CDCalendar isLoaded={true} eventList={calendarFm(dataList.list)} />
 						)}
 					</Spin>
 				</Card>
