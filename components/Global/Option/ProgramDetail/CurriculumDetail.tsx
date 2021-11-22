@@ -22,9 +22,9 @@ let listFieldSearch = {
 const CurriculumDetail = (props) => {
 	const { Option } = Select;
 	const router = useRouter();
-	const { courseID: courseID } = router.query;
+	const { courseID: courseID, slug: slug } = router.query;
 	// const curriculumID = parseInt(router.query.slug as string);
-	const { curriculumID, dataSubject, loadingOut } = props;
+	const { curriculumID, dataSubject, loadingOut, isNested } = props;
 
 	const [saveValue, setSaveValue] = useState([]);
 	const [loadingSelect, setLoadingSelect] = useState({
@@ -352,7 +352,7 @@ const CurriculumDetail = (props) => {
 
 	return (
 		<>
-			{isAdmin ? (
+			{isNested ? (
 				<NestedTable
 					currentPage={currentPage}
 					totalPage={totalPage && totalPage}

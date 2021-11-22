@@ -249,7 +249,13 @@ const Curriculum = (props) => {
 	const expandedRowRender = () => {
 		return (
 			<>
-				<CurriculumDetail loadingOut={isLoading} dataSubject={dataSubject} programID={programID} curriculumID={curriculumID} />
+				<CurriculumDetail
+					isNested={true}
+					loadingOut={isLoading}
+					dataSubject={dataSubject}
+					programID={programID}
+					curriculumID={curriculumID}
+				/>
 			</>
 		);
 	};

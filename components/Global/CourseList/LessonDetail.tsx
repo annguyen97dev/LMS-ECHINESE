@@ -11,7 +11,7 @@ import TitlePage from '~/components/Elements/TitlePage';
 
 const LessonDetail = () => {
 	const router = useRouter();
-	const { courseID: courseID } = router.query;
+	const { courseID: courseID, slug: slug } = router.query;
 	const [dataSubject, setDataSubject] = useState<ISubject[]>();
 
 	// ------ BASE USESTATE TABLE -------
@@ -64,7 +64,7 @@ const LessonDetail = () => {
 		});
 
 		try {
-			let res = await courseApi.getById(courseID as any);
+			let res = await courseApi.getById(courseID ? (courseID as any) : slug);
 			res.status == 200 && setDataSource(res.data.data);
 
 			res.status == 204 && setDataSource([]);
@@ -148,7 +148,7 @@ const LessonDetail = () => {
 				dataSource={dataSource}
 				columns={columns}
 			/> */}
-			{dataSource && <CurriculumDetail curriculumID={dataSource?.CurriculumID} dataSubject={null} />}
+			{dataSource && <CurriculumDetail isNested={false} curriculumID={dataSource?.CurriculumID} dataSubject={null} />}
 		</>
 	);
 };

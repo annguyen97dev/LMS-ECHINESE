@@ -5,7 +5,7 @@ import { Edit, Plus } from 'react-feather';
 import ChoiceForm from './QuestionFormType/ChoiceForm';
 import MultipleForm from './QuestionFormType/MultipleForm';
 import GroupForm from './QuestionFormType/GroupForm';
-import { FormOutlined, DeleteOutlined, AppstoreAddOutlined, PlusOutlined } from '@ant-design/icons';
+import { FormOutlined, DeleteOutlined, AppstoreAddOutlined, PlusOutlined, DiffOutlined } from '@ant-design/icons';
 import WrittingForm from './QuestionFormType/WrittingForm';
 import GroupFormTyping from './QuestionFormType/TypingForm';
 import TypingForm from './QuestionFormType/TypingForm';
@@ -287,15 +287,9 @@ const CreateQuestionForm = (props) => {
 					);
 				} else {
 					return (
-						<button className="btn btn-success" onClick={showDrawer}>
-							<Plus className="mr-2" style={{ width: '20px' }} />
-							<span
-								style={{
-									display: 'inline-block',
-									verticalAlign: 'middle',
-									lineHeight: '4px'
-								}}
-							>
+						<button className="btn btn-success btn-have-icon" onClick={showDrawer}>
+							<span className="d-flex align-items-center">
+								<PlusOutlined className="mr-1" />
 								Tạo câu hỏi
 							</span>
 						</button>

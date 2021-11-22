@@ -657,13 +657,13 @@ export const AdminChildMenu = [
 						Text: 'Thi cử',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/course-exam',
-						Route: '/customer/student/course-exam',
-						Text: 'Kiểm tra',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/student/course-exam',
+					// 	Route: '/customer/student/course-exam',
+					// 	Text: 'Kiểm tra',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/package/pay-fix-list',

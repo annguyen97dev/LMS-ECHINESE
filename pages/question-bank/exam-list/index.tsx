@@ -205,14 +205,22 @@ const ExamList = (props) => {
 				reloadData();
 				setTodoApi({
 					...todoApi,
+					Type: value,
+					CurriculumID: null
+				});
+				setShowFilter(false);
+				break;
+			// case 2:
+			// 	setDataExam([]);
+			// 	setShowFilter(true);
+			// 	break;
+			default:
+				reloadData();
+				setTodoApi({
+					...todoApi,
 					Type: value
 				});
-				break;
-			case 2:
-				setDataExam([]);
 				setShowFilter(true);
-				break;
-			default:
 				break;
 		}
 	};
@@ -389,7 +397,17 @@ const ExamList = (props) => {
 					</Card>
 				</div>
 				<div className="col-md-4 col-12">
-					<Card className="card-box-type" title="Lọc nhanh">
+					<Card
+						className="card-box-type"
+						title="Lọc nhanh"
+						extra={
+							<Tooltip title="Reset">
+								<button className="btn btn-icon edit" onClick={resetFilter}>
+									<SyncOutlined />
+								</button>
+							</Tooltip>
+						}
+					>
 						<div className="row mb-3">
 							{/**  PHÂN LOẠI  */}
 							<div className="col-md-12 col-12 mt-3">
@@ -403,7 +421,8 @@ const ExamList = (props) => {
 									>
 										<Option value={0}>Tất cả</Option>
 										<Option value={1}>Đề hẹn test</Option>
-										<Option value={2}>Đề bán & Đề kiểm tra</Option>
+										<Option value={2}>Đề bán</Option>
+										<Option value={3}>Đề Kiểm tra</Option>
 									</Select>
 								</div>
 							</div>
@@ -448,8 +467,8 @@ const ExamList = (props) => {
 									</div>
 								</div>
 
-								{/** LOẠI CÂU HỎI (SINGLE HOẶC GROUP)  */}
-								<div className="col-md-10 col-10 mt-3">
+								{/** CHỌN DẠNG ĐỀ  */}
+								{/* <div className="col-md-10 col-10 mt-3">
 									<div className="item-select">
 										<Select
 											className="style-input"
@@ -462,14 +481,14 @@ const ExamList = (props) => {
 											<Option value={3}>Đề kiểm tra</Option>
 										</Select>
 									</div>
-								</div>
-								<div className="col-md-2 col-2 mt-3 d-flex align-items-center">
+								</div> */}
+								{/* <div className="col-md-2 col-2 mt-3 d-flex align-items-center">
 									<Tooltip title="Reset">
 										<button className="btn btn-icon edit" onClick={resetFilter}>
 											<SyncOutlined />
 										</button>
 									</Tooltip>
-								</div>
+								</div> */}
 							</div>
 						)}
 					</Card>

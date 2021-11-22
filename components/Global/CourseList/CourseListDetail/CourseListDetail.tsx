@@ -14,6 +14,7 @@ import ScheduleStudyStudent from '../../ScheduleStudyStudent/ScheduleStudyStuden
 import CurriculumDetail from '../../Option/ProgramDetail/CurriculumDetail';
 import LessonDetail from '../LessonDetail';
 import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
+import CourseExamAdmin from '../../CourseExam/CourseExamAdmin';
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
@@ -48,32 +49,28 @@ const CourseListDetail = () => {
 				>
 					{isAdmin ? <CourseDetailCalendar courseID={parseIntID} /> : <ScheduleStudyStudent />}
 				</TabPane>
-				{!isAdmin && (
-					<>
-						<TabPane
-							tab={
-								<>
-									<BookOpen />
-									<span title="Giáo trình">Giáo trình</span>
-								</>
-							}
-							key="10"
-						>
-							<LessonDetail />
-						</TabPane>
-						<TabPane
-							tab={
-								<>
-									<Edit />
-									<span title="Giáo trình">Bài tâp/Kiểm tra</span>
-								</>
-							}
-							key="11"
-						>
-							<CourseExamStudent />
-						</TabPane>
-					</>
-				)}
+				<TabPane
+					tab={
+						<>
+							<BookOpen />
+							<span title="Giáo trình">Giáo trình</span>
+						</>
+					}
+					key="10"
+				>
+					<LessonDetail />
+				</TabPane>
+				<TabPane
+					tab={
+						<>
+							<Edit />
+							<span title="Giáo trình">Bài tâp/Kiểm tra</span>
+						</>
+					}
+					key="11"
+				>
+					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
+				</TabPane>
 				{isAdmin && (
 					<TabPane
 						tab={

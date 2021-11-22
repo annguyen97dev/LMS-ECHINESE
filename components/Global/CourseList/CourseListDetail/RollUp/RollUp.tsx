@@ -243,6 +243,7 @@ function RollUp(props) {
 			}
 		},
 		{
+			width: 120,
 			title: 'Cảnh cáo',
 			dataIndex: 'Warning',
 			align: 'center',
