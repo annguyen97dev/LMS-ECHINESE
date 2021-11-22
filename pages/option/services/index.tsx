@@ -159,7 +159,6 @@ const ServiceList = () => {
 		let res = null;
 
 		if (data.ID) {
-			console.log(data);
 			try {
 				res = await serviceApi.update(data);
 				res?.status == 200 && showNoti('success', 'Cập nhật thành công'), getDataTable();
