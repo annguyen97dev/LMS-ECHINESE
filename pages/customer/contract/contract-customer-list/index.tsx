@@ -126,7 +126,6 @@ export default function ContractList() {
 			try {
 				let res = await contractCustomerListApi.getAll(todoApi);
 				if (res.status == 204) {
-					showNoti('danger', 'Không có dữ liệu');
 					setContractCustomerList([]);
 				}
 				if (res.status == 200) {

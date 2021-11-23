@@ -102,7 +102,7 @@ export default function StudentAdvisory() {
 	const [showGroup, setShowGroup] = useState(false);
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IStudentAdvise[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, isAdmin } = useWrap();
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: pageIndex,
@@ -510,8 +510,8 @@ export default function StudentAdvisory() {
 	}, [todoApi]);
 
 	useEffect(() => {
-		getDataStudentForm(listApi);
-	}, []);
+		isAdmin && getDataStudentForm(listApi);
+	}, [isAdmin]);
 
 	const expandedRowRender = (data) => {
 		return (

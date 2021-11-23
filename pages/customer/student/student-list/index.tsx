@@ -120,7 +120,7 @@ const listApi = [
 ];
 
 const StudentData = () => {
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, isAdmin } = useWrap();
 	const [currentPage, setCurrentPage] = useState(1);
 	const listTodoApi = {
 		pageSize: pageSize,
@@ -183,10 +183,7 @@ const StudentData = () => {
 		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const [indexRow, setIndexRow] = useState(null);
-
 	const [todoApi, setTodoApi] = useState(listTodoApi);
-	const [loadingForm, setLoadingForm] = useState(true);
 
 	// FOR STUDENT FORM
 	// ------------- ADD data to list --------------
@@ -453,8 +450,8 @@ const StudentData = () => {
 	}, [todoApi]);
 
 	useEffect(() => {
-		getDataStudentForm(listApi);
-	}, []);
+		isAdmin && getDataStudentForm(listApi);
+	}, [isAdmin]);
 
 	// EXPAND ROW
 

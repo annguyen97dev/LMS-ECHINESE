@@ -1032,13 +1032,7 @@ export const AdminChildMenu = [
 		// 		Text: 'Nguồn khách hàng',
 		// 		Icon: '',
 		// 	},
-		// 	{
-		// 		ItemType: 'single',
-		// 		Key: '/option/day-off',
-		// 		Route: '/option/day-off',
-		// 		Text: 'Ngày nghỉ',
-		// 		Icon: '',
-		// 	},
+
 		// 	{
 		// 		ItemType: 'single',
 		// 		Key: '/option/jobs',

@@ -1,68 +1,68 @@
-import {Tooltip} from 'antd';
+import { Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
-import React, {useEffect, useRef, useState} from 'react';
-import {Eye} from 'react-feather';
-import {saleCampaignApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { Eye } from 'react-feather';
+import { saleCampaignApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
-import {numberWithCommas, parsePriceStrToNumber} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas, parsePriceStrToNumber } from '~/utils/functions';
 import SalesCampaignFilter from './SalesCampaignFilter';
 import SalesCampaignForm from './SalesCampaignForm';
 const SalesCampaign = () => {
 	const [saleCampaignList, setSaleCampaignList] = useState<ISaleCampaign[]>([]);
-	const {showNoti} = useWrap();
+	const { showNoti, isAdmin } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const optionStatusList = [
 		//2-Đang hoạt động 3-Tạm ngưng 4-Kết thúc
 		{
 			title: 'Đang hoạt động',
-			value: 2,
+			value: 2
 		},
 		{
 			title: 'Tạm ngưng',
-			value: 3,
-		},
+			value: 3
+		}
 	];
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Ngày bắt đầu tăng dần',
+			text: 'Ngày bắt đầu tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Ngày bắt đầu giảm dần',
+			text: 'Ngày bắt đầu giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Ngày kết thúc tăng dần',
+			text: 'Ngày kết thúc tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Ngày kết thúc giảm dần',
-		},
+			text: 'Ngày kết thúc giảm dần'
+		}
 	];
 	// FILTER
 	const listFieldInit = {
@@ -72,13 +72,13 @@ const SalesCampaign = () => {
 		sortType: false,
 
 		StatusID: null,
-		Time: '',
+		Time: ''
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -88,7 +88,7 @@ const SalesCampaign = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			Time: moment(obj.Time).format('YYYY/MM/DD'),
+			Time: moment(obj.Time).format('YYYY/MM/DD')
 		});
 	};
 	// PAGINATION
@@ -97,11 +97,11 @@ const SalesCampaign = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -109,18 +109,18 @@ const SalesCampaign = () => {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -129,7 +129,7 @@ const SalesCampaign = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 
@@ -138,7 +138,7 @@ const SalesCampaign = () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await saleCampaignApi.getAll(filters);
 			if (res.status === 200) {
@@ -154,7 +154,7 @@ const SalesCampaign = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -167,12 +167,12 @@ const SalesCampaign = () => {
 		StartTime: string;
 		EndTime: string;
 		Note?: string;
-		SaleBonusList?: {MoneyCollected: string; PercentBonus: number}[];
+		SaleBonusList?: { MoneyCollected: string; PercentBonus: number }[];
 	}) => {
 		try {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: true,
+				status: true
 			});
 			const newData = {
 				...data,
@@ -180,8 +180,8 @@ const SalesCampaign = () => {
 				EndTime: moment(data.EndTime).format('YYYY/MM/DD'),
 				SaleBonusList: data.SaleBonusList.map((s) => ({
 					...s,
-					MoneyCollected: parsePriceStrToNumber(s.MoneyCollected),
-				})),
+					MoneyCollected: parsePriceStrToNumber(s.MoneyCollected)
+				}))
 			};
 			const res = await saleCampaignApi.add(newData);
 			if (res.status === 200) {
@@ -195,7 +195,7 @@ const SalesCampaign = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -205,52 +205,35 @@ const SalesCampaign = () => {
 			try {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: true,
+					status: true
 				});
-				const {
-					StartTime,
-					EndTime,
-					SaleBonusList: newSaleBonusList,
-					StatusID,
-				} = data;
+				const { StartTime, EndTime, SaleBonusList: newSaleBonusList, StatusID } = data;
 				// GET OLD SALE CAMPAIGN
 				const newSaleCampaignList = [...saleCampaignList];
 				const saleCampaign = newSaleCampaignList[idx];
-				const {SaleBonusList: oldSaleBonusList} = saleCampaign;
+				const { SaleBonusList: oldSaleBonusList } = saleCampaign;
 				// FORMAT BONUS LIST FOLLOW API
-				const formatSaleBonusList = [
-					...newSaleBonusList,
-					...oldSaleBonusList,
-				].reduce((arr, saleBonus) => {
+				const formatSaleBonusList = [...newSaleBonusList, ...oldSaleBonusList].reduce((arr, saleBonus) => {
 					// CLEAR DUPLICATE OLD BONUS
-					if (
-						arr.some(
-							(newBonusArr) => newBonusArr.ID && newBonusArr.ID === saleBonus.ID
-						)
-					) {
+					if (arr.some((newBonusArr) => newBonusArr.ID && newBonusArr.ID === saleBonus.ID)) {
 						return arr;
 					}
-					if (
-						newSaleBonusList.some(
-							(newSaleBonus) =>
-								newSaleBonus.ID && newSaleBonus.ID === saleBonus.ID
-						)
-					) {
+					if (newSaleBonusList.some((newSaleBonus) => newSaleBonus.ID && newSaleBonus.ID === saleBonus.ID)) {
 						arr.push({
 							...saleBonus,
-							MoneyCollected: parsePriceStrToNumber(saleBonus.MoneyCollected),
+							MoneyCollected: parsePriceStrToNumber(saleBonus.MoneyCollected)
 						});
 					} else if (!saleBonus.hasOwnProperty('ID')) {
 						// DO NOT HAVE PROPERTY ID => NEW BONUS
 						arr.push({
 							...saleBonus,
-							MoneyCollected: parsePriceStrToNumber(saleBonus.MoneyCollected),
+							MoneyCollected: parsePriceStrToNumber(saleBonus.MoneyCollected)
 						});
 					} else {
 						// CAN NOT FIND ID BONUS IN SALE BONUS LIST => BONUS REMOVED
 						arr.push({
 							...saleBonus,
-							Enable: false,
+							Enable: false
 						});
 					}
 					return arr;
@@ -264,7 +247,7 @@ const SalesCampaign = () => {
 						: saleCampaign.StatusName,
 					StartTime: moment(StartTime).format('YYYY/MM/DD'),
 					EndTime: moment(EndTime).format('YYYY/MM/DD'),
-					SaleBonusList: formatSaleBonusList,
+					SaleBonusList: formatSaleBonusList
 				};
 				const res = await saleCampaignApi.update(newSaleCampaign);
 				if (res.status === 200) {
@@ -272,8 +255,8 @@ const SalesCampaign = () => {
 						...newSaleCampaign,
 						SaleBonusList: newSaleBonusList.map((s) => ({
 							...s,
-							MoneyCollected: parsePriceStrToNumber(s.MoneyCollected),
-						})),
+							MoneyCollected: parsePriceStrToNumber(s.MoneyCollected)
+						}))
 					});
 					setSaleCampaignList(newSaleCampaignList);
 					showNoti('success', res.data.message);
@@ -285,7 +268,7 @@ const SalesCampaign = () => {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -294,30 +277,26 @@ const SalesCampaign = () => {
 	const columns = [
 		{
 			title: 'Tên chiến dịch',
-			dataIndex: 'Name',
+			dataIndex: 'Name'
 		},
 		{
 			title: 'Bắt đầu',
 			dataIndex: 'StartTime',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Kết thúc',
 			dataIndex: 'EndTime',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Số ngày',
-			dataIndex: 'TotalDay',
+			dataIndex: 'TotalDay'
 		},
 		{
 			title: 'Doanh thu',
 			dataIndex: 'TotalRevenue',
-			render: (text) => numberWithCommas(text),
+			render: (text) => numberWithCommas(text)
 		},
 		{
 			title: 'Trạng thái',
@@ -344,26 +323,23 @@ const SalesCampaign = () => {
 			...FilterColumn('StatusID', onSearch, onResetSearch, 'select', [
 				{
 					title: 'Chưa hoạt động',
-					value: 1,
+					value: 1
 				},
 				{
 					title: 'Đang hoạt động',
-					value: 2,
+					value: 2
 				},
 				{
 					title: 'Tạm ngưng',
-					value: 3,
+					value: 3
 				},
 				{
 					title: 'Kết thúc',
-					value: 4,
-				},
-			]),
+					value: 4
+				}
+			])
 		},
-		{
-			title: 'Ghi chú',
-			dataIndex: 'Note',
-		},
+
 		{
 			align: 'center',
 			render: (record: ISaleCampaign, _, idx) => (
@@ -371,7 +347,7 @@ const SalesCampaign = () => {
 					<Link
 						href={{
 							pathname: '/staff/sales-campaign/sales-campaign-detail/[slug]',
-							query: {slug: record.ID},
+							query: { slug: record.ID }
 						}}
 					>
 						<a className="btn btn-icon">
@@ -380,41 +356,46 @@ const SalesCampaign = () => {
 							</Tooltip>
 						</a>
 					</Link>
-					<SalesCampaignForm
-						isUpdate={true}
-						updateObj={record}
-						isLoading={isLoading}
-						handleSubmit={onUpdateSaleCampaign(idx)}
-						optionStatusList={optionStatusList}
-					/>
+					{isAdmin && (
+						<SalesCampaignForm
+							isUpdate={true}
+							updateObj={record}
+							isLoading={isLoading}
+							handleSubmit={onUpdateSaleCampaign(idx)}
+							optionStatusList={optionStatusList}
+						/>
+					)}
 				</div>
-			),
-		},
+			)
+		}
 	];
 	const expandedRowRender = (item: ISaleCampaign) => {
 		return (
-			<table className="tb-expand">
-				<thead>
-					<tr>
-						<th>Mốc doanh thu</th>
-						<th>Thưởng (%)</th>
-					</tr>
-				</thead>
-				<tbody>
-					{item.SaleBonusList.map((s) => (
+			<>
+				<h6 className="mt-2">Ghi chú</h6>
+				<div className="note">{item.Note}</div>
+
+				<table className="tb-expand mt-3">
+					<thead>
 						<tr>
-							<td>
-								<p className="font-weight-black">
-									{numberWithCommas(s.MoneyCollected)}
-								</p>
-							</td>
-							<td>
-								<p className="font-weight-black">{s.PercentBonus}%</p>
-							</td>
+							<th>Mốc doanh thu</th>
+							<th>Thưởng (%)</th>
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{item.SaleBonusList.map((s) => (
+							<tr>
+								<td>
+									<p className="font-weight-black">{numberWithCommas(s.MoneyCollected)}</p>
+								</td>
+								<td>
+									<p className="font-weight-black">{s.PercentBonus}%</p>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</>
 		);
 	};
 	return (
@@ -427,24 +408,14 @@ const SalesCampaign = () => {
 			TitlePage="Danh sách chiến dịch"
 			dataSource={saleCampaignList}
 			columns={columns}
-			TitleCard={
-				<>
-					<SalesCampaignForm
-						isLoading={isLoading}
-						handleSubmit={onCreateSaleCampaign}
-					/>
-				</>
-			}
+			TitleCard={isAdmin && <SalesCampaignForm isLoading={isLoading} handleSubmit={onCreateSaleCampaign} />}
 			Extra={
 				<div className="extra-table">
-					<SalesCampaignFilter
-						handleFilter={onFilter}
-						handleResetFilter={onResetSearch}
-					/>
+					<SalesCampaignFilter handleFilter={onFilter} handleResetFilter={onResetSearch} />
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}
-			expandable={{expandedRowRender}}
+			expandable={{ expandedRowRender }}
 		/>
 	);
 };
