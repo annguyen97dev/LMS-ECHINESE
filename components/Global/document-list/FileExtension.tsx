@@ -3,19 +3,44 @@ import { Spin, Input } from 'antd';
 import PropTypes from 'prop-types';
 import DocListModal from './DocListMadal';
 import { useWrap } from '~/context/wrap';
+import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
+import { documentListApi } from '~/apiBase/document-list/document-list';
 
-const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
+const FileExtension = ({ docList, isLoading, docInfo, onFetchData, categoryID }) => {
 	const { Search } = Input;
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
+	const [searchDoc, setSearchDoc] = useState<IDocumentList[]>(docList);
+
+	const paramsDefault = {
+		search: null,
+		pageIndex: 1,
+		pageSize: pageSize,
+		CurriculumnID: 0
+	};
+
+	const [params, setParams] = useState(paramsDefault);
 
 	const onSearch = async (value) => {
 		setSubmitLoading({ type: 'UPLOADING', loading: true });
 		try {
+			let res = await documentListApi.getAll({ CategoryID: categoryID, DocumentName: value });
+			if (res.status === 200) {
+				setSearchDoc(res.data.data);
+				// setParams({ ...params });
+			}
+			if (res.status == 204) {
+				setSearchDoc([]);
+			}
 		} catch (error) {
 		} finally {
+			setSubmitLoading({ type: 'UPLOADING', loading: false });
 		}
 	};
+
+	useEffect(() => {
+		setSearchDoc(docList);
+	}, [, docList]);
 
 	const iconFile = (link) => {
 		return (
@@ -48,9 +73,9 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 				</div>
 			</div>
 			<Spin spinning={isLoading.type === 'GET_ALL' && isLoading.loading}>
-				{docList?.length && (
+				{searchDoc?.length > 0 ? (
 					<div className="row">
-						{docList.map((doc: IDocumentList, idx) => (
+						{searchDoc.map((doc: IDocumentList, idx) => (
 							<div className="col-12 col-md-4" key={idx}>
 								<div className="file-man-box">
 									<a href={doc.DocumentLink} download={doc.DocumentLink} target="_blank">
@@ -88,6 +113,8 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 							</div>
 						))}
 					</div>
+				) : (
+					<h4>Không tìm thấy tài liệu!</h4>
 				)}
 			</Spin>
 		</div>

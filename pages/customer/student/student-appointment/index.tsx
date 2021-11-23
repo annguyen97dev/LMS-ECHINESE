@@ -48,9 +48,6 @@ const CourseRegistration = () => {
 		setListChecked([...listChecked]);
 	}
 
-	console.log('List Checked: ', listChecked);
-	console.log('List Student: ', listStudent);
-
 	const columns = [
 		{
 			title: 'Học viên',
@@ -100,7 +97,7 @@ const CourseRegistration = () => {
 	];
 
 	const [currentPage, setCurrentPage] = useState(1);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, isAdmin } = useWrap();
 	const listParamsDefault = {
 		pageSize: pageSize,
 		pageIndex: currentPage,
@@ -214,7 +211,7 @@ const CourseRegistration = () => {
 				setDataFunc('BranchID', newData);
 			}
 
-			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
+			res.status == 204 && console.log('Trung tâm Không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -232,17 +229,19 @@ const CourseRegistration = () => {
 				setDataFunc('ProgramID', newData);
 			}
 
-			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
+			res.status == 204 && console.log('Chương trình Không có dữ liệu');
 		} catch (error) {
-			showNoti('danger', error.message);
+			// showNoti('danger', error.message);
 		} finally {
 		}
 	};
 
 	useEffect(() => {
-		getDataCenter();
-		getDataProgram();
-	}, []);
+		if (isAdmin) {
+			getDataCenter();
+			getDataProgram();
+		}
+	}, [isAdmin]);
 
 	const getPagination = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
@@ -277,9 +276,7 @@ const CourseRegistration = () => {
 				}
 
 				if (res.status == 204) {
-					showNoti('danger', 'Không tìm thấy dữ liệu!');
 					setCurrentPage(1);
-					setParams(listParamsDefault);
 					setCourseReg([]);
 				} else setTotalPage(res.data.totalRow);
 			} catch (error) {
@@ -319,15 +316,17 @@ const CourseRegistration = () => {
 				</div>
 			}
 			TitleCard={
-				<CourseRegForm
-					// infoDetail={data}
-					// infoId={data.ID}
-					listStudent={listStudent}
-					reloadData={(firstPage) => {
-						getDataCourseReg(firstPage);
-					}}
-					currentPage={currentPage}
-				/>
+				isAdmin && (
+					<CourseRegForm
+						// infoDetail={data}
+						// infoId={data.ID}
+						listStudent={listStudent}
+						reloadData={(firstPage) => {
+							getDataCourseReg(firstPage);
+						}}
+						currentPage={currentPage}
+					/>
+				)
 			}
 		/>
 	);

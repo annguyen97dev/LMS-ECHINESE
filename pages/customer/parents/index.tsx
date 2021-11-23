@@ -354,9 +354,10 @@ const ParentsList = () => {
 
 					res.status == 200 && getDataTolist(res.data.data, item.name);
 
-					res.status == 204 && showNoti('danger', item.text + ' Không có dữ liệu');
+					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
-					showNoti('danger', error.message);
+					// showNoti('danger', error.message);
+					console.log(error);
 				} finally {
 				}
 			})();

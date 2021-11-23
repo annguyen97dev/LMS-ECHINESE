@@ -253,7 +253,7 @@ const CourseExamAdmin = () => {
 				setDataFunc('StudentID', newData);
 			}
 
-			res.status == 204 && showNoti('danger', 'Không có dữ liệu học sinh này!');
+			// res.status == 204 && showNoti('danger', 'Không có dữ liệu học sinh này!');
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -306,9 +306,7 @@ const CourseExamAdmin = () => {
 				//@ts-ignore
 				res.status == 200 && setPackageSetResult(res.data.data);
 				if (res.status == 204) {
-					showNoti('danger', 'Không tìm thấy dữ liệu!');
 					setCurrentPage(1);
-					setParams(listParamsDefault);
 					setPackageSetResult([]);
 				} else setTotalPage(res.data.totalRow);
 			} catch (error) {

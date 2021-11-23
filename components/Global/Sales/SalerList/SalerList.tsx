@@ -160,7 +160,7 @@ const SalerList = () => {
 				});
 			}
 		} catch (error) {
-			showNoti('danger', error.message);
+			// showNoti('danger', error.message);
 		}
 	};
 	useEffect(() => {
@@ -181,7 +181,7 @@ const SalerList = () => {
 				});
 			}
 		} catch (error) {
-			showNoti('danger', error.message);
+			// showNoti('danger', error.message);
 		}
 	};
 	// WARD BY DISTRICT
@@ -199,7 +199,7 @@ const SalerList = () => {
 				});
 			}
 		} catch (error) {
-			showNoti('danger', error.message);
+			// showNoti('danger', error.message);
 		} finally {
 			setIsLoading({ type: 'FETCH_WARD_BY_DISTRICT', status: false });
 		}
@@ -219,7 +219,7 @@ const SalerList = () => {
 				setBranchList([]);
 			}
 		} catch (error) {
-			showNoti('danger', error.message);
+			// showNoti('danger', error.message);
 		} finally {
 			setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: false });
 		}

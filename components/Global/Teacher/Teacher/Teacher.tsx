@@ -167,7 +167,8 @@ const Teacher = () => {
 				});
 			}
 		} catch (error) {
-			showNoti('danger', error.message);
+			// showNoti('danger', error.message);
+			console.log(error);
 		}
 	};
 	useEffect(() => {
