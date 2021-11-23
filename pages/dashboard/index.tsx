@@ -98,7 +98,7 @@ const Dashboard = () => {
 			return (
 				<>
 					<div className="row">
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={1}
 								prize="0"
@@ -109,7 +109,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={2}
 								title="Học viên đang học"
@@ -120,7 +120,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={3}
 								prize="3"
@@ -131,7 +131,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={2}
 								prize="3"
@@ -142,7 +142,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							{' '}
 							<ChartCard
 								typeChart={3}
@@ -154,7 +154,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={1}
 								title="Học viên đến test"
@@ -165,9 +165,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-					</div>
-					<div className="row pt-5">
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={2}
 								prize="3"
@@ -178,7 +176,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={1}
 								prize="40"
@@ -189,7 +187,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={3}
 								prize="12"
@@ -200,7 +198,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={1}
 								title="Bài đã chấm"
@@ -211,7 +209,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={2}
 								prize="100"
@@ -222,7 +220,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={3}
 								prize="12"
@@ -233,9 +231,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-					</div>
-					<div className="row pt-5">
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={1}
 								prize="12"
@@ -246,7 +242,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={2}
 								prize="12"
@@ -257,7 +253,7 @@ const Dashboard = () => {
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
-						<div className="col-md-2 col-sm-4 col-6">
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={3}
 								prize="12"

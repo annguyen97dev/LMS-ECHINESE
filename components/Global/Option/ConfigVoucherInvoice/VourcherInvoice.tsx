@@ -5,9 +5,11 @@ import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import ExpandTable from '~/components/ExpandTable';
 
 const ConfigVoucherInvoice = () => {
 	const [dataTable, setDataTable] = useState<IConfig[]>([]);
+	console.log(dataTable);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -154,11 +156,6 @@ const ConfigVoucherInvoice = () => {
 			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : ''
 		},
 		{
-			title: 'Nội dung',
-			dataIndex: 'ConfigContent',
-			render: (text) => <p className="invoice-content">{ReactHtmlParser(text)}</p>
-		},
-		{
 			width: 100,
 			align: 'center',
 			render: (record: IConfig, _, idx: number) => (
@@ -173,8 +170,13 @@ const ConfigVoucherInvoice = () => {
 		}
 	];
 
+	const expandedRowRender = (text) => {
+		console.log(text);
+		return <p className="invoice-content pt-5">{ReactHtmlParser(text.ConfigContent)}</p>;
+	};
+
 	return (
-		<PowerTable
+		<ExpandTable
 			loading={isLoading}
 			dataSource={dataTable}
 			columns={columns}
@@ -182,6 +184,7 @@ const ConfigVoucherInvoice = () => {
 			totalPage={totalPage}
 			getPagination={getPagination}
 			TitleCard={<ConfigVoucherInvoiceForm isLoading={isLoading} handleSubmit={onCreate} optionFormList={optionFormList} />}
+			expandable={{ expandedRowRender }}
 		/>
 	);
 };
