@@ -179,17 +179,96 @@
 }
 
 .vc-details {
-	&_thum {
+	&_main-thum {
+		display: flex;
 		width: 100%;
 		height: 150px;
+		align-items: center;
+		flex-direction: column;
+
+		@include max-media(1000px) {
+			height: 200px;
+		}
+	}
+	&_thum {
+		width: 100%;
+		height: 100%;
 		border-radius: 6px;
 	}
 	&_thum-mark {
-		width: 84%;
-		height: 150px;
+		width: 100%;
+		height: 100%;
 		border-radius: 6px;
-		background: rgba($color: #000000, $alpha: 0.4);
+		background: rgba($color: #000000, $alpha: 0.3);
 		z-index: 999;
-		position: absolute;
+		margin-top: -150px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		@include max-media(1000px) {
+			margin-top: -200px;
+		}
+	}
+	&_icon-play {
+		font-size: 38px;
+		color: #fff;
+		opacity: 0.9;
+	}
+	&_thum-mark:hover {
+		background: rgba($color: #000000, $alpha: 0.4);
+		i {
+			font-size: 42px;
+		}
+	}
+	.btn-add {
+		width: 100% !important;
+	}
+
+	&_main {
+		width: 100% !important;
+		.header {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			.center-row {
+				align-items: center;
+			}
+			.name {
+				font-size: 16px;
+				font-weight: bold;
+			}
+			.title {
+				font-size: 14px;
+				font-weight: bold;
+			}
+			.slogan {
+				font-size: 14px;
+				i {
+					color: #f53882;
+				}
+			}
+			.rate {
+				font-size: 16px;
+			}
+			.total-student {
+				font-size: 14px;
+				span {
+					font-weight: bold;
+				}
+			}
+		}
+		.list-content {
+			width: 100% !important;
+		}
+		.item {
+			width: 100% !important;
+			background: #ebeef7;
+		}
+		.item:hover {
+			background: #e5f5d8;
+		}
 	}
 }
+
+// background: #e5f5d8;
+// background: #ebeef7;
