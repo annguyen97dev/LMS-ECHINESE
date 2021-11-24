@@ -1,5 +1,5 @@
 .video-course-list {
-	width: 85%;
+	width: 100%;
 	background: #fff;
 
 	@include max-media(1500px) {
@@ -14,9 +14,8 @@
 
 	&__item {
 		background: #effaff;
-		// height: 250px;
 		height: 250px;
-		margin: 15px;
+		margin: 10px;
 		border-radius: 6px;
 		border-style: solid;
 		border-width: 1px;

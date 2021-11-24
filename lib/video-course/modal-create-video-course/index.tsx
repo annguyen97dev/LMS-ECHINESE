@@ -4,12 +4,14 @@ import { RotateCcw } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { useWrap } from '~/context/wrap';
+import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
+import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import { newsFeedApi } from '~/apiBase';
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
 	const { TextArea } = Input;
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { isLoading, _onSubmit, _onSubmitEdit, programID, dataLevel, dataCategory, dataCurriculum, rowData } = props;
+	const { isLoading, _onSubmit, _onSubmitEdit, programID, dataLevel, dataCategory, dataCurriculum, rowData, refeshData } = props;
 	const [form] = Form.useForm();
 	const { Option } = Select;
 	const [category, setCategory] = useState(0);
@@ -119,20 +121,40 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		setImageSelected(info.file);
 	};
 
+	const [modalCate, setModalCate] = useState(false);
+	const [modalLevel, setModalLevel] = useState(false);
+	const [newType, setNewType] = useState('');
+	const [newLevel, setNewLevel] = useState('');
+
+	const createType = async () => {
+		setLoading(true);
+		try {
+			const res = await VideoCourseCategoryApi.add({ CategoryName: newType, Enable: 'True' });
+			res.status == 200 && (setModalCate(false), setIsModalVisible(true), refeshData());
+		} catch (error) {
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const createLevel = async () => {
+		setLoading(true);
+		try {
+			const res = await VideoCourseLevelApi.add({ LevelName: newLevel, Enable: 'True' });
+			res.status == 200 && (setModalCate(false), setIsModalVisible(true), refeshData());
+		} catch (error) {
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	// RENDER
 	return (
 		<>
-			<div className="container-fluid">
+			<div className="ml-3 mr-3 mb-3 mt-1">
 				{programID ? (
-					<button
-						className="btn btn-icon edit"
-						onClick={() => {
-							setIsModalVisible(true);
-						}}
-					>
-						<Tooltip title="Cập nhật">
-							<RotateCcw />
-						</Tooltip>
+					<button type="button" className=" btn btn-warning" style={{ width: '100%' }} onClick={() => setIsModalVisible(true)}>
+						Chỉnh sửa
 					</button>
 				) : (
 					<button
@@ -144,6 +166,51 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 						Thêm mới
 					</button>
 				)}
+
+				<Modal
+					confirmLoading={loading}
+					title="Thêm loại"
+					width={400}
+					visible={modalCate}
+					onCancel={() => (setModalCate(false), setIsModalVisible(true))}
+					onOk={() => createType()}
+				>
+					<Form form={form} layout="vertical" onFinish={() => createType()}>
+						<div className="col-md-12 col-12">
+							<Form.Item name="TypeName" label="Tên loại" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
+								<Input
+									placeholder=""
+									className="style-input"
+									defaultValue={newType}
+									value={newType}
+									onChange={(e) => setNewType(e.target.value)}
+								/>
+							</Form.Item>
+						</div>
+					</Form>
+				</Modal>
+				<Modal
+					confirmLoading={loading}
+					title="Thêm cấp độ"
+					width={400}
+					visible={modalLevel}
+					onCancel={() => (setModalLevel(false), setIsModalVisible(true))}
+					onOk={() => createLevel()}
+				>
+					<Form form={form} layout="vertical" onFinish={() => createLevel()}>
+						<div className="col-md-12 col-12">
+							<Form.Item name="LevelName" label="Tên cấp độ" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
+								<Input
+									placeholder=""
+									className="style-input"
+									defaultValue={newType}
+									value={newType}
+									onChange={(e) => setNewLevel(e.target.value)}
+								/>
+							</Form.Item>
+						</div>
+					</Form>
+				</Modal>
 
 				<Modal
 					title={`${programID ? 'Sửa' : 'Tạo'} khoá học`}
@@ -198,8 +265,16 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									<div className="col-md-6 col-12">
 										<Form.Item
 											label={
-												<div>
-													Loại <button className="btn btn-primary">+</button>
+												<div className="row m-0">
+													Loại{' '}
+													<Tooltip title="Thêm loại mới">
+														<button
+															onClick={() => (setModalCate(true), setIsModalVisible(false))}
+															className="btn btn-primary btn-vc-create ml-1"
+														>
+															<div style={{ marginTop: -2 }}>+</div>
+														</button>
+													</Tooltip>
 												</div>
 											}
 											name="Type"
@@ -265,7 +340,19 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									<div className="col-md-6 col-12">
 										<Form.Item
 											name="Level"
-											label="Cấp độ"
+											label={
+												<div className="row m-0">
+													Cấp độ{' '}
+													<Tooltip title="Thêm cấp độ mới">
+														<button
+															onClick={() => (setModalLevel(true), setIsModalVisible(false))}
+															className="btn btn-primary btn-vc-create ml-1"
+														>
+															<div style={{ marginTop: -2 }}>+</div>
+														</button>
+													</Tooltip>
+												</div>
+											}
 											rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										>
 											<Select

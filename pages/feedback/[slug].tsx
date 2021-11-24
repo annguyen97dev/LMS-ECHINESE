@@ -11,7 +11,9 @@ import { UserOutlined, DeploymentUnitOutlined, WhatsAppOutlined, MailOutlined, A
 import CommentBox from '~/components/Elements/CommentBox';
 import LayoutBase from '~/components/LayoutBase';
 import { FeedbackApi, studentApi } from '~/apiBase';
+import { userApi } from '~/apiBase/user/user';
 import { FeedbackReplyApi } from '~/apiBase/feed-back/feedback-reply';
+import { log } from 'console';
 
 const initData = { CreatedBy: '', Rate: 0, Title: '', ContentFeedBack: '', UID: 0, CreatedOn: '', StatusID: 3 };
 
@@ -29,6 +31,7 @@ const FeedbackListDetail = (props) => {
 	const [reply, setReply] = useState([]);
 	const [isReset, setReset] = useState(false);
 	const [content, setContent] = useState('');
+	const [loading, setLoading] = useState(true);
 
 	const [createdBy, setCreateBy] = useState({
 		AcademicPurposesName: '',
@@ -63,10 +66,6 @@ const FeedbackListDetail = (props) => {
 		return getNum(nDate.getDate()) + '-' + getNum(nDate.getMonth() + 1) + '-' + nDate.getFullYear();
 	};
 
-	const setFeedbackImportant = async () => {
-		setImportant(!isImportant);
-	};
-
 	// CALL API UPDATE
 	const updateCurrentFeedback = async (param) => {
 		try {
@@ -86,7 +85,8 @@ const FeedbackListDetail = (props) => {
 	// GET INFO STUDENT CREATED
 	const getStudent = async (param) => {
 		try {
-			const res = await studentApi.getWithID(param);
+			const res = await userApi.getByID(param);
+			//@ts-ignore
 			res.status == 200 && setCreateBy(res.data.data);
 		} catch (error) {}
 	};
@@ -98,7 +98,10 @@ const FeedbackListDetail = (props) => {
 			const res = await FeedbackReplyApi.getByFeedbackID(param);
 			res.status == 200 && setReply(res.data.data);
 			setReset(false);
-		} catch (error) {}
+		} catch (error) {
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	// ADD DATA REPLY TO SELECTED FEEDBACK
@@ -124,23 +127,28 @@ const FeedbackListDetail = (props) => {
 	};
 
 	const getBranch = (param) => {
-		let temp = '';
+		console.log('param: ', param);
+		if (param !== undefined) {
+			let temp = '';
 
-		for (let i = 0; i < param.length; i++) {
-			if (temp !== '') {
-				temp = temp + ', ';
+			for (let i = 0; i < param.length; i++) {
+				if (temp !== '') {
+					temp = temp + ', ';
+				}
+				temp = temp + param[i].BranchName;
 			}
-			temp = temp + param[i].BranchName;
+
+			return temp;
 		}
 
-		return temp;
+		return undefined;
 	};
 
 	return (
 		<>
 			<div className="row feedback-user">
 				<div className="col-md-3 col-12">
-					<Card className="info-profile-left">
+					<Card loading={loading} className="info-profile-left">
 						<div className="row">
 							<div className="col-12 d-flex align-items-center justify-content-center flex-wrap">
 								{createdBy.Avatar !== null && createdBy.Avatar !== '' ? (
@@ -148,22 +156,10 @@ const FeedbackListDetail = (props) => {
 								) : (
 									<Avatar size={64} src={<img src="/images/user.png" alt="" />} />
 								)}
-
-								{/* <Rate
-									value={currentInfomation.Rate}
-									style={{
-										width: '100%',
-										textAlign: 'center',
-										marginTop: '10px'
-									}}
-									onChange={(e) => {
-										onChangeRate(e);
-									}}
-								/> */}
 							</div>
 						</div>
 
-						{createdBy.FullNameUnicode !== null && (
+						{createdBy.FullNameUnicode !== null && createdBy.FullNameUnicode !== undefined && (
 							<div className="row pt-3 st-fb-center ">
 								<div className="col-2">
 									<UserOutlined />
@@ -172,7 +168,7 @@ const FeedbackListDetail = (props) => {
 							</div>
 						)}
 
-						{createdBy.JobName !== null && (
+						{createdBy.JobName !== null && createdBy.JobName !== undefined && (
 							<div className="row pt-4 st-fb-center ">
 								<div className="col-2">
 									<DeploymentUnitOutlined />
@@ -181,7 +177,7 @@ const FeedbackListDetail = (props) => {
 							</div>
 						)}
 
-						{createdBy.Mobile !== null && (
+						{createdBy.Mobile !== null && createdBy.Mobile !== undefined && (
 							<div className="row pt-4 st-fb-center ">
 								<div className="col-2">
 									<WhatsAppOutlined />
@@ -190,12 +186,14 @@ const FeedbackListDetail = (props) => {
 							</div>
 						)}
 
-						<div className="row pt-4 st-fb-center">
-							<div className="col-2">
-								<MailOutlined />
+						{createdBy.Email !== null && createdBy.Email !== undefined && (
+							<div className="row pt-4 st-fb-center">
+								<div className="col-2">
+									<MailOutlined />
+								</div>
+								<div className="col-10  d-flex ">{createdBy.Email}</div>
 							</div>
-							<div className="col-10  d-flex ">{createdBy.Email}</div>
-						</div>
+						)}
 
 						{createdBy.WardName !== null && createdBy.CMNDRegister !== null && (
 							<div className="row pt-4 st-fb-center ">
@@ -234,7 +232,7 @@ const FeedbackListDetail = (props) => {
 				</div>
 
 				<div className="col-md-9 col-12">
-					<Card className="space-top-card">
+					<Card loading={loading} className="space-top-card">
 						<div className="card-newsfeed-wrap__label">
 							<div className="m-feedback st-fb-100w">
 								<div className="row m-0 mb-3 st-fb-rsb st-fb-100w  m-feedback__head">
@@ -285,7 +283,11 @@ const FeedbackListDetail = (props) => {
 								{reply.map((item, index) => (
 									<li key={index} className={slug === item.ID ? 'active' : ''} onClick={() => {}}>
 										<div className="row m-0 student-fb__i-fb">
-											<img className="student-fb__i-avt mr-3" src={item.Avatar} alt="" width="50" height="50" />
+											{item.Avatar !== undefined && item.Avatar !== null && item.Avatar !== '' ? (
+												<img className="student-fb__i-avt mr-3" src={item.Avatar} alt="" width="50" height="50" />
+											) : (
+												<img className="student-fb__i-avt mr-3" src="/images/user.png" width="50" height="50" />
+											)}
 											<div className="st-fb-colum st-fb-fw">
 												<div className="row m-0 st-fb-rsb">
 													<span className="student-fb__i-name">{item.FullName}</span>

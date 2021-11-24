@@ -5,7 +5,7 @@ import LayoutBase from '~/components/LayoutBase';
 import { useWrap } from '~/context/wrap';
 import { VideoCourseCardApi, VideoCourseStoreApi } from '~/apiBase/video-course-store';
 import { parseToMoney } from '~/utils/functions';
-import RenderItemCardStudent from '~/components/VideoCourse/RenderItemCourseStudent';
+import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
 import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import FilterVideoCourses from '~/components/Global/Option/FilterTable/FilterVideoCourses';
@@ -145,7 +145,7 @@ const VideoCourseStore = () => {
 
 	// CREATE NEW COURSE
 	const createNewCourse = async (param) => {
-		setIsLoading({ type: 'GET_ALL', status: false });
+		setIsLoading({ type: 'GET_ALL', status: true });
 		let temp = {
 			CategoryID: param.CategoryID,
 			LevelID: param.LevelID,
@@ -160,7 +160,10 @@ const VideoCourseStore = () => {
 			res.status == 200 && showNoti('success', 'Thêm thành công');
 			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
 			getAllArea();
-		} catch (error) {}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'GET_ALL', status: false });
+		}
 	};
 
 	// UPDATE COURSE
@@ -358,73 +361,98 @@ const VideoCourseStore = () => {
 				<Card
 					loading={isLoading.status}
 					className="video-course-list"
-					title={userInformation.RoleID == 1 ? null : <div className="m-2">{Extra()}</div>}
+					title={<div className="m-2">{Extra()}</div>}
+					extra={
+						userInformation.RoleID !== 1 ? null : (
+							<div className="vc-teach-modal_header">
+								<ModalCreateVideoCourse
+									dataLevel={categoryLevel}
+									dataCategory={category}
+									dataCurriculum={dataCurriculum}
+									_onSubmit={(data: any) => createNewCourse(data)}
+									showAdd={false}
+									isLoading={false}
+									refeshData={() => getAllArea()}
+								/>
+							</div>
+						)
+					}
 				>
-					{userInformation.RoleID == 3 && (
-						<>
-							<List
-								itemLayout="horizontal"
-								dataSource={data}
-								grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }}
-								renderItem={(item) => <RenderItemCardStudent addToCard={addToCard} item={item} />}
-								pagination={{
-									onChange: getPagination,
-									total: totalPage,
-									size: 'small',
-									current: pageIndex
-								}}
-							/>
-							<Modal
-								title="Têm vào giỏ hàng"
-								visible={showModal}
-								confirmLoading={false}
-								className="vc-store_modal"
-								footer={null}
-								onCancel={() => setShowModal(false)}
-								width={500}
-							>
-								<div className="m-0 row vc-store-center vc-store-space-beetween">
-									<div className="m-0 row vc-store-center">
-										<i className="fas fa-check-circle vc-store_modal_icon"></i>
-										<span className="vc-store_modal_title">Thêm thành công</span>
-									</div>
-									<a href="/video-course-card">
-										<button type="button" className="btn btn-primary">
-											Đến giỏ hàng
-										</button>
-									</a>
-								</div>
-							</Modal>
-						</>
-					)}
+					{/* {userInformation.RoleID == 3 && ( */}
+					<>
+						<List
+							itemLayout="horizontal"
+							dataSource={data}
+							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 5 }}
+							renderItem={(item) => (
+								<RenderItemCard
+									_onSubmitEdit={(data: any) => updateCourse(data)}
+									category={category}
+									categoryLevel={categoryLevel}
+									addToCard={addToCard}
+									item={item}
+									rowData={data}
+									dataGrade={data}
+								/>
+							)}
+							pagination={{
+								onChange: getPagination,
+								total: totalPage,
+								size: 'small',
+								current: pageIndex
+							}}
+						/>
 
-					{/* admin */}
-					{userInformation.RoleID == 1 && (
-						<>
-							<CourseVideoTable
-								totalPage={totalPage && totalPage}
-								getPagination={(pageNumber: number) => getPagination(pageNumber)}
-								currentPage={currentPage}
-								columns={columnsVideoCourse}
-								dataSource={data}
-								loading={isLoading}
-								TitleCard={
-									<div className="vc-teach-modal_header">
-										<ModalCreateVideoCourse
-											dataLevel={categoryLevel}
-											dataCategory={category}
-											dataCurriculum={dataCurriculum}
-											_onSubmit={(data: any) => createNewCourse(data)}
-											showAdd={false}
-											isLoading={false}
-										/>
-									</div>
-								}
-								Extra={Extra()}
-								expandable={() => expandedRowRender}
-							></CourseVideoTable>
-						</>
-					)}
+						<Modal
+							title="Têm vào giỏ hàng"
+							visible={showModal}
+							confirmLoading={false}
+							className="vc-store_modal"
+							footer={null}
+							onCancel={() => setShowModal(false)}
+							width={500}
+						>
+							<div className="m-0 row vc-store-center vc-store-space-beetween">
+								<div className="m-0 row vc-store-center">
+									<i className="fas fa-check-circle vc-store_modal_icon"></i>
+									<span className="vc-store_modal_title">Thêm thành công</span>
+								</div>
+								<a href="/video-course-card">
+									<button type="button" className="btn btn-primary">
+										Đến giỏ hàng
+									</button>
+								</a>
+							</div>
+						</Modal>
+					</>
+					{/* )} */}
+
+					{/* Table */}
+					{/* {userInformation.RoleID == 1 && (
+						<CourseVideoTable
+							totalPage={totalPage && totalPage}
+							getPagination={(pageNumber: number) => getPagination(pageNumber)}
+							currentPage={currentPage}
+							columns={columnsVideoCourse}
+							dataSource={data}
+							loading={isLoading}
+							TitleCard={
+								<div className="vc-teach-modal_header">
+									<ModalCreateVideoCourse
+										dataLevel={categoryLevel}
+										dataCategory={category}
+										dataCurriculum={dataCurriculum}
+										_onSubmit={(data: any) => createNewCourse(data)}
+										showAdd={false}
+										isLoading={false}
+										refeshData={() => getAllArea()}
+									/>
+								</div>
+							}
+							Extra={Extra()}
+							expandable={() => expandedRowRender}
+						></CourseVideoTable>
+					)} */}
 				</Card>
 			)}
 		</div>
