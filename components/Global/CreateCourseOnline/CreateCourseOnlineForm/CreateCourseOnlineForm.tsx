@@ -32,7 +32,6 @@ const CreateCourseOnlineForm = (props) => {
 	const schema = yup.object().shape({
 		BranchID: yup.number().nullable().required('Bạn không được để trống'),
 		UserInformationID: yup.number().nullable().required('Bạn không được để trống'),
-
 		StudyTimeID: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ca học').required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
@@ -51,6 +50,9 @@ const CreateCourseOnlineForm = (props) => {
 		ProgramID: null,
 		CurriculumID: null,
 		StartDay: moment().format('YYYY/MM/DD'),
+		DaySelected: [],
+		Price: '',
+		SalaryOfLesson: '',
 		CourseName: ''
 	};
 	const form = useForm({
@@ -171,6 +173,8 @@ const CreateCourseOnlineForm = (props) => {
 									placeholder="Chọn chương trình học"
 									optionList={optionListForForm.programList}
 									onChangeSelect={(value) => {
+										const price = optionListForForm.programList.find((p) => p.value === value)?.options.Price || 0;
+										form.setValue('Price', numberWithCommas(price));
 										checkHandleGetValueBeforeFetchCurriculum('ProgramID', value);
 									}}
 								/>

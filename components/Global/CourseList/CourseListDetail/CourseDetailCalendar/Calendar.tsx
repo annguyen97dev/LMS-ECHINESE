@@ -258,18 +258,20 @@ function CDCalendar(props) {
 					)}
 					{isGetRecordList && (
 						<li>
-							<span>Bản ghi buổi học: </span>
-							<a onClick={() => middlewareOpenModal(parseInt(ID), 'record')}>
-								<i>Xem</i>
-							</a>
-							{/* <ZoomRecordModal scheduleID={ID} /> */}
+							<Button
+								size="middle"
+								className="mt-3 btn-success w-100"
+								onClick={() => middlewareOpenModal(parseInt(ID), 'record')}
+							>
+								Bản ghi buổi học
+							</Button>
 						</li>
 					)}
 					{isUploadDocument && (
 						<li>
 							<Button
 								size="middle"
-								className="mt-3 btn-warning w-100"
+								className="mt-2 btn-warning w-100"
 								onClick={() => middlewareOpenModal(parseInt(ID), 'document')}
 							>
 								Thêm tài liệu
@@ -367,6 +369,28 @@ function CDCalendar(props) {
 								)}
 							</li>
 						)}
+						{isGetRecordList && (
+							<li>
+								<Button
+									size="middle"
+									className="mt-3 btn-success w-100"
+									onClick={() => middlewareOpenModal(parseInt(ID), 'record')}
+								>
+									Bản ghi buổi học
+								</Button>
+							</li>
+						)}
+						{isUploadDocument && (
+							<li>
+								<Button
+									size="middle"
+									className="mt-2 btn-warning w-100"
+									onClick={() => middlewareOpenModal(parseInt(ID), 'document')}
+								>
+									Thêm tài liệu
+								</Button>
+							</li>
+						)}
 						{isStudyZoom && (
 							<li>
 								{checkTypeButtonStudyZoom({
@@ -438,11 +462,22 @@ function CDCalendar(props) {
 							)}
 						</li>
 					)}
+					{isGetRecordList && (
+						<li>
+							<Button
+								size="middle"
+								className="mt-3 btn-success w-100"
+								onClick={() => middlewareOpenModal(parseInt(ID), 'record')}
+							>
+								Bản ghi buổi học
+							</Button>
+						</li>
+					)}
 					{isUploadDocument && (
 						<li>
 							<Button
 								size="middle"
-								className="mt-3 btn-warning w-100"
+								className="mt-2 btn-warning w-100"
 								onClick={() => middlewareOpenModal(parseInt(ID), 'document')}
 							>
 								Thêm tài liệu

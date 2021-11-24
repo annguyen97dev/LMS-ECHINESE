@@ -80,6 +80,8 @@ type ISaveCourseInfo = {
 	DaySelected: string;
 	DaySelectedName: string;
 	TypeCourse: number;
+	SalaryOfLesson: number;
+	Price: number;
 	Schedule: IScheduleListToSave[];
 };
 const dayOfWeek = [
@@ -166,7 +168,9 @@ const CreateCourseOnline = () => {
 		StartDay: '',
 		GradeID: 0,
 		DaySelected: '',
-		StudyTimeID: ''
+		StudyTimeID: '',
+		SalaryOfLesson: 0,
+		Price: 0
 	});
 	const [saveCourseInfo, setSaveCourseInfo] = useState<ISaveCourseInfo>({
 		CourseName: '',
@@ -185,6 +189,8 @@ const CreateCourseOnline = () => {
 		DaySelected: '',
 		DaySelectedName: '',
 		TypeCourse: 2,
+		SalaryOfLesson: 0,
+		Price: 0,
 		Schedule: []
 	});
 	// CALENDAR MODAL
@@ -278,7 +284,7 @@ const CreateCourseOnline = () => {
 				GradeID: id
 			});
 			if (res.status === 200) {
-				const newProgramList = fmSelectArr(res.data.data, 'ProgramName', 'ID');
+				const newProgramList = fmSelectArr(res.data.data, 'ProgramName', 'ID', ['Price']);
 				setOptionListForForm({
 					...optionListForForm,
 					programList: newProgramList
@@ -392,7 +398,7 @@ const CreateCourseOnline = () => {
 			fetchCurriculum();
 		}
 	}, [dataToFetchCurriculum]);
-	// GET COURSE
+	// -----------GET COURSE-----------
 	const getCourse = async (object) => {
 		setIsLoading({
 			type: 'ADD_DATA',
@@ -408,7 +414,9 @@ const CreateCourseOnline = () => {
 				ProgramID,
 				GradeID,
 				CourseName,
-				UserInformationID
+				UserInformationID,
+				SalaryOfLesson,
+				Price
 			} = object;
 			stoneDataToSave.current = {
 				CourseName,
@@ -419,7 +427,9 @@ const CreateCourseOnline = () => {
 				GradeID,
 				StartDay: StartDate,
 				DaySelected: DaySelected.join(','),
-				StudyTimeID: StudyTimeID.join(',')
+				StudyTimeID: StudyTimeID.join(','),
+				SalaryOfLesson: SalaryOfLesson.replace(/\D/g, ''),
+				Price: Price.replace(/\D/g, '')
 			};
 			const lessonParams = {
 				CurriculumnID: CurriculumID,
@@ -443,7 +453,9 @@ const CreateCourseOnline = () => {
 							unavailable: lessonList.data.schedule
 						});
 					}
-					studyDayList.status === 200 && setCalendarList(studyDayList.data.data);
+					if (studyDayList.status === 200) {
+						setCalendarList(studyDayList.data.data);
+					}
 					if (lessonList.status === 200 && studyDayList.status === 200) {
 						setIsSave(true);
 						checkStudyTime(null);
@@ -681,7 +693,6 @@ const CreateCourseOnline = () => {
 		}
 	}, [dataModalCalendar]);
 	// -----------SAVE COURSE-----------
-
 	const getTitle = (arr: IOptionCommon[], vl) => arr.find((p) => p.value === vl).title;
 	const getMultiTitle = (arrList: IOptionCommon[], arrVl: string) => {
 		const rs = [];
@@ -695,7 +706,7 @@ const CreateCourseOnline = () => {
 		}
 		return rs.join(', ');
 	};
-	const onValidateDateToSave = () => {
+	const onValidateDataToSave = () => {
 		const { unavailable } = scheduleList;
 		const rs: {
 			show: {
@@ -749,7 +760,7 @@ const CreateCourseOnline = () => {
 	};
 	const onFetchDataToSave = () => {
 		const { branchList, programList, curriculumList, studyTimeList } = optionListForForm;
-		const { show, save, endDate } = onValidateDateToSave();
+		const { show, save, endDate } = onValidateDataToSave();
 
 		const scheduleListSorted = show.sort((a, b) => moment(a.date).valueOf() - moment(b.date).valueOf());
 
