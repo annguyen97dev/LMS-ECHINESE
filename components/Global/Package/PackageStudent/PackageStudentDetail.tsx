@@ -114,7 +114,11 @@ const PackageStudentDetail = () => {
 														<Link
 															href={{
 																pathname: '/exam/exam-review',
-																query: { examID: ExamTopicID, packageID: ID }
+																query: {
+																	examID: ExamTopicID,
+																	packageDetailID: ID,
+																	type: 'examination' // Thi cử
+																}
 															}}
 														>
 															<a>{ExamTopicName}</a>

@@ -22,6 +22,7 @@ function index(props: any) {
 		register,
 		handleSubmit,
 		watch,
+
 		formState: { errors }
 	} = useForm<LoginInputs>();
 	// const { loading, setLoading } = useState();
@@ -34,10 +35,7 @@ function index(props: any) {
 	}, []);
 
 	const _Submit = async (data: {}) => {
-		console.log('LoginForm _Submit data', data);
-
 		setLoading(true);
-
 		props?.onSubmit(data);
 	};
 
@@ -90,7 +88,13 @@ function index(props: any) {
 							<input
 								name="username"
 								defaultValue=""
-								{...register('username', { required: true })}
+								{...register('username', {
+									required: true,
+									validate: (value) => {
+										//@ts-ignore
+										return !!value.trim();
+									}
+								})}
 								placeholder="Enter user name"
 							/>
 							{errors.username && <span className="form-error">Hãy điền tên đăng nhập</span>}

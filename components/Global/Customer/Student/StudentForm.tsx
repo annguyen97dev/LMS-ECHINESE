@@ -435,8 +435,9 @@ const StudentForm = (props) => {
 		setImageUrl(cloneRowData.Avatar);
 
 		// Nếu có param customer id
-		if (cloneRowData.CounselorsName) {
+		if (customerID) {
 			form.setValue('FullNameUnicode', cloneRowData.CustomerName);
+			form.setValue('Mobile', cloneRowData.Number);
 			setValueEmail(cloneRowData.Email);
 		}
 	};

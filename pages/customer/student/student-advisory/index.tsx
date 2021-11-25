@@ -124,6 +124,7 @@ export default function StudentAdvisory() {
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [listCustomer, setListCustomer] = useState([]);
 	const [showCheckbox, setShowCheckbox] = useState(false);
+	const [isResetKey, setIsResetKey] = useState(false);
 
 	// ------ LIST FILTER -------
 	const [dataFilter, setDataFilter] = useState([
@@ -278,8 +279,11 @@ export default function StudentAdvisory() {
 
 		try {
 			let res = await studentAdviseApi.getAll(todoApi);
-			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow));
+			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), setIsResetKey(true));
 			res.status == 204 && setDataSource([]);
+			setTimeout(() => {
+				setIsResetKey(false);
+			}, 200);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -315,16 +319,17 @@ export default function StudentAdvisory() {
 				res = await studentAdviseApi.update(dataSubmit);
 
 				if (res.status == 200) {
-					let newDataSource = [...dataSource];
-					newDataSource.splice(indexRow, 1, {
-						...dataSubmit,
-						AreaName: listDataForm.Area.find((item) => item.value == dataSubmit.AreaID)?.title,
-						CounselorsName: listDataForm.Counselors.find((item) => item.value == dataSubmit.CounselorsID)?.title,
-						SourceInformationName:
-							dataSubmit.SourceInformationID &&
-							listDataForm.SourceInformation.find((item) => item.value == dataSubmit.SourceInformationID).title
-					});
-					setDataSource(newDataSource);
+					// let newDataSource = [...dataSource];
+					// newDataSource.splice(indexRow, 1, {
+					// 	...dataSubmit,
+					// 	AreaName: listDataForm.Area.find((item) => item.value == dataSubmit.AreaID)?.title,
+					// 	CounselorsName: listDataForm.Counselors.find((item) => item.value == dataSubmit.CounselorsID)?.title,
+					// 	SourceInformationName:
+					// 		dataSubmit.SourceInformationID &&
+					// 		listDataForm.SourceInformation.find((item) => item.value == dataSubmit.SourceInformationID).title
+					// });
+					// setDataSource(newDataSource);
+					setTodoApi({ ...todoApi });
 					showNoti('success', res.data.message);
 				}
 			} catch (error) {
@@ -504,6 +509,13 @@ export default function StudentAdvisory() {
 		setListCustomer([]);
 	};
 
+	// -------- ON SELECT ROW ---------
+	const onSelectRow = (selectRow) => {
+		console.log('TEST: ', selectRow);
+		let listID = selectRow?.map((item) => item.ID);
+		setListCustomer(listID);
+	};
+
 	// ============== USE EFFECT - FETCH DATA ===================
 	useEffect(() => {
 		getDataSource();
@@ -535,16 +547,6 @@ export default function StudentAdvisory() {
 			fixed: 'left',
 			render: (a) => <p className="font-weight-primary">{a}</p>
 		},
-		// {
-		// 	title: 'Tên tiếng Trung',
-		// 	dataIndex: 'ChineseName',
-		// 	render: (a) => <p className="font-weight-primary">{a}</p>
-		// },
-		// {
-		//   title: "Tỉnh/TP",
-		//   dataIndex: "AreaName",
-		// },
-
 		{
 			title: 'Số điện thoại',
 			dataIndex: 'Number'
@@ -622,13 +624,13 @@ export default function StudentAdvisory() {
 								</button>
 							</Popconfirm>
 						)} */}
-						{showCheckbox && (
+						{/* {showCheckbox && (
 							<Checkbox
 								className="mr-1"
 								checked={listCustomer.includes(data.ID) ? true : false}
 								onChange={(value) => onChange_sendEmail(value, data.ID)}
 							></Checkbox>
-						)}
+						)} */}
 						<StudentAdviseForm
 							getIndex={() => setIndexRow(index)}
 							index={index}
@@ -721,6 +723,9 @@ export default function StudentAdvisory() {
 				</div>
 			}
 			expandable={{ expandedRowRender }}
+			isSelect={showCheckbox}
+			isResetKey={isResetKey}
+			onSelectRow={(selectRows) => onSelectRow(selectRows)}
 		/>
 	);
 }
