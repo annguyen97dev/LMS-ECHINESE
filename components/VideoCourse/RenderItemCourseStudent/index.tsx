@@ -25,10 +25,14 @@ const RenderItemCard = ({ item, addToCard, categoryLevel, category, _onSubmitEdi
 
 	return (
 		<Link
-			href={{
-				pathname: '/video-course-store/[slug]',
-				query: params
-			}}
+			href={
+				userInformation.RoleID == 3
+					? {
+							pathname: '/video-course-store/[slug]',
+							query: params
+					  }
+					: {}
+			}
 		>
 			<div className="vc-store_item">
 				<div className="vc-store_item_warp-image">
@@ -86,6 +90,9 @@ const RenderItemCard = ({ item, addToCard, categoryLevel, category, _onSubmitEdi
 						dataGrade={item}
 						showAdd={true}
 						isLoading={false}
+						onEdit={(e) => {
+							e.stopPropagation();
+						}}
 					/>
 				)}
 			</div>

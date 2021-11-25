@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { Card, Avatar, Rate } from 'antd';
 import { useWrap } from '~/context/wrap';
@@ -21,8 +21,8 @@ const initDetails = {
 	VideoCourseName: '',
 	// ImageThumbnails: '',
 	Slogan: '',
-	// Requirements: '',
-	// Description: '',
+	Requirements: '',
+	Description: '',
 	// ResultsAchieved: '',
 	// CourseForObject: '',
 	TotalRating: 0,
@@ -76,11 +76,58 @@ const VideoCourseDetail = (props) => {
 
 	console.log('router.query.Active : ', router.query.Active);
 
+	// col-md-3 col-12
+
 	return (
 		<>
 			<div className="row feedback-user">
-				<div className="col-md-3 col-12">
-					<Card className="info-profile-left vc-details">
+				<div className="vc-details_menu" style={{}}>
+					<Card className="vc-details col-md-3 col-12 p-0">
+						<div className="vc-details_main-thum">
+							{router.query.Thum == null || router.query.Thum == undefined || router.query.Thum == '' ? (
+								<img className="vc-details_thum" src="/images/logo.jpg" />
+							) : (
+								<img className="vc-details_thum" src={router.query.Thum.toString()} />
+							)}
+							<div className="vc-details_thum-mark">
+								<i className="far fa-play-circle vc-details_icon-play"></i>
+							</div>
+						</div>
+
+						<div className="row pt-4 st-fb-center">
+							<div className="ml-3 mr-3" style={{ width: '100%' }}>
+								<h2>{parseToMoney(router.query.Sell)}đ</h2>
+								<h6
+									style={{
+										textDecorationLine: 'line-through',
+										marginTop: 5,
+										marginBottom: 15
+									}}
+								>
+									Giá gốc: {parseToMoney(router.query.Original)}đ
+								</h6>
+
+								<button className="btn btn-primary btn-add">Thêm vào giỏ</button>
+
+								{router.query.Active == 'notactivated' ? (
+									<button className="btn btn-warning btn-add mt-2">Kích hoạt</button>
+								) : (
+									<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
+								)}
+								<button className="btn btn-light btn-add mt-2">Mua ngay</button>
+							</div>
+						</div>
+
+						<hr />
+						<div className="row">
+							<ul className="list-info-bonus"></ul>
+						</div>
+					</Card>
+					<div className="col-md-9 col-12"></div>
+				</div>
+
+				<div className="col-md-3 col-12 vc-details_mobile">
+					<Card className="vc-details">
 						<div className="vc-details_main-thum">
 							{router.query.Thum == null || router.query.Thum == undefined || router.query.Thum == '' ? (
 								<img className="vc-details_thum" src="/images/logo.jpg" />
@@ -123,7 +170,9 @@ const VideoCourseDetail = (props) => {
 					</Card>
 				</div>
 
-				<div className="col-md-9 col-12">
+				<div className="col-md-3 col-12" />
+
+				<div className="col-md-9 col-12" style={{}}>
 					<Card loading={isLoading} className="space-top-card vc-details_main">
 						<div className="card-newsfeed-wrap__label">
 							<div className="m-feedback st-fb-100w">
@@ -183,6 +232,29 @@ const VideoCourseDetail = (props) => {
 								<div className="m-0 mb-3 st-fb-rsb st-fb-100w m-feedback__head header">
 									<span className="title">Nội dung khóa học</span>
 									<CourseDetailsContent loading={isLoading} contentData={content} />
+								</div>
+							</div>
+						</div>
+
+						<hr />
+
+						<div className="card-newsfeed-wrap__label">
+							<div className="m-feedback st-fb-100w">
+								<div className="m-0 mb-3 st-fb-rsb st-fb-100w m-feedback__head header">
+									<span className="title">Yêu cầu</span>
+									<span className="slogan">
+										{details.Requirements} Nắm được cơ bản Javascript/ES6. Kiến thức cơ bản của HTML5/CSS3. Chủ động học
+										tập, đặt câu hỏi khi gặp vấn đề không hiểu
+									</span>
+									<hr />
+									<span className="title">Giới thiệu</span>
+									<span className="slogan">
+										{details.Description} Xin chào mọi người, sau một thời gian hoạt động trên kênh Youtube - Easy
+										Frontend, mình được mọi người yêu cầu làm một khoá học ReactJS đầy đủ để mọi người tham khảo đầy đủ,
+										trọn vẹn về ReactJS, giúp các bạn tự tin hơn khi làm việc với ReactJS. Với mong muốn góp một chút
+										công sức vào việc phát triển cộng đồng Frontend Việt Nam, nên mình đã quyết tâm thực hiện khoá học
+										này.
+									</span>
 								</div>
 							</div>
 						</div>

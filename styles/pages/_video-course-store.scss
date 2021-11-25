@@ -9,6 +9,7 @@
 		border-color: #fcbad3;
 		display: flex;
 		flex-direction: column;
+		cursor: pointer;
 
 		&_warp-image {
 			width: 100%;
@@ -102,12 +103,37 @@
 	}
 }
 
+.custom-scroll-bar {
+	/* width */
+	::-webkit-scrollbar {
+		width: 5px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 5px rgb(238, 238, 238);
+		border-radius: 10px;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: #f0f0f0;
+		border-radius: 10px;
+	}
+}
+
 .in-1-line {
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.vc-e-d {
+	height: 400px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .vc-store-center {
@@ -136,10 +162,6 @@
 	&_search {
 		width: 500px;
 		border-radius: 6;
-		// @include max-media(2000px) {
-		// 	width: 400px;
-		// 	margin-top: 15px;
-		// }
 		@include max-media(1000px) {
 			width: 80vw;
 			margin-bottom: -15px;
@@ -223,6 +245,34 @@
 	.btn-add {
 		width: 100% !important;
 	}
+	&_menu {
+		position: fixed;
+		width: 76%;
+		@include max-media(1250px) {
+			width: 70%;
+		}
+		@include max-media(1000px) {
+			width: 95%;
+			left: 15px;
+		}
+		@include max-media(767px) {
+			display: none;
+		}
+	}
+
+	&_mobile {
+		display: none;
+		@include max-media(767px) {
+			display: block;
+			margin-bottom: 15px;
+		}
+	}
+
+	&_fake {
+		@include max-media(767px) {
+			display: none;
+		}
+	}
 
 	&_main {
 		width: 100% !important;
@@ -238,7 +288,7 @@
 				font-weight: bold;
 			}
 			.title {
-				font-size: 14px;
+				font-size: 16px;
 				font-weight: bold;
 			}
 			.slogan {
@@ -261,10 +311,31 @@
 			width: 100% !important;
 		}
 		.item {
+			display: flex;
+			justify-content: space-between;
+			padding-top: 15px;
+			padding-bottom: 15px;
 			width: 100% !important;
 			background: #ebeef7;
+			border-bottom-style: solid;
+			border-color: rgb(167, 167, 167);
+			cursor: pointer;
 		}
 		.item:hover {
+			background: #e5f5d8;
+		}
+		.sub-item {
+			display: flex;
+			justify-content: space-between;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			width: 100% !important;
+			background: #fff;
+			border-bottom-style: solid;
+			border-color: rgb(167, 167, 167);
+			cursor: pointer;
+		}
+		.sub-item:hover {
 			background: #e5f5d8;
 		}
 	}

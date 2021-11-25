@@ -7,11 +7,25 @@ import { useWrap } from '~/context/wrap';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import { newsFeedApi } from '~/apiBase';
+import EditorSimple from '~/components/Elements/EditorSimple';
+import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
 	const { TextArea } = Input;
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { isLoading, _onSubmit, _onSubmitEdit, programID, dataLevel, dataCategory, dataCurriculum, rowData, refeshData } = props;
+	const {
+		isLoading,
+		_onSubmit,
+		_onSubmitEdit,
+		onAddDetails,
+		programID,
+		dataLevel,
+		dataCategory,
+		dataCurriculum,
+		rowData,
+		refeshData,
+		onEdit
+	} = props;
 	const [form] = Form.useForm();
 	const { Option } = Select;
 	const [category, setCategory] = useState(0);
@@ -22,6 +36,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [sellPrice, setSellPrice] = useState('');
 	const [tagArray, setTagArray] = useState('');
 	const [imageSelected, setImageSelected] = useState({ name: '' });
+	const [isAddDetails, setAddDetails] = useState(false);
 
 	const {
 		register,
@@ -35,6 +50,11 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 
 	// HANDLE SUBMIT
 	const onSubmit = handleSubmit(() => {
+		console.log('submit');
+
+		// if (isAddDetails) {
+		// 	updateDetails();
+		// } else {
 		if (!programID) {
 			_onSubmit({
 				CurriculumID: curriculumID,
@@ -65,6 +85,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 				uploadFile(imageSelected);
 			}
 		}
+		// }
 	});
 
 	// IS VISIBLE MODAL
@@ -148,12 +169,45 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		}
 	};
 
+	const [slogan, setSlogan] = useState('');
+	const [requirements, setRequirements] = useState('');
+	const [description, setDescription] = useState('');
+	const [resultsAchieved, setResultsAchieved] = useState('');
+	const [courseForObject, setCourseForObject] = useState('');
+
+	// console.log('!isAddDetails: ', !isAddDetails);
+
+	const updateDetails = async () => {
+		console.log('updateDetails');
+		setLoading(true);
+		let temp = {
+			VideoCourseID: programID,
+			Slogan: slogan,
+			Requirements: requirements,
+			Description: description,
+			ResultsAchieved: resultsAchieved,
+			CourseForObject: courseForObject
+		};
+		try {
+			const res = await VideoCourseDetailApi.update(temp);
+			res.status == 200 && (setIsModalVisible(true), showNoti('success', 'Thành công'));
+		} catch (error) {
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	// RENDER
 	return (
 		<>
 			<div className="ml-3 mr-3 mb-3 mt-1">
 				{programID ? (
-					<button type="button" className=" btn btn-warning" style={{ width: '100%' }} onClick={() => setIsModalVisible(true)}>
+					<button
+						type="button"
+						className=" btn btn-warning"
+						style={{ width: '100%' }}
+						onClick={(e) => (setIsModalVisible(true), onEdit(e))}
+					>
 						Chỉnh sửa
 					</button>
 				) : (
@@ -218,7 +272,8 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 					onCancel={() => setIsModalVisible(false)}
 					footer={null}
 				>
-					<div className="container-fluid">
+					{/* {!isAddDetails ? ( */}
+					<div className="container-fluid custom-scroll-bar">
 						<Form form={form} layout="vertical" onFinish={() => onSubmit()}>
 							<div className="row">
 								<div className="col-md-6 col-12">
@@ -422,26 +477,117 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									</div>
 								)}
 							</div>
+
 							<div className="row">
 								<div className="col-12" style={{ justifyContent: 'flex-end', display: 'flex' }}>
 									<button onClick={() => setIsModalVisible(false)} className="btn btn-warning mr-3">
 										Huỷ
 									</button>
-									{loading ? (
-										<div className="btn btn-primary">
-											Lưu
-											<Spin className="loading-base" />
-										</div>
-									) : (
+
+									<>
+										{!isAddDetails ? (
+											<button onClick={() => setAddDetails(!isAddDetails)} className="btn btn-light mr-3">
+												Thêm chi tiết
+											</button>
+										) : (
+											<button onClick={() => setAddDetails(!isAddDetails)} className="btn btn-light mr-3">
+												Sửa thông tin
+											</button>
+										)}
+
 										<button type="submit" className="btn btn-primary">
 											Lưu
 											{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 										</button>
-									)}
+									</>
 								</div>
 							</div>
 						</Form>
 					</div>
+					{/* ) : (
+						<div className="container-fluid custom-scroll-bar">
+							<Form form={form} layout="vertical" onFinish={() => createLevel()}>
+								<div className="row vc-e-d">
+									<div className="col-md-12 col-12">
+										<Form.Item
+											name="Slogan"
+											label="Câu giới thiệu"
+											// rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<EditorSimple handleChange={(e) => setSlogan(e)} isTranslate={false} />
+										</Form.Item>
+									</div>
+									<div className="col-md-12 col-12">
+										<Form.Item
+											name="Requirements"
+											label="Điều kiện học"
+											// rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<EditorSimple handleChange={(e) => setRequirements(e)} isTranslate={false} />
+										</Form.Item>
+									</div>
+									<div className="col-md-12 col-12">
+										<Form.Item
+											name="CourseForObject"
+											label="Đối tượng học"
+											// rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<EditorSimple handleChange={(e) => setCourseForObject(e)} isTranslate={false} />
+										</Form.Item>
+									</div>
+									<div className="col-md-12 col-12">
+										<Form.Item
+											name="ResultsAchieved"
+											label="Nội dung khóa học"
+											// rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<EditorSimple handleChange={(e) => setResultsAchieved(e)} isTranslate={false} />
+										</Form.Item>
+									</div>
+									<div className="col-md-12 col-12">
+										<Form.Item
+											name="Description"
+											label="Giới thiệu"
+											// rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<EditorSimple handleChange={(e) => setDescription(e)} isTranslate={false} />
+										</Form.Item>
+									</div>
+								</div>
+								<div className="row pt-3">
+									<div className="col-12" style={{ justifyContent: 'flex-end', display: 'flex' }}>
+										<button onClick={() => setIsModalVisible(false)} className="btn btn-warning mr-3">
+											Huỷ
+										</button>
+
+										{loading ? (
+											<div className="btn btn-primary">
+												Lưu
+												<Spin className="loading-base" />
+											</div>
+										) : (
+											<>
+												{!isAddDetails ? (
+													<button onClick={() => setAddDetails(!isAddDetails)} className="btn btn-light mr-3">
+														Thêm chi tiết
+													</button>
+												) : (
+													<button onClick={() => setAddDetails(!isAddDetails)} className="btn btn-light mr-3">
+														Sửa thông tin
+													</button>
+												)}
+
+												<button type="submit" className="btn btn-primary">
+													Lưu
+													{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
+												</button>
+											</>
+										)}
+									</div>
+								</div>
+							</Form>
+						</div>
+					)} */}
 				</Modal>
 			</div>
 		</>

@@ -11,4 +11,7 @@ type IVideoCourseDetails = IBaseApi<{
 	RatingNumber: number;
 	TotalStudent: number;
 	CourseInFo: any;
+	Title: string;
+	IsPreview: boolean;
+	SecondVideo: number;
 }>;

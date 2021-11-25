@@ -21,7 +21,7 @@ export const VideoCourseDetailApi = {
 	},
 	// Lấy theo ID
 	getLesson(ID) {
-		return instance.get<IApiResultData<IVideoCourseDetails>>(`${url}GetLesson/${ID}`);
+		return instance.get<IApiResultData<IVideoCourseDetails[]>>(`${url}GetLesson/${ID}`);
 	},
 	// Lấy theo ID
 	getLessonPreview(ID) {
