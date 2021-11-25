@@ -1,11 +1,11 @@
-import {Spin} from 'antd';
+import { Spin } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {Calendar, momentLocalizer} from 'react-big-calendar';
+import React, { useState } from 'react';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
 
@@ -15,20 +15,20 @@ const CreateCourseCalendar = (props) => {
 		isLoaded,
 		//
 		handleSetDataModalCalendar,
-		dataModalCalendar,
+		dataModalCalendar
 	} = props;
 
 	const [isVisible, setIsVisible] = useState(false);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const openModal = () => setIsVisible(true);
 	const closeModal = () => setIsVisible(false);
-	const {dateString, limit, scheduleInDay, scheduleList} = dataModalCalendar;
+	const { dateString, limit, scheduleInDay, scheduleList } = dataModalCalendar;
 	const checkHandleSetDataModalCalendar = (obj) => {
 		if (!handleSetDataModalCalendar) return;
 		handleSetDataModalCalendar(obj);
 	};
-	const styleEvent = ({event}) => {
-		const {dateString, limit, scheduleList, valid} = event.resource;
+	const styleEvent = ({ event }) => {
+		const { dateString, limit, scheduleList, valid } = event.resource;
 		const scheduleInDay = scheduleList.length;
 		return (
 			<>
@@ -39,16 +39,11 @@ const CreateCourseCalendar = (props) => {
 							dateString,
 							limit,
 							scheduleInDay,
-							scheduleList,
+							scheduleList
 						});
 						openModal();
 						if (valid) {
-							showNoti(
-								'success',
-								`Ngày ${moment(dateString).format('DD/MM/YYYY')}- hãy chọn ${
-									limit - scheduleInDay
-								} ca`
-							);
+							showNoti('success', `Ngày ${moment(dateString).format('DD/MM/YYYY')}- hãy chọn ${limit - scheduleInDay} ca`);
 						}
 					}}
 				>
@@ -72,44 +67,38 @@ const CreateCourseCalendar = (props) => {
 		}
 		if (event.resource.dateString === dateString) {
 			return {
-				className: 'create-course-event create-course-event-active',
+				className: 'create-course-event create-course-event-active'
 			};
 		} else {
 			return {
-				className: cls,
+				className: cls
 			};
 		}
 	};
 	return (
 		<div className="wrap-calendar">
-			<Spin
-				spinning={!isLoaded}
-				size="large"
-				wrapperClassName="calendar-loading"
-			>
+			<Spin spinning={!isLoaded} size="large" wrapperClassName="calendar-loading">
 				<Calendar
 					className="custom-calendar"
 					localizer={localizer}
 					events={eventList}
 					startAccessor="start"
 					endAccessor="end"
-					style={{minHeight: 600}}
+					style={{ minHeight: 600 }}
 					popup={true}
 					views={['month']}
 					defaultView="month"
 					showMultiDayTimes={true}
 					eventPropGetter={customEventPropGetter}
-					components={{event: styleEvent}}
+					components={{ event: styleEvent }}
 					formats={{
 						monthHeaderFormat: (date) => moment(date).format('MM/YYYY'),
-						dayRangeHeaderFormat: ({start, end}) =>
-							`${moment(start).format('DD/MM')} - ${moment(end).format(
-								'DD/MM'
-							)}`,
+						dayRangeHeaderFormat: ({ start, end }) => `${moment(start).format('DD/MM')} - ${moment(end).format('DD/MM')}`
 					}}
 				/>
 			</Spin>
 			<Modal
+				style={{ top: window.matchMedia('(min-width: 1001px)').matches ? 122 : 158 }}
 				className="custom-calendar-modal create-course-modal"
 				getContainer=".create-course-wrap-modal"
 				zIndex={900}
@@ -120,7 +109,7 @@ const CreateCourseCalendar = (props) => {
 			>
 				<div>
 					<div className="tt">
-						<p style={{marginBottom: '5px'}}>
+						<p style={{ marginBottom: '5px' }}>
 							<strong>Thông tin cơ bản: </strong>
 						</p>
 						<div className="row">
@@ -142,7 +131,7 @@ const CreateCourseCalendar = (props) => {
 						</div>
 					</div>
 					<div className="cnt-wrap">
-						<p className="tt" style={{marginBottom: '5px'}}>
+						<p className="tt" style={{ marginBottom: '5px' }}>
 							<strong>Chi tiết các ca trong ngày: </strong>
 						</p>
 						<div className="cnt">
@@ -167,8 +156,8 @@ CreateCourseCalendar.propTypes = {
 				dateString: PropTypes.string.isRequired,
 				valid: PropTypes.bool.isRequired,
 				limit: PropTypes.number.isRequired,
-				scheduleList: PropTypes.array,
-			}),
+				scheduleList: PropTypes.array
+			})
 		})
 	).isRequired,
 	isLoaded: PropTypes.bool,
@@ -178,10 +167,10 @@ CreateCourseCalendar.propTypes = {
 		dateString: PropTypes.string,
 		limit: PropTypes.number,
 		scheduleInDay: PropTypes.number,
-		scheduleList: PropTypes.array,
+		scheduleList: PropTypes.array
 	}),
 	//
-	children: PropTypes.node,
+	children: PropTypes.node
 };
 CreateCourseCalendar.defaultProps = {
 	eventList: [],
@@ -192,7 +181,7 @@ CreateCourseCalendar.defaultProps = {
 		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
-		scheduleList: [],
-	},
+		scheduleList: []
+	}
 };
 export default CreateCourseCalendar;
