@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import DecideModal from '~/components/Elements/DecideModal';
 import { courseExamApi } from '~/apiBase/package/course-exam';
 import TimeUpModal from './TimeUpModal';
+import Link from 'next/link';
 
 const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQuestion'), {
 	loading: () => <p>...</p>,
@@ -52,7 +53,7 @@ const MainTest = (props) => {
 	const [pageCurrent, setPageCurrent] = useState<number>(1);
 	const [listPreview, setListPreview] = useState<Array<number>>([]);
 	const router = useRouter();
-	const packageID = router.query.packageID as string;
+	// const packageID = router.query.packageDetailID as string;
 	const { packageResult, getPackageResult } = useDoingTest();
 	const { userInformation } = useWrap();
 	const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -60,6 +61,25 @@ const MainTest = (props) => {
 	const [isModalConfirm, setIsModalConfirm] = useState(false);
 	const [isModalSuccess, setIsModalSuccess] = useState(false);
 	const [openTimeUpModal, setOpenTimeUpModal] = useState(false);
+	const [checkTested, setCheckTested] = useState(false);
+
+	const checkIsTested = async () => {
+		setIsLoading(true);
+		try {
+			let res = await examAppointmentResultApi.checkIsTested(packageDetailID);
+			if (res.status == 200) {
+				if (res.data.data) {
+					setCheckTested(true);
+					setIsLoading(false);
+				} else {
+					getListQuestion();
+				}
+			}
+		} catch (error) {
+			console.log(error);
+			setIsLoading(false);
+		}
+	};
 
 	// --- GET LIST QUESTION ---
 	const getListQuestion = async () => {
@@ -475,7 +495,12 @@ const MainTest = (props) => {
 
 	useEffect(() => {
 		if (!isDone) {
-			getListQuestion();
+			if (type === 'test') {
+				checkIsTested();
+			} else {
+				getListQuestion();
+			}
+
 			packageResult.SetPackageDetailID = parseInt(packageDetailID);
 			getPackageResult({ ...packageResult });
 		} else {
@@ -505,7 +530,7 @@ const MainTest = (props) => {
 		if (userInformation) {
 			getPackageResult({
 				...packageResult,
-				SetPackageDetailID: parseInt(packageID),
+				SetPackageDetailID: parseInt(packageDetailID),
 				StudentID: userInformation.UserInformationID
 			});
 		}
@@ -551,11 +576,26 @@ const MainTest = (props) => {
 		}
 	}, [infoExam, dataQuestion]);
 
+	const alertUser = (e) => {
+		e.preventDefault();
+		e.returnValue = '';
+		console.log('IS RELOADDD');
+	};
+
 	useEffect(() => {
 		let testFooter = document.getElementById('test-footer');
-		let heightFooter = testFooter.offsetHeight;
-		if (heightFooter > 70) {
-			setIsLong(true);
+		if (testFooter) {
+			let heightFooter = testFooter.offsetHeight;
+			if (heightFooter > 70) {
+				setIsLong(true);
+			}
+		}
+
+		if (!isModalSuccess) {
+			window.addEventListener('beforeunload', alertUser);
+			return () => {
+				window.removeEventListener('beforeunload', alertUser);
+			};
 		}
 	});
 
@@ -653,70 +693,73 @@ const MainTest = (props) => {
 						})
 					) : (
 						<div className="w-100 text-center">
-							<p style={{ fontWeight: 500 }}>Đề thi này chưa có câu hỏi</p>
+							{!checkTested ? (
+								<p style={{ fontWeight: 500 }}>Đề thi này chưa có câu hỏi</p>
+							) : (
+								<div>
+									<p style={{ fontWeight: 500 }}>Bạn đã làm đề test này rồi</p>
+									<Link
+										href={{
+											pathname: '/customer/service/service-test-student'
+										}}
+									>
+										<a className="btn btn-warning">Thoát ra</a>
+									</Link>
+								</div>
+							)}
 						</div>
 					)}
 				</div>
-				<div className="test-footer" id="test-footer">
-					{/* <div className="footer-preview">
-              <Checkbox onChange={onChange_preview}>Preview</Checkbox>
-            </div> */}
-					<div className="footer-pagination row-pagination">
-						{/* {listQuestionID?.length > 0 && (
-                <Pagination
-                  defaultCurrent={1}
-                  total={listQuestionID.length}
-                  pageSize={1}
-                  onChange={onChange_pagination}
-                />
-              )} */}
-
-						<button className="close-icon">
-							<CloseOutlined />
-						</button>
-						<p className="pagi-name">Danh sách câu hỏi</p>
-						<div className="box-preview">
-							<Checkbox checked={listPreview.includes(activeID) ? true : false} onChange={onChange_preview}>
-								Preview
-							</Checkbox>
-						</div>
-						<button className="pagi-btn previous" onClick={onChange_PreviousPage}>
-							<LeftOutlined />
-						</button>
-						<ul className="list-answer">
-							{listQuestionID?.length > 0 &&
-								listQuestionID.map((questionID, index) => (
-									<li
-										className={`item `}
-										value={questionID}
-										key={questionID}
-										style={{ marginBottom: isLong ? '10px' : '' }}
-									>
-										<a
-											href=""
-											onClick={(e) => onChange_pagination(e, index + 1)}
-											className={`
+				{dataQuestion?.length > 0 && (
+					<div className="test-footer" id="test-footer">
+						<div className="footer-pagination row-pagination">
+							<button className="close-icon">
+								<CloseOutlined />
+							</button>
+							<p className="pagi-name">Danh sách câu hỏi</p>
+							<div className="box-preview">
+								<Checkbox checked={listPreview.includes(activeID) ? true : false} onChange={onChange_preview}>
+									Preview
+								</Checkbox>
+							</div>
+							<button className="pagi-btn previous" onClick={onChange_PreviousPage}>
+								<LeftOutlined />
+							</button>
+							<ul className="list-answer">
+								{listQuestionID?.length > 0 &&
+									listQuestionID.map((questionID, index) => (
+										<li
+											className={`item `}
+											value={questionID}
+											key={questionID}
+											style={{ marginBottom: isLong ? '10px' : '' }}
+										>
+											<a
+												href=""
+												onClick={(e) => onChange_pagination(e, index + 1)}
+												className={`
                       ${questionID == activeID ? 'activeDoing' : ''}
                       ${listPicked.includes(questionID) ? 'checked' : ''} ${listPreview.includes(questionID) ? 'checked_preview' : ''}`}
-										>
-											{index + 1}
-										</a>
-									</li>
-								))}
-						</ul>
-						<button className="pagi-btn next" onClick={onChange_NextPage}>
-							<RightOutlined />
-						</button>
+											>
+												{index + 1}
+											</a>
+										</li>
+									))}
+							</ul>
+							<button className="pagi-btn next" onClick={onChange_NextPage}>
+								<RightOutlined />
+							</button>
+						</div>
+						<div className="footer-submit text-right">
+							<button
+								className="btn btn-primary"
+								onClick={() => (!dataDoneTest ? setIsModalConfirm(true) : closeMainTest && closeMainTest())}
+							>
+								{!dataDoneTest ? 'Nộp bài' : 'Đóng'}
+							</button>
+						</div>
 					</div>
-					<div className="footer-submit text-right">
-						<button
-							className="btn btn-primary"
-							onClick={() => (!dataDoneTest ? setIsModalConfirm(true) : closeMainTest && closeMainTest())}
-						>
-							{!dataDoneTest ? 'Nộp bài' : 'Đóng'}
-						</button>
-					</div>
-				</div>
+				)}
 			</Card>
 		</div>
 	);

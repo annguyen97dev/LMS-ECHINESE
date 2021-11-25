@@ -180,8 +180,6 @@ const FeedbackList = () => {
 		);
 	};
 
-	console.log('userInformation: ', userInformation);
-
 	// GET CATEGORY
 	const getFeedBackCategory = async () => {
 		const temp = {
