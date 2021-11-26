@@ -23,6 +23,8 @@ const ShoppingCart = () => {
 	});
 	const { Search } = Input;
 
+	console.log('Long dep trai');
+
 	const moveToLogin = () => {
 		signIn();
 	};
