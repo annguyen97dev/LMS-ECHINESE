@@ -7,7 +7,6 @@ import { useWrap } from '~/context/wrap';
 import Link from 'next/link';
 
 const { TextArea } = Input;
-const videoThumnail = 'https://cdn.tgdd.vn//GameApp/-1//cach-tao-thay-doi-thumbnail-hinh-thu-nho-cho-video-su-kien-thumb-800x450.jpg';
 
 const ItemVideo = ({ item, onRate }) => {
 	const [rerender, setRender] = useState('');
@@ -31,7 +30,6 @@ const ItemVideo = ({ item, onRate }) => {
 				{item.ImageThumbnails === '' || item.ImageThumbnails === null ? (
 					<img src="/images/logo-final.jpg" />
 				) : (
-					// <img src={videoThumnail} />
 					<img src={item.ImageThumbnails} />
 				)}
 			</Link>
@@ -59,11 +57,9 @@ const ItemVideo = ({ item, onRate }) => {
 
 					<div className="pr-3 pl-3 pt-3 row rate-container">
 						<Rate className="rate-start" disabled value={item.RatingNumber} />
-
 						<a
 							onClick={() => {
 								onRate(item);
-								// updateRate();
 							}}
 							className="none-selection btn-rate "
 						>

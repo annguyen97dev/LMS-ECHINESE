@@ -23,8 +23,8 @@ export const VideoCourseStoreApi = {
 		return instance.post(url + '/Create', data);
 	},
 	// Cập nhật data
-	update(data) {
-		return instance.put(url + '/Update', data);
+	update(params) {
+		return instance.put(url + '/Update', params);
 	}
 };
 

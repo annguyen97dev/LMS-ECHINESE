@@ -168,7 +168,7 @@ const VideoCourseStore = () => {
 
 	// UPDATE COURSE
 	const updateCourse = async (param) => {
-		setIsLoading({ type: 'GET_ALL', status: false });
+		setIsLoading({ type: 'GET_ALL', status: true });
 		let temp = {
 			ID: param.ID,
 			CategoryID: null,
@@ -176,7 +176,8 @@ const VideoCourseStore = () => {
 			VideoCourseName: param.VideoCourseName,
 			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
-			SellPrice: param.SellPrice
+			SellPrice: param.SellPrice,
+			TagArray: null
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);

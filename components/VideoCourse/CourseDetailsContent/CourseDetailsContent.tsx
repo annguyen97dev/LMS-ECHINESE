@@ -17,27 +17,6 @@ const RenderSubItemContent = (props) => {
 	);
 };
 
-const fakeData = [
-	{
-		ID: 21,
-		Title: 'Tạo ReactJS project với Create React App 1',
-		IsPreview: false,
-		SecondVideo: 90
-	},
-	{
-		ID: 22,
-		Title: 'Tạo ReactJS project với Create React App 2',
-		IsPreview: false,
-		SecondVideo: 90
-	},
-	{
-		ID: 23,
-		Title: 'Tạo ReactJS project với Create React App 3',
-		IsPreview: false,
-		SecondVideo: 90
-	}
-];
-
 const RenderItemContent = (props) => {
 	const { item, data } = props;
 	const [loading, setLoading] = useState(false);
@@ -51,7 +30,7 @@ const RenderItemContent = (props) => {
 		try {
 			const res = await VideoCourseDetailApi.getLesson(param);
 			res.status == 200 && (setLessons(res.data.data), setShow(true), setFirst(false));
-			res.status == 204 && (setLessons(fakeData), setShow(true), setFirst(false));
+			res.status == 204 && (setLessons([]), setShow(true), setFirst(false));
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -78,7 +57,7 @@ const RenderItemContent = (props) => {
 						<>{show ? <i className="fas fa-sort-up mt-2" /> : <i className="fas fa-sort-down mb-1" />}</>
 					)}
 					<span className="ml-3" style={{ flex: 1 }}>
-						{item?.SectionName} jas djnasnb asnd nashqwh nasdb ajsha hbashbd{' '}
+						{item?.SectionName}
 					</span>
 				</div>
 				<span className="ml-3">

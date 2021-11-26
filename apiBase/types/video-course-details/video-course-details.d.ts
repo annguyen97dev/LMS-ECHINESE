@@ -14,4 +14,8 @@ type IVideoCourseDetails = IBaseApi<{
 	Title: string;
 	IsPreview: boolean;
 	SecondVideo: number;
+	LinkVideo: string;
+	LinkHtml: string;
+	IsPreview: any;
+	SecondVideo: any;
 }>;
