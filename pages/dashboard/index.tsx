@@ -287,13 +287,13 @@ const Dashboard = () => {
 	const renderStatisticalAcademic = () => {
 		if (isLoading.status === 'GET_STAT_STUDENT' && isLoading.loading == true) {
 			return (
-				<div className="col-md-8 col-12">
+				<div className="col-xl-7 col-12 mb-5">
 					<Skeleton active />
 				</div>
 			);
 		} else {
 			return (
-				<div className="col-md-8 col-12">
+				<div className="col-xl-7 col-12 mb-5">
 					<AcademicChart />
 				</div>
 			);
@@ -303,13 +303,13 @@ const Dashboard = () => {
 	const renderStatisticalRate = () => {
 		if (isLoading.status === 'GET_STAT_RATE' && isLoading.loading == true) {
 			return (
-				<div className="col-md-4 col-12">
+				<div className="col-xl-5 col-12">
 					<Skeleton active />;
 				</div>
 			);
 		} else {
 			return (
-				<div className="col-md-4 col-12">
+				<div className="col-xl-5 col-12">
 					<div className="chart-comment">
 						<RateChart statisticalRate={statisticalRate} dataPie={dataPie} isLoading={isLoading} />
 					</div>
@@ -348,7 +348,7 @@ const Dashboard = () => {
 
 			{renderStatisticalRevenue()}
 
-			<div className="row pt-5 pb-5">
+			<div className="row mt-5">
 				{renderStatisticalAcademic()}
 				{renderStatisticalRate()}
 			</div>

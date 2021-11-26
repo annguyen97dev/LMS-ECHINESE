@@ -38,18 +38,18 @@ const RateChart = ({ dataPie, statisticalRate, isLoading }) => {
 				}}
 			>
 				<div className="row">
-					<div className="col-4 col-md-4 col-lg-4">
+					<div className="col-5 col-md-5 col-lg-5">
 						<div className="detail-pieChart" style={{ paddingTop: 80 }}>
 							{renderListRate()}
 						</div>
 					</div>
-					<div className="col-8 col-md-8 col-lg-8 pl-2">
+					<div className="col-7 col-md-7 col-lg-7 pl-2">
 						<ResponsiveContainer width="117%" height={300}>
 							<PieChart>
 								<Pie
 									dataKey="Percent"
 									data={statisticalRate}
-									cx="35%"
+									cx="38%"
 									cy="50%"
 									innerRadius={60}
 									outerRadius={80}

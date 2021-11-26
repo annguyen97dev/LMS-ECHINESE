@@ -1,4 +1,4 @@
-import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input } from 'antd';
+import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input, Dropdown } from 'antd';
 import { useSession } from 'next-auth/client';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { RotateCcw } from 'react-feather';
@@ -16,11 +16,14 @@ import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
 import ConfirmForm from '../../../components/Global/StaffList/StaffSalary/staff-confirm-salary';
+import { Card } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
 
 const SalaryStaffReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [payRoll, setPayRoll] = useState<IStaffSalary[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [roleID, setRoleID] = useState(null);
 	const { showNoti, userInformation, pageSize } = useWrap();
 	const [session, loading] = useSession();
@@ -218,10 +221,16 @@ const SalaryStaffReview = () => {
 			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
 		},
 		{
+			title: 'Lương ngày nghỉ',
+			width: 150,
+			dataIndex: 'SalaryOff',
+			render: (price, record: any) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
+		},
+		{
 			title: 'Thưởng',
 			width: 150,
 			dataIndex: 'Bonus',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
@@ -262,22 +271,22 @@ const SalaryStaffReview = () => {
 			)
 		},
 		{
+			title: 'Lương cơ bản',
+			width: 150,
+			dataIndex: 'BasicSalary',
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
+		},
+		{
 			title: 'Lương tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
-		},
-		{
-			title: 'Lương Tháng',
-			width: 150,
-			dataIndex: 'Salary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tổng',
 			width: 150,
 			dataIndex: 'TotalSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -298,9 +307,11 @@ const SalaryStaffReview = () => {
 			if (res.status == 200) {
 				setPayRoll(res.data.data);
 				setTotalPage(res.data.totalRow);
+				setDropDownVisible(false);
 			}
 			if (res.status == 204) {
 				setPayRoll([]);
+				setDropDownVisible(false);
 			}
 		} catch (error) {
 		} finally {
@@ -317,8 +328,16 @@ const SalaryStaffReview = () => {
 			status: true
 		});
 		try {
-			let res = await staffSalaryApi.postSalaryClosing(workDays);
-			setParams({ ...params });
+			let res = await staffSalaryApi.postSalaryClosing(workDays.days);
+			if (res.status == 200) {
+				setDropDownVisible(false);
+				setParams({ ...params });
+				showNoti('success', 'Thành công!');
+			}
+			if (res.status == 204) {
+				setDropDownVisible(false);
+				showNoti('success', 'Lương đã được tính rồi!');
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -363,6 +382,51 @@ const SalaryStaffReview = () => {
 		);
 	};
 
+	const menu = () => {
+		return (
+			<div className="d-xl-none">
+				<Card title="Thao tác" style={{ width: 300 }}>
+					<Input
+						onChange={(event) => {
+							setWorkDays({ ...workDays, days: Number(event.target.value) });
+						}}
+						className="style-input w-100 mb-4"
+						name="wordDays"
+						placeholder="Nhập ngày công"
+					/>
+
+					<Popconfirm
+						className="w-100 mb-4"
+						title={renderTitle}
+						visible={visible}
+						onConfirm={postSalaryOfTeacherClosing}
+						onCancel={handleCancel}
+						okButtonProps={{ loading: isLoading.status }}
+					>
+						<button onClick={showPopconfirm} className="btn btn-warning add-new">
+							Tính lương tháng trước
+						</button>
+					</Popconfirm>
+					<Select
+						onChange={onChangeMonth}
+						disabled={false}
+						className="style-input d-md-none w-100 mb-4"
+						defaultValue={months[new Date().getMonth() - 1]}
+					>
+						{months.map((item, index) => (
+							<Option key={index} value={index + 1}>
+								{item}
+							</Option>
+						))}
+					</Select>
+					<div className="w-100 d-md-none">
+						<SortBox space={false} width={278} handleSort={onSort} dataOption={sortOptionList} />
+					</div>
+				</Card>
+			</div>
+		);
+	};
+
 	useEffect(() => {
 		getDataPayroll(currentPage);
 	}, [params, userInformation]);
@@ -395,48 +459,65 @@ const SalaryStaffReview = () => {
 			TitleCard={
 				roleID == 5 && (
 					<>
-						<div className="d-flex justify-content-end align-items-center">
-							<Input
-								onChange={(event) => {
-									setWorkDays({ ...workDays, days: Number(event.target.value) });
-								}}
-								className="style-input"
-								style={{ width: 150, marginRight: 5 }}
-								name="wordDays"
-								placeholder="Nhập ngày công"
-							/>
+						<div className="d-none d-xl-inline-block">
+							<div className="d-flex justify-content-end align-items-center">
+								<Input
+									onChange={(event) => {
+										setWorkDays({ ...workDays, days: Number(event.target.value) });
+									}}
+									className="style-input"
+									style={{ width: 150, marginRight: 5 }}
+									name="wordDays"
+									placeholder="Nhập ngày công"
+								/>
 
-							<Popconfirm
-								title={renderTitle}
-								visible={visible}
-								onConfirm={postSalaryOfTeacherClosing}
-								onCancel={handleCancel}
-								okButtonProps={{ loading: isLoading.status }}
-							>
-								<button onClick={showPopconfirm} className="btn btn-warning add-new">
-									Tính lương tháng trước
-								</button>
-							</Popconfirm>
+								<Popconfirm
+									title={renderTitle}
+									visible={visible}
+									onConfirm={postSalaryOfTeacherClosing}
+									onCancel={handleCancel}
+									okButtonProps={{ loading: isLoading.status }}
+								>
+									<button onClick={showPopconfirm} className="btn btn-warning add-new">
+										Tính lương tháng trước
+									</button>
+								</Popconfirm>
+							</div>
+						</div>
+						<div className="d-inline-block d-xl-none col-md-3 w-25">
+							<Dropdown overlay={menu} trigger={['click']} visible={dropDownVisible}>
+								<a
+									className="ant-dropdown-link"
+									onClick={(e) => {
+										e.preventDefault();
+										setDropDownVisible(!dropDownVisible);
+									}}
+								>
+									<EllipsisOutlined />
+								</a>
+							</Dropdown>
 						</div>
 					</>
 				)
 			}
 			Extra={
-				<div className="extra-table">
-					<Select
-						onChange={onChangeMonth}
-						style={{ width: 200 }}
-						disabled={false}
-						className="style-input"
-						defaultValue={months[new Date().getMonth() - 1]}
-					>
-						{months.map((item, index) => (
-							<Option key={index} value={index + 1}>
-								{item}
-							</Option>
-						))}
-					</Select>
-					{roleID == 5 && <SortBox space={true} width={200} handleSort={onSort} dataOption={sortOptionList} />}
+				<div className="d-none d-md-inline-block">
+					<div className="extra-table">
+						<Select
+							onChange={onChangeMonth}
+							style={{ width: 200 }}
+							disabled={false}
+							className="style-input"
+							defaultValue={months[new Date().getMonth() - 1]}
+						>
+							{months.map((item, index) => (
+								<Option key={index} value={index + 1}>
+									{item}
+								</Option>
+							))}
+						</Select>
+						{roleID == 5 && <SortBox space={true} width={200} handleSort={onSort} dataOption={sortOptionList} />}
+					</div>
 				</div>
 			}
 		/>

@@ -1,4 +1,4 @@
-import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input } from 'antd';
+import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input, Dropdown, Card } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
@@ -17,10 +17,12 @@ import SalaryOfTeacherDetail from '../../../components/Global/Teacher/TeacherSal
 import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
 import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/confirm-form';
 import { isBuffer } from 'util';
+import { EllipsisOutlined } from '@ant-design/icons';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [visible, setVisible] = React.useState(false);
+	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [payRoll, setPayRoll] = useState<ITeacherSalary[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const { showNoti, userInformation, pageSize } = useWrap();
@@ -253,7 +255,7 @@ const SalaryReview = () => {
 			title: 'Lương Tổng',
 			width: 150,
 			dataIndex: 'TotalSalary',
-			render: (price, record: ITeacherSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
+			render: (price, record: ITeacherSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -280,9 +282,11 @@ const SalaryReview = () => {
 			if (res.status == 200) {
 				setPayRoll(res.data.data);
 				setTotalPage(res.data.totalRow);
+				setDropDownVisible(false);
 			}
 			if (res.status == 204) {
 				setPayRoll([]);
+				setDropDownVisible(false);
 			}
 		} catch (error) {
 		} finally {
@@ -303,9 +307,11 @@ const SalaryReview = () => {
 			if (res.status == 200) {
 				setParams({ ...params });
 				showNoti('success', 'Thành công!');
+				setDropDownVisible(false);
 			}
 			if (res.status == 204) {
 				showNoti('success', 'Lương đã được tính rồi!');
+				setDropDownVisible(false);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -353,6 +359,45 @@ const SalaryReview = () => {
 		);
 	};
 
+	const menu = () => {
+		return (
+			<>
+				<div className="d-md-none">
+					<Card title="Thao tác" style={{ width: 300 }}>
+						<Popconfirm
+							title={renderTitle}
+							visible={visible}
+							className="style-input w-100 mb-4"
+							onConfirm={postSalaryOfTeacherClosing}
+							onCancel={handleCancel}
+							okButtonProps={{ loading: isLoading.status }}
+						>
+							<button onClick={showPopconfirm} className="btn btn-warning add-new">
+								Tính lương tháng trước
+							</button>
+						</Popconfirm>
+						<Select
+							onChange={onChangeMonth}
+							style={{ width: 200 }}
+							disabled={false}
+							className="style-input w-100 mb-4"
+							defaultValue={months[new Date().getMonth() - 1]}
+						>
+							{months.map((item, index) => (
+								<Option key={index} value={index + 1}>
+									{item}
+								</Option>
+							))}
+						</Select>
+						<div className="d-md-none">
+							<SortBox space={false} width={278} handleSort={onSort} dataOption={sortOptionList} />
+						</div>
+					</Card>
+				</div>
+			</>
+		);
+	};
+
 	useEffect(() => {
 		getDataPayroll(currentPage);
 	}, [params]);
@@ -368,20 +413,37 @@ const SalaryReview = () => {
 			dataSource={payRoll}
 			columns={columns}
 			TitleCard={
-				<Popconfirm
-					title={renderTitle}
-					visible={visible}
-					onConfirm={postSalaryOfTeacherClosing}
-					onCancel={handleCancel}
-					okButtonProps={{ loading: isLoading.status }}
-				>
-					<button onClick={showPopconfirm} className="btn btn-warning add-new">
-						Tính lương tháng trước
-					</button>
-				</Popconfirm>
+				<>
+					<div className="d-none d-sm-inline-block">
+						<Popconfirm
+							title={renderTitle}
+							visible={visible}
+							onConfirm={postSalaryOfTeacherClosing}
+							onCancel={handleCancel}
+							okButtonProps={{ loading: isLoading.status }}
+						>
+							<button onClick={showPopconfirm} className="btn btn-warning add-new">
+								Tính lương tháng trước
+							</button>
+						</Popconfirm>
+					</div>
+					<div className="d-inline-block d-sm-none col-md-3 w-25">
+						<Dropdown overlay={menu} trigger={['click']} visible={dropDownVisible}>
+							<a
+								className="ant-dropdown-link"
+								onClick={(e) => {
+									e.preventDefault();
+									setDropDownVisible(!dropDownVisible);
+								}}
+							>
+								<EllipsisOutlined />
+							</a>
+						</Dropdown>
+					</div>
+				</>
 			}
 			Extra={
-				<div className="extra-table">
+				<div className="extra-table d-none d-sm-inline-block">
 					<Select
 						onChange={onChangeMonth}
 						style={{ width: 200 }}

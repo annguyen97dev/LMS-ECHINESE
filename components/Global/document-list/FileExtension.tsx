@@ -76,7 +76,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData, categoryID })
 				{searchDoc?.length > 0 ? (
 					<div className="row">
 						{searchDoc.map((doc: IDocumentList, idx) => (
-							<div className="col-12 col-md-4" key={idx}>
+							<div className="col-12 col-sm-6 col-md-4" key={idx}>
 								<div className="file-man-box">
 									<a href={doc.DocumentLink} download={doc.DocumentLink} target="_blank">
 										<div className="file-img-box">{iconFile(doc.DocumentLink)}</div>
