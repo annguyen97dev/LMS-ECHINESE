@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Card, Rate, Modal, Spin } from 'antd';
+import { Card, Rate, Modal, Spin, Input } from 'antd';
 import { useWrap } from '~/context/wrap';
 import ReactHtmlParser from 'react-html-parser';
 import LayoutBase from '~/components/LayoutBase';
@@ -11,6 +11,7 @@ import CourseDetailsFeedBack from '~/components/VideoCourse/CourseDetailsFeedBac
 import { VideoCourseCardApi } from '~/apiBase/video-course-store';
 import CourseDetailsPreview from '~/components/VideoCourse/CourseDetailsPreview';
 import Link from 'next/link';
+import { VideoCourseListApi } from '~/apiBase';
 
 const initDetails = {
 	VideoCourseName: '',
@@ -172,6 +173,25 @@ const VideoCourseDetail = (props) => {
 		setCurrentVideo(e);
 	};
 
+	const [activing, setActiving] = useState(false);
+	const [code, setCode] = useState('');
+	const [activeLoading, setActiveLoading] = useState(false);
+
+	// UPDATE COURSE
+	const handleActive = async (param) => {
+		setActiveLoading(true);
+		try {
+			const res = await VideoCourseListApi.updateActiveCode(param);
+			res.status == 200 && showNoti('success', 'Thành công');
+			res.status === 204 && showNoti('danger', 'Thành công');
+			getCourseDetails(slug);
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setActiveLoading(false);
+		}
+	};
+
 	return (
 		<>
 			<div className="row feedback-user">
@@ -201,27 +221,57 @@ const VideoCourseDetail = (props) => {
 									Giá gốc: {parseToMoney(router.query.Original)}đ
 								</h6>
 
-								<button onClick={() => addToCard()} className="btn btn-primary btn-add">
-									Thêm vào giỏ {buyLoading && <Spin className="loading-base" />}
-								</button>
-
-								{router.query.Active == 'notactivated' ? (
-									<button className="btn btn-warning btn-add mt-2">Kích hoạt</button>
+								{activing ? (
+									<>
+										<Input
+											value={code}
+											onChange={(e) => setCode(e.target.value)}
+											placeholder="Mã kích hoạt"
+											style={{ height: 36, borderRadius: 6 }}
+										/>
+										<button
+											onClick={() => handleActive({ ID: slug, ActiveCode: code })}
+											className="btn btn-warning btn-add mt-2"
+										>
+											Kích hoạt {activeLoading && <Spin className="loading-base" />}
+										</button>
+										<button onClick={() => setActiving(false)} className="btn btn-primary btn-add mt-2">
+											Huỷ
+										</button>
+									</>
 								) : (
-									<Link
-										href={{
-											pathname: '/video-learning',
-											query: {
-												course: slug,
-												complete: 0 + '/' + 0,
-												name: details.VideoCourseName
-											}
-										}}
-									>
-										<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
-									</Link>
+									<>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												addToCard();
+											}}
+											className="btn btn-primary btn-add"
+										>
+											Thêm vào giỏ {buyLoading && <Spin className="loading-base" />}
+										</button>
+
+										{router.query.Active == 'activated' ? (
+											<Link
+												href={{
+													pathname: '/video-learning',
+													query: {
+														course: slug,
+														complete: 0 + '/' + 0,
+														name: details.VideoCourseName
+													}
+												}}
+											>
+												<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
+											</Link>
+										) : (
+											<button onClick={() => setActiving(true)} className="btn btn-warning btn-add mt-2">
+												Kích hoạt
+											</button>
+										)}
+										<button className="btn btn-light btn-add mt-2">Mua ngay</button>
+									</>
 								)}
-								<button className="btn btn-light btn-add mt-2">Mua ngay</button>
 							</div>
 						</div>
 					</Card>
@@ -253,26 +303,57 @@ const VideoCourseDetail = (props) => {
 								>
 									Giá gốc: {parseToMoney(router.query.Original)}đ
 								</h6>
-								<button onClick={() => addToCard()} className="btn btn-primary btn-add">
-									Thêm vào giỏ
-								</button>
-								{router.query.Active == 'notactivated' ? (
-									<button className="btn btn-warning btn-add mt-2">Kích hoạt</button>
+								{activing ? (
+									<>
+										<Input
+											value={code}
+											onChange={(e) => setCode(e.target.value)}
+											placeholder="Mã kích hoạt"
+											style={{ height: 36, borderRadius: 6 }}
+										/>
+										<button
+											onClick={() => handleActive({ ID: slug, ActiveCode: code })}
+											className="btn btn-warning btn-add mt-2"
+										>
+											Kích hoạt {activeLoading && <Spin className="loading-base" />}
+										</button>
+										<button onClick={() => setActiving(false)} className="btn btn-primary btn-add mt-2">
+											Huỷ
+										</button>
+									</>
 								) : (
-									<Link
-										href={{
-											pathname: '/video-learning',
-											query: {
-												course: slug,
-												complete: 0 + '/' + 0,
-												name: details.VideoCourseName
-											}
-										}}
-									>
-										<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
-									</Link>
+									<>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												addToCard();
+											}}
+											className="btn btn-primary btn-add"
+										>
+											Thêm vào giỏ {buyLoading && <Spin className="loading-base" />}
+										</button>
+
+										{router.query.Active == 'activated' ? (
+											<Link
+												href={{
+													pathname: '/video-learning',
+													query: {
+														course: slug,
+														complete: 0 + '/' + 0,
+														name: details.VideoCourseName
+													}
+												}}
+											>
+												<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
+											</Link>
+										) : (
+											<button onClick={() => setActiving(true)} className="btn btn-warning btn-add mt-2">
+												Kích hoạt
+											</button>
+										)}
+										<button className="btn btn-light btn-add mt-2">Mua ngay</button>
+									</>
 								)}
-								<button className="btn btn-light btn-add mt-2">Mua ngay</button>
 							</div>
 						</div>
 					</Card>

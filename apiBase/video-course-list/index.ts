@@ -8,14 +8,16 @@ export const VideoCourseListApi = {
 	getAll(ID) {
 		return instance.get<IApiResultData<IVideoCourseList[]>>(`${url + 'GetAll?pageIndex=1&pageSize=5'}${''}`);
 	},
-
 	// Lấy data theo user
 	getByUser(ID) {
 		return instance.get<IApiResultData<IVideoCourseList[]>>(`${url + 'GetByUser'}${''}`);
 	},
-
 	// Cập nhật data
 	update(data) {
 		return instance.put(url + 'StudentEvaluation', data);
+	},
+	// Cập nhật data
+	updateActiveCode(data) {
+		return instance.put(url + 'UpdateActiveCode', data);
 	}
 };

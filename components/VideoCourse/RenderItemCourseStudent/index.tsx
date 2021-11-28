@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import Link from 'next/link';
 import { parseToMoney } from '~/utils/functions';
-import { Popover, Spin } from 'antd';
+import { Popover, Spin, Input } from 'antd';
 import { useWrap } from '~/context/wrap';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
 
 // CARD ITEM ON VIDEO COURSE
-const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading }) => {
+const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive }) => {
 	const { userInformation } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
+
+	const [activing, setActiving] = useState(false);
+	const [code, setCode] = useState('');
 
 	const params = {
 		Category: item.CategoryName,
@@ -56,32 +59,56 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading }) => {
 					</div>
 				) : (
 					<>
-						<button
-							onClick={(e) => {
-								e.stopPropagation();
-								addToCard(item);
-							}}
-							className="btn btn-primary btn-add"
-						>
-							Thêm vào giỏ {loading && <Spin className="loading-base" />}
-						</button>
-						{item.Active == 'activated' ? (
-							<Link
-								href={{
-									pathname: '/video-learning',
-									query: {
-										course: item.ID,
-										complete: 0 + '/' + 0,
-										name: item.VideoCourseName
-									}
-								}}
-							>
-								<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
-							</Link>
+						{activing ? (
+							<>
+								<Input
+									value={code}
+									onChange={(e) => setCode(e.target.value)}
+									placeholder="Mã kích hoạt"
+									style={{ height: 36, borderRadius: 6 }}
+								/>
+								<button
+									onClick={() => handleActive({ ID: item.ID, ActiveCode: code })}
+									className="btn btn-warning btn-add mt-2"
+								>
+									Kích hoạt {activeLoading && <Spin className="loading-base" />}
+								</button>
+								<button onClick={() => setActiving(false)} className="btn btn-primary btn-add mt-2">
+									Huỷ
+								</button>
+							</>
 						) : (
-							<button className="btn btn-warning btn-add mt-2">Kích hoạt</button>
+							<>
+								<button
+									onClick={(e) => {
+										e.stopPropagation();
+										addToCard(item);
+									}}
+									className="btn btn-primary btn-add"
+								>
+									Thêm vào giỏ {loading && <Spin className="loading-base" />}
+								</button>
+								{item.StatusActive == 'activated' ? (
+									<Link
+										href={{
+											pathname: '/video-learning',
+											query: {
+												course: item.ID,
+												complete: 0 + '/' + 0,
+												name: item.VideoCourseName
+											}
+										}}
+									>
+										<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
+									</Link>
+								) : (
+									<button onClick={() => setActiving(true)} className="btn btn-warning btn-add mt-2">
+										Kích hoạt
+									</button>
+								)}
+								<button className="btn btn-light btn-add mt-2">Mua ngay</button>
+							</>
 						)}
-						<button className="btn btn-light btn-add mt-2">Mua ngay</button>
 					</>
 				)}
 			</div>

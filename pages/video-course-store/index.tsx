@@ -13,6 +13,7 @@ import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { Eye } from 'react-feather';
 import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 import CourseVideoTable from '~/components/CourseVideoTable';
+import { VideoCourseListApi } from '~/apiBase';
 
 const key = 'updatable';
 const { Search } = Input;
@@ -331,6 +332,23 @@ const VideoCourseStore = () => {
 		);
 	};
 
+	const [activeLoading, setActiveLoading] = useState(false);
+
+	// UPDATE COURSE
+	const handleActive = async (param) => {
+		setActiveLoading(true);
+		try {
+			const res = await VideoCourseListApi.updateActiveCode(param);
+			res.status == 200 && showNoti('success', 'Thành công');
+			res.status === 204 && showNoti('danger', 'Thành công');
+			getAllArea();
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setActiveLoading(false);
+		}
+	};
+
 	// CARD EXTRA
 	const Extra = () => {
 		return (
@@ -393,8 +411,10 @@ const VideoCourseStore = () => {
 								<RenderItemCard
 									_onSubmitEdit={(data: any) => updateCourse(data)}
 									loading={addToCardLoading}
+									activeLoading={activeLoading}
 									addToCard={addToCard}
 									item={item}
+									handleActive={handleActive}
 								/>
 							)}
 							pagination={{

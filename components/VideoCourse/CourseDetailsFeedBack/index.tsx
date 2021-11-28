@@ -38,8 +38,21 @@ const CourseDetailsFeedBack = (props) => {
 		<>
 			<div className="fb-header">
 				<div className="number">
-					<h1>{feedBack?.StarModel?.Average || 0}</h1>
-					<Rate allowHalf value={feedBack?.StarModel?.Average || 0} disabled style={{ fontSize: 16 }} />
+					<h1>
+						{feedBack?.StarModel?.Average == 'NaN' || feedBack?.StarModel?.Average == NaN
+							? 0
+							: feedBack?.StarModel?.Average || 0}
+					</h1>
+					<Rate
+						allowHalf
+						value={
+							feedBack?.StarModel?.Average == 'NaN' || feedBack?.StarModel?.Average == NaN
+								? 0
+								: feedBack?.StarModel?.Average || 0
+						}
+						disabled
+						style={{ fontSize: 16 }}
+					/>
 					<h4>Trung Bình</h4>
 				</div>
 				<div className="stars ml-4 mt-3 mb-3">
@@ -47,55 +60,96 @@ const CourseDetailsFeedBack = (props) => {
 						<Progress
 							className="progress mr-3"
 							strokeColor="#f53882"
-							percent={feedBack?.StarModel?.PersentStar5}
+							percent={
+								feedBack?.StarModel?.PersentStar5 == NaN || feedBack?.StarModel?.PersentStar5 == 'NaN'
+									? 0
+									: feedBack?.StarModel?.PersentStar5
+							}
 							showInfo={false}
 						/>
 						<Rate className="start mr-3" allowHalf value={5} disabled />
-						<span style={{ fontSize: 12 }}>{feedBack?.StarModel?.PersentStar5}%</span>
+						<span style={{ fontSize: 12 }}>
+							{feedBack?.StarModel?.PersentStar5 == NaN || feedBack?.StarModel?.PersentStar5 == 'NaN'
+								? 0
+								: feedBack?.StarModel?.PersentStar5}
+							%
+						</span>
 					</div>
-
 					<div className="star-row">
 						<Progress
 							className="progress mr-3"
 							strokeColor="#f53882"
-							percent={feedBack?.StarModel?.PersentStar4}
+							percent={
+								feedBack?.StarModel?.PersentStar4 == NaN || feedBack?.StarModel?.PersentStar4 == 'NaN'
+									? 0
+									: feedBack?.StarModel?.PersentStar4
+							}
 							showInfo={false}
 						/>
 						<Rate className="start mr-3" allowHalf value={4} disabled />
-						<span style={{ fontSize: 12 }}>{feedBack?.StarModel?.PersentStar4}%</span>
+						<span style={{ fontSize: 12 }}>
+							{feedBack?.StarModel?.PersentStar4 == NaN || feedBack?.StarModel?.PersentStar4 == 'NaN'
+								? 0
+								: feedBack?.StarModel?.PersentStar4}
+							%
+						</span>
 					</div>
-
 					<div className="star-row">
 						<Progress
 							className="progress mr-3"
 							strokeColor="#f53882"
-							percent={feedBack?.StarModel?.PersentStar3}
+							percent={
+								feedBack?.StarModel?.PersentStar3 == NaN || feedBack?.StarModel?.PersentStar3 == 'NaN'
+									? 0
+									: feedBack?.StarModel?.PersentStar3
+							}
 							showInfo={false}
 						/>
 						<Rate className="start mr-3" allowHalf value={3} disabled />
-						<span style={{ fontSize: 12 }}>{feedBack?.StarModel?.PersentStar3}%</span>
+						<span style={{ fontSize: 12 }}>
+							{feedBack?.StarModel?.PersentStar3 == NaN || feedBack?.StarModel?.PersentStar3 == 'NaN'
+								? 0
+								: feedBack?.StarModel?.PersentStar3}
+							%
+						</span>
 					</div>
-
 					<div className="star-row">
 						<Progress
 							className="progress mr-3"
 							strokeColor="#f53882"
-							percent={feedBack?.StarModel?.PersentStar2}
+							percent={
+								feedBack?.StarModel?.PersentStar2 == NaN || feedBack?.StarModel?.PersentStar2 == 'NaN'
+									? 0
+									: feedBack?.StarModel?.PersentStar2
+							}
 							showInfo={false}
 						/>
 						<Rate className="start mr-3" allowHalf value={2} disabled />
-						<span style={{ fontSize: 12 }}>{feedBack?.StarModel?.PersentStar2}%</span>
+						<span style={{ fontSize: 12 }}>
+							{feedBack?.StarModel?.PersentStar2 == NaN || feedBack?.StarModel?.PersentStar2 == 'NaN'
+								? 0
+								: feedBack?.StarModel?.PersentStar2}
+							%
+						</span>
 					</div>
-
 					<div className="star-row">
 						<Progress
 							className="progress mr-3"
 							strokeColor="#f53882"
-							percent={feedBack?.StarModel?.PersentStar1}
+							percent={
+								feedBack?.StarModel?.PersentStar1 == NaN || feedBack?.StarModel?.PersentStar1 == 'NaN'
+									? 0
+									: feedBack?.StarModel?.PersentStar1
+							}
 							showInfo={false}
 						/>
 						<Rate className="start mr-3" allowHalf value={1} disabled />
-						<span style={{ fontSize: 12 }}>{feedBack?.StarModel?.PersentStar1}%</span>
+						<span style={{ fontSize: 12 }}>
+							{feedBack?.StarModel?.PersentStar1 == NaN || feedBack?.StarModel?.PersentStar1 == 'NaN'
+								? 0
+								: feedBack?.StarModel?.PersentStar1}
+							%
+						</span>
 					</div>
 				</div>
 			</div>
