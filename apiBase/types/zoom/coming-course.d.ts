@@ -1,0 +1,25 @@
+type IComingCourse = {
+	ID: number;
+	CourseID: number;
+	CourseName: string;
+	SubjectID: number;
+	SubjectName: string;
+	StudyTimeID: number;
+	StudyTimeName: string;
+	Time: number;
+	TimeStart: string;
+	BranchID: number;
+	RoomID: number;
+	ZoomRoomID: string;
+	ZoomRoomPass: string;
+	SignatureTeacher: string;
+	SignatureStudent: string;
+	ApiKey: string;
+	Date: string;
+	TeacherID: number;
+	TeacherName: string;
+	Attendance: boolean;
+	IsRoomStart: boolean;
+	FinishZoom: boolean;
+	isHappenning: boolean;
+};
