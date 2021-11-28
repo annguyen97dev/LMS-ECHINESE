@@ -26,6 +26,7 @@ const VideoCourseStore = () => {
 	const [rerender, setRender] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isLoading, setIsLoading] = useState({ type: 'GET_ALL', status: true });
+	const [addToCardLoading, setAddToCardLoading] = useState(false);
 	const [totalPage, setTotalPage] = useState(null);
 	const listTodoApi = {
 		pageSize: pageSize,
@@ -131,11 +132,15 @@ const VideoCourseStore = () => {
 			const res = await VideoCourseCardApi.add(data);
 			res.status == 200 && setShowModal(true);
 			res.status !== 200 && openNotification();
-		} catch (error) {}
+		} catch (error) {
+		} finally {
+			setAddToCardLoading(false);
+		}
 	};
 
 	// HANDLE AD TO CARD (STUDENT)
 	const addToCard = (p) => {
+		setAddToCardLoading(true);
 		let temp = {
 			VideoCourseID: p.ID,
 			Quantity: 1
@@ -379,7 +384,6 @@ const VideoCourseStore = () => {
 						)
 					}
 				>
-					{/* {userInformation.RoleID == 3 && ( */}
 					<>
 						<List
 							itemLayout="horizontal"
@@ -388,12 +392,9 @@ const VideoCourseStore = () => {
 							renderItem={(item) => (
 								<RenderItemCard
 									_onSubmitEdit={(data: any) => updateCourse(data)}
-									category={category}
-									categoryLevel={categoryLevel}
+									loading={addToCardLoading}
 									addToCard={addToCard}
 									item={item}
-									rowData={data}
-									dataGrade={data}
 								/>
 							)}
 							pagination={{
@@ -426,7 +427,6 @@ const VideoCourseStore = () => {
 							</div>
 						</Modal>
 					</>
-					{/* )} */}
 
 					{/* Table */}
 					{/* {userInformation.RoleID == 1 && (
