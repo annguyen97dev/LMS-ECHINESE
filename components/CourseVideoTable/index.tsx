@@ -149,7 +149,7 @@ const CourseVideoTable = (props) => {
 							}
 						})}
 						onExpandedRowsChange={onChangeExpand}
-						expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
+						// expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
 						onExpand={onExpand}
 						expandedRowKeys={returnRowKeys()}
 					/>

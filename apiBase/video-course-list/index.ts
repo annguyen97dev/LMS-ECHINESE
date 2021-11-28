@@ -5,8 +5,10 @@ const url = '/api/VideoCourseOfStudent/';
 
 export const VideoCourseListApi = {
 	// Lấy tất cả data
-	getAll(ID) {
-		return instance.get<IApiResultData<IVideoCourseList[]>>(`${url + 'GetAll?pageIndex=1&pageSize=5'}${''}`);
+	getAll(params) {
+		return instance.get<IApiResultData<IVideoCourseList[]>>(
+			`${url}GetAll?pageIndex=${params.pageIndex}&pageSize=${params.pageSize}&search=${params.search}'`
+		);
 	},
 	// Lấy data theo user
 	getByUser(ID) {

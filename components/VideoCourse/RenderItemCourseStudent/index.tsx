@@ -22,7 +22,6 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 		Level: item.LevelName,
 		Create: item.CreatedOn,
 		Thum: item.ImageThumbnails,
-		VideoName: item.VideoCourseName,
 		slug: item.ID,
 		Original: item.OriginalPrice,
 		Sell: item.SellPrice,

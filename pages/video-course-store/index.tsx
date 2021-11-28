@@ -448,7 +448,6 @@ const VideoCourseStore = () => {
 						</Modal>
 					</>
 
-					{/* Table */}
 					{/* {userInformation.RoleID == 1 && (
 						<CourseVideoTable
 							totalPage={totalPage && totalPage}
