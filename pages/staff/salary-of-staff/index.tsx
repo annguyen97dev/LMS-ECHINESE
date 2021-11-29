@@ -376,7 +376,7 @@ const SalaryStaffReview = () => {
 	const renderTitle = () => {
 		return (
 			<p className="font-weight-primary">
-				Xác nhận tình lương từ 01-{params.Month}-{params.Year} đến {daysInMonth(params.Month, params.Year)}-{params.Month}-
+				Xác nhận tính lương từ 01-{params.Month}-{params.Year} đến {daysInMonth(params.Month, params.Year)}-{params.Month}-
 				{params.Year} ?
 			</p>
 		);
