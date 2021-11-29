@@ -7,12 +7,14 @@ export const VideoCourseListApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<IVideoCourseList[]>>(
-			`${url}GetAll?pageIndex=${params.pageIndex}&pageSize=${params.pageSize}&search=${params.search}'`
+			`${url}GetAll?pageIndex=${params.pageIndex}&pageSize=${params.pageSize}&search=${params.search}`
 		);
 	},
 	// Lấy data theo user
-	getByUser(ID) {
-		return instance.get<IApiResultData<IVideoCourseList[]>>(`${url + 'GetByUser'}${''}`);
+	getByUser(params) {
+		return instance.get<IApiResultData<IVideoCourseList[]>>(
+			`${url}GetByUser?pageIndex=${params.pageIndex}&pageSize=${params.pageSize}&search=${params.search}`
+		);
 	},
 	// Cập nhật data
 	update(data) {

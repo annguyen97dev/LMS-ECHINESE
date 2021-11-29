@@ -31,6 +31,7 @@ type vType = {
 	addNewQuest: any;
 	onEditQuest: any;
 	dataNotification: any[];
+	details: any;
 };
 
 const VideoTabs: FC<vType> = ({
@@ -46,16 +47,17 @@ const VideoTabs: FC<vType> = ({
 	addNewQuest,
 	onEditQuest,
 	dataNotification,
-	createNewNotification
+	createNewNotification,
+	details
 }) => {
 	return (
 		<Tabs className="" tabBarStyle={{ paddingLeft: 20, paddingRight: 20 }}>
 			<TabPane className="vl-tabs" tab={titlePages.page1} key="1">
-				<VideoInfomation params={params} />
+				<VideoInfomation params={params} details={details} />
 			</TabPane>
-			<TabPane tab={titlePages.page2} key="2">
+			{/* <TabPane tab={titlePages.page2} key="2">
 				Content of Tab Pane 3
-			</TabPane>
+			</TabPane> */}
 			<TabPane tab={titlePages.page5} key="3">
 				<VocabularyTab
 					dataNote={dataNote}
@@ -75,9 +77,9 @@ const VideoTabs: FC<vType> = ({
 					videoRef={videoRef}
 				/>
 			</TabPane>
-			<TabPane tab={titlePages.page3} key="4">
+			{/* <TabPane tab={titlePages.page3} key="4">
 				Content of Tab Pane 3
-			</TabPane>
+			</TabPane> */}
 			<TabPane tab={titlePages.page4} key="5">
 				<VideoQuestion onEdit={onEditQuest} params={dataQA} addNew={addNewQuest} />
 			</TabPane>

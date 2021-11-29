@@ -22,7 +22,8 @@ const ItemVideo = ({ item, onRate }) => {
 				href={{
 					pathname: '/video-learning',
 					query: {
-						course: item.ID,
+						ID: item.ID,
+						course: item.VideoCourseID,
 						complete: item.Complete + '/' + item.TotalLesson,
 						name: item.VideoCourseName
 					}
@@ -133,9 +134,7 @@ const VideoCourseList = () => {
 		setLoading(true);
 		try {
 			const res =
-				userInformation.RoleID == 1
-					? await VideoCourseListApi.getAll(todoApi)
-					: await VideoCourseListApi.getByUser(userInformation.UserInformationID);
+				userInformation.RoleID == 1 ? await VideoCourseListApi.getAll(todoApi) : await VideoCourseListApi.getByUser(todoApi);
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 			setRender(res + '');
 		} catch (err) {
@@ -287,7 +286,7 @@ const VideoCourseList = () => {
 	return (
 		<div className="">
 			<p className="video-course-list-title">Khóa Học Video</p>
-			<Card className="video-course-list">
+			<Card title={Extra()} className="video-course-list">
 				{userInformation !== null && (
 					<>
 						{userInformation.RoleID == 1 ? (
@@ -299,15 +298,19 @@ const VideoCourseList = () => {
 								dataSource={data}
 								loading={{ type: 'GET_ALL', status: loading }}
 								TitleCard={null}
-								Extra={Extra()}
-								// expandable={() => expandedRowRender()}
 							/>
 						) : (
 							<List
+								pagination={{
+									onChange: getPagination,
+									total: totalPage,
+									size: 'small',
+									current: pageIndex
+								}}
 								loading={loading}
 								itemLayout="horizontal"
 								dataSource={data}
-								grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }}
+								grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 5 }}
 								renderItem={(item) => (
 									<ItemVideo
 										onRate={(p) => {
@@ -337,13 +340,11 @@ const VideoCourseList = () => {
 					title="Đánh giá"
 					visible={showModal}
 					onOk={() => {
-						//
 						setShowModal(false);
 						updateRate();
 					}}
 					confirmLoading={false}
 					onCancel={() => {
-						//
 						setShowModal(false);
 					}}
 				>

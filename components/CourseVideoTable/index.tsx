@@ -77,10 +77,6 @@ const CourseVideoTable = (props) => {
 		}
 	};
 
-	// const onRowchange = (row) => {
-	//   console.log("ROW: ", row);
-	// };
-
 	const onShowSizeChange = (current, size) => {
 		props.onChangePageSize && props.onChangePageSize(current, size);
 	};
