@@ -151,7 +151,7 @@ const AddQuestionAuto = (props) => {
 	return (
 		<>
 			<button
-				className="btn btn-warning "
+				className="btn btn-warning ml-2"
 				onClick={
 					countShowConfirm < 1
 						? listQuestionID.length > 0

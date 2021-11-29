@@ -20,6 +20,8 @@ import AddQuestionAuto from '~/components/Global/ExamDetail/AddQuestionAuto';
 import Link from 'next/link';
 import ChangePosition from '~/components/Global/ExamList/ExamForm/ChangePosition';
 import SpeakingList from '~/components/Global/ExamList/ExamShow/Speaking';
+import { AlignRightOutlined } from '@ant-design/icons';
+import PopupConfirm from '~/components/Elements/PopupConfirm';
 
 const listAlphabet = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'];
 
@@ -44,7 +46,11 @@ export type IProps = {
 	listQuestionAddOutside: Array<objectQuestionAddOutside>;
 	listQuestionID: Array<number>;
 	listGroupID: Array<number>;
-	dataChange: objectDataChange;
+	dataChange: Array<{
+		ID: number;
+		Index: number;
+	}>;
+	isChangePosition: boolean;
 };
 
 const ExamDetailContext = createContext<IProps>({
@@ -58,10 +64,8 @@ const ExamDetailContext = createContext<IProps>({
 	listQuestionAddOutside: [],
 	listQuestionID: [],
 	listGroupID: [],
-	dataChange: {
-		IDChangeOne: null,
-		IDChangeTwo: null
-	}
+	dataChange: [],
+	isChangePosition: false
 });
 
 const ExamDetail = () => {
@@ -88,11 +92,10 @@ const ExamDetail = () => {
 	const [listExam, setListExam] = useState([]);
 	const [loadingExam, setLoadingExam] = useState(false);
 	const [loadingDetail, setLoadingDetail] = useState(false);
-	const [dataChange, setDataChange] = useState({
-		IDChangeOne: null,
-		IDChangeTwo: null
-	});
+	const [dataChange, setDataChange] = useState([]);
 	const [loadingPosition, setLoadingPosition] = useState(false);
+	const [isChangePosition, setIsChangePosition] = useState(false);
+	const [isConfirmChange, setIsConfirmChange] = useState(false);
 
 	// console.log("List question: ", listQuestionID);
 	// console.log("List Group ID: ", listGroupID);
@@ -116,7 +119,8 @@ const ExamDetail = () => {
 		}
 	};
 
-	console.log('Lst ID: ', listQuestionID);
+	console.log('DAtaChange: ', dataChange);
+
 	// ---- GET ALL LIST QUESTION ID ----
 	const getAllListQuestionID = async () => {
 		let cloneListQuestionID = [...listQuestionID];
@@ -128,6 +132,10 @@ const ExamDetail = () => {
 				res.data.data.forEach((item) => {
 					if (item.Enable) {
 						item.ExerciseGroupID !== 0 && cloneListGroupID.push(item.ExerciseGroupID);
+						dataChange.push({
+							ID: item.ID,
+							Index: null
+						});
 						item.ExerciseTopic.forEach((ques) => {
 							cloneListQuestionID.push(ques.ExerciseID);
 						});
@@ -135,6 +143,7 @@ const ExamDetail = () => {
 				});
 				setListGroupID([...cloneListGroupID]);
 				setListQuestionID([...cloneListQuestionID]);
+				setDataChange([...dataChange]);
 			}
 		} catch (error) {
 		} finally {
@@ -386,32 +395,28 @@ const ExamDetail = () => {
 	// ACTION CHANGE POSITION
 	const actionChangePosition = async () => {
 		setLoadingPosition(true);
-		let cloneListQuestionID = [];
-		let cloneListGroupID = [];
+		// let cloneListQuestionID = [];
+		// let cloneListGroupID = [];
 		try {
-			let res = await examDetailApi.changePosition({
-				...dataChange,
-				selectAll: true,
-				ExamTopicID: examID
-			});
+			let res = await examDetailApi.changePosition(dataChange);
 			if (res.status === 200) {
 				showNoti('success', 'Đổi vị trí thành công');
-				setDataChange({
-					IDChangeOne: null,
-					IDChangeTwo: null
-				});
-				changePositionInArray();
+				onFetchData();
+				setIsConfirmChange(false);
+				setIsChangePosition(false);
 
-				res.data.data.forEach((item) => {
-					if (item.Enable) {
-						item.ExerciseGroupID !== 0 && cloneListGroupID.push(item.ExerciseGroupID);
-						item.ExerciseTopic.forEach((ques) => {
-							cloneListQuestionID.push(ques.ExerciseID);
-						});
-					}
-				});
-				setListGroupID([...cloneListGroupID]);
-				setListQuestionID([...cloneListQuestionID]);
+				// changePositionInArray();
+
+				// res.data.data.forEach((item) => {
+				// 	if (item.Enable) {
+				// 		item.ExerciseGroupID !== 0 && cloneListGroupID.push(item.ExerciseGroupID);
+				// 		item.ExerciseTopic.forEach((ques) => {
+				// 			cloneListQuestionID.push(ques.ExerciseID);
+				// 		});
+				// 	}
+				// });
+				// setListGroupID([...cloneListGroupID]);
+				// setListQuestionID([...cloneListQuestionID]);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -420,38 +425,44 @@ const ExamDetail = () => {
 		}
 	};
 
-	const changePositionInArray = () => {
-		let dataFrom = null;
-		let dataTo = null;
+	// const changePositionInArray = () => {
+	// 	let dataFrom = null;
+	// 	let dataTo = null;
 
-		let indexFrom = null;
-		let indexTo = null;
+	// 	let indexFrom = null;
+	// 	let indexTo = null;
 
-		dataExamDetail.every((item, index) => {
-			if (item.ID === dataChange.IDChangeOne) {
-				dataFrom = item;
-				indexFrom = index;
-			}
-			if (item.ID === dataChange.IDChangeTwo) {
-				dataTo = item;
-				indexTo = index;
-			}
-			if (dataFrom && dataTo) {
-				return false;
-			} else {
-				return true;
-			}
-		});
+	// 	dataExamDetail.every((item, index) => {
+	// 		if (item.ID === dataChange.IDChangeOne) {
+	// 			dataFrom = item;
+	// 			indexFrom = index;
+	// 		}
+	// 		if (item.ID === dataChange.IDChangeTwo) {
+	// 			dataTo = item;
+	// 			indexTo = index;
+	// 		}
+	// 		if (dataFrom && dataTo) {
+	// 			return false;
+	// 		} else {
+	// 			return true;
+	// 		}
+	// 	});
 
-		dataExamDetail[indexFrom] = dataTo;
-		dataExamDetail[indexTo] = dataFrom;
+	// 	dataExamDetail[indexFrom] = dataTo;
+	// 	dataExamDetail[indexTo] = dataFrom;
 
-		setDataExamDetail([...dataExamDetail]);
+	// 	setDataExamDetail([...dataExamDetail]);
+	// };
+
+	// START CHANGE POSITION
+	const startChangePosition = () => {
+		!isChangePosition && setIsChangePosition(true);
+		isChangePosition && setIsConfirmChange(true);
 	};
 
 	// GET DATA CHANGE
 	const getDataChange = (data: any) => {
-		setDataChange(data);
+		setDataChange([...data]);
 	};
 
 	useEffect(() => {
@@ -476,11 +487,11 @@ const ExamDetail = () => {
 		getExamDetail();
 	}, [todoApi]);
 
-	useEffect(() => {
-		if (dataChange.IDChangeOne && dataChange.IDChangeTwo) {
-			actionChangePosition();
-		}
-	}, [dataChange]);
+	// useEffect(() => {
+	// 	if (dataChange.IDChangeOne && dataChange.IDChangeTwo) {
+	// 		actionChangePosition();
+	// 	}
+	// }, [dataChange]);
 
 	useEffect(() => {
 		getAllListQuestionID();
@@ -492,12 +503,12 @@ const ExamDetail = () => {
 			<ul className="list">
 				<div className="d-flex">
 					<li className="list-item">
-						<span className="list-title">Chương trình</span>
-						<span className="list-text">{examTopicDetail?.ProgramName}</span>
-					</li>
-					<li className="list-item">
 						<span className="list-title">Giáo trình:</span>
 						<span className="list-text">{examTopicDetail?.CurriculumName}</span>
+					</li>
+					<li className="list-item">
+						<span className="list-title">Tổng số câu</span>
+						<span className="list-text">{listQuestionID?.length}</span>
 					</li>
 				</div>
 				<div className="d-flex">
@@ -528,12 +539,21 @@ const ExamDetail = () => {
 				onRemoveQuestionAdd,
 				onDeleteQuestion,
 				dataChange: dataChange,
-				getDataChange
+				getDataChange,
+				isChangePosition: isChangePosition
 			}}
 		>
 			<div className="question-create exam">
+				<PopupConfirm
+					okText="Đồng ý"
+					cancelText="Hủy"
+					isOpen={isConfirmChange}
+					onOk={actionChangePosition}
+					onCancel={() => setIsConfirmChange(false)}
+				>
+					<p style={{ fontWeight: 500 }}>Thay đổi vị trí câu hỏi ngay bây giờ?</p>
+				</PopupConfirm>
 				<TitlePage title="Tạo đề thi" />
-
 				<div className="row">
 					<div className="col-md-9 col-12">
 						<Card
@@ -573,10 +593,10 @@ const ExamDetail = () => {
                             {examTopicDetail?.Time} phút
                           </span>
                         </li> */}
-												<li>
+												{/* <li>
 													<span className="title">Tổng số câu:</span>
 													<span className="text">{listQuestionID.length}</span>
-												</li>
+												</li> */}
 											</ul>
 										)}
 									</Popover>
@@ -584,6 +604,12 @@ const ExamDetail = () => {
 							}
 							extra={
 								<>
+									<button className="btn btn-primary" onClick={startChangePosition}>
+										<div className="d-flex align-items-center">
+											<AlignRightOutlined className="mr-2" style={{ width: '18px' }} />
+											{isChangePosition ? 'Lưu' : 'Sắp xếp'}
+										</div>
+									</button>
 									<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
 									<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} />
 								</>

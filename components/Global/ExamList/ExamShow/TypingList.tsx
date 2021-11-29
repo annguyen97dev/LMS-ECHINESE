@@ -8,7 +8,7 @@ import { data } from '~/lib/option/dataOption2';
 const TypingList = (props) => {
 	const { doneTestData } = useDoneTest();
 	const { dataQuestion, listQuestionID, isDoingTest } = props;
-	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
+	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked, removeListPicked } = useDoingTest();
 	const [listInput, setListInput] = useState([]);
 	const [listCorrectAnswer, setListCorrectAnswer] = useState([]);
 	const [isActive, setIsActive] = useState(null);
@@ -60,7 +60,7 @@ const TypingList = (props) => {
 	};
 
 	const handleChangeText = (text, quesID) => {
-		getListPicked(quesID);
+		// getListPicked(quesID);
 
 		// Find index
 		let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
@@ -258,10 +258,16 @@ const TypingList = (props) => {
 
 					// Điều kiện đề input co giãn theo text
 					let lengthText = input.innerText.length;
+
 					if (lengthText > 14) {
 						item.classList.add('auto');
 					} else {
 						item.classList.remove('auto');
+						if (lengthText < 1) {
+							removeListPicked(quesID);
+						} else {
+							getListPicked(quesID);
+						}
 					}
 				});
 			});

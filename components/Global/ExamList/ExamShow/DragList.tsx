@@ -3,11 +3,12 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useDoingTest } from '~/context/useDoingTest';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { useDoneTest } from '~/context/useDoneTest';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 let activeDrag = null;
 
 const DragList = (props) => {
-	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
+	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked, removeListPicked } = useDoingTest();
 	const { dataQuestion, listQuestionID, isDoingTest } = props;
 	const { doneTestData } = useDoneTest();
 	const [dataQuestionClone, setDataQuestionClone] = useState(dataQuestion);
@@ -590,7 +591,9 @@ const DragList = (props) => {
 			{doneTestData ? (
 				<>
 					<div className="wrap-list-answer-typing mt-4">
-						<h6 className="mb-2">Đáp án</h6>
+						<h6 className="mb-2">
+							<ExclamationCircleOutlined /> Đáp án
+						</h6>
 						<ul className="list-answer-typing w-100  pl-0">
 							{dataQuestion?.ExerciseTopic.map(
 								(item) =>

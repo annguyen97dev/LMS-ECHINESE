@@ -131,12 +131,12 @@ function index(props: any) {
 								<div className="w-100 m-1 text-center color-red fw-bold">{props.error && props.error}</div>
 							</div>
 
-							{/* <div className={styles.boxSignup}>
-                Bạn chưa có tài khoản?{" "}
-                <a href="" onClick={moveToSignUp}>
-                  Đăng kí
-                </a>
-              </div> */}
+							<div className={styles.boxSignup}>
+								Bạn chưa có tài khoản?{' '}
+								<a href="" onClick={moveToSignUp}>
+									Đăng kí
+								</a>
+							</div>
 						</form>
 					</div>
 				</div>

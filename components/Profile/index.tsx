@@ -14,6 +14,7 @@ import { useWrap } from '~/context/wrap';
 import AvatarBase from '~/components/Elements/AvatarBase';
 import { userApi, userInformationApi } from '~/apiBase';
 import TitlePage from '../Elements/TitlePage';
+import ProfileSummary from '../ProfileSummary.tsx/ProfileSummary';
 let returnSchema = {};
 let schema = null;
 const optionGender = [
@@ -154,41 +155,7 @@ const ProfileBase = (props) => {
 							<Skeleton />
 						) : (
 							<>
-								<div className="row mb-3">
-									<div className="col-12 d-flex align-items-center justify-content-center flex-wrap">
-										<Avatar size={64} src={<img src={dataForm?.Avatar ? dataForm.Avatar : '/images/user.png'} />} />
-									</div>
-								</div>
-								<div className="row pt-3">
-									<div className="col-2">
-										<UserOutlined />
-									</div>
-									<div className="col-10  d-flex ">{dataForm?.FullNameUnicode}</div>
-								</div>
-								<div className="row pt-4">
-									<div className="col-2">
-										<DeploymentUnitOutlined />
-									</div>
-									<div className="col-10  d-flex ">{dataForm?.RoleName}</div>
-								</div>
-								<div className="row pt-4">
-									<div className="col-2">
-										<WhatsAppOutlined />
-									</div>
-									<div className="col-10  d-flex ">{dataForm?.Mobile}</div>
-								</div>
-								<div className="row pt-4">
-									<div className="col-2">
-										<MailOutlined />
-									</div>
-									<div className="col-10  d-flex ">{dataForm?.Email}</div>
-								</div>
-								<div className="row pt-4">
-									<div className="col-2">
-										<AimOutlined />
-									</div>
-									<div className="col-10  d-flex ">{dataForm?.Address}</div>
-								</div>
+								<ProfileSummary dataForm={dataForm} />
 							</>
 						)}
 					</Card>
@@ -212,27 +179,27 @@ const ProfileBase = (props) => {
 									</div>
 								</div>
 								<div className="row">
-									<div className="col-md-4 col-12">
+									<div className="col-md-6 col-12">
 										<InputTextField form={form} name="FullNameUnicode" label="Họ tên" />
 									</div>
-									<div className="col-md-4 col-12">
+									<div className="col-md-6 col-12">
 										<SelectField form={form} name="Gender" label="Giới tính" optionList={optionGender} />
-									</div>
-									<div className="col-md-4 col-12">
-										<DateField form={form} name="DOB" label="Ngày sinh" />
 									</div>
 								</div>
 
 								<div className="row">
 									<div className="col-md-6 col-12">
-										<InputTextField form={form} name="Email" label="Email" />
+										<DateField form={form} name="DOB" label="Ngày sinh" />
 									</div>
 									<div className="col-md-6 col-12">
-										<InputTextField form={form} name="Mobile" label="Số điện thoại" />
+										<InputTextField form={form} name="Email" label="Email" />
 									</div>
 								</div>
 								<div className="row">
-									<div className="col-12">
+									<div className="col-md-6 col-12">
+										<InputTextField form={form} name="Mobile" label="Số điện thoại" />
+									</div>
+									<div className="col-md-6 col-12">
 										<InputTextField form={form} name="Address" label="Địa chỉ" />
 									</div>
 								</div>

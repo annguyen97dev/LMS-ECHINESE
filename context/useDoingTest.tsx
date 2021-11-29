@@ -27,6 +27,7 @@ export type IProps = {
 	getActiveID: Function;
 	getPackageResult: Function;
 	getListPicked: Function;
+	removeListPicked: Function;
 	packageResult: ITestExamination;
 	activeID: number;
 	listQuestionID: Array<Number>;
@@ -38,6 +39,7 @@ const DoingTestContext = createContext<IProps>({
 	getActiveID: () => {},
 	getPackageResult: () => {},
 	getListPicked: () => {},
+	removeListPicked: () => {},
 	listQuestionID: [],
 	listPicked: [],
 	activeID: null,
@@ -55,8 +57,6 @@ export const DoingTestProvider = ({ children }) => {
 	const [listPicked, setListPicked] = useState([]);
 	const { userInformation } = useWrap();
 
-	console.log('Package Result: ', packageResult);
-
 	// --- GET LIST QUESTION ID ---
 	const getListQuestionID = (listQuestionID: Array<Number>) => {
 		setListQuestionID(listQuestionID);
@@ -64,10 +64,21 @@ export const DoingTestProvider = ({ children }) => {
 
 	// --- GET LIST PICKED ---
 	const getListPicked = (pickedID) => {
-		if (!listPicked.includes(pickedID)) {
+		let cloneList = [...listPicked];
+
+		if (listPicked.includes(pickedID) === false) {
 			listPicked.push(pickedID);
 			setListPicked([...listPicked]);
 		}
+	};
+
+	// --- REMOVE ID IN LIST PICKED ---
+	const removeListPicked = (pickedID) => {
+		let index = listPicked.findIndex((id) => id === pickedID);
+		listPicked.splice(index, 1);
+		// console.log('PICKED ID: ', pickedID);
+		// let newList = listPicked.filter((id) => id !== pickedID);
+		setListPicked([...listPicked]);
 	};
 
 	// --- GET ACTIVE ID ---
@@ -102,7 +113,8 @@ export const DoingTestProvider = ({ children }) => {
 					packageResult: packageResult,
 					getPackageResult,
 					listPicked: listPicked,
-					getListPicked
+					getListPicked,
+					removeListPicked
 				}}
 			>
 				{children}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Checkbox, Spin, Modal, Skeleton, Button } from 'antd';
-import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined, QuestionCircleOutlined, ProfileFilled } from '@ant-design/icons';
 import { examDetailApi, examTopicApi, doingTestApi, examAppointmentResultApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import CountDown from '~/components/Elements/CountDown/CountDown';
@@ -62,6 +62,7 @@ const MainTest = (props) => {
 	const [isModalSuccess, setIsModalSuccess] = useState(false);
 	const [openTimeUpModal, setOpenTimeUpModal] = useState(false);
 	const [checkTested, setCheckTested] = useState(false);
+	const [openPagi, setOpenPagi] = useState(false); // Use for list question in mobile
 
 	const checkIsTested = async () => {
 		setIsLoading(true);
@@ -491,6 +492,10 @@ const MainTest = (props) => {
 		return textConfirm;
 	};
 
+	const handleClick_openPagi = () => {
+		setOpenPagi(!openPagi);
+	};
+
 	// ===== ALL USE EFFECT ====
 
 	useEffect(() => {
@@ -591,11 +596,13 @@ const MainTest = (props) => {
 			}
 		}
 
-		if (!isModalSuccess) {
-			window.addEventListener('beforeunload', alertUser);
-			return () => {
-				window.removeEventListener('beforeunload', alertUser);
-			};
+		if (!dataDoneTest) {
+			if (!isModalSuccess) {
+				window.addEventListener('beforeunload', alertUser);
+				return () => {
+					window.removeEventListener('beforeunload', alertUser);
+				};
+			}
 		}
 	});
 
@@ -670,10 +677,10 @@ const MainTest = (props) => {
 								return (
 									<div className="doingtest-group h-100" key={index}>
 										<div className="row h-100">
-											<div className="col-md-6 col-12 h-100">
+											<div className="col-lg-6 col-md-12 col-sm-12 col-12 h-100">
 												<div className="box-paragraph h-100">{ReactHtmlParser(item.Content)}</div>
 											</div>
-											<div className="col-md-6 col-12 h-100 pl-0">
+											<div className="col-lg-6 col-md-12 col-sm-12 col-12 h-100 pl-0 pl-0-mobile">
 												<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />
 											</div>
 										</div>
@@ -712,8 +719,19 @@ const MainTest = (props) => {
 				</div>
 				{dataQuestion?.length > 0 && (
 					<div className="test-footer" id="test-footer">
-						<div className="footer-pagination row-pagination">
-							<button className="close-icon">
+						<div className="pagination-mobile ">
+							<button className="listQuestion" onClick={handleClick_openPagi}>
+								<ProfileFilled />
+							</button>
+							<button className="pagi-btn previous" onClick={onChange_PreviousPage}>
+								<LeftOutlined />
+							</button>
+							<button className="pagi-btn next" onClick={onChange_NextPage}>
+								<RightOutlined />
+							</button>
+						</div>
+						<div className={`footer-pagination row-pagination ${openPagi ? 'show-mobile' : ''}`}>
+							<button className="close-icon" onClick={handleClick_openPagi}>
 								<CloseOutlined />
 							</button>
 							<p className="pagi-name">Danh sách câu hỏi</p>
