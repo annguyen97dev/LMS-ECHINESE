@@ -121,7 +121,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 					<div className="vc-store_item_warp-image">
 						<Link
 							href={{
-								pathname: '/video-course-store/[slug]',
+								pathname: '/video-course/[slug]',
 								query: params
 							}}
 						>
@@ -135,7 +135,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 					<div className="vc-store_item_content">
 						<Link
 							href={{
-								pathname: '/video-course-store/[slug]',
+								pathname: '/video-course/[slug]',
 								query: params
 							}}
 						>
@@ -145,7 +145,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 						</Link>
 						<Link
 							href={{
-								pathname: '/video-course-store/[slug]',
+								pathname: '/video-course/[slug]',
 								query: params
 							}}
 						>
@@ -155,7 +155,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 						</Link>
 						<Link
 							href={{
-								pathname: '/video-course-store/[slug]',
+								pathname: '/video-course/[slug]',
 								query: params
 							}}
 						>
@@ -165,7 +165,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 						</Link>
 						<Link
 							href={{
-								pathname: '/video-course-store/[slug]',
+								pathname: '/video-course/[slug]',
 								query: params
 							}}
 						>
@@ -175,7 +175,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 						</Link>
 						<Link
 							href={{
-								pathname: '/video-course-store/[slug]',
+								pathname: '/video-course/[slug]',
 								query: params
 							}}
 						>
@@ -191,7 +191,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 						</Link>
 						<Link
 							href={{
-								pathname: '/video-course-store/[slug]',
+								pathname: '/video-course/[slug]',
 								query: params
 							}}
 						>
