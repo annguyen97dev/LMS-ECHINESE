@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Skeleton, Dropdown } from 'antd';
+import { Input, Skeleton, Dropdown, Card } from 'antd';
 import Link from 'next/link';
 import { signIn, signOut, useSession } from 'next-auth/client';
 import { UserOutlined, RedoOutlined, LogoutOutlined, LoginOutlined, FormOutlined, EllipsisOutlined } from '@ant-design/icons';
@@ -9,6 +9,7 @@ import { User } from 'react-feather';
 import { useWrap } from '~/context/wrap';
 import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
 import { numberWithCommas } from '~/utils/functions';
+import { SearchOutlined } from '@ant-design/icons';
 
 const ShoppingCart = () => {
 	const [session, loading] = useSession();
@@ -146,30 +147,41 @@ const ShoppingCart = () => {
 	const menuDropdown = () => {
 		return (
 			<>
-				<div className="d-inline-block d-md-none ">
-					<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
-						<div className="user-wrap">
-							<div className="user-info">
-								{session?.user ? (
-									<div className="user-wrap">
-										<div className="user-img">
-											<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+				<div className="menu__dropdown d-inline-block d-md-none" style={{ width: 300 }}>
+					<div className="d-inline-block d-md-none ">
+						<Search
+							onChange={(event) => {}}
+							name="CourseSearch"
+							placeholder="Tìm khóa học"
+							className="style-input mb-3"
+							allowClear
+							enterButton={<SearchOutlined />}
+							size="large"
+						/>
+						<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
+							<div className="user-wrap">
+								<div className="user-info">
+									{session?.user ? (
+										<div className="user-wrap">
+											<div className="user-img">
+												<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+											</div>
+											<div className="user-info">
+												<p className="user-name">{dataUser?.FullNameUnicode}</p>
+												<p className="user-position">{dataUser?.RoleName}</p>
+											</div>
 										</div>
-										<div className="user-info">
-											<p className="user-name">{dataUser?.FullNameUnicode}</p>
-											<p className="user-position">{dataUser?.RoleName}</p>
-										</div>
-									</div>
-								) : (
-									<p>Tài khoản</p>
-								)}
+									) : (
+										<p>Tài khoản</p>
+									)}
 
-								<div className="user-name-mobile">
+									{/* <div className="user-name-mobile">
 									<User />
+								</div> */}
 								</div>
 							</div>
-						</div>
-					</Popover>
+						</Popover>
+					</div>
 				</div>
 			</>
 		);

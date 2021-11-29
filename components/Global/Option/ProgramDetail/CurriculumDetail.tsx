@@ -61,8 +61,6 @@ const CurriculumDetail = (props) => {
 		status: false
 	});
 
-	console.log('Check Data Subject: ', dataSubject);
-
 	// GET DATA COURSE
 	const getDataSource = async () => {
 		setIsLoading({

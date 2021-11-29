@@ -198,6 +198,76 @@
 		}
 	}
 }
+.user {
+	cursor: pointer;
+	padding-right: 0;
+}
+.user-wrap {
+	display: flex;
+	align-items: center;
+	padding: 0px 0;
+	@include max-media(1000px) {
+		padding: 0;
+	}
+}
+
+.user-img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	margin-right: 10px;
+
+	img {
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+}
+
+.menu__dropdown {
+	background-color: #fff;
+	border: solid 1px #d1d7dc;
+	border-radius: 10px;
+	padding: 20px 10px;
+}
+
+.user-info {
+	p {
+		margin-bottom: 0;
+	}
+	.user-name {
+		color: #464646;
+		font-size: 13px;
+		font-weight: 600;
+		@include max-media(1000px) {
+			display: none;
+		}
+	}
+	.user-name-mobile {
+		display: none;
+		@include max-media(1000px) {
+			display: block;
+			width: 36px;
+			height: 36px;
+			background: #edf1f8;
+			border-radius: 0.375rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			svg {
+				width: 21px;
+				color: #989898;
+			}
+		}
+	}
+	.user-position {
+		font-size: 12px;
+		font-weight: 400;
+		color: #a5a5a5;
+	}
+}
 .shopping__cart-body {
 	height: 95vh;
 	.shopping__cart-content {

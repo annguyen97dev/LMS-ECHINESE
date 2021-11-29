@@ -21,7 +21,16 @@ export const AddCurriculumForm = (props) => {
 	const [showListUploadHtml, setShowListUploadHtml] = useState(false);
 	const [fileListDoc, setFileListDoc] = useState([]);
 	const [fileListHtml, setFileListHtml] = useState([]);
-	const [loadingUpload, setLoadingUpload] = useState(false);
+	const [loadingUploadDoc, setLoadingUploadDoc] = useState({
+		nameFile: '',
+		type: '',
+		loading: false
+	});
+	const [loadingUploadHtml, setLoadingUploadHtml] = useState({
+		nameFile: '',
+		type: '',
+		loading: false
+	});
 	const [lesson, setLesson] = useState({
 		Content: '',
 		CurriculumDetailID: curriculumDetailID,
@@ -97,7 +106,6 @@ export const AddCurriculumForm = (props) => {
 					onFetchData && onFetchData();
 				}
 			} catch (error) {
-				console.log('error: ', error);
 				showNoti('danger', error.message);
 			} finally {
 				setIsLoading({
@@ -108,6 +116,7 @@ export const AddCurriculumForm = (props) => {
 		} else {
 			try {
 				res = await lessonDetailApi.add(lesson);
+				console.log(lesson);
 				if (res.status == 200) {
 					showNoti('success', res.data.message);
 					form.resetFields();
@@ -130,99 +139,54 @@ export const AddCurriculumForm = (props) => {
 		return res;
 	};
 
-	const propsLinkDocument = {
-		showUploadList: showListUploadDoc,
-		async onChange(info) {
-			console.log('File: ', info.file.originFileObj);
+	const onChangeUploadLinkDocument = async (info) => {
+		console.log(info);
+		if (info.fileList.length > 0) {
+			setShowListUploadDoc(false);
+			setLoadingUploadDoc({ nameFile: info.file.name, loading: true, type: 'link-doc' });
 			if (info.file.status === 'uploading') {
-				setLoadingUpload(true);
 				return;
 			}
-			setLoadingUpload(true);
 			try {
 				let res = await lessonDetailApi.UploadDocument(info.file.originFileObj);
 				if (res.status == 200) {
-					console.log(res.data.data);
 					setLesson({ ...lesson, LinkDocument: res.data.data });
 					showNoti('success', 'Upload file thành công');
 					setShowListUploadDoc(true);
 				}
 			} catch (error) {
-				showNoti('danger', error.message);
+				showNoti('danger', 'Tải file thất bại');
 				setShowListUploadDoc(false);
 			} finally {
-				setLoadingUpload(false);
+				setLoadingUploadDoc({ nameFile: '', loading: false, type: '' });
 			}
-		}
-	};
-
-	const propsLinkHtml = {
-		// showUploadList: showListUploadHtml,
-		async onchange(info) {
-			if (info.file.status === 'uploading') {
-				setLoadingUpload(true);
-				return;
-			}
-			setLoadingUpload(true);
-			try {
-				let res = await lessonDetailApi.UploadHtml(info.file.originFileObj);
-				if (res.status == 200) {
-					console.log(res.data.data);
-					setLesson({ ...lesson, LinkHtml: res.data.data });
-					showNoti('success', 'Upload file thành công');
-					setShowListUploadHtml(true);
-				}
-			} catch (error) {
-				console.log(error);
-				showNoti('danger', error.message);
-				setShowListUploadHtml(false);
-			} finally {
-				setLoadingUpload(false);
-			}
-		}
-	};
-
-	const onChangeUploadLinkDocument = async (info) => {
-		setShowListUploadDoc(false);
-		if (info.file.status === 'uploading') {
-			setLoadingUpload(true);
-			return;
-		}
-		setLoadingUpload(true);
-		try {
-			let res = await lessonDetailApi.UploadDocument(info.file.originFileObj);
-			if (res.status == 200) {
-				console.log(res.data.data);
-				setLesson({ ...lesson, LinkDocument: res.data.data });
-				showNoti('success', 'Upload file thành công');
-				setShowListUploadDoc(true);
-			}
-		} catch (error) {
-			console.log(error);
-			showNoti('danger', error.message);
-			setShowListUploadDoc(false);
-		} finally {
-			setLoadingUpload(false);
+		} else {
+			showNoti('success', 'Xóa file thành công');
+			setLesson({ ...lesson, LinkDocument: '' });
 		}
 	};
 
 	const onChangeUploadLinkHTML = async (info) => {
-		setShowListUploadHtml(false);
-
-		if (info.file.status === 'uploading') {
-			setLoadingUpload(true);
-			return;
-		}
-		try {
-			let res = await lessonDetailApi.UploadHtml(info.file.originFileObj);
-			setLesson({ ...lesson, LinkHtml: res.data.data });
-			showNoti('success', 'Upload file thành công');
-			setShowListUploadHtml(true);
-		} catch (error) {
-			showNoti('danger', error.message);
+		if (info.fileList.length > 0) {
 			setShowListUploadHtml(false);
-		} finally {
-			setLoadingUpload(false);
+			setLoadingUploadHtml({ nameFile: info.file.name, loading: true, type: 'link-html' });
+			if (info.file.status === 'uploading') {
+				return;
+			}
+			try {
+				let res = await lessonDetailApi.UploadHtml(info.file.originFileObj);
+				setLesson({ ...lesson, LinkHtml: res.data.data });
+				showNoti('success', 'Upload file thành công');
+				setShowListUploadHtml(true);
+			} catch (error) {
+				showNoti('danger', 'Tải file thất bại');
+				setShowListUploadHtml(false);
+			} finally {
+				setLoadingUploadHtml({ nameFile: '', loading: false, type: '' });
+			}
+		} else {
+			showNoti('success', 'Xóa file thành công');
+			setLesson({ ...lesson, LinkHtml: '' });
 		}
 	};
 
@@ -328,6 +292,12 @@ export const AddCurriculumForm = (props) => {
 											<Upload onChange={onChangeUploadLinkDocument} showUploadList={showListUploadDoc} maxCount={1}>
 												<Button icon={<UploadOutlined />}>Bấm để tải file</Button>
 											</Upload>
+											{loadingUploadDoc.loading && loadingUploadDoc.type == 'link-doc' && (
+												<div className="d-flex align-items-center mt-2">
+													<Spin />
+													<p className="ml-2  ant-upload-list-item-name">{loadingUploadDoc.nameFile}</p>
+												</div>
+											)}
 										</Form.Item>
 									</div>
 
@@ -340,7 +310,10 @@ export const AddCurriculumForm = (props) => {
 												showSearch
 												placeholder="Chọn đề thi"
 												optionFilterProp="children"
-												onChange={handleSelectStatus}
+												onChange={(value) => {
+													console.log(value);
+													setLesson({ ...lesson, ExamTopicID: value });
+												}}
 											>
 												{dataExamTopic?.map((item, index) => (
 													<Option value={item.ID} key={index}>
@@ -355,6 +328,12 @@ export const AddCurriculumForm = (props) => {
 											<Upload onChange={onChangeUploadLinkHTML} showUploadList={showListUploadHtml} maxCount={1}>
 												<Button icon={<UploadOutlined />}>Bấm để tải file</Button>
 											</Upload>
+											{loadingUploadHtml.loading && loadingUploadHtml.type == 'link-html' && (
+												<div className="d-flex align-items-center mt-2">
+													<Spin />
+													<p className="ml-2  ant-upload-list-item-name">{loadingUploadHtml.nameFile}</p>
+												</div>
+											)}
 										</Form.Item>
 									</div>
 								</div>
