@@ -236,7 +236,7 @@ const PackageResultStudentDetail = () => {
 										<button className="btn btn-secondary ml-2" onClick={() => setShowMainTest(true)}>
 											<span className="d-flex align-items-center">
 												<ProfileOutlined className="mr-2" />
-												view rút gọn
+												Xem chi tiết
 											</span>
 										</button>
 									</>

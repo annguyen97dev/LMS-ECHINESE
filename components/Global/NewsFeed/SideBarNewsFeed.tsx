@@ -20,6 +20,7 @@ SideBarNewsFeed.propTypes = {
 		idTeam: PropTypes.number,
 		idGroup: PropTypes.number
 	}),
+	handleBack: PropTypes.func,
 	handleFilters: PropTypes.func,
 	groupFormComponent: PropTypes.element
 };
@@ -33,12 +34,13 @@ SideBarNewsFeed.defaultProps = {
 		idTeam: 0,
 		idGroup: 0
 	},
+	handleBack: null,
 	handleFilters: null,
 	groupFormComponent: null
 };
 
 function SideBarNewsFeed(props) {
-	const { optionList, filtersData, handleFilters, groupFormComponent } = props;
+	const { optionList, filtersData, handleBack, handleFilters, groupFormComponent } = props;
 	const { name, idTeam, idGroup } = filtersData;
 	const { teamOptionList, groupOptionList } = optionList;
 	const [visible, setVisible] = useState(false);
@@ -198,9 +200,17 @@ function SideBarNewsFeed(props) {
 		<>
 			<div className="sidebar-desktop">{SideBar()}</div>
 			<div className="sidebar-mobile">
-				<Link href="/newsfeed">
-					<a className="label-nf font-weight-black">NewsFeed</a>
-				</Link>
+				<p
+					style={{ cursor: 'pointer' }}
+					className="label-nf font-weight-black"
+					onClick={(e) => {
+						if (handleBack) {
+							handleBack();
+						}
+					}}
+				>
+					NewsFeed
+				</p>
 				<button className="btn btn-light" onClick={showSideBar}>
 					<MoreHorizontal />
 				</button>

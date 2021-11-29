@@ -3,18 +3,56 @@ import { Spin, Input } from 'antd';
 import PropTypes from 'prop-types';
 import DocListModal from './DocListMadal';
 import { useWrap } from '~/context/wrap';
+import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
+import { documentListApi } from '~/apiBase/document-list/document-list';
 
-const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
+const FileExtension = ({ docList, isLoading, docInfo, onFetchData, categoryID }) => {
 	const { Search } = Input;
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
+	const [searchDoc, setSearchDoc] = useState<IDocumentList[]>(docList);
+
+	const paramsDefault = {
+		search: null,
+		pageIndex: 1,
+		pageSize: pageSize,
+		CurriculumnID: 0
+	};
+
+	const [params, setParams] = useState(paramsDefault);
 
 	const onSearch = async (value) => {
 		setSubmitLoading({ type: 'UPLOADING', loading: true });
 		try {
+			let res = await documentListApi.getAll({ CategoryID: categoryID, DocumentName: value });
+			if (res.status === 200) {
+				setSearchDoc(res.data.data);
+				// setParams({ ...params });
+			}
+			if (res.status == 204) {
+				setSearchDoc([]);
+			}
 		} catch (error) {
 		} finally {
+			setSubmitLoading({ type: 'UPLOADING', loading: false });
 		}
+	};
+
+	useEffect(() => {
+		setSearchDoc(docList);
+	}, [, docList]);
+
+	const iconFile = (link) => {
+		return (
+			<>
+				{link.split('.').slice(-1) == 'pdf' && <img src="/images/pdf.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'png' && <img src="/images/png.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'doc' && <img src="/images/doc.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'jpg' && <img src="/images/jpg.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'gif' && <img src="/images/gif.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'xlsx' && <img src="/images/xls.svg" alt="icon" />}
+			</>
+		);
 	};
 
 	return (
@@ -30,19 +68,18 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 							onFetchData();
 						}}
 						docID={null}
+						docName={null}
 					/>
 				</div>
 			</div>
 			<Spin spinning={isLoading.type === 'GET_ALL' && isLoading.loading}>
-				{docList?.length ? (
+				{searchDoc?.length > 0 ? (
 					<div className="row">
-						{docList.map((doc: IDocumentList, idx) => (
-							<div className="col-12 col-md-4" key={idx}>
+						{searchDoc.map((doc: IDocumentList, idx) => (
+							<div className="col-12 col-sm-6 col-md-4" key={idx}>
 								<div className="file-man-box">
 									<a href={doc.DocumentLink} download={doc.DocumentLink} target="_blank">
-										<div className="file-img-box">
-											<img src="/images/doc.svg" alt="icon" />
-										</div>
+										<div className="file-img-box">{iconFile(doc.DocumentLink)}</div>
 										<div className="file-man-title">
 											<div className="d-flex justify-content-between align-align-items-center">
 												<p className="mb-0 text-overflow">{doc.DocumentName || 'Tài liệu không có tiêu đề'}</p>
@@ -52,7 +89,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 											</p>
 										</div>
 									</a>
-									<div className="d-flex doc__list-action">
+									<div className="d-flex doc__list-action justify-content-end">
 										<DocListModal
 											type="EDIT_DOC"
 											docInfo={docInfo}
@@ -60,6 +97,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 												onFetchData();
 											}}
 											docID={doc.ID}
+											docName={doc.DocumentName}
 										/>
 										<DocListModal
 											type="DELETE_DOC"
@@ -68,6 +106,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 												onFetchData();
 											}}
 											docID={doc.ID}
+											docName={doc.DocumentName}
 										/>
 									</div>
 								</div>
@@ -75,7 +114,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData }) => {
 						))}
 					</div>
 				) : (
-					<p className="empty-document">Không tìm thấy tài liệu trong giáo trình này!</p>
+					<h4>Không tìm thấy tài liệu!</h4>
 				)}
 			</Spin>
 		</div>

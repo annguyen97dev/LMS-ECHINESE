@@ -174,12 +174,12 @@ const ProgramForm = React.memo((props: any) => {
 										optionFilterProp="children"
 										onChange={onChangeSelect('Type')}
 									>
-										<Option key={1} value={1}>
+										<Option key={2} value={2}>
 											Zoom
 										</Option>
-										<Option key={2} value={2}>
+										{/* <Option key={2} value={2}>
 											Offline
-										</Option>
+										</Option> */}
 										<Option key={3} value={3}>
 											Video
 										</Option>

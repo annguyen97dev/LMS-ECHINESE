@@ -1,31 +1,29 @@
-import {Card} from 'antd';
+import { Card } from 'antd';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
-import {scheduleZoomApi, zoomRoomApi} from '~/apiBase';
+import React, { useEffect, useState } from 'react';
+import { scheduleZoomApi, zoomRoomApi } from '~/apiBase';
 import TitlePage from '~/components/TitlePage';
-import {useDebounce} from '~/context/useDebounce';
-import {useWrap} from '~/context/wrap';
+import { useDebounce } from '~/context/useDebounce';
+import { useWrap } from '~/context/wrap';
 import CDCalendar from '../CourseList/CourseListDetail/CourseDetailCalendar/Calendar';
 
 const ScheduleStudyTeacher = () => {
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
-	const [scheduleTeacherList, setScheduleTeacherList] = useState<
-		IScheduleZoom[]
-	>([]);
+	const [scheduleTeacherList, setScheduleTeacherList] = useState<IScheduleZoom[]>([]);
 	const [filters, setFilters] = useState({
 		StartTime: moment().startOf('month').format('YYYY/MM/DD'),
-		EndTime: moment().endOf('month').format('YYYY/MM/DD'),
+		EndTime: moment().endOf('month').format('YYYY/MM/DD')
 	});
 
 	const fetchScheduleStudyTeacher = async () => {
 		try {
 			setIsLoading({
 				type: 'FETCH_SCHEDULE_TEACHER',
-				status: true,
+				status: true
 			});
 			const res = await scheduleZoomApi.getAll(filters);
 			if (res.status === 200) {
@@ -39,7 +37,7 @@ const ScheduleStudyTeacher = () => {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_SCHEDULE_TEACHER',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -53,32 +51,27 @@ const ScheduleStudyTeacher = () => {
 		if (date?.start && date?.end) {
 			fmDate = {
 				StartTime: moment(date.start).format('YYYY/MM/DD'),
-				EndTime: moment(date.end).format('YYYY/MM/DD'),
+				EndTime: moment(date.end).format('YYYY/MM/DD')
 			};
 		}
 		if (Array.isArray(date) && date.length >= 1) {
 			fmDate = {
 				StartTime: moment(date[0]).format('YYYY/MM/DD'),
-				EndTime: moment(date[date.length - 1]).format('YYYY/MM/DD'),
+				EndTime: moment(date[date.length - 1]).format('YYYY/MM/DD')
 			};
 		}
-		setFilters(fmDate || {...filters});
+		setFilters(fmDate || { ...filters });
 	};
 	const debounceFetchScheduleList = useDebounce(fetchNewScheduleList, 200, []);
 
-	const onHandleZoom = async (data: {
-		idx: number;
-		btnID: number;
-		btnName?: string;
-		scheduleID: number;
-	}) => {
+	const onHandleZoom = async (data: { idx: number; btnID: number; btnName?: string; scheduleID: number }) => {
 		try {
 			//0 - ,1-Bắt đầu , 2-Vào lớp học, 3-Kết thúc
-			const {idx, btnID, btnName, scheduleID} = data;
+			const { idx, btnID, btnName, scheduleID } = data;
 			if (btnID === 1) {
 				setIsLoading({
 					type: 'FETCH_SCHEDULE_TEACHER',
-					status: true,
+					status: true
 				});
 				const res = await zoomRoomApi.createRoom(scheduleID);
 				if (res.status === 200) {
@@ -86,13 +79,13 @@ const ScheduleStudyTeacher = () => {
 					const newScheduleTeacher: IScheduleZoom = {
 						...newScheduleTeacherList[idx],
 						ButtonName: 'Vào lớp học',
-						ButtonID: 2,
+						ButtonID: 2
 					};
 					newScheduleTeacherList.splice(idx, 1, newScheduleTeacher);
 					setScheduleTeacherList(newScheduleTeacherList);
 					setIsLoading({
 						type: 'FETCH_SCHEDULE_TEACHER',
-						status: false,
+						status: false
 					});
 					if (scheduleID) {
 						window.open(`/course/zoom-view/${scheduleID}`);
@@ -105,21 +98,21 @@ const ScheduleStudyTeacher = () => {
 			if (btnID === 3 && scheduleID) {
 				setIsLoading({
 					type: 'FETCH_SCHEDULE_TEACHER',
-					status: true,
+					status: true
 				});
 				const res = await zoomRoomApi.closeRoom(scheduleID);
 				if (res.status === 200) {
 					const newScheduleTeacherList = [...scheduleTeacherList];
 					const newScheduleTeacher: IScheduleZoom = {
 						...newScheduleTeacherList[idx],
-						ButtonName: 'Đã kết thúc',
-						ButtonID: 3,
+						ButtonName: 'Kết thúc',
+						ButtonID: 3
 					};
 					newScheduleTeacherList.splice(idx, 1, newScheduleTeacher);
 					setScheduleTeacherList(newScheduleTeacherList);
 					setIsLoading({
 						type: 'FETCH_SCHEDULE_TEACHER',
-						status: false,
+						status: false
 					});
 				}
 			}
@@ -129,7 +122,7 @@ const ScheduleStudyTeacher = () => {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_SCHEDULE_TEACHER',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -147,7 +140,7 @@ const ScheduleStudyTeacher = () => {
 				EndTime,
 				//
 				ButtonID,
-				ButtonName,
+				ButtonName
 			} = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
@@ -169,8 +162,8 @@ const ScheduleStudyTeacher = () => {
 					//
 					ButtonID,
 					ButtonName,
-					idx,
-				},
+					idx
+				}
 			};
 		});
 		return rs;
@@ -182,11 +175,7 @@ const ScheduleStudyTeacher = () => {
 			<div className="col-12">
 				<Card>
 					<CDCalendar
-						isLoaded={
-							isLoading.type === 'FETCH_SCHEDULE_TEACHER' && isLoading.status
-								? false
-								: true
-						}
+						isLoaded={isLoading.type === 'FETCH_SCHEDULE_TEACHER' && isLoading.status ? false : true}
 						eventList={calendarFm(scheduleTeacherList)}
 						isStudyZoom={true}
 						fetchStudyZoom={debounceFetchScheduleList}

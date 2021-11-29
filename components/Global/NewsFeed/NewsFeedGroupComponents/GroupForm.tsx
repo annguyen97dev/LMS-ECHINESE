@@ -1,20 +1,20 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Spin} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Spin } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import PropTypes from 'prop-types';
-import {useEffect, useState} from 'react';
-import {Edit2, PlusCircle} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { Edit2, PlusCircle } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 GroupForm.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	isUpdate: PropTypes.bool,
 	dataUpdate: PropTypes.shape({
@@ -26,13 +26,13 @@ GroupForm.propTypes = {
 		CourseID: PropTypes.number,
 		CourseName: PropTypes.string,
 		BranchID: PropTypes.number,
-		BranchName: PropTypes.string,
+		BranchName: PropTypes.string
 	}),
 	courseList: optionCommonPropTypes,
-	handleSubmit: PropTypes.func,
+	handleSubmit: PropTypes.func
 };
 GroupForm.defaultProps = {
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	isUpdate: false,
 	dataUpdate: {
 		ID: 0,
@@ -43,14 +43,14 @@ GroupForm.defaultProps = {
 		CourseID: 0,
 		CourseName: '',
 		BranchID: 0,
-		BranchName: '',
+		BranchName: ''
 	},
 	courseList: [],
-	handleSubmit: null,
+	handleSubmit: null
 };
 
 function GroupForm(props) {
-	const {isLoading, isUpdate, dataUpdate, courseList, handleSubmit} = props;
+	const { isLoading, isUpdate, dataUpdate, courseList, handleSubmit } = props;
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
 
 	const showModal = () => {
@@ -64,23 +64,23 @@ function GroupForm(props) {
 	const defaultValuesInit = {
 		Name: '',
 		CourseID: null,
-		BackGround: '',
+		BackGround: ''
 	};
 
 	const schema = yup.object().shape({
 		Name: yup.string().required('Bạn không được để trống'),
 		CourseID: yup.number().nullable().required('Bạn không được để trống'),
-		BackGround: yup.string(),
+		BackGround: yup.string()
 	});
 
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
 		if (isUpdate && dataUpdate.ID) {
-			form.reset({...dataUpdate});
+			form.reset({ ...dataUpdate });
 		}
 	}, [dataUpdate]);
 
@@ -90,7 +90,7 @@ function GroupForm(props) {
 			if (res?.status === 200) {
 				closeModal();
 				if (!isUpdate) {
-					form.reset({...defaultValuesInit});
+					form.reset({ ...defaultValuesInit });
 				}
 			}
 		});
@@ -107,25 +107,12 @@ function GroupForm(props) {
 					<PlusCircle />
 				</div>
 			)}
-			<Modal
-				title={isUpdate ? 'Chỉnh sửa nhóm' : 'Thêm nhóm'}
-				visible={isVisibleModal}
-				onCancel={closeModal}
-				footer={null}
-			>
+			<Modal title={isUpdate ? 'Chỉnh sửa nhóm' : 'Thêm nhóm'} visible={isVisibleModal} onCancel={closeModal} footer={null}>
 				<div>
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleSubmit)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="Name"
-									label="Tên nhóm"
-									placeholder="Nhập tên nhóm"
-								/>
+								<InputTextField form={form} name="Name" label="Tên nhóm" placeholder="Nhập tên nhóm" />
 							</div>
 							<div className="col-12">
 								<SelectField
@@ -137,11 +124,7 @@ function GroupForm(props) {
 								/>
 							</div>
 							<div className="col-12">
-								<UploadAvatarField
-									form={form}
-									name="BackGround"
-									label="Background"
-								/>
+								<UploadAvatarField form={form} name="BackGround" label="Background" />
 							</div>
 							<div className="col-12 mt-3">
 								<button
@@ -150,9 +133,7 @@ function GroupForm(props) {
 									disabled={isLoading.type === 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Cập nhật' : 'Lưu'}
-									{isLoading.type === 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type === 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

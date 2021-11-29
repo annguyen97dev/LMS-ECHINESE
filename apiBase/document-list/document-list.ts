@@ -3,8 +3,10 @@ const url = '/api/Document';
 
 export const documentListApi = {
 	// Lấy tất cả data
-	getAll(ID) {
-		return instance.get<IApiResultData<IDocumentList[]>>(`${url + '?CategoryID='}${ID}`);
+	getAll(params) {
+		return instance.get<IApiResultData<IDocumentList[]>>(
+			`${url + '?CategoryID='}${params.CategoryID}${'&DocumentName='}${params.DocumentName}`
+		);
 	},
 	// Thêm mới data
 	add(data) {

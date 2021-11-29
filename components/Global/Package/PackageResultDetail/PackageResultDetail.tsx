@@ -211,7 +211,7 @@ const PackageResultDetail = () => {
 											</>
 										)
 									) : (
-										<Tooltip title="Xem view rút gọn">
+										<Tooltip title="Xem chi tiết">
 											<button className="btn btn-icon" onClick={() => setShowMainTest(true)}>
 												<ProfileOutlined />
 											</button>

@@ -20,6 +20,7 @@ const PowerList = (props) => {
 	};
 
 	const returnPathName = (ID, TypeCourse) => {
+		if (!userInformation) return '';
 		let role = userInformation.RoleID;
 		let path = null;
 

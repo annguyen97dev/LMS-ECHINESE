@@ -149,8 +149,6 @@ function CreateNewsFeed(props) {
 	const { teamOptionList, groupOptionList } = optionList;
 	const { name, idTeam, idGroup } = filtersData;
 
-	console.log('Option List: ', optionList);
-
 	const defaultValuesInit = {
 		Content: '',
 		Color: '',
@@ -370,7 +368,6 @@ function CreateNewsFeed(props) {
 			form.reset(newValues);
 		}
 	}, []);
-
 	return (
 		<>
 			{isUpdate ? (
@@ -446,8 +443,8 @@ function CreateNewsFeed(props) {
 										name="Content"
 										className="text-area-nf"
 										placeholder="Bạn đang nghĩ gì ?"
-										rows={4}
-										autoSize={true}
+										// rows={4}
+										// autoSize={true}
 										allowClear={false}
 										maxLength={isShowBackgroundList ? 190 : null}
 									/>

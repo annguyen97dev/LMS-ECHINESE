@@ -22,7 +22,7 @@ const ServiceList = () => {
 		ID: null,
 		Enable: null
 	});
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, isAdmin } = useWrap();
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
@@ -159,7 +159,6 @@ const ServiceList = () => {
 		let res = null;
 
 		if (data.ID) {
-			console.log(data);
 			try {
 				res = await serviceApi.update(data);
 				res?.status == 200 && showNoti('success', 'Cập nhật thành công'), getDataTable();
@@ -340,28 +339,32 @@ const ServiceList = () => {
 		{
 			render: (record) => (
 				<>
-					<ServiceForm
-						rowData={record}
-						isLoading={isLoading}
-						showIcon={true}
-						_onSubmit={(data: any) => _onSubmit(data)}
-						dataStaff={dataStaff}
-						dataSupplier={dataSupplier}
-					/>
-					<Tooltip title="Xóa">
-						<button
-							className="btn btn-icon delete"
-							onClick={() => {
-								setIsModalVisible(true);
-								setDataDelete({
-									ID: record.ID,
-									Enable: false
-								});
-							}}
-						>
-							<X />
-						</button>
-					</Tooltip>
+					{isAdmin && (
+						<>
+							<ServiceForm
+								rowData={record}
+								isLoading={isLoading}
+								showIcon={true}
+								_onSubmit={(data: any) => _onSubmit(data)}
+								dataStaff={dataStaff}
+								dataSupplier={dataSupplier}
+							/>
+							<Tooltip title="Xóa">
+								<button
+									className="btn btn-icon delete"
+									onClick={() => {
+										setIsModalVisible(true);
+										setDataDelete({
+											ID: record.ID,
+											Enable: false
+										});
+									}}
+								>
+									<X />
+								</button>
+							</Tooltip>
+						</>
+					)}
 				</>
 			)
 		}
@@ -369,9 +372,14 @@ const ServiceList = () => {
 
 	useEffect(() => {
 		getDataTable();
-		getDataStaff();
-		getDataSupplier();
 	}, [todoApi]);
+
+	useEffect(() => {
+		if (isAdmin) {
+			getDataStaff();
+			getDataSupplier();
+		}
+	}, [isAdmin]);
 
 	return (
 		<Fragment>
@@ -391,13 +399,15 @@ const ServiceList = () => {
 				addClass="basic-header"
 				TitlePage="Services List"
 				TitleCard={
-					<ServiceForm
-						showAdd={true}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-						dataStaff={dataStaff}
-						dataSupplier={dataSupplier}
-					/>
+					isAdmin && (
+						<ServiceForm
+							showAdd={true}
+							isLoading={isLoading}
+							_onSubmit={(data: any) => _onSubmit(data)}
+							dataStaff={dataStaff}
+							dataSupplier={dataSupplier}
+						/>
+					)
 				}
 				dataSource={dataTable}
 				columns={columns}

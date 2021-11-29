@@ -16,6 +16,7 @@ import { useWrap } from '~/context/wrap';
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import CourseExamDetail from '~/components/Global/CourseExam/CourseExamDetail';
 import PackageResultList from '~/components/Global/Package/PackageResult/PackageResultList';
+import PackageResultUpdateTeacher from '~/components/Global/Package/PackageResult/PackageResultUpdateTeacher';
 
 const PackageResultPage = () => {
 	const [closeAllExpand, setCloseAllExpand] = useState(false);
@@ -358,7 +359,14 @@ const PackageResultPage = () => {
 			TitlePage="Kết quả kiểm tra"
 			dataSource={packageSetResult}
 			columns={columns}
-			TitleCard={null}
+			TitleCard={
+				<PackageResultUpdateTeacher
+					reloadData={() => {
+						setParams({ ...params });
+						setCurrentPage(1);
+					}}
+				/>
+			}
 			Extra={
 				<div className="extra-table">
 					{/* <FilterBase

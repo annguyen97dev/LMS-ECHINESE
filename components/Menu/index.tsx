@@ -163,9 +163,10 @@ const MenuDefault = ({
 			});
 		});
 	};
-
+	console.log('open keys: ', openKeys);
 	const onOpenChange = (openKeys) => {
 		setOpenKeys(openKeys);
+
 		if (openKeys.length > 0) {
 			for (const value of openKeys) {
 				childMenu.forEach((menu, index) => {
@@ -209,6 +210,11 @@ const MenuDefault = ({
 				}
 			}
 		}, 200);
+
+		let itemMenu = document.querySelector('.menu-child-body-element .ant-menu-submenu-inline.is-open');
+		if (itemMenu) {
+			itemMenu.closest('.ant-menu-inline').classList.add('scroll');
+		}
 	}, [openKeys]);
 
 	useEffect(() => {
@@ -359,6 +365,10 @@ const MenuDefault = ({
 		}
 	}, [childMenu]);
 
+	const onClick_Sub = () => {
+		console.log('Hello');
+	};
+
 	return (
 		<aside className={`navbar-right ${openMenuMobile ? 'mobile' : ''}`}>
 			<div className={`navbar-right-bg ${openMenuMobile ? 'active' : ''}`}>
@@ -381,98 +391,6 @@ const MenuDefault = ({
 								</a>
 							</li>
 						))}
-						{/* <li className={tab === "tab-home" ? "active" : ""} key="1">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-home"
-              >
-                <Home />
-              </a>
-            </li>
-
-            <li className={tab === "tab-course" ? "active" : ""} key="2">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-course"
-              >
-                <Airplay />
-              </a>
-            </li>
-            <li className={tab === "tab-customer" ? "active" : ""} key="3">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-customer"
-              >
-                <User />
-              </a>
-            </li>
-            <li className={tab === "tab-staff" ? "active" : ""} key="4">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-staff"
-              >
-                <UserCheck />
-              </a>
-            </li>
-            <li className={tab === "tab-package" ? "active" : ""} key="5">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-package"
-              >
-                <Package />
-              </a>
-            </li>
-
-            <li className={tab === "tab-document" ? "active" : ""} key="6">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-document"
-              >
-                <Book />
-              </a>
-            </li>
-            <li className={tab === "tab-question-bank" ? "active" : ""} key="7">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-question-bank"
-              >
-                <FileText />
-              </a>
-            </li>
-            <li className={tab === "tab-option" ? "active" : ""} key="8">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-option"
-              >
-                <Tool />
-              </a>
-            </li>
-            <li className={tab === "tab-layout" ? "active" : ""} key="9">
-              <a
-                href="#"
-                onClick={changeTabsClick}
-                onMouseEnter={changeTabs}
-                data-tabs="tab-layout"
-              >
-                <Layers />
-              </a>
-            </li> */}
 					</ul>
 				</div>
 			</div>
@@ -508,7 +426,12 @@ const MenuDefault = ({
 												</Link>
 											</Menu.Item>
 										) : (
-											<SubMenu key={item.Key} icon={ReactHtmlParser(item.Icon)} title={item.TitleSub}>
+											<SubMenu
+												className={`${openKeys && item.Key === openKeys[openKeys?.length - 1] ? 'is-open' : ''}`}
+												key={item.Key}
+												icon={ReactHtmlParser(item.Icon)}
+												title={item.TitleSub}
+											>
 												{item?.SubMenuList.map((subitem, indexSubitem) => (
 													<Menu.Item key={subitem.Key} icon={ReactHtmlParser(subitem.Icon)}>
 														<Link href={subitem.Route}>

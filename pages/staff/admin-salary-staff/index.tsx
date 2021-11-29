@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { InputNumber, Spin, Tooltip, Select, Popconfirm } from 'antd';
+import { InputNumber, Spin, Tooltip, Select, Popconfirm, Dropdown, Card, Menu } from 'antd';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
 import { staffSalaryApi } from '~/apiBase/staff-manage/staff-salary';
@@ -15,16 +15,25 @@ import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
 import ConfirmForm from '../../../components/Global/StaffList/StaffSalary/admin-confirm-salary';
+import { Input } from 'antd';
+import { Form } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [visible, setVisible] = React.useState(false);
+	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [payRoll, setPayRoll] = useState<IStaffSalary[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const { showNoti, userInformation, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
 		status: false
+	});
+	const [form] = Form.useForm();
+	const [workDays, setWorkDays] = useState({
+		days: 0,
+		messError: ''
 	});
 	const months = [
 		'Tháng 1',
@@ -201,7 +210,7 @@ const SalaryReview = () => {
 			title: 'Thưởng',
 			width: 150,
 			dataIndex: 'Bonus',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Ghi Chú',
@@ -214,6 +223,12 @@ const SalaryReview = () => {
 			width: 90,
 			dataIndex: 'CountOff',
 			render: (price, record: any) => <p>{price}</p>
+		},
+		{
+			title: 'Lương ngày nghỉ',
+			width: 150,
+			dataIndex: 'SalaryOff',
+			render: (price, record: any) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Trạng Thái',
@@ -251,26 +266,19 @@ const SalaryReview = () => {
 			title: 'Lương cơ bản',
 			width: 150,
 			dataIndex: 'BasicSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
-			title: 'Tăng Lương',
+			title: 'Lương tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
-		},
-
-		{
-			title: 'Lương Tháng',
-			width: 150,
-			dataIndex: 'Salary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Lương Tổng',
 			width: 150,
 			dataIndex: 'TotalSalary',
-			render: (price, record: IStaffSalary) => <p>{numberWithCommas(price)}</p>
+			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
 			title: 'Cập Nhật',
@@ -297,9 +305,11 @@ const SalaryReview = () => {
 			if (res.status == 200) {
 				setPayRoll(res.data.data);
 				setTotalPage(res.data.totalRow);
+				setDropDownVisible(false);
 			}
 			if (res.status == 204) {
 				setPayRoll([]);
+				setDropDownVisible(false);
 			}
 		} catch (error) {
 		} finally {
@@ -316,11 +326,15 @@ const SalaryReview = () => {
 			status: true
 		});
 		try {
-			let res = await staffSalaryApi.postSalaryClosing();
-			console.log(res);
+			let res = await staffSalaryApi.postSalaryClosing(workDays.days);
 			setParams({ ...params });
 			if (res.status == 200) {
-				showNoti('success', 'Thành công');
+				showNoti('success', 'Thành công!');
+				setDropDownVisible(false);
+			}
+			if (res.status == 204) {
+				showNoti('success', 'Lương đã được tính rồi!');
+				setDropDownVisible(false);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -366,6 +380,51 @@ const SalaryReview = () => {
 		);
 	};
 
+	const menu = () => {
+		return (
+			<div className=" d-xl-none">
+				<Card title="Thao tác" style={{ width: 300 }}>
+					<Input
+						onChange={(event) => {
+							setWorkDays({ ...workDays, days: Number(event.target.value) });
+						}}
+						className="style-input w-100 mb-4"
+						name="wordDays"
+						placeholder="Nhập ngày công"
+					/>
+
+					<Popconfirm
+						className="w-100 mb-4"
+						title={renderTitle}
+						visible={visible}
+						onConfirm={postSalaryOfTeacherClosing}
+						onCancel={handleCancel}
+						okButtonProps={{ loading: isLoading.status }}
+					>
+						<button onClick={showPopconfirm} className="btn btn-warning add-new">
+							Tính lương tháng trước
+						</button>
+					</Popconfirm>
+					<Select
+						onChange={onChangeMonth}
+						disabled={false}
+						className="style-input d-md-none w-100 mb-4"
+						defaultValue={months[new Date().getMonth() - 1]}
+					>
+						{months.map((item, index) => (
+							<Option key={index} value={index + 1}>
+								{item}
+							</Option>
+						))}
+					</Select>
+					<div className="w-100 d-md-none">
+						<SortBox space={false} width={278} handleSort={onSort} dataOption={sortOptionList} />
+					</div>
+				</Card>
+			</div>
+		);
+	};
+
 	useEffect(() => {
 		getDataPayroll(currentPage);
 	}, [params]);
@@ -381,20 +440,49 @@ const SalaryReview = () => {
 			dataSource={payRoll}
 			columns={columns}
 			TitleCard={
-				<Popconfirm
-					title={renderTitle}
-					visible={visible}
-					onConfirm={postSalaryOfTeacherClosing}
-					onCancel={handleCancel}
-					okButtonProps={{ loading: isLoading.status }}
-				>
-					<button onClick={showPopconfirm} className="btn btn-warning add-new">
-						Tính lương tháng trước
-					</button>
-				</Popconfirm>
+				<>
+					<div className="d-none d-xl-inline-block">
+						<div className="d-flex justify-content-end align-items-center ">
+							<Input
+								onChange={(event) => {
+									setWorkDays({ ...workDays, days: Number(event.target.value) });
+								}}
+								className="style-input"
+								style={{ width: 150, marginRight: 5 }}
+								name="wordDays"
+								placeholder="Nhập ngày công"
+							/>
+
+							<Popconfirm
+								title={renderTitle}
+								visible={visible}
+								onConfirm={postSalaryOfTeacherClosing}
+								onCancel={handleCancel}
+								okButtonProps={{ loading: isLoading.status }}
+							>
+								<button onClick={showPopconfirm} className="btn btn-warning add-new">
+									Tính lương tháng trước
+								</button>
+							</Popconfirm>
+						</div>
+					</div>
+					<div className="d-inline-block d-xl-none col-md-3 w-25">
+						<Dropdown overlay={menu} trigger={['click']} visible={dropDownVisible}>
+							<a
+								className="ant-dropdown-link"
+								onClick={(e) => {
+									e.preventDefault();
+									setDropDownVisible(!dropDownVisible);
+								}}
+							>
+								<EllipsisOutlined />
+							</a>
+						</Dropdown>
+					</div>
+				</>
 			}
 			Extra={
-				<>
+				<div className="d-none d-md-inline-block">
 					<div className="extra-table">
 						<Select
 							onChange={onChangeMonth}
@@ -411,7 +499,7 @@ const SalaryReview = () => {
 						</Select>
 						<SortBox space={true} width={200} handleSort={onSort} dataOption={sortOptionList} />
 					</div>
-				</>
+				</div>
 			}
 		/>
 	);

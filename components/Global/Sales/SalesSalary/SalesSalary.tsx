@@ -1,15 +1,11 @@
-import {Input} from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
-import {saleCampaignApi, saleSalaryApi, staffApi} from '~/apiBase';
+import { Input } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { saleCampaignApi, saleSalaryApi, staffApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
-import {
-	fmSelectArr,
-	numberWithCommas,
-	parsePriceStrToNumber,
-} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { fmSelectArr, numberWithCommas, parsePriceStrToNumber } from '~/utils/functions';
 
 type IOptionListFilter = {
 	optionSaleCampaignList: IOptionCommon[];
@@ -17,51 +13,50 @@ type IOptionListFilter = {
 };
 function SalesSalary(props) {
 	const [saleSalaryList, setSaleSalaryList] = useState<ISaleSalary[]>([]);
-	const {showNoti} = useWrap();
+	const { showNoti, isAdmin } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const [optionListForFilter, setOptionListForFilter] =
-		useState<IOptionListFilter>({
-			optionSaleCampaignList: [],
-			optionCounselorList: [],
-		});
+	const [optionListForFilter, setOptionListForFilter] = useState<IOptionListFilter>({
+		optionSaleCampaignList: [],
+		optionCounselorList: []
+	});
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Lương tăng dần',
+			text: 'Lương tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Lương giảm dần',
+			text: 'Lương giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Tổng lương tăng dần',
+			text: 'Tổng lương tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 2,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Tổng lương giảm dần',
-		},
+			text: 'Tổng lương giảm dần'
+		}
 	];
 	// FILTER
 	const listFieldInit = {
@@ -72,13 +67,13 @@ function SalesSalary(props) {
 
 		CounselorsID: null,
 		SaleCampaignID: null,
-		DonePaid: false,
+		DonePaid: false
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 
@@ -88,11 +83,11 @@ function SalesSalary(props) {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -100,11 +95,11 @@ function SalesSalary(props) {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -112,7 +107,7 @@ function SalesSalary(props) {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -122,7 +117,7 @@ function SalesSalary(props) {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 
@@ -131,7 +126,7 @@ function SalesSalary(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await saleSalaryApi.getAll(filters);
 			if (res.status === 200) {
@@ -147,7 +142,7 @@ function SalesSalary(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -159,29 +154,21 @@ function SalesSalary(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const [counselorRes, saleCampaignRes] = await Promise.all([
-				staffApi.getAll({selectAll: true, RoleID: 6}),
-				saleCampaignApi.getAll({selectAll: true}),
+				staffApi.getAll({ selectAll: true, RoleID: 6 }),
+				saleCampaignApi.getAll({ selectAll: true })
 			]);
 			const rs: IOptionListFilter = {
 				optionSaleCampaignList: [],
-				optionCounselorList: [],
+				optionCounselorList: []
 			};
 			if (counselorRes.status === 200) {
-				rs.optionCounselorList = fmSelectArr(
-					counselorRes.data.data,
-					'FullNameUnicode',
-					'UserInformationID'
-				);
+				rs.optionCounselorList = fmSelectArr(counselorRes.data.data, 'FullNameUnicode', 'UserInformationID');
 			}
 			if (saleCampaignRes.status === 200) {
-				rs.optionSaleCampaignList = fmSelectArr(
-					saleCampaignRes.data.data,
-					'Name',
-					'ID'
-				);
+				rs.optionSaleCampaignList = fmSelectArr(saleCampaignRes.data.data, 'Name', 'ID');
 			}
 			setOptionListForFilter(rs);
 		} catch (error) {
@@ -189,7 +176,7 @@ function SalesSalary(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -205,12 +192,11 @@ function SalesSalary(props) {
 					? {
 							...newSaleSalaryList[idx],
 							Bonus: parsePriceStrToNumber(vl),
-							TotalSalary:
-								newSaleSalaryList[idx].Salary + parsePriceStrToNumber(vl),
+							TotalSalary: newSaleSalaryList[idx].Salary + parsePriceStrToNumber(vl)
 					  }
 					: {
 							...newSaleSalaryList[idx],
-							Note: vl,
+							Note: vl
 					  };
 			newSaleSalaryList.splice(idx, 1, newSaleSalary);
 			setSaleSalaryList(newSaleSalaryList);
@@ -224,11 +210,11 @@ function SalesSalary(props) {
 			try {
 				setIsLoading({
 					type: 'GET_ALL',
-					status: true,
+					status: true
 				});
 				const newSaleSalaryList = [...saleSalaryList];
 
-				const {ID, Bonus, Note} = newSaleSalaryList[idx];
+				const { ID, Bonus, Note } = newSaleSalaryList[idx];
 
 				const newSaleSalary: {
 					ID: number;
@@ -239,7 +225,7 @@ function SalesSalary(props) {
 					ID,
 					Bonus,
 					Note,
-					DonePaid: true,
+					DonePaid: true
 				};
 
 				const res = await saleSalaryApi.update(newSaleSalary);
@@ -254,7 +240,7 @@ function SalesSalary(props) {
 			} finally {
 				setIsLoading({
 					type: 'GET_ALL',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -264,34 +250,20 @@ function SalesSalary(props) {
 		{
 			title: 'Tư vấn viên',
 			dataIndex: 'CounselorsName',
-			...FilterColumn(
-				'CounselorsID',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionListForFilter.optionCounselorList
-			),
+			...FilterColumn('CounselorsID', onSearch, onResetSearch, 'select', optionListForFilter.optionCounselorList),
 			render: (text) => <p className="font-weight-black">{text}</p>,
-			className:
-				activeColumnSearch === 'CounselorsID' ? 'active-column-search' : '',
+			className: activeColumnSearch === 'CounselorsID' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Chiến dịch',
 			dataIndex: 'SaleCampaignName',
-			...FilterColumn(
-				'SaleCampaignID',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionListForFilter.optionSaleCampaignList
-			),
-			className:
-				activeColumnSearch === 'SaleCampaignID' ? 'active-column-search' : '',
+			...FilterColumn('SaleCampaignID', onSearch, onResetSearch, 'select', optionListForFilter.optionSaleCampaignList),
+			className: activeColumnSearch === 'SaleCampaignID' ? 'active-column-search' : ''
 		},
 		{
 			title: 'Lương chiến dịch',
 			dataIndex: 'Salary',
-			render: (price) => numberWithCommas(price),
+			render: (price) => numberWithCommas(price)
 		},
 		{
 			title: 'Thưởng',
@@ -300,18 +272,18 @@ function SalesSalary(props) {
 				<Input
 					key={item.ID}
 					value={price > 0 ? numberWithCommas(price) : ''}
-					style={{width: 150}}
+					style={{ width: 150 }}
 					placeholder="Nhập thưởng"
 					className="style-input"
 					allowClear={true}
 					onChange={(e) => onChangeBonus('Bonus', e.target.value, idx)}
 				/>
-			),
+			)
 		},
 		{
 			title: 'Tổng lương',
 			dataIndex: 'TotalSalary',
-			render: (price) => numberWithCommas(price),
+			render: (price) => numberWithCommas(price)
 		},
 		{
 			title: 'Ghi chú',
@@ -319,28 +291,25 @@ function SalesSalary(props) {
 			render: (price, item: ISaleSalary, idx) => (
 				<Input
 					key={item.ID}
-					style={{width: 150}}
+					style={{ width: 150 }}
 					placeholder="Nhập ghi chú"
 					className="style-input"
 					allowClear={true}
 					onChange={(e) => onChangeBonus('Note', e.target.value, idx)}
 				/>
-			),
+			)
 		},
 		{
 			width: 140,
 			align: 'center',
 			render: (record: ISaleSalary, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
-					<button
-						className="btn btn-warning add-new"
-						onClick={onUpdateSaleSalary(idx)}
-					>
+					<button className="btn btn-warning add-new" onClick={onUpdateSaleSalary(idx)}>
 						Thanh toán
 					</button>
 				</div>
-			),
-		},
+			)
+		}
 	];
 	return (
 		<PowerTable

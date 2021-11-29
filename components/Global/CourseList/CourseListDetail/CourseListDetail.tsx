@@ -2,7 +2,7 @@ import { Spin, Tabs } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Activity, Bell, Book, Calendar, CheckCircle, Edit, FileText, Flag } from 'react-feather';
+import { Activity, Bell, Book, Calendar, CheckCircle, Edit, FileText, Flag, BookOpen } from 'react-feather';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
@@ -13,6 +13,8 @@ import { useWrap } from '~/context/wrap';
 import ScheduleStudyStudent from '../../ScheduleStudyStudent/ScheduleStudyStudent';
 import CurriculumDetail from '../../Option/ProgramDetail/CurriculumDetail';
 import LessonDetail from '../LessonDetail';
+import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
+import CourseExamAdmin from '../../CourseExam/CourseExamAdmin';
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
@@ -34,6 +36,7 @@ const CourseListDetail = () => {
 						router.push(url);
 					}
 				}}
+				className="list-menu-course"
 			>
 				<TabPane
 					tab={
@@ -46,19 +49,28 @@ const CourseListDetail = () => {
 				>
 					{isAdmin ? <CourseDetailCalendar courseID={parseIntID} /> : <ScheduleStudyStudent />}
 				</TabPane>
-				{!isAdmin && (
-					<TabPane
-						tab={
-							<>
-								<Calendar />
-								<span title="Giáo trình">Giáo trình</span>
-							</>
-						}
-						key="10"
-					>
-						<LessonDetail />
-					</TabPane>
-				)}
+				<TabPane
+					tab={
+						<>
+							<BookOpen />
+							<span title="Giáo trình">Giáo trình</span>
+						</>
+					}
+					key="10"
+				>
+					<LessonDetail />
+				</TabPane>
+				<TabPane
+					tab={
+						<>
+							<Edit />
+							<span title="Giáo trình">Bài tâp/Kiểm tra</span>
+						</>
+					}
+					key="11"
+				>
+					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
+				</TabPane>
 				{isAdmin && (
 					<TabPane
 						tab={

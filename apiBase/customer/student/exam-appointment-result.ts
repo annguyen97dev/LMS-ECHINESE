@@ -33,5 +33,10 @@ export const examAppointmentResultApi = {
 
 	updatePoint(data) {
 		return instance.put('/api/ExamAppointmentExerciseStudent', data);
+	},
+
+	// Kiểm tra đề hẹn test này đã được làm hay chưa
+	checkIsTested(id) {
+		return instance.get<IApiResultData<IExamAppointmentResult[]>>(`/api/ExamAppointmentResultcheckResult/${id}`);
 	}
 };

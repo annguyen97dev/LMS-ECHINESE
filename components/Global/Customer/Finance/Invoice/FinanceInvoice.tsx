@@ -14,7 +14,7 @@ import InvoiceVoucherFilter from '../InvoiceVoucher/InvoiceVoucherFilter';
 
 function FinanceInvoice() {
 	const [invoiceList, setInvoiceList] = useState<IInvoice[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -254,13 +254,15 @@ function FinanceInvoice() {
 		{
 			render: (record: IInvoice, _, idx) => (
 				<>
-					<InvoiceVoucherForm
-						title="Chỉnh sửa phiếu thu"
-						isLoading={isLoading}
-						isUpdate={true}
-						updateObj={record}
-						handleSubmit={onUpdateInvoice(record.ID, idx)}
-					/>
+					{(userInformation?.RoleID == 1 || userInformation?.RoleID == 5 || userInformation?.RoleID == 9) && (
+						<InvoiceVoucherForm
+							title="Chỉnh sửa phiếu thu"
+							isLoading={isLoading}
+							isUpdate={true}
+							updateObj={record}
+							handleSubmit={onUpdateInvoice(record.ID, idx)}
+						/>
+					)}
 					<Link
 						href={{
 							pathname: '/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',

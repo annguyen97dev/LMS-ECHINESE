@@ -1,4 +1,4 @@
-import { Card, Table } from 'antd';
+import { Card, Checkbox, Table } from 'antd';
 import { Item } from 'devextreme-react/file-manager';
 import React, { useEffect, useState } from 'react';
 import { useWrap } from '~/context/wrap';
@@ -36,7 +36,8 @@ const ExpandTable = (props) => {
 		setState({ selectedRowKeys });
 	};
 
-	const onSelectedRowKeysChange = (selectedRowKeys) => {
+	const onSelectedRowKeysChange = (selectedRowKeys, selectRow) => {
+		props.onSelectRow(selectRow) && props.onSelectRow(selectRow);
 		setState({ selectedRowKeys });
 	};
 
@@ -102,7 +103,7 @@ const ExpandTable = (props) => {
 	const rowSelection = {
 		selectedRowKeys: state.selectedRowKeys,
 		onChange: onSelectedRowKeysChange,
-		hideSelectAll: true
+		hideSelectAll: false
 	};
 
 	const onSelect = () => {};
@@ -125,6 +126,14 @@ const ExpandTable = (props) => {
 			closeAllExpandFunc();
 		}
 	}, [props.closeAllExpand]);
+
+	console.log('STATE: ', state);
+
+	useEffect(() => {
+		if (props.isResetKey) {
+			setState({ selectedRowKeys: [] });
+		}
+	}, [props.isResetKey]);
 
 	return (
 		<>
@@ -166,6 +175,7 @@ const ExpandTable = (props) => {
 						onExpandedRowsChange={onChangeExpand}
 						onExpand={onExpand}
 						expandedRowKeys={returnRowKeys()}
+						rowSelection={props.isSelect ? rowSelection : null}
 					/>
 				</Card>
 			</div>

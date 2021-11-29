@@ -156,15 +156,22 @@ function PackagePayment() {
 				studentApi.getAll({ selectAll: true }),
 				packageApi.getAll({ selectAll: true })
 			]).then((res) => {
-				return res.map((r) => r.data.data);
+				return res.map((r) => (r.status === 200 ? r.data.data : []));
 			});
-			if (studentList.length && packageList.length) {
+			if (studentList.length) {
 				const fmOptionStudentList = fmSelectArr(studentList, 'FullNameUnicode', 'UserInformationID');
+				setDataToSearchList((prevState) => ({
+					...prevState,
+					studentList: fmOptionStudentList
+				}));
+			}
+			if (packageList.length) {
 				const fmOptionPackageList = fmSelectArr(packageList, 'Name', 'ID');
-				setDataToSearchList({
-					studentList: fmOptionStudentList,
+
+				setDataToSearchList((prevState) => ({
+					...prevState,
 					packageList: fmOptionPackageList
-				});
+				}));
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

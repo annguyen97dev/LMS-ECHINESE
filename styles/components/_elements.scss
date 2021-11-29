@@ -1373,6 +1373,11 @@ hr {
 	color: $primary-color;
 	margin-bottom: 0;
 }
+.font-weight-green {
+	font-weight: 500;
+	color: $color-success;
+	margin-bottom: 0;
+}
 .font-weight-black {
 	font-weight: 500;
 	color: rgb(99, 99, 99);
@@ -2177,6 +2182,9 @@ hr {
 	color: #447aac;
 }
 .btn-have-icon {
+	svg {
+		font-size: 15px;
+	}
 }
 .limit-text {
 	display: inline;

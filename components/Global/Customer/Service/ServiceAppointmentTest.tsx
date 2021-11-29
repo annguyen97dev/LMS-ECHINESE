@@ -299,7 +299,8 @@ export default function ServiceAppointmentTest(props) {
 
 					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
-					showNoti('danger', error.message);
+					// showNoti('danger', error.message);
+					console.log(error);
 				} finally {
 				}
 			})();

@@ -8,7 +8,7 @@ import CourseExamPoint from '~/components/Global/CourseExam/CourseExamPoint';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 
-const CouseExamStudent = (props) => {
+const CouseExamStudentPage = (props) => {
 	const { Option } = Select;
 	const { studentID } = props;
 	// ------ BASE USESTATE TABLE -------
@@ -217,5 +217,5 @@ const CouseExamStudent = (props) => {
 	);
 };
 
-CouseExamStudent.layout = LayoutBase;
-export default CouseExamStudent;
+CouseExamStudentPage.layout = LayoutBase;
+export default CouseExamStudentPage;

@@ -54,7 +54,7 @@ export const AdminChildMenu = [
 				Key: '/newsfeed',
 				Route: '/newsfeed',
 				Icon: '',
-				Text: 'Newsfeed'
+				Text: 'Tin tức'
 			}
 		]
 	},
@@ -120,20 +120,20 @@ export const AdminChildMenu = [
 			//     Route: "/course/schedule-study-teacher",
 			//     Text: "Lịch dạy giáo viên",
 			//   },
-			{
-				TypeItem: 'single',
-				Key: '/course/course-list-report',
-				Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
-				Route: '/course/course-list-report',
-				Text: 'Danh sách khóa học - báo cáo'
-			},
-			{
-				TypeItem: 'single',
-				Key: '/course/course-buy',
-				Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
-				Route: '/course/course-buy',
-				Text: 'Danh sách khóa học - mua bán'
-			},
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-list-report',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-list-report',
+			// 	Text: 'Danh sách khóa học - báo cáo'
+			// },
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-buy',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-buy',
+			// 	Text: 'Danh sách khóa học - mua bán'
+			// },
 			{
 				TypeItem: 'single',
 				Key: '/course/register-course',
@@ -590,14 +590,14 @@ export const AdminChildMenu = [
 						Route: '/staff/saler-revenue',
 						Text: 'Doanh thu tư vấn viên',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/staff/config-bounus',
-						Route: '/staff/config-bounus',
-						Text: 'Cấu hình thưởng',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/staff/config-bounus',
+					// 	Route: '/staff/config-bounus',
+					// 	Text: 'Cấu hình thưởng',
+					// 	Icon: ''
+					// }
 				]
 			},
 			{
@@ -657,13 +657,13 @@ export const AdminChildMenu = [
 						Text: 'Thi cử',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/course-exam',
-						Route: '/customer/student/course-exam',
-						Text: 'Kiểm tra',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/student/course-exam',
+					// 	Route: '/customer/student/course-exam',
+					// 	Text: 'Kiểm tra',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/package/pay-fix-list',
@@ -1032,13 +1032,7 @@ export const AdminChildMenu = [
 		// 		Text: 'Nguồn khách hàng',
 		// 		Icon: '',
 		// 	},
-		// 	{
-		// 		ItemType: 'single',
-		// 		Key: '/option/day-off',
-		// 		Route: '/option/day-off',
-		// 		Text: 'Ngày nghỉ',
-		// 		Icon: '',
-		// 	},
+
 		// 	{
 		// 		ItemType: 'single',
 		// 		Key: '/option/jobs',

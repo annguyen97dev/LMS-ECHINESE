@@ -63,19 +63,33 @@ export const StudentChildMenu = [
 				Text: 'Khóa học của bạn'
 			},
 			{
-				TypeItem: 'single',
-				Key: '/customer/student/course-exam-student',
-				Route: '/customer/student/course-exam-student',
-				Icon: '',
-				Text: 'Bài kiểm tra & bài tập'
-			}
+				ItemType: 'single',
+				Key: '/option/services',
+				Route: '/option/services',
+				Text: 'Dịch vụ đã mua',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/option/day-off',
+				Route: '/option/day-off',
+				Text: 'Ngày nghỉ',
+				Icon: ''
+			},
 			// {
 			// 	TypeItem: 'single',
-			// 	Key: '/customer/student/lesson-detail',
-			// 	Route: '/customer/student/lesson-detail',
+			// 	Key: '/customer/student/course-exam-student',
+			// 	Route: '/customer/student/course-exam-student',
 			// 	Icon: '',
-			// 	Text: 'Nội dung buổi học'
-			// }
+			// 	Text: 'Bài kiểm tra & bài tập'
+			// },
+			{
+				ItemType: 'single',
+				Key: '/option/faq',
+				Route: '/option/faq',
+				Text: 'Câu hỏi thường gặp',
+				Icon: ''
+			}
 		]
 	},
 	{

@@ -1,6 +1,4 @@
-type IStatStudentDay = IBaseApi<
-  {
-    Year: number;
-    Month: number;
-  }[]
->;
+type IStatStudentDay = IBaseApi<{
+	Year: number;
+	Month: number;
+}>;

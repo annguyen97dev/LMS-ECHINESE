@@ -416,12 +416,12 @@ const PackageResultList = (props) => {
 			columns={columns}
 			TitleCard={
 				<>
-					<PackageResultUpdateTeacher
+					{/* <PackageResultUpdateTeacher
 						reloadData={(firstPage) => {
 							setCurrentPage(1);
 							getDataSetPackageResult(firstPage);
 						}}
-					/>
+					/> */}
 				</>
 			}
 			Extra={

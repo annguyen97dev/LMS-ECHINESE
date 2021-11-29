@@ -211,7 +211,7 @@ const ExamAppointmentResult = () => {
 					<div className="row">
 						<div className="col-md-10 col-12">
 							<Card
-								className="table-medium"
+								className=""
 								title={
 									<div className="title-question-bank">
 										<h3 className="title-big">
@@ -242,7 +242,7 @@ const ExamAppointmentResult = () => {
 										<button className="btn btn-secondary ml-2" onClick={() => setShowMainTest(true)}>
 											<span className="d-flex align-items-center">
 												<ProfileOutlined className="mr-2" />
-												view rút gọn
+												Xem chi tiết
 											</span>
 										</button>
 									</>
@@ -284,7 +284,7 @@ const ExamAppointmentResult = () => {
 											<Spin />
 										</div>
 									) : detailResult?.length == 0 ? (
-										<p className="text-center font-weight-bold">Không có dữ liệu</p>
+										<p className="text-center font-weight-bold mt-2">Không có dữ liệu</p>
 									) : (
 										doneTestData && (
 											<>

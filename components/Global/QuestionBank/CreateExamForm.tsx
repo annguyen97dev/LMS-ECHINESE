@@ -79,6 +79,8 @@ const CreateExamForm = (props) => {
 	const handleChange_type = (value) => {
 		if (value === 1) {
 			setIsTest(true);
+		} else {
+			setIsTest(false);
 		}
 	};
 
@@ -266,7 +268,7 @@ const CreateExamForm = (props) => {
 						</div>
 						<div className="col-md-6 col-12">
 							<SelectField
-								disabled={isTest ? true : dataItem?.ID && true}
+								disabled={isTest ? true : dataItem?.ID ? true : false}
 								form={form}
 								name="ProgramID"
 								label="Chương trình"
@@ -278,7 +280,7 @@ const CreateExamForm = (props) => {
 						</div>
 						<div className="col-md-6 col-12">
 							<SelectField
-								disabled={isTest ? true : dataItem?.ID && true}
+								disabled={isTest ? true : dataItem?.ID ? true : false}
 								form={form}
 								name="CurriculumID"
 								label="Giáo trình"
