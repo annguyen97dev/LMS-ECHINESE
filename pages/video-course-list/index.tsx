@@ -36,40 +36,42 @@ const ItemVideo = ({ item, onRate }) => {
 				)}
 			</Link>
 
-			<div className="p-3 video-course-list__item__content">
-				<Link
-					href={{
-						pathname: '/video-learning',
-						query: {
-							course: item.ID,
-							complete: item.Complete + '/' + item.TotalLesson,
-							name: item.VideoCourseName
-						}
-					}}
-				>
+			<Link
+				href={{
+					pathname: '/video-learning',
+					query: {
+						ID: item.ID,
+						course: item.VideoCourseID,
+						complete: item.Complete + '/' + item.TotalLesson,
+						name: item.VideoCourseName
+					}
+				}}
+			>
+				<div className="p-3 video-course-list__item__content">
 					<a className="title in-2-line">{item.VideoCourseName}</a>
-				</Link>
 
-				<>
-					<Progress
-						className="text-process"
-						percent={(item.Complete / item.TotalLesson) * 100} // 10 - CHANGE TO TOTALESSION
-						status="active"
-					/>
+					<>
+						<Progress
+							className="text-process"
+							percent={(item.Complete / item.TotalLesson) * 100} // 10 - CHANGE TO TOTALESSION
+							status="active"
+						/>
 
-					<div className="pr-3 pl-3 pt-3 row rate-container">
-						<Rate className="rate-start" disabled value={item.RatingNumber} />
-						<a
-							onClick={() => {
-								onRate(item);
-							}}
-							className="none-selection btn-rate "
-						>
-							Đánh giá
-						</a>
-					</div>
-				</>
-			</div>
+						<div className="pr-3 pl-3 pt-3 row rate-container">
+							<Rate className="rate-start" disabled value={item.RatingNumber} />
+							<a
+								onClick={(e) => {
+									e.stopPropagation();
+									onRate(item);
+								}}
+								className="none-selection btn-rate "
+							>
+								Đánh giá
+							</a>
+						</div>
+					</>
+				</div>
+			</Link>
 		</div>
 	);
 };
