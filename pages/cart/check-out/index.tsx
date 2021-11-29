@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Radio, Input, Popover, Checkbox, DatePicker, Skeleton } from 'antd';
+import { Radio, Input, Popover, Checkbox, DatePicker, Skeleton, Dropdown } from 'antd';
 import Link from 'next/link';
 import Notifiaction from './../../../components/Header/notification';
-import { UserOutlined, RedoOutlined, LogoutOutlined, LoginOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, RedoOutlined, LogoutOutlined, LoginOutlined, LockOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { session, signIn, signOut, useSession } from 'next-auth/client';
 import { FormOutlined } from '@ant-design/icons';
 import { User } from 'react-feather';
@@ -11,6 +11,7 @@ import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
 import { numberWithCommas } from '~/utils/functions';
 import moment from 'moment';
 import { parsePriceStrToNumber } from './../../../utils/functions/index';
+import { SearchOutlined } from '@ant-design/icons';
 
 const CheckOut = () => {
 	const [method, setMothod] = useState('card');
@@ -18,10 +19,12 @@ const CheckOut = () => {
 	const [dataUser, setDataUser] = useState<IUser>();
 	const [cartItems, setCartItems] = useState<IShoppingCart[]>();
 	const [discounts, setDiscounts] = useState(0);
+	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
 		loading: false
 	});
+	const { Search } = Input;
 	const { titlePage, userInformation } = useWrap();
 	const { RangePicker } = DatePicker;
 	const monthFormat = 'MM/YYYY';
@@ -32,10 +35,6 @@ const CheckOut = () => {
 	});
 
 	const renderPaymentMethod = () => {
-		let dummyTxt = '1234567890123456';
-
-		let joy = dummyTxt.match(/.{1,4}/g);
-		console.log(joy);
 		const onChangeCheckRemember = () => {};
 		return (
 			<>
@@ -237,50 +236,110 @@ const CheckOut = () => {
 	const onChangeRadio = (event) => {
 		setMothod(event.target.value);
 	};
+
+	const menuDropdown = () => {
+		return (
+			<>
+				<div className="menu__dropdown d-inline-block d-md-none" style={{ width: 300 }}>
+					<div className="d-inline-block d-md-none ">
+						<Search
+							onChange={(event) => {}}
+							name="CourseSearch"
+							placeholder="Tìm khóa học"
+							className="style-input mb-3"
+							allowClear
+							enterButton={<SearchOutlined />}
+							size="large"
+						/>
+						<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
+							<div className="user-wrap">
+								<div className="user-info">
+									{session?.user ? (
+										<div className="user-wrap">
+											<div className="user-img">
+												<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+											</div>
+											<div className="user-info">
+												<p className="user-name">{dataUser?.FullNameUnicode}</p>
+												<p className="user-position">{dataUser?.RoleName}</p>
+											</div>
+										</div>
+									) : (
+										<p>Tài khoản</p>
+									)}
+
+									{/* <div className="user-name-mobile">
+									<User />
+								</div> */}
+								</div>
+							</div>
+						</Popover>
+					</div>
+				</div>
+			</>
+		);
+	};
+
 	return (
 		<div style={{ backgroundColor: '#fff' }}>
 			<header>
-				<div className="shopping__cart-header d-flex justify-content-between align-items-center row">
-					<div className="header__logo col-2">
+				<div className="shopping__cart-header justify-content-between align-items-center row">
+					<div className="header__logo col-6 col-md-3">
 						<Link href="/">
 							<a href="#">
+								{' '}
 								<img className="logo-img" src="/images/logo-final.jpg" alt="logo branch"></img>
 							</a>
 						</Link>
 					</div>
-					<div className="header__search col-8">
+					<div className="header__search d-none d-md-inline-block col-md-5">
 						<Input onChange={(event) => {}} name="CourseSearch" placeholder="Tìm khóa học" className="style-input" />
 					</div>
-					<div className="header__profile col-2">
+					<div className="header__profile col-2 col-md-3">
 						<div className="col-setting">
 							<ul className="col-setting-list">
-								<li className="notification">
+								<li className="notification d-none d-md-inline-block">
 									<Notifiaction />
 								</li>
 								<li className="user">
-									<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
-										<div className="user-wrap">
-											<div className="user-info">
-												{session?.user ? (
-													<div className="user-wrap">
-														<div className="user-img">
-															<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+									<div className="d-inline-block d-md-none  w-25 ">
+										<Dropdown overlay={menuDropdown} trigger={['click']} visible={dropDownVisible}>
+											<a
+												className="ant-dropdown-link"
+												onClick={(e) => {
+													e.preventDefault();
+													setDropDownVisible(!dropDownVisible);
+												}}
+											>
+												<EllipsisOutlined />
+											</a>
+										</Dropdown>
+									</div>
+									<div className="d-none d-md-inline-block ">
+										<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
+											<div className="user-wrap">
+												<div className="user-info">
+													{session?.user ? (
+														<div className="user-wrap">
+															<div className="user-img">
+																<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+															</div>
+															<div className="user-info">
+																<p className="user-name">{dataUser?.FullNameUnicode}</p>
+																<p className="user-position">{dataUser?.RoleName}</p>
+															</div>
 														</div>
-														<div className="user-info">
-															<p className="user-name">{dataUser?.FullNameUnicode}</p>
-															<p className="user-position">{dataUser?.RoleName}</p>
-														</div>
-													</div>
-												) : (
-													<p>Tài khoản</p>
-												)}
-
+													) : (
+														<p>Tài khoản</p>
+													)}
+													{/* 
 												<div className="user-name-mobile">
 													<User />
+												</div> */}
 												</div>
 											</div>
-										</div>
-									</Popover>
+										</Popover>
+									</div>
 								</li>
 							</ul>
 						</div>
@@ -288,13 +347,15 @@ const CheckOut = () => {
 				</div>
 			</header>
 			<div className="container checkout mt-5">
-				<Link href="/cart/shopping-cart">
-					<p className="text-right font-weight-primary mb-5" style={{ cursor: 'pointer' }}>
-						Hủy thanh toán
-					</p>
-				</Link>
+				<div className="d-flex justify-content-end">
+					<Link href="/cart/shopping-cart">
+						<p className="text-right font-weight-primary mb-5" style={{ cursor: 'pointer', width: 110 }}>
+							Hủy thanh toán
+						</p>
+					</Link>
+				</div>
 				<div className="row">
-					<div className="checkout__content col-7">
+					<div className="checkout__content col-12 col-md-7">
 						<h1>Thanh toán</h1>
 						<Radio.Group onChange={onChangeRadio} value={method}>
 							<div className="payment-card">
@@ -319,46 +380,48 @@ const CheckOut = () => {
 							{isLoading.loading ? <Skeleton active /> : renderCartItems()}
 						</div>
 					</div>
-					<div className="sumary col-5">
-						<h4>Tổng thanh toán</h4>
-						<div className="row">
-							<div className="col-7">
-								<p>Giá gốc</p>
+					<div className="sumary col-12 col-md-5 mt-4">
+						<div className="sumary-wrap">
+							<h4>Tổng thanh toán</h4>
+							<div className="row">
+								<div className="col-7">
+									<p>Giá gốc</p>
+								</div>
+								<div className="col-5">
+									<p>
+										{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0))}
+										vnd
+									</p>
+								</div>
 							</div>
-							<div className="col-5">
-								<p>
-									{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0))}
-									vnd
-								</p>
+							<div className="row sumary__price">
+								<div className="col-7">
+									<p>Khuyến mãi</p>
+								</div>
+								<div className="col-5">
+									<p>- {discounts} vnd</p>
+								</div>
 							</div>
+							<div className="row">
+								<div className="col-7" style={{ fontWeight: 700 }}>
+									<p>Tổng cộng:</p>
+								</div>
+								<div className="col-5" style={{ fontWeight: 700 }}>
+									<p>
+										{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0) - discounts)}
+										vnd
+									</p>
+								</div>
+							</div>
+							<p>
+								Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
+								jurisdictions.
+							</p>
+							<p>By completing your purchase you agree to these Terms of Service.</p>
+							<Link href="/cart/check-out">
+								<button className="btn btn-primary w-100">Thanh toán</button>
+							</Link>
 						</div>
-						<div className="row sumary__price">
-							<div className="col-7">
-								<p>Khuyến mãi</p>
-							</div>
-							<div className="col-5">
-								<p>- {discounts} vnd</p>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-7" style={{ fontWeight: 700 }}>
-								<p>Tổng cộng:</p>
-							</div>
-							<div className="col-5" style={{ fontWeight: 700 }}>
-								<p>
-									{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0) - discounts)}
-									vnd
-								</p>
-							</div>
-						</div>
-						<p>
-							Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
-							jurisdictions.
-						</p>
-						<p>By completing your purchase you agree to these Terms of Service.</p>
-						<Link href="/cart/check-out">
-							<button className="btn btn-primary w-100">Thanh toán</button>
-						</Link>
 					</div>
 				</div>
 			</div>
