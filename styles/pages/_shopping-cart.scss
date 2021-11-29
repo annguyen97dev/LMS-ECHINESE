@@ -269,12 +269,13 @@
 	}
 }
 .shopping__cart-body {
-	height: 95vh;
+	height: 100%;
 	.shopping__cart-content {
 		.shopping__cart-items {
 			border: solid 1px #d1d7dc;
-			border-radius: 5px;
+			border-radius: 10px;
 			.cart__item {
+				background-color: #fff;
 				border-bottom: solid 1px #d1d7dc;
 				padding: 10px 0;
 				img {
