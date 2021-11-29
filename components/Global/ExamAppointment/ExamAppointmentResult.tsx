@@ -148,7 +148,13 @@ const ExamAppointmentResult = () => {
 		let indexStart = listQuestionID.indexOf(data[0].ExerciseID);
 		let indexEnd = listQuestionID.indexOf(data[data.length - 1].ExerciseID);
 
-		let text = 'Câu ' + (indexStart + 1).toString() + ' - ' + (indexEnd + 1).toString();
+		let text = '';
+		if (indexStart === indexEnd) {
+			text = 'Câu ' + (indexStart + 1).toString();
+		} else {
+			text = 'Câu ' + (indexStart + 1).toString() + ' - ' + (indexEnd + 1).toString();
+		}
+
 		return <p className="space-question">{text}</p>;
 	};
 

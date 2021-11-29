@@ -352,20 +352,20 @@ export const AdminChildMenu = [
 						Text: 'Thông tin thanh toán',
 						Icon: ''
 					},
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/customer/finance/finance-cashier-refund',
-					// 	Route: '/customer/finance/finance-cashier-refund',
-					// 	Text: 'Yêu cầu hoàn tiền',
-					// 	Icon: ''
-					// },
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/customer/finance/finance-cashier-payment',
-					// 	Route: '/customer/finance/finance-cashier-payment',
-					// 	Text: 'Phiếu chi',
-					// 	Icon: ''
-					// },
+					{
+						ItemType: 'single',
+						Key: '/customer/finance/finance-cashier-refund',
+						Route: '/customer/finance/finance-cashier-refund',
+						Text: 'Yêu cầu hoàn tiền',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/customer/finance/finance-cashier-payment',
+						Route: '/customer/finance/finance-cashier-payment',
+						Text: 'Phiếu chi',
+						Icon: ''
+					},
 					{
 						ItemType: 'single',
 						key: '/customer/finance/finance-cashier-invoice',

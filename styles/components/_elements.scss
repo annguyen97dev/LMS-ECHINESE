@@ -2199,3 +2199,14 @@ hr {
 		line-height: 0;
 	}
 }
+.input-position {
+	width: 60px;
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}
+.line-height-0 {
+	line-height: 0;
+}

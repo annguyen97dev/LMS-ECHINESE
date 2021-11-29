@@ -24,7 +24,7 @@ const CurriculumDetail = (props) => {
 	const router = useRouter();
 	const { courseID: courseID, slug: slug } = router.query;
 	// const curriculumID = parseInt(router.query.slug as string);
-	const { curriculumID, dataSubject, loadingOut, isNested } = props;
+	const { curriculumID, dataSubject, loadingOut, isNested, isFixed } = props;
 
 	const [saveValue, setSaveValue] = useState([]);
 	const [loadingSelect, setLoadingSelect] = useState({
@@ -276,13 +276,17 @@ const CurriculumDetail = (props) => {
 			render: (text, data) => (
 				<div>
 					{isAdmin ? (
-						<Switch
-							checked={data.IsExam}
-							checkedChildren="Kiểm tra"
-							unCheckedChildren="Kiểm tra"
-							onChange={(checked) => onChange_typeLesson(data.ID, checked)}
-							loading={loadingCheck.id == data.ID && loadingCheck.status}
-						/>
+						isFixed ? (
+							<Switch
+								checked={data.IsExam}
+								checkedChildren="Kiểm tra"
+								unCheckedChildren="Kiểm tra"
+								onChange={(checked) => onChange_typeLesson(data.ID, checked)}
+								loading={loadingCheck.id == data.ID && loadingCheck.status}
+							/>
+						) : (
+							<p>{data?.IsExam ? 'Kiểm tra' : 'Buổi học'}</p>
+						)
 					) : (
 						<p>{data?.IsExam ? 'Kiểm tra' : 'Buổi học'}</p>
 					)}
@@ -336,6 +340,7 @@ const CurriculumDetail = (props) => {
 							onFetchData={() => setTodoApi({ ...todoApi })}
 							courseID={courseID}
 							dataRow={data}
+							isFixed={isFixed}
 						/>
 					) : (
 						<AddExamForm

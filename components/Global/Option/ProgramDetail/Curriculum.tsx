@@ -250,6 +250,7 @@ const Curriculum = (props) => {
 		return (
 			<>
 				<CurriculumDetail
+					isFixed={true}
 					isNested={true}
 					loadingOut={isLoading}
 					dataSubject={dataSubject}
