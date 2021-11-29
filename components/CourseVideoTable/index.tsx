@@ -144,10 +144,10 @@ const CourseVideoTable = (props) => {
 								setActiveIndex(index);
 							}
 						})}
-						onExpandedRowsChange={onChangeExpand}
+						// onExpandedRowsChange={onChangeExpand}
 						// expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
-						onExpand={onExpand}
-						expandedRowKeys={returnRowKeys()}
+						// onExpand={onExpand}
+						// expandedRowKeys={returnRowKeys()}
 					/>
 				</Card>
 			</div>

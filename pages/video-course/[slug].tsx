@@ -40,6 +40,7 @@ const VideoCourseDetail = (props) => {
 
 	const [showPreview, setShowPreview] = useState(false);
 	const [buyLoading, setByLoading] = useState(false);
+	const [buyNowLoading, setByNowLoading] = useState(false);
 
 	useEffect(() => {
 		getCourseDetails(slug);
@@ -148,25 +149,30 @@ const VideoCourseDetail = (props) => {
 	const [currentVideo, setCurrentVideo] = useState('');
 
 	// ADD COURSE VIDEO TO CART
-	const postAddToCard = async (data) => {
+	const postAddToCard = async (data, type) => {
 		try {
 			const res = await VideoCourseCardApi.add(data);
-			res.status == 200 && setShowModal(true);
+			if (type == 1) {
+				res.status == 200 && setShowModal(true);
+			} else {
+				router.push('/cart/check-out');
+			}
 		} catch (error) {
 			showNoti('error', 'Thêm không thành công');
 		} finally {
 			setByLoading(false);
+			setByNowLoading(false);
 		}
 	};
 
 	// HANDLE AD TO CARD (STUDENT)
-	const addToCard = () => {
-		setByLoading(true);
+	const addToCard = (type) => {
+		type == 1 ? setByLoading(true) : setByNowLoading(true);
 		let temp = {
 			VideoCourseID: slug,
 			Quantity: 1
 		};
-		postAddToCard(temp);
+		postAddToCard(temp, type);
 	};
 
 	const handlePlayVideo = (e) => {
@@ -244,7 +250,7 @@ const VideoCourseDetail = (props) => {
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
-												addToCard();
+												addToCard(1);
 											}}
 											className="btn btn-primary btn-add"
 										>
@@ -269,7 +275,15 @@ const VideoCourseDetail = (props) => {
 												Kích hoạt
 											</button>
 										)}
-										<button className="btn btn-light btn-add mt-2">Mua ngay</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												addToCard(0);
+											}}
+											className="btn btn-light btn-add mt-2"
+										>
+											Mua ngay {buyNowLoading && <Spin className="loading-base" />}
+										</button>
 									</>
 								)}
 							</div>
@@ -326,7 +340,7 @@ const VideoCourseDetail = (props) => {
 										<button
 											onClick={(e) => {
 												e.stopPropagation();
-												addToCard();
+												addToCard(1);
 											}}
 											className="btn btn-primary btn-add"
 										>
@@ -351,7 +365,15 @@ const VideoCourseDetail = (props) => {
 												Kích hoạt
 											</button>
 										)}
-										<button className="btn btn-light btn-add mt-2">Mua ngay</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												addToCard(0);
+											}}
+											className="btn btn-light btn-add mt-2"
+										>
+											Mua ngay {buyNowLoading && <Spin className="loading-base" />}
+										</button>
 									</>
 								)}
 							</div>
@@ -475,7 +497,7 @@ const VideoCourseDetail = (props) => {
 						<i className="fas fa-check-circle vc-store_modal_icon"></i>
 						<span className="vc-store_modal_title">Thêm thành công</span>
 					</div>
-					<a href="/video-course-card">
+					<a href="/cart/shopping-cart">
 						<button type="button" className="btn btn-primary">
 							Đến giỏ hàng
 						</button>

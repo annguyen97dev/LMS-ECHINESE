@@ -139,9 +139,11 @@ const VideoCourseCard = () => {
 							<i className="fas fa-check-circle vc-store_modal_icon"></i>
 							<span className="vc-store_modal_title">Thêm thành công</span>
 						</div>
-						<button type="button" className="btn btn-primary" onClick={() => {}}>
-							Đến giỏ hàng
-						</button>
+						<a href="/cart/shopping-cart">
+							<button type="button" className="btn btn-primary">
+								Đến giỏ hàng
+							</button>
+						</a>
 					</div>
 					{/* <div className="m-0 p-0 mt-4 vc-store_modal_card">
 						<List

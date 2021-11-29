@@ -14,6 +14,7 @@ import { Eye } from 'react-feather';
 import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 import CourseVideoTable from '~/components/CourseVideoTable';
 import { VideoCourseListApi } from '~/apiBase';
+import { useRouter } from 'next/router';
 
 const key = 'updatable';
 const { Search } = Input;
@@ -21,6 +22,7 @@ const { Search } = Input;
 let pageIndex = 1;
 
 const VideoCourseStore = () => {
+	const router = useRouter();
 	const { userInformation, pageSize, showNoti } = useWrap();
 	const [data, setData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
@@ -42,6 +44,7 @@ const VideoCourseStore = () => {
 	const [dataCurriculum, setDataCurriculum] = useState([]);
 	const [category, setCategory] = useState([]);
 	const [categoryLevel, setCategoryLevel] = useState([]);
+	const [buyNowLoading, setByNowLoading] = useState(false);
 
 	const openNotification = () => {
 		notification.open({
@@ -128,25 +131,31 @@ const VideoCourseStore = () => {
 	};
 
 	// ADD COURSE VIDEO TO CART
-	const postAddToCard = async (data) => {
+	const postAddToCard = async (data, type) => {
 		try {
 			const res = await VideoCourseCardApi.add(data);
-			res.status == 200 && setShowModal(true);
-			res.status !== 200 && openNotification();
+			if (type == 1) {
+				res.status == 200 && setShowModal(true);
+				res.status !== 200 && openNotification();
+			} else {
+				router.push('/cart/check-out');
+			}
 		} catch (error) {
 		} finally {
 			setAddToCardLoading(false);
+			setByNowLoading(false);
 		}
 	};
 
 	// HANDLE AD TO CARD (STUDENT)
-	const addToCard = (p) => {
-		setAddToCardLoading(true);
+	const addToCard = (p, type) => {
+		type == 1 ? setAddToCardLoading(true) : setByNowLoading(true);
+
 		let temp = {
 			VideoCourseID: p.ID,
 			Quantity: 1
 		};
-		postAddToCard(temp);
+		postAddToCard(temp, type);
 	};
 
 	// CREATE NEW COURSE
@@ -411,6 +420,7 @@ const VideoCourseStore = () => {
 								<RenderItemCard
 									_onSubmitEdit={(data: any) => updateCourse(data)}
 									loading={addToCardLoading}
+									buyNowLoading={buyNowLoading}
 									activeLoading={activeLoading}
 									addToCard={addToCard}
 									item={item}
@@ -439,7 +449,7 @@ const VideoCourseStore = () => {
 									<i className="fas fa-check-circle vc-store_modal_icon"></i>
 									<span className="vc-store_modal_title">Thêm thành công</span>
 								</div>
-								<a href="/video-course-card">
+								<a href="/cart/shopping-cart">
 									<button type="button" className="btn btn-primary">
 										Đến giỏ hàng
 									</button>

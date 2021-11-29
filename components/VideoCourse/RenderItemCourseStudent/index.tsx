@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { parseToMoney } from '~/utils/functions';
 import { Popover, Spin, Input } from 'antd';
 import { useWrap } from '~/context/wrap';
+import { useRouter } from 'next/router';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
 
 // CARD ITEM ON VIDEO COURSE
-const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive }) => {
+const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading }) => {
 	const { userInformation } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
@@ -81,7 +82,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 								<button
 									onClick={(e) => {
 										e.stopPropagation();
-										addToCard(item);
+										addToCard(item, 1);
 									}}
 									className="btn btn-primary btn-add"
 								>
@@ -105,7 +106,15 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 										Kích hoạt
 									</button>
 								)}
-								<button className="btn btn-light btn-add mt-2">Mua ngay</button>
+								<button
+									onClick={(e) => {
+										e.stopPropagation();
+										addToCard(item, 0);
+									}}
+									className="btn btn-light btn-add mt-2"
+								>
+									Mua ngay {buyNowLoading && <Spin className="loading-base" />}
+								</button>
 							</>
 						)}
 					</>

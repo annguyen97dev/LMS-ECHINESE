@@ -194,42 +194,42 @@ const VideoCourseList = () => {
 			dataIndex: 'StatusName',
 			key: 'StatusName',
 			align: 'center'
-		},
-		{
-			title: 'Thao tác',
-			dataIndex: 'Action',
-			key: 'action',
-			render: (Action, data, index) => (
-				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					{/* <Link
-						href={{
-							// pathname: '/option/program/program-detail/[slug]',
-							query: { slug: data.ID }
-						}}
-					>
-						<Tooltip title="Chi tiết chương trình">
-							<button className="btn btn-icon" style={{ marginRight: -10, marginLeft: -10 }}>
-								<Eye />
-							</button>
-						</Tooltip>
-					</Link> */}
-
-					<div>
-						{/* <ModalCreateVideoCourse
-							dataLevel={categoryLevel}
-							dataCategory={category}
-							getIndex={() => {}}
-							_onSubmitEdit={(data: any) => updateCourse(data)}
-							programID={data.ID}
-							rowData={data}
-							dataGrade={data}
-							showAdd={true}
-							isLoading={isLoading}
-						/> */}
-					</div>
-				</div>
-			)
 		}
+		// {
+		// 	title: 'Thao tác',
+		// 	dataIndex: 'Action',
+		// 	key: 'action',
+		// 	render: (Action, data, index) => (
+		// 		<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+		// 			{/* <Link
+		// 				href={{
+		// 					// pathname: '/option/program/program-detail/[slug]',
+		// 					query: { slug: data.ID }
+		// 				}}
+		// 			>
+		// 				<Tooltip title="Chi tiết chương trình">
+		// 					<button className="btn btn-icon" style={{ marginRight: -10, marginLeft: -10 }}>
+		// 						<Eye />
+		// 					</button>
+		// 				</Tooltip>
+		// 			</Link> */}
+
+		// 			<div>
+		// 				{/* <ModalCreateVideoCourse
+		// 					dataLevel={categoryLevel}
+		// 					dataCategory={category}
+		// 					getIndex={() => {}}
+		// 					_onSubmitEdit={(data: any) => updateCourse(data)}
+		// 					programID={data.ID}
+		// 					rowData={data}
+		// 					dataGrade={data}
+		// 					showAdd={true}
+		// 					isLoading={isLoading}
+		// 				/> */}
+		// 			</div>
+		// 		</div>
+		// 	)
+		// }
 	];
 
 	useEffect(() => {
