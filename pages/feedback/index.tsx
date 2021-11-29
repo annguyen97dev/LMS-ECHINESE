@@ -16,6 +16,7 @@ const { Search } = Input;
 const FeedbackList = () => {
 	const [selectedItem, setSelectedItem] = useState({ ID: '' });
 	const { userInformation } = useWrap();
+	const [loading, setLoading] = useState(true);
 
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -136,6 +137,8 @@ const FeedbackList = () => {
 		};
 		await getAllFeedBack(temp);
 		getFeedBackCategory();
+
+		setLoading(false);
 	};
 
 	// GET ALL DATA WITH FILTER
@@ -218,6 +221,7 @@ const FeedbackList = () => {
 					</Modal>
 
 					<FeedbackTable
+						loading={loading}
 						columns={columns}
 						dataSource={allFeedback}
 						TitlePage="Feedback List"

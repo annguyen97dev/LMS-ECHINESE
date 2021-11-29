@@ -14,7 +14,8 @@ MenuFeedBack.propTypes = {
 	currentItem: PropTypes.string,
 	handleClickItem: PropTypes.func,
 	handleClickMenu: PropTypes.func,
-	handleCreateNew: PropTypes.func
+	handleCreateNew: PropTypes.func,
+	loading: PropTypes.bool
 };
 
 MenuFeedBack.defaultProps = {
@@ -25,11 +26,22 @@ MenuFeedBack.defaultProps = {
 	currentItem: '',
 	handleClickItem: null,
 	handleClickMenu: null,
-	handleCreateNew: null
+	handleCreateNew: null,
+	loading: true
 };
 
 function MenuFeedBack(props) {
-	const { handleClickItem, feedbackList, currentItem, feedbackMenu, handleClickMenu, handleCreateNew, allDataLength, currentTab } = props;
+	const {
+		handleClickItem,
+		feedbackList,
+		currentItem,
+		loading,
+		feedbackMenu,
+		handleClickMenu,
+		handleCreateNew,
+		allDataLength,
+		currentTab
+	} = props;
 	const [visible, setVisible] = useState(false);
 	const { showNoti, userInformation } = useWrap();
 
@@ -67,7 +79,7 @@ function MenuFeedBack(props) {
 
 	const Menu = () => (
 		<>
-			<Card className="card-newsfeed" bordered={false}>
+			<Card loading={loading} className="card-newsfeed" bordered={false}>
 				<Button onClick={handleCreateNew} type="primary" className="student-fb__btn-add">
 					Tạo phản hồi
 				</Button>
@@ -119,7 +131,7 @@ function MenuFeedBack(props) {
 				/>
 			</Card>
 
-			<Card className="card-newsfeed" bordered={false}>
+			<Card loading={loading} className="card-newsfeed" bordered={false}>
 				<div className="card-newsfeed-wrap__label">
 					<p className="card-newsfeed__label font-weight-black">Danh sách phản hồi</p>
 				</div>

@@ -110,6 +110,7 @@ const FeedbackTable = (props) => {
 		<>
 			<div className="wrap-table table-expand">
 				<Card
+					loading={props.loading}
 					className={`cardRadius ${props.addClass && props.addClass} ${props.Size ? props.Size : ''}`}
 					title={props.Extra}
 					extra={props.TitleCard}

@@ -9,6 +9,20 @@ import Router, { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
 import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
 import { usePageVisibility } from '~/utils/functions';
+import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
+
+const initDetails = {
+	VideoCourseName: '',
+	Slogan: '',
+	Requirements: '',
+	Description: '',
+	ResultsAchieved: '',
+	CourseForObject: '',
+	TotalRating: 0,
+	RatingNumber: 0,
+	TotalStudent: 0,
+	CreatedBy: ''
+};
 
 const useUnload = (fn) => {
 	const cb = useRef(fn); // init with fn, so that type checkers won't assume that current might be undefined
@@ -51,6 +65,7 @@ const VideoLearning = () => {
 	useEffect(() => {
 		if (router.query.course !== undefined) {
 			getVideos();
+			getCourseDetails(router.query.course);
 		}
 	}, []);
 
@@ -66,8 +81,6 @@ const VideoLearning = () => {
 		useBeforeUnload(() => updateTime());
 	}
 
-	console.log('render: ');
-
 	// HANDLE VISIT PAGE
 	const handleVisibilityChange = (visible) => {
 		if (videoStudy.current !== null) {
@@ -77,13 +90,25 @@ const VideoLearning = () => {
 		}
 	};
 
+	const [details, setDetails] = useState(initDetails);
+
+	// CALL API DETAILS
+	const getCourseDetails = async (param) => {
+		try {
+			const res = await VideoCourseDetailApi.getDetails(param);
+			res.status == 200 && setDetails(res.data.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	usePageVisibility(handleVisibilityChange);
 
 	const updateTime = async () => {
 		if (videoStudy.current !== null) {
 			if (videoStudy.current.currentTime !== 0 && currentLession.ID !== '') {
 				let temp = {
-					VideoCourseOfStudentID: router.query.course,
+					VideoCourseOfStudentID: router.query.ID,
 					SectionID: currentLession.SectionID,
 					LessonID: currentLession.ID,
 					IsSeen: videoStudy.current.duration / 2 < videoStudy.current.currentTime ? 'True' : 'False', // True - False: đánh dấu đã xem video
@@ -99,7 +124,7 @@ const VideoLearning = () => {
 	//GET DATA
 	const getVideos = async () => {
 		try {
-			const res = await VideoCourses.ListSection(router.query.course);
+			const res = await VideoCourses.ListSection(router.query.ID);
 			res.status == 200 && setVideos(res.data.data);
 		} catch (err) {
 			// showNoti("danger", err);
@@ -111,7 +136,7 @@ const VideoLearning = () => {
 		const temp = {
 			pageIndex: 1,
 			pageSize: 10,
-			VideoCourseID: router.query.course,
+			VideoCourseID: router.query.ID,
 			LessonDetailID: LessonDetailID,
 			Title: '',
 			sort: 0
@@ -120,7 +145,7 @@ const VideoLearning = () => {
 			const res = await VideoCourseInteraction.ListQA(temp);
 			res.status == 200 && res.data.data !== undefined ? setDataQA(res.data.data) : setDataQA([]);
 		} catch (err) {}
-		getListNotification(router.query.course);
+		getListNotification(router.query.ID);
 	};
 
 	//GET DATA
@@ -128,7 +153,7 @@ const VideoLearning = () => {
 		const temp = {
 			pageIndex: 1,
 			pageSize: 10,
-			VideoCourseID: router.query.course,
+			VideoCourseID: router.query.ID,
 			LessonDetailID: LessonDetailID,
 			searchCreateby: userInformation.UserAccountID,
 			sort: 0
@@ -155,7 +180,7 @@ const VideoLearning = () => {
 	const addNewQuestion = async (comment, title) => {
 		try {
 			let temp = {
-				VideoCourseID: router.query.course,
+				VideoCourseID: router.query.ID,
 				LessonDetailID: currentLession.ID,
 				Title: title,
 				TextContent: comment,
@@ -171,7 +196,7 @@ const VideoLearning = () => {
 		try {
 			let curTime = videoStudy.current.currentTime;
 			let temp = {
-				VideoCourseID: router.query.course,
+				VideoCourseID: router.query.ID,
 				LessonDetailID: currentLession.ID,
 				Title: param.title,
 				TextContent: param.newContent,
@@ -179,7 +204,7 @@ const VideoLearning = () => {
 				Type: 3
 			};
 			await VideoCourseInteraction.add(temp);
-			getListNotification(router.query.course);
+			getListNotification(router.query.ID);
 		} catch (error) {}
 	};
 
@@ -259,7 +284,7 @@ const VideoLearning = () => {
 		try {
 			let curTime = videoStudy.current.currentTime;
 			let temp = {
-				VideoCourseID: router.query.course,
+				VideoCourseID: router.query.ID,
 				LessonDetailID: currentLession.ID,
 				Title: param.title,
 				TextContent: param.newContent,
@@ -291,7 +316,9 @@ const VideoLearning = () => {
 									</video>
 								) : (
 									<iframe
-										src="http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html"
+										className="html-iframe"
+										// http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html
+										src={currentVideo}
 										title="cc"
 									></iframe>
 								)}
@@ -313,6 +340,7 @@ const VideoLearning = () => {
 
 							<VideoTabs
 								params={currentLession}
+								details={details}
 								dataNote={data}
 								dataQA={dataQA}
 								onCreateNew={(p) => {
@@ -358,7 +386,7 @@ const VideoLearning = () => {
 								const temp =
 									'http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html';
 
-								p.Type === 0 ? setCurrentVideo(p.LinkVideo) : setCurrentVideo(temp);
+								p.Type === 0 ? setCurrentVideo(p.LinkVideo) : setCurrentVideo(p.LinkHtml);
 							}}
 							videos={videos}
 						/>

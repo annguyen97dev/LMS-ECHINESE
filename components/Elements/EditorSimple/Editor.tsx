@@ -21,7 +21,7 @@ type dataTranslate = Array<{
 }>;
 
 const EditorSummernote = (props) => {
-	const { getDataEditor, questionContent, isReset, isTranslate } = props;
+	const { getDataEditor, questionContent, isReset, isTranslate, defaultValue } = props;
 	const [valueEditor, setValueEditor] = useState(questionContent);
 	const [textSelect, setTextSelect] = useState(null);
 	const [textTranslate, setTextTranslate] = useState(null);
@@ -30,6 +30,13 @@ const EditorSummernote = (props) => {
 	const [isAddTranslate, setIsAddTranslate] = useState(false);
 	const [reloadContent, setReloadContent] = useState(false);
 	let inputTranslate = useRef(null);
+
+	// Châu thêm defaultValue
+	useEffect(() => {
+		if (defaultValue !== undefined && defaultValue !== null) {
+			setValueEditor(defaultValue);
+		}
+	}, []);
 
 	const showModal = (type) => {
 		setIsModalVisible(true);

@@ -55,6 +55,7 @@ function MainFeedback(props) {
 	const [reply, setReply] = useState([]);
 	const [isReset, setReset] = useState(false);
 	const [content, setContent] = useState('');
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		getCurrentInfo(current.ID);
@@ -88,7 +89,10 @@ function MainFeedback(props) {
 		try {
 			const res = await FeedbackApi.getByID(param);
 			res.status == 200 && setCurrentInfomation(res.data.data);
-		} catch (error) {}
+		} catch (error) {
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	// GET DATA REPLY OF SELECTED FEEDBACK
@@ -129,15 +133,7 @@ function MainFeedback(props) {
 
 	// RENDER
 	return (
-		<Card
-			className="p-2 student-fb__wrap-main st-fb-empty"
-			bordered={false}
-			style={{
-				alignItems: current.ID === undefined ? 'center' : null,
-				justifyContent: current.ID === undefined ? 'center' : null,
-				display: current.ID === undefined ? 'flex' : null
-			}}
-		>
+		<Card loading={loading} className="p-2 student-fb__wrap-main st-fb-empty" bordered={false}>
 			{current.ID !== undefined ? (
 				<>
 					<div className="card-newsfeed-wrap__label">

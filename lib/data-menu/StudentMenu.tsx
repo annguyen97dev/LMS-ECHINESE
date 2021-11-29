@@ -89,6 +89,20 @@ export const StudentChildMenu = [
 				Route: '/option/faq',
 				Text: 'Câu hỏi thường gặp',
 				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/video-course/',
+				Route: '/video-course/',
+				Text: 'Khóa học video',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/video-course-list/',
+				Route: '/video-course-list/',
+				Text: 'Khóa học video đã mua',
+				Icon: ''
 			}
 		]
 	},

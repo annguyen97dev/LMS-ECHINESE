@@ -77,10 +77,6 @@ const CourseVideoTable = (props) => {
 		}
 	};
 
-	// const onRowchange = (row) => {
-	//   console.log("ROW: ", row);
-	// };
-
 	const onShowSizeChange = (current, size) => {
 		props.onChangePageSize && props.onChangePageSize(current, size);
 	};
@@ -148,10 +144,10 @@ const CourseVideoTable = (props) => {
 								setActiveIndex(index);
 							}
 						})}
-						onExpandedRowsChange={onChangeExpand}
-						expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
-						onExpand={onExpand}
-						expandedRowKeys={returnRowKeys()}
+						// onExpandedRowsChange={onChangeExpand}
+						// expandedRowRender={(record, index, indent, expaned) => (expaned ? props.expandable : null)}
+						// onExpand={onExpand}
+						// expandedRowKeys={returnRowKeys()}
 					/>
 				</Card>
 			</div>

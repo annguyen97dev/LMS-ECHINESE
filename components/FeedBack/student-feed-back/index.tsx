@@ -5,7 +5,7 @@ import MenuFeedBack from '~/components/FeedBack/Menu/MenuFeedBack';
 import ModalCreateFeedback from '~/components/FeedBack/CreateNew/modalCreateFeedback';
 import MainFeedback from '~/components/FeedBack/Main/MainFeedback';
 
-const StudentFeedbackList = () => {
+const StudentFeedbackList = (props) => {
 	const { userInformation } = useWrap();
 	const [currentTab, setCurrentTab] = useState(1);
 	const [currentFeedback, setCurrentFeedback] = useState({});
@@ -14,6 +14,7 @@ const StudentFeedbackList = () => {
 	const [newFeedback, setNewFeedback] = useState([]);
 	const [waitingFeedback, setWaitingFeedback] = useState([]);
 	const [doneFeedback, setDoneFeedback] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	const [modalCreate, setModalCreate] = useState(false);
 
@@ -63,6 +64,7 @@ const StudentFeedbackList = () => {
 		};
 		await getAllFeedBack(temp);
 		getDataPrioritized();
+		setLoading(false);
 	};
 
 	// GET DATA
@@ -94,6 +96,7 @@ const StudentFeedbackList = () => {
 		<div className="row student-fb">
 			<div className="col-md-3 col-12">
 				<MenuFeedBack
+					loading={loading}
 					feedbackList={
 						currentTab === 1
 							? feedbackAll
