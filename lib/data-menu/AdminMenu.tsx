@@ -173,9 +173,9 @@ export const AdminChildMenu = [
 			},
 			{
 				TypeItem: 'single',
-				Key: '/video-course/',
+				Key: '/video-course',
 				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
-				Route: '/video-course/',
+				Route: '/video-course',
 				Text: 'Khóa học video'
 			},
 			{

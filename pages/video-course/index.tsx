@@ -23,7 +23,7 @@ let pageIndex = 1;
 
 const VideoCourseStore = () => {
 	const router = useRouter();
-	const { userInformation, pageSize, showNoti } = useWrap();
+	const { userInformation, pageSize, showNoti, handleReloadNoti, getTitlePage } = useWrap();
 	const [data, setData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [rerender, setRender] = useState('');
@@ -67,6 +67,7 @@ const VideoCourseStore = () => {
 			// ADMIN & HOC VIEN
 			getAllArea();
 		}
+		getTitlePage('Khóa học video');
 	}, [userInformation]);
 
 	//GET DATA
@@ -137,6 +138,7 @@ const VideoCourseStore = () => {
 			if (type == 1) {
 				res.status == 200 && setShowModal(true);
 				res.status !== 200 && openNotification();
+				handleReloadNoti();
 			} else {
 				router.push('/cart/check-out');
 			}
@@ -389,7 +391,6 @@ const VideoCourseStore = () => {
 	// RENDER
 	return (
 		<div className="">
-			<p className="video-course-list-title">Khóa Học Video</p>
 			{userInformation !== null && (
 				<Card
 					style={{ width: '100%' }}

@@ -22,7 +22,7 @@ const ItemVideo = ({ item, onRate }) => {
 				href={{
 					pathname: '/video-learning',
 					query: {
-						ID: item.ID,
+						ID: item.VideoCourseID,
 						course: item.VideoCourseID,
 						complete: item.Complete + '/' + item.TotalLesson,
 						name: item.VideoCourseName
@@ -96,7 +96,7 @@ const ItemVideo = ({ item, onRate }) => {
 let pageIndex = 1;
 
 const VideoCourseList = () => {
-	const { userInformation, pageSize, showNoti } = useWrap();
+	const { userInformation, pageSize, showNoti, getTitlePage } = useWrap();
 
 	const [data, setData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
@@ -141,6 +141,9 @@ const VideoCourseList = () => {
 	useEffect(() => {
 		if (userInformation) {
 			getAllArea();
+			getTitlePage();
+
+			userInformation.RoleID == 1 ? getTitlePage('Khóa học video đã bán') : getTitlePage('Khóa học video đã mua');
 		}
 	}, [userInformation]);
 
@@ -212,41 +215,6 @@ const VideoCourseList = () => {
 			key: 'StatusName',
 			align: 'center'
 		}
-		// {
-		// 	title: 'Thao tác',
-		// 	dataIndex: 'Action',
-		// 	key: 'action',
-		// 	render: (Action, data, index) => (
-		// 		<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-		// 			{/* <Link
-		// 				href={{
-		// 					// pathname: '/option/program/program-detail/[slug]',
-		// 					query: { slug: data.ID }
-		// 				}}
-		// 			>
-		// 				<Tooltip title="Chi tiết chương trình">
-		// 					<button className="btn btn-icon" style={{ marginRight: -10, marginLeft: -10 }}>
-		// 						<Eye />
-		// 					</button>
-		// 				</Tooltip>
-		// 			</Link> */}
-
-		// 			<div>
-		// 				{/* <ModalCreateVideoCourse
-		// 					dataLevel={categoryLevel}
-		// 					dataCategory={category}
-		// 					getIndex={() => {}}
-		// 					_onSubmitEdit={(data: any) => updateCourse(data)}
-		// 					programID={data.ID}
-		// 					rowData={data}
-		// 					dataGrade={data}
-		// 					showAdd={true}
-		// 					isLoading={isLoading}
-		// 				/> */}
-		// 			</div>
-		// 		</div>
-		// 	)
-		// }
 	];
 
 	useEffect(() => {
@@ -292,19 +260,8 @@ const VideoCourseList = () => {
 		);
 	};
 
-	const expandedRowRender = () => {
-		return (
-			<>
-				<div className="feedback-detail-text" style={{ backgroundColor: 'red' }}>
-					asd asd asdqw tw qgasgdas dnb
-				</div>
-			</>
-		);
-	};
-
 	return (
 		<div className="">
-			<p className="video-course-list-title">Khóa Học Video</p>
 			<Card title={Extra()} className="video-course-list" style={{ width: '100%' }}>
 				{userInformation !== null && (
 					<>

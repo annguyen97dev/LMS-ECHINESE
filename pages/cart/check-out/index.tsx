@@ -248,15 +248,9 @@ const CheckOut = () => {
 							</a>
 						</Link>
 					</div>
-					<div className="header__search col-8">
-						<Input onChange={(event) => {}} name="CourseSearch" placeholder="Tìm khóa học" className="style-input" />
-					</div>
 					<div className="header__profile col-2">
 						<div className="col-setting">
 							<ul className="col-setting-list">
-								<li className="notification">
-									<Notifiaction />
-								</li>
 								<li className="user">
 									<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
 										<div className="user-wrap">
@@ -274,7 +268,6 @@ const CheckOut = () => {
 												) : (
 													<p>Tài khoản</p>
 												)}
-
 												<div className="user-name-mobile">
 													<User />
 												</div>
@@ -326,10 +319,7 @@ const CheckOut = () => {
 								<p>Giá gốc</p>
 							</div>
 							<div className="col-5">
-								<p>
-									{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0))}
-									vnd
-								</p>
+								<p>{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0))} VNĐ</p>
 							</div>
 						</div>
 						<div className="row sumary__price">
@@ -337,7 +327,7 @@ const CheckOut = () => {
 								<p>Khuyến mãi</p>
 							</div>
 							<div className="col-5">
-								<p>- {discounts} vnd</p>
+								<p>- {discounts} VNĐ</p>
 							</div>
 						</div>
 						<div className="row">
@@ -351,11 +341,11 @@ const CheckOut = () => {
 								</p>
 							</div>
 						</div>
-						<p>
+						{/* <p>
 							Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
 							jurisdictions.
 						</p>
-						<p>By completing your purchase you agree to these Terms of Service.</p>
+						<p>By completing your purchase you agree to these Terms of Service.</p> */}
 						<Link href="/cart/check-out">
 							<button className="btn btn-primary w-100">Thanh toán</button>
 						</Link>

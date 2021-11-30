@@ -17,6 +17,8 @@ export type IProps = {
 	isAdmin: boolean;
 	reloadNotification: boolean;
 	handleReloadNoti: Function;
+	reloadCart: boolean;
+	handleReloadCart: Function;
 };
 
 const WrapContext = createContext<IProps>({
@@ -29,7 +31,9 @@ const WrapContext = createContext<IProps>({
 	pageSize: 30,
 	isAdmin: false,
 	reloadNotification: false,
-	handleReloadNoti: Function
+	handleReloadNoti: Function,
+	reloadCart: false,
+	handleReloadCart: Function
 });
 
 // const initialState = {
@@ -56,6 +60,7 @@ export const WrapProvider = ({ children }) => {
 	const [userInfo, setUserInfo] = useState<IUser>(null);
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [reloadNotification, setReloadNotification] = useState(false);
+	const [reloadCart, setReloadCart] = useState(false);
 
 	// --- Get Title Page ---
 	const getTitlePage = (title) => {
@@ -120,6 +125,11 @@ export const WrapProvider = ({ children }) => {
 		setReloadNotification(!reloadNotification);
 	};
 
+	// --- Handle Reload Card ---
+	const handleReloadCart = () => {
+		setReloadCart(!reloadCart);
+	};
+
 	useEffect(() => {
 		// console.log('Session: ', session);
 		if (loading && typeof session !== 'undefined' && session !== null) {
@@ -142,7 +152,9 @@ export const WrapProvider = ({ children }) => {
 					userInformation: userInfo,
 					isAdmin: isAdmin,
 					reloadNotification: reloadNotification,
-					handleReloadNoti: handleReloadNoti
+					handleReloadNoti: handleReloadNoti,
+					reloadCart: reloadCart,
+					handleReloadCart: handleReloadCart
 				}}
 			>
 				<ToastContainer

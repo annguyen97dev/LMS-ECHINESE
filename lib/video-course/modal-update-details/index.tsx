@@ -104,7 +104,7 @@ const ModalUpdateDetail = React.memo((props: any) => {
 							) : (
 								<>
 									<div className="col-md-12 col-12">
-										<Form.Item name="Slogan" label="Câu giới thiệu">
+										<Form.Item name="Slogan" label="Slogan">
 											<EditorSimple defaultValue={slogan} handleChange={(e) => setSlogan(e)} isTranslate={false} />
 										</Form.Item>
 									</div>
@@ -136,7 +136,7 @@ const ModalUpdateDetail = React.memo((props: any) => {
 										</Form.Item>
 									</div>
 									<div className="col-md-12 col-12">
-										<Form.Item name="Description" label="Giới thiệu">
+										<Form.Item name="Description" label="Miêu tả">
 											<EditorSimple
 												defaultValue={description}
 												handleChange={(e) => setDescription(e)}

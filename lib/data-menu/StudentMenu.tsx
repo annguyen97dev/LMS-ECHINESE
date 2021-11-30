@@ -57,8 +57,8 @@ export const StudentChildMenu = [
 			},
 			{
 				TypeItem: 'single',
-				Key: '/course/course-list/',
-				Route: '/course/course-list/',
+				Key: '/course/course-list',
+				Route: '/course/course-list',
 				Icon: '',
 				Text: 'Khóa học của bạn'
 			},
@@ -92,15 +92,15 @@ export const StudentChildMenu = [
 			},
 			{
 				ItemType: 'single',
-				Key: '/video-course/',
-				Route: '/video-course/',
+				Key: '/video-course',
+				Route: '/video-course',
 				Text: 'Khóa học video',
 				Icon: ''
 			},
 			{
 				ItemType: 'single',
-				Key: '/video-course-list/',
-				Route: '/video-course-list/',
+				Key: '/video-course-list',
+				Route: '/video-course-list',
 				Text: 'Khóa học video đã mua',
 				Icon: ''
 			}

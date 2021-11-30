@@ -22,6 +22,7 @@ import { User } from 'react-feather';
 import TitlePage from '../Elements/TitlePage';
 import TitlePageHeader from '../Elements/TitlePageHeader';
 import Notifiaction from './notification';
+import Cart from './cart';
 
 const { Search } = Input;
 
@@ -239,6 +240,9 @@ export default function Header({
                 </a>
               </Popover>
             </li> */}
+						<li className="notification" style={{ marginRight: -15 }}>
+							<Cart />
+						</li>
 						<li className="notification">
 							<Notifiaction />
 						</li>

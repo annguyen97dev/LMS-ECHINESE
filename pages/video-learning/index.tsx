@@ -232,11 +232,10 @@ const VideoLearning = () => {
 	// DELETE NOTE
 	const removeItem = async (id) => {
 		let temp = {
-			ID: id,
-			Type: 3
+			ID: id
 		};
 		try {
-			await VideoNoteApi.update(temp);
+			await VideoNoteApi.delete(temp);
 		} catch (error) {}
 		getListNote(currentLession.ID);
 	};

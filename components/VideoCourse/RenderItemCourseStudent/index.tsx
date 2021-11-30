@@ -93,6 +93,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 										href={{
 											pathname: '/video-learning',
 											query: {
+												ID: item.ID,
 												course: item.ID,
 												complete: 0 + '/' + 0,
 												name: item.VideoCourseName

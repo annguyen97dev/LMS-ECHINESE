@@ -1,19 +1,15 @@
 import { instance } from '~/apiBase/instance';
 
-const url = '/api/Cart/GetCartDetailOfUser';
+const url = '/api/Cart/';
 
 class ShoppingCartApi {
-	getAll = () => instance.get<IApiResultData<IShoppingCart[]>>(url, {});
+	getAll = () => instance.get<IApiResultData<IShoppingCart[]>>(url + 'GetCartDetailOfUser', {});
 
 	// getDetail = (id: number) => instance.get<IApiResultData<IPayRoll>>(`${url}/${id}`);
 
 	// add = (data: IPayRoll) => instance.post(url, data);
 
-	// update = (data: IPayRoll) => instance.put(url, data, {});
-
-	// closingSalarDate = () => instance.get<IApiResultData<IClosingSalarDate[]>>('/api/ClosingSalarDate');
-
-	// changClosingSalarDate = (data: IClosingSalarDate) => instance.put('/api/ClosingSalarDate', data, {});
+	update = (data: any) => instance.put(url + 'Update', data, {});
 }
 
 export const shoppingCartApi = new ShoppingCartApi();

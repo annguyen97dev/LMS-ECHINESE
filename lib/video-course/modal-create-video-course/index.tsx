@@ -293,7 +293,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										label="Tags"
 										rules={[{ required: true, message: 'Bạn không được để trống' }]}
 									>
-										<TextArea rows={4} placeholder="" value={tagArray} onChange={(e) => setTagArray(e.target.value)} />
+										<TextArea
+											rows={4}
+											placeholder="VD: video,html,education"
+											value={tagArray}
+											onChange={(e) => setTagArray(e.target.value)}
+										/>
 									</Form.Item>
 								</div>
 							</div>
