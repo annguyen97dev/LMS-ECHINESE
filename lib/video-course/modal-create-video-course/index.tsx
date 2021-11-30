@@ -295,7 +295,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									>
 										<TextArea
 											rows={4}
-											placeholder="VD: video,html,education"
+											placeholder="VD: video,education,basic,hsk1,hsk2"
 											value={tagArray}
 											onChange={(e) => setTagArray(e.target.value)}
 										/>
