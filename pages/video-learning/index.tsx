@@ -303,7 +303,7 @@ const VideoLearning = () => {
 
 	// RENDER
 	return (
-		<div className="container-fluid p-0">
+		<div className="container-fluid p-0" style={{ overflow: 'hidden' }}>
 			<HeaderVideo params={router.query} onClick={showDrawer} />
 			<div className="row">
 				<div className="col-md-9 col-12 p-0">

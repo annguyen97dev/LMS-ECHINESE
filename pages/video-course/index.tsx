@@ -392,6 +392,7 @@ const VideoCourseStore = () => {
 			<p className="video-course-list-title">Khóa Học Video</p>
 			{userInformation !== null && (
 				<Card
+					style={{ width: '100%' }}
 					loading={isLoading.status}
 					className="video-course-list"
 					title={<div className="m-2">{Extra()}</div>}
@@ -415,7 +416,7 @@ const VideoCourseStore = () => {
 						<List
 							itemLayout="horizontal"
 							dataSource={data}
-							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 5 }}
+							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
 							renderItem={(item) => (
 								<RenderItemCard
 									_onSubmitEdit={(data: any) => updateCourse(data)}

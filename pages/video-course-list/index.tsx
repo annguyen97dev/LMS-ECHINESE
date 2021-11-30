@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
-import { List, Card, Progress, Rate, Modal, Input } from 'antd';
+import { List, Card, Progress, Rate, Modal, Input, Tooltip } from 'antd';
 import LayoutBase from '~/components/LayoutBase';
 import { VideoCourseListApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
@@ -29,11 +29,25 @@ const ItemVideo = ({ item, onRate }) => {
 					}
 				}}
 			>
-				{item.ImageThumbnails === '' || item.ImageThumbnails === null ? (
-					<img src="/images/logo-final.jpg" />
-				) : (
-					<img src={item.ImageThumbnails} />
-				)}
+				<div className="video-course-list__item_warp-image">
+					<Link
+						href={{
+							pathname: '/video-learning',
+							query: {
+								ID: item.ID,
+								course: item.VideoCourseID,
+								complete: item.Complete + '/' + item.TotalLesson,
+								name: item.VideoCourseName
+							}
+						}}
+					>
+						{item.ImageThumbnails === '' || item.ImageThumbnails === null || item.ImageThumbnails === undefined ? (
+							<img src="/images/logo-thumnail.jpg" />
+						) : (
+							<img src={item.ImageThumbnails} />
+						)}
+					</Link>
+				</div>
 			</Link>
 
 			<Link
@@ -48,8 +62,11 @@ const ItemVideo = ({ item, onRate }) => {
 				}}
 			>
 				<div className="p-3 video-course-list__item__content">
-					<a className="title in-2-line">{item.VideoCourseName}</a>
-
+					<Tooltip title={item.VideoCourseName} style={{ width: '100%' }}>
+						<span className="title in-1-line" style={{ width: '100%' }}>
+							{item.VideoCourseName}
+						</span>
+					</Tooltip>
 					<>
 						<Progress
 							className="text-process"
@@ -288,7 +305,7 @@ const VideoCourseList = () => {
 	return (
 		<div className="">
 			<p className="video-course-list-title">Khóa Học Video</p>
-			<Card title={Extra()} className="video-course-list">
+			<Card title={Extra()} className="video-course-list" style={{ width: '100%' }}>
 				{userInformation !== null && (
 					<>
 						{userInformation.RoleID == 1 ? (

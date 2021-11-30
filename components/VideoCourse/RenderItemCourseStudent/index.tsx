@@ -135,7 +135,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 							}}
 						>
 							{item.ImageThumbnails === '' || item.ImageThumbnails === null || item.ImageThumbnails === undefined ? (
-								<img src="/images/logo-final.jpg" />
+								<img src="/images/logo-thumnail.jpg" />
 							) : (
 								<img src={item.ImageThumbnails} />
 							)}
