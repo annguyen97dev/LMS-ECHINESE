@@ -371,14 +371,15 @@ export default function ServiceAppointmentTest(props) {
 				res = await testCustomerApi.update(dataSubmit);
 
 				if (res.status == 200) {
-					let newDataSource = [...dataSource];
-					newDataSource.splice(indexRow, 1, {
-						...dataSubmit,
-						FullNameUnicode: listDataForm.Student.find((item) => item.value == dataSubmit.UserInformationID).title,
-						BranchName: listDataForm.Branch.find((item) => item.value == dataSubmit.BranchID).title,
-						TeacherName: listDataForm.Teacher.find((item) => item.value == dataSubmit.TeacherID).title
-					});
-					setDataSource(newDataSource);
+					// let newDataSource = [...dataSource];
+					// newDataSource.splice(indexRow, 1, {
+					// 	...dataSubmit,
+					// 	FullNameUnicode: listDataForm.Student.find((item) => item.value == dataSubmit.UserInformationID).title,
+					// 	BranchName: listDataForm.Branch.find((item) => item.value == dataSubmit.BranchID).title,
+					// 	TeacherName: listDataForm.Teacher.find((item) => item.value == dataSubmit.TeacherID).title
+					// });
+					// setDataSource(newDataSource);
+					setTodoApi({ ...todoApi });
 					showNoti('success', res.data.message);
 				}
 			} else {
@@ -549,6 +550,7 @@ export default function ServiceAppointmentTest(props) {
 
 	const columns = [
 		{
+			width: 200,
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
 			fixed: 'left',
@@ -564,12 +566,14 @@ export default function ServiceAppointmentTest(props) {
 			dataIndex: 'Mobile'
 		},
 		{
+			width: 170,
 			title: 'Trung tâm',
 			dataIndex: 'BranchName',
 
 			render: (a) => <p className="font-weight-black">{a}</p>
 		},
 		{
+			width: 170,
 			title: 'Đề test',
 			dataIndex: 'ExamTopicnName',
 			render: (text, data: any) => (
@@ -590,14 +594,18 @@ export default function ServiceAppointmentTest(props) {
 			render: (date: any) => moment(date).format('DD/MM/YYYY')
 		},
 		{
+			width: 100,
 			title: 'Giờ hẹn',
-			dataIndex: 'Time'
+			dataIndex: 'Time',
+			align: 'center'
 		},
 		{
+			width: 170,
 			title: 'Giáo viên chấm bài',
 			dataIndex: 'TeacherName'
 		},
 		{
+			width: 170,
 			title: 'Tư vấn viên',
 			dataIndex: 'CounselorsName'
 		},

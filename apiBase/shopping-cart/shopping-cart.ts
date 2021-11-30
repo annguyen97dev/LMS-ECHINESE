@@ -14,6 +14,12 @@ class ShoppingCartApi {
 	// closingSalarDate = () => instance.get<IApiResultData<IClosingSalarDate[]>>('/api/ClosingSalarDate');
 
 	// changClosingSalarDate = (data: IClosingSalarDate) => instance.put('/api/ClosingSalarDate', data, {});
+
+	checkoutMomo = (data) => instance.post('/api/Order/PaymentWithMoMo', data);
+
+	checkoutPaypal = (data) => instance.post('/api/Order/PaymentWithPaypal', data);
+
+	getOrderID = (data) => instance.post('/api/Order/LoadOrder', data);
 }
 
 export const shoppingCartApi = new ShoppingCartApi();

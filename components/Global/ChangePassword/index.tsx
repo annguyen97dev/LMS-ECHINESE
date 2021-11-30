@@ -166,7 +166,12 @@ const ChangePassword = (props) => {
 
 							<div className="row">
 								<div className="col-md-5 col-12">
-									<InputPassField form={form} name="KeyForgotPassword" label="Mật khẩu cũ" />
+									<InputPassField
+										disabled={isNewUser ? true : false}
+										form={form}
+										name="KeyForgotPassword"
+										label="Mật khẩu cũ"
+									/>
 									<InputPassField form={form} name="Password" label="Mật khẩu mới" />
 									<InputPassField form={form} name="RePassword" label="Xác nhận mật khẩu mới" />
 								</div>

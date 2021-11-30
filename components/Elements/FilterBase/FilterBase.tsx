@@ -161,11 +161,11 @@ const FilterBase = (props) => {
 
 					<div className="col-md-12">
 						<Form.Item className="mb-0">
-							<button type="submit" className="btn btn-primary" style={{ marginRight: '10px' }}>
-								Tìm kiếm
-							</button>
 							<button type="button" className="light btn btn-secondary" style={{ marginRight: '10px' }} onClick={onReset}>
 								Reset
+							</button>
+							<button type="submit" className="btn btn-primary" style={{ marginRight: '10px' }}>
+								Tìm kiếm
 							</button>
 						</Form.Item>
 					</div>

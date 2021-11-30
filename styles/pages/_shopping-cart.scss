@@ -332,7 +332,8 @@
 			width: 100%;
 		}
 		.payment-card,
-		.paypal {
+		.paypal,
+		.type-checkout {
 			border: solid 1px #d1d7dc;
 			border-radius: 5px;
 			margin: 20px 0;
@@ -370,6 +371,13 @@
 			.ant-radio-wrapper {
 				&::after {
 					content: 'Thanh toán bằng paypal';
+				}
+			}
+		}
+		.momo {
+			.ant-radio-wrapper {
+				&::after {
+					content: 'Thanh toán bằng Momo';
 				}
 			}
 		}
