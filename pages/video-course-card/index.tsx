@@ -126,7 +126,7 @@ const VideoCourseCard = () => {
 				/>
 
 				<Modal
-					title="Têm vào giỏ hàng"
+					title="Thêm vào giỏ hàng"
 					visible={showModal}
 					confirmLoading={false}
 					className="vc-store_modal"
