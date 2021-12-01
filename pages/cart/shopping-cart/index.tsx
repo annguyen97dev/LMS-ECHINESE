@@ -278,7 +278,7 @@ const ShoppingCart = () => {
 				{isLoading.loading ? (
 					<Skeleton active />
 				) : (
-					<div className="shopping__cart-content row mt-3 mb-3">
+					<div className="shopping__cart-content row mt-3 mb-3 align-items-start">
 						<div className="shopping__cart-items col-12 col-lg-8">{renderCartItems()}</div>
 						<div className="shopping__cart-total col-12 col-lg-4 mt-5 mt-md-0 mb-3">
 							<h4>Tổng cộng: </h4>

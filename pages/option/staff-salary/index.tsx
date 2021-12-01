@@ -15,7 +15,7 @@ import moment from 'moment';
 
 const StaffSalary = () => {
 	const [dataTable, setDataTable] = useState<IStaffSalary[]>([]);
-	const [dataStaff, setDataStaff] = useState([]);
+
 	const [dataDelete, setDataDelete] = useState({
 		SalaryID: null,
 		Enable: null
@@ -91,27 +91,6 @@ const StaffSalary = () => {
 					}
 					setTotalPage(res.data.totalRow);
 				}
-			} catch (error) {
-				showNoti('danger', error.message);
-			} finally {
-				setIsLoading({
-					type: 'GET_ALL',
-					status: false
-				});
-			}
-		})();
-	};
-
-	// GET DATA USERINFORMATION
-	const getDataStaff = () => {
-		setIsLoading({
-			type: 'GET_ALL',
-			status: true
-		});
-		(async () => {
-			try {
-				let res = await userInformationApi.getAll();
-				res.status == 200 && setDataStaff(res.data.data);
 			} catch (error) {
 				showNoti('danger', error.message);
 			} finally {
@@ -349,7 +328,6 @@ const StaffSalary = () => {
 
 	useEffect(() => {
 		getDataTable();
-		getDataStaff();
 	}, [todoApi]);
 
 	return (
@@ -369,14 +347,7 @@ const StaffSalary = () => {
 				getPagination={getPagination}
 				addClass="basic-header"
 				TitlePage="Staff salary"
-				TitleCard={
-					<StaffSalaryForm
-						showAdd={true}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-						dataStaff={dataStaff}
-					/>
-				}
+				TitleCard={<StaffSalaryForm showAdd={true} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
 				dataSource={dataTable}
 				columns={columns}
 				Extra={
