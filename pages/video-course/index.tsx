@@ -144,8 +144,10 @@ const VideoCourseStore = () => {
 			}
 		} catch (error) {
 		} finally {
-			setAddToCardLoading(false);
-			setByNowLoading(false);
+			if (type == 1) {
+				setAddToCardLoading(false);
+				setByNowLoading(false);
+			}
 		}
 	};
 
