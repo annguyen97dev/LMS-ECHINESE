@@ -2210,3 +2210,11 @@ hr {
 .line-height-0 {
 	line-height: 0;
 }
+.spin-center {
+	.ant-select-item-option-content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding-top: 5px;
+	}
+}
