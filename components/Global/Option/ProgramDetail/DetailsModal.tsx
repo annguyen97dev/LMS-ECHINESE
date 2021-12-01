@@ -14,7 +14,7 @@ const { confirm } = Modal;
 
 export const DetailsModal = (props) => {
 	const router = useRouter();
-	const { curriculumDetailID, courseID, dataExamTopic, dataCurriculumDetail, dataRow } = props;
+	const { curriculumDetailID, courseID, dataExamTopic, dataCurriculumDetail, dataRow, isFixed } = props;
 
 	const { showNoti, isAdmin } = useWrap();
 	const { TextArea } = Input;
@@ -290,7 +290,7 @@ export const DetailsModal = (props) => {
 			>
 				<div className="row m-0">{item.Content !== '' ? item.Content : 'Không có tiêu đề'}</div>
 
-				<i onClick={() => showConfirm(item.Content, item.ID)} className="far fa-trash-alt mr-2 ic-trash"></i>
+				{isFixed && <i onClick={() => showConfirm(item.Content, item.ID)} className="far fa-trash-alt mr-2 ic-trash"></i>}
 			</div>
 		);
 	};
@@ -347,20 +347,22 @@ export const DetailsModal = (props) => {
 								{isAdmin && !enableEdit && (
 									<div className="group-button">
 										<div className="group-button_btn-add">
-											<AddCurriculumForm
-												callBack={(e) => {
-													setVisible(e);
+											{isFixed && (
+												<AddCurriculumForm
+													callBack={(e) => {
+														setVisible(e);
 
-													if (e) {
-														getDetails();
-													}
-												}}
-												callFrom="modal"
-												curriculumDetailID={curriculumDetailID}
-												dataExamTopic={dataExamTopic}
-												dataCurriculumDetail={dataCurriculumDetail}
-												dataRow={dataRow}
-											/>
+														if (e) {
+															getDetails();
+														}
+													}}
+													callFrom="modal"
+													curriculumDetailID={curriculumDetailID}
+													dataExamTopic={dataExamTopic}
+													dataCurriculumDetail={dataCurriculumDetail}
+													dataRow={dataRow}
+												/>
+											)}
 										</div>
 									</div>
 								)}
@@ -551,15 +553,17 @@ export const DetailsModal = (props) => {
 																		</button>
 																	</Tooltip>
 																) : (
-																	<button
-																		onClick={() => {
-																			setEdit(true);
-																		}}
-																		className="btn btn-warning"
-																		style={{ marginLeft: 11, color: '#fff' }}
-																	>
-																		<i className="far fa-edit mr-2"></i>Chỉnh sửa
-																	</button>
+																	isFixed && (
+																		<button
+																			onClick={() => {
+																				setEdit(true);
+																			}}
+																			className="btn btn-warning"
+																			style={{ marginLeft: 11, color: '#fff' }}
+																		>
+																			<i className="far fa-edit mr-2"></i>Chỉnh sửa
+																		</button>
+																	)
 																))
 															) : (
 																<button

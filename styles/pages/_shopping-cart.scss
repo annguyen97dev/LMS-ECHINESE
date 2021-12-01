@@ -269,12 +269,14 @@
 	}
 }
 .shopping__cart-body {
-	height: 95vh;
+	height: 100%;
 	.shopping__cart-content {
 		.shopping__cart-items {
 			border: solid 1px #d1d7dc;
-			border-radius: 5px;
+			border-radius: 10px;
 			.cart__item {
+				border-radius: 10px;
+				background-color: #fff;
 				border-bottom: solid 1px #d1d7dc;
 				padding: 10px 0;
 				img {
@@ -331,7 +333,8 @@
 			width: 100%;
 		}
 		.payment-card,
-		.paypal {
+		.paypal,
+		.type-checkout {
 			border: solid 1px #d1d7dc;
 			border-radius: 5px;
 			margin: 20px 0;
@@ -369,6 +372,13 @@
 			.ant-radio-wrapper {
 				&::after {
 					content: 'Thanh toán bằng paypal';
+				}
+			}
+		}
+		.momo {
+			.ant-radio-wrapper {
+				&::after {
+					content: 'Thanh toán bằng Momo';
 				}
 			}
 		}
@@ -423,18 +433,20 @@
 		}
 	}
 	.sumary {
-		border: solid 1px #d1d7dc;
-		border-radius: 5px;
-		padding: 20px;
-		height: auto;
-		display: table;
-		position: sticky;
-		top: 2em;
-		// width: 40%;
-		height: 50%;
-		.sumary__price {
-			border-bottom: solid 1px #d1d7dc;
-			margin-bottom: 10px;
+		.sumary-wrap {
+			border: solid 1px #d1d7dc;
+			border-radius: 5px;
+			padding: 15px;
+			height: auto;
+			display: table;
+			position: sticky;
+			top: 2em;
+			// width: 40%;
+			height: 50%;
+			.sumary__price {
+				border-bottom: solid 1px #d1d7dc;
+				margin-bottom: 10px;
+			}
 		}
 	}
 }

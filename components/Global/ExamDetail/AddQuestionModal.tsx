@@ -52,7 +52,7 @@ const AddQuestionModal = (props) => {
 
 	return (
 		<>
-			<button className="btn btn-success ml-3" onClick={showModal}>
+			<button className="btn btn-success ml-2" onClick={showModal}>
 				<div className="d-flex align-items-center">
 					<Plus className="mr-2" style={{ width: '20px' }} />
 					Thêm câu hỏi

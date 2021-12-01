@@ -15,6 +15,7 @@ const ExpandTable = (props) => {
 	]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [activeIndex, setActiveIndex] = useState(null);
+	const [heightTable, setHeightTable] = useState<number>(450);
 
 	const closeAllExpandFunc = () => {
 		setRowKeys([
@@ -127,7 +128,13 @@ const ExpandTable = (props) => {
 		}
 	}, [props.closeAllExpand]);
 
-	console.log('STATE: ', state);
+	useEffect(() => {
+		let wS = screen.width;
+		if (wS < 800) {
+			// setHeightTable(600);
+			// console.log('start respon');
+		}
+	}, []);
 
 	useEffect(() => {
 		if (props.isResetKey) {
@@ -147,7 +154,7 @@ const ExpandTable = (props) => {
 					<Table
 						loading={props.loading?.type == 'GET_ALL' && props.loading?.status}
 						bordered={props.haveBorder ? props.haveBorder : false}
-						scroll={{ x: 'max-content', y: 450 }}
+						scroll={{ x: 'max-content', y: heightTable }}
 						columns={props.columns}
 						dataSource={dataSource}
 						size="middle"

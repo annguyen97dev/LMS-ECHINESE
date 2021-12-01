@@ -103,7 +103,7 @@ const ProgramForm = React.memo((props: any) => {
 					<Form form={form} layout="vertical" onFinish={onSubmit}>
 						<div className="row">
 							<div className="col-md-6 col-12">
-								<Form.Item name="GradeID" label="Khóa học" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
+								<Form.Item name="GradeID" label="Khối học" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
 									<Select
 										style={{ width: '100%' }}
 										className="style-input"

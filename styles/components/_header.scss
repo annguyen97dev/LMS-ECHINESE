@@ -445,6 +445,13 @@
 								display: none;
 							}
 						}
+						.user-name-desktop {
+							display: flex;
+							align-items: center;
+							@include max-media(768px) {
+								display: none;
+							}
+						}
 						.user-name-mobile {
 							display: none;
 							@include max-media(1000px) {

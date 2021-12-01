@@ -28,6 +28,11 @@ class UserApi {
 	changePassword(data: any) {
 		return instance.put('/api/Account', data);
 	}
+
+	// Tạo mới tài khoản
+	createAccount(data: any) {
+		return instance.post('/api/CreateAccount', data);
+	}
 }
 
 export const userApi = new UserApi();

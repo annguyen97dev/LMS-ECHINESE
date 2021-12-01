@@ -492,13 +492,14 @@ const StaffList = () => {
 			if (data.UserInformationID) {
 				res = await staffApi.update(data);
 				if (res.status == 200) {
-					let newDataSource = [...dataSource];
-					newDataSource.splice(indexRow, 1, {
-						...data,
-						Branch: returnBranchName(data.Branch),
-						RoleName: dataRoles.find((item) => item.value == data.RoleID)?.title
-					});
-					setDataSource(newDataSource);
+					// let newDataSource = [...dataSource];
+					// newDataSource.splice(indexRow, 1, {
+					// 	...data,
+					// 	Branch: returnBranchName(data.Branch),
+					// 	RoleName: dataRoles.find((item) => item.value == data.RoleID)?.title
+					// });
+					// setDataSource(newDataSource);
+					setTodoApi({ ...todoApi });
 					showNoti('success', res.data.message);
 				}
 			} else {
@@ -610,7 +611,8 @@ const StaffList = () => {
 
 	const columns = [
 		{
-			title: 'Mã nhân viên',
+			width: 100,
+			title: 'Mã',
 			dataIndex: 'UserCode',
 			fixed: 'left'
 		},
@@ -628,6 +630,7 @@ const StaffList = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			width: 150,
 			title: 'Trung tâm',
 			dataIndex: 'Branch',
 			render: (branch) => (

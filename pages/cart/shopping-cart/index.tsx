@@ -134,7 +134,12 @@ const ShoppingCart = () => {
 				<div className="cart__item-img col-3">
 					<img src={item.ImageThumbnails.length ? item.ImageThumbnails : '/images/logo-thumnail.jpg'} alt="img course"></img>
 				</div>
-				<div className="cart__item-detail col-4">
+				<div className="cart__item-action d-inline-block d-sm-none col-6 col-sm-3">
+					<p>Xóa</p>
+					<p>Lưu xem sau</p>
+					<p>Thêm vào yêu thích</p>
+				</div>
+				<div className="cart__item-detail col-12 col-sm-4 mt-3 mb-3 mt-sm-0 mb-sm-0">
 					<h5>{item.VideoCourseName}</h5>
 				</div>
 				<div className="cart__item-action col-3">
@@ -202,7 +207,7 @@ const ShoppingCart = () => {
 	}, []);
 
 	return (
-		<div style={{ backgroundColor: '#fff' }}>
+		<div>
 			<header>
 				<div className="shopping__cart-header justify-content-between align-items-center row">
 					<div className="header__logo col-6 col-md-3">
@@ -263,9 +268,9 @@ const ShoppingCart = () => {
 				{isLoading.loading ? (
 					<Skeleton active />
 				) : (
-					<div className="shopping__cart-content row mt-3">
-						<div className="shopping__cart-items col-12 col-md-8">{renderCartItems()}</div>
-						<div className="shopping__cart-total col-12 col-md-4 mt-5 mt-md-0">
+					<div className="shopping__cart-content row mt-3 mb-3 align-items-start">
+						<div className="shopping__cart-items col-12 col-lg-8">{renderCartItems()}</div>
+						<div className="shopping__cart-total col-12 col-lg-4 mt-5 mt-md-0 mb-3">
 							<h4>Tổng cộng: </h4>
 							<h1 className="font-weight-green">
 								{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0))} VNĐ

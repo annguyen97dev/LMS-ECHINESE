@@ -556,10 +556,12 @@ export default function StudentAdvisory() {
 			dataIndex: 'Email'
 		},
 		{
+			width: 180,
 			title: 'Nhu cầu học',
 			dataIndex: 'ProgramName'
 		},
 		{
+			width: 150,
 			title: 'Nguồn',
 			dataIndex: 'SourceInformationName'
 		},
@@ -595,6 +597,7 @@ export default function StudentAdvisory() {
 			// 	)
 		},
 		{
+			width: 150,
 			title: 'Tư vấn viên',
 			dataIndex: 'CounselorsName'
 		},

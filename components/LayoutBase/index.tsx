@@ -7,6 +7,7 @@ import panda from '~/public/loading/panda.json';
 const LayoutBase = ({ children }) => {
 	const [session, loading] = useSession();
 	const [isLoading, setIsLoading] = useState(true);
+	const [isNewUser, setIsNewUser] = useState(false);
 
 	// Get path and slug
 	const router = useRouter();
@@ -35,10 +36,26 @@ const LayoutBase = ({ children }) => {
 				}
 			} else {
 				// console.log('LOADING FALSE');
-				setIsLoading(false);
+				let checkNewUser = localStorage.getItem('isNewUser');
+
+				if (checkNewUser === 'true') {
+					router.push('/change-password');
+					// setTimeout(() => {
+					// 	setIsLoading(false);
+					// }, 1000);
+					setIsNewUser(true);
+				} else {
+					setIsLoading(false);
+				}
 			}
 		}
 	}, [session]);
+
+	useEffect(() => {
+		if (session) {
+			isNewUser && setIsLoading(false);
+		}
+	}, [isNewUser]);
 
 	return (
 		<>

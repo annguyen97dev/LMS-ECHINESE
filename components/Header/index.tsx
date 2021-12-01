@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Popover, Button, Input, Select } from 'antd';
+import { Popover, Button, Input, Select, Drawer } from 'antd';
 import { Grid } from 'react-feather';
 import { useWrap } from '~/context/wrap';
 import { signIn, signOut, useSession } from 'next-auth/client';
@@ -44,11 +44,13 @@ export default function Header({
 	const { titlePage, userInformation } = useWrap();
 	const [session, loading] = useSession();
 	const [dataUser, setDataUser] = useState<IUser>();
-	// let dataUser = null;
-	// if (session !== undefined) {
-	//   dataUser = session?.user;
-	//   console.log("data user: ", dataUser);
-	// }
+	const [openMenuCustom, setOpenMenuCustom] = useState(false);
+	const showDrawer = () => {
+		setOpenMenuCustom(true);
+	};
+	const onClose = () => {
+		setOpenMenuCustom(false);
+	};
 
 	const content_search = (
 		<div className="input-search">
@@ -260,7 +262,7 @@ export default function Header({
                   </div> */}
 									<div className="user-info">
 										{session?.user ? (
-											<div className="user-wrap">
+											<div className="user-name-desktop">
 												<div className="user-img">
 													<img
 														src={
@@ -289,10 +291,13 @@ export default function Header({
 							</Popover>
 						</li>
 						<li className="custom-wrap">
-							<div className="custom">
+							<div className="custom" onClick={showDrawer}>
 								{/* <SettingOutlined /> */}
 								<Grid />
 							</div>
+							<Drawer title="Chỉnh sửa" placement="right" onClose={onClose} visible={openMenuCustom}>
+								<p className="text-center font-weight-bold">Chức năng này đang được cập nhật...</p>
+							</Drawer>
 						</li>
 					</ul>
 				</div>
