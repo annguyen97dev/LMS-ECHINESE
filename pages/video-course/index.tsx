@@ -168,6 +168,7 @@ const VideoCourseStore = () => {
 			LevelID: param.LevelID,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
+			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
 			TagArray: param.TagArray
@@ -178,6 +179,7 @@ const VideoCourseStore = () => {
 			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
 			getAllArea();
 		} catch (error) {
+			showNoti('danger', 'Thêm không thành công');
 		} finally {
 			setIsLoading({ type: 'GET_ALL', status: false });
 		}

@@ -137,7 +137,6 @@
 }
 
 .vc-e-d {
-	height: 400px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -428,4 +427,22 @@
 	@include max-media(600px) {
 		height: 300px;
 	}
+}
+
+.m-create-vc {
+	width: 1000px !important;
+	margin-top: -75px;
+	.note-editor.note-frame {
+		border-radius: 6px;
+	}
+	.footer {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.wrap-input-html {
+	height: 100px !important;
 }

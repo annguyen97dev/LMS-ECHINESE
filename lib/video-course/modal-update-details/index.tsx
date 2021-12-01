@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Form, Spin } from 'antd';
+import { Modal, Form, Spin, Upload } from 'antd';
 import { useWrap } from '~/context/wrap';
 import EditorSimple from '~/components/Elements/EditorSimple';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
