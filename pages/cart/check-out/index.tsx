@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Radio, Input, Popover, Checkbox, DatePicker, Skeleton, Dropdown } from 'antd';
+import { Radio, Input, Popover, Checkbox, DatePicker, Skeleton, Spin, Dropdown } from 'antd';
 import Link from 'next/link';
 import Notifiaction from './../../../components/Header/notification';
 import { UserOutlined, RedoOutlined, LogoutOutlined, LoginOutlined, LockOutlined, EllipsisOutlined } from '@ant-design/icons';
@@ -11,9 +11,11 @@ import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
 import { numberWithCommas } from '~/utils/functions';
 import moment from 'moment';
 import { parsePriceStrToNumber } from './../../../utils/functions/index';
-import { SearchOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 
 const CheckOut = () => {
+	const { showNoti } = useWrap();
+	const router = useRouter();
 	const [method, setMothod] = useState('card');
 	const [session, loading] = useSession();
 	const [dataUser, setDataUser] = useState<IUser>();
@@ -26,15 +28,20 @@ const CheckOut = () => {
 	});
 	const { Search } = Input;
 	const { titlePage, userInformation } = useWrap();
-	const { RangePicker } = DatePicker;
 	const monthFormat = 'MM/YYYY';
 	const [params, setParams] = useState({
 		NameCard: '',
 		CardNumber: 0,
 		SecureCode: 0
 	});
+	const [dataOrder, setDataOrder] =
+		useState<{ Note: string; OrderDetailModels: Array<any>; OrderID: number; TotalPayment: number }>(null);
 
 	const renderPaymentMethod = () => {
+		let dummyTxt = '1234567890123456';
+
+		let joy = dummyTxt.match(/.{1,4}/g);
+
 		const onChangeCheckRemember = () => {};
 		return (
 			<>
@@ -99,8 +106,29 @@ const CheckOut = () => {
 						</div>
 					</div>
 				)}
+
+				{method == 'momo' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Momo</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
 			</>
 		);
+	};
+
+	console.log('Data Order: ', dataOrder);
+
+	const getOrderID = async (cartId) => {
+		try {
+			let res = await shoppingCartApi.getOrderID({ cartId: cartId });
+			if (res.status == 200) {
+				setDataOrder(res.data.data);
+			}
+		} catch (error) {}
 	};
 
 	const getShoppingCartData = async () => {
@@ -109,6 +137,8 @@ const CheckOut = () => {
 			let res = await shoppingCartApi.getAll();
 			if (res.status == 200) {
 				setCartItems(res.data.data);
+				//@ts-ignore
+				getOrderID(res.data.cartId);
 			}
 			if (res.status == 204) {
 				setCartItems([]);
@@ -237,47 +267,38 @@ const CheckOut = () => {
 		setMothod(event.target.value);
 	};
 
-	const menuDropdown = () => {
-		return (
-			<>
-				<div className="menu__dropdown d-inline-block d-md-none" style={{ width: 300 }}>
-					<div className="d-inline-block d-md-none ">
-						<Search
-							onChange={(event) => {}}
-							name="CourseSearch"
-							placeholder="Tìm khóa học"
-							className="style-input mb-3"
-							allowClear
-							enterButton={<SearchOutlined />}
-							size="large"
-						/>
-						<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
-							<div className="user-wrap">
-								<div className="user-info">
-									{session?.user ? (
-										<div className="user-wrap">
-											<div className="user-img">
-												<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
-											</div>
-											<div className="user-info">
-												<p className="user-name">{dataUser?.FullNameUnicode}</p>
-												<p className="user-position">{dataUser?.RoleName}</p>
-											</div>
-										</div>
-									) : (
-										<p>Tài khoản</p>
-									)}
+	const handleCheckout = async () => {
+		setIsLoading({
+			status: 'CHECKOUT',
+			loading: true
+		});
+		let res = null;
+		try {
+			switch (method) {
+				case 'momo':
+					res = await shoppingCartApi.checkoutMomo({ OrderID: dataOrder.OrderID });
+					break;
+				case 'paypal':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
+				default:
+					break;
+			}
+			if (res.status == 200) {
+				router.push(res.data.payUrl);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				status: 'CHECKOUT',
+				loading: false
+			});
+		}
+	};
 
-									{/* <div className="user-name-mobile">
-									<User />
-								</div> */}
-								</div>
-							</div>
-						</Popover>
-					</div>
-				</div>
-			</>
-		);
+	const menuDropdown = () => {
+		return <></>;
 	};
 
 	return (
@@ -292,10 +313,7 @@ const CheckOut = () => {
 							</a>
 						</Link>
 					</div>
-					<div className="header__search d-none d-md-inline-block col-md-5">
-						<Input onChange={(event) => {}} name="CourseSearch" placeholder="Tìm khóa học" className="style-input" />
-					</div>
-					<div className="header__profile col-2 col-md-3">
+					<div className="header__profile col-2">
 						<div className="col-setting">
 							<ul className="col-setting-list">
 								<li className="notification d-none d-md-inline-block">
@@ -358,7 +376,7 @@ const CheckOut = () => {
 					<div className="checkout__content col-12 col-md-7">
 						<h1>Thanh toán</h1>
 						<Radio.Group onChange={onChangeRadio} value={method}>
-							<div className="payment-card">
+							<div className="payment-card type-checkout">
 								<Radio value={'card'}>
 									<div className="logo-branch">
 										<img src={'/images/mastercard.svg'} alt="img branch cc"></img>
@@ -366,10 +384,17 @@ const CheckOut = () => {
 									</div>
 								</Radio>
 							</div>
-							<div className="paypal">
+							<div className="paypal type-checkout">
 								<Radio value={'paypal'}>
 									<div className="logo-branch">
 										<img src={'/images/paypal.svg'} alt="img branch cc"></img>
+									</div>
+								</Radio>
+							</div>
+							<div className="momo type-checkout">
+								<Radio value={'momo'}>
+									<div className="logo-branch">
+										<img src={'/images/momo.jpg'} alt="img branch cc"></img>
 									</div>
 								</Radio>
 							</div>
@@ -422,6 +447,31 @@ const CheckOut = () => {
 								<button className="btn btn-primary w-100">Thanh toán</button>
 							</Link>
 						</div>
+						<div className="row">
+							<div className="col-7" style={{ fontWeight: 700 }}>
+								<p>Tổng cộng:</p>
+							</div>
+							<div className="col-5" style={{ fontWeight: 700 }}>
+								<p>
+									{/* {numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0) - discounts)} */}
+									{numberWithCommas(dataOrder?.TotalPayment)}
+									VNĐ
+								</p>
+							</div>
+						</div>
+						<p>
+							Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
+							jurisdictions.
+						</p>
+						<p>By completing your purchase you agree to these Terms of Service.</p>
+						{/* <Link href="/cart/check-out">
+							<button className="btn btn-primary w-100">Thanh toán</button>
+						</Link> */}
+
+						<button className="btn btn-primary w-100" onClick={handleCheckout}>
+							Thanh toán
+							{isLoading.status == 'CHECKOUT' && isLoading.loading && <Spin className="loading-base" />}
+						</button>
 					</div>
 				</div>
 			</div>

@@ -279,13 +279,9 @@ const Discount = () => {
 		},
 		{
 			title: 'Gói',
-			dataIndex: 'Style',
+			dataIndex: 'StyleName',
 			render: (text, record) => {
-				if (record.Style == 2) {
-					return <span>Gói combo</span>;
-				} else {
-					return <span>Gới lẻ</span>;
-				}
+				return <p className="font-weight-black">{text}</p>;
 			}
 		},
 		{

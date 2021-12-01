@@ -49,11 +49,11 @@ const MenuDefault = ({
 	isOpen: boolean;
 	isOpenMenu: Function;
 }) => {
-	// const router = useRouter();
-	// const getRouter = router.pathname;
-
 	const router = useRouter();
 	let getRouter = router.pathname;
+	if (getRouter == '/') {
+		getRouter = '/newsfeed';
+	}
 
 	const [state, setState] = useState<propState>({
 		collapsed: isOpen
@@ -163,7 +163,7 @@ const MenuDefault = ({
 			});
 		});
 	};
-	console.log('open keys: ', openKeys);
+
 	const onOpenChange = (openKeys) => {
 		setOpenKeys(openKeys);
 
@@ -219,6 +219,7 @@ const MenuDefault = ({
 
 	useEffect(() => {
 		let widthScr = window.innerWidth;
+
 		widthScr < 1000 ? resetMenuMobile() : FindSubMenuActive(), FindTabActive();
 	}, [getRouter]);
 
@@ -411,7 +412,7 @@ const MenuDefault = ({
 							<Menu
 								key={indexMenu}
 								onOpenChange={onOpenChange}
-								selectedKeys={[getRouter == '/' ? '/newfeeds' : getRouter]}
+								selectedKeys={[getRouter == '/' ? '/newfeed' : getRouter]}
 								openKeys={[subMenuActive]}
 								mode="inline"
 								theme="light"

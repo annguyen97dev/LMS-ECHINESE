@@ -17,8 +17,6 @@ export default function SignIn({ providers, csrfToken }) {
 
 			const erData = JSON.parse(error.toString().split('Error:')[0]);
 
-			console.log('Erdata: ', erData);
-
 			switch (erData.status) {
 				case 200:
 					showNoti('success', 'Đăng nhập thành công');
