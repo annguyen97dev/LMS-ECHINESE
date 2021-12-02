@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button } from 'antd';
 import { useForm } from 'react-hook-form';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
@@ -7,6 +7,7 @@ import { useWrap } from '~/context/wrap';
 import EditorSimple from '~/components/Elements/EditorSimple';
 import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { newsFeedApi } from '~/apiBase';
+import { parseToMoney } from '~/utils/functions';
 
 const initDetails = {
 	VideoCourseName: '',
@@ -53,8 +54,8 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			LevelID: level,
 			VideoCourseName: videoCourseName,
 			ImageThumbnails: ImageThumbnails,
-			OriginalPrice: originalPrice,
-			SellPrice: sellPrice,
+			OriginalPrice: originalPrice.replace(/[^0-9\.]+/g, ''),
+			SellPrice: sellPrice.replace(/[^0-9\.]+/g, ''),
 			TagArray: tagArray
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
@@ -62,13 +63,27 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	};
 
 	// HANDLE SUBMIT
-	const onSubmit = handleSubmit(() => {
+	const onSubmit = handleSubmit((e) => {
 		if (imageSelected.name === '') {
 			finalSubmit(null);
 		} else {
 			uploadFile(imageSelected);
 		}
 	});
+
+	useEffect(() => {
+		const value = form.getFieldValue('OriginalPrice');
+		if (value !== null && value !== undefined) {
+			form.setFieldsValue({ OriginalPrice: parseToMoney(value.replace(/[^0-9\.]+/g, '')) });
+		}
+	}, [form.getFieldValue('OriginalPrice')]);
+
+	useEffect(() => {
+		const value = form.getFieldValue('SellPrice');
+		if (value !== null && value !== undefined) {
+			form.setFieldsValue({ SellPrice: parseToMoney(value.replace(/[^0-9\.]+/g, '')) });
+		}
+	}, [form.getFieldValue('SellPrice')]);
 
 	// Call api upload image
 	const uploadFile = async (file) => {
@@ -405,7 +420,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												placeholder=""
 												className="style-input"
 												value={originalPrice}
-												type="number"
+												// type="number"
 												onChange={(e) => setOriginalPrice(e.target.value)}
 											/>
 										</Form.Item>
@@ -419,7 +434,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											<Input
 												placeholder=""
 												className="style-input"
-												type="number"
+												// type="number"
 												value={sellPrice}
 												onChange={(e) => setSellPrice(e.target.value)}
 											/>
@@ -428,7 +443,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									<div className="col-12">
 										<Form.Item
 											name="Description"
-											label="Tags"
+											label="Từ khóa tìm kiếm"
 											rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										>
 											<TextArea
