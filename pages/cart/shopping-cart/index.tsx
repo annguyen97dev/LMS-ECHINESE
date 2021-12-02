@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Input, Skeleton, Dropdown, Card } from 'antd';
-import Link from 'next/link';
+import {
+	EllipsisOutlined,
+	FormOutlined,
+	LoginOutlined,
+	LogoutOutlined,
+	RedoOutlined,
+	SearchOutlined,
+	UserOutlined
+} from '@ant-design/icons';
+import { Dropdown, Input, Popover, Skeleton, Form, Spin } from 'antd';
 import { signIn, signOut, useSession } from 'next-auth/client';
-import { UserOutlined, RedoOutlined, LogoutOutlined, LoginOutlined, FormOutlined, EllipsisOutlined } from '@ant-design/icons';
-import Notifiaction from '../../../components/Header/notification';
-import { Popover } from 'antd';
-import { User } from 'react-feather';
-import { useWrap } from '~/context/wrap';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
+import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
-import { SearchOutlined } from '@ant-design/icons';
+import Notifiaction from '../../../components/Header/notification';
+import DeleteItem from './../../../components/Tables/DeleteItem';
 
 const ShoppingCart = () => {
 	const [session, loading] = useSession();
@@ -17,12 +23,14 @@ const ShoppingCart = () => {
 	const { titlePage, userInformation } = useWrap();
 	const [cartItems, setCartItems] = useState<IShoppingCart[]>();
 	const [dropDownVisible, setDropDownVisible] = useState(false);
-	console.log(dropDownVisible);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
 		loading: false
 	});
+	const [clickedItem, setClickedItem] = useState(null);
+
 	const { Search } = Input;
+	const { showNoti } = useWrap();
 
 	const moveToLogin = () => {
 		signIn();
@@ -98,14 +106,45 @@ const ShoppingCart = () => {
 	}
 
 	const getShoppingCartData = async () => {
-		setIsLoading({ status: 'loading', loading: true });
+		setIsLoading({ status: 'GET_CART_DATA', loading: true });
 		try {
 			let res = await shoppingCartApi.getAll();
 			if (res.status == 200) {
 				setCartItems(res.data.data);
+				//@ts-ignore
+				getOrderID(res.data.cartId);
 			}
 			if (res.status == 204) {
 				setCartItems([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_CART_DATA', loading: false });
+		}
+	};
+
+	const getShoppingCartDataNoLoading = async () => {
+		try {
+			let res = await shoppingCartApi.getAll();
+			if (res.status == 200) {
+				setCartItems(res.data.data);
+				//@ts-ignore
+				getOrderID(res.data.cartId);
+			}
+			if (res.status == 204) {
+				setCartItems([]);
+			}
+		} catch (error) {
+		} finally {
+		}
+	};
+
+	const deleteItem = async (id) => {
+		setIsLoading({ status: 'loading', loading: true });
+		try {
+			let res = await shoppingCartApi.update({ ID: id, Enable: false });
+			if (res.status == 200) {
+				getShoppingCartData();
 			}
 		} catch (error) {
 		} finally {
@@ -113,37 +152,127 @@ const ShoppingCart = () => {
 		}
 	};
 
+	const increseItem = async (id, quantity) => {
+		setIsLoading({
+			status: 'CHANGE_QUANTITY',
+			loading: true
+		});
+		try {
+			let res = await shoppingCartApi.update({ ID: id, Quantity: quantity + 1, Enable: true });
+			if (res.status == 200) {
+				getShoppingCartDataNoLoading();
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({
+				status: 'CHANGE_QUANTITY',
+				loading: false
+			});
+		}
+	};
+
+	const decreseItem = async (id, quantity) => {
+		setIsLoading({
+			status: 'CHANGE_QUANTITY',
+			loading: true
+		});
+		try {
+			let res = await shoppingCartApi.update(
+				quantity == 1 ? { ID: id, Enable: false } : { ID: id, Quantity: quantity - 1, Enable: true }
+			);
+			if (res.status == 200) {
+				getShoppingCartDataNoLoading();
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({
+				status: 'CHANGE_QUANTITY',
+				loading: false
+			});
+		}
+	};
+
 	const renderCartItems = () => {
 		return cartItems?.map((item, index) => (
 			<div className=" cart__item d-flex justify-content-between align-items-center row" key={index}>
-				<div className="cart__item-img col-6 col-sm-3">
+				<div className="cart__item-img col-4 col-sm-3">
 					<Link href="/">
 						<a href="#">
 							<img src={item.ImageThumbnails.length ? item.ImageThumbnails : '/images/cat-ben.jpg'} alt="img course"></img>
 						</a>
 					</Link>
 				</div>
-				<div className="cart__item-action d-inline-block d-sm-none col-6 col-sm-3">
-					<p>Xóa</p>
-					<p>Lưu xem sau</p>
-					<p>Thêm vào yêu thích</p>
-				</div>
-				<div className="cart__item-detail col-12 col-sm-4 mt-3 mb-3 mt-sm-0 mb-sm-0">
+				<div className="cart__item-detail d-none d-sm-inline-block col-sm-3 mt-3 mb-3 mt-sm-0 mb-sm-0">
 					<h5>{item.VideoCourseName}</h5>
-					{/* <p>Tạo bởi: Dr. Angele Yu</p> */}
-					{/* <div className="detail__hours">
-						<span>21 giờ học</span>
-						<span>240 bài học</span>
-						<span>Trung cấp</span>
-					</div> */}
 				</div>
-				<div className="cart__item-action d-none d-sm-inline-block col-12 col-sm-3">
-					<p>Xóa</p>
-					<p>Lưu xem sau</p>
-					<p>Thêm vào yêu thích</p>
+				<div className="cart__item-action d-none d-sm-inline-block d-none d-sm-inline-block col-sm-2">
+					<span
+						className="quantity-btn"
+						onClick={() => {
+							decreseItem(item.ID, item.Quantity), setClickedItem(item.ID);
+						}}
+					>
+						-
+					</span>
+					<span className="cart__item-quantity font-weight-green">
+						{isLoading.status == 'CHANGE_QUANTITY' && isLoading.loading && clickedItem == item.ID ? (
+							<Spin size="small" />
+						) : (
+							item.Quantity
+						)}
+					</span>
+					<span
+						className="quantity-btn"
+						onClick={() => {
+							increseItem(item.ID, item.Quantity), setClickedItem(item.ID);
+						}}
+					>
+						+
+					</span>
 				</div>
-				<div className="cart__item-price col-12 col-sm-2">
-					<p className="font-weight-green">{numberWithCommas(item.Price)} vnd</p>
+				<div className="cart__item-price d-none d-sm-inline-block col-sm-2">
+					<p className="font-weight-primary">{numberWithCommas(item.Price * item.Quantity)} VND</p>
+				</div>
+				<div className="cart__item-remove d-none d-sm-inline-block col-sm-1">
+					<DeleteItem onDelete={() => deleteItem(item.ID)} />
+				</div>
+				<div className="col-8 d-sm-none">
+					<div className="cart__item-detail col-12 col-sm-3 mt-3  mt-sm-0 mb-sm-0">
+						<h5>{item.VideoCourseName}</h5>
+					</div>
+					<div className="cart__item-price col-12 col-sm-2">
+						<p className="font-weight-primary">{numberWithCommas(item.Price * item.Quantity)} VND</p>
+					</div>
+					<div className="row mt-3">
+						<div className="cart__item-action pl-5 col-8 col-sm-2">
+							<span
+								className="quantity-btn"
+								onClick={() => {
+									decreseItem(item.ID, item.Quantity), setClickedItem(item.ID);
+								}}
+							>
+								-
+							</span>
+							<span className="cart__item-quantity font-weight-green">
+								{isLoading.status == 'CHANGE_QUANTITY' && isLoading.loading && clickedItem == item.ID ? (
+									<Spin size="small" />
+								) : (
+									item.Quantity
+								)}
+							</span>
+							<span
+								className="quantity-btn"
+								onClick={() => {
+									increseItem(item.ID, item.Quantity), setClickedItem(item.ID);
+								}}
+							>
+								+
+							</span>
+						</div>
+						<div className="cart__item-remove col-4 col-sm-1">
+							<DeleteItem onDelete={() => deleteItem(item.ID)} />
+						</div>
+					</div>
 				</div>
 			</div>
 		));
@@ -179,10 +308,6 @@ const ShoppingCart = () => {
 									) : (
 										<p>Tài khoản</p>
 									)}
-
-									{/* <div className="user-name-mobile">
-									<User />
-								</div> */}
 								</div>
 							</div>
 						</Popover>
@@ -275,30 +400,22 @@ const ShoppingCart = () => {
 			</header>
 			<div className="shopping__cart-body container mt-5">
 				<h1>Giỏ Hàng</h1>
-				{isLoading.loading ? (
+				{isLoading.loading && isLoading.status == 'GET_CART_DATA' ? (
 					<Skeleton active />
 				) : (
 					<div className="shopping__cart-content row mt-3 mb-3 align-items-start">
 						<div className="shopping__cart-items col-12 col-lg-8">{renderCartItems()}</div>
 						<div className="shopping__cart-total col-12 col-lg-4 mt-5 mt-md-0 mb-3">
-							<h4>Tổng cộng: </h4>
-							<h1 className="font-weight-green">
-								{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0))}
-								vnd
-							</h1>
+							<div className="row">
+								<h5 className="col-5">Tổng cộng: </h5>
+								<h5 className="font-weight-primary col-7">
+									{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price * b.Quantity), 0))}
+									<span className="ml-2">VND</span>
+								</h5>
+							</div>
 							<Link href="/cart/check-out">
 								<button className="btn btn-primary w-100">Thanh toán</button>
 							</Link>
-							<p>Mã khuyến mãi</p>
-							<Search
-								onChange={(event) => {}}
-								name="Promotions"
-								placeholder="Nhập mã khuyến mãi"
-								className="input-promo"
-								allowClear
-								enterButton="Áp dụng"
-								size="large"
-							/>
 						</div>
 					</div>
 				)}
