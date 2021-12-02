@@ -5,7 +5,9 @@ const url = '/api/Cart/GetCartDetailOfUser';
 class ShoppingCartApi {
 	getAll = () => instance.get<IApiResultData<IShoppingCart[]>>(url, {});
 
-	// getDetail = (id: number) => instance.get<IApiResultData<IPayRoll>>(`${url}/${id}`);
+	update = (data) => instance.put('/api/Cart/Update', data);
+
+	applyDiscount = (data) => instance.post('/api/Order/ApplyDiscount', data);
 
 	// add = (data: IPayRoll) => instance.post(url, data);
 
