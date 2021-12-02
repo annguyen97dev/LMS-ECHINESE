@@ -8,14 +8,16 @@ import { useWrap } from '~/context/wrap';
 import CDCalendar from './Calendar';
 
 CourseDetailCalendar.propTypes = {
-	courseID: PropTypes.number
+	courseID: PropTypes.number,
+	isAdmin: PropTypes.bool
 };
 CourseDetailCalendar.defaultProps = {
-	courseID: 0
+	courseID: 0,
+	isAdmin: false
 };
 
 function CourseDetailCalendar(props) {
-	const { courseID: ID } = props;
+	const { courseID: ID, isAdmin } = props;
 	const { showNoti } = useWrap();
 	const [calendarList, setCalendarList] = useState<ICourseDetailSchedule[]>([]);
 	const [isLoaded, setIsLoaded] = useState(false);
@@ -116,14 +118,22 @@ function CourseDetailCalendar(props) {
 	return (
 		<>
 			<TitlePage title="Chi tiết khóa học" />
-			<CDCalendar
-				isLoading={isLoading}
-				isGetRecordList={true}
-				isUploadDocument={true}
-				isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
-				eventList={calendarDateFormat(calendarList)}
-				handleUploadDocument={onUploadDocument}
-			/>
+			{isAdmin ? (
+				<CDCalendar
+					isLoading={isLoading}
+					isGetRecordList={true}
+					isUploadDocument={true}
+					isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
+					eventList={calendarDateFormat(calendarList)}
+					handleUploadDocument={onUploadDocument}
+				/>
+			) : (
+				<CDCalendar
+					isLoading={isLoading}
+					isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
+					eventList={calendarDateFormat(calendarList)}
+				/>
+			)}
 		</>
 	);
 }
