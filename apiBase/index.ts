@@ -91,7 +91,7 @@ export { saleCampaignDetailApi } from './sale/sale-campaign-detail';
 export { saleSalaryApi } from './sale/sale-salary';
 export { salerTotalRevenueApi } from './sale/saler-total-revenue';
 export { salerRevenueApi } from './sale/saler-revenue';
-export { VideoCourseListApi } from './video-course-list';
+export { VideoCourseListApi, DonePayApi } from './video-course-list';
 export { VideoCourseOfStudent, VideoCourseInteraction } from './video-learning';
 export { resetPasswordApi } from './reset-password/reset-password';
 export { doingTestApi } from './doing-test/doing-test';

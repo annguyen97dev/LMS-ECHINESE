@@ -1,11 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
-import { List, Card, Progress, Rate, Modal, Input, Tooltip } from 'antd';
+import { List, Card, Progress, Rate, Modal, Input, Tooltip, Popconfirm, message } from 'antd';
 import LayoutBase from '~/components/LayoutBase';
-import { VideoCourseListApi } from '~/apiBase';
+import { VideoCourseListApi, DonePayApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import Link from 'next/link';
 import CourseVideoTable from '~/components/CourseVideoTable';
+import { DollarOutlined } from '@ant-design/icons';
+import { Filter, Eye, CheckCircle } from 'react-feather';
 
 const { TextArea, Search } = Input;
 
@@ -143,7 +145,7 @@ const VideoCourseList = () => {
 			getAllArea();
 			getTitlePage();
 
-			userInformation.RoleID == 1 ? getTitlePage('Khóa học video đã bán') : getTitlePage('Khóa học video đã mua');
+			userInformation?.RoleID == 1 ? getTitlePage('Khóa học video đã bán') : getTitlePage('Khóa học video đã mua');
 		}
 	}, [userInformation]);
 
@@ -160,7 +162,7 @@ const VideoCourseList = () => {
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 			setRender(res + '');
 		} catch (err) {
-			// showNoti("danger", err);
+			showNoti('danger', err);
 		} finally {
 			setLoading(false);
 		}
@@ -180,6 +182,20 @@ const VideoCourseList = () => {
 		}
 		getAllArea();
 	};
+
+	const handleDone = async (ID) => {
+		try {
+			let newData = new FormData();
+			newData.append('ID', ID);
+
+			const res = await DonePayApi.update(newData);
+			showNoti('success', 'Thành công');
+		} catch (error) {
+			showNoti('danger', error.message);
+		}
+	};
+
+	const textConfirm = 'Khóa học này đã được thanh toán?';
 
 	const columnsVideoCourse = [
 		{
@@ -215,6 +231,33 @@ const VideoCourseList = () => {
 			key: 'StatusName',
 			align: 'center'
 		}
+		// {
+		// 	title: 'Thao tác',
+		// 	dataIndex: 'Action',
+		// 	key: 'action',
+		// 	align: 'center',
+		// 	render: (Action, data, index) => (
+		// 		<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+		// 			<Tooltip title="Xác thực thanh toán">
+		// 				<Popconfirm
+		// 					placement="right"
+		// 					title={textConfirm}
+		// 					onConfirm={() => handleDone(data.ID)}
+		// 					okText="OK"
+		// 					cancelText="Cancel"
+		// 				>
+		// 					<button
+		// 						onClick={() => console.log(data)}
+		// 						className="btn btn-icon"
+		// 						style={{ marginRight: -10, marginLeft: -10 }}
+		// 					>
+		// 						<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
+		// 					</button>
+		// 				</Popconfirm>
+		// 			</Tooltip>
+		// 		</div>
+		// 	)
+		// }
 	];
 
 	useEffect(() => {
