@@ -91,8 +91,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		try {
 			let res = await newsFeedApi.uploadFile(file.originFileObj);
 			if (res.status == 200 || res.status == 204) {
-				// console.log(res.data);
-
 				finalSubmit(res.data.data);
 			}
 		} catch (error) {
@@ -269,6 +267,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											/>
 										</Form.Item>
 									</div>
+
 									<div className="col-md-6 col-12">
 										<Form.Item
 											name="chineseName"
@@ -284,6 +283,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											/>
 										</Form.Item>
 									</div>
+
 									<div className="col-md-6 col-12">
 										<Form.Item name="Image" label="Hình ảnh thu nhỏ">
 											<Upload

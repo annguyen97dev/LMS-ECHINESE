@@ -127,3 +127,10 @@
 	margin-top: -17px;
 	color: black;
 }
+
+.m-e-vc {
+	height: 80vh !important;
+	.note-editor.note-frame {
+		border-radius: 6px;
+	}
+}
