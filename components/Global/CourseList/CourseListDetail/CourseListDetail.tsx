@@ -1,20 +1,17 @@
 import { Spin, Tabs } from 'antd';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Activity, Bell, Book, Calendar, CheckCircle, Edit, FileText, Flag, BookOpen } from 'react-feather';
+import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag } from 'react-feather';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
+import { useWrap } from '~/context/wrap';
+import CourseExamAdmin from '../../CourseExam/CourseExamAdmin';
+import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
+import LessonDetail from '../LessonDetail';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
-import { useWrap } from '~/context/wrap';
-import ScheduleStudyStudent from '../../ScheduleStudyStudent/ScheduleStudyStudent';
-import CurriculumDetail from '../../Option/ProgramDetail/CurriculumDetail';
-import LessonDetail from '../LessonDetail';
-import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
-import CourseExamAdmin from '../../CourseExam/CourseExamAdmin';
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
@@ -47,7 +44,7 @@ const CourseListDetail = () => {
 					}
 					key="1"
 				>
-					{isAdmin ? <CourseDetailCalendar courseID={parseIntID} /> : <ScheduleStudyStudent />}
+					<CourseDetailCalendar courseID={parseIntID} isAdmin={isAdmin || userInformation?.RoleID === 2} />
 				</TabPane>
 				<TabPane
 					tab={

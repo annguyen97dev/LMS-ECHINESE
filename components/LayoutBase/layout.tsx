@@ -295,8 +295,8 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 				funcMenuMobile={funcMenuMobile}
 			/>
 			<main className="app-main">
-				{/* KIỂM TRA LỚP SẮP DIỄN RA */}
-				<InComingClassBtn />
+				{/* KIỂM TRA LỚP SẮP DIỄN RA DÀNH CHO HỌC VIÊN*/}
+				{userInformation?.RoleID === 3 && <InComingClassBtn />}
 				{/* FACEBOOK */}
 				<Popover content={contentFanpage} title="Fanpage" trigger="click">
 					<div className="icon-facebook">
