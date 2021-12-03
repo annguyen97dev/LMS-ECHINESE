@@ -171,7 +171,6 @@ export const AdminChildMenu = [
 					// },
 				]
 			},
-			//
 			{
 				ItemType: 'sub-menu',
 				Key: 'video-course',
@@ -577,7 +576,7 @@ export const AdminChildMenu = [
 				ItemType: 'single',
 				Key: '/feedback',
 				Route: '/feedback',
-				Text: 'Phản hồi',
+				Text: 'Danh sách phản hồi',
 				Icon: ''
 			},
 			{

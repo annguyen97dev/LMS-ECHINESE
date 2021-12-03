@@ -90,18 +90,34 @@ export const StudentChildMenu = [
 				Text: 'Câu hỏi thường gặp',
 				Icon: ''
 			},
+			,
 			{
-				ItemType: 'single',
-				Key: '/video-course',
-				Route: '/video-course',
-				Text: 'Khóa học video',
-				Icon: ''
+				ItemType: 'sub-menu',
+				Key: 'video-course',
+				Icon: '',
+				TitleSub: 'Khóa học video',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/video-course',
+						Route: '/video-course',
+						Text: 'Danh sách khóa học',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/video-course-list',
+						Route: '/video-course-list',
+						Text: 'Khóa học đã mua',
+						Icon: ''
+					}
+				]
 			},
 			{
 				ItemType: 'single',
-				Key: '/video-course-list',
-				Route: '/video-course-list',
-				Text: 'Khóa học video đã mua',
+				Key: '/feedback',
+				Route: '/feedback',
+				Text: 'Phản hồi',
 				Icon: ''
 			}
 		]

@@ -134,8 +134,8 @@ export const TeacherChildMenu = [
 
 			{
 				ItemType: 'single',
-				Key: '/customer/feedback-list',
-				Route: '/customer/feedback-list',
+				Key: '/feedback',
+				Route: '/feedback',
 				Text: 'Phản hồi',
 				Icon: ''
 			},
