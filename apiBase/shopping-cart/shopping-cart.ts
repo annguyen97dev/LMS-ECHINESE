@@ -20,6 +20,8 @@ class ShoppingCartApi {
 	checkoutMomo = (data) => instance.post('/api/Order/PaymentWithMoMo', data);
 
 	checkoutPaypal = (data) => instance.post('/api/Order/PaymentWithPaypal', data);
+	
+	checkoutCash = (data) => instance.post('/api/Order/CashPayment', data);
 
 	getOrderID = (data) => instance.post('/api/Order/LoadOrder', data);
 }

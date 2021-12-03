@@ -24,6 +24,7 @@ const CheckOut = () => {
 	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [promoCode, setPromoCode] = useState('');
 	const [promo, setPromo] = useState(null);
+	const [cartID, setCartID] = useState(null);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
 		loading: false
@@ -96,6 +97,7 @@ const CheckOut = () => {
 						</div>
 					</div>
 				)}
+
 				{method == 'paypal' && (
 					<div className="paypal-info">
 						<p>Để hoàn thành thanh toán chúng tôi sẽ chuyển bạn đến trang bảo mật của Paypal!</p>
@@ -109,6 +111,30 @@ const CheckOut = () => {
 				{method == 'momo' && (
 					<div className="paypal-info">
 						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Momo</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+
+				{method == 'onepay' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+
+				{method == 'cash' && (
+					<div className="paypal-info">
+						<p>
+							Qúy khách vui lòng đến{' '}
+							<span className="text-uppercase font-weight-bold">1600 Pennsylvania Avenue NW Washington, D.C. 20500</span> để
+							hoàn tất thanh toán
+						</p>
 						<div className="text-right align-items-center">
 							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
 							<span>Secure Connection</span>
@@ -136,6 +162,8 @@ const CheckOut = () => {
 				setCartItems(res.data.data);
 				//@ts-ignore
 				getOrderID(res.data.cartId);
+				//@ts-ignore
+				setCartID(res.data.cartId);
 			}
 			if (res.status == 204) {
 				setCartItems([]);
@@ -159,10 +187,10 @@ const CheckOut = () => {
 				<div className="cart__item-detail col-4">
 					<h5>{item.VideoCourseName}</h5>
 				</div>
-				<div className="cart__item-action pl-5 col-2 ">
+				<div className="cart__item-action pl-1 col-1 ">
 					<span className="cart__item-quantity font-weight-green">{item.Quantity}</span>
 				</div>
-				<div className="cart__item-price col-3">
+				<div className="cart__item-price col-4">
 					<p className="font-weight-green">{numberWithCommas(item.Price * item.Quantity)} vnd</p>
 				</div>
 			</div>
@@ -251,6 +279,7 @@ const CheckOut = () => {
 				setPromo(res.data.data);
 			}
 		} catch (error) {
+			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({ status: 'APPLY_DISCOUNT', loading: false });
 		}
@@ -289,11 +318,36 @@ const CheckOut = () => {
 				case 'paypal':
 					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
 					break;
+				case 'cash':
+					res = await shoppingCartApi.checkoutCash({ CartId: cartID && cartID });
+					break;
+				case 'onepay':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
+				case 'card':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
 				default:
 					break;
 			}
 			if (res.status == 200) {
-				router.push(res.data.payUrl);
+				switch (method) {
+					case 'momo':
+						router.push(res.data.payUrl);
+						break;
+					case 'paypal':
+						router.push(res.data.payUrl);
+						break;
+					case 'cash':
+						showNoti('success', res.data.message);
+						break;
+					case 'onepay':
+						break;
+					case 'card':
+						break;
+					default:
+						break;
+				}
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -303,10 +357,6 @@ const CheckOut = () => {
 				loading: false
 			});
 		}
-	};
-
-	const menuDropdown = () => {
-		return <></>;
 	};
 
 	return (
@@ -328,19 +378,6 @@ const CheckOut = () => {
 									<Notifiaction />
 								</li>
 								<li className="user">
-									{/* <div className="d-inline-block d-md-none  w-25 ">
-										<Dropdown overlay={menuDropdown} trigger={['click']} visible={dropDownVisible}>
-											<a
-												className="ant-dropdown-link"
-												onClick={(e) => {
-													e.preventDefault();
-													setDropDownVisible(!dropDownVisible);
-												}}
-											>
-												<EllipsisOutlined />
-											</a>
-										</Dropdown>
-									</div> */}
 									<div className="d-none d-md-inline-block ">
 										<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
 											<div className="user-wrap">
@@ -358,10 +395,6 @@ const CheckOut = () => {
 													) : (
 														<p>Tài khoản</p>
 													)}
-													{/* 
-												<div className="user-name-mobile">
-													<User />
-												</div> */}
 												</div>
 											</div>
 										</Popover>
@@ -380,13 +413,13 @@ const CheckOut = () => {
 						</p>
 					</Link>
 				</div>
-				<div className="row">
-					<div className="checkout__content col-12 col-md-7">
+				<div className="row pb-5">
+					<div className="checkout__content col-12 col-lg-7">
 						<h1>Thanh toán</h1>
 						<Radio.Group onChange={onChangeRadio} value={method}>
 							<div className="payment-card type-checkout">
 								<Radio value={'card'}>
-									<div className="logo-branch">
+									<div className="logo-branch p-1">
 										<img src={'/images/mastercard.svg'} alt="img branch cc"></img>
 										<img src={'/images/visa.svg'} alt="img branch cc"></img>
 									</div>
@@ -394,15 +427,29 @@ const CheckOut = () => {
 							</div>
 							<div className="paypal type-checkout">
 								<Radio value={'paypal'}>
-									<div className="logo-branch">
+									<div className="logo-branch p-1">
 										<img src={'/images/paypal.svg'} alt="img branch cc"></img>
 									</div>
 								</Radio>
 							</div>
 							<div className="momo type-checkout">
 								<Radio value={'momo'}>
-									<div className="logo-branch">
+									<div className="logo-branch p-1">
 										<img src={'/images/momo.jpg'} alt="img branch cc"></img>
+									</div>
+								</Radio>
+							</div>
+							<div className="onepay type-checkout">
+								<Radio value={'onepay'}>
+									<div className="logo-branch p-1">
+										<img src={'/images/onepay.png'} alt="img branch cc"></img>
+									</div>
+								</Radio>
+							</div>
+							<div className="cash type-checkout">
+								<Radio value={'cash'}>
+									<div className="logo-branch p-1">
+										<img src={'/images/cash.png'} alt="img branch cc"></img>
 									</div>
 								</Radio>
 							</div>
@@ -413,7 +460,7 @@ const CheckOut = () => {
 							{isLoading.loading ? <Skeleton active /> : renderCartItems()}
 						</div>
 					</div>
-					<div className="sumary col-12 col-md-5 mt-4">
+					<div className="sumary col-12 col-lg-5 mt-4">
 						<div className="sumary-wrap">
 							<h6>Mã khuyến mãi</h6>
 							<Form form={form}>
