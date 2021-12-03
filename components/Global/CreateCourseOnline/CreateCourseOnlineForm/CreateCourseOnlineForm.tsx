@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Form, Modal, Spin } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, FC } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
@@ -22,7 +22,8 @@ const CreateCourseOnlineForm = (props) => {
 		handleCheckStudyTime,
 		handleFetchDataByBranch,
 		handleFetchProgramByGrade,
-		handleGetValueBeforeFetchCurriculum
+		handleGetValueBeforeFetchCurriculum,
+		handleGetValueBeforeFetchTeacher
 	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -35,6 +36,7 @@ const CreateCourseOnlineForm = (props) => {
 		StudyTimeID: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ca học').required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
+		TeacherID: yup.number().nullable().required('Bạn không được để trống'),
 		CurriculumID: yup.number().nullable().required('Bạn không được để trống'),
 		StartDay: yup.string().required('Bạn không được để trống'),
 		DaySelected: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ngày trong tuần').required('Bạn không được để trống'),
@@ -48,6 +50,7 @@ const CreateCourseOnlineForm = (props) => {
 		StudyTimeID: undefined,
 		GradeID: null,
 		ProgramID: null,
+		TeacherID: null,
 		CurriculumID: null,
 		StartDay: moment().format('YYYY/MM/DD'),
 		DaySelected: [],
@@ -55,7 +58,7 @@ const CreateCourseOnlineForm = (props) => {
 		SalaryOfLesson: '',
 		CourseName: ''
 	};
-	const form = useForm({
+	const form = useForm<ICreateCourseOnlineForm>({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema)
 	});
@@ -91,10 +94,12 @@ const CreateCourseOnlineForm = (props) => {
 		if (!handleGetValueBeforeFetchCurriculum) return;
 		form.setValue('CurriculumID', undefined);
 		handleGetValueBeforeFetchCurriculum(key, value);
-		if (key === 'StudyTimeID' && handleCheckStudyTime) {
-			// value = [1, 2, ...];
-			handleCheckStudyTime(value);
-		}
+	};
+	// ONCHANGE PROGRAM AND BRANCH
+	const checkHandleGetValueBeforeFetchTeacher = (key: string, value: number) => {
+		if (!handleGetValueBeforeFetchTeacher) return;
+		form.setValue('TeacherID', undefined);
+		handleGetValueBeforeFetchTeacher(key, value);
 	};
 
 	return (
@@ -102,14 +107,7 @@ const CreateCourseOnlineForm = (props) => {
 			<button type="button" className="btn btn-warning" onClick={openModal}>
 				Thông tin khóa học
 			</button>
-			<Modal
-				// style={{top: 20}}
-				title="Thông tin khóa học"
-				visible={isModalVisible}
-				footer={null}
-				width={800}
-				onCancel={closeModal}
-			>
+			<Modal title="Thông tin khóa học" visible={isModalVisible} footer={null} width={800} onCancel={closeModal}>
 				<div className="wrap-form">
 					<Form layout="vertical" onFinish={form.handleSubmit(createCourseSwitchFunc)}>
 						<div className="row">
@@ -122,7 +120,10 @@ const CreateCourseOnlineForm = (props) => {
 									isRequired
 									optionList={optionListForForm.branchList}
 									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
-									onChangeSelect={checkHandleFetchUserInformation}
+									onChangeSelect={(value) => {
+										checkHandleFetchUserInformation(value);
+										checkHandleGetValueBeforeFetchTeacher('BranchID', value);
+									}}
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -147,6 +148,10 @@ const CreateCourseOnlineForm = (props) => {
 									optionList={optionListForForm.studyTimeList}
 									mode="multiple"
 									onChangeSelect={(value) => {
+										if (handleCheckStudyTime) {
+											// value = [1, 2, ...];
+											handleCheckStudyTime(value);
+										}
 										checkHandleGetValueBeforeFetchCurriculum('StudyTimeID', value);
 									}}
 								/>
@@ -176,6 +181,7 @@ const CreateCourseOnlineForm = (props) => {
 										const price = optionListForForm.programList.find((p) => p.value === value)?.options.Price || 0;
 										form.setValue('Price', numberWithCommas(price));
 										checkHandleGetValueBeforeFetchCurriculum('ProgramID', value);
+										checkHandleGetValueBeforeFetchTeacher('ProgramID', value);
 									}}
 								/>
 							</div>
@@ -188,6 +194,25 @@ const CreateCourseOnlineForm = (props) => {
 									isLoading={isLoading.type === 'ProgramID' && isLoading.status}
 									placeholder="Chọn giáo trình"
 									optionList={optionListForForm.curriculumList}
+								/>
+							</div>
+							<div className="col-md-6 col-12">
+								<SelectField
+									form={form}
+									name="TeacherID"
+									label="Giáo viên"
+									isRequired
+									isLoading={isLoading.type === 'ProgramID' && isLoading.status}
+									placeholder="Chọn giáo viên"
+									optionList={optionListForForm.teacherList}
+								/>
+							</div>
+							<div className="col-md-6 col-12">
+								<InputTextField
+									form={form}
+									name="CourseName"
+									label="Tên khóa học"
+									placeholder="[Trung tâm][Chương trình học][Giáo trình][Ca học] - Ngày học"
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -224,14 +249,7 @@ const CreateCourseOnlineForm = (props) => {
 									handleFormatCurrency={numberWithCommas}
 								/>
 							</div>
-							<div className="col-md-12 col-12">
-								<InputTextField
-									form={form}
-									name="CourseName"
-									label="Tên khóa học"
-									placeholder="[Trung tâm][Chương trình học][Giáo trình][Ca học] - Ngày học"
-								/>
-							</div>
+
 							<div className="col-md-12 col-12 mt-3 " style={{ textAlign: 'center' }}>
 								<button
 									type="submit"
@@ -261,6 +279,7 @@ CreateCourseOnlineForm.propTypes = {
 		studyTimeList: optionCommonPropTypes,
 		gradeList: optionCommonPropTypes,
 		programList: optionCommonPropTypes,
+		teacherList: optionCommonPropTypes,
 		dayOfWeek: optionCommonPropTypes,
 		curriculumList: optionCommonPropTypes,
 		userInformationList: optionCommonPropTypes
@@ -270,7 +289,8 @@ CreateCourseOnlineForm.propTypes = {
 	handleCheckStudyTime: PropTypes.func,
 	handleFetchDataByBranch: PropTypes.func,
 	handleFetchProgramByGrade: PropTypes.func,
-	handleGetValueBeforeFetchCurriculum: PropTypes.func
+	handleGetValueBeforeFetchCurriculum: PropTypes.func,
+	handleGetValueBeforeFetchTeacher: PropTypes.func
 };
 CreateCourseOnlineForm.defaultProps = {
 	isUpdate: false,
@@ -281,6 +301,7 @@ CreateCourseOnlineForm.defaultProps = {
 		studyTimeList: [],
 		gradeList: [],
 		programList: [],
+		teacherList: [],
 		dayOfWeek: [],
 		curriculumList: [],
 		userInformationList: []
@@ -289,6 +310,7 @@ CreateCourseOnlineForm.defaultProps = {
 	handleCheckStudyTime: null,
 	handleFetchDataByBranch: null,
 	handleFetchProgramByGrade: null,
-	handleGetValueBeforeFetchCurriculum: null
+	handleGetValueBeforeFetchCurriculum: null,
+	handleGetValueBeforeFetchTeacher: null
 };
 export default CreateCourseOnlineForm;

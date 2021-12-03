@@ -1,14 +1,14 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Collapse} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Collapse } from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect} from 'react';
-import {useForm} from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
-const {Panel} = Collapse;
+import { optionCommonPropTypes } from '~/utils/proptypes';
+const { Panel } = Collapse;
 
 //   scheduleObj = {
 //     "ID": 1,
@@ -34,37 +34,32 @@ const ScheduleOnlineItem = (props) => {
 		isUpdate,
 		//
 		optionTeacherList,
-		optionStudyTime,
+		optionStudyTime
 	} = props;
 	const {
 		ID,
 		eventName,
 		Tiet,
 		CaID,
+		TeacherID,
 		// EDIT
 		Date,
 		TeacherName,
 		SubjectName,
+		StudyTimeID
 	} = scheduleObj;
 	const defaultValuesInit = {
-		TeacherID: 0,
-		StudyTimeID: CaID,
+		TeacherID: TeacherID,
+		StudyTimeID: CaID || StudyTimeID
 	};
 	const schema = yup.object().shape({
-		StudyTimeID: yup
-			.number()
-			.min(1, 'Bạn cần chọn ca học')
-			.required('Bạn không được để trống'),
-		TeacherID: yup
-			.number()
-			.min(1, 'Bạn cần chọn giáo viên')
-			.required('Bạn không được để trống'),
+		StudyTimeID: yup.number().min(1, 'Bạn cần chọn ca học').required('Bạn không được để trống'),
+		TeacherID: yup.number().min(1, 'Bạn cần chọn giáo viên').required('Bạn không được để trống')
 	});
-
 	const form = useForm({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema),
-		mode: 'all',
+		mode: 'all'
 	});
 
 	const checkHandleChangeStatusSchedule = (vl, type) => {
@@ -82,18 +77,9 @@ const ScheduleOnlineItem = (props) => {
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
 		form.clearErrors();
-		if (isLoading.type === 'CHECK_SCHEDULE' && !isLoading.status) {
-			let {ID, TeacherID, CaID, StudyTimeID} = scheduleObj;
-			if (optionTeacherList.length) {
-				form.setValue('StudyTimeID', CaID || StudyTimeID);
-				// NEED TO SET SELECT TEACHER TO DEFAULT IF DONT HAVE VALUE FROM API RETURN
-				if (!optionTeacherList.some((o) => o.value === TeacherID)) {
-					form.setValue('TeacherID', 0);
-					checkHandleChangeValueSchedule(ID, 'TeacherID', 0);
-				} else {
-					form.setValue('TeacherID', TeacherID);
-				}
-			}
+		if (isLoading.type === 'CHECK_SCHEDULE' && !isLoading.status && Array.isArray(optionTeacherList) && optionTeacherList.length > 0) {
+			form.setValue('TeacherID', optionTeacherList[0].value);
+			form.setValue('StudyTimeID', CaID || StudyTimeID);
 		}
 	}, [scheduleObj, optionTeacherList, isLoading]);
 
@@ -116,9 +102,7 @@ const ScheduleOnlineItem = (props) => {
 						}}
 						checked={isUpdate}
 					/>
-					<p className="title">
-						{eventName || `${moment(Date).format('DD/MM')} - ${TeacherName}`}
-					</p>
+					<p className="title">{eventName || `${moment(Date).format('DD/MM')} - ${TeacherName}`}</p>
 					<ul className="info-course-list">
 						<li>{Tiet?.CurriculumsDetailName || SubjectName}</li>
 					</ul>
@@ -143,14 +127,9 @@ const ScheduleOnlineItem = (props) => {
 						<SelectField
 							form={form}
 							name="TeacherID"
-							isLoading={
-								isLoading.type === 'CHECK_SCHEDULE' && isLoading.status
-							}
+							isLoading={isLoading.type === 'CHECK_SCHEDULE' && isLoading.status}
 							placeholder="Chọn giáo viên"
 							optionList={optionTeacherList}
-							onChangeSelect={(value) => {
-								checkHandleChangeValueSchedule(ID, 'TeacherID', value);
-							}}
 						/>
 					</div>
 				</div>
@@ -168,7 +147,7 @@ ScheduleOnlineItem.propTypes = {
 		Tiet: PropTypes.shape({
 			CurriculumsDetailID: PropTypes.number,
 			CurriculumsDetailName: PropTypes.string,
-			SubjectID: PropTypes.number,
+			SubjectID: PropTypes.number
 		}),
 		TeacherID: PropTypes.number,
 		TeacherName: PropTypes.string,
@@ -176,16 +155,16 @@ ScheduleOnlineItem.propTypes = {
 		CaName: PropTypes.string,
 		StudyTimeID: PropTypes.number,
 		SubjectName: PropTypes.string,
-		Date: PropTypes.string,
+		Date: PropTypes.string
 	}),
 	isUpdate: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	//
 	optionTeacherList: optionCommonPropTypes,
-	optionStudyTime: optionCommonPropTypes,
+	optionStudyTime: optionCommonPropTypes
 };
 ScheduleOnlineItem.defaultProps = {
 	handleChangeValueSchedule: null,
@@ -193,10 +172,10 @@ ScheduleOnlineItem.defaultProps = {
 	//
 	scheduleObj: {},
 	isUpdate: false,
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	positionInScheduleList: null,
 	//
 	optionTeacherList: [],
-	optionStudyTime: [],
+	optionStudyTime: []
 };
 export default ScheduleOnlineItem;

@@ -319,11 +319,11 @@ const Programs = () => {
 		},
 		{
 			title: 'Loại',
-			dataIndex: 'Type',
+			dataIndex: 'TypeName'
 			// ...FilterColumn("Price"),
-			render: (Type) => {
-				return Type == 1 ? 'Zoom' : 'Offline';
-			}
+			// render: (Type) => {
+			// 	return Type == 1 ? 'Zoom' : 'Offline';
+			// }
 		},
 		{
 			title: 'Trạng thái',

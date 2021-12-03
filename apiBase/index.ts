@@ -97,3 +97,4 @@ export { resetPasswordApi } from './reset-password/reset-password';
 export { doingTestApi } from './doing-test/doing-test';
 export { FeedbackApi } from './feed-back';
 export { studyRoleApi } from './study-role/study-role';
+export { comingCourseApi } from './zoom/coming-course';

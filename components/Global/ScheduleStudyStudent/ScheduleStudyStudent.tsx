@@ -82,6 +82,7 @@ const ScheduleStudyStudent = () => {
 		const rs = calendarArr.map((c, idx) => {
 			const {
 				ID,
+				Title,
 				CourseID,
 				BranchName,
 				RoomName,
@@ -108,6 +109,7 @@ const ScheduleStudyStudent = () => {
 				resource: {
 					ID,
 					CourseID,
+					CourseName: Title,
 					RoomName,
 					BranchName,
 					SubjectName,
