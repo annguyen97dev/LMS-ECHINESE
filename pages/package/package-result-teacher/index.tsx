@@ -3,8 +3,8 @@ import { useWrap } from '~/context/wrap';
 import { packageResultApi } from '~/apiBase/package/package-result';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import Link from 'next/link';
-import { Checkbox, Modal, Tooltip, Popconfirm, message } from 'antd';
-import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, FormOutlined, RedoOutlined } from '@ant-design/icons';
+import { Checkbox, Modal, Tooltip, Popconfirm, Popover } from 'antd';
+import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, FormOutlined, MoreOutlined, RedoOutlined } from '@ant-design/icons';
 import LayoutBase from '~/components/LayoutBase';
 import ExpandTable from '~/components/ExpandTable';
 import PackageResultExpand from '~/components/Global/Package/PackageResult/PackageResultExpand';
@@ -296,7 +296,8 @@ const PackageResultTeacher = () => {
 			setTodoApi({
 				...listTodoApi,
 				StatusID: 3,
-				TeacherID: userInformation.UserInformationID
+				TeacherID: userInformation.UserInformationID,
+				isDone: true
 			});
 			setCurrentPage(1);
 		} else {
@@ -466,6 +467,20 @@ const PackageResultTeacher = () => {
 		}
 	}, [userInformation]);
 
+	const contentButton = (
+		<div>
+			<button className="light btn btn-warning mb-2 d-block w-100 text-center" onClick={handleShowNotMarked}>
+				Chưa có ai chấm
+			</button>
+			<button className="light btn btn-secondary mb-2 d-block w-100 text-center" onClick={handleShowMarked}>
+				Đã chấm
+			</button>
+			<button className="light btn btn-danger mb-2 d-block w-100 text-center" onClick={handleWaitingMarking}>
+				Chờ xử lí
+			</button>
+		</div>
+	);
+
 	return (
 		<>
 			<ExpandTable
@@ -479,7 +494,7 @@ const PackageResultTeacher = () => {
 				columns={columns}
 				TitleCard={
 					<>
-						<button className="light btn btn-warning" onClick={handleShowNotMarked}>
+						{/* <button className="light btn btn-warning" onClick={handleShowNotMarked}>
 							Chưa có ai chấm
 						</button>
 						<button className="light btn btn-secondary ml-2" onClick={handleShowMarked}>
@@ -487,7 +502,10 @@ const PackageResultTeacher = () => {
 						</button>
 						<button className="light btn btn-danger ml-2" onClick={handleWaitingMarking}>
 							Chờ xử lí
-						</button>
+						</button> */}
+						<Popover content={contentButton} placement="bottomRight" title={null} trigger="hover">
+							<button className="btn btn-warning">Trạng thái</button>
+						</Popover>
 					</>
 				}
 				Extra={

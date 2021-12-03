@@ -2182,6 +2182,11 @@ hr {
 	color: #447aac;
 }
 .btn-have-icon {
+	&.icon-large {
+		svg {
+			font-size: 20px;
+		}
+	}
 	svg {
 		font-size: 15px;
 	}
@@ -2210,3 +2215,6 @@ hr {
 .line-height-0 {
 	line-height: 0;
 }
+// .ant-popover {
+// 	z-index: 999;
+// }

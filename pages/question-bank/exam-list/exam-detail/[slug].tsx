@@ -96,6 +96,7 @@ const ExamDetail = () => {
 	const [loadingPosition, setLoadingPosition] = useState(false);
 	const [isChangePosition, setIsChangePosition] = useState(false);
 	const [isConfirmChange, setIsConfirmChange] = useState(false);
+	const [visiblePopover, setVisiblePopover] = useState(false);
 
 	// console.log("List question: ", listQuestionID);
 	// console.log("List Group ID: ", listGroupID);
@@ -496,7 +497,27 @@ const ExamDetail = () => {
 	useEffect(() => {
 		getAllListQuestionID();
 		setIsLoading(true);
+
+		window.onclick = function (ev) {
+			console.log('TEST: ', ev.target);
+			if (ev.target.nodeName !== 'BUTTON') {
+				setVisiblePopover(false);
+			}
+		};
 	}, []);
+
+	const contentButton = (
+		<div onClick={() => setVisiblePopover(false)}>
+			<button className="btn btn-primary d-block w-100 text-center mb-2" onClick={startChangePosition}>
+				<div className="d-flex align-items-center">
+					<AlignRightOutlined className="mr-2" style={{ width: '18px' }} />
+					{isChangePosition ? 'Lưu' : 'Sắp xếp'}
+				</div>
+			</button>
+			<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
+			<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} />
+		</div>
+	);
 
 	const content = (
 		<div className="question-bank-info">
@@ -604,14 +625,25 @@ const ExamDetail = () => {
 							}
 							extra={
 								<>
-									<button className="btn btn-primary" onClick={startChangePosition}>
+									{/* <button className="btn btn-primary" onClick={startChangePosition}>
 										<div className="d-flex align-items-center">
 											<AlignRightOutlined className="mr-2" style={{ width: '18px' }} />
 											{isChangePosition ? 'Lưu' : 'Sắp xếp'}
 										</div>
 									</button>
 									<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
-									<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} />
+									<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} /> */}
+									<Popover
+										visible={visiblePopover}
+										content={contentButton}
+										placement="bottomRight"
+										title={null}
+										trigger="click"
+									>
+										<button className="btn btn-light btn-function" onClick={() => setVisiblePopover(!visiblePopover)}>
+											Chức năng
+										</button>
+									</Popover>
 								</>
 							}
 						>
