@@ -133,9 +133,9 @@ function MainFeedback(props) {
 
 	// RENDER
 	return (
-		<Card loading={loading} className="p-2 student-fb__wrap-main st-fb-empty" bordered={false}>
+		<Card loading={loading} className="p-2 student-fb__wrap-main st-fb-empty wrap-fb-menu" bordered={false}>
 			{current.ID !== undefined ? (
-				<>
+				<div className="fb-height-100">
 					<div className="card-newsfeed-wrap__label">
 						<div className="m-feedback st-fb-100w">
 							<div className="row m-0 mb-3 st-fb-rsb st-fb-100w  m-feedback__head">
@@ -179,6 +179,27 @@ function MainFeedback(props) {
 					<hr />
 
 					<div className="card-newsfeed fv-main-sc">
+						{current.StatusID !== 3 && (
+							<>
+								<EditorSimple
+									handleChange={(value) => {
+										setContent(value);
+									}}
+									isTranslate={false}
+									isReset={isReset}
+									questionContent={content}
+									height={150}
+								/>
+
+								<div className="row wrap-vocab__create-new__button-group">
+									<Tooltip title="Thêm ghi chú">
+										<button onClick={() => addReply()} className="btn ml-3 mt-3 btn-primary">
+											<i className="fas fa-plus-circle mr-2"></i>Thêm nhận xét
+										</button>
+									</Tooltip>
+								</div>
+							</>
+						)}
 						<ul className="m-feedback__list-group-nf">
 							{reply.map((item, index) => (
 								<li key={index} className={currentItem === item.ID ? 'active' : ''} onClick={() => {}}>
@@ -203,29 +224,8 @@ function MainFeedback(props) {
 								</li>
 							))}
 						</ul>
-
-						{current.StatusID !== 3 && (
-							<>
-								<EditorSimple
-									handleChange={(value) => {
-										setContent(value);
-									}}
-									isTranslate={false}
-									isReset={isReset}
-									questionContent={content}
-								/>
-
-								<div className="row wrap-vocab__create-new__button-group">
-									<Tooltip title="Thêm ghi chú">
-										<button onClick={() => addReply()} className="btn ml-3 mt-3 btn-primary">
-											<i className="fas fa-plus-circle mr-2"></i>Thêm nhận xét
-										</button>
-									</Tooltip>
-								</div>
-							</>
-						)}
 					</div>
-				</>
+				</div>
 			) : (
 				<Empty />
 			)}

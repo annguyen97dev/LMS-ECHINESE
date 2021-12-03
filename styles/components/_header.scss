@@ -338,6 +338,23 @@
 								color: #989898;
 							}
 						}
+						.cart-icon {
+							width: 36px;
+							height: 36px;
+							background: #edf1f8;
+							border-radius: 0.375rem;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							border: 0;
+							svg {
+								font-size: 18px;
+								color: #989898;
+							}
+						}
+						.cart-icon:hover {
+							background: #dce6f8;
+						}
 					}
 
 					.custom {

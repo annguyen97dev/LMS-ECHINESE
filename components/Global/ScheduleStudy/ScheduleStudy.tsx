@@ -65,16 +65,16 @@ const ScheduleStudy = () => {
 			Promise.all([branchApi.getAll({ pageSize: 99999, pageIndex: 1 }), studyTimeApi.getAll({ selectAll: true })]).then((res) => {
 				const [branchList, studyTimeList] = res.map((r) => (r.status === 200 ? r.data.data : []));
 				if (branchList.length) {
-					setOptionList({
-						...optionList,
+					setOptionList((preState) => ({
+						...preState,
 						branchList: fmSelectArr(branchList, 'BranchName', 'ID')
-					});
+					}));
 				}
 				if (studyTimeList.length) {
-					setOptionList({
-						...optionList,
+					setOptionList((preState) => ({
+						...preState,
 						studyTimeList: fmSelectArr(studyTimeList, 'Name', 'ID')
-					});
+					}));
 				}
 			});
 		} catch (error) {
@@ -250,6 +250,7 @@ const ScheduleStudy = () => {
 				resource: {
 					ID,
 					CourseID,
+					CourseName,
 					RoomName,
 					BranchName,
 					TeacherName,
@@ -451,12 +452,12 @@ const ScheduleStudy = () => {
 						<div className="card-list-btn">
 							<CheckBranch isLoading={isLoading} optionList={optionList} handleSubmit={onCheckScheduleOfBranch} />
 							{/* */}
-							<CheckRoom
+							{/* <CheckRoom
 								isLoading={isLoading}
 								optionList={optionList}
 								handleFetchRoom={fetchRoomByBranchID}
 								handleSubmit={onCheckRoom}
-							/>
+							/> */}
 							<CheckOneTeacher
 								isLoading={isLoading}
 								optionList={optionList}
@@ -485,7 +486,7 @@ const ScheduleStudy = () => {
 						{dataList.type === 'CheckBranch' || dataList.type === 'CheckManyTeacher' ? (
 							<ScheduleStudyList dataSource={fmList(dataList.type, dataList.list)} />
 						) : (
-							<CDCalendar isLoaded={true} eventList={calendarFm(dataList.list)} />
+							<CDCalendar isLoaded={true} isGetRecordList={true} eventList={calendarFm(dataList.list)} />
 						)}
 					</Spin>
 				</Card>

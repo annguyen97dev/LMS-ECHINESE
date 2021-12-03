@@ -22,6 +22,8 @@ export const VideoNoteApi = {
 	},
 	// Xóa data
 	delete(data) {
-		return instance.put(url, data);
+		return instance.delete(url + 'Delete', {
+			data
+		});
 	}
 };

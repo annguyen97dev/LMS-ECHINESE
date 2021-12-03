@@ -79,7 +79,9 @@ const RenderItem: FC<props> = ({ item, onPress, data }) => {
 					</span>
 				</div>
 
-				<div className="mr-2">{isShow ? <i className="far fa-chevron-up" /> : <i className="far fa-chevron-down" />}</div>
+				<div className="mr-2" style={{ marginLeft: 17 }}>
+					{isShow ? <i className="far fa-chevron-up" /> : <i className="far fa-chevron-down" />}
+				</div>
 			</div>
 
 			{isShow && (

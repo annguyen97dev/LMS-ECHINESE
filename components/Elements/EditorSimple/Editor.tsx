@@ -21,7 +21,7 @@ type dataTranslate = Array<{
 }>;
 
 const EditorSummernote = (props) => {
-	const { getDataEditor, questionContent, isReset, isTranslate, defaultValue } = props;
+	const { getDataEditor, questionContent, isReset, isTranslate, defaultValue, isSimpleTool, height } = props;
 	const [valueEditor, setValueEditor] = useState(questionContent);
 	const [textSelect, setTextSelect] = useState(null);
 	const [textTranslate, setTextTranslate] = useState(null);
@@ -268,7 +268,7 @@ const EditorSummernote = (props) => {
 					</div>
 				)}
 			</Modal>
-			<div className="wrap-editor" id="editor-element">
+			<div className="wrap-editor" id="editor-element" style={{ borderRadius: 8 }}>
 				{isTranslate && (
 					<>
 						<button className="btn-editor d-flex align-items-center" onClick={() => showModal('add')}>
@@ -285,17 +285,25 @@ const EditorSummernote = (props) => {
 					children={ReactHtmlParser(valueEditor)}
 					options={{
 						lang: 'vn',
-						height: 220,
+						height: height || 220,
 						dialogsInBody: true,
-						toolbar: [
-							['style', ['style']],
-							['font', ['bold', 'underline', 'clear']],
-							['fontname', ['fontname']],
-							['para', ['ul', 'ol', 'paragraph']],
-							['table', ['table']],
-							['insert', ['link', 'picture', 'video']],
-							['view', ['fullscreen', 'codeview']]
-						]
+						toolbar: isSimpleTool
+							? [
+									['style', ['style']],
+									['font', ['bold', 'underline']],
+									['fontname', ['fontname']],
+									['para', ['ul', 'ol', 'paragraph']],
+									['insert', ['link']]
+							  ]
+							: [
+									['style', ['style']],
+									['font', ['bold', 'underline', 'clear']],
+									['fontname', ['fontname']],
+									['para', ['ul', 'ol', 'paragraph']],
+									['table', ['table']],
+									['insert', ['link', 'picture', 'video']],
+									['view', ['fullscreen', 'codeview']]
+							  ]
 					}}
 					onChange={(content) => onChange(content)}
 					onImageUpload={onImageUpload}

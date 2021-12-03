@@ -735,7 +735,7 @@ textarea.ant-input {
 	justify-content: flex-end;
 	.icon-facebook {
 		position: fixed;
-		z-index: 99;
+		z-index: 902;
 		bottom: 20px;
 		right: 20px;
 		width: 45px;
@@ -2218,3 +2218,11 @@ hr {
 // .ant-popover {
 // 	z-index: 999;
 // }
+.spin-center {
+	.ant-select-item-option-content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding-top: 5px;
+	}
+}

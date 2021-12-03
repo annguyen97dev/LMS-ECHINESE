@@ -172,18 +172,33 @@ export const AdminChildMenu = [
 				]
 			},
 			{
-				TypeItem: 'single',
-				Key: '/video-course/',
+				ItemType: 'sub-menu',
+				Key: 'video-course',
 				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
-				Route: '/video-course/',
-				Text: 'Khóa học video'
-			},
-			{
-				TypeItem: 'single',
-				Key: '/video-course-list',
-				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
-				Route: '/video-course-list',
-				Text: 'Khóa học video đã bán'
+				TitleSub: 'Khóa học video',
+				SubMenuList: [
+					{
+						TypeItem: 'single',
+						Key: '/video-course',
+						Route: '/video-course',
+						Icon: '',
+						Text: 'Danh sách khóa học'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-order',
+						Icon: '',
+						Route: '/video-course-order',
+						Text: 'Danh sách đơn hàng'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-list',
+						Icon: '',
+						Route: '/video-course-list',
+						Text: 'Khóa học đã Active'
+					}
+				]
 			}
 		]
 	},
@@ -561,7 +576,7 @@ export const AdminChildMenu = [
 				ItemType: 'single',
 				Key: '/feedback',
 				Route: '/feedback',
-				Text: 'Phản hồi',
+				Text: 'Danh sách phản hồi',
 				Icon: ''
 			},
 			{

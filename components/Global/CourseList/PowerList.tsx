@@ -1,11 +1,10 @@
-import { List, Avatar, Tag, Divider } from 'antd';
-import Link from 'next/link';
-import { cloneElement, useState } from 'react';
-import PropTypes from 'prop-types';
+import { List } from 'antd';
 import moment from 'moment';
-import CourseListUpdate from './CourseListUpdate';
-import { numberWithCommas } from '~/utils/functions';
+import Link from 'next/link';
+import PropTypes from 'prop-types';
+import { cloneElement } from 'react';
 import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 
 const PowerList = (props) => {
 	const { dataSource, isLoading, totalPage, currentPage, getPagination, children } = props;
@@ -23,8 +22,6 @@ const PowerList = (props) => {
 		if (!userInformation) return '';
 		let role = userInformation.RoleID;
 		let path = null;
-
-		console.log('Type Course: ', TypeCourse);
 
 		if (role == 1 || role == 5) {
 			path = {

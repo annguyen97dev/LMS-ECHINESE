@@ -205,6 +205,7 @@ function CDCalendar(props) {
 		const {
 			ID,
 			CourseID,
+			CourseName,
 			RoomName,
 			BranchName,
 			TeacherName,
@@ -222,8 +223,13 @@ function CDCalendar(props) {
 
 		const dataDetail = event.resource;
 		const content = (
-			<div className="course-dt-event-info">
+			<div className="course-dt-event-info" style={{ maxWidth: 300 }}>
 				<ul>
+					{CourseName && (
+						<li>
+							<span>Khóa học:</span> {CourseName}
+						</li>
+					)}
 					{SubjectName && (
 						<li>
 							<span>{IsExam ? 'Kiểm tra môn:' : 'Môn:'} </span> {SubjectName}
@@ -317,6 +323,7 @@ function CDCalendar(props) {
 		const {
 			ID,
 			RoomName,
+			CourseName,
 			BranchName,
 			TeacherName,
 			SubjectName,
@@ -337,6 +344,11 @@ function CDCalendar(props) {
 				<div className="time">Ca: {StudyTimeName}</div>
 				<div className="course-dt-event-info">
 					<ul>
+						{CourseName && (
+							<li>
+								<span>Khóa học:</span> {CourseName}
+							</li>
+						)}
 						{SubjectName && (
 							<li>
 								<span>{IsExam ? 'Kiểm tra môn:' : 'Môn:'} </span> {SubjectName}
@@ -413,6 +425,7 @@ function CDCalendar(props) {
 		const {
 			ID,
 			CourseID,
+			CourseName,
 			RoomName,
 			BranchName,
 			TeacherName,
@@ -428,8 +441,13 @@ function CDCalendar(props) {
 			CurriculumsDetailID
 		} = event.resource;
 		const content = (
-			<div className="course-dt-event-info">
+			<div className="course-dt-event-info" style={{ maxWidth: 300 }}>
 				<ul>
+					{CourseName && (
+						<li>
+							<span>Khóa học:</span> {CourseName}
+						</li>
+					)}
 					{SubjectName && (
 						<li>
 							<span>{IsExam ? 'Kiểm tra môn:' : 'Môn:'} </span> {SubjectName}

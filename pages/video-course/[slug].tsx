@@ -34,7 +34,7 @@ const VideoCourseDetail = (props) => {
 	path = pathString[pathString.length - 2];
 
 	const [isLoading, setLoading] = useState(true);
-	const { showNoti, userInformation } = useWrap();
+	const { showNoti, getTitlePage, handleReloadNoti } = useWrap();
 	const [details, setDetails] = useState(initDetails);
 	const [content, setContent] = useState({});
 
@@ -45,6 +45,7 @@ const VideoCourseDetail = (props) => {
 	useEffect(() => {
 		getCourseDetails(slug);
 		getCourseContent(slug);
+		getTitlePage('Khóa học video');
 	}, []);
 
 	// CALL API DETAILS
@@ -154,6 +155,7 @@ const VideoCourseDetail = (props) => {
 			const res = await VideoCourseCardApi.add(data);
 			if (type == 1) {
 				res.status == 200 && setShowModal(true);
+				handleReloadNoti();
 			} else {
 				router.push('/cart/check-out');
 			}
@@ -262,6 +264,7 @@ const VideoCourseDetail = (props) => {
 												href={{
 													pathname: '/video-learning',
 													query: {
+														ID: slug,
 														course: slug,
 														complete: 0 + '/' + 0,
 														name: details.VideoCourseName
@@ -352,6 +355,7 @@ const VideoCourseDetail = (props) => {
 												href={{
 													pathname: '/video-learning',
 													query: {
+														ID: slug,
 														course: slug,
 														complete: 0 + '/' + 0,
 														name: details.VideoCourseName
@@ -484,7 +488,7 @@ const VideoCourseDetail = (props) => {
 			</Modal>
 
 			<Modal
-				title="Têm vào giỏ hàng"
+				title="Thêm vào giỏ hàng"
 				visible={showModal}
 				confirmLoading={false}
 				className="vc-store_modal"

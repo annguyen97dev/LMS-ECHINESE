@@ -6,7 +6,7 @@ import ModalCreateFeedback from '~/components/FeedBack/CreateNew/modalCreateFeed
 import MainFeedback from '~/components/FeedBack/Main/MainFeedback';
 
 const StudentFeedbackList = (props) => {
-	const { userInformation } = useWrap();
+	const { userInformation, getTitlePage } = useWrap();
 	const [currentTab, setCurrentTab] = useState(1);
 	const [currentFeedback, setCurrentFeedback] = useState({});
 	const [feedbackAll, setFeedbackAll] = useState([]);
@@ -17,6 +17,10 @@ const StudentFeedbackList = (props) => {
 	const [loading, setLoading] = useState(true);
 
 	const [modalCreate, setModalCreate] = useState(false);
+
+	React.useEffect(() => {
+		getTitlePage('Phản hồi');
+	}, []);
 
 	useLayoutEffect(() => {
 		if (userInformation !== null) {

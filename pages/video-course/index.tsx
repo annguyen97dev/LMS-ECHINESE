@@ -23,7 +23,7 @@ let pageIndex = 1;
 
 const VideoCourseStore = () => {
 	const router = useRouter();
-	const { userInformation, pageSize, showNoti } = useWrap();
+	const { userInformation, pageSize, showNoti, handleReloadNoti, getTitlePage } = useWrap();
 	const [data, setData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [rerender, setRender] = useState('');
@@ -67,6 +67,7 @@ const VideoCourseStore = () => {
 			// ADMIN & HOC VIEN
 			getAllArea();
 		}
+		getTitlePage('Khóa học video');
 	}, [userInformation]);
 
 	//GET DATA
@@ -137,13 +138,16 @@ const VideoCourseStore = () => {
 			if (type == 1) {
 				res.status == 200 && setShowModal(true);
 				res.status !== 200 && openNotification();
+				handleReloadNoti();
 			} else {
 				router.push('/cart/check-out');
 			}
 		} catch (error) {
 		} finally {
-			setAddToCardLoading(false);
-			setByNowLoading(false);
+			if (type == 1) {
+				setAddToCardLoading(false);
+				setByNowLoading(false);
+			}
 		}
 	};
 
@@ -166,6 +170,7 @@ const VideoCourseStore = () => {
 			LevelID: param.LevelID,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
+			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
 			TagArray: param.TagArray
@@ -176,6 +181,7 @@ const VideoCourseStore = () => {
 			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
 			getAllArea();
 		} catch (error) {
+			showNoti('danger', 'Thêm không thành công');
 		} finally {
 			setIsLoading({ type: 'GET_ALL', status: false });
 		}
@@ -389,9 +395,9 @@ const VideoCourseStore = () => {
 	// RENDER
 	return (
 		<div className="">
-			<p className="video-course-list-title">Khóa Học Video</p>
 			{userInformation !== null && (
 				<Card
+					style={{ width: '100%' }}
 					loading={isLoading.status}
 					className="video-course-list"
 					title={<div className="m-2">{Extra()}</div>}
@@ -415,7 +421,7 @@ const VideoCourseStore = () => {
 						<List
 							itemLayout="horizontal"
 							dataSource={data}
-							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 5 }}
+							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
 							renderItem={(item) => (
 								<RenderItemCard
 									_onSubmitEdit={(data: any) => updateCourse(data)}
@@ -436,7 +442,7 @@ const VideoCourseStore = () => {
 						/>
 
 						<Modal
-							title="Têm vào giỏ hàng"
+							title="Thêm vào giỏ hàng"
 							visible={showModal}
 							confirmLoading={false}
 							className="vc-store_modal"

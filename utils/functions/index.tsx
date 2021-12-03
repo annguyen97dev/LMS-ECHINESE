@@ -1,14 +1,18 @@
 import moment from 'moment';
 import { useEffect, useRef } from 'react';
 //  ---------EXPORT TO ARRAY FOR SELECT FIELD---------
-export const fmSelectArr = (arr: Array<{ [key: string]: any }>, title: string, value: string, options = []) =>
-	arr
-		.filter((x) => (x.Enable === false ? false : x))
-		.map((x) => ({
-			title: x[title],
-			value: x[value],
-			options: options.reduce((obj, o) => ({ ...obj, [o]: x[o] }), {})
-		}));
+export const fmSelectArr = (arr: Array<{ [key: string]: any }>, title: string, value: string, options = []) => {
+	if (Array.isArray(arr) && arr.length > 0) {
+		return arr
+			.filter((x) => (x.Enable === false ? false : x))
+			.map((x) => ({
+				title: x[title],
+				value: x[value],
+				options: options.reduce((obj, o) => ({ ...obj, [o]: x[o] }), {})
+			}));
+	}
+	return [];
+};
 
 export const clearOptionsDuplicate = (arr: IOptionCommon[]) => {
 	return arr.reduce((newArr, o) => {

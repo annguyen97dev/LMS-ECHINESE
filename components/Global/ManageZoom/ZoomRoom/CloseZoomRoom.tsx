@@ -1,11 +1,11 @@
-import {Button, Tooltip} from 'antd';
+import { Button } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {AlertTriangle, Power} from 'react-feather';
+import React, { useState } from 'react';
+import { AlertTriangle, Power } from 'react-feather';
 
 const CloseZoomRoom = (props) => {
-	const {handleClose, isIcon} = props;
+	const { handleClose, isIcon } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const checkHandleClose = () => {
@@ -16,17 +16,15 @@ const CloseZoomRoom = (props) => {
 	return (
 		<>
 			{isIcon ? (
-				<Tooltip title="Xóa">
-					<button
-						type="button"
-						className="btn btn-icon delete"
-						onClick={() => {
-							setIsModalVisible(true);
-						}}
-					>
-						<Power />
-					</button>
-				</Tooltip>
+				<button
+					type="button"
+					className="btn btn-icon delete"
+					onClick={() => {
+						setIsModalVisible(true);
+					}}
+				>
+					<Power />
+				</button>
 			) : (
 				<Button
 					size="middle"
@@ -51,10 +49,10 @@ const CloseZoomRoom = (props) => {
 };
 CloseZoomRoom.propTypes = {
 	isIcon: PropTypes.bool,
-	handleClose: PropTypes.func,
+	handleClose: PropTypes.func
 };
 CloseZoomRoom.defaultProps = {
 	isIcon: true,
-	handleClose: null,
+	handleClose: null
 };
 export default CloseZoomRoom;

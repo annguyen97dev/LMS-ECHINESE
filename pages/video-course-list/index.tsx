@@ -1,11 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
-import { List, Card, Progress, Rate, Modal, Input } from 'antd';
+import { List, Card, Progress, Rate, Modal, Input, Tooltip, Popconfirm, message } from 'antd';
 import LayoutBase from '~/components/LayoutBase';
-import { VideoCourseListApi } from '~/apiBase';
+import { VideoCourseListApi, DonePayApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import Link from 'next/link';
 import CourseVideoTable from '~/components/CourseVideoTable';
+import { DollarOutlined } from '@ant-design/icons';
+import { Filter, Eye, CheckCircle } from 'react-feather';
 
 const { TextArea, Search } = Input;
 
@@ -22,18 +24,32 @@ const ItemVideo = ({ item, onRate }) => {
 				href={{
 					pathname: '/video-learning',
 					query: {
-						ID: item.ID,
+						ID: item.VideoCourseID,
 						course: item.VideoCourseID,
 						complete: item.Complete + '/' + item.TotalLesson,
 						name: item.VideoCourseName
 					}
 				}}
 			>
-				{item.ImageThumbnails === '' || item.ImageThumbnails === null ? (
-					<img src="/images/logo-final.jpg" />
-				) : (
-					<img src={item.ImageThumbnails} />
-				)}
+				<div className="video-course-list__item_warp-image">
+					<Link
+						href={{
+							pathname: '/video-learning',
+							query: {
+								ID: item.ID,
+								course: item.VideoCourseID,
+								complete: item.Complete + '/' + item.TotalLesson,
+								name: item.VideoCourseName
+							}
+						}}
+					>
+						{item.ImageThumbnails === '' || item.ImageThumbnails === null || item.ImageThumbnails === undefined ? (
+							<img src="/images/logo-thumnail.jpg" />
+						) : (
+							<img src={item.ImageThumbnails} />
+						)}
+					</Link>
+				</div>
 			</Link>
 
 			<Link
@@ -48,8 +64,11 @@ const ItemVideo = ({ item, onRate }) => {
 				}}
 			>
 				<div className="p-3 video-course-list__item__content">
-					<a className="title in-2-line">{item.VideoCourseName}</a>
-
+					<Tooltip title={item.VideoCourseName} style={{ width: '100%' }}>
+						<span className="title in-1-line" style={{ width: '100%' }}>
+							{item.VideoCourseName}
+						</span>
+					</Tooltip>
 					<>
 						<Progress
 							className="text-process"
@@ -79,7 +98,7 @@ const ItemVideo = ({ item, onRate }) => {
 let pageIndex = 1;
 
 const VideoCourseList = () => {
-	const { userInformation, pageSize, showNoti } = useWrap();
+	const { userInformation, pageSize, showNoti, getTitlePage } = useWrap();
 
 	const [data, setData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
@@ -124,6 +143,9 @@ const VideoCourseList = () => {
 	useEffect(() => {
 		if (userInformation) {
 			getAllArea();
+			getTitlePage();
+
+			userInformation?.RoleID == 1 ? getTitlePage('Khóa học video đã bán') : getTitlePage('Khóa học video đã mua');
 		}
 	}, [userInformation]);
 
@@ -140,7 +162,7 @@ const VideoCourseList = () => {
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 			setRender(res + '');
 		} catch (err) {
-			// showNoti("danger", err);
+			showNoti('danger', err);
 		} finally {
 			setLoading(false);
 		}
@@ -160,6 +182,20 @@ const VideoCourseList = () => {
 		}
 		getAllArea();
 	};
+
+	const handleDone = async (ID) => {
+		try {
+			let newData = new FormData();
+			newData.append('ID', ID);
+
+			const res = await DonePayApi.update(newData);
+			showNoti('success', 'Thành công');
+		} catch (error) {
+			showNoti('danger', error.message);
+		}
+	};
+
+	const textConfirm = 'Khóa học này đã được thanh toán?';
 
 	const columnsVideoCourse = [
 		{
@@ -199,34 +235,26 @@ const VideoCourseList = () => {
 		// 	title: 'Thao tác',
 		// 	dataIndex: 'Action',
 		// 	key: 'action',
+		// 	align: 'center',
 		// 	render: (Action, data, index) => (
 		// 		<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-		// 			{/* <Link
-		// 				href={{
-		// 					// pathname: '/option/program/program-detail/[slug]',
-		// 					query: { slug: data.ID }
-		// 				}}
-		// 			>
-		// 				<Tooltip title="Chi tiết chương trình">
-		// 					<button className="btn btn-icon" style={{ marginRight: -10, marginLeft: -10 }}>
-		// 						<Eye />
+		// 			<Tooltip title="Xác thực thanh toán">
+		// 				<Popconfirm
+		// 					placement="right"
+		// 					title={textConfirm}
+		// 					onConfirm={() => handleDone(data.ID)}
+		// 					okText="OK"
+		// 					cancelText="Cancel"
+		// 				>
+		// 					<button
+		// 						onClick={() => console.log(data)}
+		// 						className="btn btn-icon"
+		// 						style={{ marginRight: -10, marginLeft: -10 }}
+		// 					>
+		// 						<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
 		// 					</button>
-		// 				</Tooltip>
-		// 			</Link> */}
-
-		// 			<div>
-		// 				{/* <ModalCreateVideoCourse
-		// 					dataLevel={categoryLevel}
-		// 					dataCategory={category}
-		// 					getIndex={() => {}}
-		// 					_onSubmitEdit={(data: any) => updateCourse(data)}
-		// 					programID={data.ID}
-		// 					rowData={data}
-		// 					dataGrade={data}
-		// 					showAdd={true}
-		// 					isLoading={isLoading}
-		// 				/> */}
-		// 			</div>
+		// 				</Popconfirm>
+		// 			</Tooltip>
 		// 		</div>
 		// 	)
 		// }
@@ -275,20 +303,9 @@ const VideoCourseList = () => {
 		);
 	};
 
-	const expandedRowRender = () => {
-		return (
-			<>
-				<div className="feedback-detail-text" style={{ backgroundColor: 'red' }}>
-					asd asd asdqw tw qgasgdas dnb
-				</div>
-			</>
-		);
-	};
-
 	return (
 		<div className="">
-			<p className="video-course-list-title">Khóa Học Video</p>
-			<Card title={Extra()} className="video-course-list">
+			<Card title={Extra()} className="video-course-list" style={{ width: '100%' }}>
 				{userInformation !== null && (
 					<>
 						{userInformation.RoleID == 1 ? (

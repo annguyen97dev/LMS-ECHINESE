@@ -15,8 +15,12 @@ const { Search } = Input;
 
 const FeedbackList = () => {
 	const [selectedItem, setSelectedItem] = useState({ ID: '' });
-	const { userInformation } = useWrap();
+	const { userInformation, getTitlePage } = useWrap();
 	const [loading, setLoading] = useState(true);
+
+	React.useEffect(() => {
+		getTitlePage('Danh sách phản hồi');
+	}, []);
 
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -49,7 +53,7 @@ const FeedbackList = () => {
 			key: 'TypeName'
 		},
 		{
-			title: 'Title',
+			title: 'Tiêu đề',
 			dataIndex: 'Title',
 			key: 'Title'
 		},
@@ -126,7 +130,9 @@ const FeedbackList = () => {
 	const [categories, setCategories] = useState([]);
 
 	useLayoutEffect(() => {
-		getAllData();
+		if (userInformation) {
+			getAllData();
+		}
 	}, [userInformation]);
 
 	// GET ALL DATA WHEN OPEN
@@ -135,9 +141,14 @@ const FeedbackList = () => {
 			pageIndex: 1,
 			pageSize: 20
 		};
-		await getAllFeedBack(temp);
-		getFeedBackCategory();
+		const temp2 = {
+			pageIndex: 1,
+			pageSize: 20,
+			TypeID: 3
+		};
 
+		await getAllFeedBack(userInformation.RoleID == 6 ? temp2 : temp);
+		getFeedBackCategory();
 		setLoading(false);
 	};
 
@@ -153,13 +164,15 @@ const FeedbackList = () => {
 
 	// GET DATA
 	const getAllFeedBack = async (param) => {
-		try {
-			const res = await FeedbackApi.getAll(param);
-			res.status == 200 && setAllFeedback(res.data.data);
-			res.status == 200 && setBackup(res.data.data);
-			res.status == 204 && setAllFeedback([]);
-		} catch (error) {
-			console.log(error);
+		if (userInformation !== null && (userInformation.RoleID == 1 || userInformation.RoleID == 6)) {
+			try {
+				const res = await FeedbackApi.getAll(param);
+				res.status == 200 && setAllFeedback(res.data.data);
+				res.status == 200 && setBackup(res.data.data);
+				res.status == 204 && setAllFeedback([]);
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	};
 
@@ -214,7 +227,7 @@ const FeedbackList = () => {
 
 	return (
 		<>
-			{userInformation !== null && userInformation.RoleID === 1 && (
+			{userInformation !== null && (userInformation.RoleID === 1 || userInformation.RoleID === 6) && (
 				<>
 					<Modal title="Xác nhận thông tin" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
 						<p>Bạn chắc chắn đã xử lí xong phản hồi</p>
@@ -224,7 +237,7 @@ const FeedbackList = () => {
 						loading={loading}
 						columns={columns}
 						dataSource={allFeedback}
-						TitlePage="Feedback List"
+						// TitlePage="Danh sách phản hồi"
 						Extra={
 							<div className="extra-table">
 								<div className="row m-0 st-fb-100w st-fb-flex-end-row">
@@ -239,47 +252,46 @@ const FeedbackList = () => {
 									/>
 								</div>
 
-								<Popover
-									placement="bottomLeft"
-									title="Chọn lọc"
-									content={
-										<div className="st-fb-column fb-f-btn">
-											<button
-												onClick={() => {
-													getAllData();
-												}}
-												className="btn light fb-i-filter"
-											>
-												Tất cả
-											</button>
-											{categories.map((item, index) => (
+								{userInformation.RoleID !== 6 && (
+									<Popover
+										placement="bottomLeft"
+										title="Chọn lọc"
+										content={
+											<div className="st-fb-column fb-f-btn">
 												<button
 													onClick={() => {
-														filter(item.ID);
+														getAllData();
 													}}
 													className="btn light fb-i-filter"
 												>
-													{item.Name}
+													Tất cả
 												</button>
-											))}
-										</div>
-									}
-									trigger="click"
-								>
-									<button className="ml-3 btn btn-secondary light fb-btn-filter" onClick={funcShowFilter}>
-										<Filter />
-									</button>
-								</Popover>
+												{categories.map((item, index) => (
+													<button
+														onClick={() => {
+															filter(item.ID);
+														}}
+														className="btn light fb-i-filter"
+													>
+														{item.Name}
+													</button>
+												))}
+											</div>
+										}
+										trigger="click"
+									>
+										<button className="ml-3 btn btn-secondary light fb-btn-filter" onClick={funcShowFilter}>
+											<Filter />
+										</button>
+									</Popover>
+								)}
 							</div>
 						}
-						// expandable={{ expandedRowRender }}
-					>
-						{/* <FilterFeedbackTable /> */}
-					</FeedbackTable>
+					></FeedbackTable>
 				</>
 			)}
 
-			{userInformation !== null && userInformation.RoleID !== 1 && (
+			{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 6 && (
 				<>
 					<StudentFeedbackList />
 				</>

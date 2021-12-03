@@ -78,7 +78,7 @@ function MenuFeedBack(props) {
 	};
 
 	const Menu = () => (
-		<>
+		<div className="wrap-fb-menu">
 			<Card loading={loading} className="card-newsfeed" bordered={false}>
 				<Button onClick={handleCreateNew} type="primary" className="student-fb__btn-add">
 					Tạo phản hồi
@@ -131,7 +131,7 @@ function MenuFeedBack(props) {
 				/>
 			</Card>
 
-			<Card loading={loading} className="card-newsfeed" bordered={false}>
+			<Card loading={loading} className="card-newsfeed card-list-fb" bordered={false}>
 				<div className="card-newsfeed-wrap__label">
 					<p className="card-newsfeed__label font-weight-black">Danh sách phản hồi</p>
 				</div>
@@ -160,7 +160,7 @@ function MenuFeedBack(props) {
 					))}
 				</ul>
 			</Card>
-		</>
+		</div>
 	);
 
 	return (

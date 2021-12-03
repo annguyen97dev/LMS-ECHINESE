@@ -41,11 +41,26 @@ export const SellerChildMenu = [
 				Text: 'Thống kê'
 			},
 			{
-				ItemType: 'single',
-				Key: '/feedback',
-				Route: '/feedback',
-				Text: 'Phản hồi',
-				Icon: ''
+				ItemType: 'sub-menu',
+				Key: 'sub-tab-option-1',
+				Icon: '',
+				TitleSub: 'Phản hồi',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/create-feedback',
+						Route: '/create-feedback',
+						Text: 'Phản hồi của bạn',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/feedback',
+						Route: '/feedback',
+						Text: 'Danh sách phản hồi',
+						Icon: ''
+					}
+				]
 			},
 			{
 				ItemType: 'single',

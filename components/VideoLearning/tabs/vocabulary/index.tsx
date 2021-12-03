@@ -52,7 +52,6 @@ const RenderItem: FC<iProps> = ({ item, onPress, onDelete, onEdit }) => {
 					</a>
 					<i className="far fa-file-alt mr-3"></i>
 					{ReactHtmlParser(item.Title)}
-					{/* <span className="ml-3 vocab-item__subtitle">{item.TextContent}</span> */}
 				</div>
 
 				<div className="row mr-3 ml-3 vocab-item__menu">

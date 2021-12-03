@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Radio, Input, Popover, Checkbox, DatePicker, Skeleton, Spin } from 'antd';
+import { Radio, Input, Popover, Checkbox, DatePicker, Skeleton, Spin, Dropdown, Form } from 'antd';
 import Link from 'next/link';
 import Notifiaction from './../../../components/Header/notification';
-import { UserOutlined, RedoOutlined, LogoutOutlined, LoginOutlined, LockOutlined } from '@ant-design/icons';
+import { UserOutlined, RedoOutlined, LogoutOutlined, LoginOutlined, LockOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { session, signIn, signOut, useSession } from 'next-auth/client';
 import { FormOutlined } from '@ant-design/icons';
 import { User } from 'react-feather';
@@ -21,10 +21,15 @@ const CheckOut = () => {
 	const [dataUser, setDataUser] = useState<IUser>();
 	const [cartItems, setCartItems] = useState<IShoppingCart[]>();
 	const [discounts, setDiscounts] = useState(0);
+	const [dropDownVisible, setDropDownVisible] = useState(false);
+	const [promoCode, setPromoCode] = useState('');
+	const [promo, setPromo] = useState(null);
+	const [cartID, setCartID] = useState(null);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
 		loading: false
 	});
+	const { Search } = Input;
 	const { titlePage, userInformation } = useWrap();
 	const monthFormat = 'MM/YYYY';
 	const [params, setParams] = useState({
@@ -32,14 +37,11 @@ const CheckOut = () => {
 		CardNumber: 0,
 		SecureCode: 0
 	});
+	const [form] = Form.useForm();
 	const [dataOrder, setDataOrder] =
 		useState<{ Note: string; OrderDetailModels: Array<any>; OrderID: number; TotalPayment: number }>(null);
 
 	const renderPaymentMethod = () => {
-		let dummyTxt = '1234567890123456';
-
-		let joy = dummyTxt.match(/.{1,4}/g);
-
 		const onChangeCheckRemember = () => {};
 		return (
 			<>
@@ -95,6 +97,7 @@ const CheckOut = () => {
 						</div>
 					</div>
 				)}
+
 				{method == 'paypal' && (
 					<div className="paypal-info">
 						<p>Để hoàn thành thanh toán chúng tôi sẽ chuyển bạn đến trang bảo mật của Paypal!</p>
@@ -114,11 +117,33 @@ const CheckOut = () => {
 						</div>
 					</div>
 				)}
+
+				{method == 'onepay' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+
+				{method == 'cash' && (
+					<div className="paypal-info">
+						<p>
+							Qúy khách vui lòng đến{' '}
+							<span className="text-uppercase font-weight-bold">1600 Pennsylvania Avenue NW Washington, D.C. 20500</span> để
+							hoàn tất thanh toán
+						</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
 			</>
 		);
 	};
-
-	console.log('Data Order: ', dataOrder);
 
 	const getOrderID = async (cartId) => {
 		try {
@@ -137,6 +162,8 @@ const CheckOut = () => {
 				setCartItems(res.data.data);
 				//@ts-ignore
 				getOrderID(res.data.cartId);
+				//@ts-ignore
+				setCartID(res.data.cartId);
 			}
 			if (res.status == 204) {
 				setCartItems([]);
@@ -159,15 +186,12 @@ const CheckOut = () => {
 				</div>
 				<div className="cart__item-detail col-4">
 					<h5>{item.VideoCourseName}</h5>
-					{/* <p>Tạo bởi: Dr. Angele Yu</p> */}
-					{/* <div className="detail__hours">
-						<span>21 giờ học</span>
-						<span>240 bài học</span>
-						<span>Trung cấp</span>
-					</div> */}
 				</div>
-				<div className="cart__item-price col-3">
-					<p className="font-weight-green">{numberWithCommas(item.Price)} vnd</p>
+				<div className="cart__item-action pl-1 col-1 ">
+					<span className="cart__item-quantity font-weight-green">{item.Quantity}</span>
+				</div>
+				<div className="cart__item-price col-4">
+					<p className="font-weight-green">{numberWithCommas(item.Price * item.Quantity)} vnd</p>
 				</div>
 			</div>
 		));
@@ -246,6 +270,21 @@ const CheckOut = () => {
 		return JSON.parse(jsonPayload);
 	}
 
+	const applyDiscount = async () => {
+		setIsLoading({ status: 'APPLY_DISCOUNT', loading: true });
+		try {
+			let res = await shoppingCartApi.applyDiscount({ OrderID: dataOrder.OrderID, DiscountCode: promoCode });
+			if (res.status == 200) {
+				showNoti('success', 'Thêm mã khuyễn mãi thành công!');
+				setPromo(res.data.data);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({ status: 'APPLY_DISCOUNT', loading: false });
+		}
+	};
+
 	useEffect(() => {
 		if (session !== undefined) {
 			let token = session.accessToken;
@@ -279,11 +318,36 @@ const CheckOut = () => {
 				case 'paypal':
 					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
 					break;
+				case 'cash':
+					res = await shoppingCartApi.checkoutCash({ CartId: cartID && cartID });
+					break;
+				case 'onepay':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
+				case 'card':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
 				default:
 					break;
 			}
 			if (res.status == 200) {
-				router.push(res.data.payUrl);
+				switch (method) {
+					case 'momo':
+						router.push(res.data.payUrl);
+						break;
+					case 'paypal':
+						router.push(res.data.payUrl);
+						break;
+					case 'cash':
+						showNoti('success', res.data.message);
+						break;
+					case 'onepay':
+						break;
+					case 'card':
+						break;
+					default:
+						break;
+				}
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -298,10 +362,11 @@ const CheckOut = () => {
 	return (
 		<div style={{ backgroundColor: '#fff' }}>
 			<header>
-				<div className="shopping__cart-header d-flex justify-content-between align-items-center row">
-					<div className="header__logo col-2">
+				<div className="shopping__cart-header justify-content-between align-items-center row">
+					<div className="header__logo col-6 col-md-3">
 						<Link href="/">
 							<a href="#">
+								{' '}
 								<img className="logo-img" src="/images/logo-final.jpg" alt="logo branch"></img>
 							</a>
 						</Link>
@@ -309,33 +374,28 @@ const CheckOut = () => {
 					<div className="header__profile col-2">
 						<div className="col-setting">
 							<ul className="col-setting-list">
-								<li className="notification">
-									<Notifiaction />
-								</li>
 								<li className="user">
-									<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
-										<div className="user-wrap">
-											<div className="user-info">
-												{session?.user ? (
-													<div className="user-wrap">
-														<div className="user-img">
-															<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+									<div className="d-none d-md-inline-block ">
+										<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
+											<div className="user-wrap">
+												<div className="user-info">
+													{session?.user ? (
+														<div className="user-wrap">
+															<div className="user-img">
+																<img src={dataUser?.Avatar ? dataUser.Avatar : '/images/user.png'} alt="" />
+															</div>
+															<div className="user-info">
+																<p className="user-name">{dataUser?.FullNameUnicode}</p>
+																<p className="user-position">{dataUser?.RoleName}</p>
+															</div>
 														</div>
-														<div className="user-info">
-															<p className="user-name">{dataUser?.FullNameUnicode}</p>
-															<p className="user-position">{dataUser?.RoleName}</p>
-														</div>
-													</div>
-												) : (
-													<p>Tài khoản</p>
-												)}
-
-												<div className="user-name-mobile">
-													<User />
+													) : (
+														<p>Tài khoản</p>
+													)}
 												</div>
 											</div>
-										</div>
-									</Popover>
+										</Popover>
+									</div>
 								</li>
 							</ul>
 						</div>
@@ -343,18 +403,20 @@ const CheckOut = () => {
 				</div>
 			</header>
 			<div className="container checkout mt-5">
-				<Link href="/cart/shopping-cart">
-					<p className="text-right font-weight-primary mb-5" style={{ cursor: 'pointer' }}>
-						Hủy thanh toán
-					</p>
-				</Link>
-				<div className="row">
-					<div className="checkout__content col-7">
+				<div className="d-flex justify-content-end">
+					<Link href="/cart/shopping-cart">
+						<p className="text-right font-weight-primary mb-5" style={{ cursor: 'pointer', width: 110 }}>
+							Hủy thanh toán
+						</p>
+					</Link>
+				</div>
+				<div className="row pb-5">
+					<div className="checkout__content col-12 col-lg-7">
 						<h1>Thanh toán</h1>
 						<Radio.Group onChange={onChangeRadio} value={method}>
 							<div className="payment-card type-checkout">
 								<Radio value={'card'}>
-									<div className="logo-branch">
+									<div className="logo-branch p-1">
 										<img src={'/images/mastercard.svg'} alt="img branch cc"></img>
 										<img src={'/images/visa.svg'} alt="img branch cc"></img>
 									</div>
@@ -362,15 +424,29 @@ const CheckOut = () => {
 							</div>
 							<div className="paypal type-checkout">
 								<Radio value={'paypal'}>
-									<div className="logo-branch">
+									<div className="logo-branch p-1">
 										<img src={'/images/paypal.svg'} alt="img branch cc"></img>
 									</div>
 								</Radio>
 							</div>
 							<div className="momo type-checkout">
 								<Radio value={'momo'}>
-									<div className="logo-branch">
+									<div className="logo-branch p-1">
 										<img src={'/images/momo.jpg'} alt="img branch cc"></img>
+									</div>
+								</Radio>
+							</div>
+							<div className="onepay type-checkout">
+								<Radio value={'onepay'}>
+									<div className="logo-branch p-1">
+										<img src={'/images/onepay.png'} alt="img branch cc"></img>
+									</div>
+								</Radio>
+							</div>
+							<div className="cash type-checkout">
+								<Radio value={'cash'}>
+									<div className="logo-branch p-1">
+										<img src={'/images/cash.png'} alt="img branch cc"></img>
 									</div>
 								</Radio>
 							</div>
@@ -381,52 +457,64 @@ const CheckOut = () => {
 							{isLoading.loading ? <Skeleton active /> : renderCartItems()}
 						</div>
 					</div>
-					<div className="sumary col-5">
-						<h4>Tổng thanh toán</h4>
-						<div className="row">
-							<div className="col-7">
-								<p>Giá gốc</p>
+					<div className="sumary col-12 col-lg-5 mt-4">
+						<div className="sumary-wrap">
+							<h6>Mã khuyến mãi</h6>
+							<Form form={form}>
+								<Form.Item>
+									<Search
+										onChange={(event) => {
+											setPromoCode(event.target.value);
+										}}
+										onSearch={(event) => {
+											applyDiscount();
+										}}
+										name="Promotions"
+										placeholder="Nhập mã khuyến mãi"
+										className="input-promo"
+										enterButton="Áp dụng"
+										size="large"
+										loading={isLoading.status == 'APPLY_DISCOUNT' && isLoading.loading}
+									/>
+								</Form.Item>
+							</Form>
+							<h4>Tổng thanh toán</h4>
+							<div className="row">
+								<div className="col-7">
+									<h6>Giá gốc</h6>
+								</div>
+								<div className="col-5">
+									<span className="mr-2">{numberWithCommas(dataOrder?.TotalPayment)}</span>
+									<span>VND</span>
+								</div>
 							</div>
-							<div className="col-5">
-								<p>
-									{numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0))}
-									vnd
-								</p>
+							<div className="row sumary__price">
+								<div className="col-7">
+									<h6>Khuyến mãi</h6>
+								</div>
+								<div className="col-5">
+									<p>- {promo ? promo.DiscountPrice : 0} VND</p>
+								</div>
 							</div>
+							<div className="row">
+								<div className="col-7" style={{ fontWeight: 700 }}>
+									<p>Tổng cộng:</p>
+								</div>
+								<div className="col-5" style={{ fontWeight: 700 }}>
+									<span className="mr-2">{numberWithCommas(dataOrder?.TotalPayment - discounts)}</span>
+									<span>VND</span>
+								</div>
+							</div>
+							<p>
+								Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
+								jurisdictions.
+							</p>
+							<p>By completing your purchase you agree to these Terms of Service.</p>
+							<button className="btn btn-primary w-100" onClick={handleCheckout}>
+								Thanh toán
+								{isLoading.status == 'CHECKOUT' && isLoading.loading && <Spin className="loading-base" />}
+							</button>
 						</div>
-						<div className="row sumary__price">
-							<div className="col-7">
-								<p>Khuyến mãi</p>
-							</div>
-							<div className="col-5">
-								<p>- {discounts} vnd</p>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-7" style={{ fontWeight: 700 }}>
-								<p>Tổng cộng:</p>
-							</div>
-							<div className="col-5" style={{ fontWeight: 700 }}>
-								<p>
-									{/* {numberWithCommas(cartItems?.reduce((a, b) => Number(a) + Number(b.Price), 0) - discounts)} */}
-									{numberWithCommas(dataOrder?.TotalPayment)}
-									VNĐ
-								</p>
-							</div>
-						</div>
-						<p>
-							Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
-							jurisdictions.
-						</p>
-						<p>By completing your purchase you agree to these Terms of Service.</p>
-						{/* <Link href="/cart/check-out">
-							<button className="btn btn-primary w-100">Thanh toán</button>
-						</Link> */}
-
-						<button className="btn btn-primary w-100" onClick={handleCheckout}>
-							Thanh toán
-							{isLoading.status == 'CHECKOUT' && isLoading.loading && <Spin className="loading-base" />}
-						</button>
 					</div>
 				</div>
 			</div>

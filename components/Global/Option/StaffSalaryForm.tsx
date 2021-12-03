@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useWrap } from '~/context/wrap';
+import { userInformationApi } from '~/apiBase';
 
 const StaffSalaryForm = (props) => {
 	const { Option } = Select;
@@ -10,8 +11,16 @@ const StaffSalaryForm = (props) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [form] = Form.useForm();
 	const [isTeacher, setIsTeacher] = useState(false);
+	const [roles, setRoles] = useState([]);
+	const [dataStaff, setDataStaff] = useState([]);
+	const [paramsDataStaff, setParamsDataStaff] = useState(null);
+	const { pageSize, showNoti } = useWrap();
+	const [paramsSearchStaff, setParamsSearchStaff] = useState({ pageIndex: 1, pageSize: pageSize, FullNameUnicode: '' });
 
-	const { showNoti } = useWrap();
+	const [isLoading, setIsLoading] = useState({
+		status: '',
+		loading: false
+	});
 
 	const {
 		register,
@@ -38,9 +47,85 @@ const StaffSalaryForm = (props) => {
 
 		let res = props._onSubmit(data);
 		res.then(function (rs: any) {
-			rs && rs.status == 200 && setIsModalVisible(false), form.resetFields();
+			rs && rs.status == 200 && setIsModalVisible(false), form.resetFields(), setParamsDataStaff(null);
 		});
 	});
+
+	// GET DATA USERINFORMATION
+	const getDataStaff = () => {
+		setIsLoading({
+			status: 'GET_ALL',
+			loading: true
+		});
+		(async () => {
+			try {
+				let res = await userInformationApi.getAllRole(paramsDataStaff);
+				res.status == 200 && setDataStaff(res.data.data);
+				if (res.status == 204) {
+					setDataStaff([]);
+				}
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					status: 'GET_ALL',
+					loading: false
+				});
+			}
+		})();
+	};
+
+	const getSearchDataStaff = (name) => {
+		setIsLoading({
+			status: 'GET_ALL',
+			loading: true
+		});
+		(async () => {
+			try {
+				let res = await userInformationApi.getName({ pageIndex: 1, pageSize: pageSize, FullNameUnicode: name });
+				res.status == 200 && setDataStaff(res.data.data);
+				if (res.status == 204) {
+					setDataStaff([]);
+				}
+				if (res.status == 204) {
+					setDataStaff([]);
+				}
+			} catch (error) {
+				showNoti('danger', error.message);
+			} finally {
+				setIsLoading({
+					status: 'GET_ALL',
+					loading: false
+				});
+			}
+		})();
+	};
+
+	const getRoles = async (roleType) => {
+		setIsLoading({
+			status: 'GET_ALL',
+			loading: true
+		});
+		try {
+			let res = await userInformationApi.getRole(roleType);
+			if (res.status == 200) {
+				setRoles(res.data.data);
+			}
+			if (res.status == 204) {
+				setRoles([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({
+				status: 'GET_ALL',
+				loading: false
+			});
+		}
+	};
+
+	useEffect(() => {
+		getDataStaff();
+	}, [paramsDataStaff]);
 
 	useEffect(() => {
 		if (isModalVisible) {
@@ -56,6 +141,20 @@ const StaffSalaryForm = (props) => {
 			}
 		}
 	}, [isModalVisible]);
+
+	useEffect(() => {
+		getRoles(1);
+	}, []);
+
+	// Select search
+	function onSearch(val) {
+		console.log('search:', val);
+		if (val.length == 0) {
+			getDataStaff();
+		} else {
+			getSearchDataStaff(val);
+		}
+	}
 
 	useEffect(() => {
 		if (props.dataIDStaff && props.dataStaff.length === 1) {
@@ -103,25 +202,79 @@ const StaffSalaryForm = (props) => {
 						<div className="row">
 							<div className="col-12">
 								{props.showAdd || props.showInTeacherView ? (
-									<Form.Item
-										label="Nhân viên"
-										name="Staff"
-										rules={[{ required: true, message: 'Bạn không được để trống' }]}
-									>
-										<Select
-											className="style-input"
-											placeholder="Chọn nhân viên"
-											allowClear={true}
-											onChange={(value, role) => setValueStaff(value, role)}
+									<>
+										<Form.Item
+											label="Chọn chức vụ"
+											name="Role"
+											// rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										>
-											{props.dataStaff &&
-												props.dataStaff.map((row) => (
-													<Option key={row.UserInformationID} value={row.UserInformationID} role={row.RoleID}>
-														{row.FullNameUnicode}
+											<Select
+												className="style-input"
+												placeholder="Chọn chức vụ"
+												allowClear={true}
+												onChange={(value, role) => {
+													setParamsDataStaff(value);
+												}}
+											>
+												{roles &&
+													roles.map((role, index) => (
+														<Option key={index} value={role.ID} role={role.ID}>
+															{role.name}
+														</Option>
+													))}
+											</Select>
+										</Form.Item>
+										<Form.Item
+											label="Nhân viên"
+											name="Staff"
+											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<Select
+												showSearch
+												className="style-input"
+												placeholder="Chọn nhân viên"
+												optionFilterProp="children"
+												onChange={(value, role) => setValueStaff(value, role)}
+												onSearch={onSearch}
+												filterOption={(input, option) =>
+													!isLoading.loading && option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+												}
+											>
+												{isLoading.loading ? (
+													<Option value="" className="spin-center">
+														<Spin />
 													</Option>
-												))}
-										</Select>
-									</Form.Item>
+												) : (
+													dataStaff &&
+													dataStaff.map((row) => (
+														<Option key={row.UserInformationID} value={row.UserInformationID} role={row.RoleID}>
+															{row.FullNameUnicode}
+														</Option>
+													))
+												)}
+											</Select>
+										</Form.Item>
+
+										{/* <Form.Item
+											label="Nhân viên"
+											name="Staff"
+											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<Select
+												className="style-input"
+												placeholder="Chọn nhân viên"
+												allowClear={true}
+												onChange={(value, role) => setValueStaff(value, role)}
+											>
+												{props.dataStaff &&
+													props.dataStaff.map((row) => (
+														<Option key={row.UserInformationID} value={row.UserInformationID} role={row.RoleID}>
+															{row.FullNameUnicode}
+														</Option>
+													))}
+											</Select>
+										</Form.Item> */}
+									</>
 								) : (
 									<Form.Item label="Ghi chú" name="Note">
 										<Input placeholder="Note" className="style-input" allowClear={true} />

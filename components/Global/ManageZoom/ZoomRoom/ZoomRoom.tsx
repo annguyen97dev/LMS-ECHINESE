@@ -1,22 +1,22 @@
-import {Tooltip} from 'antd';
+import { Tooltip } from 'antd';
 import moment from 'moment';
-import React, {useEffect, useRef, useState} from 'react';
-import {LogIn} from 'react-feather';
-import {zoomRoomApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { LogIn } from 'react-feather';
+import { zoomRoomApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 import CloseZoomRoom from './CloseZoomRoom';
 import ZoomRoomFilter from './ZoomRoomFilter';
 
 const ZoomRoom = () => {
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti, userInformation} = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [roomList, setRoomList] = useState<IZoomRoom[]>([]);
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 
@@ -30,59 +30,59 @@ const ZoomRoom = () => {
 		fromDate: '',
 		toDate: '',
 		TeacherName: '',
-		IsRoomStart: null,
+		IsRoomStart: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	const optionActiveList = [
 		{
 			title: 'Hoạt động',
-			value: true,
+			value: true
 		},
 		{
 			title: 'Dừng',
-			value: false,
-		},
+			value: false
+		}
 	];
 	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Tên tăng dần',
+			text: 'Tên tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Tên giảm dần',
+			text: 'Tên giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Ngày học tăng dần',
+			text: 'Ngày học tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Ngày học giảm dần',
-		},
+			text: 'Ngày học giảm dần'
+		}
 	];
 	// FILTER
 	const onFilter = (obj) => {
@@ -92,7 +92,7 @@ const ZoomRoom = () => {
 			pageIndex: 1,
 			...obj,
 			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
-			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
+			toDate: moment(obj.toDate).format('YYYY/MM/DD')
 		});
 	};
 	// PAGINATION
@@ -101,11 +101,11 @@ const ZoomRoom = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -113,11 +113,11 @@ const ZoomRoom = () => {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -125,7 +125,7 @@ const ZoomRoom = () => {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -135,7 +135,7 @@ const ZoomRoom = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			[dataIndex]: valueSearch,
+			[dataIndex]: valueSearch
 		});
 	};
 
@@ -143,7 +143,7 @@ const ZoomRoom = () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await zoomRoomApi.getAll(filters);
 			if (res.status === 200) {
@@ -160,7 +160,7 @@ const ZoomRoom = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -172,13 +172,13 @@ const ZoomRoom = () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await zoomRoomApi.closeRoom(schedule.CourseScheduleID);
 
 			if (res.status === 200) {
 				const newRoomList = [...roomList];
-				const newRoom: IZoomRoom = {...newRoomList[idx], IsRoomStart: false};
+				const newRoom: IZoomRoom = { ...newRoomList[idx], IsRoomStart: false };
 				newRoomList.splice(idx, 1, newRoom);
 				setRoomList(newRoomList);
 				showNoti('success', 'Phòng học đã đóng');
@@ -188,43 +188,32 @@ const ZoomRoom = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
 	const columns = [
 		{
 			title: 'ID phòng',
-			dataIndex: 'ZoomRoomID',
+			dataIndex: 'ZoomRoomID'
 		},
-		{title: 'Mật khẩu phòng', dataIndex: 'ZoomRoomPass'},
+		{ title: 'Mật khẩu phòng', dataIndex: 'ZoomRoomPass' },
 		{
 			title: 'Giáo viên',
 			dataIndex: 'TeacherName',
-			...FilterColumn('TeacherName', onSearch, onResetSearch),
+			...FilterColumn('TeacherName', onSearch, onResetSearch)
 		},
 		{
 			title: 'Ngày học',
 			dataIndex: 'Date',
-			render: (date) => moment(date).format('DD/MM/YYYY'),
+			render: (date) => moment(date).format('DD/MM/YYYY')
 		},
 		{
 			align: 'center',
 			title: 'Trạng thái',
 			dataIndex: 'IsRoomStart',
-			render: (IsRoomStart) =>
-				IsRoomStart ? (
-					<span className="tag blue">Hoạt động</span>
-				) : (
-					<span className="tag gray">Dừng</span>
-				),
-			...FilterColumn(
-				'IsRoomStart',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionActiveList
-			),
+			render: (IsRoomStart) => (IsRoomStart ? <span className="tag blue">Hoạt động</span> : <span className="tag gray">Dừng</span>),
+			...FilterColumn('IsRoomStart', onSearch, onResetSearch, 'select', optionActiveList)
 		},
 		{
 			width: 100,
@@ -234,25 +223,16 @@ const ZoomRoom = () => {
 				IsRoomStart && (
 					<>
 						<Tooltip title="Tham gia phòng học">
-							<a
-								target="_blank"
-								href={`/course/zoom-view/${record.CourseScheduleID}`}
-							>
+							<a target="_blank" href={`/course/zoom-view/${record.CourseScheduleID}`}>
 								<LogIn />
 							</a>
 						</Tooltip>
 						<Tooltip title="Đóng phòng học">
-							{/* <button
-								className="btn btn-icon delete"
-								onClick={() => onCloseRoom(record.CourseScheduleID, idx)}
-							>
-								<Power />
-							</button> */}
 							<CloseZoomRoom handleClose={() => onCloseRoom(record, idx)} />
 						</Tooltip>
 					</>
-				),
-		},
+				)
+		}
 	];
 
 	return (
@@ -268,10 +248,7 @@ const ZoomRoom = () => {
 			TitleCard={null}
 			Extra={
 				<div className="extra-table">
-					<ZoomRoomFilter
-						handleFilter={onFilter}
-						handleResetFilter={onResetSearch}
-					/>
+					<ZoomRoomFilter handleFilter={onFilter} handleResetFilter={onResetSearch} />
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

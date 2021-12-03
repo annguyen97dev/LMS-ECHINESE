@@ -1,11 +1,11 @@
-import {instance} from '~/apiBase/instance';
+import { instance } from '~/apiBase/instance';
 
 const url = '/api/Teacher/';
 export const teacherApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<ITeacher[]>>(url, {
-			params,
+			params
 		});
 	},
 	// Lấy theo id
@@ -21,11 +21,7 @@ export const teacherApi = {
 		return instance.put(url, data);
 	},
 	// Cập nhật data
-	updateBranch(data: {
-		UserInfomationID: number;
-		BranchID: string;
-		Enable: boolean;
-	}) {
+	updateBranch(data: { UserInfomationID: number; BranchID: string; Enable: boolean }) {
 		return instance.put('/api/UserBranch/', data);
 	},
 	// Xóa data
@@ -39,4 +35,9 @@ export const teacherApi = {
 	updateTeacherForSubject(data: any) {
 		return instance.put('/api/AssignTeacherForSubject', data);
 	},
+	getTeacherByProgram(params: { ProgramID: number; BranchID: number }) {
+		return instance.get<IApiResultData<{ UserInformationID: number; FullNameUnicode: string }[]>>('/api/TeacherByProgram', {
+			params
+		});
+	}
 };

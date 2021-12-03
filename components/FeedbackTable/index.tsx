@@ -108,7 +108,7 @@ const FeedbackTable = (props) => {
 
 	return (
 		<>
-			<div className="wrap-table table-expand">
+			<div className="wrap-table table-expand disable-checkbox">
 				<Card
 					loading={props.loading}
 					className={`cardRadius ${props.addClass && props.addClass} ${props.Size ? props.Size : ''}`}

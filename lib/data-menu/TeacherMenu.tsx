@@ -78,29 +78,29 @@ export const TeacherChildMenu = [
 				Icon: '',
 				Route: '/course/register-course',
 				Text: 'Đăng ký khóa học'
-			},
-			{
-				ItemType: 'sub-menu',
-				Key: 'sub-course-zoom',
-				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
-				TitleSub: 'Quản lý Zoom',
-				SubMenuList: [
-					{
-						ItemType: 'single',
-						Key: '/course/manage-zoom/config-zoom',
-						Route: '/course/manage-zoom/config-zoom',
-						Text: 'Cấu hình',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/course/manage-zoom/meeting-zoom',
-						Route: '/course/manage-zoom/meeting-zoom',
-						Text: 'Danh sách phòng học',
-						Icon: ''
-					}
-				]
 			}
+			// {
+			// 	ItemType: 'sub-menu',
+			// 	Key: 'sub-course-zoom',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
+			// 	TitleSub: 'Quản lý Zoom',
+			// 	SubMenuList: [
+			// 		{
+			// 			ItemType: 'single',
+			// 			Key: '/course/manage-zoom/config-zoom',
+			// 			Route: '/course/manage-zoom/config-zoom',
+			// 			Text: 'Cấu hình',
+			// 			Icon: ''
+			// 		},
+			// 		{
+			// 			ItemType: 'single',
+			// 			Key: '/course/manage-zoom/meeting-zoom',
+			// 			Route: '/course/manage-zoom/meeting-zoom',
+			// 			Text: 'Danh sách phòng học',
+			// 			Icon: ''
+			// 		}
+			// 	]
+			// }
 		]
 	},
 
@@ -134,8 +134,8 @@ export const TeacherChildMenu = [
 
 			{
 				ItemType: 'single',
-				Key: '/customer/feedback-list',
-				Route: '/customer/feedback-list',
+				Key: '/feedback',
+				Route: '/feedback',
 				Text: 'Phản hồi',
 				Icon: ''
 			},

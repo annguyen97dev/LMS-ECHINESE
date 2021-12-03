@@ -131,6 +131,22 @@ const SaveCreateCourseOnline = (props) => {
 									<div className="col-md-6 col-12">
 										<div className="item">
 											<p>
+												<span>Giáo viên:</span>
+												<span>{saveInfo.TeacherName}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
+												<span>Giá khóa học:</span>
+												<span>{numberWithCommas(saveInfo.Price)}</span>
+											</p>
+										</div>
+									</div>
+									<div className="col-md-6 col-12">
+										<div className="item">
+											<p>
 												<span>Lương/buổi:</span>
 												<span>{numberWithCommas(saveInfo.SalaryOfLesson)}</span>
 											</p>
@@ -192,6 +208,7 @@ SaveCreateCourseOnline.propTypes = {
 		CourseName: PropTypes.string,
 		BranchName: PropTypes.string,
 		ProgramName: PropTypes.string,
+		TeacherName: PropTypes.string,
 		CurriculumName: PropTypes.string,
 		DaySelectedName: PropTypes.string,
 		StudyTimeName: PropTypes.string,

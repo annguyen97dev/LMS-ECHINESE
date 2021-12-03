@@ -19,6 +19,7 @@ import { AcademicChildMenu, AcademicParentMenu } from '~/lib/data-menu/AcademinM
 import { ProfessionalManagerChildMenu, ProfessionalManagerParentMenu } from '~/lib/data-menu/ProfessionalManagerMenu';
 import { AccountantChildMenu, AccountantParentMenu } from '~/lib/data-menu/AccountantMenu';
 import { Popover } from 'antd';
+import InComingClassBtn from '../Global/CreateCourseOnline/InComingClassBtn';
 
 const name = 'Mona';
 
@@ -232,7 +233,7 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 				src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fechinese.vn%2F&tabs=timeline%2C%20message&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=688873135187834"
 				width="500"
 				height="500"
-				style={{ border: 'bone', overflow: 'hidden' }}
+				style={{ maxWidth: '100%', border: 'bone', overflow: 'hidden' }}
 				scrolling="no"
 				frameBorder="0"
 				allowFullScreen
@@ -294,6 +295,9 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 				funcMenuMobile={funcMenuMobile}
 			/>
 			<main className="app-main">
+				{/* KIỂM TRA LỚP SẮP DIỄN RA DÀNH CHO HỌC VIÊN*/}
+				{userInformation?.RoleID === 3 && <InComingClassBtn />}
+				{/* FACEBOOK */}
 				<Popover content={contentFanpage} title="Fanpage" trigger="click">
 					<div className="icon-facebook">
 						<img className="facebook-img" src="/icons/facebook.png"></img>
