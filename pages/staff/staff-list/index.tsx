@@ -690,22 +690,24 @@ const StaffList = () => {
 			title: '',
 			dataIndex: '',
 			align: 'center',
-			width: 100,
+			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 100,
 			render: (text, data, index) => (
 				<>
-					<div onClick={(e) => e.stopPropagation()}>
-						<StaffForm
-							getIndex={() => setIndexRow(index)}
-							index={index}
-							rowData={data}
-							rowID={data.UserInformationID}
-							isLoading={isLoading}
-							onSubmit={(data: any) => onSubmit(data)}
-							onSubmitSalary={(data: any) => onSubmitSalary(data)}
-							listDataForm={listDataForm}
-						/>
-						<ResetPassForm dataRow={data} />
-					</div>
+					{userInformation !== null && userInformation.RoleID !== 5 && (
+						<div onClick={(e) => e.stopPropagation()}>
+							<StaffForm
+								getIndex={() => setIndexRow(index)}
+								index={index}
+								rowData={data}
+								rowID={data.UserInformationID}
+								isLoading={isLoading}
+								onSubmit={(data: any) => onSubmit(data)}
+								onSubmitSalary={(data: any) => onSubmitSalary(data)}
+								listDataForm={listDataForm}
+							/>
+							<ResetPassForm dataRow={data} />
+						</div>
+					)}
 				</>
 			)
 		}
@@ -730,7 +732,11 @@ const StaffList = () => {
 				columns={columns}
 				dataSource={dataSource}
 				TitlePage="Danh sách nhân viên"
-				TitleCard={<StaffForm isLoading={isLoading} onSubmit={(data: any) => onSubmit(data)} listDataForm={listDataForm} />}
+				TitleCard={
+					userInformation !== null && userInformation.RoleID !== 5 ? (
+						<StaffForm isLoading={isLoading} onSubmit={(data: any) => onSubmit(data)} listDataForm={listDataForm} />
+					) : null
+				}
 				Extra={
 					<div className="extra-table">
 						<FilterBase
