@@ -242,11 +242,14 @@ export default function Header({
                 </a>
               </Popover>
             </li> */}
-						{userInformation?.RoleID !== undefined && userInformation.RoleID !== 1 && userInformation.RoleID !== 6 && (
-							<li className="notification" style={{ marginRight: -15 }}>
-								<Cart />
-							</li>
-						)}
+						{userInformation?.RoleID !== undefined &&
+							userInformation.RoleID !== 1 &&
+							userInformation.RoleID !== 5 &&
+							userInformation.RoleID !== 6 && (
+								<li className="notification" style={{ marginRight: -15 }}>
+									<Cart />
+								</li>
+							)}
 						<li className="notification">
 							<Notifiaction />
 						</li>

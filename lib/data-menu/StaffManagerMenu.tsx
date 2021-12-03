@@ -47,7 +47,7 @@ export const StaffManagerChildMenu = [
 				Key: '/dashboard',
 				Route: '/dashboard',
 				Icon: '',
-				Text: 'Trang chủ'
+				Text: 'Thống kê'
 			},
 			{
 				TypeItem: 'single',
@@ -69,6 +69,13 @@ export const StaffManagerChildMenu = [
 				Icon: '<span class="anticon"><img src="/images/icons/study-course.svg" ></span>',
 				TitleSub: 'Quản lí khóa học',
 				SubMenuList: [
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/course/create-course',
+					// 	Route: '/course/create-course',
+					// 	Text: 'Tạo khóa học',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/course/create-course-online',
@@ -76,6 +83,13 @@ export const StaffManagerChildMenu = [
 						Text: 'Tạo khóa học online',
 						Icon: ''
 					},
+					// {
+					//   ItemType: "single",
+					//   Key: "/course/create-course-self",
+					//   Route: "/course/create-course-self",
+					//   Text: "Tạo khóa tự học",
+					//   Icon: "",
+					// },
 					{
 						ItemType: 'single',
 						Key: '/course/course-list',
@@ -83,6 +97,13 @@ export const StaffManagerChildMenu = [
 						Text: 'Danh sách khóa học',
 						Icon: ''
 					}
+					// {
+					//   ItemType: "single",
+					//   Key: "/course/course-list-self",
+					//   Route: "/course/course-list-self",
+					//   Text: "Danh sách khóa tự học",
+					//   Icon: "",
+					// },
 				]
 			},
 			{
@@ -92,6 +113,27 @@ export const StaffManagerChildMenu = [
 				Route: '/course/schedule-study',
 				Text: 'Kiểm tra lịch'
 			},
+			//   {
+			//     TypeItem: "single",
+			//     Key: "/course/schedule-study-teacher",
+			//     Icon: '<span class="anticon"><img src="/images/icons/calendar.svg"></span>',
+			//     Route: "/course/schedule-study-teacher",
+			//     Text: "Lịch dạy giáo viên",
+			//   },
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-list-report',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-list-report',
+			// 	Text: 'Danh sách khóa học - báo cáo'
+			// },
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-buy',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-buy',
+			// 	Text: 'Danh sách khóa học - mua bán'
+			// },
 			{
 				TypeItem: 'single',
 				Key: '/course/register-course',
@@ -120,21 +162,43 @@ export const StaffManagerChildMenu = [
 						Text: 'Danh sách phòng học',
 						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/course/manage-zoom/meeting-internal',
+					// 	Route: '/course/manage-zoom/meeting-internal',
+					// 	Text: 'Phòng họp nội bộ',
+					// 	Icon: '',
+					// },
 				]
 			},
 			{
-				TypeItem: 'single',
-				Key: '/video-course/',
+				ItemType: 'sub-menu',
+				Key: 'video-course',
 				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
-				Route: '/video-course/',
-				Text: 'Khóa học video'
-			},
-			{
-				TypeItem: 'single',
-				Key: '/video-course-list',
-				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
-				Route: '/video-course-list',
-				Text: 'Khóa học video đã bán'
+				TitleSub: 'Khóa học video',
+				SubMenuList: [
+					{
+						TypeItem: 'single',
+						Key: '/video-course',
+						Route: '/video-course',
+						Icon: '',
+						Text: 'Danh sách khóa học'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-order',
+						Icon: '',
+						Route: '/video-course-order',
+						Text: 'Danh sách đơn hàng'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-list',
+						Icon: '',
+						Route: '/video-course-list',
+						Text: 'Khóa học đã Active'
+					}
+				]
 			}
 		]
 	},
@@ -512,7 +576,7 @@ export const StaffManagerChildMenu = [
 				ItemType: 'single',
 				Key: '/feedback',
 				Route: '/feedback',
-				Text: 'Phản hồi',
+				Text: 'Danh sách phản hồi',
 				Icon: ''
 			},
 			{
@@ -786,14 +850,14 @@ export const StaffManagerChildMenu = [
 						Route: '/option/program',
 						Text: 'Chương trình',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/option/price-fix-exam',
-						Route: '/option/price-fix-exam',
-						Text: 'Giá lượt chấm bài',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/price-fix-exam',
+					// 	Route: '/option/price-fix-exam',
+					// 	Text: 'Giá lượt chấm bài',
+					// 	Icon: ''
+					// }
 				]
 			},
 			{
@@ -888,27 +952,27 @@ export const StaffManagerChildMenu = [
 						Text: 'Thành ngữ lịch',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/option/contract',
-						Route: '/option/contract',
-						Text: 'Hợp đồng',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/option/term-of-service',
-						Route: '/option/term-of-service',
-						Text: 'Điều khoản',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/option/config-voucher-invoice',
-						Route: '/option/config-voucher-invoice',
-						Text: 'Phiếu thu, phiếu chi',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/contract',
+					// 	Route: '/option/contract',
+					// 	Text: 'Hợp đồng',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/term-of-service',
+					// 	Route: '/option/term-of-service',
+					// 	Text: 'Điều khoản',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/config-voucher-invoice',
+					// 	Route: '/option/config-voucher-invoice',
+					// 	Text: 'Phiếu thu, phiếu chi',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/option/faq',
