@@ -333,7 +333,6 @@ const SalaryReview = () => {
 	};
 
 	const onChangeMonth = (value) => {
-		console.log(value);
 		setParams({ ...params, Month: Number(value) });
 	};
 
@@ -346,7 +345,6 @@ const SalaryReview = () => {
 	};
 
 	const handleCancel = () => {
-		console.log('Clicked cancel button');
 		setVisible(false);
 	};
 

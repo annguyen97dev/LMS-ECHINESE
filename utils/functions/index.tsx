@@ -13,6 +13,15 @@ export const fmSelectArr = (arr: Array<{ [key: string]: any }>, title: string, v
 	}
 	return [];
 };
+export function removeRepeatElementSorted(arr, n) {
+	if (n == 0 || n == 1) return n;
+
+	let temp = [arr[0]];
+	// Start traversing elements
+	let j = 0;
+	for (let i = 0; i < n - 1; i++) if (arr[i] != arr[i + 1]) temp.push(arr[i + 1]);
+	return temp;
+}
 
 export const clearOptionsDuplicate = (arr: IOptionCommon[]) => {
 	return arr.reduce((newArr, o) => {
