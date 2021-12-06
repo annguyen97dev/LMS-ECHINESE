@@ -8,19 +8,9 @@ import EditorSimple from '~/components/Elements/EditorSimple';
 import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { newsFeedApi } from '~/apiBase';
 import { parseToMoney } from '~/utils/functions';
+import { videoTagApi } from '~/apiBase/video-tag';
 
-const initDetails = {
-	VideoCourseName: '',
-	Slogan: '',
-	Requirements: '',
-	Description: '',
-	ResultsAchieved: '',
-	CourseForObject: '',
-	TotalRating: 0,
-	RatingNumber: 0,
-	TotalStudent: 0,
-	CreatedBy: ''
-};
+const { Option } = Select;
 
 const { TextArea } = Input;
 
@@ -30,7 +20,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	const { Option } = Select;
 	const [category, setCategory] = useState(0);
 	const [level, setLevel] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
@@ -41,6 +30,8 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [tagArray, setTagArray] = useState('');
 	const { showNoti } = useWrap();
 	const [imageSelected, setImageSelected] = useState({ name: '' });
+
+	const [tags, setTags] = useState([]);
 
 	const {
 		register,
@@ -54,6 +45,10 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [description, setDescription] = useState('');
 	const [resultsAchieved, setResultsAchieved] = useState('');
 	const [courseForObject, setCourseForObject] = useState('');
+
+	useEffect(() => {
+		getTags();
+	}, []);
 
 	const finalSubmit = (ImageThumbnails) => {
 		_onSubmit({
@@ -164,10 +159,34 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		}
 	};
 
+	const getTags = async () => {
+		try {
+			const response = await videoTagApi.getAll();
+			response.status == 200 && setTags(response.data.data);
+		} catch (error) {
+			showNoti('danger', 'Không lấy được tag');
+		}
+	};
+
 	// Upload file audio
 	const handleUploadFile = async (info) => {
 		setImageSelected(info.file);
 	};
+
+	// xxxx
+	const children = [];
+
+	for (let i = 0; i < tags.length; i++) {
+		children.push(
+			<Option value={tags[i].ID} key={tags[i].ID}>
+				{tags[i]?.Name || null}
+			</Option>
+		);
+	}
+
+	function handleChange(value) {
+		console.log(`selected ${value}`);
+	}
 
 	// RENDER
 	return (
@@ -405,7 +424,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												placeholder=""
 												className="style-input"
 												value={originalPrice}
-												// type="number"
 												onChange={(e) => setOriginalPrice(e.target.value)}
 											/>
 										</Form.Item>
@@ -419,7 +437,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											<Input
 												placeholder=""
 												className="style-input"
-												// type="number"
 												value={sellPrice}
 												onChange={(e) => setSellPrice(e.target.value)}
 											/>
@@ -431,12 +448,22 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											label="Từ khóa tìm kiếm"
 											rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										>
-											<TextArea
+											{/* <TextArea
 												rows={4}
 												placeholder="VD: video,education,basic,hsk1,hsk2"
 												value={tagArray}
 												onChange={(e) => setTagArray(e.target.value)}
-											/>
+											/> */}
+											<Select
+												mode="multiple"
+												allowClear
+												style={{ width: '100%' }}
+												placeholder="Please select"
+												defaultValue={['a10', 'c12']}
+												onChange={handleChange}
+											>
+												{children}
+											</Select>
 										</Form.Item>
 									</div>
 								</div>
