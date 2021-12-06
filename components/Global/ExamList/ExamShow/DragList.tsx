@@ -254,8 +254,6 @@ const DragList = (props) => {
 		}
 	}, []);
 
-	console.log('DATA ANSWER: ', dataAnswer);
-
 	// -- UPDATE AFTER DROP AND DRAG
 	useEffect(() => {
 		if (!doneTestData) {
@@ -265,8 +263,16 @@ const DragList = (props) => {
 
 					let boxAns = document.querySelectorAll('.drag-list .drag-list-answer');
 
+					console.log('Chạy dô');
 					spaceEditor.forEach((item) => {
 						const quesID = parseInt(item.getAttribute('ques-id'));
+
+						// Kiểm tra nếu rỗng thì xóa id khỏi mảng của footer pagination
+						// console.log('ITEMMM: ', item.childNodes);
+						// if (item.childNodes[0].nodeName !== 'DIV') {
+						// 	console.log('start removeee');
+						// 	removeListPicked(quesID);
+						// }
 
 						let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
 							indexQuestion

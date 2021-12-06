@@ -57,6 +57,8 @@ export const DoingTestProvider = ({ children }) => {
 	const [listPicked, setListPicked] = useState([]);
 	const { userInformation } = useWrap();
 
+	console.log('List Picked: ', listPicked);
+
 	// --- GET LIST QUESTION ID ---
 	const getListQuestionID = (listQuestionID: Array<Number>) => {
 		setListQuestionID(listQuestionID);
@@ -66,19 +68,26 @@ export const DoingTestProvider = ({ children }) => {
 	const getListPicked = (pickedID) => {
 		let cloneList = [...listPicked];
 
+		console.log('Picked truyền vào: ', pickedID);
+		console.log('List Picked bên trong: ', listPicked);
+
 		if (listPicked.includes(pickedID) === false) {
 			listPicked.push(pickedID);
 			setListPicked([...listPicked]);
+		} else {
+			return;
 		}
 	};
 
 	// --- REMOVE ID IN LIST PICKED ---
 	const removeListPicked = (pickedID) => {
-		let index = listPicked.findIndex((id) => id === pickedID);
-		listPicked.splice(index, 1);
-		// console.log('PICKED ID: ', pickedID);
-		// let newList = listPicked.filter((id) => id !== pickedID);
-		setListPicked([...listPicked]);
+		if (listPicked.includes(pickedID)) {
+			let index = listPicked.findIndex((id) => id === pickedID);
+			listPicked.splice(index, 1);
+
+			// let newList = listPicked.filter((id) => id !== pickedID);
+			setListPicked([...listPicked]);
+		}
 	};
 
 	// --- GET ACTIVE ID ---

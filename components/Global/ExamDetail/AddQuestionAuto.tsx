@@ -151,7 +151,7 @@ const AddQuestionAuto = (props) => {
 	return (
 		<>
 			<button
-				className="btn btn-warning ml-2"
+				className="btn btn-warning d-block w-100 text-center mb-2"
 				onClick={
 					countShowConfirm < 1
 						? listQuestionID.length > 0
@@ -160,7 +160,7 @@ const AddQuestionAuto = (props) => {
 						: showModalCreateQuestion
 				}
 			>
-				<div className="d-flex align-item-center">
+				<div className="d-flex align-item-center w-100">
 					<Zap className="mr-2" style={{ width: '18px' }} />
 					Tạo nhanh
 				</div>
