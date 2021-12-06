@@ -1,7 +1,11 @@
 type ITeacherOff = IBaseApi<{
-	StudyTimeID: number;
-	StudyTimeName: string;
-	StudyDate: string;
-	IsHideCheckBox: boolean;
-	Checked: boolean;
+	Day: string;
+	Info: [
+		{
+			StudyTimeID: number;
+			StudyTimeName: string;
+			IsHideCheckBox: boolean;
+			Checked: boolean;
+		}
+	];
 }>;
