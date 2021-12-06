@@ -20,6 +20,8 @@ export const VideoCourseStoreApi = {
 	},
 	// Thêm mới data
 	add(data) {
+		console.log('data: ', data);
+
 		return instance.post(url + '/Create', data);
 	},
 	// Cập nhật data

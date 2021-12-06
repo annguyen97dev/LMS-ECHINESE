@@ -22,16 +22,20 @@ const initDetails = {
 	CreatedBy: ''
 };
 
+const { TextArea } = Input;
+
 const ModalCreateVideoCourse = React.memo((props: any) => {
-	const { TextArea } = Input;
-	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { isLoading, _onSubmit, dataLevel, dataCategory, dataCurriculum, refeshData } = props;
+
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	const { Option } = Select;
 	const [category, setCategory] = useState(0);
 	const [level, setLevel] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
 	const [videoCourseName, setVideoCourseName] = useState('');
+	const [videoChinaCourseName, setVideoCourseChinaName] = useState('');
 	const [originalPrice, setOriginalPrice] = useState('');
 	const [sellPrice, setSellPrice] = useState('');
 	const [tagArray, setTagArray] = useState('');
@@ -45,7 +49,11 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		formState: { isSubmitting, errors, isSubmitted }
 	} = useForm();
 
-	const [loading, setLoading] = useState(false);
+	const [slogan, setSlogan] = useState('');
+	const [requirements, setRequirements] = useState('');
+	const [description, setDescription] = useState('');
+	const [resultsAchieved, setResultsAchieved] = useState('');
+	const [courseForObject, setCourseForObject] = useState('');
 
 	const finalSubmit = (ImageThumbnails) => {
 		_onSubmit({
@@ -56,7 +64,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			ImageThumbnails: ImageThumbnails,
 			OriginalPrice: originalPrice.replace(/[^0-9\.]+/g, ''),
 			SellPrice: sellPrice.replace(/[^0-9\.]+/g, ''),
-			TagArray: tagArray
+			TagArray: tagArray,
+			Slogan: slogan,
+			Requirements: requirements,
+			Description: description,
+			ResultsAchieved: resultsAchieved,
+			CourseForObject: courseForObject
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
 		setIsModalVisible(false);
@@ -149,34 +162,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		} finally {
 			setLoading(false);
 		}
-	};
-
-	const [details, setDetails] = useState(initDetails);
-	const [updateLoading, setUpdateLoading] = useState(false);
-	const [slogan, setSlogan] = useState('');
-	const [requirements, setRequirements] = useState('');
-	const [description, setDescription] = useState('');
-	const [resultsAchieved, setResultsAchieved] = useState('');
-	const [courseForObject, setCourseForObject] = useState('');
-
-	// HANDLE UPDATE
-	const updateDetails = async () => {
-		setUpdateLoading(true);
-		// let temp = {
-		// 	VideoCourseID: programID,
-		// 	Slogan: slogan,
-		// 	Requirements: requirements,
-		// 	Description: description,
-		// 	ResultsAchieved: resultsAchieved,
-		// 	CourseForObject: courseForObject
-		// };
-		// try {
-		// 	const res = await VideoCourseDetailApi.update(temp);
-		// 	res.status == 200 && (setIsModalVisible(true), showNoti('success', 'Thành công'));
-		// } catch (error) {
-		// } finally {
-		// 	setUpdateLoading(false);
-		// }
 	};
 
 	// Upload file audio
@@ -279,7 +264,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												className="style-input"
 												defaultValue={videoCourseName}
 												value={videoCourseName}
-												onChange={(e) => setVideoCourseName(e.target.value)}
+												onChange={(e) => setVideoCourseChinaName(e.target.value)}
 											/>
 										</Form.Item>
 									</div>
@@ -547,19 +532,3 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 });
 
 export default ModalCreateVideoCourse;
-
-// {/* <div className="col-12 m-0 p-0" style={{ justifyContent: 'flex-end', display: 'flex' }}>
-// 								<button onClick={() => setIsModalVisible(false)} className="btn btn-warning mr-3">
-// 									Huỷ
-// 								</button>
-
-// 								<button
-// 									onClick={() => {
-// 										// updateDetails();
-// 									}}
-// 									className="btn btn-primary"
-// 								>
-// 									Lưu
-// 									{/* {updateLoading && <Spin className="loading-base" />} */}
-// 								</button>
-// 							</div> */}

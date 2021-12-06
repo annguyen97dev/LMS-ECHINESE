@@ -366,6 +366,7 @@ export const DetailsModal = (props) => {
 										</div>
 									</div>
 								)}
+
 								{!showList && (
 									<Spin spinning={isLoading}>
 										{/* <Skeleton loading={isLoading}> */}
@@ -481,21 +482,21 @@ export const DetailsModal = (props) => {
 														<Input
 															className="item-info"
 															prefix="Đề kiểm tra:"
-															value={selected.ExamTopicName}
+															value={selected?.ExamTopicName}
 															disabled={!enableEdit}
 														/>
 													) : (
 														<Select
 															defaultValue={
 																selected.ExamTopicID !== null
-																	? `${selected.ExamTopicName}`
+																	? `${selected?.ExamTopicName}`
 																	: 'Chọn đề kiểm tra'
 															}
 															//@ts-ignore
 															onChange={(e, a) => dispatch({ type: 'ExamTopicID', data: a.key })}
 															className="ml-3 select"
 														>
-															{dataExamTopic.map((item, index) => {
+															{dataExamTopic?.map((item, index) => {
 																return (
 																	<Option value={item.Name} key={item.ID}>
 																		{item.Name}

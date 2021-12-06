@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { Card, Input, List, Modal, notification } from 'antd';
 import 'antd/dist/antd.css';
-import { List, Card, Modal, notification, Tooltip, Input } from 'antd';
-import LayoutBase from '~/components/LayoutBase';
-import { useWrap } from '~/context/wrap';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { VideoCourseListApi } from '~/apiBase';
 import { VideoCourseCardApi, VideoCourseStoreApi } from '~/apiBase/video-course-store';
-import { parseToMoney } from '~/utils/functions';
-import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
-import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
+import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
+import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import FilterVideoCourses from '~/components/Global/Option/FilterTable/FilterVideoCourses';
-import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
-import { Eye } from 'react-feather';
-import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
-import CourseVideoTable from '~/components/CourseVideoTable';
-import { VideoCourseListApi } from '~/apiBase';
-import { useRouter } from 'next/router';
+import LayoutBase from '~/components/LayoutBase';
+import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
+import { useWrap } from '~/context/wrap';
+import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
+import { parseToMoney } from '~/utils/functions';
 
 const key = 'updatable';
 const { Search } = Input;
@@ -173,8 +171,14 @@ const VideoCourseStore = () => {
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
-			TagArray: param.TagArray
+			TagArray: param.TagArray,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject
 		};
+
 		try {
 			const res = await VideoCourseStoreApi.add(temp);
 			res.status == 200 && showNoti('success', 'Thêm thành công');
