@@ -10,7 +10,6 @@ import { useWrap } from '~/context/wrap';
 import StudentFeedbackList from '~/components/FeedBack/student-feed-back';
 import { FeedbackCategoryApi } from '~/apiBase/feed-back-category';
 
-const { Option } = Select;
 const { Search } = Input;
 
 const FeedbackList = () => {

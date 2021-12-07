@@ -244,6 +244,7 @@ export default function Header({
             </li> */}
 						{userInformation?.RoleID !== undefined &&
 							userInformation.RoleID !== 1 &&
+							userInformation.RoleID !== 2 &&
 							userInformation.RoleID !== 5 &&
 							userInformation.RoleID !== 6 && (
 								<li className="notification" style={{ marginRight: -15 }}>
