@@ -85,7 +85,7 @@ const NewsFeed = () => {
 		if (!userInformation) return 'Ignore';
 		const role = userInformation['RoleID'];
 		const uid = userInformation.UserInformationID;
-		if (role === 1 || role === 5 || +newsFeedAuthor === +uid) {
+		if (role === 1 || role === 2 || role === 5 || +newsFeedAuthor === +uid) {
 			return 'Accept';
 		}
 		return 'Ignore';

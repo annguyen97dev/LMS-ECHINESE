@@ -107,6 +107,7 @@ function GroupForm(props) {
 					<PlusCircle />
 				</div>
 			)}
+
 			<Modal title={isUpdate ? 'Chỉnh sửa nhóm' : 'Thêm nhóm'} visible={isVisibleModal} onCancel={closeModal} footer={null}>
 				<div>
 					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
