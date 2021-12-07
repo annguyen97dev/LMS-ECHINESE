@@ -12,7 +12,6 @@ import LayoutBase from '~/components/LayoutBase';
 import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
 import { useWrap } from '~/context/wrap';
 import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
-import { parseToMoney } from '~/utils/functions';
 
 const key = 'updatable';
 const { Search } = Input;
@@ -25,7 +24,6 @@ const VideoCourseStore = () => {
 	const [data, setData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [rerender, setRender] = useState('');
-	const [currentPage, setCurrentPage] = useState(1);
 	const [isLoading, setIsLoading] = useState({ type: 'GET_ALL', status: true });
 	const [addToCardLoading, setAddToCardLoading] = useState(false);
 	const [totalPage, setTotalPage] = useState(null);
@@ -223,7 +221,7 @@ const VideoCourseStore = () => {
 			pageIndex: 1,
 			search: e
 		};
-		setCurrentPage(1), setTodoApi(newTodoApi);
+		setTodoApi(newTodoApi);
 	};
 
 	// RESET FILTER
@@ -232,7 +230,6 @@ const VideoCourseStore = () => {
 			...listTodoApi,
 			pageIndex: 1
 		});
-		setCurrentPage(1);
 	};
 
 	// FILTER
@@ -244,98 +241,16 @@ const VideoCourseStore = () => {
 			fromDate: paramFilter.fromDate,
 			toDate: paramFilter.toDate
 		};
-		setCurrentPage(1), setTodoApi(newTodoApi);
+		setTodoApi(newTodoApi);
 	};
 
 	// HANDLE CHANGE PAGE
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		setCurrentPage(pageNumber);
 		setTodoApi({
 			...todoApi,
 			pageIndex: pageIndex
 		});
-	};
-
-	const columnsVideoCourse = [
-		{
-			title: 'Tên khóa học',
-			dataIndex: 'VideoCourseName',
-			key: 'VideoCourseName'
-		},
-		{
-			title: 'Ngày tạo',
-			dataIndex: 'CreatedOn',
-			key: 'CreatedOn'
-		},
-		{
-			title: 'Loại',
-			dataIndex: 'CategoryName',
-			key: 'CategoryName',
-			align: 'center'
-		},
-		{
-			title: 'Cấp độ',
-			dataIndex: 'LevelName',
-			key: 'LevelName',
-			align: 'center'
-		},
-		{
-			title: 'video',
-			dataIndex: 'TotalVideoCourseSold',
-			key: 'TotalVideoCourseSold',
-			align: 'center'
-		},
-		{
-			title: 'Giá gốc',
-			dataIndex: 'OriginalPrice',
-			key: 'OriginalPrice',
-			render: (value) => <span className="vc-store_table_custom_value">{parseToMoney(value)}</span>
-		},
-		{
-			title: 'Giá bán',
-			dataIndex: 'SellPrice',
-			key: 'SellPrice',
-			render: (value) => <span className="vc-store_table_custom_value">{parseToMoney(value)}</span>
-		},
-		{
-			title: 'Doanh thu',
-			dataIndex: 'RevenueEachVideoCourse',
-			key: 'RevenueEachVideoCourse',
-			render: (value) => <span className="vc-store_table_custom_value">{parseToMoney(value)}</span>
-		},
-		{
-			title: 'Thao tác',
-			dataIndex: 'Action',
-			key: 'action',
-			render: (Action, data, index) => (
-				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					<div>
-						<ModalCreateVideoCourse
-							dataLevel={categoryLevel}
-							dataCategory={category}
-							getIndex={() => {}}
-							_onSubmitEdit={(data: any) => updateCourse(data)}
-							programID={data.ID}
-							rowData={data}
-							dataGrade={data}
-							showAdd={true}
-							isLoading={isLoading}
-						/>
-					</div>
-				</div>
-			)
-		}
-	];
-
-	const expandedRowRender = () => {
-		return (
-			<>
-				<div className="feedback-detail-text" style={{ backgroundColor: 'red' }}>
-					asd asd asdqw tw qgasgdas dnb{' '}
-				</div>
-			</>
-		);
 	};
 
 	const [activeLoading, setActiveLoading] = useState(false);

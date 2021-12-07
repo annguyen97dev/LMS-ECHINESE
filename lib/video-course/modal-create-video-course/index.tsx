@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button } from 'antd';
 import { useForm } from 'react-hook-form';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
-import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
+import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
 import { useWrap } from '~/context/wrap';
 import EditorSimple from '~/components/Elements/EditorSimple';
 import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
@@ -11,8 +11,6 @@ import { parseToMoney } from '~/utils/functions';
 import { videoTagApi } from '~/apiBase/video-tag';
 
 const { Option } = Select;
-
-const { TextArea } = Input;
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
 	const { isLoading, _onSubmit, dataLevel, dataCategory, dataCurriculum, refeshData } = props;
@@ -59,7 +57,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			ImageThumbnails: ImageThumbnails,
 			OriginalPrice: originalPrice.replace(/[^0-9\.]+/g, ''),
 			SellPrice: sellPrice.replace(/[^0-9\.]+/g, ''),
-			TagArray: tagArray,
+			TagArray: tagArray[0] == ',' ? tagArray.replace(',', '') : tagArray,
 			Slogan: slogan,
 			Requirements: requirements,
 			Description: description,
@@ -120,8 +118,10 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 
 	const [modalCate, setModalCate] = useState(false);
 	const [modalLevel, setModalLevel] = useState(false);
+	const [modalTags, setModalTags] = useState(false);
 	const [newType, setNewType] = useState('');
 	const [newLevel, setNewLevel] = useState('');
+	const [newTag, setNewTag] = useState('');
 
 	const createType = async () => {
 		setLoading(true);
@@ -159,6 +159,24 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		}
 	};
 
+	const createTag = async () => {
+		setLoading(true);
+		try {
+			await VideoCuorseTag.add({ Name: newTag });
+		} catch (error) {
+			error?.message?.ID !== undefined
+				? (showNoti('success', 'Thêm thành công'),
+				  setIsModalVisible(true),
+				  setModalTags(false),
+				  getTags(),
+				  setNewTag(''),
+				  form.setFieldsValue({ newTag: '' }))
+				: showNoti('danger', error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const getTags = async () => {
 		try {
 			const response = await videoTagApi.getAll();
@@ -173,19 +191,9 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		setImageSelected(info.file);
 	};
 
-	// xxxx
-	const children = [];
-
-	for (let i = 0; i < tags.length; i++) {
-		children.push(
-			<Option value={tags[i].ID} key={tags[i].ID}>
-				{tags[i]?.Name || null}
-			</Option>
-		);
-	}
-
 	function handleChange(value) {
-		console.log(`selected ${value}`);
+		setTagArray(`${value}`);
+		form.setFieldsValue({ newTag: `${value}` });
 	}
 
 	// RENDER
@@ -239,6 +247,32 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									defaultValue={newLevel}
 									value={newLevel}
 									onChange={(e) => setNewLevel(e.target.value)}
+								/>
+							</Form.Item>
+						</div>
+					</Form>
+				</Modal>
+				<Modal
+					confirmLoading={loading}
+					title="Thêm từ khóa tìm kiếm"
+					width={400}
+					visible={modalTags}
+					onCancel={() => (setModalTags(false), setIsModalVisible(true))}
+					onOk={() => createTag()}
+				>
+					<Form form={form} layout="vertical" onFinish={() => createTag()}>
+						<div className="col-md-12 col-12">
+							<Form.Item
+								name="newTag"
+								label="Từ khóa tìm kiếm mới"
+								rules={[{ required: true, message: 'Bạn không được để trống' }]}
+							>
+								<Input
+									placeholder=""
+									className="style-input"
+									defaultValue={newTag}
+									value={newTag}
+									onChange={(e) => setNewTag(e.target.value)}
 								/>
 							</Form.Item>
 						</div>
@@ -443,96 +477,99 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										</Form.Item>
 									</div>
 									<div className="col-12">
-										<Form.Item
-											name="Description"
-											label="Từ khóa tìm kiếm"
-											rules={[{ required: true, message: 'Bạn không được để trống' }]}
-										>
-											{/* <TextArea
-												rows={4}
-												placeholder="VD: video,education,basic,hsk1,hsk2"
-												value={tagArray}
-												onChange={(e) => setTagArray(e.target.value)}
-											/> */}
-											<Select
-												mode="multiple"
-												allowClear
-												style={{ width: '100%' }}
-												placeholder="Please select"
-												defaultValue={['a10', 'c12']}
-												onChange={handleChange}
+										{tags.length > 0 && (
+											<Form.Item
+												name="Description"
+												label={
+													<div className="row m-0">
+														Từ khóa tìm kiếm{' '}
+														<Tooltip title="Thêm từ khóa tìm kiếm">
+															<button
+																onClick={() => (setModalTags(true), setIsModalVisible(false))}
+																className="btn btn-primary btn-vc-create ml-1"
+															>
+																<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
+															</button>
+														</Tooltip>
+													</div>
+												}
+												rules={[{ required: true, message: 'Bạn không được để trống' }]}
 											>
-												{children}
-											</Select>
-										</Form.Item>
+												<Select
+													mode="tags"
+													className="style-input"
+													style={{ width: '100%' }}
+													placeholder="Từ khóa tìm kiếm"
+													onChange={(e) => handleChange(e)}
+												>
+													{tags.map((item, index) => (
+														<Option key={index} value={item.ID}>
+															{item.Name}
+														</Option>
+													))}
+												</Select>
+											</Form.Item>
+										)}
 									</div>
 								</div>
 
 								<div className="row p-0 m-0 custom-scroll-bar col-md-6 col-12">
-									<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 485 : 520 }}>
-										{loading ? (
-											<div style={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-												<Spin size="large" />
-											</div>
-										) : (
-											<>
-												<div className="col-md-12 col-12">
-													<Form.Item name="Slogan" label="Slogan">
-														<EditorSimple
-															defaultValue={slogan}
-															handleChange={(e) => setSlogan(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="Requirements" label="Điều kiện học">
-														<EditorSimple
-															defaultValue={requirements}
-															handleChange={(e) => setRequirements(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="CourseForObject" label="Đối tượng học">
-														<EditorSimple
-															defaultValue={courseForObject}
-															handleChange={(e) => setCourseForObject(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="ResultsAchieved" label="Nội dung khóa học">
-														<EditorSimple
-															defaultValue={resultsAchieved}
-															handleChange={(e) => setResultsAchieved(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="Description" label="Mô tả">
-														<EditorSimple
-															defaultValue={description}
-															handleChange={(e) => setDescription(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-											</>
-										)}
+									<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 426 : 460 }}>
+										<div className="col-md-12 col-12">
+											<Form.Item name="Slogan" label="Slogan">
+												<EditorSimple
+													defaultValue={slogan}
+													handleChange={(e) => setSlogan(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="Requirements" label="Điều kiện học">
+												<EditorSimple
+													defaultValue={requirements}
+													handleChange={(e) => setRequirements(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="CourseForObject" label="Đối tượng học">
+												<EditorSimple
+													defaultValue={courseForObject}
+													handleChange={(e) => setCourseForObject(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="ResultsAchieved" label="Nội dung khóa học">
+												<EditorSimple
+													defaultValue={resultsAchieved}
+													handleChange={(e) => setResultsAchieved(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="Description" label="Mô tả">
+												<EditorSimple
+													defaultValue={description}
+													handleChange={(e) => setDescription(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -544,7 +581,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											Huỷ
 										</button>
 										<button type="submit" className="btn btn-primary">
-											Tạo khóa học
+											Tạo khóa học {loading && <Spin className="loading-base" />}
 											{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 										</button>
 									</div>
