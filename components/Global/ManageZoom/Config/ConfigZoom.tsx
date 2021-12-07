@@ -1,39 +1,39 @@
 import moment from 'moment';
-import React, {useEffect, useRef, useState} from 'react';
-import {configZoomApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { configZoomApi } from '~/apiBase';
 import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import SortBox from '~/components/Elements/SortBox';
 import ConfigZoomForm from '~/components/Global/ManageZoom/Config/ConfigZoomForm';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 function ConfigZoom() {
 	const [configZoomList, setConfigZoomList] = useState<IConfigZoom[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	const [totalPage, setTotalPage] = useState(0);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Ngày tạo tăng dần',
+			text: 'Ngày tạo tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Ngày tạo giảm dần',
-		},
+			text: 'Ngày tạo giảm dần'
+		}
 	];
 	// FILTER
 	const listFieldInit = {
@@ -45,26 +45,26 @@ function ConfigZoom() {
 		fromDate: '',
 		toDate: '',
 		UserZoom: '',
-		Active: null,
+		Active: null
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	const optionActiveList = [
 		{
 			label: 'Hoạt động',
 			title: 'Hoạt động',
-			value: true,
+			value: true
 		},
 		{
 			label: 'Dừng',
 			title: 'Dừng',
-			value: false,
-		},
+			value: false
+		}
 	];
 
 	// PAGINATION
@@ -73,11 +73,11 @@ function ConfigZoom() {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -85,11 +85,11 @@ function ConfigZoom() {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
@@ -97,7 +97,7 @@ function ConfigZoom() {
 		setActiveColumnSearch('');
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// ACTION SEARCH
@@ -108,14 +108,14 @@ function ConfigZoom() {
 				...listFieldInit,
 				...refValue.current,
 				pageIndex: 1,
-				...valueSearch,
+				...valueSearch
 			});
 		} else {
 			setFilters({
 				...listFieldInit,
 				...refValue.current,
 				pageIndex: 1,
-				[dataIndex]: valueSearch,
+				[dataIndex]: valueSearch
 			});
 		}
 	};
@@ -123,7 +123,7 @@ function ConfigZoom() {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await configZoomApi.getAll(filters);
 			if (res.status === 200) {
@@ -135,7 +135,7 @@ function ConfigZoom() {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -145,15 +145,11 @@ function ConfigZoom() {
 	}, [filters]);
 
 	// CREATE
-	const onCreateConfigZoom = async (data: {
-		UserZoom: string;
-		APIKey: string;
-		APISecret: string;
-	}) => {
+	const onCreateConfigZoom = async (data: { UserZoom: string; APIKey: string; APISecret: string }) => {
 		try {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: true,
+				status: true
 			});
 			const res = await configZoomApi.add(data);
 			if (res.status === 200) {
@@ -168,28 +164,24 @@ function ConfigZoom() {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
 	// UPDATE
 	const onUpdateConfigZoom = (idx: number) => {
-		return async (data: {
-			UserZoom: string;
-			APIKey: string;
-			APISecret: string;
-		}) => {
+		return async (data: { UserZoom: string; APIKey: string; APISecret: string }) => {
 			try {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: true,
+					status: true
 				});
 				const res = await configZoomApi.update(data);
 				if (res.status === 200) {
 					const newConfigZoomList = [...configZoomList];
 					newConfigZoomList.splice(idx, 1, {
 						...newConfigZoomList[idx],
-						...data,
+						...data
 					});
 					setConfigZoomList(newConfigZoomList);
 					return true;
@@ -200,7 +192,7 @@ function ConfigZoom() {
 			} finally {
 				setIsLoading({
 					type: 'ADD_DATA',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -210,14 +202,14 @@ function ConfigZoom() {
 		return async () => {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			try {
 				const delObj = configZoomList[idx];
-				const {ID} = delObj;
+				const { ID } = delObj;
 				const newDelObj = {
 					ID,
-					Enable: false,
+					Enable: false
 				};
 				const res = await configZoomApi.delete(newDelObj);
 				res.status === 200 && showNoti('success', res.data.message);
@@ -226,13 +218,13 @@ function ConfigZoom() {
 						? (setFilters({
 								...listFieldInit,
 								...refValue.current,
-								pageIndex: 1,
+								pageIndex: 1
 						  }),
 						  setConfigZoomList([]))
 						: setFilters({
 								...filters,
 								...refValue.current,
-								pageIndex: filters.pageIndex - 1,
+								pageIndex: filters.pageIndex - 1
 						  });
 					return;
 				}
@@ -243,7 +235,7 @@ function ConfigZoom() {
 			} finally {
 				setIsLoading({
 					type: 'GET_ALL',
-					status: false,
+					status: false
 				});
 			}
 		};
@@ -255,58 +247,40 @@ function ConfigZoom() {
 			dataIndex: 'UserZoom',
 			render: (text) => <p className="font-weight-black">{text}</p>,
 			...FilterColumn('UserZoom', onSearch, onResetSearch),
-			className:
-				activeColumnSearch === 'UserZoom' ? 'active-column-search' : '',
+			className: activeColumnSearch === 'UserZoom' ? 'active-column-search' : ''
 		},
 		{
 			title: 'API Key',
-			dataIndex: 'APIKey',
+			dataIndex: 'APIKey'
 		},
 		{
 			title: 'API Secret',
-			dataIndex: 'APISecret',
+			dataIndex: 'APISecret'
 		},
 		{
 			align: 'center',
 			title: 'Trạng thái',
 			dataIndex: 'Active',
-			render: (status) =>
-				status ? (
-					<span className="tag blue">Hoạt động</span>
-				) : (
-					<span className="tag gray">Dừng</span>
-				),
-			...FilterColumn(
-				'Active',
-				onSearch,
-				onResetSearch,
-				'select',
-				optionActiveList
-			),
+			render: (status) => (status ? <span className="tag blue">Hoạt động</span> : <span className="tag gray">Dừng</span>),
+			...FilterColumn('Active', onSearch, onResetSearch, 'select', optionActiveList)
 		},
 		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
 			render: (date) => moment(date).format('DD/MM/YYYY'),
 			...FilterColumn('CreatedOn', onSearch, onResetSearch, 'date-range'),
-			className:
-				activeColumnSearch === 'CreatedOn' ? 'active-column-search' : '',
+			className: activeColumnSearch === 'CreatedOn' ? 'active-column-search' : ''
 		},
 		{
 			width: 100,
 			align: 'center',
 			render: (item: IConfigZoom, _, idx) => (
 				<>
-					<ConfigZoomForm
-						isLoading={isLoading}
-						isUpdate={true}
-						updateObj={item}
-						handleSubmit={onUpdateConfigZoom(idx)}
-					/>
-					<DeleteTableRow handleDelete={onDeleteConfigZoom(idx)} />
+					<ConfigZoomForm isLoading={isLoading} isUpdate={true} updateObj={item} handleSubmit={onUpdateConfigZoom(idx)} />
+					<DeleteTableRow title="Xoá" handleDelete={onDeleteConfigZoom(idx)} />
 				</>
-			),
-		},
+			)
+		}
 	];
 
 	return (
@@ -317,12 +291,7 @@ function ConfigZoom() {
 			getPagination={getPagination}
 			addClass="basic-header"
 			TitlePage="Danh sách cấu hình"
-			TitleCard={
-				<ConfigZoomForm
-					isLoading={isLoading}
-					handleSubmit={onCreateConfigZoom}
-				/>
-			}
+			TitleCard={<ConfigZoomForm isLoading={isLoading} handleSubmit={onCreateConfigZoom} />}
 			Extra={
 				<div className="extra-table">
 					<SortBox handleSort={onSort} dataOption={sortOptionList} />

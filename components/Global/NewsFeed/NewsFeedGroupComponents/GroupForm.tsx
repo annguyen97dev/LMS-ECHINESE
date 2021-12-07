@@ -68,7 +68,7 @@ function GroupForm(props) {
 	};
 
 	const schema = yup.object().shape({
-		Name: yup.string().required('Bạn không được để trống'),
+		// Name: yup.string().required('Bạn không được để trống'),
 		CourseID: yup.number().nullable().required('Bạn không được để trống'),
 		BackGround: yup.string()
 	});
@@ -84,7 +84,13 @@ function GroupForm(props) {
 		}
 	}, [dataUpdate]);
 
-	const checkHandleSubmit = (data) => {
+	const getNamebyID = (ID) => {
+		let temp = courseList.find((e) => e.value == ID);
+		let index = courseList.indexOf(temp);
+		return courseList[index].title;
+	};
+
+	const handleFinalSubmit = (data) => {
 		if (!handleSubmit) return;
 		handleSubmit(data).then((res) => {
 			if (res?.status === 200) {
@@ -95,6 +101,21 @@ function GroupForm(props) {
 			}
 		});
 	};
+
+	const checkHandleSubmit = (data) => {
+		let temp = {
+			Name: getNamebyID(data.CourseID),
+			CourseID: data.CourseID,
+			BackGround: data.BackGround
+		};
+
+		if (data.Name == '') {
+			handleFinalSubmit(temp);
+		} else {
+			handleFinalSubmit(data);
+		}
+	};
+
 	return (
 		<>
 			{isUpdate ? (
@@ -113,7 +134,7 @@ function GroupForm(props) {
 					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField form={form} name="Name" label="Tên nhóm" placeholder="Nhập tên nhóm" />
+								<InputTextField isRequired={false} form={form} name="Name" label="Tên nhóm" placeholder="Nhập tên nhóm" />
 							</div>
 							<div className="col-12">
 								<SelectField

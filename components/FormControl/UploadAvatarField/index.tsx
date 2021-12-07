@@ -96,7 +96,6 @@ const UploadAvatarField = (props) => {
 							listType="picture-card"
 							className="avatar-uploader"
 							disabled={disabled}
-							//
 							showUploadList={false}
 							beforeUpload={beforeUpload}
 							onChange={(obj) => {
