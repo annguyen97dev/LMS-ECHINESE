@@ -310,19 +310,6 @@ const VideoCourseStore = () => {
 			key: 'action',
 			render: (Action, data, index) => (
 				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					{/* <Link
-						href={{
-							// pathname: '/option/program/program-detail/[slug]',
-							query: { slug: data.ID }
-						}}
-					>
-						<Tooltip title="Chi tiết chương trình">
-							<button className="btn btn-icon" style={{ marginRight: -10, marginLeft: -10 }}>
-								<Eye />
-							</button>
-						</Tooltip>
-					</Link> */}
-
 					<div>
 						<ModalCreateVideoCourse
 							dataLevel={categoryLevel}
@@ -467,32 +454,6 @@ const VideoCourseStore = () => {
 							</div>
 						</Modal>
 					</>
-
-					{/* {userInformation.RoleID == 1 && (
-						<CourseVideoTable
-							totalPage={totalPage && totalPage}
-							getPagination={(pageNumber: number) => getPagination(pageNumber)}
-							currentPage={currentPage}
-							columns={columnsVideoCourse}
-							dataSource={data}
-							loading={isLoading}
-							TitleCard={
-								<div className="vc-teach-modal_header">
-									<ModalCreateVideoCourse
-										dataLevel={categoryLevel}
-										dataCategory={category}
-										dataCurriculum={dataCurriculum}
-										_onSubmit={(data: any) => createNewCourse(data)}
-										showAdd={false}
-										isLoading={false}
-										refeshData={() => getAllArea()}
-									/>
-								</div>
-							}
-							Extra={Extra()}
-							expandable={() => expandedRowRender}
-						></CourseVideoTable>
-					)} */}
 				</Card>
 			)}
 		</div>
