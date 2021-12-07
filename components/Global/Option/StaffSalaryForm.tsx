@@ -44,11 +44,18 @@ const StaffSalaryForm = (props) => {
 		if (typeof data.Salary == 'string') {
 			data.Salary = Number(data.Salary.replace(/\$\s?|(,*)/g, ''));
 		}
-
-		let res = props._onSubmit(data);
-		res.then(function (rs: any) {
-			rs && rs.status == 200 && setIsModalVisible(false), form.resetFields(), setParamsDataStaff(null);
-		});
+		if (props.dataStaff && props.dataStaff.length > 0) {
+			let res = props._onSubmit(data);
+			res.then(function (rs: any) {
+				rs && rs.status == 200 && setIsModalVisible(false), form.resetFields(), setParamsDataStaff(null);
+			});
+		} else {
+			console.log(props.rowData);
+			let res = props._onSubmitStaff(data);
+			res.then(function (rs: any) {
+				rs && rs.status == 200 && setIsModalVisible(false), form.resetFields(), setParamsDataStaff(null);
+			});
+		}
 	});
 
 	// GET DATA USERINFORMATION
@@ -148,7 +155,6 @@ const StaffSalaryForm = (props) => {
 
 	// Select search
 	function onSearch(val) {
-		console.log('search:', val);
 		if (val.length == 0) {
 			getDataStaff();
 		} else {
@@ -159,7 +165,7 @@ const StaffSalaryForm = (props) => {
 	useEffect(() => {
 		if (props.dataIDStaff && props.dataStaff.length === 1) {
 			form.setFieldsValue({
-				Staff: props.dataIDStaff
+				Staff: props.dataStaff.dataIDStaff
 			});
 			setValue('UserInformationID', props.dataIDStaff);
 			form.setFieldsValue({ Style: 1 });
@@ -173,6 +179,7 @@ const StaffSalaryForm = (props) => {
 					className="btn btn-icon edit"
 					onClick={() => {
 						setIsModalVisible(true);
+						props.setUpdateSalary({ type: 'update', SalaryID: props.rowData.SalaryID });
 					}}
 				>
 					<Tooltip title="Cập nhật">
@@ -185,6 +192,7 @@ const StaffSalaryForm = (props) => {
 					className="btn btn-warning add-new"
 					onClick={() => {
 						setIsModalVisible(true);
+						props.setUpdateSalary({ type: 'add', SalaryID: null });
 					}}
 				>
 					Thêm mới
@@ -203,31 +211,38 @@ const StaffSalaryForm = (props) => {
 							<div className="col-12">
 								{props.showAdd || props.showInTeacherView ? (
 									<>
-										<Form.Item
-											label="Chọn chức vụ"
-											name="Role"
-											// rules={[{ required: true, message: 'Bạn không được để trống' }]}
-										>
-											<Select
-												className="style-input"
-												placeholder="Chọn chức vụ"
-												allowClear={true}
-												onChange={(value, role) => {
-													setParamsDataStaff(value);
-												}}
+										{props.isOpenModalFromOutSide ? (
+											<></>
+										) : (
+											<Form.Item
+												label="Chọn chức vụ"
+												name="Role"
+												// rules={[{ required: true, message: 'Bạn không được để trống' }]}
 											>
-												{roles &&
-													roles.map((role, index) => (
-														<Option key={index} value={role.ID} role={role.ID}>
-															{role.name}
-														</Option>
-													))}
-											</Select>
-										</Form.Item>
+												<Select
+													className="style-input"
+													placeholder="Chọn chức vụ"
+													allowClear={true}
+													onChange={(value, role) => {
+														setParamsDataStaff(value);
+													}}
+												>
+													{roles &&
+														roles.map((role, index) => (
+															<Option key={index} value={role.ID} role={role.ID}>
+																{role.name}
+															</Option>
+														))}
+												</Select>
+											</Form.Item>
+										)}
 										<Form.Item
 											label="Nhân viên"
 											name="Staff"
 											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+											initialValue={
+												props.dataStaff && props.dataStaff.length > 0 && props.dataStaff[0].FullNameUnicode
+											}
 										>
 											<Select
 												showSearch
@@ -240,7 +255,13 @@ const StaffSalaryForm = (props) => {
 													!isLoading.loading && option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 												}
 											>
-												{isLoading.loading ? (
+												{props.dataStaff && props.dataStaff.length > 0 ? (
+													props.dataStaff && (
+														<Option value={props.dataStaff[0].UserInformationID}>
+															{props.dataStaff[0].FullNameUnicode}
+														</Option>
+													)
+												) : isLoading.loading ? (
 													<Option value="" className="spin-center">
 														<Spin />
 													</Option>
@@ -254,26 +275,6 @@ const StaffSalaryForm = (props) => {
 												)}
 											</Select>
 										</Form.Item>
-
-										{/* <Form.Item
-											label="Nhân viên"
-											name="Staff"
-											rules={[{ required: true, message: 'Bạn không được để trống' }]}
-										>
-											<Select
-												className="style-input"
-												placeholder="Chọn nhân viên"
-												allowClear={true}
-												onChange={(value, role) => setValueStaff(value, role)}
-											>
-												{props.dataStaff &&
-													props.dataStaff.map((row) => (
-														<Option key={row.UserInformationID} value={row.UserInformationID} role={row.RoleID}>
-															{row.FullNameUnicode}
-														</Option>
-													))}
-											</Select>
-										</Form.Item> */}
 									</>
 								) : (
 									<Form.Item label="Ghi chú" name="Note">
