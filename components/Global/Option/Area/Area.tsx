@@ -22,8 +22,8 @@ const Area = () => {
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: pageSize,
-		sort: -1,
-		sortType: false,
+		sort: 1,
+		sortType: true,
 		AreaName: ''
 	};
 	let refValue = useRef({
