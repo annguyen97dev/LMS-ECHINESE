@@ -1,6 +1,6 @@
 import { Card } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import { branchApi, courseApi, programApi, staffApi } from '~/apiBase';
+import { branchApi, courseApi, programApi, teacherApi } from '~/apiBase';
 import TitlePage from '~/components/Elements/TitlePage';
 import CourseListFilterForm from '~/components/Global/CourseList/CourseListFilterForm';
 import PowerList from '~/components/Global/CourseList/PowerList';
@@ -142,31 +142,17 @@ const CourseList = () => {
 			status: true
 		});
 		try {
-			const res = await Promise.all([
-				staffApi.getAll({ RoleID: 7, BranchID: BranchID }),
-				staffApi.getAll({ RoleID: 2, BranchID: BranchID })
-			])
-				.then(([academicRes, teacherLeadRes]) => {
-					const newOptionList = {
-						academicList: [{ title: '---Trống---', value: 0 }],
-						teacherLeadList: [{ title: '---Trống---', value: 0 }]
-					};
-					academicRes.status === 200 &&
-						(newOptionList.academicList = [
-							...newOptionList.academicList,
-							...fmSelectArr(academicRes.data.data, 'FullNameUnicode', 'UserInformationID')
-						]);
-					teacherLeadRes.status === 200 &&
-						(newOptionList.teacherLeadList = [
-							...newOptionList.teacherLeadList,
-							...fmSelectArr(teacherLeadRes.data.data, 'FullNameUnicode', 'UserInformationID')
-						]);
-					setOptionListForUpdate({
-						...optionListForUpdate,
-						...newOptionList
-					});
-				})
-				.catch((err) => console.log('fetchDataForFilterForm - PromiseAll:', err));
+			const res = await teacherApi.getAll({ pageSize: 99999 });
+			if (res.status === 200) {
+				const newTeacherList = [
+					{ title: '---Trống---', value: 0 },
+					...fmSelectArr(res.data.data, 'FullNameUnicode', 'UserInformationID')
+				];
+				setOptionListForUpdate({
+					...optionListForUpdate,
+					teacherLeadList: newTeacherList
+				});
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {

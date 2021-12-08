@@ -406,13 +406,14 @@ const CreateCourseOnline = () => {
 				TeacherID,
 				GradeID,
 				CourseName,
-				UserInformationID,
+				// UserInformationID,
 				SalaryOfLesson,
 				Price
 			} = object;
 			stoneDataToSave.current = {
 				CourseName,
-				AcademicUID: UserInformationID,
+				// AcademicUID: UserInformationID,
+				AcademicUID: 0,
 				BranchID,
 				CurriculumID,
 				ProgramID,

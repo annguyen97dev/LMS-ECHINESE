@@ -102,9 +102,9 @@ const PowerList = (props) => {
 						description={
 							<div className="content-body">
 								<ul className="list-ver">
-									<li>
+									{/* <li>
 										<span>Học vụ: </span> <span>{AcademicName || 'Trống'}</span>
-									</li>
+									</li> */}
 									<li>
 										<span>Quản lý: </span> <span>{TeacherLeaderName || 'Trống'}</span>
 									</li>
