@@ -1,5 +1,5 @@
 import React from 'react';
-import { Airplay, Tool, Home, User, UserCheck, FileText } from 'react-feather';
+import { Airplay, Tool, Home, User, UserCheck, FileText, Book } from 'react-feather';
 
 export const TeacherParentMenu = [
 	{
@@ -17,6 +17,10 @@ export const TeacherParentMenu = [
 	{
 		TabName: 'tab-staff',
 		Icon: <UserCheck />
+	},
+	{
+		TabName: 'tab-document',
+		Icon: <Book />
 	},
 	{
 		TabName: 'tab-question-bank',
@@ -276,6 +280,20 @@ export const TeacherChildMenu = [
 				Key: '/staff/manage-task',
 				Route: '/staff/manage-task',
 				Text: 'Quản lí công việc',
+				Icon: ''
+			}
+		]
+	},
+	{
+		MenuName: 'tab-document',
+		MenuTitle: 'Document List',
+		MenuKey: '/document-list',
+		MenuItem: [
+			{
+				ItemType: 'single',
+				Key: '/document-list',
+				Route: '/document-list',
+				Text: 'Danh sách tài liệu',
 				Icon: ''
 			}
 		]
