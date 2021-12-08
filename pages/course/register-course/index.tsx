@@ -124,6 +124,7 @@ const RegisterCourse = (props: any) => {
 						<Card
 							title="Thông tin cá nhân"
 							extra={
+								userInformation &&
 								(userInformation.RoleID === 1 ||
 									userInformation.RoleID === 5 ||
 									userInformation.RoleID === 2 ||

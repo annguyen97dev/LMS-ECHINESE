@@ -76,16 +76,14 @@ const FeedbackList = () => {
 			title: 'Trạng thái',
 			dataIndex: 'StatusName',
 			key: 'StatusName',
-			align: 'center'
-			// render: (value) => (
-			// 	<>
-			// 		{value === 3 && (
-			// 			<Tag className="style-tag" color="#06d6a0">
-			// 				Xong
-			// 			</Tag>
-			// 		)}
-			// 	</>
-			// )
+			align: 'center',
+			render: (value, record) => (
+				<>
+					{record.StatusID == 1 && <span className="tag red">{value}</span>}
+					{record.StatusID == 2 && <span className="tag yellow">{value}</span>}
+					{record.StatusID == 3 && <span className="tag green">{value}</span>}
+				</>
+			)
 		},
 		{
 			title: 'Thao tác',
