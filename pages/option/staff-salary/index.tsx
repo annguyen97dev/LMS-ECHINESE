@@ -29,6 +29,10 @@ const StaffSalary = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
+	const [updateSalary, setUpdateSalary] = useState({
+		type: '',
+		SalaryID: null
+	});
 
 	let pageIndex = 1;
 
@@ -110,11 +114,11 @@ const StaffSalary = () => {
 		});
 
 		let res = null;
+		console.log(updateSalary);
 
-		if (data.SalaryID) {
-			console.log(data);
+		if (updateSalary.type == 'update') {
 			try {
-				res = await staffSalaryApi.update(data);
+				res = await staffSalaryApi.update({ ...data, SalaryID: updateSalary.SalaryID, Enable: true });
 				res.status === 200 && showNoti('success', 'Cập nhật thành công'), getDataTable();
 			} catch (error) {
 				showNoti('danger', error.message);
@@ -127,7 +131,7 @@ const StaffSalary = () => {
 		} else {
 			try {
 				res = await staffSalaryApi.add(data);
-				res?.status == 200 && afterPost('Thêm');
+				res?.status == 200 && afterPost('Thêm'), console.log('success hewer');
 			} catch (error) {
 				showNoti('danger', error.message);
 			} finally {
@@ -306,7 +310,13 @@ const StaffSalary = () => {
 		{
 			render: (record) => (
 				<>
-					<StaffSalaryForm showIcon={true} rowData={record} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
+					<StaffSalaryForm
+						showIcon={true}
+						rowData={record}
+						isLoading={isLoading}
+						_onSubmitStaff={(data: any) => _onSubmit(data)}
+						setUpdateSalary={setUpdateSalary}
+					/>
 					<Tooltip title="Xóa">
 						<button
 							className="btn btn-icon delete"
@@ -347,7 +357,14 @@ const StaffSalary = () => {
 				getPagination={getPagination}
 				addClass="basic-header"
 				TitlePage="Staff salary"
-				TitleCard={<StaffSalaryForm showAdd={true} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
+				TitleCard={
+					<StaffSalaryForm
+						showAdd={true}
+						isLoading={isLoading}
+						_onSubmitStaff={(data: any) => _onSubmit(data)}
+						setUpdateSalary={setUpdateSalary}
+					/>
+				}
 				dataSource={dataTable}
 				columns={columns}
 				Extra={

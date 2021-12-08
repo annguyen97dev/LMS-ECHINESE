@@ -168,7 +168,6 @@ const Teacher = () => {
 			}
 		} catch (error) {
 			// showNoti('danger', error.message);
-			console.log(error);
 		}
 	};
 	useEffect(() => {
@@ -237,7 +236,6 @@ const Teacher = () => {
 			setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: false });
 		}
 	};
-	console.log('BranchList là: ', branchList);
 	// GET DATA IN FIRST TIME
 	const fetchTeacherList = async () => {
 		setIsLoading({
