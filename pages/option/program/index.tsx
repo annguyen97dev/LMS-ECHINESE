@@ -298,6 +298,15 @@ const Programs = () => {
 			}
 		},
 		{
+			title: 'Mã lớp',
+			dataIndex: 'GradeID',
+			align: 'center',
+			...FilterColumn('GradeID', onSearch, handleReset, 'text'),
+			render: (text) => {
+				return <p className="font-weight-primary">{text}</p>;
+			}
+		},
+		{
 			title: 'Tên lớp',
 			dataIndex: 'ProgramName',
 			...FilterColumn('ProgramName', onSearch, handleReset, 'text'),
@@ -307,7 +316,8 @@ const Programs = () => {
 		},
 		{
 			title: 'Level',
-			dataIndex: 'Level'
+			dataIndex: 'Level',
+			align: 'center'
 		},
 		{
 			title: 'Học phí',

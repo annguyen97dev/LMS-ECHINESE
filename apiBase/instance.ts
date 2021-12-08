@@ -53,13 +53,13 @@ instance.interceptors.request.use(
 		return config;
 	},
 	(error) => {
-		console.log(`%c ${error.response.status}  :`, 'color: red; font-weight: bold', error.response.data);
+		console.log(`%c ${error?.response?.status}  :`, 'color: red; font-weight: bold', error?.response?.data);
 		return Promise.reject(error);
 	}
 );
 
 const checkResponse = (error) => {
-	switch (error.response.status) {
+	switch (error?.response?.status) {
 		case 401:
 			// showNoti('danger', 'Bạn không có quyền truy cập');
 			setTimeout(() => {
@@ -70,33 +70,33 @@ const checkResponse = (error) => {
 			alert('Bạn không có quyền thực hiện');
 			break;
 		case 400:
-			console.log(error.response.message);
+			console.log(error?.response?.message);
 
 			break;
 		default:
-			console.log(`%c ${error.response.status}  :`, 'color: red; font-weight: bold', error.response.data);
+			console.log(`%c ${error?.response?.status}  :`, 'color: red; font-weight: bold', error?.response?.data);
 	}
 };
 
 instance.interceptors.response.use(
 	(response: AxiosResponse) => {
 		// checkResponse(response);
-		console.log(` %c ${response.status} - ${getUrl(response.config)}:`, 'color: #008000; font-weight: bold', response);
+		console.log(` %c ${response?.status} - ${getUrl(response?.config)}:`, 'color: #008000; font-weight: bold', response);
 		return response;
 	},
 	function (error) {
 		if (error.response) {
 			checkResponse(error);
 			// server trả response về là lỗi code đã handle
-			console.log(`%c ${error.response.status}  :`, 'color: red; font-weight: bold', error.response.data);
+			console.log(`%c ${error?.response?.status}  :`, 'color: red; font-weight: bold', error?.response?.data);
 			return Promise.reject({
-				status: error.response.status,
-				message: error.response.data.message
+				status: error?.response?.status,
+				message: error?.response?.data?.message
 			});
 		} else if (error.request) {
 			// request mãi mãi ko thấy response
 			// `error.request` là XMLHttpRequest trong website còn nodejs là http.ClientRequest
-			console.log(`%c ${JSON.stringify(error)}  :`, 'color: red; font-weight: bold', error.response.data);
+			console.log(`%c ${JSON.stringify(error)}  :`, 'color: red; font-weight: bold', error?.response?.data);
 			return Promise.reject(error.request);
 		} else {
 			// có gì đó sai sai, hình như là hàm request sai

@@ -229,6 +229,7 @@ export default function Header({
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
+				xxx
               >
                 <Option value="center-1">Trung tâm Anh Ngữ Zim</Option>
                 <Option value="center-2">Trung tâm Việt Hoa</Option>
@@ -244,6 +245,7 @@ export default function Header({
             </li> */}
 						{userInformation?.RoleID !== undefined &&
 							userInformation.RoleID !== 1 &&
+							userInformation.RoleID !== 2 &&
 							userInformation.RoleID !== 5 &&
 							userInformation.RoleID !== 6 && (
 								<li className="notification" style={{ marginRight: -15 }}>

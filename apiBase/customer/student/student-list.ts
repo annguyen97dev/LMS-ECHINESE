@@ -10,6 +10,8 @@ class StudentApi {
 
 	add = (data: IStudent) => instance.post('/api/Student', data, {});
 
+	createAccount = (data: IStudent) => instance.post('/api/CreateAccount', data, {});
+
 	update = (data: any) => instance.put('/api/Student/', data, {});
 
 	// uploadImage = (file: any) =>

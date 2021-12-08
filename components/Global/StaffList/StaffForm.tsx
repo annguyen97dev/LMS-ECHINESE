@@ -69,6 +69,10 @@ const StaffForm = (props) => {
 	const [dataStaff, setDataStaff] = useState(null);
 	const [submitSalary, setSubmitSalary] = useState(true);
 
+	// useEffect(() => {
+	// 	console.log('listDataForm: ', listDataForm);
+	// }, [listData]);
+
 	// console.log("Row Data: ", rowData);
 
 	const makeNewData = (data, name) => {
@@ -143,6 +147,9 @@ const StaffForm = (props) => {
 				listData[key] = newData;
 			}
 		});
+
+		console.log('getDataTolist: ', listData);
+
 		setListData({ ...listData });
 	};
 
@@ -152,6 +159,7 @@ const StaffForm = (props) => {
 			status: true,
 			name: name
 		});
+
 		try {
 			switch (name) {
 				case 'DistrictID':

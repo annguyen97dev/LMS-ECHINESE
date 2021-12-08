@@ -224,6 +224,7 @@ const SalerList = () => {
 			setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: false });
 		}
 	};
+
 	// GET DATA IN FIRST TIME
 	const fetchSalerList = async () => {
 		setIsLoading({

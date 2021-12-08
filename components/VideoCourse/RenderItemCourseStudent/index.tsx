@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import Link from 'next/link';
 import { parseToMoney } from '~/utils/functions';
-import { Popover, Spin, Input } from 'antd';
+import { Spin, Input } from 'antd';
 import { useWrap } from '~/context/wrap';
-import { useRouter } from 'next/router';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
 
@@ -14,7 +13,6 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
-
 	const [activing, setActiving] = useState(false);
 	const [code, setCode] = useState('');
 
@@ -208,7 +206,10 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 								query: params
 							}}
 						>
-							<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', height: '100%' }}>
+							<div
+								className="rotate180"
+								style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', height: '100%' }}
+							>
 								<div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
 									<p style={{ fontSize: 16, color: '#000', fontWeight: 'bold' }}>{item.VideoCourseName}</p>
 									<span className="in-1-line">Số video: {item.TotalVideoCourseSold}</span>

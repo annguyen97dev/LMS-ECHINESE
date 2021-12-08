@@ -20,6 +20,7 @@ import { ProfessionalManagerChildMenu, ProfessionalManagerParentMenu } from '~/l
 import { AccountantChildMenu, AccountantParentMenu } from '~/lib/data-menu/AccountantMenu';
 import { Popover } from 'antd';
 import InComingClassBtn from '../Global/CreateCourseOnline/InComingClassBtn';
+import RegCourseBtn from '../Global/RegisterCourse/RegCourseBtn';
 
 const name = 'Mona';
 
@@ -297,6 +298,11 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 			<main className="app-main">
 				{/* KIỂM TRA LỚP SẮP DIỄN RA DÀNH CHO HỌC VIÊN*/}
 				{userInformation?.RoleID === 3 && <InComingClassBtn />}
+				{/* Redirect to registor course */}
+				{(userInformation?.RoleID === 1 ||
+					userInformation?.RoleID === 2 ||
+					userInformation?.RoleID === 5 ||
+					userInformation?.RoleID === 6) && <RegCourseBtn />}
 				{/* FACEBOOK */}
 				<Popover content={contentFanpage} title="Fanpage" trigger="click">
 					<div className="icon-facebook">

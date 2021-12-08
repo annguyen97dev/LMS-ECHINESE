@@ -2,41 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button } from 'antd';
 import { useForm } from 'react-hook-form';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
-import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
+import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
 import { useWrap } from '~/context/wrap';
 import EditorSimple from '~/components/Elements/EditorSimple';
 import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { newsFeedApi } from '~/apiBase';
 import { parseToMoney } from '~/utils/functions';
+import { videoTagApi } from '~/apiBase/video-tag';
 
-const initDetails = {
-	VideoCourseName: '',
-	Slogan: '',
-	Requirements: '',
-	Description: '',
-	ResultsAchieved: '',
-	CourseForObject: '',
-	TotalRating: 0,
-	RatingNumber: 0,
-	TotalStudent: 0,
-	CreatedBy: ''
-};
+const { Option } = Select;
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
-	const { TextArea } = Input;
-	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { isLoading, _onSubmit, dataLevel, dataCategory, dataCurriculum, refeshData } = props;
+
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
-	const { Option } = Select;
 	const [category, setCategory] = useState(0);
 	const [level, setLevel] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
 	const [videoCourseName, setVideoCourseName] = useState('');
+	const [videoChinaCourseName, setVideoCourseChinaName] = useState('');
 	const [originalPrice, setOriginalPrice] = useState('');
 	const [sellPrice, setSellPrice] = useState('');
 	const [tagArray, setTagArray] = useState('');
 	const { showNoti } = useWrap();
 	const [imageSelected, setImageSelected] = useState({ name: '' });
+
+	const [tags, setTags] = useState([]);
 
 	const {
 		register,
@@ -45,7 +38,15 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		formState: { isSubmitting, errors, isSubmitted }
 	} = useForm();
 
-	const [loading, setLoading] = useState(false);
+	const [slogan, setSlogan] = useState('');
+	const [requirements, setRequirements] = useState('');
+	const [description, setDescription] = useState('');
+	const [resultsAchieved, setResultsAchieved] = useState('');
+	const [courseForObject, setCourseForObject] = useState('');
+
+	useEffect(() => {
+		getTags();
+	}, []);
 
 	const finalSubmit = (ImageThumbnails) => {
 		_onSubmit({
@@ -56,7 +57,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			ImageThumbnails: ImageThumbnails,
 			OriginalPrice: originalPrice.replace(/[^0-9\.]+/g, ''),
 			SellPrice: sellPrice.replace(/[^0-9\.]+/g, ''),
-			TagArray: tagArray
+			TagArray: tagArray[0] == ',' ? tagArray.replace(',', '') : tagArray,
+			Slogan: slogan,
+			Requirements: requirements,
+			Description: description,
+			ResultsAchieved: resultsAchieved,
+			CourseForObject: courseForObject
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
 		setIsModalVisible(false);
@@ -112,8 +118,10 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 
 	const [modalCate, setModalCate] = useState(false);
 	const [modalLevel, setModalLevel] = useState(false);
+	const [modalTags, setModalTags] = useState(false);
 	const [newType, setNewType] = useState('');
 	const [newLevel, setNewLevel] = useState('');
+	const [newTag, setNewTag] = useState('');
 
 	const createType = async () => {
 		setLoading(true);
@@ -151,38 +159,42 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 		}
 	};
 
-	const [details, setDetails] = useState(initDetails);
-	const [updateLoading, setUpdateLoading] = useState(false);
-	const [slogan, setSlogan] = useState('');
-	const [requirements, setRequirements] = useState('');
-	const [description, setDescription] = useState('');
-	const [resultsAchieved, setResultsAchieved] = useState('');
-	const [courseForObject, setCourseForObject] = useState('');
+	const createTag = async () => {
+		setLoading(true);
+		try {
+			await VideoCuorseTag.add({ Name: newTag });
+		} catch (error) {
+			error?.message?.ID !== undefined
+				? (showNoti('success', 'Thêm thành công'),
+				  setIsModalVisible(true),
+				  setModalTags(false),
+				  getTags(),
+				  setNewTag(''),
+				  form.setFieldsValue({ newTag: '' }))
+				: showNoti('danger', error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-	// HANDLE UPDATE
-	const updateDetails = async () => {
-		setUpdateLoading(true);
-		// let temp = {
-		// 	VideoCourseID: programID,
-		// 	Slogan: slogan,
-		// 	Requirements: requirements,
-		// 	Description: description,
-		// 	ResultsAchieved: resultsAchieved,
-		// 	CourseForObject: courseForObject
-		// };
-		// try {
-		// 	const res = await VideoCourseDetailApi.update(temp);
-		// 	res.status == 200 && (setIsModalVisible(true), showNoti('success', 'Thành công'));
-		// } catch (error) {
-		// } finally {
-		// 	setUpdateLoading(false);
-		// }
+	const getTags = async () => {
+		try {
+			const response = await videoTagApi.getAll();
+			response.status == 200 && setTags(response.data.data);
+		} catch (error) {
+			showNoti('danger', 'Không lấy được tag');
+		}
 	};
 
 	// Upload file audio
 	const handleUploadFile = async (info) => {
 		setImageSelected(info.file);
 	};
+
+	function handleChange(value) {
+		setTagArray(`${value}`);
+		form.setFieldsValue({ newTag: `${value}` });
+	}
 
 	// RENDER
 	return (
@@ -240,6 +252,32 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 						</div>
 					</Form>
 				</Modal>
+				<Modal
+					confirmLoading={loading}
+					title="Thêm từ khóa tìm kiếm"
+					width={400}
+					visible={modalTags}
+					onCancel={() => (setModalTags(false), setIsModalVisible(true))}
+					onOk={() => createTag()}
+				>
+					<Form form={form} layout="vertical" onFinish={() => createTag()}>
+						<div className="col-md-12 col-12">
+							<Form.Item
+								name="newTag"
+								label="Từ khóa tìm kiếm mới"
+								rules={[{ required: true, message: 'Bạn không được để trống' }]}
+							>
+								<Input
+									placeholder=""
+									className="style-input"
+									defaultValue={newTag}
+									value={newTag}
+									onChange={(e) => setNewTag(e.target.value)}
+								/>
+							</Form.Item>
+						</div>
+					</Form>
+				</Modal>
 
 				<Modal
 					className="m-create-vc"
@@ -279,7 +317,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												className="style-input"
 												defaultValue={videoCourseName}
 												value={videoCourseName}
-												onChange={(e) => setVideoCourseName(e.target.value)}
+												onChange={(e) => setVideoCourseChinaName(e.target.value)}
 											/>
 										</Form.Item>
 									</div>
@@ -420,7 +458,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												placeholder=""
 												className="style-input"
 												value={originalPrice}
-												// type="number"
 												onChange={(e) => setOriginalPrice(e.target.value)}
 											/>
 										</Form.Item>
@@ -434,93 +471,105 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											<Input
 												placeholder=""
 												className="style-input"
-												// type="number"
 												value={sellPrice}
 												onChange={(e) => setSellPrice(e.target.value)}
 											/>
 										</Form.Item>
 									</div>
 									<div className="col-12">
-										<Form.Item
-											name="Description"
-											label="Từ khóa tìm kiếm"
-											rules={[{ required: true, message: 'Bạn không được để trống' }]}
-										>
-											<TextArea
-												rows={4}
-												placeholder="VD: video,education,basic,hsk1,hsk2"
-												value={tagArray}
-												onChange={(e) => setTagArray(e.target.value)}
-											/>
-										</Form.Item>
+										{tags.length > 0 && (
+											<Form.Item
+												name="Description"
+												label={
+													<div className="row m-0">
+														Từ khóa tìm kiếm{' '}
+														<Tooltip title="Thêm từ khóa tìm kiếm">
+															<button
+																onClick={() => (setModalTags(true), setIsModalVisible(false))}
+																className="btn btn-primary btn-vc-create ml-1"
+															>
+																<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
+															</button>
+														</Tooltip>
+													</div>
+												}
+												rules={[{ required: true, message: 'Bạn không được để trống' }]}
+											>
+												<Select
+													mode="tags"
+													className="style-input"
+													style={{ width: '100%' }}
+													placeholder="Từ khóa tìm kiếm"
+													onChange={(e) => handleChange(e)}
+												>
+													{tags.map((item, index) => (
+														<Option key={index} value={item.ID}>
+															{item.Name}
+														</Option>
+													))}
+												</Select>
+											</Form.Item>
+										)}
 									</div>
 								</div>
 
 								<div className="row p-0 m-0 custom-scroll-bar col-md-6 col-12">
-									<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 485 : 520 }}>
-										{loading ? (
-											<div style={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-												<Spin size="large" />
-											</div>
-										) : (
-											<>
-												<div className="col-md-12 col-12">
-													<Form.Item name="Slogan" label="Slogan">
-														<EditorSimple
-															defaultValue={slogan}
-															handleChange={(e) => setSlogan(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="Requirements" label="Điều kiện học">
-														<EditorSimple
-															defaultValue={requirements}
-															handleChange={(e) => setRequirements(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="CourseForObject" label="Đối tượng học">
-														<EditorSimple
-															defaultValue={courseForObject}
-															handleChange={(e) => setCourseForObject(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="ResultsAchieved" label="Nội dung khóa học">
-														<EditorSimple
-															defaultValue={resultsAchieved}
-															handleChange={(e) => setResultsAchieved(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-												<div className="col-md-12 col-12">
-													<Form.Item name="Description" label="Mô tả">
-														<EditorSimple
-															defaultValue={description}
-															handleChange={(e) => setDescription(e)}
-															isTranslate={false}
-															isSimpleTool={true}
-															height={80}
-														/>
-													</Form.Item>
-												</div>
-											</>
-										)}
+									<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 426 : 460 }}>
+										<div className="col-md-12 col-12">
+											<Form.Item name="Slogan" label="Slogan">
+												<EditorSimple
+													defaultValue={slogan}
+													handleChange={(e) => setSlogan(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="Requirements" label="Điều kiện học">
+												<EditorSimple
+													defaultValue={requirements}
+													handleChange={(e) => setRequirements(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="CourseForObject" label="Đối tượng học">
+												<EditorSimple
+													defaultValue={courseForObject}
+													handleChange={(e) => setCourseForObject(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="ResultsAchieved" label="Nội dung khóa học">
+												<EditorSimple
+													defaultValue={resultsAchieved}
+													handleChange={(e) => setResultsAchieved(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
+										<div className="col-md-12 col-12">
+											<Form.Item name="Description" label="Mô tả">
+												<EditorSimple
+													defaultValue={description}
+													handleChange={(e) => setDescription(e)}
+													isTranslate={false}
+													isSimpleTool={true}
+													height={80}
+												/>
+											</Form.Item>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -532,7 +581,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											Huỷ
 										</button>
 										<button type="submit" className="btn btn-primary">
-											Tạo khóa học
+											Tạo khóa học {loading && <Spin className="loading-base" />}
 											{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 										</button>
 									</div>
@@ -547,19 +596,3 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 });
 
 export default ModalCreateVideoCourse;
-
-// {/* <div className="col-12 m-0 p-0" style={{ justifyContent: 'flex-end', display: 'flex' }}>
-// 								<button onClick={() => setIsModalVisible(false)} className="btn btn-warning mr-3">
-// 									Huỷ
-// 								</button>
-
-// 								<button
-// 									onClick={() => {
-// 										// updateDetails();
-// 									}}
-// 									className="btn btn-primary"
-// 								>
-// 									Lưu
-// 									{/* {updateLoading && <Spin className="loading-base" />} */}
-// 								</button>
-// 							</div> */}

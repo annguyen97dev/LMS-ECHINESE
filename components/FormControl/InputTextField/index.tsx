@@ -1,7 +1,7 @@
-import {Form, Input} from 'antd';
+import { Form, Input } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Controller} from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 const InputTextField = (props) => {
 	const {
@@ -16,10 +16,10 @@ const InputTextField = (props) => {
 		allowClear,
 		handleFormatCurrency,
 		isDynamicField,
-		isRequired,
+		isRequired
 	} = props;
 
-	const {errors} = form.formState;
+	const { errors } = form.formState;
 	let hasError;
 	let errorMessage;
 	if (isDynamicField) {
@@ -46,16 +46,14 @@ const InputTextField = (props) => {
 		<Form.Item
 			style={style}
 			label={label}
-			className={`${className} ${
-				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
-			}`}
+			className={`${className} ${hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
 			required={isRequired}
 			colon
 		>
 			<Controller
 				name={name}
 				control={form.control}
-				render={({field}) => (
+				render={({ field }) => (
 					<Input
 						{...field}
 						className="style-input"
@@ -93,7 +91,7 @@ InputTextField.propTypes = {
 	className: PropTypes.string,
 	allowClear: PropTypes.bool,
 	isDynamicField: PropTypes.bool,
-	isRequired: PropTypes.bool,
+	isRequired: PropTypes.bool
 };
 InputTextField.defaultProps = {
 	label: '',
@@ -105,6 +103,6 @@ InputTextField.defaultProps = {
 	className: '',
 	allowClear: true,
 	isDynamicField: false,
-	isRequired: false,
+	isRequired: false
 };
 export default InputTextField;

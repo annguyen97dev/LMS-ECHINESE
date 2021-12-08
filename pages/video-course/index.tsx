@@ -1,20 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import { Card, Input, List, Modal, notification } from 'antd';
 import 'antd/dist/antd.css';
-import { List, Card, Modal, notification, Tooltip, Input } from 'antd';
-import LayoutBase from '~/components/LayoutBase';
-import { useWrap } from '~/context/wrap';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { VideoCourseListApi } from '~/apiBase';
 import { VideoCourseCardApi, VideoCourseStoreApi } from '~/apiBase/video-course-store';
-import { parseToMoney } from '~/utils/functions';
-import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
-import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
+import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
+import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import FilterVideoCourses from '~/components/Global/Option/FilterTable/FilterVideoCourses';
-import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
-import { Eye } from 'react-feather';
-import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
-import CourseVideoTable from '~/components/CourseVideoTable';
-import { VideoCourseListApi } from '~/apiBase';
-import { useRouter } from 'next/router';
+import LayoutBase from '~/components/LayoutBase';
+import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
+import { useWrap } from '~/context/wrap';
+import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
 
 const key = 'updatable';
 const { Search } = Input;
@@ -27,7 +24,6 @@ const VideoCourseStore = () => {
 	const [data, setData] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [rerender, setRender] = useState('');
-	const [currentPage, setCurrentPage] = useState(1);
 	const [isLoading, setIsLoading] = useState({ type: 'GET_ALL', status: true });
 	const [addToCardLoading, setAddToCardLoading] = useState(false);
 	const [totalPage, setTotalPage] = useState(null);
@@ -173,8 +169,14 @@ const VideoCourseStore = () => {
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
-			TagArray: param.TagArray
+			TagArray: param.TagArray,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject
 		};
+
 		try {
 			const res = await VideoCourseStoreApi.add(temp);
 			res.status == 200 && showNoti('success', 'Thêm thành công');
@@ -219,7 +221,7 @@ const VideoCourseStore = () => {
 			pageIndex: 1,
 			search: e
 		};
-		setCurrentPage(1), setTodoApi(newTodoApi);
+		setTodoApi(newTodoApi);
 	};
 
 	// RESET FILTER
@@ -228,7 +230,6 @@ const VideoCourseStore = () => {
 			...listTodoApi,
 			pageIndex: 1
 		});
-		setCurrentPage(1);
 	};
 
 	// FILTER
@@ -240,111 +241,16 @@ const VideoCourseStore = () => {
 			fromDate: paramFilter.fromDate,
 			toDate: paramFilter.toDate
 		};
-		setCurrentPage(1), setTodoApi(newTodoApi);
+		setTodoApi(newTodoApi);
 	};
 
 	// HANDLE CHANGE PAGE
 	const getPagination = (pageNumber: number) => {
 		pageIndex = pageNumber;
-		setCurrentPage(pageNumber);
 		setTodoApi({
 			...todoApi,
 			pageIndex: pageIndex
 		});
-	};
-
-	const columnsVideoCourse = [
-		{
-			title: 'Tên khóa học',
-			dataIndex: 'VideoCourseName',
-			key: 'VideoCourseName'
-		},
-		{
-			title: 'Ngày tạo',
-			dataIndex: 'CreatedOn',
-			key: 'CreatedOn'
-		},
-		{
-			title: 'Loại',
-			dataIndex: 'CategoryName',
-			key: 'CategoryName',
-			align: 'center'
-		},
-		{
-			title: 'Cấp độ',
-			dataIndex: 'LevelName',
-			key: 'LevelName',
-			align: 'center'
-		},
-		{
-			title: 'video',
-			dataIndex: 'TotalVideoCourseSold',
-			key: 'TotalVideoCourseSold',
-			align: 'center'
-		},
-		{
-			title: 'Giá gốc',
-			dataIndex: 'OriginalPrice',
-			key: 'OriginalPrice',
-			render: (value) => <span className="vc-store_table_custom_value">{parseToMoney(value)}</span>
-		},
-		{
-			title: 'Giá bán',
-			dataIndex: 'SellPrice',
-			key: 'SellPrice',
-			render: (value) => <span className="vc-store_table_custom_value">{parseToMoney(value)}</span>
-		},
-		{
-			title: 'Doanh thu',
-			dataIndex: 'RevenueEachVideoCourse',
-			key: 'RevenueEachVideoCourse',
-			render: (value) => <span className="vc-store_table_custom_value">{parseToMoney(value)}</span>
-		},
-		{
-			title: 'Thao tác',
-			dataIndex: 'Action',
-			key: 'action',
-			render: (Action, data, index) => (
-				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					{/* <Link
-						href={{
-							// pathname: '/option/program/program-detail/[slug]',
-							query: { slug: data.ID }
-						}}
-					>
-						<Tooltip title="Chi tiết chương trình">
-							<button className="btn btn-icon" style={{ marginRight: -10, marginLeft: -10 }}>
-								<Eye />
-							</button>
-						</Tooltip>
-					</Link> */}
-
-					<div>
-						<ModalCreateVideoCourse
-							dataLevel={categoryLevel}
-							dataCategory={category}
-							getIndex={() => {}}
-							_onSubmitEdit={(data: any) => updateCourse(data)}
-							programID={data.ID}
-							rowData={data}
-							dataGrade={data}
-							showAdd={true}
-							isLoading={isLoading}
-						/>
-					</div>
-				</div>
-			)
-		}
-	];
-
-	const expandedRowRender = () => {
-		return (
-			<>
-				<div className="feedback-detail-text" style={{ backgroundColor: 'red' }}>
-					asd asd asdqw tw qgasgdas dnb{' '}
-				</div>
-			</>
-		);
 	};
 
 	const [activeLoading, setActiveLoading] = useState(false);
@@ -463,32 +369,6 @@ const VideoCourseStore = () => {
 							</div>
 						</Modal>
 					</>
-
-					{/* {userInformation.RoleID == 1 && (
-						<CourseVideoTable
-							totalPage={totalPage && totalPage}
-							getPagination={(pageNumber: number) => getPagination(pageNumber)}
-							currentPage={currentPage}
-							columns={columnsVideoCourse}
-							dataSource={data}
-							loading={isLoading}
-							TitleCard={
-								<div className="vc-teach-modal_header">
-									<ModalCreateVideoCourse
-										dataLevel={categoryLevel}
-										dataCategory={category}
-										dataCurriculum={dataCurriculum}
-										_onSubmit={(data: any) => createNewCourse(data)}
-										showAdd={false}
-										isLoading={false}
-										refeshData={() => getAllArea()}
-									/>
-								</div>
-							}
-							Extra={Extra()}
-							expandable={() => expandedRowRender}
-						></CourseVideoTable>
-					)} */}
 				</Card>
 			)}
 		</div>

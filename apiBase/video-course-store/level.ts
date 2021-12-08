@@ -14,3 +14,11 @@ export const VideoCourseLevelApi = {
 		return instance.post(url + 'CreateOrUpdateLevel', data);
 	}
 };
+
+const urlTag = '/api/VideoCoursesTagArray';
+export const VideoCuorseTag = {
+	// Thêm mới data
+	add(data) {
+		return instance.post(urlTag, data);
+	}
+};

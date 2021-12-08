@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { AlertTriangle, X } from 'react-feather';
 
 const DeleteTableRow = (props) => {
-	const { handleDelete, text } = props;
+	const { handleDelete, text, title } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const checkHandleDelete = () => {
@@ -15,7 +15,7 @@ const DeleteTableRow = (props) => {
 	};
 	return (
 		<>
-			<Tooltip title="Đóng phòng học">
+			<Tooltip title={title || 'Đóng phòng học'}>
 				<button
 					type="button"
 					className="btn btn-icon delete"
@@ -39,10 +39,12 @@ const DeleteTableRow = (props) => {
 };
 DeleteTableRow.propTypes = {
 	handleDelete: PropTypes.func,
-	text: PropTypes.string
+	text: PropTypes.string,
+	title: PropTypes.string
 };
 DeleteTableRow.defaultProps = {
 	handleDelete: null,
-	text: ''
+	text: '',
+	title: ''
 };
 export default DeleteTableRow;
