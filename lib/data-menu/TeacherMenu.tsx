@@ -1,5 +1,5 @@
 import React from 'react';
-import { Airplay, FileText, Home, User, UserCheck } from 'react-feather';
+import { Airplay, Tool, Home, User, UserCheck, FileText } from 'react-feather';
 
 export const TeacherParentMenu = [
 	{
@@ -10,10 +10,6 @@ export const TeacherParentMenu = [
 		TabName: 'tab-course',
 		Icon: <Airplay />
 	},
-	// {
-	// 	TabName: 'tab-package',
-	// 	Icon: <FileText />
-	// },
 	{
 		TabName: 'tab-student',
 		Icon: <User />
@@ -21,6 +17,14 @@ export const TeacherParentMenu = [
 	{
 		TabName: 'tab-staff',
 		Icon: <UserCheck />
+	},
+	{
+		TabName: 'tab-question-bank',
+		Icon: <FileText />
+	},
+	{
+		TabName: 'tab-option',
+		Icon: <Tool />
 	}
 ];
 
@@ -66,19 +70,83 @@ export const TeacherChildMenu = [
 		MenuKey: '/course',
 		MenuItem: [
 			{
-				ItemType: 'single',
-				Key: '/course/course-list',
-				Route: '/course/course-list',
-				Text: 'Danh sách khóa học',
-				Icon: ''
+				ItemType: 'sub-menu',
+				Key: 'sub-course',
+				Icon: '<span class="anticon"><img src="/images/icons/study-course.svg" ></span>',
+				TitleSub: 'Quản lí khóa học',
+				SubMenuList: [
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/course/create-course',
+					// 	Route: '/course/create-course',
+					// 	Text: 'Tạo khóa học',
+					// 	Icon: ''
+					// },
+					{
+						ItemType: 'single',
+						Key: '/course/create-course-online',
+						Route: '/course/create-course-online',
+						Text: 'Tạo khóa học online',
+						Icon: ''
+					},
+					// {
+					//   ItemType: "single",
+					//   Key: "/course/create-course-self",
+					//   Route: "/course/create-course-self",
+					//   Text: "Tạo khóa tự học",
+					//   Icon: "",
+					// },
+					{
+						ItemType: 'single',
+						Key: '/course/course-list',
+						Route: '/course/course-list',
+						Text: 'Danh sách khóa học',
+						Icon: ''
+					}
+					// {
+					//   ItemType: "single",
+					//   Key: "/course/course-list-self",
+					//   Route: "/course/course-list-self",
+					//   Text: "Danh sách khóa tự học",
+					//   Icon: "",
+					// },
+				]
 			},
 			{
 				TypeItem: 'single',
+				Key: '/course/schedule-study',
+				Icon: '<span class="anticon"><img src="/images/icons/calendar.svg"></span>',
+				Route: '/course/schedule-study',
+				Text: 'Kiểm tra lịch'
+			},
+			//   {
+			//     TypeItem: "single",
+			//     Key: "/course/schedule-study-teacher",
+			//     Icon: '<span class="anticon"><img src="/images/icons/calendar.svg"></span>',
+			//     Route: "/course/schedule-study-teacher",
+			//     Text: "Lịch dạy giáo viên",
+			//   },
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-list-report',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-list-report',
+			// 	Text: 'Danh sách khóa học - báo cáo'
+			// },
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/course/course-buy',
+			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
+			// 	Route: '/course/course-buy',
+			// 	Text: 'Danh sách khóa học - mua bán'
+			// },
+			{
+				TypeItem: 'single',
 				Key: '/course/register-course',
-				Icon: '',
+				Icon: '<span class="anticon"><img src="/images/icons/shopping-bag.svg"></span>',
 				Route: '/course/register-course',
 				Text: 'Đăng ký khóa học'
-			}
+			},
 			// {
 			// 	ItemType: 'sub-menu',
 			// 	Key: 'sub-course-zoom',
@@ -99,8 +167,44 @@ export const TeacherChildMenu = [
 			// 			Text: 'Danh sách phòng học',
 			// 			Icon: ''
 			// 		}
+			// 		{
+			// 			ItemType: 'single',
+			// 			Key: '/course/manage-zoom/meeting-internal',
+			// 			Route: '/course/manage-zoom/meeting-internal',
+			// 			Text: 'Phòng họp nội bộ',
+			// 			Icon: '',
+			// 		},
 			// 	]
-			// }
+			// },
+			{
+				ItemType: 'sub-menu',
+				Key: 'video-course',
+				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
+				TitleSub: 'Khóa học video',
+				SubMenuList: [
+					{
+						TypeItem: 'single',
+						Key: '/video-course',
+						Route: '/video-course',
+						Icon: '',
+						Text: 'Danh sách khóa học'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-order',
+						Icon: '',
+						Route: '/video-course-order',
+						Text: 'Danh sách đơn hàng'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-list',
+						Icon: '',
+						Route: '/video-course-list',
+						Text: 'Khóa học đã Active'
+					}
+				]
+			}
 		]
 	},
 
@@ -173,6 +277,49 @@ export const TeacherChildMenu = [
 				Route: '/staff/manage-task',
 				Text: 'Quản lí công việc',
 				Icon: ''
+			}
+		]
+	},
+	{
+		MenuName: 'tab-question-bank',
+		MenuTitle: 'Ngân hàng đề thi',
+		MenuKey: '/question-bank',
+		MenuItem: [
+			{
+				ItemType: 'single',
+				Key: '/question-bank/question-list',
+				Route: '/question-bank/question-list',
+				Text: 'Danh sách câu hỏi',
+				Icon: ''
+			},
+			{
+				ItemType: 'single',
+				Key: '/question-bank/exam-list',
+				Route: '/question-bank/exam-list',
+				Text: 'Danh sách đề thi',
+				Icon: ''
+			}
+		]
+	},
+	{
+		MenuName: 'tab-option',
+		MenuTitle: 'Cấu hình',
+		MenuKey: '/option',
+		MenuItem: [
+			{
+				ItemType: 'sub-menu',
+				Key: 'sub-tab-option-4',
+				Icon: '',
+				TitleSub: 'Cấu hình học',
+				SubMenuList: [
+					{
+						ItemType: 'single',
+						Key: '/option/program',
+						Route: '/option/program',
+						Text: 'Chương trình',
+						Icon: ''
+					}
+				]
 			}
 		]
 	}
