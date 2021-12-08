@@ -12,17 +12,20 @@ import RegOpenClass from '~/components/Global/RegisterCourse/RegOpenClass';
 import RegCoursePayment from '~/components/Global/RegisterCourse/RegCoursePayment';
 import RegCourse from '~/components/Global/RegisterCourse/RegCourse';
 import { courseStudentPriceApi } from '~/apiBase/customer/student/course-student-price';
+import CreateCustomer from './../../../components/Global/RegisterCourse/CreateCustomer';
 
 const RegisterCourse = (props: any) => {
 	const { Option } = Select;
 	const [option, setOption] = useState(null);
 	const [form] = Form.useForm();
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [loading, setLoading] = useState(false);
 	const [userAll, setUserAll] = useState<IStudent[]>();
 	const [userDetail, setUserDetail] = useState<IStudent>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isContract, setIsContract] = useState(false);
+
+	console.log(userInformation);
 
 	const fetchDataUser = () => {
 		(async () => {
@@ -118,7 +121,17 @@ const RegisterCourse = (props: any) => {
 			<Form form={form} layout="vertical" onFinish={onSubmit}>
 				<div className="row">
 					<div className="col-6">
-						<Card title="Thông tin cá nhân">
+						<Card
+							title="Thông tin cá nhân"
+							extra={
+								(userInformation.RoleID === 1 ||
+									userInformation.RoleID === 5 ||
+									userInformation.RoleID === 2 ||
+									userInformation.RoleID === 6 ||
+									userInformation.RoleID === 7) && <CreateCustomer fetchDataUser={() => fetchDataUser()} />
+							}
+						>
+							{/* Button create student for admin, manager, academic, seller, teacher */}
 							<div className="row">
 								<div className="col-md-6 col-12">
 									<Form.Item label="Loại đăng ký">
