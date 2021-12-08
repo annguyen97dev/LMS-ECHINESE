@@ -72,7 +72,7 @@ function TimelineCourse(props) {
 
 	return (
 		<div>
-			<Card title="Phản hồi" extra={<TimelineCourseForm isLoading={isLoading} handleSubmit={onSubmit} />}>
+			<Card title="Phản hồi buổi học" extra={<TimelineCourseForm isLoading={isLoading} handleSubmit={onSubmit} />}>
 				<div>
 					<Spin spinning={isLoading.type === 'FETCH_TIMELINE' && isLoading.status} size="large">
 						<Timeline mode="right">
@@ -91,6 +91,8 @@ function TimelineCourse(props) {
 									<div>
 										<p className="font-weight-primary">{x.Note}</p>
 									</div>
+									{/* @ts-ignore */}
+									<div>{x.NoteStudent}</div>
 									<div>{x.CreatedBy}</div>
 									<div>{x.RoleName}</div>
 								</Timeline.Item>
@@ -102,4 +104,5 @@ function TimelineCourse(props) {
 		</div>
 	);
 }
+
 export default TimelineCourse;

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { userApi } from '~/apiBase';
+import { userApi, userInformationApi } from '~/apiBase';
 import { signIn, useSession } from 'next-auth/client';
 
 export type IProps = {
@@ -13,6 +13,8 @@ export type IProps = {
 	showNoti: Function;
 	getDataUser: Function;
 	userInformation: IUser;
+	useAllRoles: IRole[];
+	useStaffRoles: IRole[];
 	pageSize: number;
 	isAdmin: boolean;
 	reloadNotification: boolean;
@@ -28,6 +30,8 @@ const WrapContext = createContext<IProps>({
 	showNoti: () => {},
 	getDataUser: () => {},
 	userInformation: null,
+	useAllRoles: null,
+	useStaffRoles: null,
 	pageSize: 30,
 	isAdmin: false,
 	reloadNotification: false,
@@ -58,6 +62,8 @@ export const WrapProvider = ({ children }) => {
 		type: ''
 	});
 	const [userInfo, setUserInfo] = useState<IUser>(null);
+	const [roles, setRoles] = useState<IRole[]>(null);
+	const [staffRoles, setStaffRoles] = useState<IRole[]>(null);
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [reloadNotification, setReloadNotification] = useState(false);
 	const [reloadCart, setReloadCart] = useState(false);
@@ -94,6 +100,15 @@ export const WrapProvider = ({ children }) => {
 				break;
 			default:
 				break;
+		}
+	};
+
+	const getRoles = async (roleType) => {
+		try {
+			let res = await userInformationApi.getRole(roleType);
+			res.status == 200 && roleType == 0 ? setRoles(res.data.data) : setStaffRoles(res.data.data);
+		} catch (error) {
+			console.log('Lỗi lấy thông tin roles: ', error);
 		}
 	};
 
@@ -135,6 +150,8 @@ export const WrapProvider = ({ children }) => {
 		if (loading && typeof session !== 'undefined' && session !== null) {
 			if (path.search('signin') < 1) {
 				getNewDataUser();
+				getRoles(0);
+				getRoles(1);
 			}
 		}
 	}, [session]);
@@ -150,6 +167,8 @@ export const WrapProvider = ({ children }) => {
 					showNoti,
 					getDataUser,
 					userInformation: userInfo,
+					useAllRoles: roles,
+					useStaffRoles: staffRoles,
 					isAdmin: isAdmin,
 					reloadNotification: reloadNotification,
 					handleReloadNoti: handleReloadNoti,

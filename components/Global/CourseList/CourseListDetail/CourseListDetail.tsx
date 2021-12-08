@@ -20,6 +20,15 @@ const CourseListDetail = () => {
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
 
+	const isStudent = () => {
+		let role = userInformation?.RoleID;
+		if (role == 3) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
 	return (
 		<div className="course-dt page-no-scroll">
 			<Tabs
@@ -130,17 +139,21 @@ const CourseListDetail = () => {
 				>
 					<DocumentCourse courseID={parseIntID} />
 				</TabPane>
-				<TabPane
-					tab={
-						<>
-							<Flag />
-							<span title="Phản hồi">Lộ trình</span>
-						</>
-					}
-					key="7"
-				>
-					<TimelineCourse courseID={parseIntID} />
-				</TabPane>
+
+				{!isStudent() && (
+					<TabPane
+						tab={
+							<>
+								<Flag />
+								<span title="Phản hồi">Phản hồi buổi học</span>
+							</>
+						}
+						key="7"
+					>
+						<TimelineCourse courseID={parseIntID} />
+					</TabPane>
+				)}
+
 				<TabPane
 					tab={
 						<>
