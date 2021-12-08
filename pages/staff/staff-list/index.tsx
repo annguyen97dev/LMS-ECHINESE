@@ -23,7 +23,6 @@ import SalaryStaffNested from '~/components/Global/StaffList/SalaryStaffNested';
 // import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from '~/components/Global/StaffList/StaffForm';
 import LayoutBase from '~/components/LayoutBase';
-import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 
@@ -41,26 +40,13 @@ const Roles = [
 		id: 1,
 		RoleName: 'Admin'
 	},
-
 	{
 		id: 5,
-		RoleName: 'Nhân viên quản lí'
+		RoleName: 'Quản lí'
 	},
 	{
 		id: 6,
-		RoleName: 'Nhân viên bán hàng'
-	},
-	{
-		id: 7,
-		RoleName: 'Học vụ'
-	},
-	{
-		id: 8,
-		RoleName: 'Quản lí chuyên môn'
-	},
-	{
-		id: 9,
-		RoleName: 'Kế toán'
+		RoleName: 'Tư vấn viên'
 	}
 ];
 
@@ -188,6 +174,10 @@ const StaffList = () => {
 		Parent: [],
 		Counselors: []
 	});
+
+	useEffect(() => {
+		console.log('listDataForm: ', listDataForm);
+	}, [listDataForm]);
 
 	const [isOpenReset, setIsOpenReset] = useState(false);
 
@@ -655,10 +645,6 @@ const StaffList = () => {
 			title: 'Email',
 			dataIndex: 'Email'
 		},
-		// {
-		//   title: "SĐT",
-		//   dataIndex: "Mobile",
-		// },
 		{
 			title: 'Vị trí',
 			dataIndex: 'RoleName'
