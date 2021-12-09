@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input } from 'antd';
 import { studentApi } from '~/apiBase';
+import { useWrap } from '~/context/wrap';
 
 const CreateCustomer = (props) => {
 	const [visible, setVisible] = useState(false);
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		status: '',
 		loading: false
@@ -15,7 +17,6 @@ const CreateCustomer = (props) => {
 	};
 
 	const _onSubmit = async (data) => {
-		console.log(data);
 		setIsLoading({ status: 'CREATE_ACC', loading: true });
 		try {
 			let res = await studentApi.createAccount(data);
@@ -23,8 +24,10 @@ const CreateCustomer = (props) => {
 				props.fetchDataUser();
 				setVisible(false);
 				form.resetFields();
+				showNoti('success', 'Thêm học viên thành công!');
 			}
 		} catch (error) {
+			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({ status: 'CREATE_ACC', loading: false });
 		}
@@ -32,6 +35,7 @@ const CreateCustomer = (props) => {
 	return (
 		<>
 			<button
+				type="button"
 				className="btn btn-warning"
 				onClick={() => {
 					setVisible(true);
@@ -43,22 +47,30 @@ const CreateCustomer = (props) => {
 				<Form form={form} onFinish={_onSubmit} layout="vertical">
 					<div className="row">
 						<div className="col-12">
-							<Form.Item label="Tên Học Viên" name="FullNameUnicode">
+							<Form.Item
+								label="Tên Học Viên"
+								name="FullNameUnicode"
+								rules={[{ required: true, message: 'Bạn không được để trống' }]}
+							>
 								<Input placeholder="Nhập tên học viên" allowClear size="large" className="style-input" />
 							</Form.Item>
 						</div>
 						<div className="col-12">
-							<Form.Item label="Email" name="Email">
+							<Form.Item label="Email" name="Email" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
 								<Input placeholder="Nhập Email" allowClear size="large" className="style-input" />
 							</Form.Item>
 						</div>
 						<div className="col-12">
-							<Form.Item label="Số Điện Thoại" name="Mobile">
+							<Form.Item label="Số Điện Thoại" name="Mobile" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
 								<Input placeholder="Số điện thoại học viên" allowClear size="large" className="style-input" />
 							</Form.Item>
 						</div>
 						<div className="col-12">
-							<button className="btn btn-primary w-100" disabled={isLoading.status == 'CREATE_ACC' && isLoading.loading}>
+							<button
+								className="btn btn-primary w-100"
+								type="submit"
+								disabled={isLoading.status == 'CREATE_ACC' && isLoading.loading}
+							>
 								Lưu
 							</button>
 						</div>

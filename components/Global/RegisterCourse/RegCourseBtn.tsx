@@ -18,11 +18,6 @@ const RegCourseBtn = () => {
 							<a>Tạo khóa học</a>
 						</Link>
 					</Menu.Item>
-					<Menu.Item>
-						<Link href={'/course/register-course/'}>
-							<a>Tạo khách hàng</a>
-						</Link>
-					</Menu.Item>
 				</Menu>
 			</div>
 		);
@@ -34,7 +29,7 @@ const RegCourseBtn = () => {
 					position: 'fixed',
 					right: 20,
 					bottom: 80,
-					zIndex: 2900,
+					zIndex: 902,
 					width: 45,
 					height: 45,
 					borderRadius: '100%',
