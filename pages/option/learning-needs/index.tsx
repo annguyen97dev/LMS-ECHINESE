@@ -4,6 +4,7 @@ import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
 import { learningNeeds } from './../../../apiBase/options/learning-needs';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 
 const LearningNeeds = () => {
 	const { showNoti, pageSize } = useWrap();
@@ -36,10 +37,27 @@ const LearningNeeds = () => {
 		}
 	};
 
+	const handleDelete = async (record) => {
+		setIsLoading({
+			type: 'DELETE',
+			status: true
+		});
+		try {
+			let res = await learningNeeds.update({ ID: record.ID, Name: record.Name, Enable: false });
+		} catch (error) {
+		} finally {
+			setIsLoading({
+				type: 'DELETE',
+				status: true
+			});
+		}
+	};
+
 	const columns = [
 		{
 			title: 'Nhu cầu học',
 			dataIndex: 'Name',
+			width: 200,
 			render: (text) => {
 				return <p className="font-weight-black">{text}</p>;
 			}
@@ -47,6 +65,7 @@ const LearningNeeds = () => {
 		{
 			title: 'ID',
 			dataIndex: 'ID',
+			width: 80,
 			render: (text) => {
 				return <p>{text}</p>;
 			}
@@ -54,8 +73,22 @@ const LearningNeeds = () => {
 		{
 			title: 'Người tạo',
 			dataIndex: 'CreatedBy',
+			width: 150,
 			render: (text) => {
 				return <p>{text}</p>;
+			}
+		},
+		{
+			title: 'Thao tác',
+			dataIndex: 'Action',
+			width: 150,
+			render: (text, record) => {
+				return (
+					<>
+						<LearningNeedsForm setTodoApi={() => setTodoApi({ ...todoApi })} type="edit" record={record} />
+						<DeleteTableRow title="Xóa" text="nhu cầu học này?" handleDelete={(record) => handleDelete(record)} />
+					</>
+				);
 			}
 		}
 	];
@@ -85,7 +118,7 @@ const LearningNeeds = () => {
 				dataSource={dataSource}
 				columns={columns}
 				TitlePage="Bảng nhu cầu học"
-				TitleCard={<LearningNeedsForm />}
+				TitleCard={<LearningNeedsForm setTodoApi={() => setTodoApi({ ...todoApi })} type="add" />}
 			></PowerTable>
 		</>
 	);
