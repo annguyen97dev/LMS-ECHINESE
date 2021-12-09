@@ -13,6 +13,7 @@ import { CalendarOutlined, UserAddOutlined } from '@ant-design/icons';
 import ExpandTable from '~/components/ExpandTable';
 import StudentAdvisoryNote from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryNote';
 import StudentAdvisoryMail from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryMail';
+import { learningNeeds } from '~/apiBase/options/learning-needs';
 
 let pageIndex = 1;
 
@@ -84,7 +85,8 @@ const listApi = [
 		name: 'ConsultationStatus'
 	},
 	{
-		api: programApi,
+		api: learningNeeds,
+		// api: programApi,
 		text: 'Nhu cầu học',
 		name: 'Program'
 	}
@@ -503,15 +505,12 @@ export default function StudentAdvisory() {
 		setListCustomer([...listCustomer]);
 	};
 
-	console.log('List Customer: ', listCustomer);
-
 	const resetListCustomer = () => {
 		setListCustomer([]);
 	};
 
 	// -------- ON SELECT ROW ---------
 	const onSelectRow = (selectRow) => {
-		console.log('TEST: ', selectRow);
 		let listID = selectRow?.map((item) => item.ID);
 		setListCustomer(listID);
 	};
