@@ -77,7 +77,7 @@ const CourseListDetail = () => {
 				>
 					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
 				</TabPane>
-				{isAdmin && (
+				{(isAdmin || userInformation.RoleID == 2) && (
 					<TabPane
 						tab={
 							<>
@@ -93,7 +93,7 @@ const CourseListDetail = () => {
 					</TabPane>
 				)}
 
-				{isAdmin && (
+				{(isAdmin || userInformation.RoleID == 2) && (
 					<TabPane
 						tab={
 							<>

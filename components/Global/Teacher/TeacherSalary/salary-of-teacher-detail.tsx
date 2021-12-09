@@ -22,6 +22,15 @@ const SalaryOfTeacherDetail = ({ price, record }) => {
 	};
 	const [params, setParams] = useState(defaultParams);
 
+	const getNum = (num) => {
+		return num < 10 ? '0' + num : num;
+	};
+
+	const getStrDate = (date) => {
+		const nDate = new Date(date);
+		return getNum(nDate.getDate()) + '-' + getNum(nDate.getMonth() + 1) + '-' + nDate.getFullYear();
+	};
+
 	const columns = [
 		{
 			title: 'Giáo viên',
@@ -34,19 +43,26 @@ const SalaryOfTeacherDetail = ({ price, record }) => {
 			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
-			title: 'Số bài học',
+			title: 'Buổi học',
 			dataIndex: 'LessonNumber',
-			render: (price, record) => <p>{price}</p>
+			align: 'center',
+			render: (price, record) => <p style={{ width: 70 }}>{price}</p>
+		},
+		{
+			title: 'Ngày dạy',
+			dataIndex: 'Date',
+			align: 'center',
+			render: (price, record) => <p style={{ width: 100 }}>{getStrDate(price)}</p>
 		},
 		{
 			title: 'Thời gian học',
 			dataIndex: 'StudyTimeName',
-			render: (price, record) => <p>{price}</p>
+			render: (price, record) => <p style={{ width: 100 }}>{price}</p>
 		},
 		{
 			title: 'Lương môn học',
 			dataIndex: 'SalaryOfLesson',
-			render: (price, record) => <p>{price}</p>
+			render: (price, record) => <p style={{ width: 120 }}>{price}</p>
 		}
 	];
 

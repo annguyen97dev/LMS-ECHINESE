@@ -79,9 +79,9 @@ const Notification = () => {
 					setDataTable([]);
 				}
 				if (res.status == 200) {
-					if (res.data.data.length < 1) {
-						handleReset();
-					}
+					// if (res.data.data.length < 1) {
+					// 	handleReset();
+					// }
 					setTotalPage(res.data.totalRow);
 
 					const results = res.data.data.map((row, i) => ({
@@ -199,9 +199,13 @@ const Notification = () => {
 	//   );
 	// };
 
+	// console.log('todoApi: ', todoApi);
+
 	useEffect(() => {
 		getDataTable();
 		getDataBranch();
+
+		console.log('todoApi: ', todoApi);
 	}, [todoApi]);
 
 	const columns = [

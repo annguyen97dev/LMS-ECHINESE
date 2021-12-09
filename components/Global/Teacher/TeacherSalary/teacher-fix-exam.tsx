@@ -35,7 +35,7 @@ const TecherFixExam = ({ price, record }) => {
 			render: (price, record) => <p>{price}</p>
 		},
 		{
-			title: 'Số bài học',
+			title: 'Buổi học',
 			dataIndex: 'ExamTopicName',
 			render: (price, record) => <p>{price}</p>
 		},

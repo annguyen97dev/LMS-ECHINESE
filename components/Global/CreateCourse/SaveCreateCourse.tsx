@@ -1,17 +1,10 @@
-import {Modal, Spin} from 'antd';
+import { Modal, Spin } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 // ------------ DRAWER INFO CORUSE --------------
 const SaveCreateCourse = (props) => {
-	const {
-		isLoading,
-		isEdit,
-		saveInfo,
-		handleFetchDataToSave,
-		handleSaveCourse,
-		scheduleShow,
-	} = props;
+	const { isLoading, isEdit, saveInfo, handleFetchDataToSave, handleSaveCourse, scheduleShow } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -31,15 +24,12 @@ const SaveCreateCourse = (props) => {
 		return Object.keys(scheduleShow).map((date, idx) => (
 			<div
 				className={`create-course-save-list-item ${
-					scheduleShow[date].some((obj) => obj.isValid)
-						? 'create-course-save-list-item-error'
-						: ''
+					scheduleShow[date].some((obj) => obj.isValid) ? 'create-course-save-list-item-error' : ''
 				}`}
 				key={idx}
 			>
 				<span>
-					{scheduleShow[date][0]?.dayOffWeek} -{' '}
-					{moment(date).format('DD/MM/YYYY')}: {}
+					{scheduleShow[date][0]?.dayOffWeek} - {moment(date).format('DD/MM/YYYY')}: {}
 				</span>
 				<ul>
 					{scheduleShow[date]
@@ -71,7 +61,7 @@ const SaveCreateCourse = (props) => {
 			{
 				// isEdit ? (
 				<Modal
-					style={{top: 20}}
+					style={{ top: 20 }}
 					className={`${!isEdit ? 'create-course-save modal-scroll' : ''}`}
 					title={isEdit ? 'Cập nhật khóa học' : 'Thông tin khóa học'}
 					visible={isModalVisible}
@@ -83,16 +73,12 @@ const SaveCreateCourse = (props) => {
 							disabled={isLoading.type == 'SAVE_COURSE' && isLoading.status}
 						>
 							{isEdit ? 'Cập nhật' : 'Lưu tất cả'}
-							{isLoading.type == 'SAVE_COURSE' && isLoading.status && (
-								<Spin className="loading-base" />
-							)}
+							{isLoading.type == 'SAVE_COURSE' && isLoading.status && <Spin className="loading-base" />}
 						</button>
 					}
 					width={isEdit ? 600 : 800}
 				>
-					<div
-						className={`create-course-save-info ${!isEdit ? 'box-form' : ''}`}
-					>
+					<div className={`create-course-save-info ${!isEdit ? 'box-form' : ''}`}>
 						<div className="row">
 							{!isEdit && (
 								<>
@@ -156,9 +142,7 @@ const SaveCreateCourse = (props) => {
 										<div className="item">
 											<p>
 												<span>Ngày bắt đầu:</span>
-												<span>
-													{moment(saveInfo.StartDay).format('DD/MM/YYYY')}
-												</span>
+												<span>{moment(saveInfo.StartDay).format('DD/MM/YYYY')}</span>
 											</p>
 										</div>
 									</div>
@@ -166,9 +150,7 @@ const SaveCreateCourse = (props) => {
 										<div className="item">
 											<p>
 												<span>Ngày kết thúc:</span>
-												<span>
-													{moment(saveInfo.EndDay).format('DD/MM/YYYY')}
-												</span>
+												<span>{moment(saveInfo.EndDay).format('DD/MM/YYYY')}</span>
 											</p>
 										</div>
 									</div>
@@ -177,23 +159,19 @@ const SaveCreateCourse = (props) => {
 							{isEdit ? (
 								<div className="col-md-12 col-12">
 									<div className="item">
-										<p style={{marginBottom: 0}}>
+										<p style={{ marginBottom: 0 }}>
 											<span>Những buổi học đã thay đổi:</span>
 										</p>
-										<div className="create-course-save-list">
-											{renderScheduleList()}
-										</div>
+										<div className="create-course-save-list">{renderScheduleList()}</div>
 									</div>
 								</div>
 							) : (
 								<div className="col-md-12 col-12">
 									<div className="item">
-										<p style={{marginBottom: 0}}>
+										<p style={{ marginBottom: 0 }}>
 											<span>Lịch học tổng quát:</span>
 										</p>
-										<div className="create-course-save-list">
-											{renderScheduleList()}
-										</div>
+										<div className="create-course-save-list">{renderScheduleList()}</div>
 									</div>
 								</div>
 							)}
@@ -208,7 +186,7 @@ const SaveCreateCourse = (props) => {
 SaveCreateCourse.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	isEdit: PropTypes.bool,
 	scheduleShow: PropTypes.shape({}),
@@ -220,17 +198,17 @@ SaveCreateCourse.propTypes = {
 		CurriculumName: PropTypes.string,
 		DaySelectedName: PropTypes.string,
 		StudyTimeName: PropTypes.string,
-		EndDay: PropTypes.string,
+		EndDay: PropTypes.string
 	}),
 	handleSaveCourse: PropTypes.func,
-	handleFetchDataToSave: PropTypes.func,
+	handleFetchDataToSave: PropTypes.func
 };
 SaveCreateCourse.defaultProps = {
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	isEdit: false,
 	scheduleShow: {},
 	saveInfo: {},
 	handleSaveCourse: null,
-	handleFetchDataToSave: null,
+	handleFetchDataToSave: null
 };
 export default SaveCreateCourse;

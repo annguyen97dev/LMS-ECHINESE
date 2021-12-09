@@ -35,10 +35,12 @@
 		outline: none;
 		transition: 0.3s ease-in-out;
 		min-height: 26px;
+		background: rgba($color: #000000, $alpha: 0);
 	}
 	.rbc-event-content {
 		flex-grow: 1;
 		font-size: 12px;
+		// background: red;
 		> div {
 			padding: 2px 5px;
 			height: 100%;
