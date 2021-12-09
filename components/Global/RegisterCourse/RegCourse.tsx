@@ -12,6 +12,7 @@ import { studentExamServicesApi } from '~/apiBase/customer/student/student-exam-
 const RegCourse = React.memo((props: any) => {
 	const { TextArea } = Input;
 	const { Option } = Select;
+	const { userInformation } = useWrap();
 	const [branch, setBranch] = useState<IBranch[]>();
 	const [course, setCourse] = useState<ICourse[]>();
 	const [discount, setDiscount] = useState<IDiscount[]>();
@@ -277,27 +278,29 @@ const RegCourse = React.memo((props: any) => {
 				</div>
 			</div>
 
-			<div className="row">
-				<div className="col-md-6 col-12">
-					<Form.Item name="Paid" label="Thanh toán" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
-						<InputNumber
-							placeholder="Số tiền thanh toán"
-							className="ant-input style-input w-100"
-							formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-							parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-							onChange={(value) => {
-								setValue('Paid', value);
-								handleMoneyLeft(value);
-							}}
-						/>
-					</Form.Item>
+			{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 && (
+				<div className="row">
+					<div className="col-md-6 col-12">
+						<Form.Item name="Paid" label="Thanh toán" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
+							<InputNumber
+								placeholder="Số tiền thanh toán"
+								className="ant-input style-input w-100"
+								formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+								parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+								onChange={(value) => {
+									setValue('Paid', value);
+									handleMoneyLeft(value);
+								}}
+							/>
+						</Form.Item>
+					</div>
+					<div className="col-md-6 col-12">
+						<Form.Item label="Số tiền còn lại">
+							<Input value={Intl.NumberFormat('ja-JP').format(debt)} className="style-input" readOnly={true} />
+						</Form.Item>
+					</div>
 				</div>
-				<div className="col-md-6 col-12">
-					<Form.Item label="Số tiền còn lại">
-						<Input value={Intl.NumberFormat('ja-JP').format(debt)} className="style-input" readOnly={true} />
-					</Form.Item>
-				</div>
-			</div>
+			)}
 
 			<div className="row">
 				<div className="col-md-6 col-12">
