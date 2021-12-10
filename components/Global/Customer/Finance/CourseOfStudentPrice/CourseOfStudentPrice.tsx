@@ -248,20 +248,22 @@ const CourseOfStudentPrice = () => {
 			PaymentMethodsID: number;
 			PayBranchID: number;
 			PayDate: string;
+			Note: string;
 		}) => {
 			try {
 				setIsLoading({
 					type: 'ADD_DATA',
 					status: true
 				});
-				const { FullNameUnicode, PaymentMethodsID, PayBranchID, Paid, PayDate } = data;
+				const { Note, FullNameUnicode, PaymentMethodsID, PayBranchID, Paid, PayDate } = data;
 				const newData = {
 					ID,
 					FullNameUnicode,
 					PaymentMethodsID,
 					PayBranchID,
 					Paid: parseInt(Paid.replace(/\D/g, '')),
-					PayDate: moment(PayDate).format('YYYY/MM/DD')
+					PayDate: moment(PayDate).format('YYYY/MM/DD'),
+					Note
 				};
 				const res = await courseStudentPriceApi.update(newData);
 				if (res.status === 200) {
@@ -376,15 +378,18 @@ const CourseOfStudentPrice = () => {
 		},
 		{
 			title: 'Hình thức',
+			width: 180,
 			dataIndex: 'PaymentMethodsName'
 		},
 		{
 			title: 'Ngày hẹn trả',
 			dataIndex: 'PayDate',
+			width: 200,
 			render: (date) => (date ? moment(date).format('DD/MM/YYYY') : '')
 		},
 		{
 			title: 'Trạng thái',
+			width: 200,
 			dataIndex: 'DonePaid',
 			render: (status) => {
 				return (
@@ -422,14 +427,14 @@ const CourseOfStudentPrice = () => {
 							handleSubmit={onUpdateCourseOfStudentPrice(record.ID)}
 						/>
 					)}
-					{/* <RequestRefundForm
+					<RequestRefundForm
 						isLoading={isLoading}
 						studentObj={data}
 						getInfoCourse={getInfoCourse}
 						paymentMethodOptionList={paymentMethodOptionList}
 						courseListOfStudent={courseListOfStudent}
 						onSubmit={onCreateRequestRefund}
-					/> */}
+					/>
 				</div>
 			)
 		}

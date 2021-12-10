@@ -2,7 +2,7 @@ import { Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
 import React, { Fragment, useEffect, useState } from 'react';
-import { areaApi, branchApi, parentsApi, programApi } from '~/apiBase';
+import { areaApi, branchApi, parentsApi, programApi, courseStudentApi, refundsApi } from '~/apiBase';
 import { courseReserveApi } from '~/apiBase/customer/student/course-reserve';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
@@ -10,12 +10,28 @@ import CourseReserveIntoCourse from '~/components/Global/Customer/Student/Course
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
+import RequestRefundForm from '~/components/Global/Customer/Finance/Refunds/RequestRefundsForm';
 
 const StudentCourseReserve = () => {
+	const [isLoading, setIsLoading] = useState({
+		type: 'GET_ALL',
+		status: false
+	});
 	const handleReset = () => {
 		setCurrentPage(1);
 		setParams(listParamsDefault);
 	};
+
+	const paymentMethodOptionList = [
+		{
+			label: 'Tiền mặt',
+			value: 1
+		},
+		{
+			label: 'Chuyển khoản',
+			value: 2
+		}
+	];
 
 	const columns = [
 		{
@@ -66,14 +82,24 @@ const StudentCourseReserve = () => {
 					{data.StatusID == 3 ? (
 						<></>
 					) : (
-						<CourseReserveIntoCourse
-							infoDetail={data}
-							infoId={data.ID}
-							reloadData={(firstPage) => {
-								getDataCourseReserve(firstPage);
-							}}
-							currentPage={currentPage}
-						/>
+						<>
+							<CourseReserveIntoCourse
+								infoDetail={data}
+								infoId={data.ID}
+								reloadData={(firstPage) => {
+									getDataCourseReserve(firstPage);
+								}}
+								currentPage={currentPage}
+							/>
+							<RequestRefundForm
+								isLoading={isLoading}
+								studentObj={data}
+								getInfoCourse={getInfoCourse}
+								paymentMethodOptionList={paymentMethodOptionList}
+								courseListOfStudent={courseListOfStudent}
+								onSubmit={onCreateRequestRefund}
+							/>
+						</>
 					)}
 				</Fragment>
 			)
@@ -137,8 +163,6 @@ const StudentCourseReserve = () => {
 	]);
 
 	const handleFilter = (listFilter) => {
-		console.log('List Filter when submit: ', listFilter);
-
 		let newListFilter = {
 			pageIndex: 1,
 			fromDate: null,
@@ -168,11 +192,7 @@ const StudentCourseReserve = () => {
 	const [params, setParams] = useState(listParamsDefault);
 	const [totalPage, setTotalPage] = useState(null);
 	const [studentCourseReserve, setStudentCourseReserve] = useState<ICourseReserve[]>([]);
-
-	const [isLoading, setIsLoading] = useState({
-		type: 'GET_ALL',
-		status: false
-	});
+	const [courseListOfStudent, setCourseListOfStudent] = useState<ICourseOfStudent[]>([]);
 
 	const setDataFunc = (name, data) => {
 		dataFilter.every((item, index) => {
@@ -258,6 +278,63 @@ const StudentCourseReserve = () => {
 				});
 			}
 		})();
+	};
+
+	// REQUEST REFUND
+	const getInfoCourse = async (CourseOfStudentPriceID: number) => {
+		setIsLoading({
+			type: 'FETCH_INFO_COURSE',
+			status: true
+		});
+		try {
+			const res = await courseStudentApi.getAll({ CourseOfStudentPriceID });
+			if (res.status === 200) {
+				setCourseListOfStudent(res.data.data);
+			}
+			if (res.status === 204) {
+				setCourseListOfStudent([]);
+			}
+		} catch (error) {
+			console.log('getInfoCourse', error);
+		} finally {
+			setIsLoading({
+				type: 'FETCH_INFO_COURSE',
+				status: false
+			});
+		}
+	};
+
+	const onCreateRequestRefund = async (data: {
+		ListCourseOfStudentID: number[];
+		Price: string;
+		PaymentMethodsID: number;
+		Reason: string;
+		isExpulsion: boolean;
+	}) => {
+		console.log(data);
+		setIsLoading({
+			type: 'ADD_DATA',
+			status: true
+		});
+		try {
+			const { Price } = data;
+			const newData = {
+				...data,
+				Price: parseInt(Price.replace(/\D/g, ''))
+			};
+			const res = await refundsApi.add(newData);
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				return res;
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false
+			});
+		}
 	};
 
 	useEffect(() => {

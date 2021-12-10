@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Tooltip } from 'antd';
 import { learningNeeds } from './../../../apiBase/options/learning-needs';
 import { useWrap } from '~/context/wrap';
-import { RotateCcw } from 'react-feather';
+import { RotateCcw, X } from 'react-feather';
 
 const LearningNeedsForm = (props) => {
 	const [visible, setVisible] = useState(false);
@@ -14,12 +14,45 @@ const LearningNeedsForm = (props) => {
 		setVisible(false);
 	};
 
+	const handleDelete = async () => {
+		setIsLoading({ type: 'ADD_DATA', status: true });
+		try {
+			let res = await learningNeeds.update({ ID: props.record.ID, Enable: false });
+			if (res.status == 200) {
+				showNoti('success', 'Xóa thành công!');
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'ADD_DATA', status: false });
+		}
+	};
+
 	const _onSubmit = async (data) => {
 		setIsLoading({ type: 'ADD_DATA', status: true });
 		try {
-			let res = props.type == 'add' ? await learningNeeds.insert(data) : await learningNeeds.update({ ...data, ID: props.record.ID });
+			let res = null;
+			if (props.type == 'add') {
+				res = await learningNeeds.insert(data);
+			}
+			if (props.type == 'deleterow') {
+				console.log(props.type);
+				console.log('delete');
+				res = await learningNeeds.update({ ID: props.record.ID, Enable: false });
+			}
+			if (props.type == 'edit') {
+				res = await learningNeeds.update({ ...data, ID: props.record.ID });
+			}
+			// let res =
+			// 	props.type == 'add'
+			// 		? await learningNeeds.insert(data)
+			// 		: props.type == 'edit'
+			// 		? await learningNeeds.update({ ...data, ID: props.record.ID })
+			// 		: await learningNeeds.update({ ID: props.record.ID, Enable: false });
 			if (res.status == 200) {
-				showNoti('success', 'Thêm thành công!');
+				showNoti(
+					'success',
+					props.type == 'add' ? 'Thêm thành công!' : props.type == 'edit' ? 'Sửa thành công!' : 'Xóa thành công!'
+				);
 				setVisible(false);
 				props.setTodoApi();
 				form.resetFields();
@@ -59,30 +92,62 @@ const LearningNeedsForm = (props) => {
 					Thêm nhu cầu học
 				</button>
 			)}
+			{props.type == 'deleterow' && (
+				<button
+					className="btn  btn-icon delete"
+					onClick={() => {
+						setVisible(true);
+					}}
+					type="button"
+				>
+					<Tooltip title="Xóa nhu cầu học">
+						<X />
+					</Tooltip>
+				</button>
+			)}
 
 			<Modal visible={visible} onCancel={handleCancel} title="Thêm nhu cầu học" footer={null}>
-				<Form form={form} onFinish={_onSubmit} layout="vertical">
-					<div className="row">
-						<div className="col-12">
-							<Form.Item name="Name" label="Nhu cầu học" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
-								<Input
-									placeholder="Nhập nhu cầu học"
-									className="style-input"
-									defaultValue={props.record && props.record.Name}
-								/>
-							</Form.Item>
+				{props.type == 'deleterow' ? (
+					<Form form={form} onFinish={_onSubmit} layout="vertical">
+						<div className="row">
+							<div className="col-12">
+								<p className="text-confirm">Bạn có chắc muốn xóa nhu cầu học này?</p>
+							</div>
+							<div className="col-12">
+								<button
+									className="btn btn-primary w-100"
+									type="submit"
+									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+								>
+									Xóa
+								</button>
+							</div>
 						</div>
-						<div className="col-12">
-							<button
-								className="btn btn-primary w-100"
-								type="submit"
-								disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
-							>
-								Lưu
-							</button>
+					</Form>
+				) : (
+					<Form form={form} onFinish={_onSubmit} layout="vertical">
+						<div className="row">
+							<div className="col-12">
+								<Form.Item name="Name" label="Nhu cầu học" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
+									<Input
+										placeholder="Nhập nhu cầu học"
+										className="style-input"
+										defaultValue={props.record && props.record.Name}
+									/>
+								</Form.Item>
+							</div>
+							<div className="col-12">
+								<button
+									className="btn btn-primary w-100"
+									type="submit"
+									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+								>
+									Lưu
+								</button>
+							</div>
 						</div>
-					</div>
-				</Form>
+					</Form>
+				)}
 			</Modal>
 		</>
 	);

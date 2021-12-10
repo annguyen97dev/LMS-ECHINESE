@@ -193,7 +193,7 @@ export default function StudentAdvisory() {
 				break;
 			case 'Program':
 				newData = data.map((item) => ({
-					title: item.ProgramName,
+					title: item.Name,
 					value: item.ID
 				}));
 				setDataFunc('ProgramID', newData);
