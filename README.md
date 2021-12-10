@@ -29,91 +29,63 @@ npm run dev
 -   Mỗi ngày trước khi bắt đầu công việc thì pull từ branch dev về để lấy code mới nhất
 -   Sau khi làm xong tính năng thì push lại lên dev để mọi người cập nhật
 
-#### 1. Cấu trúc dự án
+#### Cấu trúc dự án
 
 ```markdown
-src
-
-├───api ⇾ chứ các hàm gọi api từ server
-├───assets
-├───components -> chứa các componet
-├───pages ⇾ chứa các page của website
-│ ├───account ⇾ đăng nhập/ quên mật khẩu
-│ ├───admin ⇾ role admin (role gốc, nếu thêm page sẽ tạo trong này. Các role khác có page này sẽ export từ đây ra)
-│ ├───admin-sales ⇾ role admin sales
-│ ├───confirm ⇾ trang xác nhận báo giá (click vào email )
-│ ├───delivery ⇾ role delivery
-│ ├───document ⇾ trang tài liệu sản phẩm (scan qr sẽ vào đây )
-│ ├───resetpassword ⇾ trang đặt lại mật khẩu -> từ email
-│ ├───sale ⇾ role sale
-│ └───shop-manager ⇾ role shop-mananger
-├───styles ⇾ file scss global
+├───apiBase ⇾ chứa các hàm gọi api
+│ ├───types ⇾ chứa type của các kết quả api trả ra
+│ └───exam ⇾ mẫu hàm gọi api (thay đổi link và type là dùng được)
+├───components -> chứa các componets (lưu ý: tất cả các component đều phải export default)
+├───context
+│ └───wrap ⇾ chứa các dữ liệu có thể gọi ra ở bất cứ đâu
+│ ├───userInformation ⇾ thông tin tài khoản đang đăng nhập
+│ ├───useAllRoles ⇾ tất cả các role trong hệ thống
+│ ├───useStaffRoles ⇾ các role nhân viên
+│ ├───showNoti ⇾ hiện ra các thông báo - VD: showNoti("success", "Thành công")
+│ └───pageSize ⇾ số row cho các bảng (sài cho đồng bộ)
+├───lib ⇾ chứa những thứ lung tung (fake data....)
+├───pages ⇾ chứa các page của hệ thống (không lưu components, lib... trong này)
+├───public ⇾ file scss global
+│ └───images ⇾ chứa các hình ảnh dùng trong hệ thống (logo, default image...)
 ├───types ⇾ định nghĩa kiểu dữ liệu typescript
-└───utilities ⇾ các hàm tiện ích
+└───utils ⇾ các hàm tiện ích
 
 appConfig.ts ⇾ file config dự án
 ```
 
-#### 2. Hướng dẫn thêm page
+#### Hướng dẫn thêm page
 
--   Nếu trang cần phân quyền:
+    - Tạo một thư mục với tên là router đến trang cần tạo trong thư mục **src/pages/** (VD: trang cần tạo là product -> tạo thư mục trong **src/pages/** và đặt tên nó là product). Sau đó tạo file index.tsx => thực hiện chỉnh sửa trong đây.
 
-    -   B1: Tạo một thư mục với tên là router đến trang cần tạo trong thư mục **src/pages/admin** (VD: trang cần tạo là admin/page1 -> tạo thư mục trong **src/pages/admin** và đặt tên nó là page1). Sau đó tạo file index.tsx => thực hiện chỉnh sửa trong đây.
-
-    -   B2: Nếu các role khác admin cần có trong này, lặp lại các thao tác tương tự như bước 1, thay **admin** thành các thư mục chức năng tương ứng và export page từ thư mục **admin**
-
-    **Phân quyền trong trang :**
-
-    Lấy role hiện tại của tài khoản
+    - Lấy thông tin của tài khoản hiện tại:
 
     ```tsx
-    import { useRoleContext } from '~src/contexts';
+    import { useWrap } from '~/context/wrap';
     // ...
-    const { role } = useRoleContext();
+    const { userInformation } = useWrap();
     ```
 
-    Phân quyền cho component
+    - Tạo thông báo:
 
     ```tsx
-    import { Role } from '~src/components/Role';
-
+    import { useWrap } from '~/context/wrap';
     //...
-
-    <Role roles={['admin']}>// component/JSX element</Role>;
+    const { showNoti } = useWrap();
+    //...
+    showNoti("success", "Ghi âm thành công");
+    //...
+    showNoti("danger", "Thất bại")
     ```
 
--   Nếu trang không cần phân quyền có thể tạo trực tiếp trong thư mục **src/pages**
-
-#### 3. Hướng dẫn thêm component
+#### Hướng dẫn thêm component
 
 -   B1: Tạo thư mục với tên là tên của component trong thư mục **src/components**
--   B2: Tạo file index.jsx (thực hiện code ở đây), mà file style **<name>.module.scss** (file style của component -> tìm kiếm từ khóa CSS module trên google )
+-   B2: Tạo file index.jsx (thực hiện code ở đây).
 
-#### 4. Hướng dẫn khởi chạy dự án
+#### Liên hệ
 
-**Yêu cầu hệ thống**
+-   Mọi vấn đề liên hệ: https://t.me/baochau9xx
 
--   Hệ điều hành: linux distro, macos, windows
--   Phần mềm: nodejs từ phiên bản 14 trở lên, npm hoặc yarn
+#### Keyword
 
-**Môi trường development **
-
--   Từ thư mục chứa file package.json chạy các lệnh sau
-
-    ```shell
-    yarn install #or npm install
-
-    yarn dev #or npm run dev
-    ```
-
-**Môi trường production **
-
--   Từ thư mục chứa file package.json chạy các lệnh sau
-
-    ```shell
-    yarn install #or npm install
-
-    yarn build #or npm run build
-
-    yarn start #or npm run start
-    ```
+-   lms, echinese, monamedia, elearning
