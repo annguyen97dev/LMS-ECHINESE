@@ -1,17 +1,18 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Input, Modal, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {CreditCard} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { CreditCard } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import RadioField from '~/components/FormControl/RadioField';
 import SelectField from '~/components/FormControl/SelectField';
-import {numberWithCommas} from '~/utils/functions';
-import {optionCommonPropTypes, radioCommonPropTypes} from '~/utils/proptypes';
+import { numberWithCommas } from '~/utils/functions';
+import { optionCommonPropTypes, radioCommonPropTypes } from '~/utils/proptypes';
+import TextAreaField from '~/components/FormControl/TextAreaField';
 
 CourseOfStudentPriceForm.propTypes = {
 	isPayTuition: PropTypes.bool,
@@ -19,35 +20,28 @@ CourseOfStudentPriceForm.propTypes = {
 	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	paymentMethodOptionList: radioCommonPropTypes,
 	optionBranchList: optionCommonPropTypes,
 	handleSubmit: PropTypes.func,
-	handleFetch: PropTypes.func,
+	handleFetch: PropTypes.func
 };
 CourseOfStudentPriceForm.defaultProps = {
 	isPayTuition: false,
 	isUpdate: false,
 	updateObj: {},
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	paymentMethodOptionList: [],
 	optionBranchList: [],
 	handleSubmit: null,
-	handleFetch: null,
+	handleFetch: null
 };
 
 function CourseOfStudentPriceForm(props) {
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const {
-		isPayTuition,
-		isUpdate,
-		isLoading,
-		updateObj,
-		paymentMethodOptionList,
-		handleSubmit,
-		optionBranchList,
-	} = props;
+	const { isPayTuition, isUpdate, isLoading, updateObj, paymentMethodOptionList, handleSubmit, optionBranchList } = props;
+	const { TextArea } = Input;
 
 	const schema = yup.object().shape({
 		FullNameUnicode: yup.string().required('Bạn không được để trống'),
@@ -55,26 +49,16 @@ function CourseOfStudentPriceForm(props) {
 		Paid: yup
 			.string()
 			.required('Bạn không được để trống')
-			.test(
-				'less-than-total',
-				'Tiền thanh toán không hợp lệ',
-				(value, context) => {
-					return (
-						parseInt(value.replace(/\D/g, '')) <=
-						parseInt(context.parent.MoneyInDebt.replace(/\D/g, ''))
-					);
-				}
-			),
+			.test('less-than-total', 'Tiền thanh toán không hợp lệ', (value, context) => {
+				return parseInt(value.replace(/\D/g, '')) <= parseInt(context.parent.MoneyInDebt.replace(/\D/g, ''));
+			}),
 		PaymentMethodsID: yup.number().required('Bạn không được để trống'),
 		PayBranchID: yup.number().nullable().required('Bạn không được để trống'),
 		PayDate: yup
 			.date()
 			.nullable()
-			.min(
-				moment().format('YYYY/MM/DD'),
-				'Ngày thanh toán tiếp theo không hợp lệ'
-			)
-			.required('Bạn không được để trống'),
+			.min(moment().format('YYYY/MM/DD'), 'Ngày thanh toán tiếp theo không hợp lệ')
+			.required('Bạn không được để trống')
 	});
 
 	const defaultValuesInit = {
@@ -83,22 +67,20 @@ function CourseOfStudentPriceForm(props) {
 		Paid: '',
 		PaymentMethodsID: 1,
 		PayBranchID: null,
-		PayDate: moment().format('YYYY/MM/DD'),
+		PayDate: moment().format('YYYY/MM/DD')
 	};
 
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
 		if (isUpdate && updateObj) {
 			form.reset({
 				...updateObj,
-				MoneyInDebt: !updateObj.MoneyInDebt
-					? ''
-					: numberWithCommas(updateObj.MoneyInDebt),
-				Paid: '',
+				MoneyInDebt: !updateObj.MoneyInDebt ? '' : numberWithCommas(updateObj.MoneyInDebt),
+				Paid: ''
 			});
 		}
 	}, [updateObj]);
@@ -109,7 +91,7 @@ function CourseOfStudentPriceForm(props) {
 			if (res) {
 				setIsModalVisible(false);
 				if (!isUpdate) {
-					form.reset({...defaultValuesInit});
+					form.reset({ ...defaultValuesInit });
 				}
 			}
 		});
@@ -145,10 +127,7 @@ function CourseOfStudentPriceForm(props) {
 				footer={null}
 			>
 				<div>
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleSubmit)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-12 col-md-6">
 								<InputTextField
@@ -195,12 +174,10 @@ function CourseOfStudentPriceForm(props) {
 								/>
 							</div>
 							<div className="col-12 col-md-6">
-								<DateField
-									form={form}
-									name="PayDate"
-									label="Ngày thu tiếp theo"
-									placeholder="Chọn ngày thu tiếp theo"
-								/>
+								<DateField form={form} name="PayDate" label="Ngày thu tiếp theo" placeholder="Chọn ngày thu tiếp theo" />
+							</div>
+							<div className="col-12">
+								<TextAreaField form={form} name="Note" label="Ghi chú" placeholder="Thêm ghi chú" rows={4} />
 							</div>
 							<div className="col-12 mt-3">
 								<button
@@ -209,9 +186,7 @@ function CourseOfStudentPriceForm(props) {
 									disabled={isLoading.type === 'ADD_DATA' && isLoading.status}
 								>
 									Lưu
-									{isLoading.type === 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type === 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

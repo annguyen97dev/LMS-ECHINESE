@@ -12,8 +12,10 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import ReserveCourseForm from '~/components/Global/Customer/Student/CourseOfStudent/ReserveCourseForm';
 import PowerTable from '~/components/PowerTable';
+import UpdatePriceForm from '~/components/Global/Customer/Student/CourseOfStudent/UpdatePriceForm';
 
 const CourseStudent = () => {
+	const { showNoti, userInformation, pageSize } = useWrap();
 	const onSearch = (data) => {
 		setCurrentPage(1);
 		setParams({
@@ -93,13 +95,12 @@ const CourseStudent = () => {
 						}}
 						currentPage={currentPage}
 					/>
+					{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}
 				</Fragment>
 			)
 		}
 	];
 	const [currentPage, setCurrentPage] = useState(1);
-
-	const { showNoti, pageSize } = useWrap();
 
 	const listParamsDefault = {
 		pageSize: pageSize,

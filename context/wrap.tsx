@@ -129,6 +129,7 @@ export const WrapProvider = ({ children }) => {
 	const getNewDataUser = async () => {
 		try {
 			let res = await userApi.getNew();
+
 			res.status == 200 && (setUserInfo(res.data.data), checkIsAdmin(res.data.data));
 		} catch (error) {
 			console.log('Lỗi lấy thông tin user: ', error);
