@@ -222,35 +222,49 @@ const RegCourse = React.memo((props: any) => {
 			</Spin>
 
 			<div className="row">
-				<div className="col-md-6 col-12">
-					<Form.Item label="Tổng giá tiền">
-						<Input
-							value={totalPrice ? Intl.NumberFormat('ja-JP').format(totalPrice) : 0}
-							className="style-input"
-							readOnly={true}
-						/>
-					</Form.Item>
-				</div>
-				<div className="col-md-6 col-12">
-					<Form.Item
-						name="PaymentMethodsID"
-						label="Hình thức thanh toán"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng điền đủ thông tin!'
-							}
-						]}
-					>
-						<Select className="style-input" allowClear={true}>
-							{PaymentMethod?.map((item, index) => (
-								<Option key={index} value={item.id}>
-									{item.Name}
-								</Option>
-							))}
-						</Select>
-					</Form.Item>
-				</div>
+				{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 ? (
+					<>
+						<div className="col-md-6 col-12">
+							<Form.Item label="Tổng giá tiền">
+								<Input
+									value={totalPrice ? Intl.NumberFormat('ja-JP').format(totalPrice) : 0}
+									className="style-input"
+									readOnly={true}
+								/>
+							</Form.Item>
+						</div>
+						<div className="col-md-6 col-12">
+							<Form.Item
+								name="PaymentMethodsID"
+								label="Hình thức thanh toán"
+								rules={[
+									{
+										required: true,
+										message: 'Vui lòng điền đủ thông tin!'
+									}
+								]}
+							>
+								<Select className="style-input" allowClear={true}>
+									{PaymentMethod?.map((item, index) => (
+										<Option key={index} value={item.id}>
+											{item.Name}
+										</Option>
+									))}
+								</Select>
+							</Form.Item>
+						</div>
+					</>
+				) : (
+					<div className="col-md-12 col-12">
+						<Form.Item label="Tổng giá tiền">
+							<Input
+								value={totalPrice ? Intl.NumberFormat('ja-JP').format(totalPrice) : 0}
+								className="style-input"
+								readOnly={true}
+							/>
+						</Form.Item>
+					</div>
+				)}
 			</div>
 
 			<div className="row">
@@ -302,33 +316,35 @@ const RegCourse = React.memo((props: any) => {
 				</div>
 			)}
 
-			<div className="row">
-				<div className="col-md-6 col-12">
-					<Form.Item
-						name="PayBranchID"
-						label="Trung tâm thanh toán"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng điền đủ thông tin!'
-							}
-						]}
-					>
-						<Select className="style-input" showSearch optionFilterProp="children" allowClear={true}>
-							{branch?.map((item, index) => (
-								<Option key={index} value={item.ID}>
-									{item.BranchName}
-								</Option>
-							))}
-						</Select>
-					</Form.Item>
+			{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 && (
+				<div className="row">
+					<div className="col-md-6 col-12">
+						<Form.Item
+							name="PayBranchID"
+							label="Trung tâm thanh toán"
+							rules={[
+								{
+									required: true,
+									message: 'Vui lòng điền đủ thông tin!'
+								}
+							]}
+						>
+							<Select className="style-input" showSearch optionFilterProp="children" allowClear={true}>
+								{branch?.map((item, index) => (
+									<Option key={index} value={item.ID}>
+										{item.BranchName}
+									</Option>
+								))}
+							</Select>
+						</Form.Item>
+					</div>
+					<div className="col-md-6 col-12">
+						<Form.Item name="PayDate" label="Ngày hẹn trả" rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}>
+							<DatePicker allowClear={true} className="style-input" onChange={(e) => setValue('PayDate', e)} />
+						</Form.Item>
+					</div>
 				</div>
-				<div className="col-md-6 col-12">
-					<Form.Item name="PayDate" label="Ngày hẹn trả" rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}>
-						<DatePicker allowClear={true} className="style-input" onChange={(e) => setValue('PayDate', e)} />
-					</Form.Item>
-				</div>
-			</div>
+			)}
 
 			<div className="row">
 				<div className="col-12">
