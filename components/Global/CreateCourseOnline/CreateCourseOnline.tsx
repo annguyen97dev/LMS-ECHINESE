@@ -453,6 +453,7 @@ const CreateCourseOnline = () => {
 					}
 					if (lessonList.status === 200 && studyDayList.status === 200) {
 						const finalTeacherList = optionListForForm.teacherList.filter((o) => o.value === TeacherID);
+						console.log(finalTeacherList);
 						setIsSave(true);
 						checkStudyTime(null);
 						setOptionListForADay({
@@ -875,7 +876,7 @@ const CreateCourseOnline = () => {
 								{dataModalCalendar.scheduleList.map((s, idx) => (
 									<ScheduleOnlineItem
 										key={idx}
-										isUpdate={true}
+										isUnavailable={true}
 										scheduleObj={s}
 										isLoading={isLoading}
 										handleChangeValueSchedule={changeValueSchedule}
@@ -892,12 +893,7 @@ const CreateCourseOnline = () => {
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
-								<ScheduleOnlineItem
-									key={idx}
-									scheduleObj={s}
-									handleChangeStatusSchedule={onToggleSchedule}
-									isUpdate={false}
-								/>
+								<ScheduleOnlineItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} />
 							))}
 						</ScheduleList>
 					</Schedule>

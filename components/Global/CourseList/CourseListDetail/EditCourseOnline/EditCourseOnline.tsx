@@ -703,7 +703,8 @@ const EditCourseOnline = (props) => {
 								{dataModalCalendar.scheduleList.map((s, idx) => (
 									<ScheduleOnlineItem
 										key={idx}
-										isUpdate={true}
+										isUnavailable={true}
+										isEditView={true}
 										scheduleObj={s}
 										isLoading={isLoading}
 										handleChangeValueSchedule={changeValueSchedule}
@@ -720,7 +721,7 @@ const EditCourseOnline = (props) => {
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
-								<ScheduleItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} isUpdate={false} />
+								<ScheduleItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} isEditView={true} />
 							))}
 						</ScheduleList>
 					</Schedule>
