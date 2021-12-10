@@ -2,27 +2,32 @@
 
 > Framework : next 10.0.0
 
-#### Installation
+#### Cài đặt
 
-Clone repo:
+Clone source code:
 
 ```sh
 git clone https://github.com/annguyen97dev/LMS-ECHINESE
 ```
 
-Install the dependencies:
+Cài đặt thư viện hỗ trợ:
 
 ```sh
 npm install
 ```
 
-#### Development Workflow
-
-Start a live-reload development server:
+Chạy dự án:
 
 ```sh
 npm run dev
 ```
+
+**Lưu ý**
+
+-   Không được chỉnh sửa code trên branch master
+-   Mỗi người tạo ra branch tên mình hoặc tên chức năng đang làm
+-   Mỗi ngày trước khi bắt đầu công việc thì pull từ branch dev về để lấy code mới nhất
+-   Sau khi làm xong tính năng thì push lại lên dev để mọi người cập nhật
 
 #### 1. Cấu trúc dự án
 
