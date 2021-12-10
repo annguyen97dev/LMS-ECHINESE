@@ -73,12 +73,15 @@ const ScheduleOnlineItem = (props) => {
 	const setSiblingsFieldToDefault = () => {
 		form.setValue('TeacherID', 0);
 	};
-
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
 		form.clearErrors();
 		if (isLoading.type === 'CHECK_SCHEDULE' && !isLoading.status && Array.isArray(optionTeacherList) && optionTeacherList.length > 0) {
-			form.setValue('TeacherID', optionTeacherList[0].value);
+			if (isUpdate) {
+				form.setValue('TeacherID', TeacherID);
+			} else {
+				form.setValue('TeacherID', optionTeacherList[0].value);
+			}
 			form.setValue('StudyTimeID', CaID || StudyTimeID);
 		}
 	}, [scheduleObj, optionTeacherList, isLoading]);
@@ -130,6 +133,11 @@ const ScheduleOnlineItem = (props) => {
 							isLoading={isLoading.type === 'CHECK_SCHEDULE' && isLoading.status}
 							placeholder="Chọn giáo viên"
 							optionList={optionTeacherList}
+							onChangeSelect={(value) => {
+								if (isUpdate) {
+									checkHandleChangeValueSchedule(ID, 'TeacherID', value);
+								}
+							}}
 						/>
 					</div>
 				</div>

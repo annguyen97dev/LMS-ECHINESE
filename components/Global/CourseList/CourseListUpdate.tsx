@@ -5,7 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { UserCheck } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import { numberWithCommas } from '~/utils/functions';
 import { optionCommonPropTypes } from '~/utils/proptypes';
 
 const CourseListUpdate = (props) => {
@@ -26,13 +28,16 @@ const CourseListUpdate = (props) => {
 	};
 
 	const schema = yup.object().shape({
-		AcademicUID: yup.number(),
-		TeacherLeaderUID: yup.number()
+		// AcademicUID: yup.number(),
+		TeacherLeaderUID: yup.number().min(1, 'Bạn không được để trống'),
+		SalaryOfLesson: yup.string().nullable().required('Bạn không được để trống')
 	});
 	const defaultValuesInit = {
-		AcademicUID: 0,
-		TeacherLeaderUID: 0
+		// AcademicUID: 0,
+		TeacherLeaderUID: 0,
+		SalaryOfLesson: ''
 	};
+
 	const form = useForm({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema)
@@ -41,19 +46,21 @@ const CourseListUpdate = (props) => {
 	useEffect(() => {
 		if (courseObj) {
 			form.reset({
-				...courseObj
+				...courseObj,
+				SalaryOfLesson: numberWithCommas(courseObj.SalaryOfLesson)
 			});
 		}
 	}, [courseObj]);
 
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
-		let { AcademicUID, TeacherLeaderUID } = courseObj;
-		const { academicList, teacherLeadList } = optionList;
-		if (academicList.length && teacherLeadList.length) {
-			if (!academicList.some((o) => o.value === AcademicUID)) {
-				form.setValue('AcademicUID', 0);
-			}
+		let { TeacherLeaderUID } = courseObj;
+		const { teacherLeadList } = optionList;
+		// if (academicList.length && teacherLeadList.length) {
+		if (teacherLeadList.length) {
+			// if (!academicList.some((o) => o.value === AcademicUID)) {
+			// 	form.setValue('AcademicUID', 0);
+			// }
 			if (!teacherLeadList.some((o) => o.value === TeacherLeaderUID)) {
 				form.setValue('TeacherLeaderUID', 0);
 			}
@@ -101,9 +108,18 @@ const CourseListUpdate = (props) => {
 						<SelectField
 							form={form}
 							name="TeacherLeaderUID"
+							isRequired
 							label="Giáo viên quản lý"
 							optionList={optionList.teacherLeadList}
 							isLoading={isLoading.type == 'FETCH_DATA' && isLoading.status}
+						/>
+						<InputTextField
+							form={form}
+							name="SalaryOfLesson"
+							isRequired
+							label="Lương/buổi"
+							placeholder="Nhập lương/buổi học"
+							handleFormatCurrency={numberWithCommas}
 						/>
 						<button
 							type="submit"

@@ -170,8 +170,11 @@ const CourseList = () => {
 		});
 		let res;
 		try {
-			const { BranchID, ...newObj } = obj;
-			res = await courseApi.update(newObj);
+			const { BranchID, SalaryOfLesson, ...newObj } = obj;
+			res = await courseApi.update({
+				...newObj,
+				SalaryOfLesson: +SalaryOfLesson.replace(/\D/g, '')
+			});
 			if (res.status === 200) {
 				fetchScheduleList();
 				showNoti('Success', 'Cập nhật dữ liệu thành công');
