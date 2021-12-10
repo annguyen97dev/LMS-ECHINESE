@@ -1,10 +1,28 @@
-## Website quản trị - ESTI
+## ECHINESE - LMS V2
 
-> Framework : next 10.0.5
->
-> Authentication library: next-auth 3.1.0
->
-> UI library: @chakra-ui/react 1.3.4
+> Framework : next 10.0.0
+
+#### Installation
+
+Clone repo:
+
+```sh
+git clone https://github.com/annguyen97dev/LMS-ECHINESE
+```
+
+Install the dependencies:
+
+```sh
+npm install
+```
+
+#### Development Workflow
+
+Start a live-reload development server:
+
+```sh
+npm run dev
+```
 
 #### 1. Cấu trúc dự án
 
