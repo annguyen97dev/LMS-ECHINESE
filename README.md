@@ -53,29 +53,29 @@ npm run dev
 appConfig.ts ⇾ file config dự án
 ```
 
-#### Hướng dẫn thêm page
+#### Hướng dẫn thêm page:
 
     - Tạo một thư mục với tên là router đến trang cần tạo trong thư mục **src/pages/** (VD: trang cần tạo là product -> tạo thư mục trong **src/pages/** và đặt tên nó là product). Sau đó tạo file index.tsx => thực hiện chỉnh sửa trong đây.
 
-    - Lấy thông tin của tài khoản hiện tại:
+#### Lấy thông tin của tài khoản hiện tại:
 
-    ```tsx
-    import { useWrap } from '~/context/wrap';
-    // ...
-    const { userInformation } = useWrap();
-    ```
+```tsx
+import { useWrap } from '~/context/wrap';
+// ...
+const { userInformation } = useWrap();
+```
 
-    - Tạo thông báo:
+#### Tạo thông báo:
 
-    ```tsx
-    import { useWrap } from '~/context/wrap';
-    //...
-    const { showNoti } = useWrap();
-    //...
-    showNoti("success", "Ghi âm thành công");
-    //...
-    showNoti("danger", "Thất bại")
-    ```
+```tsx
+import { useWrap } from '~/context/wrap';
+//...
+const { showNoti } = useWrap();
+//...
+showNoti('success', 'Ghi âm thành công');
+//...
+showNoti('danger', 'Thất bại');
+```
 
 #### Hướng dẫn thêm component
 
