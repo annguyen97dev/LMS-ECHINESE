@@ -38,11 +38,11 @@ npm run dev
 ├───components -> chứa các componets (lưu ý: tất cả các component đều phải export default)
 ├───context
 │ └───wrap ⇾ chứa các dữ liệu có thể gọi ra ở bất cứ đâu
-│ ├───userInformation ⇾ thông tin tài khoản đang đăng nhập
-│ ├───useAllRoles ⇾ tất cả các role trong hệ thống
-│ ├───useStaffRoles ⇾ các role nhân viên
-│ ├───showNoti ⇾ hiện ra các thông báo - VD: showNoti("success", "Thành công")
-│ └───pageSize ⇾ số row cho các bảng (sài cho đồng bộ)
+│ 	├───userInformation ⇾ thông tin tài khoản đang đăng nhập
+│ 	├───useAllRoles ⇾ tất cả các role trong hệ thống
+│ 	├───useStaffRoles ⇾ các role nhân viên
+│ 	├───showNoti ⇾ hiện ra các thông báo - VD: showNoti("success", "Thành công")
+│ 	└───pageSize ⇾ số row cho các bảng (sài cho đồng bộ)
 ├───lib ⇾ chứa những thứ lung tung (fake data....)
 ├───pages ⇾ chứa các page của hệ thống (không lưu components, lib... trong này)
 ├───public ⇾ file scss global
