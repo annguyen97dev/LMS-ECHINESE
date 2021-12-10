@@ -6,6 +6,7 @@ import { Checkbox, DatePicker } from 'antd';
 import { Check } from 'react-feather';
 import { teacherOffScheduleApi } from '~/apiBase/teacher/teacher-off-schedule';
 import { day } from 'date-arithmetic';
+import { useWrap } from '~/context/wrap';
 
 const DayOffSchedule = () => {
 	const [dataSchedule, setDataSchedule] = useState<ITeacherOff[]>();
@@ -16,8 +17,11 @@ const DayOffSchedule = () => {
 	});
 	const [params, setParams] = useState({ Date: new Date().toJSON().slice(0, 10).replace(/-/g, '/'), Type: 0 });
 
+	const { showNoti, pageSize } = useWrap();
+
 	const getSchedule = async () => {
 		setIsLoading({ status: 'GET_ALL', loading: true });
+		console.log('ahsdh');
 		try {
 			let res = await teacherOffScheduleApi.getAll(params);
 			if (res.status == 200) {
@@ -27,6 +31,7 @@ const DayOffSchedule = () => {
 				setDataSchedule([]);
 			}
 		} catch (error) {
+			console.log('ahsdh');
 		} finally {
 			setIsLoading({ status: 'GET_ALL', loading: false });
 		}
@@ -38,8 +43,10 @@ const DayOffSchedule = () => {
 			let res = await teacherOffScheduleApi.update({ DateOff: Day, StudyTimeID: StudyTimeID });
 			if (res.status == 200) {
 				setParams({ ...params });
+				showNoti('success', 'Thành công');
 			}
 		} catch (error) {
+			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({ status: 'UPDATE_SCHEDULE', loading: false });
 		}

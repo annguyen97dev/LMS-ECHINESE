@@ -1,10 +1,10 @@
-import {instance} from '../instance';
+import { instance } from '../instance';
 
-const url = 'api/ScheduleByBranch/';
+const url = 'api/CourseScheduleOfBranch';
 export const checkBranchScheduleStudy = {
 	getAll(params) {
 		return instance.get<IApiResultData<ICheckBranchScheduleStudyData[]>>(url, {
-			params,
+			params
 		});
-	},
+	}
 };

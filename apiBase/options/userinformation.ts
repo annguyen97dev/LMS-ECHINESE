@@ -19,9 +19,9 @@ class UserInformation {
 			}
 		});
 	getRole = (roleType) =>
-		instance.get<IApiResultData<IUserinformation[]>>('/api/GetRole', {
+		instance.get<IApiResultData<IRole[]>>('/api/GetRole', {
 			params: {
-				style: roleType
+				style: roleType // 0 lấy tất cả, 1 lấy nhân viên
 			}
 		});
 	getName = (params) => instance.get<IApiResultData<IUserinformation[]>>('/api/Staff', { params: params });

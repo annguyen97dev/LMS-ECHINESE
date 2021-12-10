@@ -9,6 +9,7 @@ import CloseZoomRoom from '~/components/Global/ManageZoom/ZoomRoom/CloseZoomRoom
 import ZoomRecordModal from '~/components/Global/ManageZoom/ZoomRoom/ZoomRecordModal';
 import { useWrap } from '~/context/wrap';
 import CourseDetailUploadFile from './CourseDetailUploadFile';
+import _ from 'appConfig';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
 
@@ -182,6 +183,16 @@ function CDCalendar(props) {
 						>
 							{btnName}
 						</Button>
+						<Button
+							size="middle"
+							className="btn-primary w-100"
+							onClick={() => {
+								navigator.clipboard.writeText(`${_.API_URL}/course/zoom-view/${data.scheduleID}`);
+							}}
+							style={{ marginTop: 4 }}
+						>
+							Sao chép link zoom
+						</Button>
 						<CloseZoomRoom
 							isIcon={false}
 							handleClose={() => {
@@ -201,7 +212,23 @@ function CDCalendar(props) {
 		}
 	};
 
+	const getStrDate = (date) => {
+		const nDate = new Date(date);
+		return nDate.getDate() + '-' + (nDate.getMonth() + 1) + '-' + nDate.getFullYear();
+	};
+
+	const compare = (dateTimeA, dateTimeB) => {
+		var momentA = moment(dateTimeA, 'DD/MM/YYYY');
+		var momentB = moment(dateTimeB, 'DD/MM/YYYY');
+		if (momentA > momentB) return 1;
+		else if (momentA < momentB) return -1;
+		else return 0;
+	};
+
 	const styleEvent = ({ event }) => {
+		const date = new Date();
+		let checkDate = compare(getStrDate(event.start), getStrDate(date)); // -1: qua roi, 0: hom nay, 1: chua qua
+
 		const {
 			ID,
 			CourseID,
@@ -298,11 +325,26 @@ function CDCalendar(props) {
 				</ul>
 			</div>
 		);
+
 		return (
 			<div
 				onClick={(e) => {
 					e.stopPropagation();
 					e.nativeEvent.stopImmediatePropagation();
+				}}
+				// 0 - ,1-Bắt đầu , 2-Vào lớp học, 3-Kết thúc
+				style={{
+					backgroundColor:
+						checkDate == 0
+							? btnID == undefined || btnID == null || btnID == ''
+								? '#fac10a'
+								: btnID == 3
+								? '#bdbdbd'
+								: '#fac10a'
+							: checkDate == -1
+							? '#bdbdbd'
+							: '#3174ad',
+					borderRadius: 6
 				}}
 			>
 				<Popover

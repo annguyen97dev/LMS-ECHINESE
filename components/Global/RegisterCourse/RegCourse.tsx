@@ -12,6 +12,7 @@ import { studentExamServicesApi } from '~/apiBase/customer/student/student-exam-
 const RegCourse = React.memo((props: any) => {
 	const { TextArea } = Input;
 	const { Option } = Select;
+	const { userInformation } = useWrap();
 	const [branch, setBranch] = useState<IBranch[]>();
 	const [course, setCourse] = useState<ICourse[]>();
 	const [discount, setDiscount] = useState<IDiscount[]>();
@@ -221,35 +222,49 @@ const RegCourse = React.memo((props: any) => {
 			</Spin>
 
 			<div className="row">
-				<div className="col-md-6 col-12">
-					<Form.Item label="Tổng giá tiền">
-						<Input
-							value={totalPrice ? Intl.NumberFormat('ja-JP').format(totalPrice) : 0}
-							className="style-input"
-							readOnly={true}
-						/>
-					</Form.Item>
-				</div>
-				<div className="col-md-6 col-12">
-					<Form.Item
-						name="PaymentMethodsID"
-						label="Hình thức thanh toán"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng điền đủ thông tin!'
-							}
-						]}
-					>
-						<Select className="style-input" allowClear={true}>
-							{PaymentMethod?.map((item, index) => (
-								<Option key={index} value={item.id}>
-									{item.Name}
-								</Option>
-							))}
-						</Select>
-					</Form.Item>
-				</div>
+				{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 ? (
+					<>
+						<div className="col-md-6 col-12">
+							<Form.Item label="Tổng giá tiền">
+								<Input
+									value={totalPrice ? Intl.NumberFormat('ja-JP').format(totalPrice) : 0}
+									className="style-input"
+									readOnly={true}
+								/>
+							</Form.Item>
+						</div>
+						<div className="col-md-6 col-12">
+							<Form.Item
+								name="PaymentMethodsID"
+								label="Hình thức thanh toán"
+								rules={[
+									{
+										required: true,
+										message: 'Vui lòng điền đủ thông tin!'
+									}
+								]}
+							>
+								<Select className="style-input" allowClear={true}>
+									{PaymentMethod?.map((item, index) => (
+										<Option key={index} value={item.id}>
+											{item.Name}
+										</Option>
+									))}
+								</Select>
+							</Form.Item>
+						</div>
+					</>
+				) : (
+					<div className="col-md-12 col-12">
+						<Form.Item label="Tổng giá tiền">
+							<Input
+								value={totalPrice ? Intl.NumberFormat('ja-JP').format(totalPrice) : 0}
+								className="style-input"
+								readOnly={true}
+							/>
+						</Form.Item>
+					</div>
+				)}
 			</div>
 
 			<div className="row">
@@ -277,55 +292,59 @@ const RegCourse = React.memo((props: any) => {
 				</div>
 			</div>
 
-			<div className="row">
-				<div className="col-md-6 col-12">
-					<Form.Item name="Paid" label="Thanh toán" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
-						<InputNumber
-							placeholder="Số tiền thanh toán"
-							className="ant-input style-input w-100"
-							formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-							parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-							onChange={(value) => {
-								setValue('Paid', value);
-								handleMoneyLeft(value);
-							}}
-						/>
-					</Form.Item>
+			{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 && (
+				<div className="row">
+					<div className="col-md-6 col-12">
+						<Form.Item name="Paid" label="Thanh toán" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
+							<InputNumber
+								placeholder="Số tiền thanh toán"
+								className="ant-input style-input w-100"
+								formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+								parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+								onChange={(value) => {
+									setValue('Paid', value);
+									handleMoneyLeft(value);
+								}}
+							/>
+						</Form.Item>
+					</div>
+					<div className="col-md-6 col-12">
+						<Form.Item label="Số tiền còn lại">
+							<Input value={Intl.NumberFormat('ja-JP').format(debt)} className="style-input" readOnly={true} />
+						</Form.Item>
+					</div>
 				</div>
-				<div className="col-md-6 col-12">
-					<Form.Item label="Số tiền còn lại">
-						<Input value={Intl.NumberFormat('ja-JP').format(debt)} className="style-input" readOnly={true} />
-					</Form.Item>
-				</div>
-			</div>
+			)}
 
-			<div className="row">
-				<div className="col-md-6 col-12">
-					<Form.Item
-						name="PayBranchID"
-						label="Trung tâm thanh toán"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng điền đủ thông tin!'
-							}
-						]}
-					>
-						<Select className="style-input" showSearch optionFilterProp="children" allowClear={true}>
-							{branch?.map((item, index) => (
-								<Option key={index} value={item.ID}>
-									{item.BranchName}
-								</Option>
-							))}
-						</Select>
-					</Form.Item>
+			{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 && (
+				<div className="row">
+					<div className="col-md-6 col-12">
+						<Form.Item
+							name="PayBranchID"
+							label="Trung tâm thanh toán"
+							rules={[
+								{
+									required: true,
+									message: 'Vui lòng điền đủ thông tin!'
+								}
+							]}
+						>
+							<Select className="style-input" showSearch optionFilterProp="children" allowClear={true}>
+								{branch?.map((item, index) => (
+									<Option key={index} value={item.ID}>
+										{item.BranchName}
+									</Option>
+								))}
+							</Select>
+						</Form.Item>
+					</div>
+					<div className="col-md-6 col-12">
+						<Form.Item name="PayDate" label="Ngày hẹn trả" rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}>
+							<DatePicker allowClear={true} className="style-input" onChange={(e) => setValue('PayDate', e)} />
+						</Form.Item>
+					</div>
 				</div>
-				<div className="col-md-6 col-12">
-					<Form.Item name="PayDate" label="Ngày hẹn trả" rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}>
-						<DatePicker allowClear={true} className="style-input" onChange={(e) => setValue('PayDate', e)} />
-					</Form.Item>
-				</div>
-			</div>
+			)}
 
 			<div className="row">
 				<div className="col-12">

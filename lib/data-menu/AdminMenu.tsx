@@ -875,6 +875,13 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/option/learning-needs',
+						Route: '/option/learning-needs',
+						Text: 'Nhu cầu học',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/option/customer-supplier',
 						Route: '/option/customer-supplier',
 						Text: 'Nguồn khách hàng',

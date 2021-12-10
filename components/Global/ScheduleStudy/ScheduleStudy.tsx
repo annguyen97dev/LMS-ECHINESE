@@ -341,6 +341,14 @@ const ScheduleStudy = () => {
 		}
 		return rs;
 	};
+
+	// ============================================================================
+	// ============================================================================
+	// ============================================================================
+	// ============================================================================
+	// ============================================================================
+	// ============================================================================
+
 	//Branch
 	const onCheckScheduleOfBranch = async (value: { BranchID: number; StartTime: string; EndTime: string }) => {
 		setIsLoading({
@@ -351,9 +359,9 @@ const ScheduleStudy = () => {
 		try {
 			const { BranchID, StartTime, EndTime } = value;
 			const fmObj = {
-				BranchID,
-				StartTime: moment(StartTime).format('YYYY/MM/DD'),
-				EndTime: moment(EndTime).format('YYYY/MM/DD')
+				branchId: BranchID,
+				from: moment(StartTime).format('YYYY/MM/DD'),
+				to: moment(EndTime).format('YYYY/MM/DD')
 			};
 			res = await checkBranchScheduleStudy.getAll(fmObj);
 			if (res.status === 200) {
@@ -433,6 +441,7 @@ const ScheduleStudy = () => {
 		}
 		return rs;
 	};
+
 	const fmList = (type, arr) => {
 		switch (type) {
 			case 'CheckBranch':

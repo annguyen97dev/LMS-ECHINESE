@@ -13,7 +13,7 @@ const NotificationForm = React.memo((props: any) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [form] = Form.useForm();
 
-	const { showNoti } = useWrap();
+	const { useAllRoles, useStaffRoles } = useWrap();
 
 	const [sendMail, setSendMail] = useState(false);
 
@@ -54,6 +54,8 @@ const NotificationForm = React.memo((props: any) => {
 			}
 		}
 	}, [isModalVisible]);
+
+	console.log('useAllRoles: ', useAllRoles);
 
 	return (
 		<>
@@ -129,7 +131,6 @@ const NotificationForm = React.memo((props: any) => {
 									<Select
 										mode="multiple"
 										style={{ width: '100%' }}
-										// placeholder="select one country"
 										optionLabelProp="label"
 										className="style-input multiple-select"
 										onChange={(value) => setValue('RoleID', value.toString())}
@@ -138,11 +139,12 @@ const NotificationForm = React.memo((props: any) => {
 										<Option value={0} label="Tất cả">
 											<div className="demo-option-label-item">Tất cả</div>
 										</Option>
-										{Roles.map((item) => (
-											<Option key={item.id} value={item.id} label={item.RoleName}>
-												<div className="demo-option-label-item">{item.RoleName}</div>
-											</Option>
-										))}
+										{useAllRoles !== null &&
+											useAllRoles.map((item) => (
+												<Option key={item.ID} value={item.ID} label={item.name}>
+													<div className="demo-option-label-item">{item.name}</div>
+												</Option>
+											))}
 									</Select>
 								</Form.Item>
 							</div>
