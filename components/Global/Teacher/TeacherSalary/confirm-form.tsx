@@ -114,14 +114,13 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						) : (
 							<>
 								<div className="col-12">
-									<Form.Item label="Lương tạm ứng" name="AdvanceSalary">
+									<Form.Item
+										label="Lương tạm ứng"
+										name="AdvanceSalary"
+									>
 										<Input
 											onChange={(event) => {
-												console.log(parsePriceStrToNumber(event.target.value));
 												setDataForm({ ...dataForm, AdvanceSalary: parsePriceStrToNumber(event.target.value) });
-												// isNaN(Number(event.target.value))
-												// 	? setErrorMess({ ...errorMess, AdvanceSalary: 'Hãy nhập số!' })
-												// 	: setErrorMess({ ...errorMess, AdvanceSalary: '' });
 											}}
 											name="AdvanceSalary"
 											placeholder="Thêm lương tạm ứng"
@@ -137,9 +136,6 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 										<Input
 											onChange={(event) => {
 												setDataForm({ ...dataForm, Bonus: parsePriceStrToNumber(event.target.value) });
-												// isNaN(Number(event.target.value))
-												// 	? setErrorMess({ ...errorMess, Bonus: 'Hãy nhập số!' })
-												// 	: setErrorMess({ ...errorMess, Bonus: '' });
 											}}
 											name="Bonus"
 											placeholder="Thêm tiền thưởng"

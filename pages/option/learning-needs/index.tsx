@@ -37,19 +37,17 @@ const LearningNeeds = () => {
 		}
 	};
 
-	const handleDelete = async (record) => {
-		setIsLoading({
-			type: 'DELETE',
-			status: true
-		});
+	const handleDeleteRow = async (record) => {
+		setIsLoading({ type: 'DELETE', status: true });
 		try {
 			let res = await learningNeeds.update({ ID: record.ID, Name: record.Name, Enable: false });
+			if (res.status == 200) {
+				console.log('delete');
+				showNoti('success', 'Xóa thành công!');
+			}
 		} catch (error) {
 		} finally {
-			setIsLoading({
-				type: 'DELETE',
-				status: true
-			});
+			setIsLoading({ type: 'DELETE', status: false });
 		}
 	};
 
@@ -86,7 +84,7 @@ const LearningNeeds = () => {
 				return (
 					<>
 						<LearningNeedsForm setTodoApi={() => setTodoApi({ ...todoApi })} type="edit" record={record} />
-						<DeleteTableRow title="Xóa" text="nhu cầu học này?" handleDelete={(record) => handleDelete(record)} />
+						<LearningNeedsForm setTodoApi={() => setTodoApi({ ...todoApi })} type="deleterow" record={record} />
 					</>
 				);
 			}

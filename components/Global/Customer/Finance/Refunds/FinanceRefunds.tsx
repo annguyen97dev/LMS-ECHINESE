@@ -237,20 +237,24 @@ const FinanceRefund = () => {
 		{
 			title: 'Học viên',
 			dataIndex: 'FullNameUnicode',
+			width: 200,
 			...FilterColumn('FullNameUnicode', onSearch, onResetSearch, 'text'),
 			className: activeColumnSearch === 'FullNameUnicode' ? 'active-column-search' : '',
 			render: (name) => <p className="font-weight-black">{name}</p>
 		},
 		{
+			width: 150,
 			title: 'Trung tâm',
 			dataIndex: 'BranchName'
 		},
 		{
+			width: 200,
 			title: 'Số điện thoại',
 			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Số tiền',
+			width: 200,
 			dataIndex: 'Price',
 			render: (Price) => {
 				return <p className="font-weight-primary">{numberWithCommas(Price)}</p>;
@@ -259,6 +263,7 @@ const FinanceRefund = () => {
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusName',
+			width: 200,
 			align: 'center',
 			render: (fnStatus) => {
 				switch (fnStatus) {
@@ -276,6 +281,7 @@ const FinanceRefund = () => {
 		{
 			title: 'Xóa khỏi lớp',
 			dataIndex: 'isExpulsion',
+			width: 240,
 			align: 'center',
 			render: (isExpulsion) => {
 				return <p>{isExpulsion ? <Check color="#0da779" /> : ''}</p>;
@@ -283,6 +289,7 @@ const FinanceRefund = () => {
 		},
 		{
 			title: '',
+			width: 200,
 			render: (record: IRefunds, _, idx: number) => (
 				<RefundForm
 					isLoading={isLoading}
