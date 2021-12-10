@@ -13,7 +13,9 @@ class CourseOfStudentApi {
 	add = (data: ICourseOfStudent) => instance.post(url, data);
 
 	update = (data: ICourseOfStudent) => instance.put(url, data, {});
-	updatePrice = (data) => instance.put('/api/UpdatePrice', data, {});
+	updatePrice = (data) => {
+		return instance.put('/api/UpdatePrice', data, {});
+	};
 }
 
 export const courseOfStudentApi = new CourseOfStudentApi();
