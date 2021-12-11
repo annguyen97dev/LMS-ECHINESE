@@ -393,25 +393,31 @@
 		}
 	}
 
-	.test-title-info {
-		.name-type-test {
-			font-size: 18px;
-			margin-bottom: 5px;
+	.test-info {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		.test-title-info {
+			margin-right: 10px;
+			.name-type-test {
+				font-size: 18px;
+				margin-bottom: 5px;
 
-			@include max-media(600px) {
-				font-size: 16px;
+				@include max-media(600px) {
+					font-size: 16px;
+				}
 			}
-		}
-		.info-user {
-			font-size: 12px;
-			display: flex;
-			align-items: center;
-			color: $primary-color;
-			margin-bottom: 0;
+			.info-user {
+				font-size: 12px;
+				display: flex;
+				align-items: center;
+				color: $primary-color;
+				margin-bottom: 0;
 
-			span:last-child {
-				font-weight: 500;
-				// margin-left: 7px;
+				span:last-child {
+					font-weight: 500;
+					// margin-left: 7px;
+				}
 			}
 		}
 	}

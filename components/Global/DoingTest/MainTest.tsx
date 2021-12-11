@@ -613,6 +613,8 @@ const MainTest = (props) => {
 		}
 	}, [activeID]);
 
+	console.log(addMinutes);
+
 	return (
 		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
 			{/** Modal báo hết giờ làm bài */}
@@ -640,11 +642,20 @@ const MainTest = (props) => {
 			<Card
 				className="test-card"
 				title={
-					<div className="test-title-info">
-						<h6 className="name-type-test">{infoExam?.Name}</h6>
-						<p className="info-user">
-							<span>{infoExam?.ProgramName}</span>
-						</p>
+					<div className="test-info">
+						<div className="test-title-info">
+							<h6 className="name-type-test">
+								{infoExam?.Name}
+								<i className="fas fa-volume-up" style={{ marginLeft: 10 }}></i>
+							</h6>
+							<p className="info-user">
+								<span>{infoExam?.ProgramName}</span>
+							</p>
+						</div>
+
+						{/* <div className="wrap-audio">
+							<i className="fas fa-volume-up"></i>
+						</div> */}
 					</div>
 				}
 				extra={

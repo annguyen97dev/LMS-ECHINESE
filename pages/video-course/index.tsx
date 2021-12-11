@@ -276,7 +276,6 @@ const VideoCourseStore = () => {
 	// UPDATE COURSE
 	const handleActive = async (param) => {
 		setActiveLoading(true);
-
 		try {
 			const res = await VideoCourseListApi.updateActiveCode(param);
 			res.status == 200 && showNoti('success', 'Thành công');

@@ -19,4 +19,5 @@ type ICourseDetailSchedule = {
 	isValid?: boolean;
 	ProgramID: number;
 	LinkDocument?: string;
+	TeacherAttendanceID: any;
 };

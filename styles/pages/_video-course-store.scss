@@ -510,3 +510,14 @@
 		flex: 1;
 	}
 }
+
+.btn-delete-audio {
+	color: red;
+	height: 100%;
+	margin-top: -15px;
+	margin-left: 15px;
+}
+
+.btn-delete-audio:hover {
+	color: rgb(136, 7, 7);
+}
