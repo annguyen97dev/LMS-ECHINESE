@@ -16,7 +16,7 @@ export const DetailsModal = (props) => {
 	const router = useRouter();
 	const { curriculumDetailID, courseID, dataExamTopic, dataCurriculumDetail, dataRow, isFixed } = props;
 
-	const { showNoti, isAdmin } = useWrap();
+	const { showNoti, isAdmin, userInformation } = useWrap();
 	const { TextArea } = Input;
 
 	const [visible, setVisible] = useState(false);
@@ -347,7 +347,7 @@ export const DetailsModal = (props) => {
 								{isAdmin && !enableEdit && (
 									<div className="group-button">
 										<div className="group-button_btn-add">
-											{isFixed && (
+											{isFixed && userInformation && userInformation.RoleID !== 2 && (
 												<AddCurriculumForm
 													callBack={(e) => {
 														setVisible(e);
