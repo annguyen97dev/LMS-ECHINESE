@@ -21,6 +21,7 @@ type ICourse = IBaseApi<{
 	TotalStudents: number;
 	TotalRow: number;
 	DonePercent: number;
+	SalaryOfLesson: number;
 }>;
 
 type ICourseDetail = IBaseApi<{

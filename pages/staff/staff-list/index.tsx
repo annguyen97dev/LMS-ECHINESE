@@ -2,6 +2,7 @@ import { RetweetOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
 import {
 	areaApi,
 	branchApi,
@@ -25,6 +26,7 @@ import StaffForm from '~/components/Global/StaffList/StaffForm';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
+import Link from 'next/link';
 
 let pageIndex = 1;
 
@@ -184,7 +186,7 @@ const StaffList = () => {
 	// ------ BASE USESTATE TABLE -------
 
 	const [dataSource, setDataSource] = useState<IStaff[]>([]);
-	const { showNoti, pageSize, userInformation } = useWrap();
+	const { showNoti, pageSize, userInformation, isAdmin } = useWrap();
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: pageIndex,
@@ -676,11 +678,25 @@ const StaffList = () => {
 			title: '',
 			dataIndex: '',
 			align: 'center',
-			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 100,
+			width: isAdmin ? 130 : 0,
 			render: (text, data, index) => (
 				<>
-					{userInformation !== null && userInformation.RoleID !== 5 && (
+					{isAdmin && (
 						<div onClick={(e) => e.stopPropagation()}>
+							{data.RoleID === 5 && (
+								<Link
+									href={{
+										pathname: '/staff/teacher-list/teacher-detail/[slug]',
+										query: { slug: data.UserInformationID }
+									}}
+								>
+									<Tooltip title="Xem quản lý">
+										<a className="btn btn-icon">
+											<Eye />
+										</a>
+									</Tooltip>
+								</Link>
+							)}
 							<StaffForm
 								getIndex={() => setIndexRow(index)}
 								index={index}
