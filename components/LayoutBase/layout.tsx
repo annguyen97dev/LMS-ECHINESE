@@ -323,7 +323,7 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 														<a>{returnText(index)}</a>
 													</Link>
 												) : (
-													<span>{returt(index)}</span>
+													<span>{returnText(index)}</span>
 												)}
 											</Breadcrumb.Item>
 										)
