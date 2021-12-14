@@ -882,6 +882,13 @@ export const StaffManagerChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/option/payment-method',
+						Route: '/option/payment-method',
+						Text: 'Phương thức thanh toán',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/option/customer-supplier',
 						Route: '/option/customer-supplier',
 						Text: 'Nguồn khách hàng',

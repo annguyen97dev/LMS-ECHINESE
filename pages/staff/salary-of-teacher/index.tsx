@@ -100,7 +100,7 @@ const SalaryReview = () => {
 			)
 		},
 		{
-			title: 'Lương tạm ứng',
+			title: 'Trừ tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: ITeacherSalary) => <p>{price}</p>

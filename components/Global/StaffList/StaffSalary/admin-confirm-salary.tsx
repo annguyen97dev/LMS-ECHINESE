@@ -17,6 +17,7 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 		Bonus: '',
 		BtnDisable: true
 	});
+	const { TextArea } = Input;
 
 	const [dataForm, setDataForm] = useState({
 		ID: record.ID,
@@ -113,13 +114,13 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 						) : (
 							<>
 								<div className="col-12">
-									<Form.Item label="Lương tạm ứng" name="AdvanceSalary">
+									<Form.Item label="Trừ tạm ứng" name="AdvanceSalary">
 										<Input
 											onChange={(event) => {
 												setDataForm({ ...dataForm, AdvanceSalary: parsePriceStrToNumber(event.target.value) });
 											}}
 											name="AdvanceSalary"
-											placeholder="Thêm lương tạm ứng"
+											placeholder="Trừ tạm ứng"
 											className="style-input"
 											value={numberWithCommas(dataForm.AdvanceSalary)}
 											defaultValue={numberWithCommas(dataForm.AdvanceSalary)}
@@ -157,14 +158,14 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 									</Form.Item>
 								</div>
 								<div className="col-12">
-									<Form.Item label="Ghi Chú Lương Thưởng" name="NoteBonus">
-										<Input
+									<Form.Item label="Ghi chú" name="NoteBonus">
+										<TextArea
+											rows={4}
 											onChange={(event) => {
 												setDataForm({ ...dataForm, NoteBonus: event.target.value });
 											}}
 											name="NoteBonus"
 											placeholder="Thêm ghi chú"
-											className="style-input"
 											defaultValue={dataForm.NoteBonus}
 										/>
 									</Form.Item>
