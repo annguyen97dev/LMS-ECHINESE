@@ -158,7 +158,7 @@ const CourseListDetail = () => {
 					tab={
 						<>
 							<Bell />
-							<span title="Thông báo"> Thông báo</span>
+							<span title="Thông báo"> Thông báo qua email</span>
 						</>
 					}
 					key="8"
