@@ -114,6 +114,7 @@ const CourseList = () => {
 		});
 		try {
 			let res = await courseApi.getAll(filters);
+            console.log("course", res.data.data)
 			if (res.status === 200) {
 				if (res.data.totalRow && res.data.data.length) {
 					setCourseList(res.data.data);
