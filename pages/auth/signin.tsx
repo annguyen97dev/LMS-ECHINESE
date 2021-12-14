@@ -3,12 +3,12 @@ import { providers, signIn, csrfToken, getProviders } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import LoginForm from '~/components/LoginForm';
 import { useWrap } from '~/context/wrap';
+import AuthLayout from '~/components/AuthLayout';
 
-export default function SignIn({ providers, csrfToken }) {
+function SignIn({ providers, csrfToken }) {
 	const { showNoti } = useWrap();
 	const router = useRouter();
 	const [haveError, setHaveError] = useState('');
-
 	// console.log("Csrf token: ", csrfToken);
 
 	useEffect(() => {
@@ -104,6 +104,10 @@ export default function SignIn({ providers, csrfToken }) {
 		</>
 	);
 }
+
+SignIn.layout = AuthLayout;
+
+export default SignIn;
 
 export async function getServerSideProps(context) {
 	const providers = await getProviders();

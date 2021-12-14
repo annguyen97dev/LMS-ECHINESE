@@ -1,3 +1,4 @@
+import { day } from 'date-arithmetic';
 import moment from 'moment';
 import { useEffect, useRef } from 'react';
 //  ---------EXPORT TO ARRAY FOR SELECT FIELD---------
@@ -118,3 +119,13 @@ export function usePageVisibility(cb) {
 export const parseToMoney = (value) => {
 	return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
+
+export const createDateObject = (dateState, locale) => {
+	const year = dateState.getFullYear();
+	const month = dateState.toLocaleDateString(locale, { month: 'long' });
+	const date = dateState.getDate();
+	const hour = ('0' + dateState.getHours()).slice(-2);
+	const minute = ('0' + dateState.getMinutes()).slice(-2);
+	const second = ('0' + dateState.getSeconds()).slice(-2);
+    return { year, month, date, hour, minute, second }
+}

@@ -58,7 +58,7 @@ const Programs = () => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IProgram[]>([]);
-	const { showNoti, pageSize, userInformation } = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -288,206 +288,108 @@ const Programs = () => {
 	}, []);
 
 	// ---------------- COLUMN --------------------
-	const columns =
-		userInformation && userInformation.RoleID !== 2
-			? [
-					{
-						title: 'Khối học',
-						dataIndex: 'GradeName',
-						width: 150,
-						render: (text) => {
-							return <p className="font-weight-black">{text}</p>;
-						}
-					},
-					{
-						title: 'Mã lớp',
-						dataIndex: 'GradeID',
-						width: 150,
-						align: 'center',
-						...FilterColumn('GradeID', onSearch, handleReset, 'text'),
-						render: (text) => {
-							return <p className="font-weight-primary">{text}</p>;
-						}
-					},
-					{
-						title: 'Tên lớp',
-						width: 150,
-						dataIndex: 'ProgramName',
-						...FilterColumn('ProgramName', onSearch, handleReset, 'text'),
-						render: (text) => {
-							return <p className="font-weight-primary">{text}</p>;
-						}
-					},
-					{
-						title: 'Level',
-						width: 150,
-						dataIndex: 'Level',
-						align: 'center'
-					},
-					{
-						title: 'Học phí',
-						dataIndex: 'Price',
-						width: 150,
+	const columns = [
+		{
+			title: 'Khối học',
+			dataIndex: 'GradeName',
 
-						render: (Price) => {
-							return <p className="font-weight-black">{new Intl.NumberFormat().format(Price)}</p>;
-						}
-					},
-					{
-						title: 'Loại',
-						width: 150,
-						dataIndex: 'TypeName'
-						// ...FilterColumn("Price"),
-						// render: (Type) => {
-						// 	return Type == 1 ? 'Zoom' : 'Offline';
-						// }
-					},
-					{
-						title: 'Trạng thái',
-						width: 150,
-						dataIndex: 'Enable',
-						render: (Enable, record) => (
-							<>
-								<Switch
-									checkedChildren="Hiện"
-									unCheckedChildren="Ẩn"
-									checked={Enable}
-									size="default"
-									onChange={(checked) => changeStatus(checked, record.ID)}
-								/>
-							</>
-						)
-					},
+			render: (text) => {
+				return <p className="font-weight-black">{text}</p>;
+			}
+		},
+		{
+			title: 'Mã lớp',
+			dataIndex: 'GradeID',
+			align: 'center',
+			...FilterColumn('GradeID', onSearch, handleReset, 'text'),
+			render: (text) => {
+				return <p className="font-weight-primary">{text}</p>;
+			}
+		},
+		{
+			title: 'Tên lớp',
+			dataIndex: 'ProgramName',
+			...FilterColumn('ProgramName', onSearch, handleReset, 'text'),
+			render: (text) => {
+				return <p className="font-weight-primary">{text}</p>;
+			}
+		},
+		{
+			title: 'Level',
+			dataIndex: 'Level',
+			align: 'center'
+		},
+		{
+			title: 'Học phí',
+			dataIndex: 'Price',
 
-					{
-						title: 'ModifiedBy',
-						width: 150,
-						dataIndex: 'ModifiedBy'
-					},
-					{
-						title: 'ModifiedOn',
-						width: 150,
-						dataIndex: 'ModifiedOn',
-						render: (date: any) => moment(date).format('DD/MM/YYYY')
-					},
+			render: (Price) => {
+				return <p className="font-weight-black">{new Intl.NumberFormat().format(Price)}</p>;
+			}
+		},
+		{
+			title: 'Loại',
+			dataIndex: 'TypeName'
+			// ...FilterColumn("Price"),
+			// render: (Type) => {
+			// 	return Type == 1 ? 'Zoom' : 'Offline';
+			// }
+		},
+		{
+			title: 'Trạng thái',
+			dataIndex: 'Enable',
+			render: (Enable, record) => (
+				<>
+					<Switch
+						checkedChildren="Hiện"
+						unCheckedChildren="Ẩn"
+						checked={Enable}
+						size="default"
+						onChange={(checked) => changeStatus(checked, record.ID)}
+					/>
+				</>
+			)
+		},
 
-					{
-						title: 'Action',
-						width: 150,
-						dataIndex: 'Action',
-						render: (value, data, index) => (
-							<>
-								<Link
-									href={{
-										pathname: '/option/program/program-detail/[slug]',
-										query: { slug: data.ID }
-									}}
-								>
-									<Tooltip title="Chi tiết chương trình">
-										<button className="btn btn-icon">
-											<Eye />
-										</button>
-									</Tooltip>
-								</Link>
+		{
+			title: 'ModifiedBy',
+			dataIndex: 'ModifiedBy'
+		},
+		{
+			title: 'ModifiedOn',
+			dataIndex: 'ModifiedOn',
+			render: (date: any) => moment(date).format('DD/MM/YYYY')
+		},
 
-								<ProgramForm
-									getIndex={() => setIndexRow(index)}
-									_onSubmit={(data: any) => _onSubmit(data)}
-									programID={data.ID}
-									rowData={data}
-									dataGrade={dataGrade}
-									showAdd={true}
-									isLoading={isLoading}
-								/>
-							</>
-						)
-					}
-			  ]
-			: [
-					{
-						title: 'Khối học',
-						dataIndex: 'GradeName',
-						width: 150,
-						render: (text) => {
-							return <p className="font-weight-black">{text}</p>;
-						}
-					},
-					{
-						title: 'Mã lớp',
-						dataIndex: 'GradeID',
-						width: 150,
-						align: 'center',
-						...FilterColumn('GradeID', onSearch, handleReset, 'text'),
-						render: (text) => {
-							return <p className="font-weight-primary">{text}</p>;
-						}
-					},
-					{
-						title: 'Tên lớp',
-						width: 150,
-						dataIndex: 'ProgramName',
-						...FilterColumn('ProgramName', onSearch, handleReset, 'text'),
-						render: (text) => {
-							return <p className="font-weight-primary">{text}</p>;
-						}
-					},
-					{
-						title: 'Level',
-						width: 150,
-						dataIndex: 'Level',
-						align: 'center'
-					},
-					{
-						title: 'Học phí',
-						dataIndex: 'Price',
-						width: 150,
+		{
+			render: (value, data, index) => (
+				<>
+					<Link
+						href={{
+							pathname: '/option/program/program-detail/[slug]',
+							query: { slug: data.ID }
+						}}
+					>
+						<Tooltip title="Chi tiết chương trình">
+							<button className="btn btn-icon">
+								<Eye />
+							</button>
+						</Tooltip>
+					</Link>
 
-						render: (Price) => {
-							return <p className="font-weight-black">{new Intl.NumberFormat().format(Price)}</p>;
-						}
-					},
-					{
-						title: 'Loại',
-						width: 150,
-						dataIndex: 'TypeName'
-						// ...FilterColumn("Price"),
-						// render: (Type) => {
-						// 	return Type == 1 ? 'Zoom' : 'Offline';
-						// }
-					},
-					{
-						title: 'ModifiedBy',
-						width: 150,
-						dataIndex: 'ModifiedBy'
-					},
-					{
-						title: 'ModifiedOn',
-						width: 150,
-						dataIndex: 'ModifiedOn',
-						render: (date: any) => moment(date).format('DD/MM/YYYY')
-					},
-					{
-						title: 'Action',
-						width: 150,
-						dataIndex: 'Action',
-						render: (value, data, index) => (
-							<>
-								<Link
-									href={{
-										pathname: '/option/program/program-detail/[slug]',
-										query: { slug: data.ID }
-									}}
-								>
-									<Tooltip title="Chi tiết chương trình">
-										<button className="btn btn-icon">
-											<Eye />
-										</button>
-									</Tooltip>
-								</Link>
-							</>
-						)
-					}
-			  ];
+					<ProgramForm
+						getIndex={() => setIndexRow(index)}
+						_onSubmit={(data: any) => _onSubmit(data)}
+						programID={data.ID}
+						rowData={data}
+						dataGrade={dataGrade}
+						showAdd={true}
+						isLoading={isLoading}
+					/>
+				</>
+			)
+		}
+	];
 
 	return (
 		<Fragment>
@@ -499,15 +401,7 @@ const Programs = () => {
 				addClass="basic-header"
 				TitlePage="Danh sách chương trình"
 				TitleCard={
-					userInformation &&
-					userInformation.RoleID !== 2 && (
-						<ProgramForm
-							_onSubmit={(data: any) => _onSubmit(data)}
-							dataGrade={dataGrade}
-							showAdd={true}
-							isLoading={isLoading}
-						/>
-					)
+					<ProgramForm _onSubmit={(data: any) => _onSubmit(data)} dataGrade={dataGrade} showAdd={true} isLoading={isLoading} />
 				}
 				dataSource={dataSource}
 				columns={columns}

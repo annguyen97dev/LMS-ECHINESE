@@ -259,7 +259,7 @@ function CDCalendar(props) {
 					)}
 					{SubjectName && (
 						<li>
-							<span>{IsExam ? 'Kiểm tra môn:' : 'Môn:'} </span> {SubjectName}
+							<span>{IsExam ? 'Kiểm tra môn:' : 'Bài học:'} </span> {SubjectName}
 						</li>
 					)}
 					{RoomName && (

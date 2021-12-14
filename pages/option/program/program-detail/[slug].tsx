@@ -7,12 +7,10 @@ import Curriculum from '~/components/Global/Option/ProgramDetail/Curriculum';
 import Subject from '~/components/Global/Option/ProgramDetail/Subject';
 
 import { Tabs, Radio, Card } from 'antd';
-import { useWrap } from '~/context/wrap';
 
 const { TabPane } = Tabs;
 
 const ProgramDetail = () => {
-	const { userInformation } = useWrap();
 	const [keyTab, setKeyTab] = useState(null);
 
 	function callback(key) {
@@ -24,7 +22,7 @@ const ProgramDetail = () => {
 		<>
 			<div className="row">
 				<div className="col-12">
-					<TitlePage title="Giáo trình - Môn học" />
+					<TitlePage title="Giáo trình - Bài học" />
 				</div>
 			</div>
 			{/* <div className="row">
@@ -37,7 +35,7 @@ const ProgramDetail = () => {
 			</div> */}
 			<Card>
 				<Tabs defaultActiveKey="1" onChange={callback} type="card">
-					<TabPane tab="Môn học" key="1">
+					<TabPane tab="Bài học" key="1">
 						<Subject key={keyTab} />
 					</TabPane>
 					<TabPane tab="Giáo trình" key="2">

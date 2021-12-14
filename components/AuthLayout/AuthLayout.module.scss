@@ -1,0 +1,76 @@
+.wrapper {
+	display: flex;
+	background-image: url(~public/images/gioi-thieu-2.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	align-items: stretch;
+	flex-wrap: wrap !important;
+}
+
+.calendar-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	text-align: center;
+	font-weight: bold;
+	.calendar {
+		color: white;
+	}
+
+	.month_year {
+		font-size: 62px;
+	}
+
+	.date {
+		color: #01a42f;
+		font-size: 80px;
+		line-height: 1;
+        margin-bottom: 35px;
+	}
+	.time {
+		font-size: 52px;
+		background: white;
+		padding: 0 20px;
+		display: inline-block;
+		border-radius: 15px;
+		color: #01a42f;
+	}
+
+	.slogan {
+		text-align: right;
+		margin-top: 50px;
+		font-weight: 400;
+	}
+}
+
+.content {
+	background: white;
+	height: 100vh;
+	position: relative;
+}
+
+.footer {
+	background: #282828;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	text-transform: uppercase;
+	padding: 15px 25px;
+	&__left {
+		margin: 0 auto;
+	}
+}
+
+@media screen and(max-width: 991px) {
+	.wrapper {
+		flex-direction: column-reverse;
+	}
+	.content {
+		width: 100%;
+		padding: 0;
+		order: 1;
+	}
+}

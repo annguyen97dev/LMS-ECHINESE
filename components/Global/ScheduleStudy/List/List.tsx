@@ -1,13 +1,11 @@
 import { Card, List } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-
 const ScheduleStudyList = (props) => {
 	const { dataSource, isLoading } = props;
 	const ListChild = (data) => {
 		// SỐ CA || SỐ PHÒNG
 		const getValuesFromData = Object.keys(data).sort((a, b) => +a.slice(a.lastIndexOf('-') + 1) - +b.slice(b.lastIndexOf('-') + 1));
-
 		return (
 			<List
 				className="schedule-study-list-child"
@@ -15,25 +13,16 @@ const ScheduleStudyList = (props) => {
 				grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 5 }}
 				dataSource={getValuesFromData}
 				renderItem={(item) => {
-					const title = item.slice(item.indexOf('-') + 1, item.lastIndexOf('-'));
-					console.log(title);
-
 					return (
 						<List.Item className="schedule-study-list-child-item">
-							<Card title={title == 'undefined' ? '' : title}>
+							<Card title={item.slice(item.indexOf('-') + 1, item.lastIndexOf('-'))}>
 								<div className="content-body">
 									{data[item]
 										.sort((a, b) => +moment(a.StartTime).format('X') - +moment(b.StartTime).format('X'))
 										.map((i, idx) => (
 											<p key={idx}>
 												{i.TeacherID && <span>GV: {i.TeacherName}</span>}
-												{i.RoomStudyTimeNameID && <span>Ca: {i.StudyTimeName}</span>}
-												{title == 'undefined' && (
-													<span>
-														<br />
-														Ca: {i.StudyTimeName}
-													</span>
-												)}
+												{i.RoomID && <span>Ca: {i.StudyTimeName}</span>}
 											</p>
 										))}
 								</div>

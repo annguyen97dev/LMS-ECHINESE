@@ -406,14 +406,13 @@ const CreateCourseOnline = () => {
 				TeacherID,
 				GradeID,
 				CourseName,
-				// UserInformationID,
+				UserInformationID,
 				SalaryOfLesson,
 				Price
 			} = object;
 			stoneDataToSave.current = {
 				CourseName,
-				// AcademicUID: UserInformationID,
-				AcademicUID: 0,
+				AcademicUID: UserInformationID,
 				BranchID,
 				CurriculumID,
 				ProgramID,
@@ -452,20 +451,11 @@ const CreateCourseOnline = () => {
 						setCalendarList(studyDayList.data.data);
 					}
 					if (lessonList.status === 200 && studyDayList.status === 200) {
-						const finalTeacherList = optionListForForm.teacherList.filter((o) => o.value === TeacherID);
-						console.log(finalTeacherList);
 						setIsSave(true);
 						checkStudyTime(null);
 						setOptionListForADay({
 							...optionListForADay,
-							optionTeacherList: lessonList.data.schedule.map((s) => ({
-								id: s.ID,
-								list: finalTeacherList
-							}))
-						});
-						setOptionListForForm({
-							...optionListForForm,
-							teacherList: finalTeacherList
+							optionTeacherList: lessonList.data.schedule.map((s) => ({ id: s.ID, list: optionListForForm.teacherList }))
 						});
 						showNoti('success', 'Thành công');
 						return true;
@@ -747,7 +737,6 @@ const CreateCourseOnline = () => {
 				const s2 = scheduleList.unavailable[i2];
 				if (i !== i2 && s.date === s2.date && s.CaID === s2.CaID) {
 					isValid = true;
-					break;
 				}
 			}
 			rs.show.push({
@@ -876,7 +865,7 @@ const CreateCourseOnline = () => {
 								{dataModalCalendar.scheduleList.map((s, idx) => (
 									<ScheduleOnlineItem
 										key={idx}
-										isUnavailable={true}
+										isUpdate={true}
 										scheduleObj={s}
 										isLoading={isLoading}
 										handleChangeValueSchedule={changeValueSchedule}
@@ -893,7 +882,12 @@ const CreateCourseOnline = () => {
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
-								<ScheduleOnlineItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} />
+								<ScheduleOnlineItem
+									key={idx}
+									scheduleObj={s}
+									handleChangeStatusSchedule={onToggleSchedule}
+									isUpdate={false}
+								/>
 							))}
 						</ScheduleList>
 					</Schedule>
