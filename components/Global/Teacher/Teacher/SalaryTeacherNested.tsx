@@ -62,6 +62,11 @@ const SalaryTeacherNested = (props) => {
 			dataIndex: 'Year',
 			render: (price, record: ITeacherSalary) => <p>{price}</p>
 		},
+		{
+			title: 'Lương cơ bản',
+			dataIndex: 'BasicSalary',
+			render: (price, record: ITeacherSalary) => <p>{price}</p>
+		},
 
 		{
 			title: 'Thưởng',
@@ -86,7 +91,7 @@ const SalaryTeacherNested = (props) => {
 			)
 		},
 		{
-			title: 'Lương Ứng',
+			title: 'Trừ Tạm Ứng',
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: ITeacherSalary) => <p>{numberWithCommas(price)}</p>
 		},

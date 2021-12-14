@@ -277,7 +277,7 @@ const SalaryStaffReview = () => {
 			render: (price, record: IStaffSalary) => <p className="font-weight-green">{numberWithCommas(price)}</p>
 		},
 		{
-			title: 'Lương tạm ứng',
+			title: 'Trừ tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: IStaffSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>
