@@ -1,43 +1,38 @@
-
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { idiomsApi } from '~/apiBase/options/idioms';
+import { createDateObject } from '~/utils/functions';
 
 import styles from './AuthLayout.module.scss';
 
 function AuthLayout({ children }) {
-    const [idiom, setIdiom] = useState<string>('');
-	const [dateState, setDateState] = useState(new Date());
+	const [idiom, setIdiom] = useState<string>('');
+	const [dateState, setDateState] = useState(createDateObject(new Date(), 'en'));
 
 	function getIdiom() {
 		(async () => {
-			const res = await idiomsApi.getPaged({});
-			console.log('idioms', res.data.data);
-			if (res.status == 200) {
-				setIdiom(res.data.data[0].Idioms);
-			}
+            try {
+                const res = await idiomsApi.getPaged({});
+                if (res.status == 200) {
+                    setIdiom(res.data.data[0].Idioms);
+                }
+            } catch (error) {
+                console.log(error);
+            }
 		})();
 	}
 
 	useEffect(() => {
 		const timeID = setInterval(() => {
-			setDateState(new Date());
+			setDateState(createDateObject(new Date(), 'en'));
 		}, 1000);
 		return () => {
 			clearInterval(timeID);
 		};
 	}, []);
 
-    useEffect(() => {
-        getIdiom();
-    }, [])
-
-	const locale = 'en';
-	const year = dateState.getFullYear();
-	const month = dateState.toLocaleDateString(locale, { month: 'long' });
-	const date = dateState.getDate();
-	const hour = ('0' + dateState.getHours()).slice(-2);
-	const minute = ('0' + dateState.getMinutes()).slice(-2);
-	const second = ('0' + dateState.getSeconds()).slice(-2);
+	useEffect(() => {
+		getIdiom();
+	}, []);
 
 	return (
 		<>
@@ -45,11 +40,11 @@ function AuthLayout({ children }) {
 				<div className={styles['calendar-wrapper']}>
 					<div className={styles.calendar}>
 						<p className={styles.month_year}>
-							{month} {year}
+							{dateState.month} {dateState.year}
 						</p>
-						<p className={styles.date}>{date}</p>
+						<p className={styles.date}>{dateState.date}</p>
 						<p className={styles.time}>
-							{hour} : {minute} : {second}
+							{dateState.hour} : {dateState.minute} : {dateState.second}
 						</p>
 						<div className={styles.slogan}>
 							<div

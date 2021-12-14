@@ -26,6 +26,8 @@
 	.date {
 		color: #01a42f;
 		font-size: 80px;
+		line-height: 1;
+        margin-bottom: 35px;
 	}
 	.time {
 		font-size: 52px;
@@ -63,9 +65,9 @@
 }
 
 @media screen and(max-width: 991px) {
-    .wrapper{
-        flex-direction: column-reverse;
-    }
+	.wrapper {
+		flex-direction: column-reverse;
+	}
 	.content {
 		width: 100%;
 		padding: 0;
