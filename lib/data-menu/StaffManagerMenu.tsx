@@ -55,6 +55,20 @@ export const StaffManagerChildMenu = [
 				Route: '/newsfeed',
 				Icon: '',
 				Text: 'Tin tức'
+			},
+			{
+				TypeItem: 'single',
+				Key: '/course/schedule-study-teacher',
+				Icon: '',
+				Route: '/course/schedule-study-teacher',
+				Text: 'Lịch dạy '
+			},
+			{
+				TypeItem: 'single',
+				Key: '/teacher/day-off-schedule',
+				Icon: '',
+				Route: '/teacher/day-off-schedule',
+				Text: 'Lịch nghỉ'
 			}
 		]
 	},
@@ -878,6 +892,13 @@ export const StaffManagerChildMenu = [
 						Key: '/option/learning-needs',
 						Route: '/option/learning-needs',
 						Text: 'Nhu cầu học',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/option/payment-method',
+						Route: '/option/payment-method',
+						Text: 'Phương thức thanh toán',
 						Icon: ''
 					},
 					{

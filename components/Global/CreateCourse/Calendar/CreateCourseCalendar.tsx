@@ -23,10 +23,12 @@ const CreateCourseCalendar = (props) => {
 	const openModal = () => setIsVisible(true);
 	const closeModal = () => setIsVisible(false);
 	const { dateString, limit, scheduleInDay, scheduleList } = dataModalCalendar;
+
 	const checkHandleSetDataModalCalendar = (obj) => {
 		if (!handleSetDataModalCalendar) return;
 		handleSetDataModalCalendar(obj);
 	};
+
 	const styleEvent = ({ event }) => {
 		const { dateString, limit, scheduleList, valid } = event.resource;
 		const scheduleInDay = scheduleList.length;

@@ -47,7 +47,7 @@ const Curriculum = (props) => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ICurriculum[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -261,56 +261,92 @@ const Curriculum = (props) => {
 		);
 	};
 
-	const columns = [
-		{
-			title: 'ID',
-			dataIndex: 'ID',
-			render: (id) => <p className="font-weight-black">{id}</p>,
-			fixed: 'left'
-		},
-		{
-			width: '50%',
-			title: 'Giáo trình',
-			dataIndex: 'CurriculumName',
-			key: 'curriculumname',
-			render: (text) => <p className="font-weight-black">{text}</p>,
-			fixed: 'left'
-		},
-		{
-			width: 120,
-			title: 'Thời gian học',
-			dataIndex: 'TimeOfLesson',
-			key: 'timeoflesson',
-			className: 'text-center'
-		},
-		{
-			width: 120,
-			title: 'Số buổi học',
-			dataIndex: 'Lesson',
-			key: 'lesson',
-			className: 'text-center'
-		},
+	const columns =
+		userInformation && userInformation.RoleID !== 2
+			? [
+					{
+						title: 'ID',
+						dataIndex: 'ID',
+						render: (id) => <p className="font-weight-black">{id}</p>,
+						fixed: 'left'
+					},
+					{
+						width: '50%',
+						title: 'Giáo trình',
+						dataIndex: 'CurriculumName',
+						key: 'curriculumname',
+						render: (text) => <p className="font-weight-black">{text}</p>,
+						fixed: 'left'
+					},
+					{
+						width: 120,
+						title: 'Thời gian học',
+						dataIndex: 'TimeOfLesson',
+						key: 'timeoflesson',
+						className: 'text-center'
+					},
+					{
+						width: 120,
+						title: 'Số buổi học',
+						dataIndex: 'Lesson',
+						key: 'lesson',
+						className: 'text-center'
+					},
 
-		{
-			width: 130,
-			key: 'action',
-			render: (text, data, index) => (
-				<>
-					<CurriculumForm
-						dataProgram={dataProgram}
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.ID}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-					/>
-					<PickAllSubject dataSubject={dataSubject} curriculumID={data.ID} onFetchData={() => setTodoApi({ ...todoApi })} />
-					<DeleteItem onDelete={() => handleDelete(data)} />
-				</>
-			)
-		}
-	];
+					{
+						width: 130,
+						key: 'action',
+						render: (text, data, index) => (
+							<>
+								<CurriculumForm
+									dataProgram={dataProgram}
+									getIndex={() => setIndexRow(index)}
+									index={index}
+									rowData={data}
+									rowID={data.ID}
+									isLoading={isLoading}
+									_onSubmit={(data: any) => _onSubmit(data)}
+								/>
+								<PickAllSubject
+									dataSubject={dataSubject}
+									curriculumID={data.ID}
+									onFetchData={() => setTodoApi({ ...todoApi })}
+								/>
+								<DeleteItem onDelete={() => handleDelete(data)} />
+							</>
+						)
+					}
+			  ]
+			: [
+					{
+						title: 'ID',
+						dataIndex: 'ID',
+						render: (id) => <p className="font-weight-black">{id}</p>,
+						fixed: 'left'
+					},
+					{
+						width: '50%',
+						title: 'Giáo trình',
+						dataIndex: 'CurriculumName',
+						key: 'curriculumname',
+						render: (text) => <p className="font-weight-black">{text}</p>,
+						fixed: 'left'
+					},
+					{
+						width: 120,
+						title: 'Thời gian học',
+						dataIndex: 'TimeOfLesson',
+						key: 'timeoflesson',
+						className: 'text-center'
+					},
+					{
+						width: 120,
+						title: 'Số buổi học',
+						dataIndex: 'Lesson',
+						key: 'lesson',
+						className: 'text-center'
+					}
+			  ];
 
 	return (
 		<div>
@@ -320,7 +356,12 @@ const Curriculum = (props) => {
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				loading={isLoading}
-				TitleCard={<CurriculumForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
+				TitleCard={
+					userInformation &&
+					userInformation.RoleID !== 2 && (
+						<CurriculumForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
+					)
+				}
 				dataSource={dataSource}
 				columns={columns}
 				Extra={'Giáo trình'}

@@ -7,10 +7,12 @@ import Curriculum from '~/components/Global/Option/ProgramDetail/Curriculum';
 import Subject from '~/components/Global/Option/ProgramDetail/Subject';
 
 import { Tabs, Radio, Card } from 'antd';
+import { useWrap } from '~/context/wrap';
 
 const { TabPane } = Tabs;
 
 const ProgramDetail = () => {
+	const { userInformation } = useWrap();
 	const [keyTab, setKeyTab] = useState(null);
 
 	function callback(key) {

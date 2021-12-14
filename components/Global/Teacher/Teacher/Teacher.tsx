@@ -479,23 +479,7 @@ const Teacher = () => {
 	];
 
 	const expandedRowRender = (item: ITeacher) => {
-		return (
-			// <table className="tb-expand">
-			// 	<thead>
-			// 		<tr>
-			// 			<th>Các trung tâm</th>
-			// 		</tr>
-			// 	</thead>
-			// 	<tbody>
-			// 		{item.Branch.map((s) => (
-			// 			<tr>
-			// 				<td>{s.BranchName}</td>
-			// 			</tr>
-			// 		))}
-			// 	</tbody>
-			// </table>
-			<SalaryTeacherNested teacherID={item.UserInformationID} />
-		);
+		return <SalaryTeacherNested teacherID={item.UserInformationID} />;
 	};
 
 	return (

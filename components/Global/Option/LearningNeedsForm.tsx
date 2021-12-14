@@ -35,19 +35,11 @@ const LearningNeedsForm = (props) => {
 				res = await learningNeeds.insert(data);
 			}
 			if (props.type == 'deleterow') {
-				console.log(props.type);
-				console.log('delete');
 				res = await learningNeeds.update({ ID: props.record.ID, Enable: false });
 			}
 			if (props.type == 'edit') {
 				res = await learningNeeds.update({ ...data, ID: props.record.ID });
 			}
-			// let res =
-			// 	props.type == 'add'
-			// 		? await learningNeeds.insert(data)
-			// 		: props.type == 'edit'
-			// 		? await learningNeeds.update({ ...data, ID: props.record.ID })
-			// 		: await learningNeeds.update({ ID: props.record.ID, Enable: false });
 			if (res.status == 200) {
 				showNoti(
 					'success',

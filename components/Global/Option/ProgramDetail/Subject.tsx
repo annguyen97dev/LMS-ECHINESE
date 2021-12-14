@@ -42,7 +42,7 @@ const Subject = (props) => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ISubject[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -253,40 +253,60 @@ const Subject = (props) => {
 		getDataProgram();
 	}, []);
 
-	const columns = [
-		{
-			title: 'Môn học',
-			dataIndex: 'SubjectName',
-			key: 'subjectname',
-			width: '20%',
-			className: 'col-long',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			width: '50%',
-			title: 'Bổ sung',
-			dataIndex: 'Additional',
-			key: 'additional',
-			className: 'text-center',
-			render: (text, data, index) => <>{text == true && <CheckCircle className="icon-additional" />}</>
-		},
+	const columns =
+		userInformation && userInformation.RoleID !== 2
+			? [
+					{
+						title: 'Môn học',
+						dataIndex: 'SubjectName',
+						key: 'subjectname',
+						width: '20%',
+						className: 'col-long',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						width: '50%',
+						title: 'Bổ sung',
+						dataIndex: 'Additional',
+						key: 'additional',
+						className: 'text-center',
+						render: (text, data, index) => <>{text == true && <CheckCircle className="icon-additional" />}</>
+					},
 
-		{
-			render: (text, data, index) => (
-				<>
-					<SubjectForm
-						dataProgram={dataProgram}
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.ID}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-					/>
-				</>
-			)
-		}
-	];
+					{
+						render: (text, data, index) => (
+							<>
+								<SubjectForm
+									dataProgram={dataProgram}
+									getIndex={() => setIndexRow(index)}
+									index={index}
+									rowData={data}
+									rowID={data.ID}
+									isLoading={isLoading}
+									_onSubmit={(data: any) => _onSubmit(data)}
+								/>
+							</>
+						)
+					}
+			  ]
+			: [
+					{
+						title: 'Môn học',
+						dataIndex: 'SubjectName',
+						key: 'subjectname',
+						width: '20%',
+						className: 'col-long',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						width: '50%',
+						title: 'Bổ sung',
+						dataIndex: 'Additional',
+						key: 'additional',
+						className: 'text-center',
+						render: (text, data, index) => <>{text == true && <CheckCircle className="icon-additional" />}</>
+					}
+			  ];
 
 	const expandableObj = {
 		// expandedRowRender: () => <PointColumn SubjectID={subjectID} />,
@@ -310,7 +330,12 @@ const Subject = (props) => {
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				addClass="table-fix-column table-small"
 				loading={isLoading}
-				TitleCard={<SubjectForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
+				TitleCard={
+					userInformation &&
+					userInformation.RoleID !== 2 && (
+						<SubjectForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
+					)
+				}
 				dataSource={dataSource}
 				columns={columns}
 				Extra={
