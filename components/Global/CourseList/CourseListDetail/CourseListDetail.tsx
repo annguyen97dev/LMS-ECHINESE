@@ -1,7 +1,7 @@
 import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag } from 'react-feather';
+import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users } from 'react-feather';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
@@ -40,6 +40,9 @@ const CourseListDetail = () => {
 								? `/course/course-list/edit-course/${parseIntID}`
 								: `/course/course-list/edit-course-online/${parseIntID}`;
 						router.push(url);
+					}
+					if (parseInt(key) === 9) {
+						router.push('/newsfeed/');
 					}
 				}}
 				className="list-menu-course"
@@ -165,6 +168,22 @@ const CourseListDetail = () => {
 				>
 					<NotificationCourse courseID={parseIntID} />
 				</TabPane>
+
+				{userInformation && (userInformation.RoleID == 1 || userInformation.RoleID == 2 || userInformation.RoleID == 5) && (
+					<TabPane
+						tab={
+							<>
+								<Users />
+								<span title="Nhóm"> Nhóm</span>
+							</>
+						}
+						key="9"
+					>
+						<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+							<Spin size="large" />
+						</div>
+					</TabPane>
+				)}
 			</Tabs>
 		</div>
 	);
