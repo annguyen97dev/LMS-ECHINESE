@@ -77,6 +77,7 @@ const VideoCourseStore = () => {
 				const res = await VideoCourseStoreApi.getAll(todoApi);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				getCurriculum();
+                console.log("video course", res.data.data)
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
