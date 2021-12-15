@@ -32,7 +32,7 @@ const CreateCourseOnlineForm = (props) => {
 
 	const schema = yup.object().shape({
 		BranchID: yup.number().nullable().required('Bạn không được để trống'),
-		UserInformationID: yup.number().nullable().required('Bạn không được để trống'),
+		// UserInformationID: yup.number().nullable().required('Bạn không được để trống'),
 		StudyTimeID: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ca học').required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
@@ -46,7 +46,7 @@ const CreateCourseOnlineForm = (props) => {
 	});
 	const defaultValuesInit = {
 		BranchID: null,
-		UserInformationID: null,
+		// UserInformationID: null,
 		StudyTimeID: undefined,
 		GradeID: null,
 		ProgramID: null,
@@ -78,11 +78,11 @@ const CreateCourseOnlineForm = (props) => {
 		}
 	};
 	// ONCHANGE OF BRANCH FIELD
-	const checkHandleFetchUserInformation = (value) => {
-		if (!handleFetchDataByBranch) return;
-		form.setValue('UserInformationID', undefined);
-		handleFetchDataByBranch(value);
-	};
+	// const checkHandleFetchUserInformation = (value) => {
+	// 	if (!handleFetchDataByBranch) return;
+	// 	form.setValue('UserInformationID', undefined);
+	// 	handleFetchDataByBranch(value);
+	// };
 	// ONCHANGE OF GRADE FIELD
 	const checkHandleFetchProgramByGrade = (value) => {
 		if (!handleFetchProgramByGrade) return;
@@ -121,12 +121,12 @@ const CreateCourseOnlineForm = (props) => {
 									optionList={optionListForForm.branchList}
 									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
 									onChangeSelect={(value) => {
-										checkHandleFetchUserInformation(value);
+										// checkHandleFetchUserInformation(value);
 										checkHandleGetValueBeforeFetchTeacher('BranchID', value);
 									}}
 								/>
 							</div>
-							<div className="col-md-6 col-12">
+							{/* <div className="col-md-6 col-12">
 								<SelectField
 									form={form}
 									name="UserInformationID"
@@ -136,7 +136,7 @@ const CreateCourseOnlineForm = (props) => {
 									isLoading={isLoading.type === 'BranchID' && isLoading.status}
 									optionList={optionListForForm.userInformationList}
 								/>
-							</div>
+							</div> */}
 							<div className="col-md-6 col-12">
 								<SelectField
 									form={form}
@@ -207,14 +207,7 @@ const CreateCourseOnlineForm = (props) => {
 									optionList={optionListForForm.teacherList}
 								/>
 							</div>
-							<div className="col-md-6 col-12">
-								<InputTextField
-									form={form}
-									name="CourseName"
-									label="Tên khóa học"
-									placeholder="[Trung tâm][Chương trình học][Giáo trình][Ca học] - Ngày học"
-								/>
-							</div>
+
 							<div className="col-md-6 col-12">
 								<DateField form={form} name="StartDay" label="Ngày mở" isRequired placeholder="Chọn ngày mở" />
 							</div>
@@ -249,7 +242,22 @@ const CreateCourseOnlineForm = (props) => {
 									handleFormatCurrency={numberWithCommas}
 								/>
 							</div>
-
+                            <div className="col-6">
+								<InputTextField
+									form={form}
+									name="MaximumStudent"
+									label="Số học viên tối đa"
+									placeholder="Nhập số học viên tối đa trong lớp"
+								/>
+							</div>
+							<div className="col-6">
+								<InputTextField
+									form={form}
+									name="CourseName"
+									label="Tên khóa học"
+									placeholder="[Trung tâm][Chương trình học][Giáo trình][Ca học] - Ngày học"
+								/>
+							</div>
 							<div className="col-md-12 col-12 mt-3 " style={{ textAlign: 'center' }}>
 								<button
 									type="submit"

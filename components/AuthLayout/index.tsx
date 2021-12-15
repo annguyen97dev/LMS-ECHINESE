@@ -5,19 +5,21 @@ import { createDateObject } from '~/utils/functions';
 import styles from './AuthLayout.module.scss';
 
 function AuthLayout({ children }) {
-	const [idiom, setIdiom] = useState<string>('');
+	const [idiom, setIdiom] = useState<{ content: string; author: string }>({content: '', author:''});
 	const [dateState, setDateState] = useState(createDateObject(new Date(), 'en'));
 
 	function getFirstIdiom() {
 		(async () => {
-            try {
-                const res = await idiomsApi.getPaged({});
-                if (res.status == 200) {
-                    setIdiom(res.data.data[0].Idioms); // lấy cái mới nhất
-                }
-            } catch (error) {
-                console.log(error);
-            }
+			try {
+				const res = await idiomsApi.getPaged({});
+				if (res.status == 200) {
+					const content = res.data.data[0].Idioms;
+					const author = res.data.data[0].CreatedBy;
+					setIdiom({ content, author }); // lấy cái mới nhất
+				}
+			} catch (error) {
+				console.log(error);
+			}
 		})();
 	}
 
@@ -50,9 +52,10 @@ function AuthLayout({ children }) {
 							<div
 								className={styles.text}
 								dangerouslySetInnerHTML={{
-									__html: `${idiom}`
+									__html: `${idiom.content}`
 								}}
 							></div>
+							<p>{idiom.author}</p>
 						</div>
 					</div>
 				</div>

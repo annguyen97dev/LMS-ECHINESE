@@ -85,6 +85,7 @@ const PowerList = (props) => {
 				TotalStudents,
 				TypeCourse,
 				TypeCourseName,
+				MaximumStudent,
 				BranchID
 			}: ICourse) => (
 				<List.Item
@@ -131,6 +132,11 @@ const PowerList = (props) => {
 									<li>
 										Số học viên: <span>{TotalStudents}</span>
 									</li>
+									{MaximumStudent && (
+										<li>
+											Số học viên tối đa: <span>{MaximumStudent}</span>
+										</li>
+									)}
 								</ul>
 							</div>
 						}
