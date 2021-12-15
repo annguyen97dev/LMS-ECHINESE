@@ -277,29 +277,40 @@ const SalesCampaign = () => {
 	const columns = [
 		{
 			title: 'Tên chiến dịch',
-			dataIndex: 'Name'
+			width: 150,
+			dataIndex: 'Name',
+			render: (text) => (
+				<Tooltip title={text}>
+					<p className="limit-text">{text}</p>
+				</Tooltip>
+			)
 		},
 		{
 			title: 'Bắt đầu',
+			width: 150,
 			dataIndex: 'StartTime',
 			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Kết thúc',
+			width: 150,
 			dataIndex: 'EndTime',
 			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Số ngày',
+			width: 100,
 			dataIndex: 'TotalDay'
 		},
 		{
 			title: 'Doanh thu',
+			width: 100,
 			dataIndex: 'TotalRevenue',
 			render: (text) => numberWithCommas(text)
 		},
 		{
 			title: 'Trạng thái',
+			width: 150,
 			dataIndex: 'StatusID',
 			align: 'center',
 			render: (statusID, record: ISaleCampaign) => {
@@ -342,6 +353,7 @@ const SalesCampaign = () => {
 
 		{
 			align: 'center',
+			width: 150,
 			render: (record: ISaleCampaign, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
 					<Link
@@ -408,7 +420,7 @@ const SalesCampaign = () => {
 			TitlePage="Danh sách chiến dịch"
 			dataSource={saleCampaignList}
 			columns={columns}
-			TitleCard={isAdmin && <SalesCampaignForm isLoading={isLoading} handleSubmit={onCreateSaleCampaign} />}
+			// TitleCard={isAdmin && <SalesCampaignForm isLoading={isLoading} handleSubmit={onCreateSaleCampaign} />}
 			Extra={
 				<div className="extra-table">
 					<SalesCampaignFilter handleFilter={onFilter} handleResetFilter={onResetSearch} />

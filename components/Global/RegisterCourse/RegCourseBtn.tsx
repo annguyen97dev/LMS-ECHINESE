@@ -18,6 +18,11 @@ const RegCourseBtn = () => {
 							<a>Tạo khóa học</a>
 						</Link>
 					</Menu.Item>
+					<Menu.Item>
+						<Link href={'/customer/student/student-advisory/'}>
+							<a>Tạo khách hàng</a>
+						</Link>
+					</Menu.Item>
 				</Menu>
 			</div>
 		);
