@@ -1,7 +1,7 @@
-import {Popover, Skeleton, Tooltip} from 'antd';
+import { Popover, Skeleton, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {MoreHorizontal} from 'react-feather';
+import { MoreHorizontal } from 'react-feather';
 
 BannerGroup.propTypes = {
 	infoGroup: PropTypes.shape({
@@ -14,7 +14,7 @@ BannerGroup.propTypes = {
 			CourseID: PropTypes.number,
 			CourseName: PropTypes.string,
 			BranchID: PropTypes.number,
-			BranchName: PropTypes.string,
+			BranchName: PropTypes.string
 		}),
 		userList: PropTypes.arrayOf(
 			PropTypes.shape({
@@ -24,13 +24,13 @@ BannerGroup.propTypes = {
 				UserInformationID: PropTypes.number,
 				FullNameUnicode: PropTypes.string,
 				RoleID: PropTypes.number,
-				RoleName: PropTypes.string,
+				RoleName: PropTypes.string
 			})
-		),
+		)
 	}),
 	totalNewsFeed: PropTypes.number,
 	//
-	bannerGroupActionListComponent: PropTypes.element,
+	bannerGroupActionListComponent: PropTypes.element
 };
 BannerGroup.defaultProps = {
 	infoGroup: {
@@ -43,13 +43,13 @@ BannerGroup.defaultProps = {
 			CourseID: 0,
 			CourseName: '',
 			BranchID: 0,
-			BranchName: '',
+			BranchName: ''
 		},
-		userList: [],
+		userList: []
 	},
 	totalNewsFeed: 0,
 	//
-	bannerGroupActionListComponent: null,
+	bannerGroupActionListComponent: null
 };
 
 function BannerGroup(props) {
@@ -57,10 +57,9 @@ function BannerGroup(props) {
 		infoGroup,
 		totalNewsFeed,
 		//
-		bannerGroupActionListComponent,
+		bannerGroupActionListComponent
 	} = props;
-	const {info, userList} = infoGroup;
-	console.log(userList);
+	const { info, userList } = infoGroup;
 	const popoverUserList = (userList) => {
 		return (
 			<ul className="list-user-in-group">
@@ -77,10 +76,7 @@ function BannerGroup(props) {
 	if (info?.ID) {
 		return (
 			<div className="card-group-nf">
-				<div
-					className="card-group-nf__header"
-					style={{backgroundImage: `url(${info.BackGround})`}}
-				>
+				<div className="card-group-nf__header" style={{ backgroundImage: `url(${info.BackGround})` }}>
 					<div className="information-group">
 						<p className="name-group">{info.Name}</p>
 						<p className="name-admin">
@@ -88,7 +84,7 @@ function BannerGroup(props) {
 							{userList.map((item, idx) => {
 								if (item.RoleID === 1)
 									return (
-										<span style={{marginLeft: 5}} key={idx}>
+										<span style={{ marginLeft: 5 }} key={idx}>
 											{item.FullNameUnicode}
 										</span>
 									);
@@ -97,11 +93,7 @@ function BannerGroup(props) {
 					</div>
 					{bannerGroupActionListComponent && (
 						<div className="more-group">
-							<Popover
-								placement="bottomRight"
-								content={bannerGroupActionListComponent}
-								trigger="focus"
-							>
+							<Popover placement="bottomRight" content={bannerGroupActionListComponent} trigger="focus">
 								<button className="btn-more">
 									<MoreHorizontal />
 								</button>
@@ -115,12 +107,7 @@ function BannerGroup(props) {
 						<p>Thành viên: </p>
 						{userList.length > 5 ? (
 							<div className="members">
-								<Popover
-									placement="bottom"
-									title="Thành viên"
-									content={popoverUserList(userList)}
-									trigger="click"
-								>
+								<Popover placement="bottom" title="Thành viên" content={popoverUserList(userList)} trigger="click">
 									<span>
 										<MoreHorizontal />
 									</span>
