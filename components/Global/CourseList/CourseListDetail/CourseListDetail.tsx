@@ -148,7 +148,7 @@ const CourseListDetail = () => {
 						tab={
 							<>
 								<Flag />
-								<span title="Phản hồi">Phản hồi buổi học</span>
+								<span title="Phản hồi" >Phản hồi buổi học</span>
 							</>
 						}
 						key="7"
