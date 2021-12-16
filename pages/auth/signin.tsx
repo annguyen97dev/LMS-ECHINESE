@@ -51,33 +51,25 @@ function SignIn({ providers, csrfToken }) {
 					case 'credentials-signin':
 						return (
 							<div key={provider.name}>
-								<LoginForm
-									key={provider.name}
-									onSubmit={_Submit}
-									// action="/api/auth/callback/credentials-signin"
-									csrfToken={csrfToken}
-									error={haveError}
-								/>
-								{/* <form
-                  method="post"
-                  action="/api/auth/callback/credentials-signin"
-                >
-                  <input
-                    name="csrfToken"
-                    type="hidden"
-                    defaultValue={csrfToken}
-                    // value={csrfToken}
-                  />
-                  <label>
-                    Username
-                    <input name="username" type="text" />
-                  </label>
-                  <label>
-                    Password
-                    <input name="password" type="password" />
-                  </label>
-                  <button type="submit">Đăng nhập</button>
-                </form> */}
+								<LoginForm key={provider.name} onSubmit={_Submit} csrfToken={csrfToken} error={haveError} />
+
+								{/* <form method="post" action="/api/auth/callback/credentials-signin">
+									<input
+										name="csrfToken"
+										type="hidden"
+										defaultValue={csrfToken}
+										// value={csrfToken}
+									/>
+									<label>
+										Username
+										<input name="username" type="text" />
+									</label>
+									<label>
+										Password
+										<input name="password" type="password" />
+									</label>
+									<button type="submit">Đăng nhập</button>
+								</form> */}
 							</div>
 						);
 					case 'email':
