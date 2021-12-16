@@ -2,20 +2,25 @@ import { Card } from 'antd';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
-import { checkTeacherApi, courseDetailApi, courseOnlineDetailAvailableDayApi, studyTimeApi, subjectApi } from '~/apiBase';
+import {
+	checkTeacherApi,
+	courseDetailApi,
+	courseOnlineDetailAvailableDayApi,
+	IApiCourseSchedule,
+	studyTimeApi,
+	subjectApi
+} from '~/apiBase';
 import CreateCourseCalendar from '~/components/Global/CreateCourse/Calendar/CreateCourseCalendar';
 import Schedule from '~/components/Global/CreateCourse/Schedule/Schedule';
 import ScheduleList from '~/components/Global/CreateCourse/Schedule/ScheduleList';
 import SaveCreateCourseOnline from '~/components/Global/CreateCourseOnline/SaveCreateCourseOnline';
-import {
-	default as ScheduleItem,
-	default as ScheduleOnlineItem
-} from '~/components/Global/CreateCourseOnline/ScheduleOnline/ScheduleOnlineItem';
+import ScheduleOnlineItem from '~/components/Global/CreateCourseOnline/ScheduleOnline/ScheduleOnlineItem';
 import TitlePage from '~/components/TitlePage';
 import { useWrap } from '~/context/wrap';
 import { fmArrayToObjectWithSpecialKey, fmSelectArr } from '~/utils/functions';
 import CreateNewScheduleForm from '../EditCourse/CreateNewScheduleForm';
 import AvailableScheduleOnlineForm from './AvailableScheduleOnlineForm';
+
 // ------------ MAIN COMPONENT ------------------
 const EditCourseOnline = (props) => {
 	const router = useRouter();
@@ -57,55 +62,8 @@ const EditCourseOnline = (props) => {
 	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>([]);
 	const [scheduleListToSave, setScheduleListToSave] = useState<IScheduleListToSave[]>([]);
 	const stoneScheduleListToFindDifference = useRef<ICourseDetailSchedule[]>([]);
-	const stoneTeacher = useRef<IOptionCommon>();
 
 	// -----------SCHEDULE-----------
-	const onCheckTeacherAvailable = async (params: {
-		id: number | string;
-		TeacherID: number;
-		Date: string;
-		StudyTimeID: number;
-		CourseID: number;
-	}) => {
-		try {
-			setIsLoading({
-				type: 'CHECK_SCHEDULE',
-				status: true
-			});
-			const { id, ...rest } = params;
-			const res = await checkTeacherApi.getAll(rest);
-			const idxInOptList = optionListForADay.optionTeacherList.findIndex((o) => o.id === id);
-			const newOptionTeacherList = [...optionListForADay.optionTeacherList];
-			if (res.status === 200) {
-				newOptionTeacherList.splice(idxInOptList, 1, {
-					...optionListForADay.optionTeacherList[idxInOptList],
-					list: [stoneTeacher.current]
-				});
-				setOptionListForADay({
-					...optionListForADay,
-					optionTeacherList: newOptionTeacherList
-				});
-				return true;
-			}
-			if (res.status === 204) {
-				newOptionTeacherList.splice(idxInOptList, 1, {
-					...optionListForADay.optionTeacherList[idxInOptList],
-					list: [{ title: '----Giáo viên trống----', value: 0 }]
-				});
-				setOptionListForADay({
-					...optionListForADay,
-					optionTeacherList: newOptionTeacherList
-				});
-				return false;
-			}
-		} catch (error) {
-		} finally {
-			setIsLoading({
-				type: 'CHECK_SCHEDULE',
-				status: false
-			});
-		}
-	};
 	const checkDuplicateStudyTimeInDay = (arr: ICourseDetailSchedule[], vl) => {
 		const scheduleSameStudyTime = arr.filter((s) => s.StudyTimeID === vl);
 		if (scheduleSameStudyTime.length > 1) {
@@ -142,39 +100,32 @@ const EditCourseOnline = (props) => {
 		}
 		return rs;
 	};
-	const getNewValueForSchedule = async (uid: number | string, date: string, key: 'CaID', vl: number) => {
+	const getNewValueForSchedule = (uid: number | string, date: string, key: 'CaID' | 'TeacherID', vl: number) => {
 		const { optionStudyTimeList } = optionListForADay;
 
 		switch (key) {
 			case 'CaID':
 				const StudyTimeName = optionStudyTimeList.find((o) => o.value === vl)?.title;
-				const isHasTeacher = await onCheckTeacherAvailable({
-					id: uid,
-					TeacherID: +stoneTeacher.current.value,
-					CourseID: Number(courseID),
-					StudyTimeID: Number(vl),
-					Date: date
-				});
-
-				const newTeacher = isHasTeacher
-					? {
-							TeacherID: +stoneTeacher.current.value,
-							TeacherName: stoneTeacher.current.title
-					  }
-					: {
-							TeacherID: 0,
-							TeacherName: 'Giáo viên trống'
-					  };
 				return {
-					...newTeacher,
+					TeacherID: 0,
+					TeacherName: 'Giáo viên trống',
 					StudyTimeName,
 					StudyTimeID: vl
 				};
+			case 'TeacherID':
+				const optionTeacherList = optionListForADay.optionTeacherList.find((o) => o.id === uid)?.list || [];
+				const newOptionTeacherList = [...optionTeacherList];
+				const teacherName = newOptionTeacherList.find((o) => o.value === vl)?.title;
+				return {
+					TeacherName: vl ? teacherName : 'Giáo viên trống',
+					[key]: vl
+				};
+				break;
 			default:
 				break;
 		}
 	};
-	const getNewUnavailableScheduleList = async (uid: number, key: 'CaID', vl: number) => {
+	const getNewUnavailableScheduleList = (uid: number | string, key: 'CaID' | 'TeacherID', vl: number) => {
 		const { unavailable } = scheduleList;
 		const newUnavailable = [...unavailable];
 
@@ -185,7 +136,7 @@ const EditCourseOnline = (props) => {
 		if (idxSchedule >= 0) {
 			const schedule = newUnavailable[idxSchedule];
 			date = schedule.Date;
-			const newVl = await getNewValueForSchedule(uid, date, key, vl);
+			const newVl = getNewValueForSchedule(uid, date, key, vl);
 			const newSchedule = {
 				...schedule,
 				...newVl
@@ -195,13 +146,13 @@ const EditCourseOnline = (props) => {
 
 		return { date, rs: newUnavailable };
 	};
-	const changeValueSchedule = async (uid: number, key: 'CaID', vl: number) => {
-		const { rs: newUnavailableScheduleList, date } = await getNewUnavailableScheduleList(uid, key, vl);
+	const changeValueSchedule = (uid: number | string, key: 'CaID' | 'TeacherID', vl: number) => {
+		const { rs: newUnavailableScheduleList, date } = getNewUnavailableScheduleList(uid, key, vl);
 		const scheduleList = newUnavailableScheduleList.filter((s) => s.Date === date);
-
 		if (studyTimeOverFlow(scheduleList) || checkDuplicateStudyTimeInDay(scheduleList, vl)) {
 			showNoti('danger', 'Dữ liệu không phù hợp');
 		}
+
 		setDataModalCalendar({
 			...dataModalCalendar,
 			scheduleList: scheduleList
@@ -242,11 +193,8 @@ const EditCourseOnline = (props) => {
 				...newScheduleAvailableList[idx],
 				Date: newDate
 			};
-			// CHECK AVAILABLE TEACHER
-			const newTeacher = await getNewValueForSchedule(newScheduleObj.ID, newDate, 'CaID', newScheduleObj.StudyTimeID);
-
 			newScheduleAvailableList.splice(idx, 1);
-			newScheduleUnavailableList.push({ ...newScheduleObj, ...newTeacher });
+			newScheduleUnavailableList.push(newScheduleObj);
 		}
 		setScheduleList((prevState) => ({
 			...prevState,
@@ -306,6 +254,89 @@ const EditCourseOnline = (props) => {
 			});
 		}
 	};
+	const onCheckTeacherAvailable = async (params: {
+		id: number | string;
+		CourseID: number;
+		StudyTimeID: number;
+		TeacherID: number;
+		ProgramID: number;
+		BranchID: number;
+		Date: string;
+	}) => {
+		try {
+			setIsLoading({
+				type: 'CHECK_SCHEDULE',
+				status: true
+			});
+			const { id, TeacherID, ...rest } = params;
+
+			const idxInOptList = optionListForADay.optionTeacherList.findIndex((o) => o.id === id);
+			const newOptionTeacherList = [...optionListForADay.optionTeacherList];
+			if (!params.StudyTimeID) {
+				newOptionTeacherList.splice(idxInOptList, 1, {
+					...optionListForADay.optionTeacherList[idxInOptList],
+					list: [{ title: '----Giáo viên trống----', value: 0 }]
+				});
+				setOptionListForADay({
+					...optionListForADay,
+					optionTeacherList: newOptionTeacherList
+				});
+				return false;
+			}
+			const res = await checkTeacherApi.getAllTeacherAvailable(rest);
+			if (res.status === 200) {
+				const newList = fmSelectArr(res.data.data, 'FullNameUnicode', 'UserInformationID');
+				const finalList = [{ title: '----Giáo viên trống----', value: 0 }, ...newList];
+				newOptionTeacherList.splice(idxInOptList, 1, {
+					...optionListForADay.optionTeacherList[idxInOptList],
+					list: finalList
+				});
+
+				const isHadTeacherInList = finalList.some((o) => o.value === TeacherID); // kiểm tra nếu như trong buổi học còn giữ lại giá trị cũ nhưng api lại không có giá trị thỏa giá trị cũ
+				if (!isHadTeacherInList) {
+					changeValueSchedule(id, 'TeacherID', 0);
+				}
+
+				setOptionListForADay({
+					...optionListForADay,
+					optionTeacherList: newOptionTeacherList
+				});
+				return true;
+			}
+			if (res.status === 204) {
+				newOptionTeacherList.splice(idxInOptList, 1, {
+					...optionListForADay.optionTeacherList[idxInOptList],
+					list: [{ title: '----Giáo viên trống----', value: 0 }]
+				});
+				setOptionListForADay({
+					...optionListForADay,
+					optionTeacherList: newOptionTeacherList
+				});
+				return false;
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({
+				type: 'CHECK_SCHEDULE',
+				status: false
+			});
+		}
+	};
+	useEffect(() => {
+		if (Array.isArray(dataModalCalendar.scheduleList) && dataModalCalendar.scheduleList.length >= 1) {
+			dataModalCalendar.scheduleList.forEach((s) => {
+				onCheckTeacherAvailable({
+					id: s.ID,
+					Date: dataModalCalendar.dateString,
+					StudyTimeID: s.StudyTimeID,
+					TeacherID: s.TeacherID,
+					CourseID: +courseID,
+					ProgramID: s.ProgramID,
+					BranchID: s.BranchID
+				});
+			});
+		}
+	}, [dataModalCalendar.scheduleList]);
 	// -----------SAVE COURSE-----------
 	const onFindScheduleChanged = (arr: ICourseDetailSchedule[]) => {
 		const { current: stoneScheduleList } = stoneScheduleListToFindDifference;
@@ -357,12 +388,14 @@ const EditCourseOnline = (props) => {
 			let isValid = !s.TeacherID;
 			for (let i2 = 0; i2 < unavailable.length; i2++) {
 				const s2 = unavailable[i2];
-				if (i !== i2 && s.ID !== s2.ID && s.Date === s2.Date) {
+				if (s.ID !== s2.ID && s.Date === s2.Date) {
 					if (studyTimeOverFlow([s, s2])) {
 						isValid = true;
+						break;
 					}
 					if (s.StudyTimeID === s2.StudyTimeID) {
 						isValid = true;
+						break;
 					}
 				}
 			}
@@ -433,6 +466,33 @@ const EditCourseOnline = (props) => {
 		return res;
 	};
 	// -----------EDIT COURSE-----------
+	const fmCourseDetail = (res: IApiCourseSchedule<ICourseDetailSchedule[]>, isAheadSchedule?: boolean) => {
+		const data = res.data;
+		const newScheduleList = data.map((sch) => ({
+			...sch,
+			Date: moment(sch.StartTime).format('YYYY/MM/DD')
+		}));
+		if (!isAheadSchedule) {
+			stoneScheduleListToFindDifference.current = newScheduleList;
+		}
+
+		const studyTimesFm = fmSelectArr(res.studyTimes, 'name', 'id', ['select']);
+
+		const rs = {
+			studyTimes: studyTimesFm
+		};
+
+		setOptionListForADay((preState) => ({
+			...preState,
+			optionTeacherList: data.map((s) => ({ id: +s.ID, list: [{ title: data[0].TeacherName, value: data[0].TeacherID }] }))
+		}));
+		setOptionListForGetAvailableSchedule(rs);
+		setScheduleList({
+			available: [],
+			unavailable: newScheduleList
+		});
+		return rs;
+	};
 	const fetchCourseDetail = async () => {
 		setIsLoading({
 			type: 'FETCH_COURSE',
@@ -441,29 +501,7 @@ const EditCourseOnline = (props) => {
 		try {
 			const res = await courseDetailApi.getAll({ CourseID: courseID });
 			if (res.status === 200) {
-				const data = res.data.data;
-				const newScheduleList = data.map((sch) => ({
-					...sch,
-					Date: moment(sch.StartTime).format('YYYY/MM/DD')
-				}));
-				stoneScheduleListToFindDifference.current = newScheduleList;
-
-				const studyTimesFm = fmSelectArr(res.data.studyTimes, 'name', 'id', ['select']);
-
-				const rs = {
-					studyTimes: studyTimesFm
-				};
-
-				stoneTeacher.current = { title: data[0].TeacherName, value: data[0].TeacherID };
-				setOptionListForADay((preState) => ({
-					...preState,
-					optionTeacherList: data.map((s) => ({ id: +s.ID, list: [stoneTeacher.current] }))
-				}));
-				setOptionListForGetAvailableSchedule(rs);
-				setScheduleList({
-					available: [],
-					unavailable: newScheduleList
-				});
+				const rs = fmCourseDetail(res.data);
 				return rs;
 			}
 		} catch (error) {
@@ -581,20 +619,21 @@ const EditCourseOnline = (props) => {
 					CourseName: '',
 					BranchID: scheduleList.unavailable[0].BranchID,
 					BranchName: '',
-					StudyTimeName: 'Trống',
+					StudyTimeName: '----Ca học trống----',
 					StudyTimeID: 0,
 					Date: moment().format('YYYY/MM/DD'),
 					StartTime: moment().format('YYYY/MM/DD'),
 					EndTime: '',
-					TeacherID: +stoneTeacher.current.value,
-					TeacherName: stoneTeacher.current.title,
+					TeacherID: 0,
+					TeacherName: '----Giáo viên trống----',
 					SubjectID,
 					SubjectName: optionSubjectList.find((s) => s.value === SubjectID).title,
-					CurriculumID: 0
+					CurriculumID: scheduleList.unavailable[0].CurriculumID,
+					ProgramID: scheduleList.unavailable[0].ProgramID
 				};
 				const newOption = {
 					id: newSchedule.ID,
-					list: [stoneTeacher.current]
+					list: []
 				};
 				newOptionTeacher.push(newOption);
 				rs.push(newSchedule);
@@ -616,6 +655,36 @@ const EditCourseOnline = (props) => {
 			});
 		}
 		return res;
+	};
+	const onAheadSchedule = async (courseScheduleId: number, teacherId: number) => {
+		try {
+			setIsLoading({
+				type: 'FETCH_COURSE',
+				status: true
+			});
+			setScheduleList({
+				available: [],
+				unavailable: []
+			});
+			setDataModalCalendar({
+				...dataModalCalendar,
+				scheduleInDay: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId).length,
+				scheduleList: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId)
+			});
+			const res = await courseDetailApi.aheadSchedule({
+				courseScheduleId,
+				teacherId
+			});
+			if (res.status === 200) {
+				fmCourseDetail(res.data, true);
+				setIsLoading({
+					type: 'FETCH_COURSE',
+					status: false
+				});
+			}
+		} catch (error) {
+			console.log('onAheadSchedule', error.message);
+		}
 	};
 	useEffect(() => {
 		let isMounted = true;
@@ -670,29 +739,52 @@ const EditCourseOnline = (props) => {
 							//
 							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
+							//
+							isEditView={true}
+							unAvailableList={
+								<Schedule>
+									<ScheduleList>
+										{scheduleList.available.map((s, idx) => (
+											<ScheduleOnlineItem
+												key={idx}
+												scheduleObj={s}
+												handleChangeStatusSchedule={onToggleSchedule}
+												isEditView={true}
+											/>
+										))}
+									</ScheduleList>
+								</Schedule>
+							}
 						>
 							<ScheduleList panelActiveListInModal={dataModalCalendar.scheduleList.map((_, idx) => idx)}>
 								{dataModalCalendar.scheduleList.map((s, idx) => (
 									<ScheduleOnlineItem
 										key={idx}
-										isUpdate={true}
+										isUnavailable={true}
+										isEditView={true}
 										scheduleObj={s}
 										isLoading={isLoading}
 										handleChangeValueSchedule={changeValueSchedule}
 										handleChangeStatusSchedule={onToggleSchedule}
 										optionTeacherList={optionListForADay.optionTeacherList.find((o) => o.id === s.ID)?.list || []}
 										optionStudyTime={optionListForADay.optionStudyTimeList}
+										handleAheadSchedule={onAheadSchedule}
 									/>
 								))}
 							</ScheduleList>
 						</CreateCourseCalendar>
 					</Card>
 				</div>
-				<div className="col-md-4 col-12">
+				<div className="col-md-4 col-12 d-none d-md-block">
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
-								<ScheduleItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} isUpdate={false} />
+								<ScheduleOnlineItem
+									key={idx}
+									scheduleObj={s}
+									handleChangeStatusSchedule={onToggleSchedule}
+									isEditView={true}
+								/>
 							))}
 						</ScheduleList>
 					</Schedule>

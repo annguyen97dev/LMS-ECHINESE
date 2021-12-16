@@ -50,7 +50,7 @@ export { userApi } from './user/user';
 export { examComingSoonApi } from './customer/student/exam-coming-soon';
 export { warningApi } from './customer/student/warning';
 export { courseApi } from './course/course';
-export { courseDetailApi } from './course-detail/course-detail';
+export * from './course-detail/course-detail';
 export { studentListInCourseApi } from './course-detail/student-list';
 export { studentChangeApi } from './customer/student/student-change';
 export { studentChangeCourseApi } from './customer/student/student-change-course';

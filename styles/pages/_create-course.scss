@@ -20,13 +20,19 @@
 	.ant-modal-body {
 		padding-left: 0;
 		padding-right: 0;
+		@include max-media(768px) {
+			padding: 10px 0;
+		}
 	}
 	.tt {
 		padding: 0 24px;
+		@include max-media(768px) {
+			padding: 0 10px;
+		}
 	}
 	.cnt {
 		padding: 0 24px;
-		max-height: 555px;
+		max-height: 575px;
 		overflow: hidden auto;
 		&::-webkit-scrollbar-track {
 			border-radius: 10px;
@@ -42,6 +48,17 @@
 		&::-webkit-scrollbar-thumb {
 			border-radius: 10px;
 			background-color: #b1b1b1;
+		}
+		@include max-media(768px) {
+			max-height: 300px;
+			padding: 0 10px;
+		}
+	}
+	.unavailable-mobile {
+		display: none;
+		@include max-media(767px) {
+			padding: 0 10px;
+			display: block;
 		}
 	}
 }
@@ -114,6 +131,10 @@
 			&::-webkit-scrollbar-thumb {
 				border-radius: 10px;
 				background-color: #e7e7e7;
+			}
+			@include max-media(767px) {
+				padding: 0 10px;
+				max-height: 102px;
 			}
 		}
 	}
