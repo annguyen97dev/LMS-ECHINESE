@@ -1,5 +1,5 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Form, Upload } from 'antd';
+import { Form, Spin, Upload } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
@@ -102,17 +102,21 @@ const UploadAvatarField = (props) => {
 								handleUploadAvatar(obj.file).then((res) => res?.status === 200 && field.onChange(res.data.data));
 							}}
 						>
-							<img
-								src={imgUrl || field.value}
-								alt="avatar"
-								style={{
-									width: '100%',
-									height: '100%',
-									objectFit: 'cover',
-									display: imgUrl || field.value ? 'block' : 'none'
-								}}
-							/>
-							<UploadButton />
+							{loadingImage ? (
+								<Spin size="large" />
+							) : (
+								<img
+									src={imgUrl || field.value}
+									alt="avatar"
+									style={{
+										width: '100%',
+										height: '100%',
+										objectFit: 'cover',
+										display: imgUrl || field.value ? 'block' : 'none'
+									}}
+								/>
+							)}
+							{/* <UploadButton /> */}
 						</Upload>
 					);
 				}}

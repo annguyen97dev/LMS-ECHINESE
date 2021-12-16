@@ -1,0 +1,95 @@
+.wrapper {
+	display: flex;
+	background-repeat: no-repeat;
+	background-position: left;
+	align-items: stretch;
+	flex-wrap: wrap !important;
+}
+
+.image-wrapper {
+	background-image: url(https://echineseweb.monamedia.net/template/images/img-right-side.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	flex: 1;
+	display: flex;
+
+	.calendar-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 1;
+		text-align: center;
+		font-weight: bold;
+		background: rgba(0, 0, 0, 0.5);
+
+		.image {
+			height: 100vh;
+			width: auto;
+			position: fixed;
+		}
+
+		.calendar {
+			color: white;
+			z-index: 99;
+		}
+
+		.month_year {
+			font-size: 62px;
+		}
+
+		.date {
+			color: #dd4768;
+			font-size: 80px;
+			line-height: 1;
+			margin-bottom: 35px;
+		}
+		.time {
+			font-size: 52px;
+			background: white;
+			padding: 0 20px;
+			display: inline-block;
+			border-radius: 15px;
+			color: #dd4768;
+		}
+
+		.slogan {
+			font-style: italic;
+			text-align: center;
+			margin-top: 40px;
+			font-size: 16px;
+			font-weight: 400;
+		}
+	}
+}
+
+.content {
+	background: white;
+	height: 100vh;
+	position: relative;
+	z-index: 9999;
+}
+
+.footer {
+	background: #282828;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	text-transform: uppercase;
+	padding: 15px 25px;
+	z-index: 9999;
+	&__left {
+		margin: 0 auto;
+	}
+}
+
+@media screen and(max-width: 991px) {
+	.wrapper {
+		flex-direction: column-reverse;
+	}
+	.content {
+		width: 100%;
+		padding: 0;
+		order: 1;
+	}
+}

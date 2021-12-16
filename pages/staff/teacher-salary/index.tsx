@@ -193,7 +193,11 @@ const SalaryReview = () => {
 			title: 'Ghi Chú',
 			width: 107,
 			dataIndex: 'NoteBonus',
-			render: (price, record: any) => <p>{price}</p>
+			render: (price, record: any) => (
+				<Tooltip title={price} className="limit-text">
+					<p>{price}</p>
+				</Tooltip>
+			)
 		},
 		{
 			title: 'Trạng Thái',
@@ -228,7 +232,7 @@ const SalaryReview = () => {
 			)
 		},
 		{
-			title: 'Lương tạm ứng',
+			title: 'Trừ tạm ứng',
 			width: 150,
 			dataIndex: 'AdvanceSalary',
 			render: (price, record: ITeacherSalary) => <p className="font-weight-primary">{numberWithCommas(price)}</p>

@@ -114,6 +114,7 @@ const Idioms = () => {
 		(async () => {
 			try {
 				let res = await idiomsApi.getPaged({ ...params, pageIndex: page });
+                
 				res.status == 200 && setIdioms(res.data.data);
 				if (res.status == 204) {
 					showNoti('danger', 'Không tìm thấy dữ liệu!');

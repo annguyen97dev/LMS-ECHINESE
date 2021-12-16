@@ -2192,12 +2192,14 @@ hr {
 	}
 }
 .limit-text {
-	display: inline;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
+	width: 200px;
+	display: -webkit-box;
+	white-space: nowrap;
+	display: inline-block;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 100%;
 }
 .info-profile-left {
 	.box-icon {

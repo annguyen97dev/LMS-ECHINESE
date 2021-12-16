@@ -85,12 +85,12 @@ const PowerList = (props) => {
 				TotalStudents,
 				TypeCourse,
 				TypeCourseName,
-				BranchID,
-				SalaryOfLesson
+				MaximumStudent,
+				BranchID
 			}: ICourse) => (
 				<List.Item
 					extra={cloneElement(children, {
-						courseObj: { ID, BranchID, AcademicUID, TeacherLeaderUID, SalaryOfLesson }
+						courseObj: { ID, BranchID, AcademicUID, TeacherLeaderUID }
 					})}
 				>
 					<List.Item.Meta
@@ -103,9 +103,9 @@ const PowerList = (props) => {
 						description={
 							<div className="content-body">
 								<ul className="list-ver">
-									{/* <li>
+									<li>
 										<span>Học vụ: </span> <span>{AcademicName || 'Trống'}</span>
-									</li> */}
+									</li>
 									<li>
 										<span>Quản lý: </span> <span>{TeacherLeaderName || 'Trống'}</span>
 									</li>
@@ -132,6 +132,11 @@ const PowerList = (props) => {
 									<li>
 										Số học viên: <span>{TotalStudents}</span>
 									</li>
+									{MaximumStudent && (
+										<li>
+											Số học viên tối đa: <span>{MaximumStudent}</span>
+										</li>
+									)}
 								</ul>
 							</div>
 						}

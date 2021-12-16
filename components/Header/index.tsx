@@ -43,6 +43,7 @@ export default function Header({
 	const [isSearch, setIsSearch] = useState(false);
 	const { titlePage, userInformation } = useWrap();
 	const [session, loading] = useSession();
+    // console.log("session: " + JSON.stringify(session));
 	const [dataUser, setDataUser] = useState<IUser>();
 	const [openMenuCustom, setOpenMenuCustom] = useState(false);
 	const showDrawer = () => {

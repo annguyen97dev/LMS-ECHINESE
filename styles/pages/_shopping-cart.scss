@@ -406,39 +406,45 @@
 		}
 		.payment-card {
 			.ant-radio-wrapper {
-				&::after {
-					content: 'Thanh toán bằng thẻ';
+				span:nth-child(1) {
+					.ant-radio-inner {
+						width: 16px;
+						height: 16px;
+					}
+				}
+				span:nth-child(2) {
+					width: 95%;
 				}
 			}
 		}
-		.paypal {
-			.ant-radio-wrapper {
-				&::after {
-					content: 'Thanh toán bằng paypal';
-				}
-			}
-		}
-		.momo {
-			.ant-radio-wrapper {
-				&::after {
-					content: 'Thanh toán bằng Momo';
-				}
-			}
-		}
-		.onepay {
-			.ant-radio-wrapper {
-				&::after {
-					content: 'Thanh toán bằng Onepay';
-				}
-			}
-		}
-		.cash {
-			.ant-radio-wrapper {
-				&::after {
-					content: 'Thanh toán bằng tiền mặt';
-				}
-			}
-		}
+		// .paypal {
+		// 	.ant-radio-wrapper {
+		// 		&::after {
+		// 			content: 'Thanh toán bằng paypal';
+		// 		}
+		// 	}
+		// }
+		// .momo {
+		// 	.ant-radio-wrapper {
+		// 		&::after {
+		// 			content: 'Thanh toán bằng Momo';
+		// 		}
+		// 	}
+		// }
+		// .onepay {
+		// 	.ant-radio-wrapper {
+		// 		&::after {
+		// 			content: 'Thanh toán bằng Onepay';
+		// 		}
+		// 	}
+		// }
+		// .cash {
+		// 	.ant-radio-wrapper {
+		// 		&::after {
+		// 			content: 'Thanh toán bằng tiền mặt';
+		// 		}
+		// 	}
+		// }
 		.payment-method {
 			.card-info,
 			.paypal-info {

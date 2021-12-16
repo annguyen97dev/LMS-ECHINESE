@@ -3,12 +3,12 @@ import { providers, signIn, csrfToken, getProviders } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import LoginForm from '~/components/LoginForm';
 import { useWrap } from '~/context/wrap';
+import AuthLayout from '~/components/AuthLayout';
 
-export default function SignIn({ providers, csrfToken }) {
+function SignIn({ providers, csrfToken }) {
 	const { showNoti } = useWrap();
 	const router = useRouter();
 	const [haveError, setHaveError] = useState('');
-
 	// console.log("Csrf token: ", csrfToken);
 
 	useEffect(() => {
@@ -51,33 +51,25 @@ export default function SignIn({ providers, csrfToken }) {
 					case 'credentials-signin':
 						return (
 							<div key={provider.name}>
-								<LoginForm
-									key={provider.name}
-									onSubmit={_Submit}
-									// action="/api/auth/callback/credentials-signin"
-									csrfToken={csrfToken}
-									error={haveError}
-								/>
-								{/* <form
-                  method="post"
-                  action="/api/auth/callback/credentials-signin"
-                >
-                  <input
-                    name="csrfToken"
-                    type="hidden"
-                    defaultValue={csrfToken}
-                    // value={csrfToken}
-                  />
-                  <label>
-                    Username
-                    <input name="username" type="text" />
-                  </label>
-                  <label>
-                    Password
-                    <input name="password" type="password" />
-                  </label>
-                  <button type="submit">Đăng nhập</button>
-                </form> */}
+								<LoginForm key={provider.name} onSubmit={_Submit} csrfToken={csrfToken} error={haveError} />
+
+								{/* <form method="post" action="/api/auth/callback/credentials-signin">
+									<input
+										name="csrfToken"
+										type="hidden"
+										defaultValue={csrfToken}
+										// value={csrfToken}
+									/>
+									<label>
+										Username
+										<input name="username" type="text" />
+									</label>
+									<label>
+										Password
+										<input name="password" type="password" />
+									</label>
+									<button type="submit">Đăng nhập</button>
+								</form> */}
 							</div>
 						);
 					case 'email':
@@ -104,6 +96,10 @@ export default function SignIn({ providers, csrfToken }) {
 		</>
 	);
 }
+
+SignIn.layout = AuthLayout;
+
+export default SignIn;
 
 export async function getServerSideProps(context) {
 	const providers = await getProviders();

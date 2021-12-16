@@ -1,18 +1,28 @@
-import { Card } from 'antd';
+import {Card} from 'antd';
 import moment from 'moment';
-import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
-import { checkRoomApi, checkTeacherApi, courseDetailApi, studyTimeApi, subjectApi } from '~/apiBase';
-import { courseDetailAvailableDayApi } from '~/apiBase/course-detail/available-day';
+import {useRouter} from 'next/router';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+	checkRoomApi,
+	checkTeacherApi,
+	courseDetailApi,
+	studyTimeApi,
+	subjectApi,
+} from '~/apiBase';
+import {courseDetailAvailableDayApi} from '~/apiBase/course-detail/available-day';
 import CreateCourseCalendar from '~/components/Global/CreateCourse/Calendar/CreateCourseCalendar';
 import SaveCreateCourse from '~/components/Global/CreateCourse/SaveCreateCourse';
 import Schedule from '~/components/Global/CreateCourse/Schedule/Schedule';
 import ScheduleItem from '~/components/Global/CreateCourse/Schedule/ScheduleItem';
 import ScheduleList from '~/components/Global/CreateCourse/Schedule/ScheduleList';
 import TitlePage from '~/components/TitlePage';
-import { useDebounce } from '~/context/useDebounce';
-import { useWrap } from '~/context/wrap';
-import { clearOptionsDuplicate, fmArrayToObjectWithSpecialKey, fmSelectArr } from '~/utils/functions';
+import {useDebounce} from '~/context/useDebounce';
+import {useWrap} from '~/context/wrap';
+import {
+	clearOptionsDuplicate,
+	fmArrayToObjectWithSpecialKey,
+	fmSelectArr,
+} from '~/utils/functions';
 import AvailableScheduleForm from './AvailableScheduleForm';
 import CreateNewScheduleForm from './CreateNewScheduleForm';
 
@@ -53,58 +63,70 @@ type IScheduleListToSave = {
 };
 const EditCourse = (props) => {
 	const router = useRouter();
-	const { slug: courseID } = router.query;
+	const {slug: courseID} = router.query;
 	// -----------STATE-----------
 	// CREATE COURSE FORM STATE
-	const { showNoti } = useWrap();
+	const {showNoti} = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false
+		status: false,
 	});
 	//Lesson
 	const [scheduleList, setScheduleList] = useState<IEditCourseScheduleList>({
 		available: [],
-		unavailable: []
+		unavailable: [],
 	});
-	const [optionListForADay, setOptionListForADay] = useState<IOptionListForADay>({
-		optionStudyTimeList: [],
-		list: [
-			{
-				optionRoomList: [],
-				optionTeacherList: []
-			}
-		]
-	});
+	const [optionListForADay, setOptionListForADay] =
+		useState<IOptionListForADay>({
+			optionStudyTimeList: [],
+			list: [
+				{
+					optionRoomList: [],
+					optionTeacherList: [],
+				},
+			],
+		});
 	//StudyDay
 	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
 	// SCHEDULE TO SHOW ON MODAL
-	const [scheduleShow, setScheduleShow] = useState<IEditCourseScheduleShowList>({});
+	const [scheduleShow, setScheduleShow] = useState<IEditCourseScheduleShowList>(
+		{}
+	);
 	// CALENDAR MODAL
 	const [dataModalCalendar, setDataModalCalendar] = useState<IDataModal>({
 		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
-		scheduleList: []
+		scheduleList: [],
 	});
 	// EDIT
 	const [isShowSaveBtnGroup, setIsShowSaveBtnGroup] = useState(false);
-	const [optionListForGetAvailableSchedule, setOptionListForGetAvailableSchedule] = useState<{
+	const [
+		optionListForGetAvailableSchedule,
+		setOptionListForGetAvailableSchedule,
+	] = useState<{
 		studyTimes: IOptionCommon[];
 		rooms: IOptionCommon[];
 	}>({
 		rooms: [],
-		studyTimes: []
+		studyTimes: [],
 	});
-	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>([]);
-	const [scheduleListToSave, setScheduleListToSave] = useState<IScheduleListToSave[]>([]);
+	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>(
+		[]
+	);
+	const [scheduleListToSave, setScheduleListToSave] = useState<
+		IScheduleListToSave[]
+	>([]);
 	const stoneScheduleListToFindDifference = useRef<ICourseDetailSchedule[]>([]);
 	// -----------SCHEDULE-----------
 	// FETCH DATA FOR SELECT SCHEDULE
-	const fetchInfoAvailableSchedule = async (arrSchedule: ICourseDetailSchedule[]) => {
+	const fetchInfoAvailableSchedule = async (
+		arrSchedule: ICourseDetailSchedule[]
+	) => {
 		// SPLIT SCHEDULE TO 2 OBJECT TO CALL 2 API
 		// paramsArr = [ {Schedule-*: [{params teacher}, {params room}]} ]
 		const paramsArr = arrSchedule.map((sch, idx) => {
-			const { BranchID, SubjectID, StudyTimeID, RoomID, CourseID } = sch;
+			const {BranchID, SubjectID, StudyTimeID, RoomID, CourseID} = sch;
 			const dateFm = moment(dataModalCalendar.dateString).format('YYYY/MM/DD');
 			return {
 				[`Schedule-${idx + 1}`]: [
@@ -113,7 +135,7 @@ const EditCourse = (props) => {
 						BranchID,
 						SubjectID,
 						StudyTimeID,
-						Date: dateFm
+						Date: dateFm,
 					},
 					// ROOM
 					{
@@ -121,9 +143,9 @@ const EditCourse = (props) => {
 						Rooms: RoomID,
 						StudyTimeID,
 						Date: dateFm,
-						CourseID
-					}
-				]
+						CourseID,
+					},
+				],
 			};
 		});
 		try {
@@ -148,61 +170,71 @@ const EditCourse = (props) => {
 					const newOptionForSchedule = newRes.map((r, idx) => {
 						const teacherList = r[0];
 						const roomList = r[1];
-						const { RoomID, RoomName, TeacherID, TeacherName } = arrSchedule[idx];
+						const {RoomID, RoomName, TeacherID, TeacherName} = arrSchedule[idx];
 						const rs = {
 							optionTeacherList: [
-								{ title: '---Chọn giáo viên---', value: 0 },
-								{ title: TeacherName, value: TeacherID }
+								{title: '---Chọn giáo viên---', value: 0},
+								{title: TeacherName, value: TeacherID},
 							],
 							optionRoomList: [
-								{ title: '---Chọn phòng---', value: 0 },
-								{ title: RoomName, value: RoomID }
-							]
+								{title: '---Chọn phòng---', value: 0},
+								{title: RoomName, value: RoomID},
+							],
 						};
 						//
 						if (teacherList.status === 200) {
 							const newOptionTeacherList = [
 								...rs.optionTeacherList,
-								...fmSelectArr(teacherList.data.data, 'name', 'id', ['name'])
+								...fmSelectArr(teacherList.data.data, 'name', 'id', ['name']),
 							];
-							const clearDuplicate = clearOptionsDuplicate(newOptionTeacherList);
+							const clearDuplicate =
+								clearOptionsDuplicate(newOptionTeacherList);
 							rs.optionTeacherList = clearDuplicate;
 						}
 						if (TeacherID === 0 && teacherList.status === 204) {
-							rs.optionTeacherList = [{ title: '---Chọn giáo viên---', value: 0 }];
+							rs.optionTeacherList = [
+								{title: '---Chọn giáo viên---', value: 0},
+							];
 						}
 						//
 						if (roomList.status === 200) {
-							const newOptionRoomList = [...rs.optionRoomList, ...fmSelectArr(roomList.data.data, 'name', 'id', ['name'])];
+							const newOptionRoomList = [
+								...rs.optionRoomList,
+								...fmSelectArr(roomList.data.data, 'name', 'id', ['name']),
+							];
 							const clearDuplicate = clearOptionsDuplicate(newOptionRoomList);
 							rs.optionRoomList = clearDuplicate;
 						}
 						if (RoomID === 0 && roomList.status === 204) {
-							rs.optionRoomList = [{ title: '---Chọn phòng---', value: 0 }];
+							rs.optionRoomList = [{title: '---Chọn phòng---', value: 0}];
 						}
 						//
 						return rs;
 					});
 					setOptionListForADay((prevState) => ({
 						...prevState,
-						list: newOptionForSchedule
+						list: newOptionForSchedule,
 					}));
 				})
-				.catch((err) => console.log('fetchInfoAvailableSchedule - PromiseAll:', err));
+				.catch((err) =>
+					console.log('fetchInfoAvailableSchedule - PromiseAll:', err)
+				);
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({
 				type: 'CHECK_SCHEDULE',
-				status: false
+				status: false,
 			});
 		}
 	};
 	const onDebounceFetch = useDebounce(fetchInfoAvailableSchedule, 300, []);
-	const onDebounceFetchInfoAvailableSchedule = (params: ICourseDetailSchedule[]) => {
+	const onDebounceFetchInfoAvailableSchedule = (
+		params: ICourseDetailSchedule[]
+	) => {
 		setIsLoading({
 			type: 'CHECK_SCHEDULE',
-			status: true
+			status: true,
 		});
 		onDebounceFetch(params);
 	};
@@ -216,7 +248,9 @@ const EditCourse = (props) => {
 	const studyTimeOverFlow = (scheduleList: ICourseDetailSchedule[]) => {
 		const newStudyTimeList = [...optionListForADay.optionStudyTimeList];
 		let rs = false;
-		const studyTimeInDay = newStudyTimeList.filter((s) => scheduleList.map((sch) => sch.StudyTimeID).includes(+s.value));
+		const studyTimeInDay = newStudyTimeList.filter((s) =>
+			scheduleList.map((sch) => sch.StudyTimeID).includes(+s.value)
+		);
 		// COMPARE STUDY TIME RETURN TRUE IF IN VALID
 		for (let i = 0; i < studyTimeInDay.length; i++) {
 			const timeObjBase = studyTimeInDay[i];
@@ -243,30 +277,34 @@ const EditCourse = (props) => {
 		return rs;
 	};
 	const getNewValueForSchedule = (key, vl, pos) => {
-		const { optionRoomList, optionTeacherList } = optionListForADay.list[pos];
+		const {optionRoomList, optionTeacherList} = optionListForADay.list[pos];
 		switch (key) {
 			case 'CaID':
-				const StudyTimeName = optionListForADay.optionStudyTimeList.find((o) => o.value === vl)?.title;
+				const StudyTimeName = optionListForADay.optionStudyTimeList.find(
+					(o) => o.value === vl
+				)?.title;
 				return {
 					RoomID: 0,
 					TeacherID: 0,
 					TeacherName: 'Giáo viên trống',
 					RoomName: 'Phòng trống',
 					StudyTimeName,
-					StudyTimeID: vl
+					StudyTimeID: vl,
 				};
 			case 'TeacherID':
-				const TeacherName = optionTeacherList.find((o) => o.value === vl)?.title;
+				const TeacherName = optionTeacherList.find(
+					(o) => o.value === vl
+				)?.title;
 				return {
 					TeacherName: vl ? TeacherName : 'Giáo viên trống',
-					[key]: vl
+					[key]: vl,
 				};
 				break;
 			case 'RoomID':
 				const RoomName = optionRoomList.find((o) => o.value === vl)?.title;
 				return {
 					RoomName: vl ? RoomName : 'Phòng trống',
-					[key]: vl
+					[key]: vl,
 				};
 				break;
 			default:
@@ -274,7 +312,7 @@ const EditCourse = (props) => {
 		}
 	};
 	const getNewUnavailableScheduleList = (uid, key, vl, pos) => {
-		const { unavailable } = scheduleList;
+		const {unavailable} = scheduleList;
 		// DATE TO CHECK DUPLICATE VALUE
 		let date;
 		const rs = unavailable.map((s) => {
@@ -283,39 +321,52 @@ const EditCourse = (props) => {
 				date = s.Date;
 				return {
 					...s,
-					...newVl
+					...newVl,
 				};
 			} else {
 				return s;
 			}
 		});
-		return { date, rs };
+		return {date, rs};
 	};
-	const changeValueSchedule = (uid: number, key: 'CaID' | 'TeacherID' | 'RoomID', vl: number | string, pos: number) => {
-		const { rs: newUnavailableScheduleList, date } = getNewUnavailableScheduleList(uid, key, vl, pos);
+	const changeValueSchedule = (
+		uid: number,
+		key: 'CaID' | 'TeacherID' | 'RoomID',
+		vl: number | string,
+		pos: number
+	) => {
+		const {rs: newUnavailableScheduleList, date} =
+			getNewUnavailableScheduleList(uid, key, vl, pos);
 		if (key === 'CaID') {
-			const scheduleList = newUnavailableScheduleList.filter((s) => s.Date === date);
-			if (studyTimeOverFlow(scheduleList) || checkDuplicateStudyTimeInDay(scheduleList, vl)) {
+			const scheduleList = newUnavailableScheduleList.filter(
+				(s) => s.Date === date
+			);
+			if (
+				studyTimeOverFlow(scheduleList) ||
+				checkDuplicateStudyTimeInDay(scheduleList, vl)
+			) {
 				showNoti('danger', 'Dữ liệu không phù hợp');
 			} else {
 				setDataModalCalendar({
 					...dataModalCalendar,
-					scheduleList: scheduleList
+					scheduleList: scheduleList,
 				});
 			}
 		}
 		if (key === 'RoomID') {
-			const scheduleList = newUnavailableScheduleList.filter((s) => s.Date === date);
+			const scheduleList = newUnavailableScheduleList.filter(
+				(s) => s.Date === date
+			);
 			if (scheduleList.length) {
 				setDataModalCalendar({
 					...dataModalCalendar,
-					scheduleList: scheduleList
+					scheduleList: scheduleList,
 				});
 			}
 		}
 		setScheduleList((prevState) => ({
 			...prevState,
-			unavailable: newUnavailableScheduleList
+			unavailable: newUnavailableScheduleList,
 		}));
 	};
 	const changeStatusSchedule = (sch: ICourseDetailSchedule, type = 1) => {
@@ -325,28 +376,36 @@ const EditCourse = (props) => {
 		}
 		const newScheduleUnavailableList = [...scheduleList.unavailable];
 		const newScheduleAvailableList = [...scheduleList.available];
-		const fmScheduleUnavailableToObject = fmArrayToObjectWithSpecialKey(newScheduleUnavailableList, 'Date');
+		const fmScheduleUnavailableToObject = fmArrayToObjectWithSpecialKey(
+			newScheduleUnavailableList,
+			'Date'
+		);
 		// type = 2 => unavailable to available
 		if (type === 2) {
 			const idx = newScheduleUnavailableList.findIndex((s) => s.ID === sch.ID);
 			const newScheduleObj = {
 				...newScheduleUnavailableList[idx],
-				Date: dataModalCalendar.dateString
+				Date: dataModalCalendar.dateString,
 			};
 			newScheduleUnavailableList.splice(idx, 1);
 			newScheduleAvailableList.push(newScheduleObj);
 		}
 		// type = 1 => available to unavailable
 		if (type === 1) {
-			const limit = calendarList.find((c) => c.Day === dataModalCalendar.dateString)?.Limit;
-			if (fmScheduleUnavailableToObject[dataModalCalendar.dateString]?.length >= limit) {
+			const limit = calendarList.find(
+				(c) => c.Day === dataModalCalendar.dateString
+			)?.Limit;
+			if (
+				fmScheduleUnavailableToObject[dataModalCalendar.dateString]?.length >=
+				limit
+			) {
 				showNoti('danger', 'Số ca đạt giới hạn');
 				return false;
 			}
 			const idx = newScheduleAvailableList.findIndex((s) => s.ID === sch.ID);
 			const newScheduleObj = {
 				...newScheduleAvailableList[idx],
-				Date: dataModalCalendar.dateString
+				Date: dataModalCalendar.dateString,
 			};
 			newScheduleAvailableList.splice(idx, 1);
 			newScheduleUnavailableList.push(newScheduleObj);
@@ -354,14 +413,17 @@ const EditCourse = (props) => {
 		setScheduleList((prevState) => ({
 			...prevState,
 			available: newScheduleAvailableList,
-			unavailable: newScheduleUnavailableList
+			unavailable: newScheduleUnavailableList,
 		}));
 		return true;
 	};
 	// -----------CALENDAR-----------
 	const calendarDateFormat = (calendarArr: ICourseDetailAvailableDay[]) => {
-		const { unavailable } = scheduleList;
-		const fmScheduleUnavailableToObject = fmArrayToObjectWithSpecialKey(unavailable, 'Date');
+		const {unavailable} = scheduleList;
+		const fmScheduleUnavailableToObject = fmArrayToObjectWithSpecialKey(
+			unavailable,
+			'Date'
+		);
 		const rs = calendarArr.map((c, idx) => {
 			let isValid = true;
 			let limit = c.Limit;
@@ -386,8 +448,8 @@ const EditCourse = (props) => {
 					dateString: c.Day,
 					valid: isValid,
 					limit: c.Limit,
-					scheduleList
-				}
+					scheduleList,
+				},
 			};
 		});
 		return rs;
@@ -404,19 +466,19 @@ const EditCourse = (props) => {
 			setDataModalCalendar({
 				...dataModalCalendar,
 				scheduleInDay: newScheduleList.length,
-				scheduleList: newScheduleList
+				scheduleList: newScheduleList,
 			});
 		}
 	};
 	useEffect(() => {
-		const { scheduleList } = dataModalCalendar;
+		const {scheduleList} = dataModalCalendar;
 		if (scheduleList.length) {
 			onDebounceFetchInfoAvailableSchedule(scheduleList);
 		}
 	}, [dataModalCalendar]);
 	// -----------SAVE COURSE-----------
 	const onFindScheduleChanged = (arr: ICourseDetailSchedule[]) => {
-		const { current: stoneScheduleList } = stoneScheduleListToFindDifference;
+		const {current: stoneScheduleList} = stoneScheduleListToFindDifference;
 		const rs: ICourseDetailSchedule[] = [];
 		for (let i = 0, len = arr.length; i < len; i++) {
 			const s = arr[i];
@@ -428,7 +490,8 @@ const EditCourse = (props) => {
 				const s2 = stoneScheduleList[i2];
 				if (
 					s.ID === s2.ID &&
-					(moment(s.Date).format('YYYY/MM/DD') !== moment(s2.StartTime).format('YYYY/MM/DD') ||
+					(moment(s.Date).format('YYYY/MM/DD') !==
+						moment(s2.StartTime).format('YYYY/MM/DD') ||
 						s.StudyTimeID !== s2.StudyTimeID ||
 						s.RoomID !== s2.RoomID ||
 						s.TeacherID !== s2.TeacherID)
@@ -441,7 +504,7 @@ const EditCourse = (props) => {
 		return rs;
 	};
 	const onValidateDateToSave = (arr: ICourseDetailSchedule[]) => {
-		const { unavailable } = scheduleList;
+		const {unavailable} = scheduleList;
 		const rs: {
 			show: Array<{
 				ID: number;
@@ -458,7 +521,7 @@ const EditCourse = (props) => {
 			save: IScheduleListToSave[];
 		} = {
 			show: [],
-			save: []
+			save: [],
 		};
 		for (let i = 0, len = arr.length; i < len; i++) {
 			const s = arr[i];
@@ -474,9 +537,17 @@ const EditCourse = (props) => {
 				CourseID,
 				BranchID,
 				SubjectID,
-				CurriculumID
+				CurriculumID,
 			} = s;
-			const dayArr = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+			const dayArr = [
+				'Chủ Nhật',
+				'Thứ 2',
+				'Thứ 3',
+				'Thứ 4',
+				'Thứ 5',
+				'Thứ 6',
+				'Thứ 7',
+			];
 			const dayOffWeek = dayArr[moment(s.Date).day()];
 			let isValid = !s.RoomID || !s.TeacherID;
 			for (let i2 = 0; i2 < unavailable.length; i2++) {
@@ -495,12 +566,16 @@ const EditCourse = (props) => {
 				Date,
 				dayOffWeek,
 				StudyTimeID,
-				studyTimeName: StudyTimeName || optionListForADay.optionStudyTimeList.find((s) => s.value === StudyTimeID).title,
+				studyTimeName:
+					StudyTimeName ||
+					optionListForADay.optionStudyTimeList.find(
+						(s) => s.value === StudyTimeID
+					).title,
 				RoomID,
 				roomName: RoomName,
 				TeacherID,
 				teacherName: TeacherName,
-				isValid
+				isValid,
 			});
 			rs.save.push({
 				ID: typeof ID === 'string' ? 0 : ID,
@@ -511,19 +586,24 @@ const EditCourse = (props) => {
 				Date,
 				StudyTimeID,
 				RoomID,
-				TeacherID
+				TeacherID,
 			});
 		}
 		return rs;
 	};
 	const onFetchDataToSave = () => {
-		const { unavailable } = scheduleList;
+		const {unavailable} = scheduleList;
 
 		const scheduleListChanged = onFindScheduleChanged(unavailable);
-		const { show, save } = onValidateDateToSave(scheduleListChanged);
+		const {show, save} = onValidateDateToSave(scheduleListChanged);
 
-		const scheduleListSorted = show.sort((a, b) => moment(a.Date).valueOf() - moment(b.Date).valueOf());
-		const fmScheduleListToShow = fmArrayToObjectWithSpecialKey(scheduleListSorted, 'Date');
+		const scheduleListSorted = show.sort(
+			(a, b) => moment(a.Date).valueOf() - moment(b.Date).valueOf()
+		);
+		const fmScheduleListToShow = fmArrayToObjectWithSpecialKey(
+			scheduleListSorted,
+			'Date'
+		);
 
 		setScheduleShow(fmScheduleListToShow);
 		setScheduleListToSave(save);
@@ -531,11 +611,13 @@ const EditCourse = (props) => {
 	const onSaveCourse = async () => {
 		setIsLoading({
 			type: 'SAVE_COURSE',
-			status: true
+			status: true,
 		});
 		let res;
 		try {
-			const haveErrors = Object.keys(scheduleShow).find((date, idx) => scheduleShow[date].find((s) => s.isValid));
+			const haveErrors = Object.keys(scheduleShow).find((date, idx) =>
+				scheduleShow[date].find((s) => s.isValid)
+			);
 			if (haveErrors) {
 				showNoti('danger', 'Đã xảy ra lỗi. Xin kiểm tra lại');
 				return;
@@ -547,14 +629,16 @@ const EditCourse = (props) => {
 			res = await courseDetailApi.update(scheduleListToSave);
 			if (res.status === 200) {
 				showNoti('success', res.data.message);
-				router.push(`/course/course-list/course-list-detail/${courseID}?type=1`);
+				router.push(
+					`/course/course-list/course-list-detail/${courseID}?type=1`
+				);
 			}
 		} catch (error) {
 			showNoti('error', error.message);
 		} finally {
 			setIsLoading({
 				type: 'SAVE_COURSE',
-				status: false
+				status: false,
 			});
 		}
 		return res;
@@ -563,30 +647,32 @@ const EditCourse = (props) => {
 	const fetchCourseDetail = async () => {
 		setIsLoading({
 			type: 'FETCH_COURSE',
-			status: true
+			status: true,
 		});
 		try {
-			const res = await courseDetailApi.getAll({ CourseID: courseID });
+			const res = await courseDetailApi.getAll({CourseID: courseID});
 			if (res.status === 200) {
 				const newScheduleList = res.data.data.map((sch) => ({
 					...sch,
-					Date: moment(sch.StartTime).format('YYYY/MM/DD')
+					Date: moment(sch.StartTime).format('YYYY/MM/DD'),
 				}));
 				stoneScheduleListToFindDifference.current = newScheduleList;
 
-				const studyTimesFm = fmSelectArr(res.data.studyTimes, 'name', 'id', ['select']);
+				const studyTimesFm = fmSelectArr(res.data.studyTimes, 'name', 'id', [
+					'select',
+				]);
 				const roomsFm = fmSelectArr(res.data.rooms, 'name', 'id', ['select']);
 
 				const rs = {
 					rooms: roomsFm,
-					studyTimes: studyTimesFm
+					studyTimes: studyTimesFm,
 				};
 
 				setOptionListForGetAvailableSchedule(rs);
 
 				setScheduleList({
 					available: [],
-					unavailable: newScheduleList
+					unavailable: newScheduleList,
 				});
 				return rs;
 			}
@@ -595,22 +681,25 @@ const EditCourse = (props) => {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_COURSE',
-				status: false
+				status: false,
 			});
 		}
 	};
 	const fetchSubject = async () => {
 		setIsLoading({
 			type: 'FETCH_SUBJECT',
-			status: true
+			status: true,
 		});
 		try {
 			const res = await subjectApi.getAll({
-				CourseID: courseID
+				CourseID: courseID,
 			});
 			if (res.status === 200) {
 				const fmOption = fmSelectArr(res.data.data, 'SubjectName', 'ID');
-				setOptionSubjectList([{ title: '---Chọn môn học---', value: 0 }, ...fmOption]);
+				setOptionSubjectList([
+					{title: '---Chọn môn học---', value: 0},
+					...fmOption,
+				]);
 				return fmOption;
 			}
 		} catch (error) {
@@ -618,27 +707,31 @@ const EditCourse = (props) => {
 		} finally {
 			setIsLoading({
 				type: 'FETCH_SUBJECT',
-				status: false
+				status: false,
 			});
 		}
 	};
 	const fetchStudyTime = async () => {
 		try {
 			const res = await studyTimeApi.getAll({
-				CourseID: courseID
+				CourseID: courseID,
 			});
 			if (res.status === 200) {
-				const fmOption = fmSelectArr(res.data.data, 'Name', 'ID', ['Time', 'TimeStart', 'TimeEnd']);
+				const fmOption = fmSelectArr(res.data.data, 'Name', 'ID', [
+					'Time',
+					'TimeStart',
+					'TimeEnd',
+				]);
 
 				setOptionListForADay({
 					...optionListForADay,
 					optionStudyTimeList: [
 						{
 							title: '---Chọn ca học---',
-							value: 0
+							value: 0,
 						},
-						...fmOption
-					]
+						...fmOption,
+					],
 				});
 				return fmOption;
 			}
@@ -647,32 +740,38 @@ const EditCourse = (props) => {
 		}
 	};
 
-	const fetchAvailableSchedule = async (data: { RoomID: number[]; StudyTimeID: number[] }) => {
+	const fetchAvailableSchedule = async (data: {
+		RoomID: number[];
+		StudyTimeID: number[];
+	}) => {
 		setIsShowSaveBtnGroup(false);
 		setIsLoading({
 			type: 'FETCH_SCHEDULE',
-			status: true
+			status: true,
 		});
 		try {
 			const res = await courseDetailAvailableDayApi.getAll({
 				Room: data.RoomID.join(','),
 				StudyTime: data.StudyTimeID.join(','),
-				CourseID: courseID
+				CourseID: courseID,
 			});
 			if (res.status === 200) {
-				const newScheduleListFm = fmArrayToObjectWithSpecialKey(stoneScheduleListToFindDifference.current, 'Date');
+				const newScheduleListFm = fmArrayToObjectWithSpecialKey(
+					stoneScheduleListToFindDifference.current,
+					'Date'
+				);
 				const dayListFm = res.data.data.map((d) => {
 					const fmDay = moment(d.Day).format('YYYY/MM/DD');
 					return {
 						...d,
 						Day: fmDay,
-						Limit: newScheduleListFm[fmDay]?.length + d.Limit || d.Limit
+						Limit: newScheduleListFm[fmDay]?.length + d.Limit || d.Limit,
 					};
 				});
 				setIsShowSaveBtnGroup(true);
 				setIsLoading({
 					type: 'FETCH_SCHEDULE',
-					status: false
+					status: false,
 				});
 				setCalendarList(dayListFm);
 				return true;
@@ -685,21 +784,23 @@ const EditCourse = (props) => {
 		}
 	};
 	const fetchAvailableScheduleFirstTime = async () => {
-		const { rooms, studyTimes } = await fetchCourseDetail();
+		const {rooms, studyTimes} = await fetchCourseDetail();
 		const RoomID = rooms.filter((r) => r.options.select).map((r) => r.value);
-		const StudyTimeID = studyTimes.filter((r) => r.options.select).map((r) => r.value);
+		const StudyTimeID = studyTimes
+			.filter((r) => r.options.select)
+			.map((r) => r.value);
 		if (RoomID.length && StudyTimeID.length) {
-			fetchAvailableSchedule({ RoomID, StudyTimeID });
+			fetchAvailableSchedule({RoomID, StudyTimeID});
 		}
 	};
-	const onCreateSchedule = (obj: { SubjectID: number; StudyDay: number }) => {
+	const onCreateSchedule = (obj: {SubjectID: number; StudyDay: number}) => {
 		setIsLoading({
 			type: 'CREATE_SCHEDULE',
-			status: true
+			status: true,
 		});
 		let res;
 		try {
-			const { StudyDay, SubjectID } = obj;
+			const {StudyDay, SubjectID} = obj;
 			const rs = scheduleList.available;
 			for (let i = 0; i < StudyDay; i++) {
 				const newSchedule = {
@@ -718,22 +819,22 @@ const EditCourse = (props) => {
 					TeacherID: 0,
 					TeacherName: 'Trống',
 					SubjectID,
-					SubjectName: optionSubjectList.find((s) => s.value === SubjectID).title,
+					SubjectName: optionSubjectList.find((s) => s.value === SubjectID)
+						.title,
 					CurriculumID: 0,
-					ProgramID: scheduleList.unavailable[0].ProgramID
 				};
 				rs.push(newSchedule);
 			}
 			setScheduleList({
 				...scheduleList,
-				available: rs
+				available: rs,
 			});
 		} catch (error) {
 			console.log('onCreateSchedule', error.message);
 		} finally {
 			setIsLoading({
 				type: 'CREATE_SCHEDULE',
-				status: false
+				status: false,
 			});
 		}
 		return res;
@@ -763,7 +864,9 @@ const EditCourse = (props) => {
 									<AvailableScheduleForm
 										isLoading={isLoading}
 										handleGetAvailableSchedule={fetchAvailableSchedule}
-										optionListForGetAvailableSchedule={optionListForGetAvailableSchedule}
+										optionListForGetAvailableSchedule={
+											optionListForGetAvailableSchedule
+										}
 									/>
 									{isShowSaveBtnGroup && (
 										<>
@@ -787,19 +890,29 @@ const EditCourse = (props) => {
 					>
 						<CreateCourseCalendar
 							eventList={calendarDateFormat(calendarList)}
-							isLoaded={isLoading.type === 'FETCH_SCHEDULE' && isLoading.status ? false : true}
+							isLoaded={
+								isLoading.type === 'FETCH_SCHEDULE' && isLoading.status
+									? false
+									: true
+							}
 							//
 							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
 						>
-							<ScheduleList panelActiveListInModal={dataModalCalendar.scheduleList.map((_, idx) => idx)}>
+							<ScheduleList
+								panelActiveListInModal={dataModalCalendar.scheduleList.map(
+									(_, idx) => idx
+								)}
+							>
 								{dataModalCalendar.scheduleList.map((s, idx) => (
 									<ScheduleItem
 										key={idx}
 										isUpdate={true}
 										scheduleObj={s}
 										isLoading={isLoading}
-										handleChangeValueSchedule={(uid, key, vl) => changeValueSchedule(uid, key, vl, idx)}
+										handleChangeValueSchedule={(uid, key, vl) =>
+											changeValueSchedule(uid, key, vl, idx)
+										}
 										handleChangeStatusSchedule={onToggleSchedule}
 										optionRoomAndTeacherForADay={optionListForADay.list[idx]}
 										optionStudyTime={optionListForADay.optionStudyTimeList}
@@ -813,7 +926,12 @@ const EditCourse = (props) => {
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
-								<ScheduleItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} isUpdate={false} />
+								<ScheduleItem
+									key={idx}
+									scheduleObj={s}
+									handleChangeStatusSchedule={onToggleSchedule}
+									isUpdate={false}
+								/>
 							))}
 						</ScheduleList>
 					</Schedule>

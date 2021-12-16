@@ -56,7 +56,7 @@ const StudentCourseReserve = () => {
 		},
 		{
 			title: 'Ngày bảo lưu',
-			dataIndex: 'ProgramName',
+			dataIndex: 'ReserveDate',
 			render: (DOB) => moment(DOB).format('DD/MM/YYYY')
 		},
 		{

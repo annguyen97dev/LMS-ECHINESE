@@ -106,6 +106,7 @@ export const WrapProvider = ({ children }) => {
 	const getRoles = async (roleType) => {
 		try {
 			let res = await userInformationApi.getRole(roleType);
+			// @ts-ignore
 			res.status == 200 && roleType == 0 ? setRoles(res.data.data) : setStaffRoles(res.data.data);
 		} catch (error) {
 			console.log('Lỗi lấy thông tin roles: ', error);

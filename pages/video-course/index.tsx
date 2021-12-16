@@ -77,11 +77,13 @@ const VideoCourseStore = () => {
 				const res = await VideoCourseStoreApi.getAll(todoApi);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				getCurriculum();
+                console.log("video course", res.data.data)
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
 				// HOC VIEN
 				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 9 });
+                console.log('video course for student', res.data.data)
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
@@ -258,6 +260,7 @@ const VideoCourseStore = () => {
 	// UPDATE COURSE
 	const handleActive = async (param) => {
 		setActiveLoading(true);
+        
 		try {
 			const res = await VideoCourseListApi.updateActiveCode(param);
 			res.status == 200 && showNoti('success', 'Thành công');

@@ -3,7 +3,7 @@ import { Form, Spin } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Edit2, PlusCircle } from 'react-feather';
+import { Edit2, PlusCircle, Users } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
@@ -17,6 +17,7 @@ GroupForm.propTypes = {
 		status: PropTypes.bool.isRequired
 	}),
 	isUpdate: PropTypes.bool,
+	isCourseListDetail: PropTypes.bool,
 	dataUpdate: PropTypes.shape({
 		ID: PropTypes.number,
 		Name: PropTypes.string,
@@ -29,11 +30,13 @@ GroupForm.propTypes = {
 		BranchName: PropTypes.string
 	}),
 	courseList: optionCommonPropTypes,
-	handleSubmit: PropTypes.func
+	handleSubmit: PropTypes.func,
+	courseDetail: Object
 };
 GroupForm.defaultProps = {
 	isLoading: { type: '', status: false },
 	isUpdate: false,
+	// isCourseListDetail: null,
 	dataUpdate: {
 		ID: 0,
 		Name: '',
@@ -50,7 +53,9 @@ GroupForm.defaultProps = {
 };
 
 function GroupForm(props) {
-	const { isLoading, isUpdate, dataUpdate, courseList, handleSubmit } = props;
+	const { isLoading, isCourseListDetail, isUpdate, dataUpdate, courseList, courseDetail, handleSubmit } = props;
+	console.log(courseDetail);
+	console.log(courseList);
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
 
 	const showModal = () => {
@@ -123,6 +128,11 @@ function GroupForm(props) {
 					<Edit2 />
 					Chỉnh sửa nhóm
 				</button>
+			) : isCourseListDetail ? (
+				<div onClick={showModal}>
+					<Users />
+					<span title="Nhóm"> Nhóm</span>
+				</div>
 			) : (
 				<div className="add-group" onClick={showModal}>
 					<PlusCircle />
@@ -142,7 +152,8 @@ function GroupForm(props) {
 									name="CourseID"
 									label="Thuộc khóa học"
 									placeholder="Chọn khóa học"
-									optionList={courseList}
+									optionList={courseDetail ? courseDetail : courseList}
+									// optionList={courseList}
 								/>
 							</div>
 							<div className="col-12">

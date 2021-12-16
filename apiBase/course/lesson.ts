@@ -1,5 +1,4 @@
 import { instance } from '../instance';
-import _ from '~/appConfig';
 
 const url = '/api/Lesson/';
 export const lessonApi = {
@@ -11,10 +10,10 @@ export const lessonApi = {
 	},
 
 	callAuto(data) {
-		return instance.put(`${_.API_URL}/api/Push`, null);
+		return instance.put('http://lmsv2.monamedia.net/api/Push', null);
 	},
 
 	callAutoMinute(data) {
-		return instance.put(`${_.API_URL}/api/PushOneMinute`, null);
+		return instance.put('http://lmsv2.monamedia.net/api/PushOneMinute', null);
 	}
 };

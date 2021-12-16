@@ -90,7 +90,7 @@ function NotificationCourse(props) {
 
 	const columns = [
 		{
-			title: 'Thông báo',
+			title: 'Thông báo qua email',
 			dataIndex: 'NotificationTitle',
 			render: (text) => <p className="font-weight-primary">{text}</p>
 		},

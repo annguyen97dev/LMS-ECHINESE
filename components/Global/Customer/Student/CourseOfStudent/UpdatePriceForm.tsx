@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign } from 'react-feather';
-import { Tooltip, Modal, Spin, Input, Checkbox, DatePicker, Radio, Form, InputNumber } from 'antd';
+import { Tooltip, Modal, Spin, Input, Checkbox, DatePicker, Radio, Form } from 'antd';
 import { numberWithCommas, parsePriceStrToNumber } from '~/utils/functions';
 import moment from 'moment';
-import { useForm } from 'react-hook-form';
 import { courseOfStudentApi } from '~/apiBase/customer/parents/courses-of-student';
 import { useWrap } from '~/context/wrap';
 
@@ -12,14 +11,13 @@ const UpdatePriceForm = (props) => {
 	const [visible, setVisible] = useState(false);
 	const [form] = Form.useForm();
 	const { showNoti } = useWrap();
-	const { setValue } = useForm();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
 	});
 	const [inputField, setInputField] = useState({
-		Price: '',
-		Paid: '',
+		Price: null,
+		Paid: null,
 		Mess: ''
 	});
 	const { TextArea } = Input;
@@ -37,13 +35,12 @@ const UpdatePriceForm = (props) => {
 
 	const _onSubmit = async (value) => {
 		console.log(value);
-		console.log(inputField);
 		setIsLoading({ type: 'UPDATE', status: true });
 		try {
 			let res = await courseOfStudentApi.updatePrice({
-				ID: data.CourseOfStudentPriceID,
-				Price: parsePriceStrToNumber(inputField.Price),
-				Paid: parsePriceStrToNumber(inputField.Paid),
+				ID: data.ID,
+				Price: inputField.Price,
+				Paid: inputField.Paid,
 				Note: value.Note,
 				PaymentMethodsID: value.PaymentMethodsID,
 				PayDate: value.PayDate._i
@@ -82,63 +79,64 @@ const UpdatePriceForm = (props) => {
 				<Form layout="vertical" onFinish={_onSubmit} form={form} scrollToFirstError={true}>
 					<div className="row">
 						<div className="col-12">
-							<div className="refund-branch-item mb-4">
-								<div className="info">
-									<p className="name font-weight-black">{data.CourseName}</p>
-									<ul className="list">
-										<li className="price">
-											Giá: <span> {numberWithCommas(data.Price)} VNĐ</span>
-										</li>
-										<li className="date-start">
-											Ngày bắt đầu:
-											<span> {moment(data.StartDay).format('DD/MM/YYYY')}</span>
-										</li>
-										<li className="date-end">
-											Ngày kết thúc:
-											<span> {moment(data.EndDay).format('DD/MM/YYYY')}</span>
-										</li>
-									</ul>
-								</div>
+							<div className="info">
+								<p className="name font-weight-black">{data.CourseName}</p>
+								<ul className="list">
+									<li className="price">
+										Giá: <span> {numberWithCommas(data.Price)} VNĐ</span>
+									</li>
+									<li className="date-start">
+										Ngày bắt đầu:
+										<span> {moment(data.StartDay).format('DD/MM/YYYY')}</span>
+									</li>
+									<li className="date-end">
+										Ngày kết thúc:
+										<span> {moment(data.EndDay).format('DD/MM/YYYY')}</span>
+									</li>
+								</ul>
 							</div>
 						</div>
 						<div className="col-12 col-md-6">
 							<Form.Item
 								label="Số tiền thanh toán thêm"
 								name="Price"
-								rules={[{ required: true, message: 'Vui lòng điền số tiền thanh toán thêm!' }]}
+								// rules={[{ required: true, message: 'Vui lòng điền số tiền thanh toán thêm!' }]}
 							>
-								<InputNumber
+								<Input
 									name="Price"
 									className="style-input"
 									placeholder="Nhập số tiên yêu cầu"
-									formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-									parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-									onChange={(value) => setValue('Paid', value)}
+									onChange={(event) => {
+										setInputField({ ...inputField, Price: parsePriceStrToNumber(event.target.value) });
+									}}
+									value={numberWithCommas(inputField.Price)}
+									defaultValue={numberWithCommas(inputField.Price)}
 								/>
+								<p className="font-weight-primary">{inputField.Mess}</p>
 							</Form.Item>
 						</div>
 						<div className="col-12 col-md-6">
 							<Form.Item
 								label="Số tiền học viên thanh toán"
 								name="Paid"
-								rules={[{ required: true, message: 'Vui lòng điền số tiền học viên thanh toán!' }]}
+								// rules={[{ required: true, message: 'Vui lòng điền số tiền học viên thanh toán!' }]}
 							>
-								<InputNumber
+								<Input
 									className="style-input"
 									placeholder="Nhập số tiền học viên trả trước"
 									name="Paid"
-									formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-									parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-									onChange={(value) => setValue('Paid', value)}
+									onChange={(event) => {
+										setInputField({ ...inputField, Paid: parsePriceStrToNumber(event.target.value) });
+										// form.setFieldsValue({ Paid: numberWithCommas(inputField.Paid) });
+									}}
+									value={numberWithCommas(inputField.Paid)}
+									defaultValue={numberWithCommas(inputField.Paid)}
 								/>
+								<p className="font-weight-primary">{inputField.Mess}</p>
 							</Form.Item>
 						</div>
 						<div className="col-12 col-md-6">
-							<Form.Item
-								name="PaymentMethodsID"
-								label="Phương thức hoàn tiền"
-								rules={[{ required: true, message: 'Vui lòng chọn phương thức thanh toán!' }]}
-							>
+							<Form.Item name="PaymentMethodsID" label="Phương thức hoàn tiền">
 								<Radio.Group name="PaymentMethodsID" onChange={() => {}}>
 									{paymentMethodOptionList.map((item, index) => (
 										<Radio value={item.value} key={index}>
@@ -149,11 +147,7 @@ const UpdatePriceForm = (props) => {
 							</Form.Item>
 						</div>
 						<div className="col-12 col-md-6">
-							<Form.Item
-								name="PayDate"
-								label="Ngày hẹn thanh toán"
-								rules={[{ required: true, message: 'Vui lòng chọn ngày thanh toán!' }]}
-							>
+							<Form.Item name="PayDate" label="Ngày hẹn thanh toán">
 								<DatePicker
 									name="PayDate"
 									className="style-input w-100"
