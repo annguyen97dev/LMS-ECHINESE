@@ -7,6 +7,7 @@ import { useWrap } from '~/context/wrap';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
 import { wrap } from 'module';
+import RatingStar from '~/components/RatingStar';
 
 // CARD ITEM ON VIDEO COURSE
 const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading }) => {
@@ -22,6 +23,8 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 		Level: item.LevelName,
 		Create: item.CreatedOn,
 		Thum: item.ImageThumbnails,
+		AverageRating: item.AverageRating,
+		TotalFeedBack: item.TotalFeedBack,
 		slug: item.ID,
 		Original: item.OriginalPrice,
 		Sell: item.SellPrice,
@@ -146,7 +149,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 							<h3 style={{ width: '90%' }} className="title ml-3 mr-3 in-1-line">
 								{item.VideoCourseName}
 							</h3>
-							<span style={{ width: '90%' }} className="ml-3 mr-3 mb-3 price-old in-1-line">
+							<span style={{ width: '90%' }} className="ml-3 mr-3 in-1-line">
 								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán
 							</span>
 
@@ -170,6 +173,17 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 									Cấp độ: {item.LevelName}
 								</span>
 							</Link> */}
+                            <Link
+								href={{
+									pathname: '/video-course/[slug]',
+									query: params
+								}}
+							>   
+								<div className="ml-3">
+									<RatingStar AverageRating={item.AverageRating} TotalFeedBack={item.TotalFeedBack} />
+								</div>
+							</Link>
+
 							<Link
 								href={{
 									pathname: '/video-course/[slug]',
@@ -178,7 +192,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 							>
 								<div className="ml-3 price-group">
 									<i
-										className="price"
+										className="price price-old"
 										style={{
 											textDecorationLine: 'line-through'
 										}}
@@ -203,13 +217,17 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 								style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', height: '100%' }}
 							>
 								<div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-									<h3 className="title mb-3">
-										{item.VideoCourseName}
-									</h3>
+									<h3 className="title mb-3">{item.VideoCourseName}</h3>
 									{/* <span className="in-1-line">Đã bán: {item.TotalVideoCourseSold}</span> */}
-									<span className="in-1-line mb-3 "><i className="fas fa-check"></i> {item.CategoryName}</span>
-									<span className="in-1-line mb-3 "><i className="fas fa-check"></i> {item.LevelName}</span>
-									<span className="mb-3 in-1-line"><i className="fas fa-check"></i> {item.CreatedOn}</span>
+									<span className="in-1-line mb-3 ">
+										<i className="fas fa-check"></i> {item.CategoryName}
+									</span>
+									<span className="in-1-line mb-3 ">
+										<i className="fas fa-check"></i> {item.LevelName}
+									</span>
+									<span className="mb-3 in-1-line">
+										<i className="fas fa-check"></i> {item.CreatedOn}
+									</span>
 									<div style={{ flex: 1 }} />
 									{/* button action */}
 									{userInformation.RoleID == 1 ? (
