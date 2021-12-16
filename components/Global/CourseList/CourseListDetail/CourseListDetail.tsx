@@ -1,6 +1,6 @@
 import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users } from 'react-feather';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
@@ -12,11 +12,18 @@ import LessonDetail from '../LessonDetail';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
+import { courseApi, groupNewsFeedApi } from '~/apiBase';
+import GroupForm from '~/components/Global/NewsFeed/NewsFeedGroupComponents/GroupForm';
+import AddGroupFormFromCourseDetail from '../../NewsFeed/NewsFeedGroupComponents/AddGroupFormFromCourseDetail';
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
 	const { userInformation, isAdmin } = useWrap();
+	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const router = useRouter();
+	const [groupID, setGroupID] = useState({ groupID: null, groupInfo: null });
+	const [courseDetail, setCourseDettail] = useState<ICourseDetail>();
+	const { showNoti, pageSize } = useWrap();
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
 
@@ -28,6 +35,81 @@ const CourseListDetail = () => {
 			return false;
 		}
 	};
+
+	const getGroupNewsFeed = async () => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true
+		});
+		try {
+			let res = await groupNewsFeedApi.getAll({ pageSize: pageSize, pageIndex: 1, CourseID: Number(router.query.slug) });
+			if (res.status === 200) {
+				if (res.data.totalRow && res.data.data.length) {
+					// @ts-ignore
+					setGroupID({ groupID: res.data.data[0].ID, groupInfo: res.data.data });
+				}
+			} else if (res.status === 204) {
+				setGroupID(null);
+				showNoti('danger', 'Nhóm chưa tồn tại, bạn có thể tạo nhóm!');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: false
+			});
+		}
+	};
+
+	const getCourseDetail = async () => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true
+		});
+		try {
+			let res = await courseApi.getById(Number(router.query.slug));
+			if (res.status === 200) {
+				setCourseDettail(res.data.data);
+			} else if (res.status === 204) {
+				showNoti('danger', 'Không tìm thấy');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: false
+			});
+		}
+	};
+
+	const onCreateGroup = async (data: { Name: string; CourseID: number; BackGround: string }) => {
+		console.log('data', data);
+		// setIsLoading({
+		// 	type: 'ADD_DATA',
+		// 	status: true
+		// });
+		// try {
+		// 	const res = await groupNewsFeedApi.add(data);
+		// 	if (res.status === 200) {
+		// 		showNoti('success', res.data.message);
+		// 		router.push({ pathname: '/newsfeed/' });
+		// 	}
+		// } catch (error) {
+		// 	showNoti('danger', error.message);
+		// } finally {
+		// 	setIsLoading({
+		// 		type: 'ADD_DATA',
+		// 		status: false
+		// 	});
+		// }
+	};
+
+	useEffect(() => {
+		getGroupNewsFeed();
+		getCourseDetail();
+	}, [router.query.slug]);
 
 	return (
 		<div className="course-dt page-no-scroll">
@@ -42,7 +124,9 @@ const CourseListDetail = () => {
 						router.push(url);
 					}
 					if (parseInt(key) === 9) {
-						router.push('/newsfeed/');
+						if (groupID) {
+							router.push({ pathname: '/newsfeed/', query: { idGroup: groupID.groupID } });
+						}
 					}
 				}}
 				className="list-menu-course"
@@ -169,21 +253,39 @@ const CourseListDetail = () => {
 					<NotificationCourse courseID={parseIntID} />
 				</TabPane>
 
-				{userInformation && (userInformation.RoleID == 1 || userInformation.RoleID == 2 || userInformation.RoleID == 5) && (
-					<TabPane
-						tab={
-							<>
-								<Users />
-								<span title="Nhóm"> Nhóm</span>
-							</>
-						}
-						key="9"
-					>
-						<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
-							<Spin size="large" />
-						</div>
-					</TabPane>
-				)}
+				{userInformation &&
+					(userInformation.RoleID == 1 || userInformation.RoleID == 2 || userInformation.RoleID == 5) &&
+					(groupID ? (
+						<TabPane
+							tab={
+								<>
+									<Users />
+									<span title="Nhóm"> Nhóm</span>
+								</>
+							}
+							key="9"
+						>
+							<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+								<Spin size="large" />
+							</div>
+						</TabPane>
+					) : (
+						<TabPane
+							tab={
+								<AddGroupFormFromCourseDetail
+									isCourseListDetail={true}
+									courseDetail={courseDetail}
+									isLoading={isLoading}
+									handleSubmit={onCreateGroup}
+								/>
+							}
+							key="9"
+						>
+							<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+								<Spin size="large" />
+							</div>
+						</TabPane>
+					))}
 			</Tabs>
 		</div>
 	);
