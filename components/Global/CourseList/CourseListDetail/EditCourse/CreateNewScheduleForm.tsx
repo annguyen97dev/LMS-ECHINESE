@@ -1,30 +1,30 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Spin} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Spin } from 'antd';
 import Form from 'antd/lib/form/Form';
 import Modal from 'antd/lib/modal/Modal';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {useForm} from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 CreateNewScheduleForm.propTypes = {
 	handleOnCreateSchedule: PropTypes.func,
 	optionSubjectList: optionCommonPropTypes,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
-	}),
+		status: PropTypes.bool.isRequired
+	})
 };
 CreateNewScheduleForm.defaultProps = {
 	handleOnCreateSchedule: null,
 	optionSubjectList: [],
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false }
 };
 function CreateNewScheduleForm(props) {
-	const {handleOnCreateSchedule, isLoading, optionSubjectList} = props;
+	const { handleOnCreateSchedule, isLoading, optionSubjectList } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -42,16 +42,16 @@ function CreateNewScheduleForm(props) {
 
 	const schema = yup.object().shape({
 		SubjectID: yup.number().min(1, 'Bạn cần chọn môn học'),
-		StudyDay: yup.number().nullable().required('Bạn không được bỏ trống'),
+		StudyDay: yup.number().typeError('Bạn không được bỏ trống').nullable().required('Bạn không được bỏ trống')
 	});
 	const defaultValuesInit = {
 		SubjectID: 0,
-		StudyDay: null,
+		StudyDay: null
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema),
-		mode: 'onChange',
+		mode: 'onChange'
 	});
 
 	const checkHandleOnCreateSchedule = (data) => {
@@ -66,23 +66,13 @@ function CreateNewScheduleForm(props) {
 			<button type="button" className="btn btn-warning" onClick={showModal}>
 				Tạo buổi học
 			</button>
-			<Modal
-				width="350px"
-				title="Tạo buổi học"
-				visible={isModalVisible}
-				onOk={handleOk}
-				onCancel={handleCancel}
-				footer={null}
-			>
+			<Modal width="350px" title="Tạo buổi học" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} footer={null}>
 				<div className="wrap-form">
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleOnCreateSchedule)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleOnCreateSchedule)}>
 						<SelectField
 							form={form}
 							name="SubjectID"
-							label="Môn học"
+							label="Bài học"
 							optionList={optionSubjectList}
 							isLoading={isLoading.type === 'FETCH_SUBJECT' && isLoading.status}
 						/>
@@ -93,9 +83,7 @@ function CreateNewScheduleForm(props) {
 							disabled={isLoading.type == 'CREATE_SCHEDULE' && isLoading.status}
 						>
 							Khởi tạo
-							{isLoading.type == 'CREATE_SCHEDULE' && isLoading.status && (
-								<Spin className="loading-base" />
-							)}
+							{isLoading.type == 'CREATE_SCHEDULE' && isLoading.status && <Spin className="loading-base" />}
 						</button>
 					</Form>
 				</div>

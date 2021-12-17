@@ -164,7 +164,7 @@ const CourseListDetail = () => {
 				>
 					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
 				</TabPane>
-				{(isAdmin || userInformation.RoleID == 2) && (
+				{(isAdmin || userInformation?.RoleID == 2) && (
 					<TabPane
 						tab={
 							<>
@@ -180,7 +180,7 @@ const CourseListDetail = () => {
 					</TabPane>
 				)}
 
-				{(isAdmin || userInformation.RoleID == 2) && (
+				{(isAdmin || userInformation?.RoleID == 2) && (
 					<TabPane
 						tab={
 							<>
@@ -232,7 +232,7 @@ const CourseListDetail = () => {
 						tab={
 							<>
 								<Flag />
-								<span title="Phản hồi" >Phản hồi buổi học</span>
+								<span title="Phản hồi">Phản hồi buổi học</span>
 							</>
 						}
 						key="7"

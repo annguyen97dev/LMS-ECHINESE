@@ -7,7 +7,7 @@ type ICourse = IBaseApi<{
 	GradeID: number;
 	Price: string;
 	ProgramID: number;
-    MaximumStudent: number;
+	MaximumStudent: number;
 	TypeCourse: string;
 	TypeCourseName: string;
 	CurriculumID: number;
@@ -22,6 +22,7 @@ type ICourse = IBaseApi<{
 	TotalStudents: number;
 	TotalRow: number;
 	DonePercent: number;
+	SalaryOfLesson: number;
 }>;
 
 type ICourseDetail = IBaseApi<{

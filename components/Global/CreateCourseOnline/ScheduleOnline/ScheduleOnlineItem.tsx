@@ -28,10 +28,12 @@ const ScheduleOnlineItem = (props) => {
 	const {
 		handleChangeStatusSchedule,
 		handleChangeValueSchedule,
+		handleAheadSchedule,
 		//
 		scheduleObj,
 		isLoading,
-		isUpdate,
+		isUnavailable,
+		isEditView,
 		//
 		optionTeacherList,
 		optionStudyTime
@@ -73,12 +75,24 @@ const ScheduleOnlineItem = (props) => {
 	const setSiblingsFieldToDefault = () => {
 		form.setValue('TeacherID', 0);
 	};
-
+	const checkHandleAheadSchedule = (courseScheduleId: number, teacherId: number) => {
+		if (!handleAheadSchedule) return;
+		handleAheadSchedule(courseScheduleId, teacherId);
+	};
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
 		form.clearErrors();
-		if (isLoading.type === 'CHECK_SCHEDULE' && !isLoading.status && Array.isArray(optionTeacherList) && optionTeacherList.length > 0) {
-			form.setValue('TeacherID', optionTeacherList[0].value);
+		if (
+			(isLoading.type === 'CHECK_SCHEDULE' || isLoading.type === 'ADD_DATA') &&
+			!isLoading.status &&
+			Array.isArray(optionTeacherList) &&
+			optionTeacherList.length > 0
+		) {
+			if (isEditView) {
+				form.setValue('TeacherID', TeacherID);
+			} else {
+				form.setValue('TeacherID', optionTeacherList[0].value);
+			}
 			form.setValue('StudyTimeID', CaID || StudyTimeID);
 		}
 	}, [scheduleObj, optionTeacherList, isLoading]);
@@ -90,7 +104,7 @@ const ScheduleOnlineItem = (props) => {
 				<div className="info-course-item">
 					<Checkbox
 						onChange={() => {
-							if (isUpdate) {
+							if (isUnavailable) {
 								// remove schedule from unavailable list
 								// add schedule to available list
 								checkHandleChangeStatusSchedule(scheduleObj, 2);
@@ -100,7 +114,7 @@ const ScheduleOnlineItem = (props) => {
 								checkHandleChangeStatusSchedule(scheduleObj, 1);
 							}
 						}}
-						checked={isUpdate}
+						checked={isUnavailable}
 					/>
 					<p className="title">{eventName || `${moment(Date).format('DD/MM')} - ${TeacherName}`}</p>
 					<ul className="info-course-list">
@@ -123,15 +137,27 @@ const ScheduleOnlineItem = (props) => {
 							}}
 						/>
 					</div>
-					<div className="col-12 mt-3">
+					<div className="col-12">
 						<SelectField
 							form={form}
 							name="TeacherID"
 							isLoading={isLoading.type === 'CHECK_SCHEDULE' && isLoading.status}
 							placeholder="Chọn giáo viên"
 							optionList={optionTeacherList}
+							onChangeSelect={(value) => {
+								if (isEditView) {
+									checkHandleChangeValueSchedule(ID, 'TeacherID', value);
+								}
+							}}
 						/>
 					</div>
+					{isEditView && (
+						<div className="col-12 text-right">
+							<button className="btn btn-secondary" onClick={() => checkHandleAheadSchedule(ID, TeacherID)}>
+								Lùi buổi học
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
 		</Panel>
@@ -140,6 +166,7 @@ const ScheduleOnlineItem = (props) => {
 ScheduleOnlineItem.propTypes = {
 	handleChangeValueSchedule: PropTypes.func,
 	handleChangeStatusSchedule: PropTypes.func,
+	handleAheadSchedule: PropTypes.func,
 	//
 	scheduleObj: PropTypes.shape({
 		ID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -157,7 +184,8 @@ ScheduleOnlineItem.propTypes = {
 		SubjectName: PropTypes.string,
 		Date: PropTypes.string
 	}),
-	isUpdate: PropTypes.bool,
+	isUnavailable: PropTypes.bool,
+	isEditView: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired
@@ -169,9 +197,11 @@ ScheduleOnlineItem.propTypes = {
 ScheduleOnlineItem.defaultProps = {
 	handleChangeValueSchedule: null,
 	handleChangeStatusSchedule: null,
+	handleAheadSchedule: null,
 	//
 	scheduleObj: {},
-	isUpdate: false,
+	isUnavailable: false,
+	isEditView: false,
 	isLoading: { type: '', status: false },
 	positionInScheduleList: null,
 	//

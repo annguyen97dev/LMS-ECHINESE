@@ -1,4 +1,4 @@
-import { Spin } from 'antd';
+import { Divider, Spin } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -15,9 +15,12 @@ const CreateCourseCalendar = (props) => {
 		isLoaded,
 		//
 		handleSetDataModalCalendar,
-		dataModalCalendar
+		dataModalCalendar,
+		//
+		isEditView,
+		unAvailableList
 	} = props;
-
+	const isSmDown = window.matchMedia('(max-width: 767px)').matches;
 	const [isVisible, setIsVisible] = useState(false);
 	const { showNoti } = useWrap();
 	const openModal = () => setIsVisible(true);
@@ -84,7 +87,7 @@ const CreateCourseCalendar = (props) => {
 					events={eventList}
 					startAccessor="start"
 					endAccessor="end"
-					style={{ minHeight: 600 }}
+					style={{ minHeight: isSmDown ? 500 : 600 }}
 					popup={true}
 					views={['month']}
 					defaultView="month"
@@ -98,10 +101,12 @@ const CreateCourseCalendar = (props) => {
 				/>
 			</Spin>
 			<Modal
-				style={{ top: window.matchMedia('(min-width: 1001px)').matches ? 122 : 158 }}
+				style={{
+					top: window.matchMedia('(min-width: 1001px)').matches ? 122 : isSmDown ? 15 : 158
+				}}
 				className="custom-calendar-modal create-course-modal"
-				getContainer=".create-course-wrap-modal"
-				zIndex={900}
+				getContainer={isSmDown ? document.body : '.create-course-wrap-modal'}
+				zIndex={isSmDown ? 903 : 900}
 				title={`Chi tiết ngày ${moment(dateString).format('DD/MM/YYYY')}`}
 				visible={isVisible}
 				footer={null}
@@ -113,17 +118,17 @@ const CreateCourseCalendar = (props) => {
 							<strong>Thông tin cơ bản: </strong>
 						</p>
 						<div className="row">
-							<div className="col-12 col-md-4">
+							<div className="col-4 col-md-4">
 								<p>
 									Tổng số ca: <strong>{limit}</strong>
 								</p>
 							</div>
-							<div className="col-12 col-md-4">
+							<div className="col-4 col-md-4">
 								<p>
 									Đã xếp: <strong>{scheduleInDay}</strong>
 								</p>
 							</div>
-							<div className="col-12 col-md-4">
+							<div className="col-4 col-md-4">
 								<p>
 									Còn trống: <strong>{limit - scheduleInDay}</strong>
 								</p>
@@ -140,6 +145,7 @@ const CreateCourseCalendar = (props) => {
 							</div>
 						</div>
 					</div>
+					<div className="unavailable-mobile">{unAvailableList}</div>
 				</div>
 			</Modal>
 		</div>
@@ -170,6 +176,9 @@ CreateCourseCalendar.propTypes = {
 		scheduleList: PropTypes.array
 	}),
 	//
+	unAvailableList: PropTypes.node,
+	isEditView: PropTypes.bool,
+	//
 	children: PropTypes.node
 };
 CreateCourseCalendar.defaultProps = {
@@ -182,6 +191,9 @@ CreateCourseCalendar.defaultProps = {
 		limit: 0,
 		scheduleInDay: 0,
 		scheduleList: []
-	}
+	},
+	//
+	unAvailableList: null,
+	isEditView: false
 };
 export default CreateCourseCalendar;
