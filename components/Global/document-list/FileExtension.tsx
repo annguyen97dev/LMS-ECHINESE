@@ -6,7 +6,8 @@ import { useWrap } from '~/context/wrap';
 import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
 import { documentListApi } from '~/apiBase/document-list/document-list';
 
-const FileExtension = ({ docList, isLoading, docInfo, onFetchData, categoryID }) => {
+const FileExtension = (props) => {
+	const { docList, isLoading, docInfo, onFetchData, categoryID, docListFromDetail } = props;
 	const { Search } = Input;
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
 	const { showNoti, pageSize } = useWrap();
@@ -18,8 +19,6 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData, categoryID })
 		pageSize: pageSize,
 		CurriculumnID: 0
 	};
-
-	const [params, setParams] = useState(paramsDefault);
 
 	const onSearch = async (value) => {
 		setSubmitLoading({ type: 'UPLOADING', loading: true });
@@ -48,6 +47,7 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData, categoryID })
 				{link.split('.').slice(-1) == 'pdf' && <img src="/images/pdf.svg" alt="icon" />}
 				{link.split('.').slice(-1) == 'png' && <img src="/images/png.svg" alt="icon" />}
 				{link.split('.').slice(-1) == 'doc' && <img src="/images/doc.svg" alt="icon" />}
+				{link.split('.').slice(-1) == 'docx' && <img src="/images/docx.svg" alt="icon" />}
 				{link.split('.').slice(-1) == 'jpg' && <img src="/images/jpg.svg" alt="icon" />}
 				{link.split('.').slice(-1) == 'gif' && <img src="/images/gif.svg" alt="icon" />}
 				{link.split('.').slice(-1) == 'xlsx' && <img src="/images/xls.svg" alt="icon" />}
@@ -57,21 +57,22 @@ const FileExtension = ({ docList, isLoading, docInfo, onFetchData, categoryID })
 
 	return (
 		<div className="card-file-box">
-			<div className="col-12 d-flex justify-content-end align-items-center">
-				{/* <div className="pb-3 font-weight-black">Tài liệu</div> */}
-				<div className="d-flex">
-					<Search placeholder="Tìm giáo trình" onSearch={onSearch} size="large" style={{ width: 200 }} className="mr-1 " />
-					<DocListModal
-						type="ADD_DOC"
-						docInfo={docInfo}
-						onFetchDataForm={() => {
-							onFetchData();
-						}}
-						docID={null}
-						docName={null}
-					/>
+			{docListFromDetail && (
+				<div className="col-12 d-flex justify-content-end align-items-center">
+					<div className="d-flex">
+						<Search placeholder="Tìm giáo trình" onSearch={onSearch} size="large" style={{ width: 200 }} className="mr-1 " />
+						<DocListModal
+							type="ADD_DOC"
+							docInfo={docInfo}
+							onFetchDataForm={() => {
+								onFetchData();
+							}}
+							docID={null}
+							docName={null}
+						/>
+					</div>
 				</div>
-			</div>
+			)}
 			<Spin spinning={isLoading.type === 'GET_ALL' && isLoading.loading}>
 				{searchDoc?.length > 0 ? (
 					<div className="row">

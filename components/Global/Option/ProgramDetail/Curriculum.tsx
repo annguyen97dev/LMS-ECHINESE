@@ -6,7 +6,7 @@ import { curriculumApi, programApi, subjectApi } from '~/apiBase';
 import CurriculumForm from '~/components/Global/Option/CurriculumForm';
 import { Modal, Select, Tooltip } from 'antd';
 import Link from 'next/link';
-import { Info } from 'react-feather';
+import { Book, Info } from 'react-feather';
 import ExpandTable from '~/components/ExpandTable';
 import CurriculumDetail from './CurriculumDetail';
 import { resolveSoa } from 'dns';
@@ -292,7 +292,7 @@ const Curriculum = (props) => {
 		},
 
 		{
-			width: 130,
+			width: 180,
 			key: 'action',
 			render: (text, data, index) => (
 				<>
@@ -305,6 +305,21 @@ const Curriculum = (props) => {
 						isLoading={isLoading}
 						_onSubmit={(data: any) => _onSubmit(data)}
 					/>
+					{
+						<>
+							<button
+								type="button"
+								className="btn btn-icon edit"
+								onClick={() => {
+									router.push({ pathname: '/option/program/document-list/', query: { curriculumID: data.ID } });
+								}}
+							>
+								<Tooltip title="Thêm tài liệu">
+									<Book />
+								</Tooltip>
+							</button>
+						</>
+					}
 					<PickAllSubject dataSubject={dataSubject} curriculumID={data.ID} onFetchData={() => setTodoApi({ ...todoApi })} />
 					<DeleteItem onDelete={() => handleDelete(data)} />
 				</>
