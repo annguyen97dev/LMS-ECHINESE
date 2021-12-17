@@ -6,6 +6,7 @@ import { gradeApi, branchApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import { AnyCnameRecord } from 'dns';
 import { parse } from 'path';
+import EditorSimple from '~/components/Elements/EditorSimple';
 
 const ProgramForm = React.memo((props: any) => {
 	const { TextArea } = Input;
@@ -203,8 +204,15 @@ const ProgramForm = React.memo((props: any) => {
 									name="Description"
 									label="Mô tả"
 									// rules={[{ required: true, message: 'Bạn không được để trống' }]}
-								>
-									<TextArea rows={4} placeholder="" onChange={(e) => setValue('Description', e.target.value)} />
+                                    >
+									<EditorSimple
+										defaultValue=''
+                                        isSimpleTool={true}
+										handleChange={(e) => setValue('Description', e.target.value)}
+										isTranslate={false}
+										height={80}
+									/>
+									{/* <TextArea rows={4} placeholder="" onChange={(e) => setValue('Description', e.target.value)} /> */}
 								</Form.Item>
 							</div>
 						</div>

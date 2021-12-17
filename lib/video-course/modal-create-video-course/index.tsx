@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button } from 'antd';
+import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button, Image } from 'antd';
 import { useForm } from 'react-hook-form';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
@@ -22,7 +22,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [form] = Form.useForm();
 	const [category, setCategory] = useState(0);
 	const [level, setLevel] = useState(0);
-    const [teacherID, setTeacherID] = useState(0);
+	const [teacherID, setTeacherID] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
 	const [videoCourseName, setVideoCourseName] = useState('');
 	const [videoChinaCourseName, setVideoCourseChinaName] = useState('');
@@ -31,6 +31,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [tagArray, setTagArray] = useState('');
 	const { showNoti } = useWrap();
 	const [imageSelected, setImageSelected] = useState({ name: '' });
+	const [previewImage, setPreviewImage] = useState('');
 
 	const [tags, setTags] = useState([]);
 
@@ -52,7 +53,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	}, []);
 
 	const finalSubmit = (ImageThumbnails) => {
-        console.log(teacherID)
+		console.log(teacherID);
 		_onSubmit({
 			CurriculumID: curriculumID,
 			CategoryID: category,
@@ -67,7 +68,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			Description: description,
 			ResultsAchieved: resultsAchieved,
 			CourseForObject: courseForObject,
-            TeacherID: teacherID,
+			TeacherID: teacherID
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
 		setIsModalVisible(false);
@@ -194,7 +195,21 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	// Upload file audio
 	const handleUploadFile = async (info) => {
 		setImageSelected(info.file);
+		setPreviewImage(URL.createObjectURL(info.file.originFileObj));
 	};
+
+	// Handle delete image
+	const handleDeleteImage = () => {
+		setImageSelected({ name: '' });
+        setPreviewImage('');
+	};
+
+	useEffect(() => {
+		// tranh tran bo nho
+		return () => {
+			previewImage !== '' && URL.revokeObjectURL(previewImage);
+		};
+	}, [imageSelected]);
 
 	function handleChange(value) {
 		setTagArray(`${value}`);
@@ -326,28 +341,41 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											/>
 										</Form.Item>
 									</div>
-
+									{/* teacher item */}
 									<div className="col-md-6 col-12">
-										<Form.Item name="Image" label="Hình ảnh thu nhỏ">
-											<Upload
-												style={{ width: 800 }}
-												className="vc-e-upload"
-												onChange={(e) => handleUploadFile(e)}
-												showUploadList={false}
+										<Form.Item
+											name="Teacher"
+											label=" "
+											tooltip={{
+												title: 'Chỉ hiển thị giáo trình có video',
+												icon: (
+													<div className="row ">
+														<span className="mr-1 mt-3" style={{ color: '#000' }}>
+															Giáo viên
+														</span>
+														<i className="fas fa-question-circle"></i>
+													</div>
+												)
+											}}
+											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<Select
+												style={{ width: '100%' }}
+												className="style-input"
+												showSearch
+												aria-selected
+												placeholder="Chọn giáo viên.."
+												optionFilterProp="children"
+												onChange={(e: number) => setTeacherID(e)}
 											>
-												<Button className="vc-e-upload" icon={<UploadOutlined style={{ marginTop: -2 }} />}>
-													Bấm để tải hình ảnh
-												</Button>
-											</Upload>
-											{imageSelected.name !== undefined && imageSelected.name !== '' && (
-												<div className="row m-0 mt-3 vc-store-center">
-													<PaperClipOutlined />
-													<span>...{imageSelected.name.slice(-20, imageSelected.name.length)}</span>
-												</div>
-											)}
+												{dataTeacher.map((item, index) => (
+													<Option key={index} value={item.UserInformationID}>
+														{item.FullNameUnicode}
+													</Option>
+												))}
+											</Select>
 										</Form.Item>
 									</div>
-
 									<div className="col-md-6 col-12">
 										<Form.Item
 											name="Curriculum"
@@ -481,41 +509,41 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											/>
 										</Form.Item>
 									</div>
-                                    {/* teacher item */}
-                                    <div className="col-md-12 col-12">
-										<Form.Item
-											name="Teacher"
-											label=" "
-											tooltip={{
-												title: 'Chỉ hiển thị giáo trình có video',
-												icon: (
-													<div className="row ">
-														<span className="mr-1 mt-3" style={{ color: '#000' }}>
-															Giáo viên
-														</span>
-														<i className="fas fa-question-circle"></i>
-													</div>
-												)
-											}}
-											rules={[{ required: true, message: 'Bạn không được để trống' }]}
-										>
-											<Select
-												style={{ width: '100%' }}
-												className="style-input"
-												showSearch
-												aria-selected
-												placeholder="Chọn giáo viên.."
-												optionFilterProp="children"
-												onChange={(e: number) => setTeacherID(e)}
+
+									{/* upload image */}
+									<div className="col-md-6 col-12">
+										<Form.Item name="Image" label="Hình ảnh thu nhỏ">
+											<Upload
+												style={{ width: 800 }}
+												className="vc-e-upload"
+												onChange={(e) => handleUploadFile(e)}
+												showUploadList={false}
 											>
-												{dataTeacher.map((item, index) => (
-													<Option key={index} value={item.UserInformationID}>
-														{item.FullNameUnicode}
-													</Option>
-												))}
-											</Select>
+												<Button className="vc-e-upload" icon={<UploadOutlined style={{ marginTop: -2 }} />}>
+													Bấm để tải hình ảnh
+												</Button>
+											</Upload>
+											{imageSelected.name !== undefined && imageSelected.name !== '' && (
+												<div className="row m-0 mt-3 vc-store-center">
+													<Button danger onClick={handleDeleteImage}>
+														Xoá hình ảnh
+													</Button>
+													{/* <PaperClipOutlined /> */}
+													{/* <span>...{imageSelected.name.slice(-20, imageSelected.name.length)}</span> */}
+												</div>
+											)}
 										</Form.Item>
 									</div>
+									{/* end upload image */}
+
+									{/* preview image */}
+									{previewImage !== '' && (
+										<div className="col-md-6 col-12">
+											<Image className="image_wrapper" src={previewImage} />
+										</div>
+									)}
+
+									{/* end preview image */}
 
 									<div className="col-12">
 										{tags.length > 0 && (

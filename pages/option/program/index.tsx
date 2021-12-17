@@ -63,6 +63,7 @@ const Programs = () => {
 		type: '',
 		status: false
 	});
+    
 	const [totalPage, setTotalPage] = useState(null);
 	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
