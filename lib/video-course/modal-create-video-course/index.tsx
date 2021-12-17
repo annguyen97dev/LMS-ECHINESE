@@ -15,13 +15,14 @@ import { videoTagApi } from '~/apiBase/video-tag';
 const { Option } = Select;
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
-	const { isLoading, _onSubmit, dataLevel, dataCategory, dataCurriculum, refeshData } = props;
+	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	const [category, setCategory] = useState(0);
 	const [level, setLevel] = useState(0);
+    const [teacherID, setTeacherID] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
 	const [videoCourseName, setVideoCourseName] = useState('');
 	const [videoChinaCourseName, setVideoCourseChinaName] = useState('');
@@ -51,6 +52,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	}, []);
 
 	const finalSubmit = (ImageThumbnails) => {
+        console.log(teacherID)
 		_onSubmit({
 			CurriculumID: curriculumID,
 			CategoryID: category,
@@ -64,7 +66,8 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			Requirements: requirements,
 			Description: description,
 			ResultsAchieved: resultsAchieved,
-			CourseForObject: courseForObject
+			CourseForObject: courseForObject,
+            TeacherID: teacherID,
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
 		setIsModalVisible(false);
@@ -478,6 +481,42 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											/>
 										</Form.Item>
 									</div>
+                                    {/* teacher item */}
+                                    <div className="col-md-12 col-12">
+										<Form.Item
+											name="Teacher"
+											label=" "
+											tooltip={{
+												title: 'Chỉ hiển thị giáo trình có video',
+												icon: (
+													<div className="row ">
+														<span className="mr-1 mt-3" style={{ color: '#000' }}>
+															Giáo viên
+														</span>
+														<i className="fas fa-question-circle"></i>
+													</div>
+												)
+											}}
+											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<Select
+												style={{ width: '100%' }}
+												className="style-input"
+												showSearch
+												aria-selected
+												placeholder="Chọn giáo viên.."
+												optionFilterProp="children"
+												onChange={(e: number) => setTeacherID(e)}
+											>
+												{dataTeacher.map((item, index) => (
+													<Option key={index} value={item.UserInformationID}>
+														{item.FullNameUnicode}
+													</Option>
+												))}
+											</Select>
+										</Form.Item>
+									</div>
+
 									<div className="col-12">
 										{tags.length > 0 && (
 											<Form.Item

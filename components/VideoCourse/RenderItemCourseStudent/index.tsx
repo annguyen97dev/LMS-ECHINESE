@@ -10,7 +10,7 @@ import { wrap } from 'module';
 import RatingStar from '~/components/RatingStar';
 
 // CARD ITEM ON VIDEO COURSE
-const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading }) => {
+const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading, dataTeacher }) => {
 	const { userInformation } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
@@ -29,7 +29,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 		Original: item.OriginalPrice,
 		Sell: item.SellPrice,
 		Active: item.StatusActive,
-		TotalVideo: item.TotalVideoCourseSold
+		TotalVideo: item.TotalVideoCourseSold,
 	};
 
 	const PopoverItem = (
@@ -219,13 +219,16 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 								<div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
 									<h3 className="title mb-3">{item.VideoCourseName}</h3>
 									{/* <span className="in-1-line">Đã bán: {item.TotalVideoCourseSold}</span> */}
-									<span className="in-1-line mb-3 ">
+                                    <span className="in-1-line mb-1 ">
+										<i className="fas fa-check"></i> {item.TeacherName}
+									</span>
+									<span className="in-1-line mb-1 ">
 										<i className="fas fa-check"></i> {item.CategoryName}
 									</span>
-									<span className="in-1-line mb-3 ">
+									<span className="in-1-line mb-1 ">
 										<i className="fas fa-check"></i> {item.LevelName}
 									</span>
-									<span className="mb-3 in-1-line">
+									<span className="mb-1 in-1-line">
 										<i className="fas fa-check"></i> {item.CreatedOn}
 									</span>
 									<div style={{ flex: 1 }} />
@@ -335,6 +338,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 				rowData={item}
 				isModalVisible={showModalUpdate}
 				setIsModalVisible={setShowModalUpdate}
+                dataTeacher={dataTeacher}
 			/>
 			<ModalUpdateDetail programID={item.ID} isModalVisible={showModalEdit} setIsModalVisible={setShowModalEdit} />
 		</>
