@@ -22,6 +22,7 @@ import ResetPassForm from '~/components/Global/StaffList/ResetPassForm';
 import SalaryStaffNested from '~/components/Global/StaffList/SalaryStaffNested';
 // import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from '~/components/Global/StaffList/StaffForm';
+import PromoteTeacher from '~/components/Global/Teacher/Teacher/PromoteTeacher';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
@@ -415,14 +416,10 @@ const StaffList = () => {
 		setCurrentPage(1);
 	};
 
-	console.log('List data: ', listDataForm);
-
 	// ----------- SUBMI FORM ------------
 	const returnBranchName = (branchID) => {
 		let newArr = [];
 		let listID = branchID.split(',');
-
-		console.log('List ID: ', listID);
 
 		listID.forEach((item) => {
 			console.log(
@@ -437,13 +434,10 @@ const StaffList = () => {
 			newObj && newArr.push(newObj);
 		});
 
-		console.log('New arr: ', newArr);
 		return newArr;
 	};
 
 	const onSubmitSalary = async (data: any) => {
-		console.log('DATA SUBMIT SALARY: ', data);
-
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
@@ -599,6 +593,21 @@ const StaffList = () => {
 		getDataStudentForm(listApi);
 	}, []);
 
+	const _onSubmitPromoteStaff = async (data) => {
+		setIsLoading({ type: 'PROMOTE', status: true });
+		try {
+			let res = await staffApi.update({ RoleID: 2, UserInformationID: data });
+			if (res.status == 200) {
+				setTodoApi({ ...todoApi });
+				showNoti('success', 'Chuyển vị trí thành công!');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({ type: 'PROMOTE', status: false });
+		}
+	};
+
 	const columns = [
 		{
 			width: 100,
@@ -676,7 +685,7 @@ const StaffList = () => {
 			title: '',
 			dataIndex: '',
 			align: 'center',
-			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 100,
+			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 180,
 			render: (text, data, index) => (
 				<>
 					{userInformation !== null && userInformation.RoleID !== 5 && (
@@ -692,6 +701,16 @@ const StaffList = () => {
 								listDataForm={listDataForm}
 							/>
 							<ResetPassForm dataRow={data} />
+							{userInformation && userInformation.RoleID == 1 && data.RoleID == 5 && (
+								<PromoteTeacher
+									isLoading={isLoading}
+									type="staff"
+									record={data}
+									_onSubmitPromoteStaff={() => {
+										_onSubmitPromoteStaff(data.UserInformationID);
+									}}
+								/>
+							)}
 						</div>
 					)}
 				</>
