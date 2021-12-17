@@ -50,7 +50,7 @@ const CourseListDetail = () => {
 				}
 			} else if (res.status === 204) {
 				setGroupID(null);
-				showNoti('danger', 'Nhóm chưa tồn tại, bạn có thể tạo nhóm!');
+				// showNoti('danger', 'Nhóm chưa tồn tại, bạn có thể tạo nhóm!');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

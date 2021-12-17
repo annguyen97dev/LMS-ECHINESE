@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Collapse } from 'antd';
+import { Collapse, Spin } from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -34,6 +34,7 @@ const ScheduleOnlineItem = (props) => {
 		isLoading,
 		isUnavailable,
 		isEditView,
+		isClickAheadSchedule,
 		//
 		optionTeacherList,
 		optionStudyTime
@@ -151,10 +152,15 @@ const ScheduleOnlineItem = (props) => {
 							}}
 						/>
 					</div>
-					{isEditView && (
+					{isEditView && !isClickAheadSchedule && typeof ID === 'number' && (
 						<div className="col-12 text-right">
-							<button className="btn btn-secondary" onClick={() => checkHandleAheadSchedule(ID, TeacherID)}>
+							<button
+								className="btn btn-secondary"
+								disabled={isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status}
+								onClick={() => checkHandleAheadSchedule(ID, TeacherID)}
+							>
 								Lùi buổi học
+								{isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status && <Spin className="loading-base" />}
 							</button>
 						</div>
 					)}
@@ -190,6 +196,7 @@ ScheduleOnlineItem.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired
 	}),
+	isClickAheadSchedule: PropTypes.bool,
 	//
 	optionTeacherList: optionCommonPropTypes,
 	optionStudyTime: optionCommonPropTypes
@@ -203,7 +210,7 @@ ScheduleOnlineItem.defaultProps = {
 	isUnavailable: false,
 	isEditView: false,
 	isLoading: { type: '', status: false },
-	positionInScheduleList: null,
+	isClickAheadSchedule: false,
 	//
 	optionTeacherList: [],
 	optionStudyTime: []

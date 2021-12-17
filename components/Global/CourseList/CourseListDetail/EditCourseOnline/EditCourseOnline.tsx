@@ -62,7 +62,7 @@ const EditCourseOnline = (props) => {
 	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>([]);
 	const [scheduleListToSave, setScheduleListToSave] = useState<IScheduleListToSave[]>([]);
 	const stoneScheduleListToFindDifference = useRef<ICourseDetailSchedule[]>([]);
-
+	const [isClickAheadSchedule, setIsClickAheadSchedule] = useState(false);
 	// -----------SCHEDULE-----------
 	const checkDuplicateStudyTimeInDay = (arr: ICourseDetailSchedule[], vl) => {
 		const scheduleSameStudyTime = arr.filter((s) => s.StudyTimeID === vl);
@@ -659,31 +659,38 @@ const EditCourseOnline = (props) => {
 	const onAheadSchedule = async (courseScheduleId: number, teacherId: number) => {
 		try {
 			setIsLoading({
-				type: 'FETCH_COURSE',
+				type: 'AHEAD_SCHEDULE',
 				status: true
-			});
-			setScheduleList({
-				available: [],
-				unavailable: []
-			});
-			setDataModalCalendar({
-				...dataModalCalendar,
-				scheduleInDay: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId).length,
-				scheduleList: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId)
 			});
 			const res = await courseDetailApi.aheadSchedule({
 				courseScheduleId,
 				teacherId
 			});
 			if (res.status === 200) {
-				fmCourseDetail(res.data, true);
-				setIsLoading({
-					type: 'FETCH_COURSE',
-					status: false
+				setScheduleList({
+					available: [],
+					unavailable: []
 				});
+				setDataModalCalendar({
+					...dataModalCalendar,
+					scheduleInDay: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId).length,
+					scheduleList: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId)
+				});
+				setIsClickAheadSchedule(true);
+
+				await fmCourseDetail(res.data, true);
 			}
 		} catch (error) {
+			if (error.status === 400) {
+				showNoti('danger', error.message);
+				setIsClickAheadSchedule(false);
+			}
 			console.log('onAheadSchedule', error.message);
+		} finally {
+			setIsLoading({
+				type: 'AHEAD_SCHEDULE',
+				status: false
+			});
 		}
 	};
 	useEffect(() => {
@@ -769,6 +776,7 @@ const EditCourseOnline = (props) => {
 										optionTeacherList={optionListForADay.optionTeacherList.find((o) => o.id === s.ID)?.list || []}
 										optionStudyTime={optionListForADay.optionStudyTimeList}
 										handleAheadSchedule={onAheadSchedule}
+										isClickAheadSchedule={isClickAheadSchedule}
 									/>
 								))}
 							</ScheduleList>
