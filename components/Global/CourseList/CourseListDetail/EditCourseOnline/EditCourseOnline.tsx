@@ -33,20 +33,20 @@ const EditCourseOnline = (props) => {
 		status: false
 	});
 	//Lesson
-	const [scheduleList, setScheduleList] = useState<IEditCourseScheduleList>({
+	const [scheduleList, setScheduleList] = useState<ICOEditScheduleList>({
 		available: [],
 		unavailable: []
 	});
-	const [optionListForADay, setOptionListForADay] = useState<IOptionListForADay>({
+	const [optionListForADay, setOptionListForADay] = useState<ICOOptionListForADay>({
 		optionStudyTimeList: [],
 		optionTeacherList: []
 	});
 	//StudyDay
 	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
 	// SCHEDULE TO SHOW ON MODAL
-	const [scheduleShow, setScheduleShow] = useState<IEditCourseScheduleShowList>({});
+	const [scheduleShow, setScheduleShow] = useState<ICOEditScheduleShowList>({});
 	// CALENDAR MODAL
-	const [dataModalCalendar, setDataModalCalendar] = useState<IDataModalEditCourse>({
+	const [dataModalCalendar, setDataModalCalendar] = useState<ICODataModalEdit>({
 		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
@@ -60,7 +60,7 @@ const EditCourseOnline = (props) => {
 		studyTimes: []
 	});
 	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>([]);
-	const [scheduleListToSave, setScheduleListToSave] = useState<IScheduleListToSave[]>([]);
+	const [scheduleListToSave, setScheduleListToSave] = useState<ICOScheduleListToSave[]>([]);
 	const stoneScheduleListToFindDifference = useRef<ICourseDetailSchedule[]>([]);
 	const [isClickAheadSchedule, setIsClickAheadSchedule] = useState(false);
 	// -----------SCHEDULE-----------
@@ -376,7 +376,7 @@ const EditCourseOnline = (props) => {
 				teacherName: string;
 				isValid: boolean;
 			}>;
-			save: IEditCourseScheduleListToSave[];
+			save: ICOEditScheduleListToSave[];
 		} = {
 			show: [],
 			save: []

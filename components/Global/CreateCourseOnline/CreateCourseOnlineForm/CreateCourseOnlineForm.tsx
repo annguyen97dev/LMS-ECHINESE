@@ -58,7 +58,7 @@ const CreateCourseOnlineForm = (props) => {
 		SalaryOfLesson: '',
 		CourseName: ''
 	};
-	const form = useForm<ICreateCourseOnlineForm>({
+	const form = useForm<ICOCreateForm>({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema)
 	});
