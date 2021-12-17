@@ -288,20 +288,20 @@ const StudentForm = (props) => {
 					break;
 
 				case 'Branch':
-					returnSchema[key] = yup.array().required('Bạn không được để trống');
+					returnSchema[key] = yup.array();
 				case 'AppointmentDate':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				case 'ExamAppointmentTime':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				case 'CounselorsID':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				case 'FullNameUnicode':
@@ -668,7 +668,6 @@ const StudentForm = (props) => {
 													name="AppointmentDate"
 													label="Ngày hẹn test"
 													placeholder="Chọn ngày hẹn test"
-													isRequired={true}
 												/>
 											</div>
 											<div className="col-md-6 col-12">
@@ -678,7 +677,6 @@ const StudentForm = (props) => {
 													name="ExamAppointmentTime"
 													label="Giờ hẹn test"
 													placeholder="Chọn giờ hẹn test"
-													isRequired={true}
 												/>
 											</div>
 											<div className="col-md-6 col-12">

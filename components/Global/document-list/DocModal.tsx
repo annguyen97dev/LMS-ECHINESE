@@ -4,16 +4,18 @@ import { RotateCcw, X } from 'react-feather';
 import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
 import { useWrap } from '~/context/wrap';
 
-const DocModal = ({ type, cateID, onFetchData, CategoryName }) => {
+const DocModal = (props) => {
+	const { type, cateID, onFetchData, CategoryName, curriculumID } = props;
 	const [isVisible, setIsVisible] = useState(false);
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
 	const [form] = Form.useForm();
 	const { showNoti, pageSize } = useWrap();
 
 	const addDocument = async (data) => {
+		console.log('add category', data);
 		setSubmitLoading({ type: 'UPLOADING', loading: true });
 		try {
-			let res = await documentCategoryApi.add(data);
+			let res = await documentCategoryApi.add({ ...data, CurriculumnID: curriculumID });
 			if (res.status === 200) {
 				showNoti('success', 'Thành công!');
 				setIsVisible(false);
@@ -45,7 +47,7 @@ const DocModal = ({ type, cateID, onFetchData, CategoryName }) => {
 	};
 
 	const _onSubmit = (value) => {
-		console.log(value);
+		console.log('value', value);
 		if (type == 'ADD_DOC') {
 			addDocument(value);
 		}
