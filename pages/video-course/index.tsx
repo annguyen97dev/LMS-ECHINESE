@@ -224,6 +224,11 @@ const VideoCourseStore = () => {
 			SellPrice: param.SellPrice,
 			TagArray: null,
             TeacherID: param.TeacherID,
+            Slogan: param.Slogan,
+            Requirements: param.Requirements,
+            Description: param.Description,
+            ResultsAchieved: param.ResultsAchieved,
+            CourseForObject: param.CourseForObject,
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);

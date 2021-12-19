@@ -203,12 +203,11 @@ const ProgramForm = React.memo((props: any) => {
 								<Form.Item
 									name="Description"
 									label="Mô tả"
-									// rules={[{ required: true, message: 'Bạn không được để trống' }]}
                                     >
 									<EditorSimple
 										defaultValue=''
                                         isSimpleTool={true}
-										handleChange={(e) => setValue('Description', e.target.value)}
+										handleChange={(value) => setValue('Description', value)}
 										isTranslate={false}
 										height={80}
 									/>

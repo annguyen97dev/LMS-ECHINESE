@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Spin, Upload, Button, Select, } from 'antd';
+import { Modal, Form, Input, Spin, Upload, Button, Select } from 'antd';
 import { useForm } from 'react-hook-form';
 import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { useWrap } from '~/context/wrap';
@@ -9,6 +9,7 @@ import { parseToMoney } from '~/utils/functions';
 import 'antd/dist/antd.css';
 import { VideoCourseStoreApi } from '~/apiBase/video-course-store';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
+import { resolveSrv } from 'dns/promises';
 
 const { Option } = Select;
 
@@ -33,7 +34,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const [sellPrice, setSellPrice] = useState('');
 	const [imageSelected, setImageSelected] = useState({ name: '' });
 	const [buttonLoading, setButtonLoading] = useState(false);
-    const [teacherID, setTeacherID] = useState(0);
+	const [teacherID, setTeacherID] = useState(0);
 
 	const {
 		register,
@@ -71,7 +72,12 @@ const ModalUpdateInfo = React.memo((props: any) => {
 				setVideoCourseName(rowData.VideoCourseName);
 				setOriginalPrice(rowData.OriginalPrice);
 				setSellPrice(rowData.SellPrice);
-				form.setFieldsValue({ Name: rowData.VideoCourseName, OriginalPrice: rowData.OriginalPrice, SellPrice: rowData.SellPrice, Teacher: rowData.TeacherName });
+				form.setFieldsValue({
+					Name: rowData.VideoCourseName,
+					OriginalPrice: rowData.OriginalPrice,
+					SellPrice: rowData.SellPrice,
+					Teacher: rowData.TeacherName
+				});
 
 				getCourseDetails(programID);
 			}
@@ -95,13 +101,27 @@ const ModalUpdateInfo = React.memo((props: any) => {
 		try {
 			let res = await newsFeedApi.uploadFile(file.originFileObj);
 			if (res.status == 200 || res.status == 204) {
-				_onSubmitEdit({
+				const temp = {
 					ID: rowData.ID,
 					VideoCourseName: videoCourseName,
 					OriginalPrice: originalPrice.toString().replace(/[^0-9\.]+/g, ''),
 					SellPrice: sellPrice.toString().replace(/[^0-9\.]+/g, ''),
 					ImageThumbnails: res.data.data,
-				});
+					TeacherID: teacherID,
+					Slogan: slogan,
+					Requirements: requirements,
+					Description: description,
+					ResultsAchieved: resultsAchieved,
+					CourseForObject: courseForObject
+				};
+				_onSubmitEdit(temp);
+				// _onSubmitEdit({
+				// 	ID: rowData.ID,
+				// 	VideoCourseName: videoCourseName,
+				// 	OriginalPrice: originalPrice.toString().replace(/[^0-9\.]+/g, ''),
+				// 	SellPrice: sellPrice.toString().replace(/[^0-9\.]+/g, ''),
+				// 	ImageThumbnails: res.data.data
+				// });
 				setIsModalVisible(false);
 			}
 		} catch (error) {
@@ -149,34 +169,58 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const updateDetails = async () => {
 		setButtonLoading(true);
 		let temp = {
-			VideoCourseID: programID,
+			ID: rowData.ID,
+			VideoCourseName: videoCourseName,
+			OriginalPrice: originalPrice.toString().replace(/[^0-9\.]+/g, ''),
+			SellPrice: sellPrice.toString().replace(/[^0-9\.]+/g, ''),
+			ImageThumbnails: '',
+			TeacherID: teacherID,
 			Slogan: slogan,
 			Requirements: requirements,
 			Description: description,
 			ResultsAchieved: resultsAchieved,
-			CourseForObject: courseForObject,
-            
+			CourseForObject: courseForObject
 		};
 		try {
-			const res = await VideoCourseDetailApi.update(temp);
-			res.status == 200 && (setIsModalVisible(true), showNoti('success', 'Thành công'));
-		} catch (error) {
-		} finally {
 			if (imageSelected.name === '') {
-				_onSubmitEdit({
-					ID: rowData.ID,
-					VideoCourseName: videoCourseName,
-					OriginalPrice: originalPrice.toString().replace(/[^0-9\.]+/g, ''),
-					SellPrice: sellPrice.toString().replace(/[^0-9\.]+/g, ''),
-					ImageThumbnails: '',
-                    TeacherID: teacherID,
-				});
+				_onSubmitEdit(temp);
 				setButtonLoading(false);
 				setIsModalVisible(false);
 			} else {
 				uploadFile(imageSelected);
 			}
+		} catch (e) {
+			console.log(e);
 		}
+		// let temp = {
+		// 	VideoCourseID: programID,
+		// 	Slogan: slogan,
+		// 	Requirements: requirements,
+		// 	Description: description,
+		// 	ResultsAchieved: resultsAchieved,
+		// 	CourseForObject: courseForObject,
+
+		// };
+		// try {
+		// 	const res = await VideoCourseDetailApi.update(temp);
+		// 	res.status == 200 && (setIsModalVisible(true), showNoti('success', 'Thành công'));
+		// } catch (error) {
+		// } finally {
+		// 	if (imageSelected.name === '') {
+		// 		_onSubmitEdit({
+		// 			ID: rowData.ID,
+		// 			VideoCourseName: videoCourseName,
+		// 			OriginalPrice: originalPrice.toString().replace(/[^0-9\.]+/g, ''),
+		// 			SellPrice: sellPrice.toString().replace(/[^0-9\.]+/g, ''),
+		// 			ImageThumbnails: '',
+		//             TeacherID: teacherID,
+		// 		});
+		// 		setButtonLoading(false);
+		// 		setIsModalVisible(false);
+		// 	} else {
+		// 		uploadFile(imageSelected);
+		// 	}
+		// }
 	};
 
 	// RENDER
@@ -276,28 +320,28 @@ const ModalUpdateInfo = React.memo((props: any) => {
 												</Form.Item>
 											</div>
 
-                                            {/* teacher item */}
-                                            <div className="col-md-6 col-12">
+											{/* teacher item */}
+											<div className="col-md-6 col-12">
 												<Form.Item
 													name="Teacher"
 													label="giáo viên"
 													rules={[{ required: true, message: 'Bạn không được để trống' }]}
 												>
 													<Select
-												style={{ width: '100%' }}
-												className="style-input"
-												showSearch
-												aria-selected
-												placeholder="Chọn giáo viên.."
-												optionFilterProp="children"
-												onChange={(e: number) => setTeacherID(e)}
-											>
-												{dataTeacher.map((item, index) => (
-													<Option key={index} value={item.UserInformationID}>
-														{item.FullNameUnicode}
-													</Option>
-												))}
-											</Select>
+														style={{ width: '100%' }}
+														className="style-input"
+														showSearch
+														aria-selected
+														placeholder="Chọn giáo viên.."
+														optionFilterProp="children"
+														onChange={(e: number) => setTeacherID(e)}
+													>
+														{dataTeacher.map((item, index) => (
+															<Option key={index} value={item.UserInformationID}>
+																{item.FullNameUnicode}
+															</Option>
+														))}
+													</Select>
 												</Form.Item>
 											</div>
 
