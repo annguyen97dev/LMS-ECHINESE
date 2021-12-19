@@ -9,7 +9,7 @@ type ITeacher = IBaseApi<{
 	DistrictID: number;
 	DistrictName: string;
 	Avatar: string;
-	Branch: {ID: number; BranchName: string}[];
+	Branch: { ID: number; BranchName: string }[];
 	CMND: number;
 	CMNDDate: null;
 	CMNDRegister: null;
@@ -20,6 +20,7 @@ type ITeacher = IBaseApi<{
 	Ratings: null;
 	StatusID: number;
 	StatusName: string;
+	RoleID: number;
 	Jobdate: string;
 	Mobile: string;
 	isFixSetpacked?: boolean;

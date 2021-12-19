@@ -120,7 +120,11 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 						{(type == 'ADD_DOC' && (
 							<>
 								<div className="col-12">
-									<Form.Item label="Tên tài liệu" name="DocumentName">
+									<Form.Item
+										label="Tên tài liệu"
+										name="DocumentName"
+										rules={[{ required: true, message: 'Bạn không được để trống' }]}
+									>
 										<Input
 											onChange={(event) => {}}
 											name="DocumentName"
@@ -130,7 +134,11 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 									</Form.Item>
 								</div>
 								<div className="col-12">
-									<Form.Item label="Nhấp để tải giáo trình" name="File">
+									<Form.Item
+										label="Nhấp để tải giáo trình"
+										name="File"
+										rules={[{ required: true, message: 'Bạn không được để trống' }]}
+									>
 										<Upload maxCount={1} name="File">
 											<Button icon={<UploadOutlined />}>Click to Upload</Button>
 										</Upload>

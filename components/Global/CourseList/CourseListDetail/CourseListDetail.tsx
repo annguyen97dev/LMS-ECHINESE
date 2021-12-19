@@ -84,28 +84,6 @@ const CourseListDetail = () => {
 		}
 	};
 
-	const onCreateGroup = async (data: { Name: string; CourseID: number; BackGround: string }) => {
-		console.log('data', data);
-		// setIsLoading({
-		// 	type: 'ADD_DATA',
-		// 	status: true
-		// });
-		// try {
-		// 	const res = await groupNewsFeedApi.add(data);
-		// 	if (res.status === 200) {
-		// 		showNoti('success', res.data.message);
-		// 		router.push({ pathname: '/newsfeed/' });
-		// 	}
-		// } catch (error) {
-		// 	showNoti('danger', error.message);
-		// } finally {
-		// 	setIsLoading({
-		// 		type: 'ADD_DATA',
-		// 		status: false
-		// 	});
-		// }
-	};
-
 	useEffect(() => {
 		getGroupNewsFeed();
 		getCourseDetail();
@@ -273,12 +251,7 @@ const CourseListDetail = () => {
 					) : (
 						<TabPane
 							tab={
-								<AddGroupFormFromCourseDetail
-									isCourseListDetail={true}
-									courseDetail={courseDetail}
-									isLoading={isLoading}
-									handleSubmit={onCreateGroup}
-								/>
+								<AddGroupFormFromCourseDetail isCourseListDetail={true} courseDetail={courseDetail} isLoading={isLoading} />
 							}
 							key="9"
 						>

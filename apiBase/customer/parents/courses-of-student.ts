@@ -11,6 +11,7 @@ class CourseOfStudentApi {
 	getDetail = (id: number) => instance.get<IApiResultData<ICourseOfStudent>>(`${url}/${id}`);
 
 	add = (data: ICourseOfStudent) => instance.post(url, data);
+	createTrial = (data: ICourseTrial) => instance.post('/api/CreateTrial', data);
 
 	update = (data: ICourseOfStudent) => instance.put(url, data, {});
 	updatePrice = (data) => instance.put('/api/UpdatePrice', data, {});

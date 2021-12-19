@@ -1,4 +1,4 @@
-import {instance} from '../instance';
+import { instance } from '../instance';
 
 const url = '/api/StudentInCourse/';
 type IApiResultStudentInCourse<T = any> = {
@@ -9,11 +9,8 @@ type IApiResultStudentInCourse<T = any> = {
 export const studentListInCourseApi = {
 	// Lấy tất cả data
 	getAll(params) {
-		return instance.get<IApiResultStudentInCourse<IStudentListInCourse[]>>(
-			url,
-			{
-				params,
-			}
-		);
-	},
+		return instance.get<IApiResultStudentInCourse<IStudentListInCourse[]>>(url, {
+			params
+		});
+	}
 };

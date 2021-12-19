@@ -24,6 +24,9 @@ export const teacherApi = {
 	updateBranch(data: { UserInfomationID: number; BranchID: string; Enable: boolean }) {
 		return instance.put('/api/UserBranch/', data);
 	},
+	updateRole(data: { RoleID: number; UserInformationID: number }) {
+		return instance.put('/api/Teacher/', data);
+	},
 	// Xóa data
 	delete(data: ITeacher) {
 		return instance.put(url, data);
