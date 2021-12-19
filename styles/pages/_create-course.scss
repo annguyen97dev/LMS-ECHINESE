@@ -228,7 +228,7 @@
 	}
 }
 .btn-page-course {
-	.btn {
+	.btn:not(:last-child) {
 		margin-right: 4px;
 	}
 }

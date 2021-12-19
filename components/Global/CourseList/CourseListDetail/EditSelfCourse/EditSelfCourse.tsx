@@ -189,7 +189,6 @@ const EditSelfCourse = (props) => {
 		});
 		return true;
 	};
-	const count = useRef(0);
 	// -----------CALENDAR-----------
 	const calendarDateFormat = (calendarArr: { Day: string }[]) => {
 		const { unavailable } = scheduleList;
@@ -342,7 +341,6 @@ const EditSelfCourse = (props) => {
 
 	useEffect(() => {
 		if (Array.isArray(dataModalCalendar.scheduleList) && dataModalCalendar.scheduleList.length >= 1) {
-			count.current = count.current + 1;
 			dataModalCalendar.scheduleList.forEach((s) => {
 				const params = {
 					id: s.ID,
@@ -469,7 +467,7 @@ const EditSelfCourse = (props) => {
 			const res = await Promise.all(scheduleListToSave.map((s) => updateScheduleSelfCourse(s)));
 			if (res.every((r) => r.status === 200)) {
 				fetchAvailableSchedule();
-				showNoti('success', 'Các buổi học đăng ký thành công');
+				showNoti('success', res[0].data.message);
 			} else {
 				showNoti('danger', 'Có lỗi xảy ra');
 			}
@@ -583,6 +581,7 @@ const EditSelfCourse = (props) => {
 			if (res.status === 200) {
 				onToggleSchedule(sch, 2);
 				fetchAvailableSchedule();
+				showNoti('success', 'Hủy lịch học thành công');
 			}
 		} catch (error) {
 			console.log('onCancelSchedule', error.message);
@@ -603,7 +602,6 @@ const EditSelfCourse = (props) => {
 			isMounted = false;
 		};
 	}, []);
-	console.log(count.current);
 	return (
 		<div className="create-course edit-course">
 			<TitlePage title="Cập nhật khóa học" />

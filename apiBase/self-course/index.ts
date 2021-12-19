@@ -20,3 +20,5 @@ export const checkTeacherSelfCourse = (data: ISCCheckTeacher) =>
 
 export const updateScheduleSelfCourse = (data: ICSScheduleToSave) => instance.put<IApiResultData>('/api/UpdateCourseSchedule', data);
 export const cancelScheduleSelfCourse = (id: number) => instance.put<IApiResultData>(`/api/RemoveCourseSchedule/${id}`);
+export const getRangeTimeSelfCourse = () => instance.get<IApiResultData>('/api/TimeBook');
+export const setRangeTimeSelfCourse = (data: ISCTime) => instance.put<IApiResultData>('/api/TimeBook', data);

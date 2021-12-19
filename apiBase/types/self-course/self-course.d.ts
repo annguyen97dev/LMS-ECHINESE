@@ -68,3 +68,4 @@ type ISCCheckSchedule = {
 	date: string;
 	teacherID: number;
 };
+type ISCTime = { TimeStart: string; TimeEnd: string };

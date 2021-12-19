@@ -2,14 +2,22 @@ import { Card } from 'antd';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { branchApi, createSelfCourse, curriculumApi, gradeApi, programApi } from '~/apiBase';
+import {
+	branchApi,
+	createSelfCourse,
+	curriculumApi,
+	getRangeTimeSelfCourse,
+	gradeApi,
+	programApi,
+	setRangeTimeSelfCourse
+} from '~/apiBase';
 import TitlePage from '~/components/TitlePage';
 import { useWrap } from '~/context/wrap';
 import { fmSelectArr } from '~/utils/functions';
 import Schedule from '../CreateCourse/Schedule/Schedule';
 import CreateSelfCourseCalendar from './Calendar/CreateSelfCourseCalendar';
 import CreateSelfCourseForm from './CreateSelfCourseForm/CreateSelfCourseForm';
-
+import SetTimeSelfCourseForm from './SetTimeSelfCourseForm';
 // ------------ MAIN COMPONENT ------------------
 
 const CreateSelfCourse = () => {
@@ -27,6 +35,7 @@ const CreateSelfCourse = () => {
 		programList: [],
 		curriculumList: []
 	});
+	const [rangeTime, setRangeTime] = useState<ISCTime>();
 	// -----------CREATE COURSE FORM-----------
 	// FETCH BRANCH, STUDY TIME, GRADE IN THE FIRST TIME
 	const fetchData = async () => {
@@ -58,7 +67,41 @@ const CreateSelfCourse = () => {
 			});
 		}
 	};
+	// TIME
+	const onFetchRangeTime = async () => {
+		try {
+			const res = await getRangeTimeSelfCourse();
+			if (res.status === 200) {
+				const { ID, ...rest } = res.data.data;
+				setRangeTime(rest);
+			}
+		} catch (error) {
+			console.log('onFetchRangeTime', error.message);
+		}
+	};
+	const onSetRangeTime = async (data: ISCTime) => {
+		try {
+			setIsLoading({
+				type: 'SUBMIT_TIME',
+				status: true
+			});
+			const res = await setRangeTimeSelfCourse(data);
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				return true;
+			}
+			return false;
+		} catch (error) {
+			console.log('onSetRangeTime', error.message);
+		} finally {
+			setIsLoading({
+				type: 'SUBMIT_TIME',
+				status: false
+			});
+		}
+	};
 	useEffect(() => {
+		onFetchRangeTime();
 		fetchData();
 	}, []);
 	// PROGRAM
@@ -177,7 +220,8 @@ const CreateSelfCourse = () => {
 					<Card
 						title="Sắp xếp lịch học"
 						extra={
-							<div className="btn-page-course">
+							<div className="btn-page-course d-flex align-items-center">
+								<SetTimeSelfCourseForm isLoading={isLoading} rangeTimeObj={rangeTime} handleSetRangeTime={onSetRangeTime} />
 								<CreateSelfCourseForm
 									isLoading={isLoading}
 									isUpdate={false}
