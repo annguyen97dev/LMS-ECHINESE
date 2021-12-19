@@ -19,8 +19,6 @@ const CreateSelfCourseForm = (props) => {
 		optionListForForm,
 		//
 		handleGetCourse,
-		handleCheckStudyTime,
-		handleFetchDataByBranch,
 		handleFetchProgramByGrade,
 		handleFetchCurriculumByProgram
 	} = props;
@@ -31,7 +29,6 @@ const CreateSelfCourseForm = (props) => {
 
 	const schema = yup.object().shape({
 		BranchID: yup.number().nullable().required('Bạn không được để trống'),
-		UserInformationID: yup.number().nullable().required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
 		CurriculumID: yup.number().nullable().required('Bạn không được để trống'),
@@ -46,7 +43,6 @@ const CreateSelfCourseForm = (props) => {
 	});
 	const defaultValuesInit = {
 		BranchID: null,
-		UserInformationID: null,
 		GradeID: null,
 		ProgramID: null,
 		CurriculumID: null,
@@ -74,12 +70,6 @@ const CreateSelfCourseForm = (props) => {
 			default:
 				break;
 		}
-	};
-	// ONCHANGE OF BRANCH FIELD
-	const checkHandleFetchUserInformation = (value) => {
-		if (!handleFetchDataByBranch) return;
-		form.setValue('UserInformationID', undefined);
-		handleFetchDataByBranch(value);
 	};
 	// ONCHANGE OF GRADE FIELD
 	const checkHandleFetchProgramByGrade = (value) => {
@@ -119,18 +109,6 @@ const CreateSelfCourseForm = (props) => {
 									isRequired
 									optionList={optionListForForm.branchList}
 									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
-									onChangeSelect={checkHandleFetchUserInformation}
-								/>
-							</div>
-							<div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="UserInformationID"
-									label="Học vụ"
-									placeholder="Chọn học vụ"
-									isRequired
-									isLoading={isLoading.type === 'BranchID' && isLoading.status}
-									optionList={optionListForForm.userInformationList}
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -155,6 +133,8 @@ const CreateSelfCourseForm = (props) => {
 									placeholder="Chọn chương trình học"
 									optionList={optionListForForm.programList}
 									onChangeSelect={(value) => {
+										const price = optionListForForm.programList.find((p) => p.value === value)?.options.Price || 0;
+										form.setValue('Price', numberWithCommas(price));
 										checkHandleFetchCurriculumByProgram(value);
 									}}
 								/>
@@ -170,14 +150,7 @@ const CreateSelfCourseForm = (props) => {
 									optionList={optionListForForm.curriculumList}
 								/>
 							</div>
-							<div className="col-md-6 col-12">
-								<InputTextField
-									form={form}
-									name="CourseName"
-									label="Tên khóa học"
-									placeholder="[Trung tâm][Chương trình học][Giáo trình] - (Ngày học - Ngày đóng)"
-								/>
-							</div>
+
 							<div className="col-md-6 col-12">
 								<InputTextField
 									form={form}
@@ -193,8 +166,8 @@ const CreateSelfCourseForm = (props) => {
 									form={form}
 									name="SalaryOfLesson"
 									isRequired
-									label="Lương giáo viên"
-									placeholder="Nhập lương giáo viên theo buổi"
+									label="Lương/buổi"
+									placeholder="Nhập lương/buổi"
 									handleFormatCurrency={numberWithCommas}
 								/>
 							</div>
@@ -205,7 +178,14 @@ const CreateSelfCourseForm = (props) => {
 							<div className="col-md-6 col-12">
 								<DateField form={form} name="EndDay" isRequired label="Ngày đóng" placeholder="Chọn ngày đóng" />
 							</div>
-
+							<div className="col-12">
+								<InputTextField
+									form={form}
+									name="CourseName"
+									label="Tên khóa học"
+									placeholder="[Trung tâm][Chương trình học][Giáo trình] - (Ngày học - Ngày đóng)"
+								/>
+							</div>
 							<div className="col-md-12 col-12 mt-3" style={{ textAlign: 'center' }}>
 								<button
 									type="submit"
@@ -234,12 +214,10 @@ CreateSelfCourseForm.propTypes = {
 		branchList: optionCommonPropTypes,
 		gradeList: optionCommonPropTypes,
 		programList: optionCommonPropTypes,
-		curriculumList: optionCommonPropTypes,
-		userInformationList: optionCommonPropTypes
+		curriculumList: optionCommonPropTypes
 	}),
 	//
 	handleGetCourse: PropTypes.func,
-	handleFetchDataByBranch: PropTypes.func,
 	handleFetchProgramByGrade: PropTypes.func,
 	handleFetchCurriculumByProgram: PropTypes.func
 };
@@ -251,11 +229,9 @@ CreateSelfCourseForm.defaultProps = {
 		branchList: [],
 		gradeList: [],
 		programList: [],
-		curriculumList: [],
-		userInformationList: []
+		curriculumList: []
 	},
 	handleGetCourse: null,
-	handleFetchDataByBranch: null,
 	handleFetchProgramByGrade: null,
 	handleFetchCurriculumByProgram: null
 };

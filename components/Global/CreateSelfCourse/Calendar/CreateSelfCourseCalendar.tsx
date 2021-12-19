@@ -15,17 +15,22 @@ const CreateSelfCourseCalendar = (props) => {
 		isLoaded,
 		//
 		handleSetDataModalCalendar,
-		dataModalCalendar
+		dataModalCalendar,
+		//
+		unAvailableList
 	} = props;
+	const isSmDown = window.matchMedia('(max-width: 767px)').matches;
 	const [isVisible, setIsVisible] = useState(false);
 	const { showNoti } = useWrap();
 	const openModal = () => setIsVisible(true);
 	const closeModal = () => setIsVisible(false);
 	const { dateString, scheduleList } = dataModalCalendar;
+
 	const checkHandleSetDataModalCalendar = (obj) => {
 		if (!handleSetDataModalCalendar) return;
 		handleSetDataModalCalendar(obj);
 	};
+
 	const styleEvent = ({ event }) => {
 		const { dateString, scheduleList } = event.resource;
 		const scheduleInDay = scheduleList.length;
@@ -49,7 +54,6 @@ const CreateSelfCourseCalendar = (props) => {
 	const customEventPropGetter = (event, start, end, isSelected) => {
 		let cls;
 		const now = moment().isSameOrBefore();
-		// console.log(start, end);
 		if (event.resource.scheduleList.length === 0) {
 			cls = 'create-course-event create-course-event-gray';
 		}
@@ -72,7 +76,7 @@ const CreateSelfCourseCalendar = (props) => {
 					events={eventList}
 					startAccessor="start"
 					endAccessor="end"
-					style={{ minHeight: 600 }}
+					style={{ minHeight: isSmDown ? 500 : 600 }}
 					popup={true}
 					views={['month']}
 					defaultView="month"
@@ -86,10 +90,12 @@ const CreateSelfCourseCalendar = (props) => {
 				/>
 			</Spin>
 			<Modal
-				style={{ top: window.matchMedia('(min-width: 1001px)').matches ? 122 : 158 }}
+				style={{
+					top: window.matchMedia('(min-width: 1001px)').matches ? 122 : isSmDown ? 15 : 158
+				}}
 				className="custom-calendar-modal create-course-modal"
-				getContainer=".create-course-wrap-modal"
-				zIndex={900}
+				getContainer={isSmDown ? document.body : '.create-course-wrap-modal'}
+				zIndex={isSmDown ? 903 : 900}
 				title={`Chi tiết ngày ${moment(dateString).format('DD/MM/YYYY')}`}
 				visible={isVisible}
 				footer={null}
@@ -111,6 +117,7 @@ const CreateSelfCourseCalendar = (props) => {
 							</div>
 						</div>
 					</div>
+					<div className="unavailable-mobile">{unAvailableList}</div>
 				</div>
 			</Modal>
 		</div>
@@ -137,6 +144,8 @@ CreateSelfCourseCalendar.propTypes = {
 		scheduleList: PropTypes.array
 	}),
 	//
+	unAvailableList: PropTypes.node,
+	//
 	children: PropTypes.node
 };
 CreateSelfCourseCalendar.defaultProps = {
@@ -147,6 +156,8 @@ CreateSelfCourseCalendar.defaultProps = {
 	dataModalCalendar: {
 		dateString: '',
 		scheduleList: []
-	}
+	},
+	//
+	unAvailableList: null
 };
 export default CreateSelfCourseCalendar;

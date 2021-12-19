@@ -56,10 +56,9 @@ const SaveSelfCourse = (props) => {
 				Lưu
 			</button>
 			{
-				// isEdit ? (
 				<Modal
 					style={{ top: 20 }}
-					title="Cập nhật khóa học"
+					title="Đăng ký buổi học"
 					visible={isModalVisible}
 					onCancel={closeModal}
 					footer={

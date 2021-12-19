@@ -5,17 +5,18 @@ type ScheduleSelfCourseResult<T = any> = {
 	courseSchedulesInarranged: T;
 	message: string;
 };
-export const createSelfCourse = (data: IPostSelfCourse) =>
-	instance.post<IApiResultData<IScheduleZoomDetail>>('/api/CreateCourse1vs1/', data);
+export const createSelfCourse = (data: ISCPost) => instance.post<IApiResultData<IScheduleZoomDetail>>('/api/CreateCourse1vs1/', data);
 
 export const getScheduleSelfCourse = (id: number) =>
-	instance.get<ScheduleSelfCourseResult<ISelfCourseSchedule[]>>(`/api/courseNotScheduleYet/${id}`);
+	instance.get<ScheduleSelfCourseResult<ISCSchedule[]>>(`/api/courseNotScheduleYet/${id}`);
 
-export const checkStudyTimeSelfCourse = (data: { date: string }) =>
-	instance.get<IApiResultData<IStudyTime[]>>(`/api/GetStudyTimeByDateAndStudentID?date=${data.date}`);
+export const checkStudyTimeSelfCourse = (date: string) =>
+	instance.get<IApiResultData<IStudyTime[]>>(`/api/GetStudyTimeByDateAndStudentID?date=${date}`);
 
-export type ICheckTeacherSelfCourse = { studyTimeID: number; curriculumsDetailID: number; date: string };
-export const checkTeacherSelfCourse = (data: ICheckTeacherSelfCourse) =>
+export const checkTeacherSelfCourse = (data: ISCCheckTeacher) =>
 	instance.get<IApiResultData<IUser[]>>(
 		`/api/GetTeacherByDateAndStudyTimeAndCurriculumDetail?date=${data.date}&curriculumsDetailID=${data.curriculumsDetailID}&studyTimeID=${data.studyTimeID}`
 	);
+
+export const updateScheduleSelfCourse = (data: ICSScheduleToSave) => instance.put<IApiResultData>('/api/UpdateCourseSchedule', data);
+export const cancelScheduleSelfCourse = (id: number) => instance.put<IApiResultData>(`/api/RemoveCourseSchedule/${id}`);
