@@ -54,7 +54,7 @@ type ICOSaveCourseInfo = {
 	TypeCourse: number;
 	SalaryOfLesson: number;
 	Price: number;
-	Schedule: IScheduleListToSave[];
+	Schedule: ICOScheduleListToSave[];
 };
 type ICOCreateForm = {
 	BranchID: number;

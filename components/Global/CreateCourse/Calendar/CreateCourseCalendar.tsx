@@ -17,7 +17,6 @@ const CreateCourseCalendar = (props) => {
 		handleSetDataModalCalendar,
 		dataModalCalendar,
 		//
-		isEditView,
 		unAvailableList
 	} = props;
 	const isSmDown = window.matchMedia('(max-width: 767px)').matches;
@@ -177,7 +176,6 @@ CreateCourseCalendar.propTypes = {
 	}),
 	//
 	unAvailableList: PropTypes.node,
-	isEditView: PropTypes.bool,
 	//
 	children: PropTypes.node
 };
@@ -193,7 +191,6 @@ CreateCourseCalendar.defaultProps = {
 		scheduleList: []
 	},
 	//
-	unAvailableList: null,
-	isEditView: false
+	unAvailableList: null
 };
 export default CreateCourseCalendar;

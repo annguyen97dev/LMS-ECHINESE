@@ -58,7 +58,11 @@
 		display: none;
 		@include max-media(767px) {
 			padding: 0 10px;
+			margin-top: 12px;
 			display: block;
+			.space-top-card {
+				margin-top: 0;
+			}
 		}
 	}
 }

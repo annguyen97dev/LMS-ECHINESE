@@ -868,6 +868,16 @@ const CreateCourseOnline = () => {
 							//
 							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
+							//
+							unAvailableList={
+								<Schedule>
+									<ScheduleList>
+										{scheduleList.available.map((s, idx) => (
+											<ScheduleOnlineItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} />
+										))}
+									</ScheduleList>
+								</Schedule>
+							}
 						>
 							<ScheduleList panelActiveListInModal={dataModalCalendar.scheduleList.map((_, idx) => idx)}>
 								{dataModalCalendar.scheduleList.map((s, idx) => (
@@ -886,7 +896,7 @@ const CreateCourseOnline = () => {
 						</CreateCourseCalendar>
 					</Card>
 				</div>
-				<div className="col-md-4 col-12">
+				<div className="col-md-4 col-12 d-none d-md-block">
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
