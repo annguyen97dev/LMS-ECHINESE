@@ -340,6 +340,10 @@ const EditSelfCourse = (props) => {
 
 	useEffect(() => {
 		if (Array.isArray(dataModalCalendar.scheduleList) && dataModalCalendar.scheduleList.length >= 1) {
+			setIsLoading({
+				type: 'SCHEDULE_INVALID',
+				status: false
+			});
 			dataModalCalendar.scheduleList.forEach((s) => {
 				const params = {
 					id: s.ID,
@@ -349,11 +353,16 @@ const EditSelfCourse = (props) => {
 					teacherID: s.TeacherID || 0
 				};
 				const now = moment().format();
-				const conditionDate = `${s.Date !== 'Invalid date' || dataModalCalendar.dateString} ${s.TimeStart || '00:00'}`;
+				const conditionDate = `${dataModalCalendar.dateString} ${s.TimeStart || '00:00'}`;
 				const isValid = moment(conditionDate).isSameOrAfter(now);
 				if (isValid) {
 					onCheckTeacherAvailable(params);
 					onCheckStudyTimeAvailable(params);
+				} else {
+					setIsLoading({
+						type: 'SCHEDULE_INVALID',
+						status: true
+					});
 				}
 			});
 		}
@@ -522,6 +531,28 @@ const EditSelfCourse = (props) => {
 
 		return dates;
 	};
+	type IFMOptionList = { id: number; list: IOptionCommon[] }[];
+	const fmOptionList = (
+		arranged: ISCSchedule[],
+		inarranged: ISCSchedule[]
+	): { optionStudyTimeList: IFMOptionList; optionTeacherList: IFMOptionList } => {
+		const fm = (arr: ISCSchedule[], tt: string, vl: string) =>
+			arr.map((s) => ({
+				id: +s.ID,
+				list: [{ title: s[tt] || '', value: s[vl] }]
+			}));
+
+		const optionStudyTimeListArranged: IFMOptionList = fm(arranged, 'StudyTimeName', 'StudyTimeID');
+		const optionStudyTimeListInarranged: IFMOptionList = fm(inarranged, 'StudyTimeName', 'StudyTimeID');
+
+		const optionTeacherListSchedulesArranged: IFMOptionList = fm(arranged, 'TeacherName', 'TeacherID');
+		const optionTeacherListSchedulesInarranged: IFMOptionList = fm(inarranged, 'TeacherName', 'TeacherID');
+
+		return {
+			optionStudyTimeList: optionStudyTimeListArranged.concat(optionStudyTimeListInarranged),
+			optionTeacherList: optionTeacherListSchedulesArranged.concat(optionTeacherListSchedulesInarranged)
+		};
+	};
 	const fetchAvailableSchedule = async () => {
 		setIsShowSaveBtnGroup(false);
 		setIsLoading({
@@ -540,18 +571,14 @@ const EditSelfCourse = (props) => {
 			if (courseSchedule.status === 200) {
 				const { courseSchedulesArranged, courseSchedulesInarranged } = courseSchedule.data;
 				const totalSchedule = [...courseSchedulesArranged, ...courseSchedulesInarranged];
-				const optionList = totalSchedule.map((s) => ({
-					id: +s.ID,
-					list: []
-				}));
+
+				const optionList = fmOptionList(courseSchedulesArranged, courseSchedulesInarranged);
+
 				setScheduleList({
 					unavailable: courseSchedulesArranged.map((s) => ({ ...s, Date: moment(s.Date).format('YYYY/MM/DD') })),
 					available: courseSchedulesInarranged.map((s) => ({ ...s, Date: moment(s.Date).format('YYYY/MM/DD') }))
 				});
-				setOptionListForADay((preState) => ({
-					optionStudyTimeList: optionList,
-					optionTeacherList: optionList
-				}));
+				setOptionListForADay(optionList);
 				stoneScheduleArranged.current = courseSchedulesArranged;
 				stoneScheduleListToFindDifference.current = totalSchedule;
 			}

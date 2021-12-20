@@ -69,7 +69,9 @@ const ScheduleSelfItem = (props) => {
 			(isLoading.type === 'CHECK_SCHEDULE' || isLoading.type === 'ADD_DATA') &&
 			!isLoading.status &&
 			Array.isArray(optionTeacherList) &&
-			optionTeacherList.length > 0
+			optionTeacherList.length > 0 &&
+			Array.isArray(optionStudyTime) &&
+			optionStudyTime.length > 0
 		) {
 			if (isEditView) {
 				form.setValue('TeacherID', TeacherID);
@@ -78,7 +80,11 @@ const ScheduleSelfItem = (props) => {
 			}
 			form.setValue('StudyTimeID', CaID || StudyTimeID);
 		}
-	}, [scheduleObj, optionTeacherList, isLoading]);
+		if (isLoading.type === 'SCHEDULE_INVALID' && isLoading.status) {
+			form.setValue('TeacherID', optionTeacherList[0]?.value);
+			form.setValue('StudyTimeID', optionStudyTime[0]?.value);
+		}
+	}, [scheduleObj, optionTeacherList, optionStudyTime, isLoading]);
 
 	return (
 		<Panel

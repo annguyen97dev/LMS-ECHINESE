@@ -14,6 +14,7 @@ interface ISCSchedule extends Omit<IScheduleZoomDetail, 'isExam' | 'ExamTopicID'
 	SubjectName: string;
 	TeacherName: string;
 	CaID: number;
+	StudyTimeName: string;
 	StudyTimeID: number;
 	TimeEnd: string;
 	TimeStart: string;
