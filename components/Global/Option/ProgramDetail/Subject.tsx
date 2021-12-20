@@ -1,37 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PowerTable from '~/components/PowerTable';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useWrap } from '~/context/wrap';
 import { subjectApi, programApi } from '~/apiBase';
-import CurriculumForm from '~/components/Global/Option/CurriculumForm';
 import SubjectForm from '../SubjectForm';
-import { CheckCircle, Info } from 'react-feather';
-import { Table, Tooltip } from 'antd';
+import { CheckCircle } from 'react-feather';
 import ExpandTable from '~/components/ExpandTable';
-import PointColumn from './PointColumn/PointColumn';
 
 let pageIndex = 1;
 
 let listFieldSearch = {
 	pageIndex: 1
 };
-
-const dataOption = [
-	{
-		dataSort: {
-			sort: 0,
-			sortType: false
-		},
-		text: 'Tên giảm dần'
-	},
-	{
-		dataSort: {
-			sort: 0,
-			sortType: true
-		},
-		text: 'Tên tăng dần '
-	}
-];
 
 const Subject = (props) => {
 	const { key } = props;
@@ -42,7 +21,7 @@ const Subject = (props) => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ISubject[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -270,19 +249,21 @@ const Subject = (props) => {
 			className: 'text-center',
 			render: (text, data, index) => <>{text == true && <CheckCircle className="icon-additional" />}</>
 		},
-
 		{
+			width: userInformation.RoleID !== 2 ? 50 : 0,
 			render: (text, data, index) => (
 				<>
-					<SubjectForm
-						dataProgram={dataProgram}
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.ID}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-					/>
+					{userInformation.RoleID !== 2 && (
+						<SubjectForm
+							dataProgram={dataProgram}
+							getIndex={() => setIndexRow(index)}
+							index={index}
+							rowData={data}
+							rowID={data.ID}
+							isLoading={isLoading}
+							_onSubmit={(data: any) => _onSubmit(data)}
+						/>
+					)}
 				</>
 			)
 		}
@@ -310,7 +291,11 @@ const Subject = (props) => {
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				addClass="table-fix-column table-small"
 				loading={isLoading}
-				TitleCard={<SubjectForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
+				TitleCard={
+					userInformation?.RoleID !== 2 && (
+						<SubjectForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
+					)
+				}
 				dataSource={dataSource}
 				columns={columns}
 				Extra={
