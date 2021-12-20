@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Collapse } from 'antd';
+import { Collapse, Spin } from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -28,11 +28,13 @@ const ScheduleOnlineItem = (props) => {
 	const {
 		handleChangeStatusSchedule,
 		handleChangeValueSchedule,
+		handleAheadSchedule,
 		//
 		scheduleObj,
 		isLoading,
 		isUnavailable,
 		isEditView,
+		isClickAheadSchedule,
 		//
 		optionTeacherList,
 		optionStudyTime
@@ -73,6 +75,10 @@ const ScheduleOnlineItem = (props) => {
 	};
 	const setSiblingsFieldToDefault = () => {
 		form.setValue('TeacherID', 0);
+	};
+	const checkHandleAheadSchedule = (courseScheduleId: number, teacherId: number) => {
+		if (!handleAheadSchedule) return;
+		handleAheadSchedule(courseScheduleId, teacherId);
 	};
 	// CHECK IF VALUE DO NOT IN THE SELECT => CHANGE VALUE TO DEFAULT (0)
 	useEffect(() => {
@@ -132,7 +138,7 @@ const ScheduleOnlineItem = (props) => {
 							}}
 						/>
 					</div>
-					<div className="col-12 mt-3">
+					<div className="col-12">
 						<SelectField
 							form={form}
 							name="TeacherID"
@@ -146,6 +152,18 @@ const ScheduleOnlineItem = (props) => {
 							}}
 						/>
 					</div>
+					{isEditView && !isClickAheadSchedule && typeof ID === 'number' && (
+						<div className="col-12 text-right">
+							<button
+								className="btn btn-secondary"
+								disabled={isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status}
+								onClick={() => checkHandleAheadSchedule(ID, TeacherID)}
+							>
+								Lùi buổi học
+								{isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status && <Spin className="loading-base" />}
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
 		</Panel>
@@ -154,6 +172,7 @@ const ScheduleOnlineItem = (props) => {
 ScheduleOnlineItem.propTypes = {
 	handleChangeValueSchedule: PropTypes.func,
 	handleChangeStatusSchedule: PropTypes.func,
+	handleAheadSchedule: PropTypes.func,
 	//
 	scheduleObj: PropTypes.shape({
 		ID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -177,6 +196,7 @@ ScheduleOnlineItem.propTypes = {
 		type: PropTypes.string.isRequired,
 		status: PropTypes.bool.isRequired
 	}),
+	isClickAheadSchedule: PropTypes.bool,
 	//
 	optionTeacherList: optionCommonPropTypes,
 	optionStudyTime: optionCommonPropTypes
@@ -184,12 +204,13 @@ ScheduleOnlineItem.propTypes = {
 ScheduleOnlineItem.defaultProps = {
 	handleChangeValueSchedule: null,
 	handleChangeStatusSchedule: null,
+	handleAheadSchedule: null,
 	//
 	scheduleObj: {},
 	isUnavailable: false,
 	isEditView: false,
 	isLoading: { type: '', status: false },
-	positionInScheduleList: null,
+	isClickAheadSchedule: false,
 	//
 	optionTeacherList: [],
 	optionStudyTime: []

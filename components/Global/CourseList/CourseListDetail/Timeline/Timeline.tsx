@@ -92,7 +92,7 @@ function TimelineCourse(props) {
 										<p className="font-weight-primary">{x.Note}</p>
 									</div>
 									{/* @ts-ignore */}
-									<div>{x.NoteStudent}</div>
+									<div style={{color: 'blue'}}>{x.NoteStudent}</div>
 									<div>{x.CreatedBy}</div>
 									<div>{x.RoleName}</div>
 								</Timeline.Item>

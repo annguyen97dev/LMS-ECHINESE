@@ -93,7 +93,24 @@ const RegCourse = React.memo((props: any) => {
 		fetchDataCourse();
 	}, [branchID]);
 
+	console.log(props.courseOverStudent);
 	const handleChangeCourse = (value) => {
+		let _totalStudents = [];
+		for (let i = 0; i < course.length; i++) {
+			for (let j = 0; j < value.length; j++) {
+				if (course[i].ID == value[j]) {
+					_totalStudents.push({
+						students: course[i].TotalStudents,
+						maxStudent: course[i].MaximumStudent,
+						courseName: course[i].CourseName
+					});
+				}
+			}
+		}
+		let _courseOverStudents = _totalStudents.filter((item) => item.students >= item.maxStudent);
+		props.setCourseOverStudent(_courseOverStudents);
+		props.setCourseOverStudentClone(_courseOverStudents);
+
 		if (value.length > 1) {
 			setDiscountStyle(2);
 		} else {
@@ -123,8 +140,6 @@ const RegCourse = React.memo((props: any) => {
 	};
 
 	const handleDiscount = (value) => {
-		console.log('Check thử nha: ', value);
-
 		let _dc = [];
 		if (value) {
 			for (let i = 0; i < discount.length; i++) {
@@ -206,7 +221,13 @@ const RegCourse = React.memo((props: any) => {
 								}
 							]}
 						>
-							<Select mode="multiple" showSearch optionFilterProp="children" onChange={(value) => handleChangeCourse(value)}>
+							<Select
+								mode="multiple"
+								showSearch
+								optionFilterProp="children"
+								className="style-input"
+								onChange={(value) => handleChangeCourse(value)}
+							>
 								{course?.map((item, index) => (
 									<Option key={index} value={item.ID}>
 										{/* {item.DonePercent

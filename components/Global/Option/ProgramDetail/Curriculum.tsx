@@ -6,7 +6,7 @@ import { curriculumApi, programApi, subjectApi } from '~/apiBase';
 import CurriculumForm from '~/components/Global/Option/CurriculumForm';
 import { Modal, Select, Tooltip } from 'antd';
 import Link from 'next/link';
-import { Info } from 'react-feather';
+import { Book, Info } from 'react-feather';
 import ExpandTable from '~/components/ExpandTable';
 import CurriculumDetail from './CurriculumDetail';
 import { resolveSoa } from 'dns';
@@ -47,7 +47,7 @@ const Curriculum = (props) => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ICurriculum[]>([]);
-	const { showNoti, pageSize, userInformation } = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -261,92 +261,71 @@ const Curriculum = (props) => {
 		);
 	};
 
-	const columns =
-		userInformation && userInformation.RoleID !== 2
-			? [
-					{
-						title: 'ID',
-						dataIndex: 'ID',
-						render: (id) => <p className="font-weight-black">{id}</p>,
-						fixed: 'left'
-					},
-					{
-						width: '50%',
-						title: 'Giáo trình',
-						dataIndex: 'CurriculumName',
-						key: 'curriculumname',
-						render: (text) => <p className="font-weight-black">{text}</p>,
-						fixed: 'left'
-					},
-					{
-						width: 120,
-						title: 'Thời gian học',
-						dataIndex: 'TimeOfLesson',
-						key: 'timeoflesson',
-						className: 'text-center'
-					},
-					{
-						width: 120,
-						title: 'Số buổi học',
-						dataIndex: 'Lesson',
-						key: 'lesson',
-						className: 'text-center'
-					},
+	const columns = [
+		{
+			title: 'ID',
+			dataIndex: 'ID',
+			render: (id) => <p className="font-weight-black">{id}</p>,
+			fixed: 'left'
+		},
+		{
+			width: '50%',
+			title: 'Giáo trình',
+			dataIndex: 'CurriculumName',
+			key: 'curriculumname',
+			render: (text) => <p className="font-weight-black">{text}</p>,
+			fixed: 'left'
+		},
+		{
+			width: 120,
+			title: 'Thời gian học',
+			dataIndex: 'TimeOfLesson',
+			key: 'timeoflesson',
+			className: 'text-center'
+		},
+		{
+			width: 120,
+			title: 'Số buổi học',
+			dataIndex: 'Lesson',
+			key: 'lesson',
+			className: 'text-center'
+		},
 
+		{
+			width: 180,
+			key: 'action',
+			render: (text, data, index) => (
+				<>
+					<CurriculumForm
+						dataProgram={dataProgram}
+						getIndex={() => setIndexRow(index)}
+						index={index}
+						rowData={data}
+						rowID={data.ID}
+						isLoading={isLoading}
+						_onSubmit={(data: any) => _onSubmit(data)}
+					/>
 					{
-						width: 130,
-						key: 'action',
-						render: (text, data, index) => (
-							<>
-								<CurriculumForm
-									dataProgram={dataProgram}
-									getIndex={() => setIndexRow(index)}
-									index={index}
-									rowData={data}
-									rowID={data.ID}
-									isLoading={isLoading}
-									_onSubmit={(data: any) => _onSubmit(data)}
-								/>
-								<PickAllSubject
-									dataSubject={dataSubject}
-									curriculumID={data.ID}
-									onFetchData={() => setTodoApi({ ...todoApi })}
-								/>
-								<DeleteItem onDelete={() => handleDelete(data)} />
-							</>
-						)
+						<>
+							<button
+								type="button"
+								className="btn btn-icon edit"
+								onClick={() => {
+									router.push({ pathname: '/option/program/document-list/', query: { curriculumID: data.ID } });
+								}}
+							>
+								<Tooltip title="Thêm tài liệu">
+									<Book />
+								</Tooltip>
+							</button>
+						</>
 					}
-			  ]
-			: [
-					{
-						title: 'ID',
-						dataIndex: 'ID',
-						render: (id) => <p className="font-weight-black">{id}</p>,
-						fixed: 'left'
-					},
-					{
-						width: '50%',
-						title: 'Giáo trình',
-						dataIndex: 'CurriculumName',
-						key: 'curriculumname',
-						render: (text) => <p className="font-weight-black">{text}</p>,
-						fixed: 'left'
-					},
-					{
-						width: 120,
-						title: 'Thời gian học',
-						dataIndex: 'TimeOfLesson',
-						key: 'timeoflesson',
-						className: 'text-center'
-					},
-					{
-						width: 120,
-						title: 'Số buổi học',
-						dataIndex: 'Lesson',
-						key: 'lesson',
-						className: 'text-center'
-					}
-			  ];
+					<PickAllSubject dataSubject={dataSubject} curriculumID={data.ID} onFetchData={() => setTodoApi({ ...todoApi })} />
+					<DeleteItem onDelete={() => handleDelete(data)} />
+				</>
+			)
+		}
+	];
 
 	return (
 		<div>
@@ -356,12 +335,7 @@ const Curriculum = (props) => {
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				loading={isLoading}
-				TitleCard={
-					userInformation &&
-					userInformation.RoleID !== 2 && (
-						<CurriculumForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
-					)
-				}
+				TitleCard={<CurriculumForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
 				dataSource={dataSource}
 				columns={columns}
 				Extra={'Giáo trình'}

@@ -6,9 +6,11 @@ import { Spin, Input } from 'antd';
 import { useWrap } from '~/context/wrap';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
+import { wrap } from 'module';
+import RatingStar from '~/components/RatingStar';
 
 // CARD ITEM ON VIDEO COURSE
-const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading }) => {
+const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading, dataTeacher }) => {
 	const { userInformation } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
@@ -21,11 +23,13 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 		Level: item.LevelName,
 		Create: item.CreatedOn,
 		Thum: item.ImageThumbnails,
+		AverageRating: item.AverageRating,
+		TotalFeedBack: item.TotalFeedBack,
 		slug: item.ID,
 		Original: item.OriginalPrice,
 		Sell: item.SellPrice,
 		Active: item.StatusActive,
-		TotalVideo: item.TotalVideoCourseSold
+		TotalVideo: item.TotalVideoCourseSold,
 	};
 
 	const PopoverItem = (
@@ -142,25 +146,24 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 						</div>
 
 						<div className="content">
-							<span style={{ width: '90%' }} className="title ml-3 mr-3 in-1-line">
+							<h3 style={{ width: '90%' }} className="title ml-3 mr-3 in-1-line">
 								{item.VideoCourseName}
+							</h3>
+							<span style={{ width: '90%' }} className="ml-3 mr-3 in-1-line">
+								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán
 							</span>
 
-							<span style={{ width: '90%' }} className="ml-3 mr-3 price-old in-1-line">
-								Số video: {item.TotalVideoCourseSold}
-							</span>
-
-							<Link
+							{/* <Link
 								href={{
 									pathname: '/video-course/[slug]',
 									query: params
 								}}
 							>
 								<span style={{ width: '90%' }} className="ml-3 mr-3 price-old in-1-line">
-									Loại: {item.CategoryName}
+									{item.CategoryName}
 								</span>
-							</Link>
-							<Link
+							</Link> */}
+							{/* <Link
 								href={{
 									pathname: '/video-course/[slug]',
 									query: params
@@ -169,32 +172,35 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 								<span style={{ width: '90%' }} className="ml-3 mr-3 price-old in-1-line">
 									Cấp độ: {item.LevelName}
 								</span>
+							</Link> */}
+                            <Link
+								href={{
+									pathname: '/video-course/[slug]',
+									query: params
+								}}
+							>   
+								<div className="ml-3">
+									<RatingStar AverageRating={item.AverageRating} TotalFeedBack={item.TotalFeedBack} />
+								</div>
 							</Link>
+
 							<Link
 								href={{
 									pathname: '/video-course/[slug]',
 									query: params
 								}}
 							>
-								<i
-									className="ml-3 mr-3 price-old in-2-line pr-1"
-									style={{
-										textDecorationLine: 'line-through',
-										width: '90%'
-									}}
-								>
-									Giá gốc: {parseToMoney(item.OriginalPrice)}đ
-								</i>
-							</Link>
-							<Link
-								href={{
-									pathname: '/video-course/[slug]',
-									query: params
-								}}
-							>
-								<span style={{ width: '90%' }} className="ml-3 mb-3 price in-2-line">
-									Giá bán: {parseToMoney(item.SellPrice)}đ
-								</span>
+								<div className="ml-3 price-group">
+									<i
+										className="price price-old"
+										style={{
+											textDecorationLine: 'line-through'
+										}}
+									>
+										{parseToMoney(item.OriginalPrice)}đ
+									</i>
+									<span className="price">{parseToMoney(item.SellPrice)}đ</span>
+								</div>
 							</Link>
 						</div>
 					</div>
@@ -211,11 +217,22 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 								style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', height: '100%' }}
 							>
 								<div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-									<p style={{ fontSize: 16, color: '#000', fontWeight: 'bold' }}>{item.VideoCourseName}</p>
-									<span className="in-1-line">Số video: {item.TotalVideoCourseSold}</span>
-									<span className="in-1-line">Loại: {item.CategoryName}</span>
-									<span className="mb-3 in-1-line">Cấp độ: {item.LevelName}</span>
+									<h3 className="title mb-3">{item.VideoCourseName}</h3>
+									{/* <span className="in-1-line">Đã bán: {item.TotalVideoCourseSold}</span> */}
+                                    <span className="in-1-line mb-1 ">
+										<i className="fas fa-check"></i> {item.TeacherName}
+									</span>
+									<span className="in-1-line mb-1 ">
+										<i className="fas fa-check"></i> {item.CategoryName}
+									</span>
+									<span className="in-1-line mb-1 ">
+										<i className="fas fa-check"></i> {item.LevelName}
+									</span>
+									<span className="mb-1 in-1-line">
+										<i className="fas fa-check"></i> {item.CreatedOn}
+									</span>
 									<div style={{ flex: 1 }} />
+									{/* button action */}
 									{userInformation.RoleID == 1 ? (
 										<div style={{ zIndex: 99999 }}>
 											<button
@@ -321,6 +338,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 				rowData={item}
 				isModalVisible={showModalUpdate}
 				setIsModalVisible={setShowModalUpdate}
+                dataTeacher={dataTeacher}
 			/>
 			<ModalUpdateDetail programID={item.ID} isModalVisible={showModalEdit} setIsModalVisible={setShowModalEdit} />
 		</>

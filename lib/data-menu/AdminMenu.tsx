@@ -83,6 +83,13 @@ export const AdminChildMenu = [
 						Text: 'Tạo khóa học online',
 						Icon: ''
 					},
+					{
+						ItemType: 'single',
+						Key: '/course/create-self-course',
+						Route: '/course/create-self-course',
+						Text: 'Tạo khóa học 1 - 1',
+						Icon: ''
+					},
 					// {
 					//   ItemType: "single",
 					//   Key: "/course/create-course-self",
@@ -878,6 +885,13 @@ export const AdminChildMenu = [
 						Key: '/option/learning-needs',
 						Route: '/option/learning-needs',
 						Text: 'Nhu cầu học',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/option/payment-method',
+						Route: '/option/payment-method',
+						Text: 'Phương thức thanh toán',
 						Icon: ''
 					},
 					{

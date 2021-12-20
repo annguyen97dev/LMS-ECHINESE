@@ -208,6 +208,10 @@ const ZoomRoom = () => {
 			dataIndex: 'Date',
 			render: (date) => moment(date).format('DD/MM/YYYY')
 		},
+        {
+			title: 'Giờ học',
+			dataIndex: 'StudyTimeName',
+		},
 		{
 			align: 'center',
 			title: 'Trạng thái',

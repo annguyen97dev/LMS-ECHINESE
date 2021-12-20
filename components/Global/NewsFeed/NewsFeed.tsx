@@ -27,6 +27,7 @@ import { useDebounce } from '~/context/useDebounce';
 import { useWrap } from '~/context/wrap';
 import { Roles } from '~/lib/roles/listRoles';
 import { fmSelectArr } from '~/utils/functions';
+import { useRouter } from 'next/router';
 
 const initialNewsFeedList = [];
 const initialPageIndex = 1;
@@ -55,11 +56,12 @@ const NewsFeed = () => {
 	const [idListUserLiked, setIDListUserLiked] = useState<number[]>([]);
 	const [hasNextPage, setHasNextPage] = useState(true);
 	const [pageIndex, setPageIndex] = useState(1);
+	const router = useRouter();
 	// STONE DATA TO FILTER NEWS FEED
 	const [filtersData, setFiltersData] = useState<FiltersData>({
 		name: null,
 		idTeam: null,
-		idGroup: null
+		idGroup: router.query.idGroup ? Number(router.query.idGroup) : null
 	});
 	// OPTION LIST FOR CREATE NEWS FEED
 	const [optionList, setOptionList] = useState<OptionList>({
@@ -960,7 +962,7 @@ const NewsFeed = () => {
 						handleFilters={onFilters}
 						// CREATE GROUP
 						groupFormComponent={
-							// ADMIN || MANAGER CAN CREATE NEW GROUP
+							// ADMIN || MANAGER || TEACHER CAN CREATE NEW GROUP
 							checkAuthorization() === 'Accept' ? (
 								<GroupForm isLoading={isLoading} courseList={courseList} handleSubmit={onCreateGroup} />
 							) : null

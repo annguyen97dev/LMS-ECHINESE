@@ -13,7 +13,6 @@ import { useWrap } from '~/context/wrap';
 import ReserveCourseForm from '~/components/Global/Customer/Student/CourseOfStudent/ReserveCourseForm';
 import PowerTable from '~/components/PowerTable';
 import UpdatePriceForm from '~/components/Global/Customer/Student/CourseOfStudent/UpdatePriceForm';
-import UpdatePriceFormTwo from '~/components/Global/Customer/Student/CourseOfStudent/UpdatePriceFormTwo';
 
 const CourseStudent = () => {
 	const { showNoti, userInformation, pageSize } = useWrap();
@@ -97,7 +96,6 @@ const CourseStudent = () => {
 						currentPage={currentPage}
 					/>
 					{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}
-					{/* {(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceFormTwo data={data} />} */}
 				</Fragment>
 			)
 		}
@@ -215,6 +213,10 @@ const CourseStudent = () => {
 		type: 'GET_ALL',
 		status: false
 	});
+
+    useEffect(()=>{
+        console.log('courseStudent', courseStudent)
+    }, [courseStudent])
 
 	const setDataFunc = (name, data) => {
 		dataFilter.every((item, index) => {

@@ -72,7 +72,7 @@ function CreateNewScheduleForm(props) {
 						<SelectField
 							form={form}
 							name="SubjectID"
-							label="Môn học"
+							label="Bài học"
 							optionList={optionSubjectList}
 							isLoading={isLoading.type === 'FETCH_SUBJECT' && isLoading.status}
 						/>

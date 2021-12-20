@@ -1,4 +1,4 @@
-import {instance} from '../instance';
+import { instance } from '../instance';
 
 const url = '/api/CourseSchedules/';
 
@@ -7,7 +7,7 @@ type ITypeForOptionFetchAvailableSchedule = {
 	name: string;
 	select: boolean;
 };
-type IApiCourseSchedule<T = any> = {
+export type IApiCourseSchedule<T = any> = {
 	data: T;
 	message: string;
 	totalRow: number;
@@ -18,11 +18,14 @@ export const courseDetailApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiCourseSchedule<ICourseDetailSchedule[]>>(url, {
-			params,
+			params
 		});
 	},
 	// Cập nhật
 	update(data) {
 		return instance.put(url, data);
 	},
+	aheadSchedule(params: { courseScheduleId: number; teacherId: number }) {
+		return instance.get<IApiCourseSchedule<ICourseDetailSchedule[]>>('/api/luiLichHoc', { params });
+	}
 };

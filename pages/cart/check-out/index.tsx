@@ -12,14 +12,17 @@ import { numberWithCommas } from '~/utils/functions';
 import moment from 'moment';
 import { parsePriceStrToNumber } from './../../../utils/functions/index';
 import { useRouter } from 'next/router';
+import { paymentConfig } from '~/apiBase/shopping-cart/payment-config';
 
 const CheckOut = () => {
 	const { showNoti } = useWrap();
 	const router = useRouter();
-	const [method, setMothod] = useState('card');
 	const [session, loading] = useSession();
 	const [dataUser, setDataUser] = useState<IUser>();
 	const [cartItems, setCartItems] = useState<IShoppingCart[]>();
+	const [paymentMethods, setPaymentMethods] = useState([]);
+	const [method, setMethod] = useState();
+	// const [paymentMethods, setPaymentMethods] = useState<IPaymentMethod[]>([]);
 	const [discounts, setDiscounts] = useState(0);
 	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [promoCode, setPromoCode] = useState('');
@@ -41,11 +44,11 @@ const CheckOut = () => {
 	const [dataOrder, setDataOrder] =
 		useState<{ Note: string; OrderDetailModels: Array<any>; OrderID: number; TotalPayment: number }>(null);
 
-	const renderPaymentMethod = () => {
+	const renderPaymentMethodDetail = () => {
 		const onChangeCheckRemember = () => {};
 		return (
 			<>
-				{method == 'card' && (
+				{method == 'Momo' && (
 					<div className="card-info">
 						<Input className="style-input mb-4" size="large" placeholder="Tên chủ thẻ" />
 						<Input
@@ -62,7 +65,6 @@ const CheckOut = () => {
 						/>
 						<div className="row">
 							<div className="col-6">
-								{/* <Input className="style-input mb-4" size="large" placeholder="DD/MM" /> */}
 								<DatePicker
 									className="style-input"
 									defaultValue={moment('01/2021', monthFormat)}
@@ -98,7 +100,7 @@ const CheckOut = () => {
 					</div>
 				)}
 
-				{method == 'paypal' && (
+				{method == 'Paypal Test' && (
 					<div className="paypal-info">
 						<p>Để hoàn thành thanh toán chúng tôi sẽ chuyển bạn đến trang bảo mật của Paypal!</p>
 						<div className="text-right align-items-center">
@@ -108,7 +110,7 @@ const CheckOut = () => {
 					</div>
 				)}
 
-				{method == 'momo' && (
+				{method == 'OnePay Quốc tế' && (
 					<div className="paypal-info">
 						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Momo</p>
 						<div className="text-right align-items-center">
@@ -118,7 +120,7 @@ const CheckOut = () => {
 					</div>
 				)}
 
-				{method == 'onepay' && (
+				{method == 'OnePay Nội địa' && (
 					<div className="paypal-info">
 						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
 						<div className="text-right align-items-center">
@@ -128,7 +130,7 @@ const CheckOut = () => {
 					</div>
 				)}
 
-				{method == 'cash' && (
+				{method == 'Momo Test' && (
 					<div className="paypal-info">
 						<p>
 							Qúy khách vui lòng đến{' '}
@@ -145,13 +147,76 @@ const CheckOut = () => {
 		);
 	};
 
-	const getOrderID = async (cartId) => {
+	const renderPaymentMethod = () =>
+		paymentMethods &&
+		paymentMethods.map((item, index) => {
+			return (
+				<div className="payment-card type-checkout" key={index}>
+					<Radio value={item.PaymentName}>
+						<div className="logo-branch p-1 d-flex justify-content-between align-items-center">
+							<p className="mb-0">{item.PaymentName}</p>
+							<div>
+								<img src={item.PaymentLogo} alt="img branch cc"></img>
+							</div>
+						</div>
+					</Radio>
+				</div>
+			);
+		});
+
+	const handleCheckout = async () => {
+		setIsLoading({
+			status: 'CHECKOUT',
+			loading: true
+		});
+		let res = null;
 		try {
-			let res = await shoppingCartApi.getOrderID({ cartId: cartId });
-			if (res.status == 200) {
-				setDataOrder(res.data.data);
+			switch (method) {
+				case 'Momo':
+					res = await shoppingCartApi.checkoutMomo({ OrderID: dataOrder.OrderID });
+					break;
+				case 'Paypal Test':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
+				case 'OnePay Quốc tế':
+					res = await shoppingCartApi.checkoutCash({ CartId: cartID && cartID });
+					break;
+				case 'OnePay Nội địa':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
+				case 'Momo Test':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+					break;
+				default:
+					break;
 			}
-		} catch (error) {}
+			if (res.status == 200) {
+				switch (method) {
+					case 'Momo':
+						router.push(res.data.payUrl);
+						break;
+					case 'Paypal Test':
+						router.push(res.data.payUrl);
+						break;
+					case 'OnePay Quốc tế':
+						showNoti('success', res.data.message);
+						break;
+					case 'OnePay Nội địa':
+						break;
+					case 'Momo Test':
+						break;
+					default:
+						break;
+				}
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				status: 'CHECKOUT',
+				loading: false
+			});
+		}
 	};
 
 	const getShoppingCartData = async () => {
@@ -256,9 +321,9 @@ const CheckOut = () => {
 	);
 
 	function parseJwt(token) {
-		var base64Url = token.split('.')[1];
-		var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-		var jsonPayload = decodeURIComponent(
+		let base64Url = token.split('.')[1];
+		let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+		let jsonPayload = decodeURIComponent(
 			atob(base64)
 				.split('')
 				.map(function (c) {
@@ -285,6 +350,30 @@ const CheckOut = () => {
 		}
 	};
 
+	const getPaymentMethod = async () => {
+		setIsLoading({ status: 'GET_ALL', loading: true });
+		try {
+			let res = await paymentConfig.getAll();
+			if (res.status == 200) {
+				setPaymentMethods(res.data.data);
+				// @ts-ignore
+				setMethod(res.data.data[0].PaymentName);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_ALL', loading: false });
+		}
+	};
+
+	const getOrderID = async (cartId) => {
+		try {
+			let res = await shoppingCartApi.getOrderID({ cartId: cartId });
+			if (res.status == 200) {
+				setDataOrder(res.data.data);
+			}
+		} catch (error) {}
+	};
+
 	useEffect(() => {
 		if (session !== undefined) {
 			let token = session.accessToken;
@@ -298,65 +387,11 @@ const CheckOut = () => {
 
 	useEffect(() => {
 		getShoppingCartData();
+		getPaymentMethod();
 	}, []);
 
 	const onChangeRadio = (event) => {
-		setMothod(event.target.value);
-	};
-
-	const handleCheckout = async () => {
-		setIsLoading({
-			status: 'CHECKOUT',
-			loading: true
-		});
-		let res = null;
-		try {
-			switch (method) {
-				case 'momo':
-					res = await shoppingCartApi.checkoutMomo({ OrderID: dataOrder.OrderID });
-					break;
-				case 'paypal':
-					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
-					break;
-				case 'cash':
-					res = await shoppingCartApi.checkoutCash({ CartId: cartID && cartID });
-					break;
-				case 'onepay':
-					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
-					break;
-				case 'card':
-					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
-					break;
-				default:
-					break;
-			}
-			if (res.status == 200) {
-				switch (method) {
-					case 'momo':
-						router.push(res.data.payUrl);
-						break;
-					case 'paypal':
-						router.push(res.data.payUrl);
-						break;
-					case 'cash':
-						showNoti('success', res.data.message);
-						break;
-					case 'onepay':
-						break;
-					case 'card':
-						break;
-					default:
-						break;
-				}
-			}
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
-			setIsLoading({
-				status: 'CHECKOUT',
-				loading: false
-			});
-		}
+		setMethod(event.target.value);
 	};
 
 	return (
@@ -413,45 +448,11 @@ const CheckOut = () => {
 				<div className="row pb-5">
 					<div className="checkout__content col-12 col-lg-7">
 						<h1>Thanh toán</h1>
+						{/* @ts-ignore */}
 						<Radio.Group onChange={onChangeRadio} value={method}>
-							<div className="payment-card type-checkout">
-								<Radio value={'card'}>
-									<div className="logo-branch p-1">
-										<img src={'/images/mastercard.svg'} alt="img branch cc"></img>
-										<img src={'/images/visa.svg'} alt="img branch cc"></img>
-									</div>
-								</Radio>
-							</div>
-							<div className="paypal type-checkout">
-								<Radio value={'paypal'}>
-									<div className="logo-branch p-1">
-										<img src={'/images/paypal.svg'} alt="img branch cc"></img>
-									</div>
-								</Radio>
-							</div>
-							<div className="momo type-checkout">
-								<Radio value={'momo'}>
-									<div className="logo-branch p-1">
-										<img src={'/images/momo.jpg'} alt="img branch cc"></img>
-									</div>
-								</Radio>
-							</div>
-							<div className="onepay type-checkout">
-								<Radio value={'onepay'}>
-									<div className="logo-branch p-1">
-										<img src={'/images/onepay.png'} alt="img branch cc"></img>
-									</div>
-								</Radio>
-							</div>
-							<div className="cash type-checkout">
-								<Radio value={'cash'}>
-									<div className="logo-branch p-1">
-										<img src={'/images/cash.png'} alt="img branch cc"></img>
-									</div>
-								</Radio>
-							</div>
+							{renderPaymentMethod()}
 						</Radio.Group>
-						<div className="payment-method">{renderPaymentMethod()}</div>
+						<div className="payment-method">{renderPaymentMethodDetail()}</div>
 						<div className="order-detail mt-4">
 							<h4>Chi tiết mua hàng</h4>
 							{isLoading.loading ? <Skeleton active /> : renderCartItems()}

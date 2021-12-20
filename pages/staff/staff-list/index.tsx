@@ -2,7 +2,6 @@ import { RetweetOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Eye } from 'react-feather';
 import {
 	areaApi,
 	branchApi,
@@ -23,10 +22,10 @@ import ResetPassForm from '~/components/Global/StaffList/ResetPassForm';
 import SalaryStaffNested from '~/components/Global/StaffList/SalaryStaffNested';
 // import { Roles } from "~/lib/roles/listRoles";
 import StaffForm from '~/components/Global/StaffList/StaffForm';
+import PromoteTeacher from '~/components/Global/Teacher/Teacher/PromoteTeacher';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-import Link from 'next/link';
 
 let pageIndex = 1;
 
@@ -186,7 +185,7 @@ const StaffList = () => {
 	// ------ BASE USESTATE TABLE -------
 
 	const [dataSource, setDataSource] = useState<IStaff[]>([]);
-	const { showNoti, pageSize, userInformation, isAdmin } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: pageIndex,
@@ -417,14 +416,10 @@ const StaffList = () => {
 		setCurrentPage(1);
 	};
 
-	console.log('List data: ', listDataForm);
-
 	// ----------- SUBMI FORM ------------
 	const returnBranchName = (branchID) => {
 		let newArr = [];
 		let listID = branchID.split(',');
-
-		console.log('List ID: ', listID);
 
 		listID.forEach((item) => {
 			console.log(
@@ -439,13 +434,10 @@ const StaffList = () => {
 			newObj && newArr.push(newObj);
 		});
 
-		console.log('New arr: ', newArr);
 		return newArr;
 	};
 
 	const onSubmitSalary = async (data: any) => {
-		console.log('DATA SUBMIT SALARY: ', data);
-
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
@@ -601,6 +593,21 @@ const StaffList = () => {
 		getDataStudentForm(listApi);
 	}, []);
 
+	const _onSubmitPromoteStaff = async (data) => {
+		setIsLoading({ type: 'PROMOTE', status: true });
+		try {
+			let res = await staffApi.update({ RoleID: 2, UserInformationID: data });
+			if (res.status == 200) {
+				setTodoApi({ ...todoApi });
+				showNoti('success', 'Chuyển vị trí thành công!');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({ type: 'PROMOTE', status: false });
+		}
+	};
+
 	const columns = [
 		{
 			width: 100,
@@ -678,25 +685,11 @@ const StaffList = () => {
 			title: '',
 			dataIndex: '',
 			align: 'center',
-			width: isAdmin ? 130 : 0,
+			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 180,
 			render: (text, data, index) => (
 				<>
-					{isAdmin && (
+					{userInformation !== null && userInformation.RoleID !== 5 && (
 						<div onClick={(e) => e.stopPropagation()}>
-							{data.RoleID === 5 && (
-								<Link
-									href={{
-										pathname: '/staff/teacher-list/teacher-detail/[slug]',
-										query: { slug: data.UserInformationID }
-									}}
-								>
-									<Tooltip title="Xem quản lý">
-										<a className="btn btn-icon">
-											<Eye />
-										</a>
-									</Tooltip>
-								</Link>
-							)}
 							<StaffForm
 								getIndex={() => setIndexRow(index)}
 								index={index}
@@ -708,6 +701,16 @@ const StaffList = () => {
 								listDataForm={listDataForm}
 							/>
 							<ResetPassForm dataRow={data} />
+							{userInformation && userInformation.RoleID == 1 && data.RoleID == 5 && (
+								<PromoteTeacher
+									isLoading={isLoading}
+									type="staff"
+									record={data}
+									_onSubmitPromoteStaff={() => {
+										_onSubmitPromoteStaff(data.UserInformationID);
+									}}
+								/>
+							)}
 						</div>
 					)}
 				</>

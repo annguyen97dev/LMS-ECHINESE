@@ -288,20 +288,20 @@ const StudentForm = (props) => {
 					break;
 
 				case 'Branch':
-					returnSchema[key] = yup.array().required('Bạn không được để trống');
+					returnSchema[key] = yup.array();
 				case 'AppointmentDate':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				case 'ExamAppointmentTime':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				case 'CounselorsID':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				case 'FullNameUnicode':
@@ -369,6 +369,7 @@ const StudentForm = (props) => {
 			let res = await studentApi.getAll({ Email: valueEmail });
 
 			res?.status == 200 && (showNoti('success', 'Tìm kiếm thành công'), handleDataRow(res.data.data[0]), setIsSearch(true));
+
 			res?.status == 204 &&
 				(showNoti('danger', 'Không tìm thấy email'),
 				form.reset(defaultValuesInit),
@@ -393,7 +394,7 @@ const StudentForm = (props) => {
 		});
 		try {
 			let res = await studentAdviseApi.getAll({ Email: valueEmail });
-
+			console.log('student info', res.data.data);
 			res?.status == 200 &&
 				(form.setValue('CustomerConsultationID', res.data.data[0].ID),
 				showNoti('success', 'Tìm kiếm thành công'),
@@ -435,11 +436,10 @@ const StudentForm = (props) => {
 		setImageUrl(cloneRowData.Avatar);
 
 		// Nếu có param customer id
-		if (customerID) {
-			form.setValue('FullNameUnicode', cloneRowData.CustomerName);
-			form.setValue('Mobile', cloneRowData.Number);
-			setValueEmail(cloneRowData.Email);
-		}
+		console.log('customerID', customerID);
+		form.setValue('FullNameUnicode', cloneRowData.CustomerName);
+		form.setValue('Mobile', cloneRowData.Number);
+		setValueEmail(cloneRowData.Email);
 	};
 
 	useEffect(() => {
@@ -668,7 +668,6 @@ const StudentForm = (props) => {
 													name="AppointmentDate"
 													label="Ngày hẹn test"
 													placeholder="Chọn ngày hẹn test"
-													isRequired={true}
 												/>
 											</div>
 											<div className="col-md-6 col-12">
@@ -678,7 +677,6 @@ const StudentForm = (props) => {
 													name="ExamAppointmentTime"
 													label="Giờ hẹn test"
 													placeholder="Chọn giờ hẹn test"
-													isRequired={true}
 												/>
 											</div>
 											<div className="col-md-6 col-12">

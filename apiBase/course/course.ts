@@ -1,11 +1,11 @@
-import {instance} from '../instance';
+import { instance } from '../instance';
 
 const url = '/api/Course/';
 export const courseApi = {
 	// Lấy tất cả data
 	getAll(params) {
 		return instance.get<IApiResultData<ICourse[]>>(url, {
-			params,
+			params
 		});
 	},
 	// Thêm mới data
@@ -19,5 +19,5 @@ export const courseApi = {
 
 	getById(id: number) {
 		return instance.get<IApiResultData<ICourseDetail>>(`${url}${id}`);
-	},
+	}
 };

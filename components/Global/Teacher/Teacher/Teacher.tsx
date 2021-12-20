@@ -10,6 +10,7 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { fmSelectArr } from '~/utils/functions';
 import StaffSalaryForm from '../../Option/StaffSalaryForm';
+import PromoteTeacher from './PromoteTeacher';
 import SalaryTeacherNested from './SalaryTeacherNested';
 import TeacherFilterForm from './TeacherFilterForm';
 import TeacherForm from './TeacherForm';
@@ -31,7 +32,7 @@ const Teacher = () => {
 		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
@@ -375,6 +376,21 @@ const Teacher = () => {
 		}
 	};
 
+	const _onSubmitPromoteTeacher = async (data) => {
+		setIsLoading({ type: 'PROMOTE', status: true });
+		try {
+			let res = await teacherApi.updateRole({ RoleID: 5, UserInformationID: data });
+			if (res.status == 200) {
+				setFilters({ ...filters });
+				showNoti('success', 'Thăng cấp thành công!');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({ type: 'PROMOTE', status: false });
+		}
+	};
+
 	const columns = [
 		{
 			title: 'Mã giáo viên',
@@ -410,10 +426,12 @@ const Teacher = () => {
 		},
 		{
 			title: 'SĐT',
+			width: 120,
 			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Email',
+			width: 180,
 			dataIndex: 'Email'
 		},
 		{
@@ -424,7 +442,7 @@ const Teacher = () => {
 		},
 		{
 			title: 'Facebook',
-			width: 100,
+			width: 150,
 			dataIndex: 'LinkFaceBook',
 			render: (link) =>
 				link && (
@@ -435,6 +453,7 @@ const Teacher = () => {
 		},
 		{
 			title: 'Trạng thái',
+			width: 150,
 			dataIndex: 'StatusID',
 			align: 'center',
 			...FilterColumn('StatusID', onSearch, onResetSearch, 'select', optionStatusList),
@@ -442,7 +461,7 @@ const Teacher = () => {
 		},
 
 		{
-			width: 100,
+			width: 180,
 			align: 'center',
 			render: (value, _, idx) => (
 				<div onClick={(e) => e.stopPropagation()}>
@@ -452,7 +471,7 @@ const Teacher = () => {
 							query: { slug: _.UserInformationID }
 						}}
 					>
-						<Tooltip title="Xem giáo viên">
+						<Tooltip title="Chi tiết giảng dạy">
 							<a className="btn btn-icon">
 								<Eye />
 							</a>
@@ -473,29 +492,24 @@ const Teacher = () => {
 						optionBranchList={branchList}
 						handleFetchBranch={fetchBranchByAreaId}
 					/>
+					{userInformation && userInformation.RoleID == 1 && (
+						<PromoteTeacher
+							isLoading={isLoading}
+							type="teacher"
+							record={_}
+							_onSubmitPromoteTeacher={() => {
+								_onSubmitPromoteTeacher(_.UserInformationID);
+							}}
+							// _onSubmitPromoteStaff={()=>{_onSubmitPromoteStaff(_.UserInformationID)}}
+						/>
+					)}
 				</div>
 			)
 		}
 	];
 
 	const expandedRowRender = (item: ITeacher) => {
-		return (
-			// <table className="tb-expand">
-			// 	<thead>
-			// 		<tr>
-			// 			<th>Các trung tâm</th>
-			// 		</tr>
-			// 	</thead>
-			// 	<tbody>
-			// 		{item.Branch.map((s) => (
-			// 			<tr>
-			// 				<td>{s.BranchName}</td>
-			// 			</tr>
-			// 		))}
-			// 	</tbody>
-			// </table>
-			<SalaryTeacherNested teacherID={item.UserInformationID} />
-		);
+		return <SalaryTeacherNested teacherID={item.UserInformationID} />;
 	};
 
 	return (

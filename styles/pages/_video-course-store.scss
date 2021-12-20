@@ -1,11 +1,18 @@
 .vc-store {
 	&_container {
 		perspective: 1000px;
+		.title {
+			font-size: 16px;
+			text-decoration: none;
+			font-weight: bold;
+			color: $primary-color;
+			text-transform: uppercase;
+		}
 	}
 
 	&_item {
 		background: #fff;
-		height: 300px;
+		height: 230px;
 		margin: 15px;
 		border-radius: 8px;
 		border-style: solid;
@@ -14,6 +21,10 @@
 
 		transition: transform 0.5s;
 		transform-style: preserve-3d;
+
+		@include max-media(1600px) {
+			height: 250px;
+		}
 
 		@include max-media(575px) {
 			height: 370px;
@@ -46,13 +57,22 @@
 				flex-direction: column;
 				justify-content: space-between;
 				padding-top: 10px;
-				.title {
-					font-size: 16px;
-					text-decoration: none;
-					font-weight: bold;
-				}
 				.price-old {
-					font-size: 14px;
+					font-size: 13px;
+                    color: #aaa;
+                    font-weight: 300;
+				}
+
+				.price {
+					display: inline-block;
+				}
+
+				.price-group {
+					display: flex;
+					align-items: center;
+					flex-wrap: wrap;
+					gap: 10px;
+                    font-weight: bold;
 				}
 			}
 
