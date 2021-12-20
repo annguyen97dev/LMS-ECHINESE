@@ -21,7 +21,6 @@ const DayOffSchedule = () => {
 
 	const getSchedule = async () => {
 		setIsLoading({ status: 'GET_ALL', loading: true });
-		console.log('ahsdh');
 		try {
 			let res = await teacherOffScheduleApi.getAll(params);
 			if (res.status == 200) {
@@ -31,7 +30,6 @@ const DayOffSchedule = () => {
 				setDataSchedule([]);
 			}
 		} catch (error) {
-			console.log('ahsdh');
 		} finally {
 			setIsLoading({ status: 'GET_ALL', loading: false });
 		}
@@ -98,8 +96,8 @@ const DayOffSchedule = () => {
 												checked={itemInfo.Checked}
 												disabled={itemInfo.IsHideCheckBox}
 												onChange={(event) => {
-													console.log(itemInfo.StudyTimeID);
-													console.log(item.Day.split('/').reverse().join('-'));
+													// console.log(itemInfo.StudyTimeID);
+													// console.log(item.Day.split('/').reverse().join('-'));
 													updateSchedule(item.Day.split('/').reverse().join('-'), itemInfo.StudyTimeID);
 												}}
 											/>

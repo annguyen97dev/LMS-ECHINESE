@@ -289,9 +289,9 @@ const EditSelfCourse = (props) => {
 				type: 'CHECK_SCHEDULE',
 				status: true
 			});
-			const { id, date, studyTimeID } = params;
+			const { id, date, studyTimeID, curriculumsDetailID } = params;
 			const idxInOptList = optionListForADay.optionTeacherList.findIndex((o) => o.id === id);
-			const res = await checkStudyTimeSelfCourse(date);
+			const res = await checkStudyTimeSelfCourse({ curriculumsDetailID, date });
 			if (res.status === 200) {
 				const validTimeList = res.data.data.filter((s) => isValidRegisterCourse(s.TimeStart));
 				const newList = fmSelectArr(validTimeList, 'Name', 'ID', ['Time', 'TimeStart', 'TimeEnd']);
@@ -348,10 +348,13 @@ const EditSelfCourse = (props) => {
 					curriculumsDetailID: s.CurriculumsDetailID,
 					teacherID: s.TeacherID || 0
 				};
-				// if (isValidRegisterCourse(s.TimeStart)) {
-				onCheckTeacherAvailable(params);
-				onCheckStudyTimeAvailable(params);
-				// }
+				const now = moment().format();
+				const conditionDate = `${s.Date !== 'Invalid date' || dataModalCalendar.dateString} ${s.TimeStart || '00:00'}`;
+				const isValid = moment(conditionDate).isSameOrAfter(now);
+				if (isValid) {
+					onCheckTeacherAvailable(params);
+					onCheckStudyTimeAvailable(params);
+				}
 			});
 		}
 	}, [dataModalCalendar.scheduleList]);
