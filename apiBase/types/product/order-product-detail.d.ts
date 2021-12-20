@@ -1,4 +1,4 @@
-type IOrderProductDetail{
+type IOrderProductDetail = IBaseApi<{
     ID: number;
     ProductID: number;
     Quantity: number;
@@ -8,4 +8,4 @@ type IOrderProductDetail{
     CreatedBy: string;
     ModifiedOn: string;
     ModifiedBy: string
-}
+}>
