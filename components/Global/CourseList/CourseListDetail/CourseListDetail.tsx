@@ -12,7 +12,6 @@ import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
 import AddGroupFormFromCourseDetail from '../../NewsFeed/NewsFeedGroupComponents/AddGroupFormFromCourseDetail';
 import LessonDetail from '../LessonDetail';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
-import EditSelfCourse from './EditSelfCourse/EditSelfCourse';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
 
@@ -22,7 +21,7 @@ const CourseListDetail = () => {
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const router = useRouter();
 	const [groupID, setGroupID] = useState({ groupID: null, groupInfo: null });
-	const [courseDetail, setCourseDettail] = useState<ICourseDetail>();
+	const [courseDetail, setCourseDetail] = useState<ICourseDetail>();
 	const { showNoti, pageSize } = useWrap();
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
@@ -70,7 +69,7 @@ const CourseListDetail = () => {
 		try {
 			let res = await courseApi.getById(Number(router.query.slug));
 			if (res.status === 200) {
-				setCourseDettail(res.data.data);
+				setCourseDetail(res.data.data);
 			} else if (res.status === 204) {
 				showNoti('danger', 'Không tìm thấy');
 			}
@@ -98,9 +97,10 @@ const CourseListDetail = () => {
 
 					if (parseInt(key) === 2) {
 						const url = () => {
-							if (parseInt(key) === 1) return `/course/course-list/edit-course/${parseIntID}`;
-							if (parseInt(key) === 2) return `/course/course-list/edit-course-online/${parseIntID}`;
-							if (parseInt(key) === 3) return `/course/course-list/edit-self-course/${parseIntID}`;
+							if (parseInt(type as string) === 1) return `/course/course-list/edit-course/${parseIntID}`;
+							if (parseInt(type as string) === 2) return `/course/course-list/edit-course-online/${parseIntID}`;
+							if (parseInt(type as string) === 3 || courseDetail?.TypeCourse === 3)
+								return `/course/course-list/edit-self-course/${parseIntID}`;
 						};
 						router.push(url());
 					}
@@ -146,13 +146,14 @@ const CourseListDetail = () => {
 				>
 					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
 				</TabPane>
-
-				{(isAdmin || userInformation?.RoleID == 2) && (
+				{(isAdmin || userInformation?.RoleID == 2 || (userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3)) && (
 					<TabPane
 						tab={
 							<>
 								<Edit />
-								<span title="Chỉnh sửa"> Chỉnh sửa</span>
+								<span title="Chỉnh sửa">
+									{userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3 ? 'Đăng ký buổi học' : 'Chỉnh sửa'}
+								</span>
 							</>
 						}
 						key="2"
@@ -208,7 +209,7 @@ const CourseListDetail = () => {
 					}
 					key="6"
 				>
-					<DocumentCourse courseID={parseIntID} />
+					<DocumentCourse courseID={parseIntID} courseDetail={courseDetail} />
 				</TabPane>
 
 				{!isStudent() && (
