@@ -1,14 +1,14 @@
 type IOrderProduct = IBaseApi<{
-    StudentID: 5,
-    StudentID: 1062,
-    StudentName: "Minh học viên 1",
-    Avatar: "C:/Minh/hinh.jpg",
-    TotalPrice: 200000,
-    PayBranchID: 1043,
-    PaymentMethodsID: 1,
-    PaymentMethodsName: "Tiền mặt",
+    StudentID: number,
+    StudentID: number,
+    StudentName: string,
+    Avatar: string,
+    TotalPrice: number,
+    PayBranchID: number,
+    PaymentMethodsID: number,
+    PaymentMethodsName: string,
     StatusID: number,
-    StatusName: "Chưa xác nhận",
+    StatusName: string,
     isConfirm: boolean,
     Enable: boolean,
     CreatedOn: string,
@@ -16,4 +16,4 @@ type IOrderProduct = IBaseApi<{
     ModifiedOn: string,
     ModifiedBy: string,
     OrderProductDetail: IOrderProductDetail
-}>[];
+}>;
