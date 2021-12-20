@@ -47,7 +47,7 @@ const Curriculum = (props) => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<ICurriculum[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -292,36 +292,44 @@ const Curriculum = (props) => {
 		},
 
 		{
-			width: 180,
+			width: userInformation?.RoleID !== 2 ? 180 : 0,
 			key: 'action',
 			render: (text, data, index) => (
 				<>
-					<CurriculumForm
-						dataProgram={dataProgram}
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.ID}
-						isLoading={isLoading}
-						_onSubmit={(data: any) => _onSubmit(data)}
-					/>
-					{
+					{userInformation?.RoleID !== 2 && (
 						<>
-							<button
-								type="button"
-								className="btn btn-icon edit"
-								onClick={() => {
-									router.push({ pathname: '/option/program/document-list/', query: { curriculumID: data.ID } });
-								}}
-							>
-								<Tooltip title="Thêm tài liệu">
-									<Book />
-								</Tooltip>
-							</button>
+							<CurriculumForm
+								dataProgram={dataProgram}
+								getIndex={() => setIndexRow(index)}
+								index={index}
+								rowData={data}
+								rowID={data.ID}
+								isLoading={isLoading}
+								_onSubmit={(data: any) => _onSubmit(data)}
+							/>
+							{
+								<>
+									<button
+										type="button"
+										className="btn btn-icon edit"
+										onClick={() => {
+											router.push({ pathname: '/option/program/document-list/', query: { curriculumID: data.ID } });
+										}}
+									>
+										<Tooltip title="Thêm tài liệu">
+											<Book />
+										</Tooltip>
+									</button>
+								</>
+							}
+							<PickAllSubject
+								dataSubject={dataSubject}
+								curriculumID={data.ID}
+								onFetchData={() => setTodoApi({ ...todoApi })}
+							/>
+							<DeleteItem onDelete={() => handleDelete(data)} />
 						</>
-					}
-					<PickAllSubject dataSubject={dataSubject} curriculumID={data.ID} onFetchData={() => setTodoApi({ ...todoApi })} />
-					<DeleteItem onDelete={() => handleDelete(data)} />
+					)}
 				</>
 			)
 		}
@@ -335,7 +343,11 @@ const Curriculum = (props) => {
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				loading={isLoading}
-				TitleCard={<CurriculumForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
+				TitleCard={
+					userInformation?.RoleID !== 2 && (
+						<CurriculumForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
+					)
+				}
 				dataSource={dataSource}
 				columns={columns}
 				Extra={'Giáo trình'}
