@@ -21,7 +21,7 @@ type IScheduleZoom = {
 	SignatureStudent: string;
 	ApiKey: string;
 	UserName: string;
-	IsOff: true;
+	IsOff: boolean;
 	IsExam: boolean;
 	ExamTopicID: number;
 	CurriculumsDetailID: number;
@@ -48,7 +48,7 @@ type IScheduleZoomDetail = {
 	Status: number;
 	ButtonID: number;
 	ButtonName: string;
-	FinishZoom: false;
+	FinishZoom: boolean;
 	isExam: boolean;
 	ExamTopicID: number;
 };
