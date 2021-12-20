@@ -300,9 +300,9 @@ const Programs = () => {
 		},
 		{
 			title: 'Mã lớp',
-			dataIndex: 'GradeID',
+			dataIndex: 'ProgramCode',
 			align: 'center',
-			...FilterColumn('GradeID', onSearch, handleReset, 'text'),
+			...FilterColumn('ProgramCode', onSearch, handleReset, 'text'),
 			render: (text) => {
 				return <p className="font-weight-primary">{text}</p>;
 			}
