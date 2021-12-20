@@ -214,6 +214,10 @@ const CourseStudent = () => {
 		status: false
 	});
 
+    useEffect(()=>{
+        console.log('courseStudent', courseStudent)
+    }, [courseStudent])
+
 	const setDataFunc = (name, data) => {
 		dataFilter.every((item, index) => {
 			if (item.name == name) {

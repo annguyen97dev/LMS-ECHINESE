@@ -100,12 +100,14 @@ const ChangeCourseForm = React.memo((props: any) => {
 		showNoti('success', mes);
 		setLoading(false);
 		setIsModalVisible(false);
+		// handleReset();
 	};
 
 	useEffect(() => {
 		if (isModalVisible) {
 			fetchDataPrice();
 			fetchDataCourseAfter();
+			console.log('courseStudentPrice', courseStudentPrice);
 		}
 	}, [isModalVisible]);
 
@@ -195,7 +197,7 @@ const ChangeCourseForm = React.memo((props: any) => {
 										<div className="col-md-6 col-12">
 											<Form.Item label="Đã đóng">
 												<Input
-													defaultValue={Intl.NumberFormat('ja-JP').format(courseStudentPrice.Paid)}
+													value={Intl.NumberFormat('ja-JP').format(courseStudentPrice.Paid)}
 													className="style-input"
 													readOnly={true}
 												/>
@@ -205,7 +207,7 @@ const ChangeCourseForm = React.memo((props: any) => {
 										<div className="col-md-6 col-12">
 											<Form.Item label="Còn lại">
 												<Input
-													defaultValue={Intl.NumberFormat('ja-JP').format(courseStudentPrice.MoneyInDebt)}
+													value={Intl.NumberFormat('ja-JP').format(courseStudentPrice.MoneyInDebt)}
 													className="style-input"
 													readOnly={true}
 												/>
