@@ -14,9 +14,10 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { fmSelectArr, numberWithCommas } from '~/utils/functions';
 import CourseOfStudentPriceFilter from './CourseOfStudentPriceFilter';
+import UpdatePaidStatus from './UpdatePaidStatus';
 
 const CourseOfStudentPrice = () => {
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	const [totalPage, setTotalPage] = useState(null);
 	const [courseStudentPrice, setCourseStudentPrice] = useState<ICourseOfStudentPrice[]>([]);
@@ -401,7 +402,7 @@ const CourseOfStudentPrice = () => {
 			}
 		},
 		{
-			width: 130,
+			width: 160,
 			render: (data, record: any) => (
 				<div onClick={(e) => e.stopPropagation()}>
 					<Link
@@ -416,6 +417,14 @@ const CourseOfStudentPrice = () => {
 							</button>
 						</Tooltip>
 					</Link>
+					{userInformation && userInformation.RoleID == 1 && (
+						<UpdatePaidStatus
+							record={record}
+							setFilters={() => {
+								setFilters({ ...filters });
+							}}
+						/>
+					)}
 					{!record.DonePaid && (
 						<CourseOfStudentPriceForm
 							isPayTuition={true}

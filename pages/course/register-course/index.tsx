@@ -13,6 +13,7 @@ import RegCoursePayment from '~/components/Global/RegisterCourse/RegCoursePaymen
 import RegCourse from '~/components/Global/RegisterCourse/RegCourse';
 import { courseStudentPriceApi } from '~/apiBase/customer/student/course-student-price';
 import CreateCustomer from './../../../components/Global/RegisterCourse/CreateCustomer';
+import OverStudentConfirmBox from '~/components/Global/RegisterCourse/OverStudentConfirmBox';
 
 const RegisterCourse = (props: any) => {
 	const { Option } = Select;
@@ -24,8 +25,10 @@ const RegisterCourse = (props: any) => {
 	const [userDetail, setUserDetail] = useState<IStudent>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isContract, setIsContract] = useState(false);
-
-	console.log(userInformation);
+	const [courseOverStudent, setCourseOverStudent] = useState(null);
+	const [courseOverStudentClone, setCourseOverStudentClone] = useState(null);
+	const [visibleModalConfirm, setVisibleModalConfirm] = useState(false);
+	const [dataSubmit, setDataSubmit] = useState(null);
 
 	const fetchDataUser = () => {
 		(async () => {
@@ -66,6 +69,8 @@ const RegisterCourse = (props: any) => {
 	};
 
 	const onSubmit = async (data: any) => {
+		console.log(data);
+		setDataSubmit(data);
 		setLoading(true);
 		if (option == 1) {
 			try {
@@ -101,17 +106,26 @@ const RegisterCourse = (props: any) => {
 				data.Course = '';
 			}
 
-			try {
-				let res = await courseStudentPriceApi.add({
-					...data,
-					isContract: isContract
-				});
-				showNoti('success', res?.data.message);
-				setLoading(false);
-				form.resetFields();
-			} catch (error) {
-				showNoti('danger', error.message);
-				setLoading(false);
+			if (courseOverStudent && courseOverStudent.length > 0) {
+				setVisibleModalConfirm(true);
+				setCourseOverStudent(null);
+			} else {
+				setLoading(true);
+				try {
+					let res = await courseStudentPriceApi.add({
+						...data,
+						isContract: isContract
+					});
+					showNoti('success', res?.data.message);
+					setLoading(false);
+					setVisibleModalConfirm(false);
+					form.resetFields();
+				} catch (error) {
+					showNoti('danger', error.message);
+					setLoading(false);
+				} finally {
+					setLoading(false);
+				}
 			}
 		}
 	};
@@ -119,6 +133,16 @@ const RegisterCourse = (props: any) => {
 	return (
 		<div className="container-fluid">
 			<Form form={form} layout="vertical" onFinish={onSubmit}>
+				<OverStudentConfirmBox
+					visibleModalConfirm={visibleModalConfirm}
+					setVisibleModalConfirm={setVisibleModalConfirm}
+					courseOverStudent={courseOverStudent}
+					setCourseOverStudent={setCourseOverStudent}
+					courseOverStudentClone={courseOverStudentClone}
+					onSubmit={(dataSubmit) => onSubmit(dataSubmit)}
+					dataSubmit={dataSubmit}
+					isLoading={isLoading}
+				/>
 				<div className="row">
 					<div className="col-6">
 						<Card
@@ -339,7 +363,14 @@ const RegisterCourse = (props: any) => {
 							<StudentExamOfServices userID={userDetail ? userDetail.UserInformationID : null} loading={loading} />
 						)}
 						{option == 2 && <RegOpenClass userID={userDetail ? userDetail.UserInformationID : null} loading={loading} />}
-						{option == 3 && <RegCourse userID={userDetail ? userDetail.UserInformationID : null} />}
+						{option == 3 && (
+							<RegCourse
+								userID={userDetail ? userDetail.UserInformationID : null}
+								setCourseOverStudent={setCourseOverStudent}
+								courseOverStudent={courseOverStudent}
+								setCourseOverStudentClone={setCourseOverStudentClone}
+							/>
+						)}
 						{option == 4 && <RegCoursePayment userID={userDetail ? userDetail.UserInformationID : null} />}
 					</div>
 				</div>

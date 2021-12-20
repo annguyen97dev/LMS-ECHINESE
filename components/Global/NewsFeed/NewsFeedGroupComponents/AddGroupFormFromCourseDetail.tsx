@@ -11,7 +11,6 @@ const AddGroupFormFromCourseDetail = (props) => {
 	const [loadingImage, setLoadingImage] = useState(false);
 	const [imgUrl, setImgUrl] = useState(null);
 	const [form] = Form.useForm();
-	console.log(imgUrl);
 	const [showModal, setShowModal] = useState(false);
 	const { showNoti } = useWrap();
 	const { Option } = Select;
@@ -104,13 +103,7 @@ const AddGroupFormFromCourseDetail = (props) => {
 							</div>
 							<div className="col-12">
 								<Form.Item label="Khóa học" name="CourseID" initialValue={courseDetail.ID}>
-									<Select
-										className="style-input"
-										placeholder="Chọn khóa học"
-										// allowClear={true}
-										// onChange={(value) => setValue('Style', value)}
-										disabled
-									>
+									<Select className="style-input" placeholder="Chọn khóa học" disabled>
 										<Option value={courseDetail.ID}>{courseDetail.CourseName}</Option>
 									</Select>
 								</Form.Item>

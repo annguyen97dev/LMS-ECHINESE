@@ -22,6 +22,13 @@ type ICourseOfStudent = IBaseApi<{
 	ModifiedBy: string;
 	ModifiedOn: string;
 }>[];
+type ICourseTrial = IBaseApi<{
+	CourseID: number;
+	UserInformationID: number;
+	Note: string;
+	TrialStart: number; //lấy CourseScheduleID
+	TrialEnd: number; //lấy CourseScheduleID
+}>[];
 type ICourseOfStudentPrice = IBaseApi<{
 	ID: number;
 	Course: [
