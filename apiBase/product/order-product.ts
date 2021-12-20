@@ -1,6 +1,6 @@
 import { instance } from '~/apiBase/instance';
 
-const url = '/api/ProductType';
+const url = '/api/OrderProduct';
 class ProductTypeApi {
 	// Lấy tất cả data
 	getAll = (params) => instance.get<IApiResultData<IProductType[]>>(url, { params });

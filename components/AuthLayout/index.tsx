@@ -59,7 +59,7 @@ function AuthLayout({ children }) {
 										__html: `${idiom.content}`
 									}}
 								></div>
-								<p>{idiom.author}</p>
+								{/* <p>{idiom.author}</p> */}
 							</div>
 						</div>
 					</div>
