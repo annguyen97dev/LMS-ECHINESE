@@ -2,16 +2,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Form, Modal, Spin } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { useState, FC } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-import { optionCommonPropTypes } from '~/utils/proptypes';
 import { numberWithCommas } from '~/utils/functions';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
-const CreateCourseOnlineForm = (props) => {
+const CreateSelfCourseForm = (props) => {
 	const {
 		isUpdate,
 		isLoading,
@@ -19,11 +19,8 @@ const CreateCourseOnlineForm = (props) => {
 		optionListForForm,
 		//
 		handleGetCourse,
-		handleCheckStudyTime,
-		handleFetchDataByBranch,
 		handleFetchProgramByGrade,
-		handleGetValueBeforeFetchCurriculum,
-		handleGetValueBeforeFetchTeacher
+		handleFetchCurriculumByProgram
 	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -32,33 +29,30 @@ const CreateCourseOnlineForm = (props) => {
 
 	const schema = yup.object().shape({
 		BranchID: yup.number().nullable().required('Bạn không được để trống'),
-		// UserInformationID: yup.number().nullable().required('Bạn không được để trống'),
-		StudyTimeID: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ca học').required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
-		TeacherID: yup.number().nullable().required('Bạn không được để trống'),
 		CurriculumID: yup.number().nullable().required('Bạn không được để trống'),
-		StartDay: yup.string().required('Bạn không được để trống'),
-		DaySelected: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ngày trong tuần').required('Bạn không được để trống'),
+		StartDay: yup.date().required('Bạn không được để trống'),
+		EndDay: yup
+			.date()
+			.required('Bạn không được để trống')
+			.when('fromDate', (startDate, schema) => startDate && schema.min(startDate, `Ngày không hợp lệ`)),
+		CourseName: yup.string(),
 		Price: yup.string().required('Bạn không được để trống'),
-		SalaryOfLesson: yup.string().required('Bạn không được để trống'),
-		CourseName: yup.string()
+		SalaryOfLesson: yup.string().required('Bạn không được để trống')
 	});
 	const defaultValuesInit = {
 		BranchID: null,
-		// UserInformationID: null,
-		StudyTimeID: undefined,
 		GradeID: null,
 		ProgramID: null,
-		TeacherID: null,
 		CurriculumID: null,
 		StartDay: moment().format('YYYY/MM/DD'),
-		DaySelected: [],
+		EndDay: moment().add(1, 'month').format('YYYY/MM/DD'),
+		CourseName: '',
 		Price: '',
-		SalaryOfLesson: '',
-		CourseName: ''
+		SalaryOfLesson: ''
 	};
-	const form = useForm<ICOCreateForm>({
+	const form = useForm({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema)
 	});
@@ -77,12 +71,6 @@ const CreateCourseOnlineForm = (props) => {
 				break;
 		}
 	};
-	// ONCHANGE OF BRANCH FIELD
-	// const checkHandleFetchUserInformation = (value) => {
-	// 	if (!handleFetchDataByBranch) return;
-	// 	form.setValue('UserInformationID', undefined);
-	// 	handleFetchDataByBranch(value);
-	// };
 	// ONCHANGE OF GRADE FIELD
 	const checkHandleFetchProgramByGrade = (value) => {
 		if (!handleFetchProgramByGrade) return;
@@ -90,24 +78,25 @@ const CreateCourseOnlineForm = (props) => {
 		handleFetchProgramByGrade(value);
 	};
 	// ONCHANGE STUDY TIME AND PROGRAM
-	const checkHandleGetValueBeforeFetchCurriculum = (key: string, value: number) => {
-		if (!handleGetValueBeforeFetchCurriculum) return;
+	const checkHandleFetchCurriculumByProgram = (value: number) => {
+		if (!handleFetchCurriculumByProgram) return;
 		form.setValue('CurriculumID', undefined);
-		handleGetValueBeforeFetchCurriculum(key, value);
-	};
-	// ONCHANGE PROGRAM AND BRANCH
-	const checkHandleGetValueBeforeFetchTeacher = (key: string, value: number) => {
-		if (!handleGetValueBeforeFetchTeacher) return;
-		form.setValue('TeacherID', undefined);
-		handleGetValueBeforeFetchTeacher(key, value);
+		handleFetchCurriculumByProgram(value);
 	};
 
 	return (
 		<>
 			<button type="button" className="btn btn-warning" onClick={openModal}>
-				Thông tin khóa học
+				Tạo khóa học 1 - 1
 			</button>
-			<Modal title="Thông tin khóa học" visible={isModalVisible} footer={null} width={800} onCancel={closeModal}>
+			<Modal
+				// style={{top: 20}}
+				title="Thông tin khóa học"
+				visible={isModalVisible}
+				footer={null}
+				width={800}
+				onCancel={closeModal}
+			>
 				<div className="wrap-form">
 					<Form layout="vertical" onFinish={form.handleSubmit(createCourseSwitchFunc)}>
 						<div className="row">
@@ -120,48 +109,14 @@ const CreateCourseOnlineForm = (props) => {
 									isRequired
 									optionList={optionListForForm.branchList}
 									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
-									onChangeSelect={(value) => {
-										// checkHandleFetchUserInformation(value);
-										checkHandleGetValueBeforeFetchTeacher('BranchID', value);
-									}}
-								/>
-							</div>
-							{/* <div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="UserInformationID"
-									label="Học vụ"
-									isRequired
-									placeholder="Chọn học vụ"
-									isLoading={isLoading.type === 'BranchID' && isLoading.status}
-									optionList={optionListForForm.userInformationList}
-								/>
-							</div> */}
-							<div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="StudyTimeID"
-									label="Ca học"
-									isRequired
-									placeholder="Chọn ca học"
-									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
-									optionList={optionListForForm.studyTimeList}
-									mode="multiple"
-									onChangeSelect={(value) => {
-										if (handleCheckStudyTime) {
-											// value = [1, 2, ...];
-											handleCheckStudyTime(value);
-										}
-										checkHandleGetValueBeforeFetchCurriculum('StudyTimeID', value);
-									}}
 								/>
 							</div>
 							<div className="col-md-6 col-12">
 								<SelectField
 									form={form}
 									name="GradeID"
-									label="Khối học"
 									isRequired
+									label="Khối học"
 									placeholder="Chọn khối học"
 									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
 									optionList={optionListForForm.gradeList}
@@ -180,8 +135,7 @@ const CreateCourseOnlineForm = (props) => {
 									onChangeSelect={(value) => {
 										const price = optionListForForm.programList.find((p) => p.value === value)?.options.Price || 0;
 										form.setValue('Price', numberWithCommas(price));
-										checkHandleGetValueBeforeFetchCurriculum('ProgramID', value);
-										checkHandleGetValueBeforeFetchTeacher('ProgramID', value);
+										checkHandleFetchCurriculumByProgram(value);
 									}}
 								/>
 							</div>
@@ -189,46 +143,21 @@ const CreateCourseOnlineForm = (props) => {
 								<SelectField
 									form={form}
 									name="CurriculumID"
-									label="Giáo trình"
 									isRequired
+									label="Giáo trình"
 									isLoading={isLoading.type === 'ProgramID' && isLoading.status}
 									placeholder="Chọn giáo trình"
 									optionList={optionListForForm.curriculumList}
 								/>
 							</div>
-							<div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="TeacherID"
-									label="Giáo viên"
-									isRequired
-									isLoading={isLoading.type === 'ProgramID' && isLoading.status}
-									placeholder="Chọn giáo viên"
-									optionList={optionListForForm.teacherList}
-								/>
-							</div>
 
-							<div className="col-md-6 col-12">
-								<DateField form={form} name="StartDay" label="Ngày mở" isRequired placeholder="Chọn ngày mở" />
-							</div>
-							<div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="DaySelected"
-									label="Thứ"
-									isRequired
-									placeholder="Chọn thứ"
-									optionList={optionListForForm.dayOfWeek}
-									mode="multiple"
-								/>
-							</div>
 							<div className="col-md-6 col-12">
 								<InputTextField
 									form={form}
 									name="Price"
-									label="Giá khóa học"
 									isRequired
-									placeholder="Nhập giá khóa học"
+									label="Học phí"
+									placeholder="Nhập học phí"
 									handleFormatCurrency={numberWithCommas}
 								/>
 							</div>
@@ -236,27 +165,34 @@ const CreateCourseOnlineForm = (props) => {
 								<InputTextField
 									form={form}
 									name="SalaryOfLesson"
-									label="Lương/buổi"
 									isRequired
-									placeholder="Nhập lương/buổi học"
+									label="Lương/buổi"
+									placeholder="Nhập lương/buổi"
 									handleFormatCurrency={numberWithCommas}
 								/>
+							</div>
+
+							<div className="col-md-6 col-12">
+								<DateField form={form} name="StartDay" isRequired label="Ngày mở" placeholder="Chọn ngày mở" />
+							</div>
+							<div className="col-md-6 col-12">
+								<DateField form={form} name="EndDay" isRequired label="Ngày đóng" placeholder="Chọn ngày đóng" />
 							</div>
 							<div className="col-12">
 								<InputTextField
 									form={form}
 									name="CourseName"
 									label="Tên khóa học"
-									placeholder="[Trung tâm][Chương trình học][Giáo trình][Ca học] - Ngày học"
+									placeholder="[Trung tâm][Chương trình học][Giáo trình] - (Ngày học - Ngày đóng)"
 								/>
 							</div>
-							<div className="col-md-12 col-12 mt-3 " style={{ textAlign: 'center' }}>
+							<div className="col-md-12 col-12 mt-3" style={{ textAlign: 'center' }}>
 								<button
 									type="submit"
 									className="btn btn-primary"
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
-									Xem Lịch
+									Tạo khóa học
 									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
@@ -267,7 +203,7 @@ const CreateCourseOnlineForm = (props) => {
 		</>
 	);
 };
-CreateCourseOnlineForm.propTypes = {
+CreateSelfCourseForm.propTypes = {
 	isUpdate: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
@@ -276,41 +212,27 @@ CreateCourseOnlineForm.propTypes = {
 	//
 	optionListForForm: PropTypes.shape({
 		branchList: optionCommonPropTypes,
-		studyTimeList: optionCommonPropTypes,
 		gradeList: optionCommonPropTypes,
 		programList: optionCommonPropTypes,
-		teacherList: optionCommonPropTypes,
-		dayOfWeek: optionCommonPropTypes,
-		curriculumList: optionCommonPropTypes,
-		userInformationList: optionCommonPropTypes
+		curriculumList: optionCommonPropTypes
 	}),
 	//
 	handleGetCourse: PropTypes.func,
-	handleCheckStudyTime: PropTypes.func,
-	handleFetchDataByBranch: PropTypes.func,
 	handleFetchProgramByGrade: PropTypes.func,
-	handleGetValueBeforeFetchCurriculum: PropTypes.func,
-	handleGetValueBeforeFetchTeacher: PropTypes.func
+	handleFetchCurriculumByProgram: PropTypes.func
 };
-CreateCourseOnlineForm.defaultProps = {
+CreateSelfCourseForm.defaultProps = {
 	isUpdate: false,
 	isLoading: { type: '', status: false },
 	//
 	optionListForForm: {
 		branchList: [],
-		studyTimeList: [],
 		gradeList: [],
 		programList: [],
-		teacherList: [],
-		dayOfWeek: [],
-		curriculumList: [],
-		userInformationList: []
+		curriculumList: []
 	},
 	handleGetCourse: null,
-	handleCheckStudyTime: null,
-	handleFetchDataByBranch: null,
 	handleFetchProgramByGrade: null,
-	handleGetValueBeforeFetchCurriculum: null,
-	handleGetValueBeforeFetchTeacher: null
+	handleFetchCurriculumByProgram: null
 };
-export default CreateCourseOnlineForm;
+export default CreateSelfCourseForm;

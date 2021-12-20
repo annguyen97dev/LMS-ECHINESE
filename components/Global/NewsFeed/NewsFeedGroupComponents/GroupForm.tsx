@@ -31,12 +31,12 @@ GroupForm.propTypes = {
 	}),
 	courseList: optionCommonPropTypes,
 	handleSubmit: PropTypes.func,
-	courseDetail: Object
+	courseDetail: PropTypes.object
 };
 GroupForm.defaultProps = {
 	isLoading: { type: '', status: false },
 	isUpdate: false,
-	// isCourseListDetail: null,
+	isCourseListDetail: false,
 	dataUpdate: {
 		ID: 0,
 		Name: '',
@@ -54,8 +54,6 @@ GroupForm.defaultProps = {
 
 function GroupForm(props) {
 	const { isLoading, isCourseListDetail, isUpdate, dataUpdate, courseList, courseDetail, handleSubmit } = props;
-	console.log(courseDetail);
-	console.log(courseList);
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
 
 	const showModal = () => {

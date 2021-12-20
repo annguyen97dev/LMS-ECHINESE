@@ -33,20 +33,20 @@ const EditCourseOnline = (props) => {
 		status: false
 	});
 	//Lesson
-	const [scheduleList, setScheduleList] = useState<IEditCourseScheduleList>({
+	const [scheduleList, setScheduleList] = useState<ICOEditScheduleList>({
 		available: [],
 		unavailable: []
 	});
-	const [optionListForADay, setOptionListForADay] = useState<IOptionListForADay>({
+	const [optionListForADay, setOptionListForADay] = useState<ICOOptionListForADay>({
 		optionStudyTimeList: [],
 		optionTeacherList: []
 	});
 	//StudyDay
 	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
 	// SCHEDULE TO SHOW ON MODAL
-	const [scheduleShow, setScheduleShow] = useState<IEditCourseScheduleShowList>({});
+	const [scheduleShow, setScheduleShow] = useState<ICOEditScheduleShowList>({});
 	// CALENDAR MODAL
-	const [dataModalCalendar, setDataModalCalendar] = useState<IDataModalEditCourse>({
+	const [dataModalCalendar, setDataModalCalendar] = useState<ICODataModalEdit>({
 		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
@@ -60,35 +60,26 @@ const EditCourseOnline = (props) => {
 		studyTimes: []
 	});
 	const [optionSubjectList, setOptionSubjectList] = useState<IOptionCommon[]>([]);
-	const [scheduleListToSave, setScheduleListToSave] = useState<IScheduleListToSave[]>([]);
+	const [scheduleListToSave, setScheduleListToSave] = useState<ICOScheduleListToSave[]>([]);
 	const stoneScheduleListToFindDifference = useRef<ICourseDetailSchedule[]>([]);
-
+	const [isClickAheadSchedule, setIsClickAheadSchedule] = useState(false);
 	// -----------SCHEDULE-----------
-	const checkDuplicateStudyTimeInDay = (arr: ICourseDetailSchedule[], vl) => {
-		const scheduleSameStudyTime = arr.filter((s) => s.StudyTimeID === vl);
-		if (scheduleSameStudyTime.length > 1) {
-			return true;
-		}
-		return false;
-	};
 	const studyTimeOverFlow = (scheduleList: ICourseDetailSchedule[]) => {
-		const newStudyTimeList = [...optionListForADay.optionStudyTimeList];
 		let rs = false;
-		const studyTimeInDay = newStudyTimeList.filter((s) => scheduleList.map((sch) => sch.StudyTimeID).includes(+s.value));
-		// COMPARE STUDY TIME RETURN TRUE IF IN VALID
-		for (let i = 0; i < studyTimeInDay.length; i++) {
-			const timeObjBase = studyTimeInDay[i];
-			if (!timeObjBase.value) continue;
-			const s1 = +timeObjBase.options.TimeStart.replace(':', '');
-			const e1 = +timeObjBase.options.TimeEnd.replace(':', '');
-			studyTimeInDay.filter((st) => {
-				if (!st.value) return;
-				const s2 = +st.options.TimeStart.replace(':', '');
-				const e2 = +st.options.TimeEnd.replace(':', '');
-				if (timeObjBase.value === st.value) {
-					return;
-				}
+		const studyTimeList = optionListForADay.optionStudyTimeList;
+		const studyTimeIdList = scheduleList.map((s) => s.StudyTimeID).filter(Boolean);
+		// COMPARE STUDY TIME RETURN TRUE IF INVALID
+		for (let i = 0; i < studyTimeIdList.length - 1; i++) {
+			const time1 = studyTimeList.find((s) => s.value === studyTimeIdList[i]);
+			const s1 = +time1.options.TimeStart.replace(':', '');
+			const e1 = +time1.options.TimeEnd.replace(':', '');
+
+			for (let j = i + 1; j < studyTimeIdList.length; j++) {
+				const time2 = studyTimeList.find((s) => s.value === studyTimeIdList[j]);
+				const s2 = +time2.options.TimeStart.replace(':', '');
+				const e2 = +time2.options.TimeEnd.replace(':', '');
 				if (
+					time1.value === time2.value ||
 					(s1 < s2 && e1 > e2 && s1 < e2) ||
 					(s1 > s2 && e1 > e2 && s1 < e2) ||
 					(s1 < s2 && e1 < e2 && e1 > s2) ||
@@ -96,7 +87,7 @@ const EditCourseOnline = (props) => {
 				) {
 					rs = true;
 				}
-			});
+			}
 		}
 		return rs;
 	};
@@ -149,7 +140,7 @@ const EditCourseOnline = (props) => {
 	const changeValueSchedule = (uid: number | string, key: 'CaID' | 'TeacherID', vl: number) => {
 		const { rs: newUnavailableScheduleList, date } = getNewUnavailableScheduleList(uid, key, vl);
 		const scheduleList = newUnavailableScheduleList.filter((s) => s.Date === date);
-		if (studyTimeOverFlow(scheduleList) || checkDuplicateStudyTimeInDay(scheduleList, vl)) {
+		if (studyTimeOverFlow(scheduleList)) {
 			showNoti('danger', 'Dữ liệu không phù hợp');
 		}
 
@@ -271,15 +262,17 @@ const EditCourseOnline = (props) => {
 			const { id, TeacherID, ...rest } = params;
 
 			const idxInOptList = optionListForADay.optionTeacherList.findIndex((o) => o.id === id);
-			const newOptionTeacherList = [...optionListForADay.optionTeacherList];
 			if (!params.StudyTimeID) {
-				newOptionTeacherList.splice(idxInOptList, 1, {
-					...optionListForADay.optionTeacherList[idxInOptList],
-					list: [{ title: '----Giáo viên trống----', value: 0 }]
-				});
-				setOptionListForADay({
-					...optionListForADay,
-					optionTeacherList: newOptionTeacherList
+				setOptionListForADay((prevState) => {
+					const newOptList = [...prevState.optionTeacherList];
+					newOptList.splice(idxInOptList, 1, {
+						...prevState.optionTeacherList[idxInOptList],
+						list: [{ title: '----Giáo viên trống----', value: 0 }]
+					});
+					return {
+						...prevState,
+						optionTeacherList: newOptList
+					};
 				});
 				return false;
 			}
@@ -287,30 +280,36 @@ const EditCourseOnline = (props) => {
 			if (res.status === 200) {
 				const newList = fmSelectArr(res.data.data, 'FullNameUnicode', 'UserInformationID');
 				const finalList = [{ title: '----Giáo viên trống----', value: 0 }, ...newList];
-				newOptionTeacherList.splice(idxInOptList, 1, {
-					...optionListForADay.optionTeacherList[idxInOptList],
-					list: finalList
-				});
 
 				const isHadTeacherInList = finalList.some((o) => o.value === TeacherID); // kiểm tra nếu như trong buổi học còn giữ lại giá trị cũ nhưng api lại không có giá trị thỏa giá trị cũ
 				if (!isHadTeacherInList) {
 					changeValueSchedule(id, 'TeacherID', 0);
 				}
 
-				setOptionListForADay({
-					...optionListForADay,
-					optionTeacherList: newOptionTeacherList
+				setOptionListForADay((prevState) => {
+					const newOptList = [...prevState.optionTeacherList];
+					newOptList.splice(idxInOptList, 1, {
+						...prevState.optionTeacherList[idxInOptList],
+						list: finalList
+					});
+					return {
+						...prevState,
+						optionTeacherList: newOptList
+					};
 				});
 				return true;
 			}
 			if (res.status === 204) {
-				newOptionTeacherList.splice(idxInOptList, 1, {
-					...optionListForADay.optionTeacherList[idxInOptList],
-					list: [{ title: '----Giáo viên trống----', value: 0 }]
-				});
-				setOptionListForADay({
-					...optionListForADay,
-					optionTeacherList: newOptionTeacherList
+				setOptionListForADay((prevState) => {
+					const newOptList = [...prevState.optionTeacherList];
+					newOptList.splice(idxInOptList, 1, {
+						...prevState.optionTeacherList[idxInOptList],
+						list: [{ title: '----Giáo viên trống----', value: 0 }]
+					});
+					return {
+						...prevState,
+						optionTeacherList: newOptList
+					};
 				});
 				return false;
 			}
@@ -375,7 +374,7 @@ const EditCourseOnline = (props) => {
 				teacherName: string;
 				isValid: boolean;
 			}>;
-			save: IEditCourseScheduleListToSave[];
+			save: ICOEditScheduleListToSave[];
 		} = {
 			show: [],
 			save: []
@@ -659,31 +658,38 @@ const EditCourseOnline = (props) => {
 	const onAheadSchedule = async (courseScheduleId: number, teacherId: number) => {
 		try {
 			setIsLoading({
-				type: 'FETCH_COURSE',
+				type: 'AHEAD_SCHEDULE',
 				status: true
-			});
-			setScheduleList({
-				available: [],
-				unavailable: []
-			});
-			setDataModalCalendar({
-				...dataModalCalendar,
-				scheduleInDay: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId).length,
-				scheduleList: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId)
 			});
 			const res = await courseDetailApi.aheadSchedule({
 				courseScheduleId,
 				teacherId
 			});
 			if (res.status === 200) {
-				fmCourseDetail(res.data, true);
-				setIsLoading({
-					type: 'FETCH_COURSE',
-					status: false
+				setScheduleList({
+					available: [],
+					unavailable: []
 				});
+				setDataModalCalendar({
+					...dataModalCalendar,
+					scheduleInDay: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId).length,
+					scheduleList: dataModalCalendar.scheduleList.filter((s) => s.ID !== courseScheduleId)
+				});
+				setIsClickAheadSchedule(true);
+
+				await fmCourseDetail(res.data, true);
 			}
 		} catch (error) {
+			if (error.status === 400) {
+				showNoti('danger', error.message);
+				setIsClickAheadSchedule(false);
+			}
 			console.log('onAheadSchedule', error.message);
+		} finally {
+			setIsLoading({
+				type: 'AHEAD_SCHEDULE',
+				status: false
+			});
 		}
 	};
 	useEffect(() => {
@@ -740,7 +746,6 @@ const EditCourseOnline = (props) => {
 							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
 							//
-							isEditView={true}
 							unAvailableList={
 								<Schedule>
 									<ScheduleList>
@@ -769,6 +774,7 @@ const EditCourseOnline = (props) => {
 										optionTeacherList={optionListForADay.optionTeacherList.find((o) => o.id === s.ID)?.list || []}
 										optionStudyTime={optionListForADay.optionStudyTimeList}
 										handleAheadSchedule={onAheadSchedule}
+										isClickAheadSchedule={isClickAheadSchedule}
 									/>
 								))}
 							</ScheduleList>

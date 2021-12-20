@@ -1,4 +1,4 @@
-import { Divider, Spin } from 'antd';
+import { Spin } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -9,7 +9,7 @@ import { useWrap } from '~/context/wrap';
 moment.locale('vi');
 const localizer = momentLocalizer(moment);
 
-const CreateCourseCalendar = (props) => {
+const CreateSelfCourseCalendar = (props) => {
 	const {
 		eventList,
 		isLoaded,
@@ -24,13 +24,15 @@ const CreateCourseCalendar = (props) => {
 	const { showNoti } = useWrap();
 	const openModal = () => setIsVisible(true);
 	const closeModal = () => setIsVisible(false);
-	const { dateString, limit, scheduleInDay, scheduleList } = dataModalCalendar;
+	const { dateString, scheduleList } = dataModalCalendar;
+
 	const checkHandleSetDataModalCalendar = (obj) => {
 		if (!handleSetDataModalCalendar) return;
 		handleSetDataModalCalendar(obj);
 	};
+
 	const styleEvent = ({ event }) => {
-		const { dateString, limit, scheduleList, valid } = event.resource;
+		const { dateString, scheduleList } = event.resource;
 		const scheduleInDay = scheduleList.length;
 		return (
 			<>
@@ -39,31 +41,19 @@ const CreateCourseCalendar = (props) => {
 						e.stopPropagation();
 						checkHandleSetDataModalCalendar({
 							dateString,
-							limit,
-							scheduleInDay,
 							scheduleList
 						});
 						openModal();
-						if (valid) {
-							showNoti('success', `Ngày ${moment(dateString).format('DD/MM/YYYY')}- hãy chọn ${limit - scheduleInDay} ca`);
-						}
 					}}
 				>
-					<strong>Còn trống: {limit - scheduleInDay}</strong>
-					<br />
-					<strong>Đã xếp: {scheduleInDay}</strong>
+					<strong>Buổi học: {scheduleInDay}</strong>
 				</div>
 			</>
 		);
 	};
 	const customEventPropGetter = (event, start, end, isSelected) => {
 		let cls;
-		if (event.resource.limit !== event.resource.scheduleList.length) {
-			cls = 'create-course-event create-course-event-green';
-		}
-		if (event.resource.limit === event.resource.scheduleList.length) {
-			cls = 'create-course-event';
-		}
+		const now = moment().isSameOrBefore();
 		if (event.resource.scheduleList.length === 0) {
 			cls = 'create-course-event create-course-event-gray';
 		}
@@ -81,7 +71,7 @@ const CreateCourseCalendar = (props) => {
 		<div className="wrap-calendar">
 			<Spin spinning={!isLoaded} size="large" wrapperClassName="calendar-loading">
 				<Calendar
-					className="custom-calendar"
+					className="custom-calendar self-calendar"
 					localizer={localizer}
 					events={eventList}
 					startAccessor="start"
@@ -114,25 +104,8 @@ const CreateCourseCalendar = (props) => {
 				<div>
 					<div className="tt">
 						<p style={{ marginBottom: '5px' }}>
-							<strong>Thông tin cơ bản: </strong>
+							Số buổi học trong ngày: <strong>{scheduleList.length || 0}</strong>
 						</p>
-						<div className="row">
-							<div className="col-4 col-md-4">
-								<p>
-									Tổng số ca: <strong>{limit}</strong>
-								</p>
-							</div>
-							<div className="col-4 col-md-4">
-								<p>
-									Đã xếp: <strong>{scheduleInDay}</strong>
-								</p>
-							</div>
-							<div className="col-4 col-md-4">
-								<p>
-									Còn trống: <strong>{limit - scheduleInDay}</strong>
-								</p>
-							</div>
-						</div>
 					</div>
 					<div className="cnt-wrap">
 						<p className="tt" style={{ marginBottom: '5px' }}>
@@ -150,7 +123,7 @@ const CreateCourseCalendar = (props) => {
 		</div>
 	);
 };
-CreateCourseCalendar.propTypes = {
+CreateSelfCourseCalendar.propTypes = {
 	eventList: PropTypes.arrayOf(
 		PropTypes.shape({
 			id: PropTypes.number.isRequired,
@@ -159,8 +132,6 @@ CreateCourseCalendar.propTypes = {
 			end: PropTypes.instanceOf(Date).isRequired,
 			resource: PropTypes.shape({
 				dateString: PropTypes.string.isRequired,
-				valid: PropTypes.bool.isRequired,
-				limit: PropTypes.number.isRequired,
 				scheduleList: PropTypes.array
 			})
 		})
@@ -170,8 +141,6 @@ CreateCourseCalendar.propTypes = {
 	handleSetDataModalCalendar: PropTypes.func,
 	dataModalCalendar: PropTypes.shape({
 		dateString: PropTypes.string,
-		limit: PropTypes.number,
-		scheduleInDay: PropTypes.number,
 		scheduleList: PropTypes.array
 	}),
 	//
@@ -179,18 +148,16 @@ CreateCourseCalendar.propTypes = {
 	//
 	children: PropTypes.node
 };
-CreateCourseCalendar.defaultProps = {
+CreateSelfCourseCalendar.defaultProps = {
 	eventList: [],
 	isLoaded: false,
 	//
 	handleSetDataModalCalendar: null,
 	dataModalCalendar: {
 		dateString: '',
-		limit: 0,
-		scheduleInDay: 0,
 		scheduleList: []
 	},
 	//
 	unAvailableList: null
 };
-export default CreateCourseCalendar;
+export default CreateSelfCourseCalendar;

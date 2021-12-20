@@ -2,19 +2,19 @@ import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users } from 'react-feather';
+import { courseApi, groupNewsFeedApi } from '~/apiBase';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
 import { useWrap } from '~/context/wrap';
 import CourseExamAdmin from '../../CourseExam/CourseExamAdmin';
 import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
+import AddGroupFormFromCourseDetail from '../../NewsFeed/NewsFeedGroupComponents/AddGroupFormFromCourseDetail';
 import LessonDetail from '../LessonDetail';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
+import EditSelfCourse from './EditSelfCourse/EditSelfCourse';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
-import { courseApi, groupNewsFeedApi } from '~/apiBase';
-import GroupForm from '~/components/Global/NewsFeed/NewsFeedGroupComponents/GroupForm';
-import AddGroupFormFromCourseDetail from '../../NewsFeed/NewsFeedGroupComponents/AddGroupFormFromCourseDetail';
 
 const { TabPane } = Tabs;
 const CourseListDetail = () => {
@@ -50,7 +50,7 @@ const CourseListDetail = () => {
 				}
 			} else if (res.status === 204) {
 				setGroupID(null);
-				showNoti('danger', 'Nhóm chưa tồn tại, bạn có thể tạo nhóm!');
+				// showNoti('danger', 'Nhóm chưa tồn tại, bạn có thể tạo nhóm!');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -95,11 +95,12 @@ const CourseListDetail = () => {
 				tabPosition="right"
 				onTabClick={(key) => {
 					if (parseInt(key) === 2) {
-						const url =
-							parseInt(type as string) === 1
-								? `/course/course-list/edit-course/${parseIntID}`
-								: `/course/course-list/edit-course-online/${parseIntID}`;
-						router.push(url);
+						const url = () => {
+							if (parseInt(type as string) === 1) return `/course/course-list/edit-course/${parseIntID}`;
+							if (parseInt(type as string) === 2) return `/course/course-list/edit-course-online/${parseIntID}`;
+							if (parseInt(type as string) === 3) return `/course/course-list/edit-self-course/${parseIntID}`;
+						};
+						router.push(url());
 					}
 					if (parseInt(key) === 9) {
 						if (groupID) {

@@ -66,7 +66,7 @@ const CreateCourseOnline = () => {
 		type: '',
 		status: false
 	});
-	const [optionListForForm, setOptionListForForm] = useState<IOptionListForForm>({
+	const [optionListForForm, setOptionListForForm] = useState<ICOOptionListForForm>({
 		branchList: [],
 		studyTimeList: [],
 		gradeList: [],
@@ -89,12 +89,11 @@ const CreateCourseOnline = () => {
 		ProgramID: null
 	});
 	//Lesson
-	const [scheduleList, setScheduleList] = useState<ICreateCourseScheduleList>({
+	const [scheduleList, setScheduleList] = useState<ICOCreateScheduleList>({
 		available: [],
-		unavailable: [],
-		endDate: ''
+		unavailable: []
 	});
-	const [optionListForADay, setOptionListForADay] = useState<IOptionListForADay>({
+	const [optionListForADay, setOptionListForADay] = useState<ICOOptionListForADay>({
 		optionStudyTimeList: [],
 		optionTeacherList: []
 	});
@@ -102,7 +101,7 @@ const CreateCourseOnline = () => {
 	const [calendarList, setCalendarList] = useState<IStudyDay[]>([]);
 	// SAVE
 	const [isSave, setIsSave] = useState(false);
-	const [scheduleShow, setScheduleShow] = useState<ICreateCourseScheduleShowList>({});
+	const [scheduleShow, setScheduleShow] = useState<ICOCreateScheduleShowList>({});
 	const stoneDataToSave = useRef({
 		CourseName: '',
 		AcademicUID: 0,
@@ -117,7 +116,7 @@ const CreateCourseOnline = () => {
 		SalaryOfLesson: 0,
 		Price: 0
 	});
-	const [saveCourseInfo, setSaveCourseInfo] = useState<ISaveCourseInfo>({
+	const [saveCourseInfo, setSaveCourseInfo] = useState<ICOSaveCourseInfo>({
 		CourseName: '',
 		AcademicUID: 0,
 		BranchID: 0,
@@ -141,7 +140,7 @@ const CreateCourseOnline = () => {
 		Schedule: []
 	});
 	// CALENDAR MODAL
-	const [dataModalCalendar, setDataModalCalendar] = useState<IDataModal>({
+	const [dataModalCalendar, setDataModalCalendar] = useState<ICODataModal>({
 		dateString: '',
 		limit: 0,
 		scheduleInDay: 0,
@@ -390,7 +389,7 @@ const CreateCourseOnline = () => {
 		}
 	}, [dataToFetchCurriculum]);
 	// -----------GET COURSE-----------
-	const getCourse = async (object: ICreateCourseOnlineForm) => {
+	const getCourse = async (object: ICOCreateForm) => {
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
@@ -443,7 +442,6 @@ const CreateCourseOnline = () => {
 				.then(([lessonList, studyDayList]) => {
 					if (lessonList.status === 200) {
 						setScheduleList({
-							endDate: '',
 							available: [],
 							unavailable: lessonList.data.schedule
 						});
@@ -725,7 +723,7 @@ const CreateCourseOnline = () => {
 				StudyTimeID: number;
 				isValid: boolean;
 			}[];
-			save: IScheduleListToSave[];
+			save: ICOScheduleListToSave[];
 			endDate: number;
 		} = {
 			show: [],
@@ -870,6 +868,16 @@ const CreateCourseOnline = () => {
 							//
 							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
+							//
+							unAvailableList={
+								<Schedule>
+									<ScheduleList>
+										{scheduleList.available.map((s, idx) => (
+											<ScheduleOnlineItem key={idx} scheduleObj={s} handleChangeStatusSchedule={onToggleSchedule} />
+										))}
+									</ScheduleList>
+								</Schedule>
+							}
 						>
 							<ScheduleList panelActiveListInModal={dataModalCalendar.scheduleList.map((_, idx) => idx)}>
 								{dataModalCalendar.scheduleList.map((s, idx) => (
@@ -888,7 +896,7 @@ const CreateCourseOnline = () => {
 						</CreateCourseCalendar>
 					</Card>
 				</div>
-				<div className="col-md-4 col-12">
+				<div className="col-md-4 col-12 d-none d-md-block">
 					<Schedule>
 						<ScheduleList>
 							{scheduleList.available.map((s, idx) => (
