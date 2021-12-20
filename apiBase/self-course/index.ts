@@ -10,8 +10,10 @@ export const createSelfCourse = (data: ISCPost) => instance.post<IApiResultData<
 export const getScheduleSelfCourse = (id: number) =>
 	instance.get<ScheduleSelfCourseResult<ISCSchedule[]>>(`/api/courseNotScheduleYet/${id}`);
 
-export const checkStudyTimeSelfCourse = (date: string) =>
-	instance.get<IApiResultData<IStudyTime[]>>(`/api/GetStudyTimeByDateAndStudentID?date=${date}`);
+export const checkStudyTimeSelfCourse = (data: Omit<ISCCheckTeacher, 'studyTimeID'>) =>
+	instance.get<IApiResultData<IStudyTime[]>>(
+		`/api/GetStudyTimeByDateAndStudentID?date=${data.date}&curriculumsDetailID=${data.curriculumsDetailID}`
+	);
 
 export const checkTeacherSelfCourse = (data: ISCCheckTeacher) =>
 	instance.get<IApiResultData<IUser[]>>(

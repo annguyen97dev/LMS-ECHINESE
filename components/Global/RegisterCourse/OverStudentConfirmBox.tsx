@@ -12,7 +12,6 @@ const OverStudentConfirmBox = (props) => {
 		dataSubmit,
 		isLoading
 	} = props;
-	courseOverStudent && console.log(courseOverStudent[0].courseName);
 	return (
 		<>
 			<Modal

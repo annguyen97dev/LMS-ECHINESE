@@ -15,6 +15,8 @@ interface ISCSchedule extends Omit<IScheduleZoomDetail, 'isExam' | 'ExamTopicID'
 	TeacherName: string;
 	CaID: number;
 	StudyTimeID: number;
+	TimeEnd: string;
+	TimeStart: string;
 	isValid?: boolean;
 }
 type ISCCheckTeacher = { studyTimeID: number; curriculumsDetailID: number; date: string };
