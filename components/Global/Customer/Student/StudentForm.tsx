@@ -369,6 +369,7 @@ const StudentForm = (props) => {
 			let res = await studentApi.getAll({ Email: valueEmail });
 
 			res?.status == 200 && (showNoti('success', 'Tìm kiếm thành công'), handleDataRow(res.data.data[0]), setIsSearch(true));
+
 			res?.status == 204 &&
 				(showNoti('danger', 'Không tìm thấy email'),
 				form.reset(defaultValuesInit),
@@ -393,7 +394,7 @@ const StudentForm = (props) => {
 		});
 		try {
 			let res = await studentAdviseApi.getAll({ Email: valueEmail });
-
+			console.log('student info', res.data.data);
 			res?.status == 200 &&
 				(form.setValue('CustomerConsultationID', res.data.data[0].ID),
 				showNoti('success', 'Tìm kiếm thành công'),
@@ -435,11 +436,10 @@ const StudentForm = (props) => {
 		setImageUrl(cloneRowData.Avatar);
 
 		// Nếu có param customer id
-		if (customerID) {
-			form.setValue('FullNameUnicode', cloneRowData.CustomerName);
-			form.setValue('Mobile', cloneRowData.Number);
-			setValueEmail(cloneRowData.Email);
-		}
+		console.log('customerID', customerID);
+		form.setValue('FullNameUnicode', cloneRowData.CustomerName);
+		form.setValue('Mobile', cloneRowData.Number);
+		setValueEmail(cloneRowData.Email);
 	};
 
 	useEffect(() => {
