@@ -10,6 +10,7 @@ import { Filter, Eye, CheckCircle } from 'react-feather';
 import { parseToMoney } from '~/utils/functions';
 import { EyeOutlined } from '@ant-design/icons';
 import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
+import moment from 'moment';
 
 const { Search } = Input;
 
@@ -118,7 +119,8 @@ const VideoCourseList = () => {
 		{
 			title: 'Ngày mua',
 			dataIndex: 'CreatedOn',
-			key: 'CreatedOn'
+			key: 'CreatedOn',
+			render: (Action, data, index) => <div>{moment(data.CreatedOn).format('DD/MM/yyyy')}</div>
 		},
 		{
 			title: 'Trạng thái kích hoạt',
