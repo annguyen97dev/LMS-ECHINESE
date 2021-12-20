@@ -83,13 +83,13 @@ export const AdminChildMenu = [
 						Text: 'Tạo khóa học online',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/course/create-self-course',
-						Route: '/course/create-self-course',
-						Text: 'Tạo khóa học 1 - 1',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/course/create-self-course',
+					// 	Route: '/course/create-self-course',
+					// 	Text: 'Tạo khóa học 1 - 1',
+					// 	Icon: ''
+					// },
 					// {
 					//   ItemType: "single",
 					//   Key: "/course/create-course-self",

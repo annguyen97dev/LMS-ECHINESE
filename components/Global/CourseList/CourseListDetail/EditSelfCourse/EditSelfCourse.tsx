@@ -18,7 +18,6 @@ import CreateSelfCourseCalendar from '~/components/Global/CreateSelfCourse/Calen
 import SaveSelfCourse from '~/components/Global/CreateSelfCourse/SaveSelfCourse';
 import ScheduleSelfItem from '~/components/Global/CreateSelfCourse/ScheduleSelf/ScheduleSelfItem';
 import TitlePage from '~/components/TitlePage';
-import { useThrottle } from '~/context/useThrottle';
 import { useWrap } from '~/context/wrap';
 import { fmArrayToObjectWithSpecialKey, fmSelectArr } from '~/utils/functions';
 
@@ -349,8 +348,10 @@ const EditSelfCourse = (props) => {
 					curriculumsDetailID: s.CurriculumsDetailID,
 					teacherID: s.TeacherID || 0
 				};
+				// if (isValidRegisterCourse(s.TimeStart)) {
 				onCheckTeacherAvailable(params);
 				onCheckStudyTimeAvailable(params);
+				// }
 			});
 		}
 	}, [dataModalCalendar.scheduleList]);
