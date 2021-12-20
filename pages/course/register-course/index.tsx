@@ -69,7 +69,6 @@ const RegisterCourse = (props: any) => {
 	};
 
 	const onSubmit = async (data: any) => {
-		console.log(data);
 		setDataSubmit(data);
 		setLoading(true);
 		if (option == 1) {

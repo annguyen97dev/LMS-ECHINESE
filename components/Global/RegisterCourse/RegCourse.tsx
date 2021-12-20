@@ -93,7 +93,6 @@ const RegCourse = React.memo((props: any) => {
 		fetchDataCourse();
 	}, [branchID]);
 
-	console.log(props.courseOverStudent);
 	const handleChangeCourse = (value) => {
 		let _totalStudents = [];
 		for (let i = 0; i < course.length; i++) {
