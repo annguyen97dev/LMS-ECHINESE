@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 
 import { Modal, Form, Input, Select, Card, Spin, InputNumber, Button, DatePicker } from 'antd';
 import { branchApi, courseApi, discountApi } from '~/apiBase';
 import { examServiceApi } from '~/apiBase/options/examServices';
 import { useWrap } from '~/context/wrap';
-import moment from 'moment';
 import { useForm } from 'react-hook-form';
 import { PaymentMethod } from '~/lib/payment-method/payment-method';
 import { studentExamServicesApi } from '~/apiBase/customer/student/student-exam-services';
@@ -15,6 +14,7 @@ const RegCourse = React.memo((props: any) => {
 	const { userInformation } = useWrap();
 	const [branch, setBranch] = useState<IBranch[]>();
 	const [course, setCourse] = useState<ICourse[]>();
+	const [loadingCourse, setLoadingCourse] = useState(false);
 	const [discount, setDiscount] = useState<IDiscount[]>();
 	const { showNoti } = useWrap();
 	const [form] = Form.useForm();
@@ -25,7 +25,6 @@ const RegCourse = React.memo((props: any) => {
 	const [paid, setPaid] = useState(0);
 	const [discountStyle, setDiscountStyle] = useState(1);
 	const [branchID, setBranchID] = useState(0);
-	const [loadingCourse, setLoadingCourse] = useState(false);
 
 	const fetchDataSelectList = () => {
 		(async () => {
@@ -91,7 +90,7 @@ const RegCourse = React.memo((props: any) => {
 
 	useEffect(() => {
 		fetchDataCourse();
-	}, [branchID]);
+	}, [branchID, props.isFetchDataCourses]);
 
 	const handleChangeCourse = (value) => {
 		let _totalStudents = [];

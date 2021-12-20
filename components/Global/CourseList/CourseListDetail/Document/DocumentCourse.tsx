@@ -6,22 +6,24 @@ import { documentApi } from '~/apiBase/course-detail/document';
 import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
 import FileExtension from '~/components/Global/CourseList/CourseListDetail/Document/FileExtension';
 import { useWrap } from '~/context/wrap';
+// import  FileExtension  from '~/components/Global/document-list/FileExtension';
 
 DocumentCourse.propTypes = {
-	courseID: PropTypes.number
+	courseID: PropTypes.number,
+	courseDetail: PropTypes.object
 };
 DocumentCourse.defaultProps = {
 	courseID: 0
 };
 
 function DocumentCourse(props) {
-	const { courseID } = props;
+	const { courseID, courseDetail } = props;
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
 	});
 	const [categoryDoc, setCategoryDoc] = useState<ICategoryDoc[]>([]);
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [documentList, setDocumentList] = useState<IDocument[]>([]);
 
 	const getDataCategoryDoc = async () => {
@@ -31,7 +33,9 @@ function DocumentCourse(props) {
 				status: true
 			});
 			const res = await documentCategoryApi.getAll({
-				CourseID: courseID
+				CurriculumID: courseDetail.CurriculumID,
+				pageIndex: 1,
+				pageSize: pageSize
 			});
 			if (res.status === 200) {
 				setCategoryDoc(res.data.data);

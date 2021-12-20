@@ -3,7 +3,7 @@ import LayoutBase from '~/components/LayoutBase';
 import { Form, Input, Select, Card, Switch, Spin } from 'antd';
 import { useWrap } from '~/context/wrap';
 import { useForm } from 'react-hook-form';
-import { branchApi, programApi, studentApi, studyTimeApi } from '~/apiBase';
+import { branchApi, courseApi, programApi, studentApi, studyTimeApi } from '~/apiBase';
 import moment from 'moment';
 import { courseRegistrationApi } from '~/apiBase/customer/student/course-registration';
 import StudentExamOfServices from '~/components/Global/RegisterCourse/StudentExamOfServices';
@@ -29,6 +29,7 @@ const RegisterCourse = (props: any) => {
 	const [courseOverStudentClone, setCourseOverStudentClone] = useState(null);
 	const [visibleModalConfirm, setVisibleModalConfirm] = useState(false);
 	const [dataSubmit, setDataSubmit] = useState(null);
+	const [isFetchDataCourses, setIsFetchDataCourses] = useState(false);
 
 	const fetchDataUser = () => {
 		(async () => {
@@ -115,10 +116,13 @@ const RegisterCourse = (props: any) => {
 						...data,
 						isContract: isContract
 					});
-					showNoti('success', res?.data.message);
-					setLoading(false);
-					setVisibleModalConfirm(false);
-					form.resetFields();
+					if (res.status === 200) {
+						showNoti('success', res?.data.message);
+						setLoading(false);
+						setVisibleModalConfirm(false);
+						form.resetFields();
+						setIsFetchDataCourses(!isFetchDataCourses);
+					}
 				} catch (error) {
 					showNoti('danger', error.message);
 					setLoading(false);
@@ -368,6 +372,7 @@ const RegisterCourse = (props: any) => {
 								setCourseOverStudent={setCourseOverStudent}
 								courseOverStudent={courseOverStudent}
 								setCourseOverStudentClone={setCourseOverStudentClone}
+								isFetchDataCourses={isFetchDataCourses}
 							/>
 						)}
 						{option == 4 && <RegCoursePayment userID={userDetail ? userDetail.UserInformationID : null} />}

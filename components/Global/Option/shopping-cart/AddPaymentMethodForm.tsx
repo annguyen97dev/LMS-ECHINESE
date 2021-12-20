@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Tooltip, Select, Input } from 'antd';
+import { Modal, Form, Tooltip, Select, Input, Upload, message, Spin } from 'antd';
 import { RotateCw, X } from 'react-feather';
 import EditorSimple from '~/components/Elements/EditorSimple';
+import { useWrap } from '~/context/wrap';
+import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
+import { paymentConfig } from '~/apiBase/shopping-cart/payment-config';
 
 const AddPaymentMethodForm = (props) => {
-	// interface Method {
-	//     Code: String;
-	//     Name: String
-	// }
 	const [visible, setVisible] = useState(false);
 	const [method, setMethod] = useState({ Name: null, Code: null });
 	const [isLoading, setIsLoading] = useState({
@@ -16,6 +15,9 @@ const AddPaymentMethodForm = (props) => {
 	});
 	const [form] = Form.useForm();
 	const { Option } = Select;
+	const [loadingImage, setLoadingImage] = useState(false);
+	const [imageUrl, setImageUrl] = useState('');
+	const { showNoti } = useWrap();
 	const handleSelectMethod = (info) => {
 		setMethod({ Name: info.label, Code: info.value });
 	};
@@ -315,12 +317,77 @@ const AddPaymentMethodForm = (props) => {
 				return (
 					<>
 						<div className="col-12 mb-3">
-							<EditorSimple isSimpleTool={false} height={100} isTranslate={false} handleChange={() => {}} />
+							<EditorSimple isSimpleTool={false} height={300} isTranslate={false} handleChange={() => {}} />
 						</div>
 					</>
 				);
 			default:
 				break;
+		}
+	};
+
+	const beforeUpload = (file) => {
+		const validTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp'];
+		const isValidType = validTypeList.includes(file.type);
+		if (!isValidType) {
+			showNoti('danger', `${file.name} không đúng định dạng (jpg | jpeg | png | bmp).`);
+		}
+		return isValidType;
+	};
+
+	const handleUploadAvatar = async (file) => {
+		console.log(file.file.originFileObj);
+		try {
+			if (file.file.status === 'uploading') {
+				setLoadingImage(true);
+				return;
+			}
+			if (file.file.status === 'done') {
+				const res = await paymentConfig.uploadLogo(file.originFileObj);
+				if (res.status === 200) {
+					setImageUrl(res.data.data);
+					showNoti('success', 'success');
+					return res;
+				}
+			}
+		} catch (err) {
+			console.log('UploadAvatarField-handleUploadAvatar', err);
+		} finally {
+			setLoadingImage(false);
+		}
+	};
+
+	function getBase64(img, callback) {
+		const reader = new FileReader();
+		reader.addEventListener('load', () => callback(reader.result));
+		reader.readAsDataURL(img);
+	}
+
+	const UploadButton = (props) => {
+		return (
+			<>
+				<div className={`bg-upload  ${loadingImage && 'loading'}`}>{loadingImage ? <LoadingOutlined /> : <PlusOutlined />}</div>
+			</>
+		);
+	};
+
+	const handleChange = (info) => {
+		if (info.file.status === 'uploading') {
+			setIsLoading({ type: 'UPLOAD_IMG', status: true });
+			return;
+		}
+		if (info.file.status === 'done') {
+			// Get this url from response in real world.
+			getBase64(
+				info.file.originFileObj,
+				(imageUrl) =>
+					// this.setState({
+					// 	imageUrl,
+					// 	loading: false,
+					// }),
+					setIsLoading({ type: 'UPLOAD_IMG', status: true })
+				// setImageUrl(imageUrl)
+			);
 		}
 	};
 
@@ -384,24 +451,54 @@ const AddPaymentMethodForm = (props) => {
 				<Form form={form} onFinish={_onFinish} layout="vertical">
 					<div className="row">
 						<div className="col-12 mb-3">
-							<Select
-								onChange={handleSelectMethod}
-								// value={method.Name}
-								placeholder="Chọn phương thức"
-								labelInValue
-								size="large"
-								style={{ width: '100%' }}
-								className="style-input"
-							>
-								{renderSelectMethod()}
-							</Select>
+							<Form.Item>
+								<Select
+									onChange={handleSelectMethod}
+									placeholder="Chọn phương thức"
+									labelInValue
+									size="large"
+									style={{ width: '100%' }}
+									className="style-input"
+								>
+									{renderSelectMethod()}
+								</Select>
+							</Form.Item>
 						</div>
 						{renderPaymentField()}
+						<div className="col-12 mb-3">
+							<Form.Item name="PaymentLogo">
+								{' '}
+								<Upload
+									name="PaymentLogo"
+									listType="picture-card"
+									className="avatar-uploader"
+									showUploadList={false}
+									beforeUpload={beforeUpload}
+									onChange={handleUploadAvatar}
+								>
+									{loadingImage ? (
+										<Spin size="large" />
+									) : (
+										<img
+											src={imageUrl}
+											alt="avatar"
+											style={{
+												width: '100%',
+												height: '100%',
+												objectFit: 'cover',
+												display: imageUrl && imageUrl.length > 0 ? 'block' : 'none'
+											}}
+										/>
+									)}
+									<UploadButton />
+								</Upload>
+							</Form.Item>
+						</div>
 						<div className="col-12">
 							<button
 								className="btn btn-primary w-100"
 								type="submit"
-								disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+								disabled={(isLoading.type == 'ADD_DATA' && isLoading.status) || !method.Code}
 							>
 								Lưu
 							</button>

@@ -96,9 +96,9 @@ const DocModal = (props) => {
 
 			<Modal
 				title={
-					(type == 'ADD_DOC' && 'Thêm danh mục') ||
-					(type == 'DELETE_DOC' && 'Xóa danh mục') ||
-					(type == 'EDIT_DOC' && 'Sửa danh mục')
+					(type == 'ADD_DOC' && 'Thêm loại tài liệu') ||
+					(type == 'DELETE_DOC' && 'Xóa loại tài liệu') ||
+					(type == 'EDIT_DOC' && 'Sửa loại tài liệu')
 				}
 				onCancel={() => setIsVisible(false)}
 				visible={isVisible}
@@ -108,11 +108,11 @@ const DocModal = (props) => {
 					<div className="row">
 						{(type == 'ADD_DOC' && (
 							<div className="col-12">
-								<Form.Item label="Tên giáo trình" name="CategoryName">
+								<Form.Item label="Tên loại tài liệu" name="CategoryName">
 									<Input
 										onChange={(event) => {}}
 										name="CategoryName"
-										placeholder="Tên giáo trình"
+										placeholder="Tên loại tài liệu"
 										className="style-input"
 									/>
 								</Form.Item>
@@ -120,16 +120,16 @@ const DocModal = (props) => {
 						)) ||
 							(type == 'DELETE_DOC' && (
 								<div className="col-12 justify-content-center">
-									<h4 className="text-center">Bạn xác nhận muốn xóa giáo trình?</h4>
+									<h4 className="text-center">Bạn xác nhận muốn xóa loại tài liệu này?</h4>
 								</div>
 							)) ||
 							(type == 'EDIT_DOC' && (
 								<div className="col-12">
-									<Form.Item label="Tên giáo trình" name="CategoryName">
+									<Form.Item label="Tên loại tài liệu" name="CategoryName">
 										<Input
 											onChange={(event) => {}}
 											name="CategoryName"
-											placeholder="Tên giáo trình"
+											placeholder="Tên loại tài liệu"
 											className="style-input"
 											defaultValue={CategoryName}
 										/>

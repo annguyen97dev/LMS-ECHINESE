@@ -202,7 +202,7 @@ const CourseListDetail = () => {
 					}
 					key="6"
 				>
-					<DocumentCourse courseID={parseIntID} />
+					<DocumentCourse courseID={parseIntID} courseDetail={courseDetail} />
 				</TabPane>
 
 				{!isStudent() && (
