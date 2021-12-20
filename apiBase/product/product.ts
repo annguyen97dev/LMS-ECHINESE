@@ -1,0 +1,1 @@
+import { instance } from '~/apiBase/instance';
