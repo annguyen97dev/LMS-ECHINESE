@@ -13,6 +13,7 @@ class IdiomsApi {
   add = (data: IIdioms) => instance.post(url, data);
 
   update = (data: IIdioms) => instance.put(url, data, {});
+  getRandom = () => instance.get<IApiResultData<IIdioms>>(`${url}/getRandoms`)
 }
 
 export const idiomsApi = new IdiomsApi();

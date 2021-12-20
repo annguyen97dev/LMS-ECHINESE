@@ -11,10 +11,11 @@ function AuthLayout({ children }) {
 	function getFirstIdiom() {
 		(async () => {
 			try {
-				const res = await idiomsApi.getPaged({});
+				const res = await idiomsApi.getRandom();
+                
 				if (res.status == 200) {
-					const content = res.data.data[0].Idioms;
-					const author = res.data.data[0].CreatedBy;
+					const content = res.data.data.Idioms;
+					const author = res.data.data.CreatedBy;
 					setIdiom({ content, author }); // lấy cái mới nhất
 				}
 			} catch (error) {
