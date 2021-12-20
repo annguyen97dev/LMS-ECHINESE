@@ -242,7 +242,15 @@ const CreateCourseOnlineForm = (props) => {
 									handleFormatCurrency={numberWithCommas}
 								/>
 							</div>
-							<div className="col-12">
+                            <div className="col-6">
+								<InputTextField
+									form={form}
+									name="MaximumStudent"
+									label="Số học viên tối đa"
+									placeholder="Nhập số học viên tối đa trong lớp"
+								/>
+							</div>
+							<div className="col-6">
 								<InputTextField
 									form={form}
 									name="CourseName"
