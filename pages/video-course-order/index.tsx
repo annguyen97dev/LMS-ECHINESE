@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
-import { List, Card, Progress, Rate, Modal, Input, Tooltip, Popconfirm, message } from 'antd';
+import { List, Card, Progress, Rate, Modal, Input, Tooltip, Popconfirm, message, Spin, Skeleton } from 'antd';
 import LayoutBase from '~/components/LayoutBase';
 import { VideoCourseListApi, DonePayApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
@@ -8,6 +8,8 @@ import Link from 'next/link';
 import CourseVideoTable from '~/components/CourseVideoTable';
 import { Filter, Eye, CheckCircle } from 'react-feather';
 import { parseToMoney } from '~/utils/functions';
+import { EyeOutlined } from '@ant-design/icons';
+import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
 
 const { Search } = Input;
 
@@ -17,10 +19,13 @@ const VideoCourseList = () => {
 	const { userInformation, pageSize, showNoti, getTitlePage } = useWrap();
 
 	const [data, setData] = useState([]);
-	const [showModal, setShowModal] = useState(false);
+	const [showModalDetails, setShowModalDetails] = useState(false);
 	const [rerender, setRender] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [totalPage, setTotalPage] = useState(null);
+
+	const [detailLoading, setDetailLoading] = useState(false);
+	const [dataDetails, setDataDetails] = useState([]);
 
 	const listTodoApi = {
 		pageSize: pageSize,
@@ -34,14 +39,9 @@ const VideoCourseList = () => {
 		if (userInformation) {
 			getAllArea();
 			getTitlePage();
-
-			getTitlePage('Khóa học chưa thanh toán');
+			getTitlePage('Danh sách đơn hàng');
 		}
 	}, [userInformation]);
-
-	useEffect(() => {
-		console.log('data: ', data);
-	}, [data]);
 
 	//GET DATA
 	const getAllArea = async () => {
@@ -66,6 +66,17 @@ const VideoCourseList = () => {
 			showNoti('danger', error.message);
 		} finally {
 			getAllArea();
+		}
+	};
+
+	const getDetails = async (ID) => {
+		try {
+			const res = await shoppingCartApi.getOrderDetail(ID);
+			res.status == 200 && setDataDetails(res.data.data);
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setDetailLoading(false);
 		}
 	};
 
@@ -122,22 +133,38 @@ const VideoCourseList = () => {
 			align: 'center',
 			render: (Action, data, index) => (
 				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					<Tooltip title="Xác thực thanh toán">
-						<Popconfirm
-							placement="right"
-							title={textConfirm}
-							onConfirm={() => handleDone(data.ID)}
-							okText="OK"
-							cancelText="Cancel"
-						>
-							<button
-								onClick={() => console.log(data)}
-								className="btn btn-icon"
-								style={{ marginRight: -10, marginLeft: -10 }}
+					{data.Status == 1 ? (
+						<Tooltip title="Xác thực thanh toán">
+							<Popconfirm
+								placement="right"
+								title={textConfirm}
+								onConfirm={() => handleDone(data.ID)}
+								okText="OK"
+								cancelText="Cancel"
 							>
-								<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
-							</button>
-						</Popconfirm>
+								<button onClick={() => console.log(data)} className="btn btn-icon" style={{}}>
+									<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
+								</button>
+							</Popconfirm>
+						</Tooltip>
+					) : (
+						<div onClick={() => console.log(data)} className="btn btn-icon" style={{}}>
+							<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
+						</div>
+					)}
+
+					<Tooltip title="Xem thông tin">
+						<button
+							onClick={() => {
+								setDetailLoading(true);
+								getDetails(data.ID);
+								setShowModalDetails(true);
+							}}
+							className="btn btn-icon"
+							style={{}}
+						>
+							<EyeOutlined />
+						</button>
 					</Tooltip>
 				</div>
 			)
@@ -206,6 +233,38 @@ const VideoCourseList = () => {
 					</>
 				)}
 			</Card>
+
+			<Modal
+				title="Thông tin đơn hàng"
+				visible={showModalDetails}
+				onOk={() => setShowModalDetails(false)}
+				onCancel={() => setShowModalDetails(false)}
+				className="modal-vc-details"
+				width={700}
+			>
+				{!detailLoading ? (
+					<>
+						<List
+							dataSource={dataDetails}
+							renderItem={(item) => (
+								<List.Item>
+									<div className="row m-0 item">
+										<div className="row m-0 main">
+											<div className="column">
+												<span>{item?.VideoCourseName}</span>
+												<span>{parseToMoney(item?.VideoCoursePrice)}đ</span>
+											</div>
+											<span>Số lượng: {parseToMoney(item?.Quantity)}</span>
+										</div>
+									</div>
+								</List.Item>
+							)}
+						/>
+					</>
+				) : (
+					<Spin />
+				)}
+			</Modal>
 		</div>
 	);
 };
