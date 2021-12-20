@@ -108,11 +108,11 @@ const DocModal = (props) => {
 					<div className="row">
 						{(type == 'ADD_DOC' && (
 							<div className="col-12">
-								<Form.Item label="Tên giáo trình" name="CategoryName">
+								<Form.Item label="Tên tài liệu" name="CategoryName">
 									<Input
 										onChange={(event) => {}}
 										name="CategoryName"
-										placeholder="Tên giáo trình"
+										placeholder="Tên tài liệu"
 										className="style-input"
 									/>
 								</Form.Item>

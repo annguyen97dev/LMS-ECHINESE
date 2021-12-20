@@ -121,7 +121,7 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 							<>
 								<div className="col-12">
 									<Form.Item
-										label="Tên tài liệu"
+										label="Tên giáo trình"
 										name="DocumentName"
 										rules={[{ required: true, message: 'Bạn không được để trống' }]}
 									>
