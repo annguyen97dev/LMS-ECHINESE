@@ -93,6 +93,8 @@ const CourseListDetail = () => {
 			<Tabs
 				tabPosition="right"
 				onTabClick={(key) => {
+					console.log('key: ', key);
+
 					if (parseInt(key) === 2) {
 						const url = () => {
 							if (parseInt(type as string) === 1) return `/course/course-list/edit-course/${parseIntID}`;
@@ -102,6 +104,7 @@ const CourseListDetail = () => {
 						};
 						router.push(url());
 					}
+
 					if (parseInt(key) === 9) {
 						if (groupID) {
 							router.push({ pathname: '/newsfeed/', query: { idGroup: groupID.groupID } });
@@ -174,6 +177,7 @@ const CourseListDetail = () => {
 						<StudentsList courseID={parseIntID} />
 					</TabPane>
 				)}
+
 				<TabPane
 					tab={
 						<>
