@@ -59,8 +59,8 @@
 				padding-top: 10px;
 				.price-old {
 					font-size: 13px;
-                    color: #aaa;
-                    font-weight: 300;
+					color: #aaa;
+					font-weight: 300;
 				}
 
 				.price {
@@ -72,7 +72,7 @@
 					align-items: center;
 					flex-wrap: wrap;
 					gap: 10px;
-                    font-weight: bold;
+					font-weight: bold;
 				}
 			}
 
@@ -490,4 +490,23 @@
 
 .wrap-input-html {
 	height: 100px !important;
+}
+
+.modal-vc-details {
+	width: 60vw;
+	.item {
+		height: 50px;
+		width: 100%;
+		align-items: center;
+	}
+	.main {
+		width: 100%;
+		display: flex;
+		align-items: center;
+	}
+	.column {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
 }
