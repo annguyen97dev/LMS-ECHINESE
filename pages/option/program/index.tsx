@@ -58,12 +58,12 @@ const Programs = () => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IProgram[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
 	});
-    
+
 	const [totalPage, setTotalPage] = useState(null);
 	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -378,15 +378,17 @@ const Programs = () => {
 						</Tooltip>
 					</Link>
 
-					<ProgramForm
-						getIndex={() => setIndexRow(index)}
-						_onSubmit={(data: any) => _onSubmit(data)}
-						programID={data.ID}
-						rowData={data}
-						dataGrade={dataGrade}
-						showAdd={true}
-						isLoading={isLoading}
-					/>
+					{userInformation.RoleID !== 2 && (
+						<ProgramForm
+							getIndex={() => setIndexRow(index)}
+							_onSubmit={(data: any) => _onSubmit(data)}
+							programID={data.ID}
+							rowData={data}
+							dataGrade={dataGrade}
+							showAdd={true}
+							isLoading={isLoading}
+						/>
+					)}
 				</>
 			)
 		}
@@ -402,7 +404,14 @@ const Programs = () => {
 				addClass="basic-header"
 				TitlePage="Danh sách chương trình"
 				TitleCard={
-					<ProgramForm _onSubmit={(data: any) => _onSubmit(data)} dataGrade={dataGrade} showAdd={true} isLoading={isLoading} />
+					userInformation.RoleID !== 2 && (
+						<ProgramForm
+							_onSubmit={(data: any) => _onSubmit(data)}
+							dataGrade={dataGrade}
+							showAdd={true}
+							isLoading={isLoading}
+						/>
+					)
 				}
 				dataSource={dataSource}
 				columns={columns}
