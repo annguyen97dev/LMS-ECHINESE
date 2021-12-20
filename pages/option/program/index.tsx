@@ -300,7 +300,7 @@ const Programs = () => {
 		},
 		{
 			title: 'Mã lớp',
-			dataIndex: 'GradeID',
+			dataIndex: 'ProgramCode',
 			align: 'center',
 			...FilterColumn('GradeID', onSearch, handleReset, 'text'),
 			render: (text) => {
