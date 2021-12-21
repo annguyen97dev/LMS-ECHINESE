@@ -45,10 +45,12 @@ const UpdatePriceForm = (props) => {
 				PaymentMethodsID: value.PaymentMethodsID,
 				PayDate: value.PayDate._i
 			});
-			if (res.status == 200) {
+			if (res.status == 200 || res.status == 204) {
+				setVisible(false);
 				showNoti('success', 'Thêm thành công!');
 			}
 		} catch (error) {
+			showNoti('danger', error.message);
 		} finally {
 			setIsLoading({ type: 'UPDATE', status: false });
 		}
@@ -97,11 +99,7 @@ const UpdatePriceForm = (props) => {
 							</div>
 						</div>
 						<div className="col-12 col-md-6">
-							<Form.Item
-								label="Số tiền thanh toán thêm"
-								name="Price"
-								// rules={[{ required: true, message: 'Vui lòng điền số tiền thanh toán thêm!' }]}
-							>
+							<Form.Item label="Số tiền thanh toán thêm" name="Price">
 								<Input
 									name="Price"
 									className="style-input"

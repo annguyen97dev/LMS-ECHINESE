@@ -437,8 +437,13 @@ const StudentForm = (props) => {
 
 		// Nếu có param customer id
 		console.log('customerID', customerID);
-		form.setValue('FullNameUnicode', cloneRowData.CustomerName);
-		form.setValue('Mobile', cloneRowData.Number);
+        if (cloneRowData.CustomerName){
+            form.setValue('FullNameUnicode', cloneRowData.CustomerName);
+        }
+        if (cloneRowData.Number){
+            form.setValue('Mobile', cloneRowData.Number);
+        }
+        
 		setValueEmail(cloneRowData.Email);
 	};
 
