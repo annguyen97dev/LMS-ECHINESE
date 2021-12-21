@@ -1,14 +1,14 @@
-import {useRouter} from 'next/router';
-import React, {useEffect, useState} from 'react';
-import {invoiceApi} from '~/apiBase';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { invoiceApi } from '~/apiBase';
 import InvoiceVoucherLayout from '~/components/Global/Customer/Finance/InvoiceVoucher/InvoiceVoucherLayout';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 const FinanceInvoiceDetail = () => {
 	const router = useRouter();
 	const slug = router.query.slug;
 	const [templateString, setTemplateString] = useState(null);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 
 	const getInvoice = async () => {
 		try {
@@ -28,9 +28,7 @@ const FinanceInvoiceDetail = () => {
 		getInvoice();
 	}, []);
 
-	return (
-		<InvoiceVoucherLayout title="Phiếu thu" templateString={templateString} />
-	);
+	return <InvoiceVoucherLayout title="Phiếu thu" templateString={templateString} />;
 };
 
 export default FinanceInvoiceDetail;

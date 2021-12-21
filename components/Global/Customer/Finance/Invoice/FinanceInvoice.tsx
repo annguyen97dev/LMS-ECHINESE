@@ -1,6 +1,7 @@
 import { Image, Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { File } from 'react-feather';
 import { branchApi, invoiceApi } from '~/apiBase';
@@ -57,21 +58,29 @@ function FinanceInvoice() {
 			text: 'Số tiền tăng dần '
 		}
 	];
+
+	const route = useRouter();
+
+	console.log('route.query: ', route.query.detail);
+
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
 		pageSize: pageSize,
 		sort: -1,
 		sortType: false,
-
-		FullNameUnicode: null
+		FullNameUnicode: null,
+		StyleID: route.query === {} ? 1 : null,
+		PayID: route.query === {} ? '' : route.query.detail
 	};
+
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
 		sortType: false
 	});
+
 	const [filters, setFilters] = useState(listFieldInit);
 
 	// FILTER
@@ -236,7 +245,8 @@ function FinanceInvoice() {
 		},
 		{
 			title: 'Lý do',
-			dataIndex: 'Reason'
+			dataIndex: 'Reason',
+			render: (a) => <p style={{ width: 100 }}>{a}</p>
 		},
 		{
 			title: 'Ngày tạo',
@@ -249,7 +259,7 @@ function FinanceInvoice() {
 		},
 		{
 			title: 'QR Code',
-			render: (record: IInvoice) => <>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</>
+			render: (record: IInvoice) => <div style={{ width: 100 }}>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</div>
 		},
 		{
 			render: (record: IInvoice, _, idx) => (
