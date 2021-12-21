@@ -145,13 +145,9 @@ const VideoCourseList = () => {
 			getAllArea();
 			getTitlePage();
 
-			userInformation?.RoleID == 1 ? getTitlePage('Khóa học video đã bán') : getTitlePage('Khóa học video đã mua');
+			userInformation?.RoleID == 1 ? getTitlePage('Khóa học video đã bán') : getTitlePage('Khóa học video đã sở hữu');
 		}
 	}, [userInformation]);
-
-	useEffect(() => {
-		console.log('data: ', data);
-	}, [data]);
 
 	//GET DATA
 	const getAllArea = async () => {
@@ -178,24 +174,10 @@ const VideoCourseList = () => {
 		try {
 			await VideoCourseListApi.update(temp);
 		} catch (err) {
-			// showNoti("danger", err);
+			showNoti('danger', err.message);
 		}
 		getAllArea();
 	};
-
-	const handleDone = async (ID) => {
-		try {
-			let newData = new FormData();
-			newData.append('ID', ID);
-
-			const res = await DonePayApi.update(newData);
-			showNoti('success', 'Thành công');
-		} catch (error) {
-			showNoti('danger', error.message);
-		}
-	};
-
-	const textConfirm = 'Khóa học này đã được thanh toán?';
 
 	const columnsVideoCourse = [
 		{

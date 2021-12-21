@@ -168,10 +168,15 @@ const Notifiaction = () => {
 				title={<AlertCircle color="#32c6a4" />}
 				visible={isModalVisible}
 				width={700}
-				onOk={() => {
-					setIsModalVisible(false);
-					contentRow.status == 0 && _onSubmit(dataSeen);
+				okButtonProps={{
+					style: {
+						display: 'none'
+					}
 				}}
+				// onOk={() => {
+				// 	setIsModalVisible(false);
+				// 	contentRow.status == 0 && _onSubmit(dataSeen);
+				// }}
 				onCancel={() => {
 					setIsModalVisible(false);
 					contentRow.status == 0 && _onSubmit(dataSeen);

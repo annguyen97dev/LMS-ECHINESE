@@ -47,6 +47,12 @@ const StudentCourseReserve = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
+			title: 'Khóa học',
+			width: 110,
+			dataIndex: 'BranchName',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
 			title: 'Chương trình học',
 			width: 150,
 			dataIndex: 'ProgramName',

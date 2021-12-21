@@ -64,7 +64,7 @@ const AddGroupFormFromCourseDetail = (props) => {
 			const res = await groupNewsFeedApi.add({ Name: data.Name, CourseID: data.CourseID, BackGround: imgUrl });
 			if (res.status === 200) {
 				showNoti('success', res.data.message);
-				router.push({ pathname: '/newsfeed/' });
+				router.push({ pathname: '/newsfeed/', query: { idGroup: res.data.data.ID } });
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

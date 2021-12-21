@@ -342,6 +342,11 @@ const CheckOut = () => {
 			if (res.status == 200) {
 				showNoti('success', 'Thêm mã khuyễn mãi thành công!');
 				setPromo(res.data.data);
+				if (res.data.data?.DiscountPrice !== undefined && res.data.data?.DiscountPrice > 0) {
+					setDiscounts(res.data.data?.DiscountPrice);
+				} else {
+					setDiscounts(0);
+				}
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -502,7 +507,11 @@ const CheckOut = () => {
 									<p>Tổng cộng:</p>
 								</div>
 								<div className="col-5" style={{ fontWeight: 700 }}>
-									<span className="mr-2">{numberWithCommas(dataOrder?.TotalPayment - discounts)}</span>
+									<span className="mr-2">
+										{numberWithCommas(dataOrder?.TotalPayment - discounts) != NaN
+											? numberWithCommas(dataOrder?.TotalPayment - discounts)
+											: 0}
+									</span>
 									<span>VND</span>
 								</div>
 							</div>
