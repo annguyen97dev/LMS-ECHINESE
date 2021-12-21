@@ -1,8 +1,9 @@
 import { Card, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
+import router from 'next/router';
 import React from 'react';
-import { File } from 'react-feather';
+import { Eye, File } from 'react-feather';
 
 export default function ExpandBox() {
 	return (
@@ -73,7 +74,7 @@ export function ExpandPaymentRow(props: {
 							) : null}
 							<td>{(infoInvoiceList && infoInvoiceList[0]?.Reason) || 'Không có lý do'}</td>
 							<td>
-								{infoInvoiceList &&
+								{/* {infoInvoiceList &&
 									infoInvoiceList.map((v) => (
 										<Link
 											key={v.ID}
@@ -88,7 +89,21 @@ export function ExpandPaymentRow(props: {
 												</button>
 											</Tooltip>
 										</Link>
-									))}
+									))} */}
+
+								<Tooltip title="Xem phiếu thu">
+									<button
+										onClick={() => {
+											router.push({
+												pathname: '/customer/finance/finance-cashier-invoice',
+												query: { detail: dataRow?.ID }
+											});
+										}}
+										className="btn btn-icon exchange"
+									>
+										<Eye style={{ color: '#dd4667' }} />
+									</button>
+								</Tooltip>
 							</td>
 						</tr>
 					</tbody>
