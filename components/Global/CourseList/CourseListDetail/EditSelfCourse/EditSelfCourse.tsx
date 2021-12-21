@@ -66,7 +66,7 @@ const EditSelfCourse = (props) => {
 		const now = moment(checkDate).format();
 		const nextDay = moment().add(1, 'days').format();
 		const rs = moment(now).isSameOrAfter(nextDay);
-		return rs;
+		return true;
 	};
 	const studyTimeOverFlow = (scheduleList: ISCSchedule[]) => {
 		let rs = false;
@@ -480,12 +480,15 @@ const EditSelfCourse = (props) => {
 			const res = await Promise.all(scheduleListToSave.map((s) => updateScheduleSelfCourse(s)));
 			if (res.every((r) => r.status === 200)) {
 				fetchAvailableSchedule();
-				showNoti('success', res[0].data.message);
+				showNoti('success', 'Đăng ký thành công!');
 			} else {
 				showNoti('danger', 'Có lỗi xảy ra');
 			}
 		} catch (error) {
-			showNoti('error', error.message);
+			if (error.status === 400) {
+				showNoti('danger', error.message);
+			}
+			console.log('onSaveCourse', error.message);
 		} finally {
 			setIsLoading({
 				type: 'SAVE_COURSE',
