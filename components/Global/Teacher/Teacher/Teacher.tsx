@@ -322,6 +322,7 @@ const Teacher = () => {
 			};
 			res = await teacherApi.add(newTeacher);
 			if (res.status === 200) {
+				console.log(res.data);
 				onOpenSalaryForm(res.data.data.UserInformationID);
 				showNoti('success', res.data.message);
 				onResetSearch(); // <== khi tạo xong r reset search để trở về trang đầu tiên
@@ -500,7 +501,6 @@ const Teacher = () => {
 							_onSubmitPromoteTeacher={() => {
 								_onSubmitPromoteTeacher(_.UserInformationID);
 							}}
-							// _onSubmitPromoteStaff={()=>{_onSubmitPromoteStaff(_.UserInformationID)}}
 						/>
 					)}
 				</div>
