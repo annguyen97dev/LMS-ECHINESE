@@ -66,7 +66,7 @@ const EditSelfCourse = (props) => {
 		const now = moment(checkDate).format();
 		const nextDay = moment().add(1, 'days').format();
 		const rs = moment(now).isSameOrAfter(nextDay);
-		return true;
+		return rs;
 	};
 	const studyTimeOverFlow = (scheduleList: ISCSchedule[]) => {
 		let rs = false;
