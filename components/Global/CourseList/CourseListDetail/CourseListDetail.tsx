@@ -93,12 +93,12 @@ const CourseListDetail = () => {
 			<Tabs
 				tabPosition="right"
 				onTabClick={(key) => {
-					console.log('key: ', key);
-
 					if (parseInt(key) === 2) {
 						const url = () => {
-							if (parseInt(type as string) === 1) return `/course/course-list/edit-course/${parseIntID}`;
-							if (parseInt(type as string) === 2) return `/course/course-list/edit-course-online/${parseIntID}`;
+							if (parseInt(type as string) === 1 || courseDetail?.TypeCourse === 1)
+								return `/course/course-list/edit-course/${parseIntID}`;
+							if (parseInt(type as string) === 2 || courseDetail?.TypeCourse === 2)
+								return `/course/course-list/edit-course-online/${parseIntID}`;
 							if (parseInt(type as string) === 3 || courseDetail?.TypeCourse === 3)
 								return `/course/course-list/edit-self-course/${parseIntID}`;
 						};
