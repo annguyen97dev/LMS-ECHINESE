@@ -5,6 +5,7 @@ import EditorSimple from '~/components/Elements/EditorSimple';
 import { useWrap } from '~/context/wrap';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { paymentConfig } from '~/apiBase/shopping-cart/payment-config';
+import { studentApi } from '~/apiBase';
 
 const AddPaymentMethodForm = (props) => {
 	const [visible, setVisible] = useState(false);
@@ -317,7 +318,17 @@ const AddPaymentMethodForm = (props) => {
 				return (
 					<>
 						<div className="col-12 mb-3">
-							<EditorSimple isSimpleTool={false} height={300} isTranslate={false} handleChange={() => {}} />
+							<Form.Item name="transferpayment">
+								<EditorSimple
+									isSimpleTool={false}
+									height={300}
+									name="transferpayment"
+									isTranslate={false}
+									handleChange={(value) => {
+										form.setFieldsValue({ transferpayment: value.toString() });
+									}}
+								/>
+							</Form.Item>
 						</div>
 					</>
 				);
@@ -336,17 +347,19 @@ const AddPaymentMethodForm = (props) => {
 	};
 
 	const handleUploadAvatar = async (file) => {
-		console.log(file.file.originFileObj);
 		try {
 			if (file.file.status === 'uploading') {
 				setLoadingImage(true);
 				return;
 			}
 			if (file.file.status === 'done') {
-				const res = await paymentConfig.uploadLogo(file.originFileObj);
+				setLoadingImage(true);
+				// const res = await paymentConfig.uploadLogo(file.file.originFileObj);
+				const res = await studentApi.uploadImage(file.file.originFileObj);
 				if (res.status === 200) {
 					setImageUrl(res.data.data);
-					showNoti('success', 'success');
+					showNoti('success', 'Tải ảnh thành công!');
+					form.setFieldsValue({ PaymentLogo: res.data.data });
 					return res;
 				}
 			}
@@ -371,28 +384,28 @@ const AddPaymentMethodForm = (props) => {
 		);
 	};
 
-	const handleChange = (info) => {
-		if (info.file.status === 'uploading') {
-			setIsLoading({ type: 'UPLOAD_IMG', status: true });
-			return;
-		}
-		if (info.file.status === 'done') {
-			// Get this url from response in real world.
-			getBase64(
-				info.file.originFileObj,
-				(imageUrl) =>
-					// this.setState({
-					// 	imageUrl,
-					// 	loading: false,
-					// }),
-					setIsLoading({ type: 'UPLOAD_IMG', status: true })
-				// setImageUrl(imageUrl)
-			);
-		}
-	};
-
-	const _onFinish = (data) => {
+	const _onFinish = async (data) => {
 		console.log(data);
+		setIsLoading({
+			type: 'UPLOADING',
+			status: true
+		});
+		try {
+			let res = await paymentConfig.add({ ...data, PaymentName: method.Name, PaymentCode: method.Code });
+			if (res.status === 200) {
+				showNoti('success', 'Thêm phương thức thành công!');
+				setVisible(false);
+				form.resetFields();
+				props.fetchData();
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'UPLOADING',
+				status: false
+			});
+		}
 	};
 
 	return (
@@ -466,7 +479,7 @@ const AddPaymentMethodForm = (props) => {
 						</div>
 						{renderPaymentField()}
 						<div className="col-12 mb-3">
-							<Form.Item name="PaymentLogo">
+							<Form.Item name="PaymentLogo" label="Ảnh Logo">
 								{' '}
 								<Upload
 									name="PaymentLogo"
@@ -498,9 +511,9 @@ const AddPaymentMethodForm = (props) => {
 							<button
 								className="btn btn-primary w-100"
 								type="submit"
-								disabled={(isLoading.type == 'ADD_DATA' && isLoading.status) || !method.Code}
+								disabled={(isLoading.type == 'ADD_DATA' && isLoading.status) || !method.Code || loadingImage}
 							>
-								Lưu
+								{isLoading.type == 'ADD_DATA' && isLoading.status ? <Spin /> : 'Lưu'}
 							</button>
 						</div>
 					</div>
