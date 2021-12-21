@@ -4,9 +4,11 @@ class PaymentConfig {
 	getPaymentConfig = () => instance.get<IApiResultData<IPaymentMethodConfig[]>>('/api/paymentconfiguration/getpaymentconfiguration', {});
 	uploadLogo = (file) => {
 		let fData = new FormData();
-		fData.append('File', file);
+		fData.append('file', file);
+		console.log(fData.get('file'));
 		return instance.post('/api/paymentconfiguration/uploadlogo', fData);
 	};
+	add = (data) => instance.post('/api/paymentconfiguration/insert', data, {});
 }
 
 export const paymentConfig = new PaymentConfig();

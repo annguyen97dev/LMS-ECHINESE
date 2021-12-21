@@ -29,14 +29,22 @@ const PaymentMethodConfig = () => {
 			}
 		},
 		{
+			title: 'Logo',
+			dataIndex: 'PaymentLogo',
+			width: 80,
+			render: (text, data) => {
+				return <img style={{ width: 40, height: 40 }} src={data.PaymentLogo} />;
+			}
+		},
+		{
 			title: '',
 			dataIndex: 'Action',
-			width: 200,
-			render: (text) => {
+			width: 100,
+			render: (text, data) => {
 				return (
 					<>
-						<AddPaymentMethodForm paymentMethod={paymentMethod} type="edit" />
-						<AddPaymentMethodForm paymentMethod={paymentMethod} type="delete" />
+						<AddPaymentMethodForm paymentMethod={paymentMethod} dataPayment={data} type="edit" />
+						<AddPaymentMethodForm paymentMethod={paymentMethod} dataPayment={data} type="delete" />
 					</>
 				);
 			}
@@ -93,7 +101,7 @@ const PaymentMethodConfig = () => {
 				dataSource={dataSource}
 				columns={columns}
 				TitlePage="Cấu hình phương thức thanh toán"
-				TitleCard={<AddPaymentMethodForm paymentMethod={paymentMethod} type="add" />}
+				TitleCard={<AddPaymentMethodForm paymentMethod={paymentMethod} type="add" fetchData={getPaymentMethods} />}
 			></PowerTable>
 		</>
 	);
