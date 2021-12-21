@@ -48,6 +48,7 @@ function StudentsList(props) {
 			dataIndex: 'Warning',
 			render: (bool) => bool && <span className="tag yellow">Warning</span>
 		},
+		{ title: 'Ghi chú', width: 200, dataIndex: 'Note' },
 		{
 			title: '',
 			width: 150,
