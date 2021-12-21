@@ -1,45 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Spin, Input } from 'antd';
-import PropTypes from 'prop-types';
 import DocListModal from './DocListMadal';
 import { useWrap } from '~/context/wrap';
-import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
-import { documentListApi } from '~/apiBase/document-list/document-list';
 
 const FileExtension = (props) => {
 	const { docList, isLoading, docInfo, onFetchData, categoryID, docListFromDetail } = props;
-	const { Search } = Input;
-	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
-	const { showNoti, pageSize } = useWrap();
 	const [searchDoc, setSearchDoc] = useState<IDocumentList[]>(docList);
-
-	const paramsDefault = {
-		search: null,
-		pageIndex: 1,
-		pageSize: pageSize,
-		CurriculumnID: 0
-	};
-
-	const onSearch = async (value) => {
-		setSubmitLoading({ type: 'UPLOADING', loading: true });
-		try {
-			let res = await documentListApi.getAll({ CategoryID: categoryID, DocumentName: value });
-			if (res.status === 200) {
-				setSearchDoc(res.data.data);
-				// setParams({ ...params });
-			}
-			if (res.status == 204) {
-				setSearchDoc([]);
-			}
-		} catch (error) {
-		} finally {
-			setSubmitLoading({ type: 'UPLOADING', loading: false });
-		}
-	};
 
 	useEffect(() => {
 		setSearchDoc(docList);
-	}, [, docList]);
+	}, [docList]);
 
 	const iconFile = (link) => {
 		return (
@@ -57,22 +27,19 @@ const FileExtension = (props) => {
 
 	return (
 		<div className="card-file-box">
-			{docListFromDetail && (
-				<div className="col-12 d-flex justify-content-end align-items-center">
-					<div className="d-flex">
-						<Search placeholder="Tìm giáo trình" onSearch={onSearch} size="large" style={{ width: 200 }} className="mr-1 " />
-						<DocListModal
-							type="ADD_DOC"
-							docInfo={docInfo}
-							onFetchDataForm={() => {
-								onFetchData();
-							}}
-							docID={null}
-							docName={null}
-						/>
-					</div>
+			<div className="col-12 d-flex justify-content-end align-items-center">
+				<div className="d-flex">
+					<DocListModal
+						type="ADD_DOC"
+						docInfo={docInfo}
+						onFetchDataForm={() => {
+							onFetchData();
+						}}
+						docID={null}
+						docName={null}
+					/>
 				</div>
-			)}
+			</div>
 			<Spin spinning={isLoading.type === 'GET_ALL' && isLoading.loading}>
 				{searchDoc?.length > 0 ? (
 					<div className="row">

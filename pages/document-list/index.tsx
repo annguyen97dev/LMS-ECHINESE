@@ -96,7 +96,7 @@ const DocumentList = (props) => {
 		return (
 			<div className=" d-md-none col-md-3 document-menu">
 				<div className="pb-3 col-12 d-flex justify-content-between align-items-center box-header">
-					<div className="title">Danh sách</div>
+					<div className="title">Loại tài liệu</div>
 					<DocModal
 						type="ADD_DOC"
 						CategoryName={null}
