@@ -39,6 +39,7 @@ function SignIn({ providers, csrfToken }) {
 		return () => {};
 	}, []);
 	const _Submit = (data) => {
+        console.log('data', data)
 		signIn('credentials-signin', {
 			...data,
 			callbackUrl: router.query?.callbackUrl ?? '/'
@@ -47,6 +48,7 @@ function SignIn({ providers, csrfToken }) {
 	return (
 		<>
 			{Object.values(providers).map((provider: { id; name }) => {
+                console.log('name', provider.name)
 				switch (provider.id) {
 					case 'credentials-signin':
 						return (
@@ -103,6 +105,7 @@ export default SignIn;
 
 export async function getServerSideProps(context) {
 	const providers = await getProviders();
+    console.log('providers', providers)
 	return {
 		props: { providers }
 	};

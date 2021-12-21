@@ -93,7 +93,8 @@ function index(props: any) {
 									validate: (value) => {
 										//@ts-ignore
 										return !!value.trim();
-									}
+									},
+                                    setValueAs: (value) => value.trim()
 								})}
 								placeholder="Enter user name"
 							/>
