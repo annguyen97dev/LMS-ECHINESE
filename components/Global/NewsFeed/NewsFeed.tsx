@@ -660,6 +660,7 @@ const NewsFeed = () => {
 				const newGroupOptionList = [newGroup, ...optionList.groupOptionList];
 				setOptionList({ ...optionList, groupOptionList: newGroupOptionList });
 				showNoti('success', res.data.message);
+                onFilters('idGroup', newGroup.value)
 				return res;
 			}
 		} catch (error) {
