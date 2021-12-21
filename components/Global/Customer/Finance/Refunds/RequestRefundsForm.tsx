@@ -131,25 +131,28 @@ function RequestRefundsForm(props) {
 									>
 										{courseListOfStudent.map((c: any) => {
 											return (
-												<div className="refund-branch-item" key={c.ID}>
-													<Checkbox value={c.ID} />
-													<div className="info">
-														<p className="name">{c.CourseName}</p>
-														<ul className="list">
-															<li className="price">
-																Giá: <span>{numberWithCommas(c.Price)} VNĐ</span>
-															</li>
-															<li className="date-start">
-																Ngày bắt đầu:
-																<span>{moment(c.StartDay).format('DD/MM/YYYY')}</span>
-															</li>
-															<li className="date-end">
-																Ngày kết thúc:
-																<span>{moment(c.EndDay).format('DD/MM/YYYY')}</span>
-															</li>
-														</ul>
+												<>
+													<div className="refund-branch-item" key={c.ID}>
+														<Checkbox value={c.ID} />
+														<div className="info">
+															<p className="name">{c.CourseName}</p>
+															<ul className="list">
+																<li className="price">
+																	Giá:
+																	{c.Price && <span>{numberWithCommas(c.Price)} VNĐ</span>}
+																</li>
+																<li className="date-start">
+																	Ngày bắt đầu:
+																	{c.StartDay && <span>{moment(c.StartDay).format('DD/MM/YYYY')}</span>}
+																</li>
+																<li className="date-end">
+																	Ngày kết thúc:
+																	{c.EndDay && <span>{moment(c.EndDay).format('DD/MM/YYYY')}</span>}
+																</li>
+															</ul>
+														</div>
 													</div>
-												</div>
+												</>
 											);
 										})}
 									</Checkbox.Group>

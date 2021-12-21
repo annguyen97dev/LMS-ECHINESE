@@ -28,7 +28,6 @@ const StaffSalaryForm = (props) => {
 		setValue,
 		formState: { isSubmitting, errors, isSubmitted }
 	} = useForm();
-	// const { showNoti } = useWrap();
 
 	const setValueStaff = (value, data) => {
 		setValue('UserInformationID', value);
@@ -50,7 +49,6 @@ const StaffSalaryForm = (props) => {
 				rs && rs.status == 200 && setIsModalVisible(false), form.resetFields(), setParamsDataStaff(null);
 			});
 		} else {
-			console.log(props.rowData);
 			let res = props._onSubmitStaff(data);
 			res.then(function (rs: any) {
 				rs && rs.status == 200 && setIsModalVisible(false), form.resetFields(), setParamsDataStaff(null);
@@ -165,7 +163,7 @@ const StaffSalaryForm = (props) => {
 	useEffect(() => {
 		if (props.dataIDStaff && props.dataStaff.length === 1) {
 			form.setFieldsValue({
-				Staff: props.dataStaff.dataIDStaff
+				Staff: props.dataStaff[0].FullNameUnicode
 			});
 			setValue('UserInformationID', props.dataIDStaff);
 			form.setFieldsValue({ Style: 1 });

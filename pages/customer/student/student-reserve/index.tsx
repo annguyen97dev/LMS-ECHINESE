@@ -36,36 +36,43 @@ const StudentCourseReserve = () => {
 	const columns = [
 		{
 			title: 'Học viên',
+			width: 150,
 			dataIndex: 'FullNameUnicode',
 			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Trung tâm',
+			width: 110,
 			dataIndex: 'BranchName',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Chương trình học',
+			width: 150,
 			dataIndex: 'ProgramName',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Số tiền',
+			width: 100,
 			dataIndex: 'ProgramPrice',
 			render: (price) => <span>{Intl.NumberFormat('en-US').format(price)}</span>
 		},
 		{
 			title: 'Ngày bảo lưu',
+			width: 130,
 			dataIndex: 'ReserveDate',
 			render: (DOB) => moment(DOB).format('DD/MM/YYYY')
 		},
 		{
 			title: 'Ngày hết hạn',
+			width: 130,
 			dataIndex: 'ExpirationDate',
 			render: (DOB) => moment(DOB).format('DD/MM/YYYY')
 		},
 		{
 			title: 'Trạng thái',
+			width: 130,
 			dataIndex: 'StatusID',
 			render: (status) => (
 				<>
@@ -77,6 +84,7 @@ const StudentCourseReserve = () => {
 			)
 		},
 		{
+			width: 130,
 			render: (data) => (
 				<Fragment>
 					{data.StatusID == 3 ? (
