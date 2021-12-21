@@ -94,6 +94,7 @@ function GroupForm(props) {
 	};
 
 	const handleFinalSubmit = (data) => {
+        console.log('data', data)
 		if (!handleSubmit) return;
 		handleSubmit(data).then((res) => {
 			if (res?.status === 200) {
@@ -101,6 +102,7 @@ function GroupForm(props) {
 				if (!isUpdate) {
 					form.reset({ ...defaultValuesInit });
 				}
+                
 			}
 		});
 	};

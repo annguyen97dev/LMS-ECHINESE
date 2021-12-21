@@ -229,10 +229,9 @@ export const SellerChildMenu = [
 						Text: 'Thông tin thanh toán',
 						Icon: ''
 					},
-
 					{
 						ItemType: 'single',
-						key: '/customer/finance/finance-cashier-invoice',
+						Key: '/customer/finance/finance-cashier-invoice',
 						Route: '/customer/finance/finance-cashier-invoice',
 						Text: 'Phiếu thu',
 						Icon: ''
