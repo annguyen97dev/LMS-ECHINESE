@@ -36,7 +36,6 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 	};
 
 	const updateDocument = async (value) => {
-		console.log(value);
 		let dataUpdate = {
 			ID: docID,
 			DocumentName: type == 'DELETE_DOC' ? '' : value.CategoryName,
@@ -80,7 +79,7 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 					}}
 					className="btn btn-warning"
 				>
-					Thêm giáo trình
+					Thêm tài liệu
 				</button>
 			)}
 			{type == 'EDIT_DOC' && (
@@ -107,9 +106,9 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 
 			<Modal
 				title={
-					(type == 'ADD_DOC' && 'Thêm giáo trình') ||
-					(type == 'DELETE_DOC' && 'Xóa giáo trình') ||
-					(type == 'EDIT_DOC' && 'Sửa giáo trình')
+					(type == 'ADD_DOC' && 'Thêm tài liệu') ||
+					(type == 'DELETE_DOC' && 'Xóa tài liệu') ||
+					(type == 'EDIT_DOC' && 'Sửa tài liệu')
 				}
 				onCancel={() => setIsVisible(false)}
 				visible={isVisible}
@@ -121,21 +120,21 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 							<>
 								<div className="col-12">
 									<Form.Item
-										label="Tên giáo trình"
+										label="Tên tài liệu"
 										name="DocumentName"
 										rules={[{ required: true, message: 'Bạn không được để trống' }]}
 									>
 										<Input
 											onChange={(event) => {}}
 											name="DocumentName"
-											placeholder="Tên giáo trình"
+											placeholder="Tên tài liệu"
 											className="style-input"
 										/>
 									</Form.Item>
 								</div>
 								<div className="col-12">
 									<Form.Item
-										label="Nhấp để tải giáo trình"
+										label="Nhấp để tải tài liệu"
 										name="File"
 										rules={[{ required: true, message: 'Bạn không được để trống' }]}
 									>
@@ -148,16 +147,16 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 						)) ||
 							(type == 'DELETE_DOC' && (
 								<div className="col-12 justify-content-center">
-									<h4 className="text-center">Bạn xác nhận muốn xóa giáo trình?</h4>
+									<h4 className="text-center">Bạn xác nhận muốn xóa tài liệu?</h4>
 								</div>
 							)) ||
 							(type == 'EDIT_DOC' && (
 								<div className="col-12">
-									<Form.Item label="Tên giáo trình" name="CategoryName">
+									<Form.Item label="Tên tài liệu" name="CategoryName">
 										<Input
 											onChange={(event) => {}}
 											name="CategoryName"
-											placeholder="Tên giáo trình"
+											placeholder="Tên tài liệu"
 											className="style-input"
 											defaultValue={docName}
 										/>

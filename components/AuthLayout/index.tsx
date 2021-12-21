@@ -12,7 +12,7 @@ function AuthLayout({ children }) {
 		(async () => {
 			try {
 				const res = await idiomsApi.getRandom();
-                
+
 				if (res.status == 200) {
 					const content = res.data.data.Idioms;
 					const author = res.data.data.CreatedBy;

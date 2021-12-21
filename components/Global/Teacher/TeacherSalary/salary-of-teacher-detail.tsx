@@ -62,7 +62,7 @@ const SalaryOfTeacherDetail = ({ price, record }) => {
 		{
 			title: 'Lương môn học',
 			dataIndex: 'SalaryOfLesson',
-			render: (price, record) => <p style={{ width: 120 }}>{price}</p>
+			render: (price, record) => <p style={{ width: 120 }}>{numberWithCommas(price)}</p>
 		}
 	];
 

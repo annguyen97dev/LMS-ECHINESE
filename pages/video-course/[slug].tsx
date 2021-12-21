@@ -160,7 +160,7 @@ const VideoCourseDetail = (props) => {
 				router.push('/cart/check-out');
 			}
 		} catch (error) {
-			showNoti('error', 'Thêm không thành công');
+			showNoti('danger', 'Thêm không thành công');
 		} finally {
 			setByLoading(false);
 			setByNowLoading(false);
@@ -191,7 +191,7 @@ const VideoCourseDetail = (props) => {
 		try {
 			const res = await VideoCourseListApi.updateActiveCode(param);
 			res.status == 200 && showNoti('success', 'Thành công');
-			res.status === 204 && showNoti('danger', 'Thành công');
+			res.status === 204 && showNoti('success', 'Thành công');
 			getCourseDetails(slug);
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -205,7 +205,12 @@ const VideoCourseDetail = (props) => {
 			<div className="row feedback-user">
 				<div className="vc-details_menu" style={{ zIndex: 9 }}>
 					<Card loading={isLoading} className="vc-details col-md-3 col-12 p-0">
-						<div onClick={() => setShowPreview(true)} className="vc-details_main-thum">
+						<div
+							onClick={() => {
+								videoPreView.length > 0 ? setShowPreview(true) : showNoti('danger', 'Không có video xem trước');
+							}}
+							className="vc-details_main-thum"
+						>
 							{router.query.Thum == null || router.query.Thum == undefined || router.query.Thum == '' ? (
 								<img className="vc-details_thum" src="/images/logo.jpg" />
 							) : (
@@ -297,7 +302,12 @@ const VideoCourseDetail = (props) => {
 
 				<div className="col-md-3 col-12 vc-details_mobile" style={{ zIndex: 9 }}>
 					<Card loading={isLoading} className="vc-details">
-						<div onClick={() => setShowPreview(true)} className="vc-details_main-thum">
+						<div
+							onClick={() => {
+								videoPreView.length > 0 ? setShowPreview(true) : showNoti('danger', 'Không có video xem trước');
+							}}
+							className="vc-details_main-thum"
+						>
 							{router.query.Thum == null || router.query.Thum == undefined || router.query.Thum == '' ? (
 								<img className="vc-details_thum" src="/images/logo.jpg" />
 							) : (

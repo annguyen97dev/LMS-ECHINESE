@@ -3,7 +3,6 @@ import { ChevronsDown, ChevronsUp } from 'react-feather';
 import { Form, Modal, Spin } from 'antd';
 const PromoteTeacher = (props) => {
 	const { isLoading, record, type, _onSubmitPromoteTeacher, _onSubmitPromoteStaff } = props;
-	console.log(record);
 	const [visible, setVisible] = useState(false);
 
 	const onSubmit = () => {
