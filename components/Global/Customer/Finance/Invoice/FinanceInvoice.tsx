@@ -61,8 +61,6 @@ function FinanceInvoice() {
 
 	const route = useRouter();
 
-	console.log('route.query: ', route.query.detail);
-
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,

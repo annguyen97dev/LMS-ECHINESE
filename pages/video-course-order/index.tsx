@@ -141,8 +141,9 @@ const VideoCourseList = () => {
 								placement="right"
 								title={textConfirm}
 								onConfirm={() => handleDone(data.ID)}
-								okText="OK"
-								cancelText="Cancel"
+								okText={<div>OK</div>}
+								cancelText={<div>Cancel</div>}
+								className="customPopconfirm"
 							>
 								<button onClick={() => console.log(data)} className="btn btn-icon" style={{}}>
 									<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
@@ -252,11 +253,17 @@ const VideoCourseList = () => {
 								<List.Item>
 									<div className="row m-0 item">
 										<div className="row m-0 main">
+											<img
+												className="logo-img"
+												src={item.ImageThumbnails === undefined ? '/images/logo-final.jpg' : item.ImageThumbnails}
+												alt="logo branch"
+												style={{ width: 50, height: 50, borderRadius: 6, marginRight: 10 }}
+											/>
 											<div className="column">
-												<span>{item?.VideoCourseName}</span>
+												<span style={{ fontWeight: 'bold' }}>{item?.VideoCourseName}</span>
 												<span>{parseToMoney(item?.VideoCoursePrice)}đ</span>
 											</div>
-											<span>Số lượng: {parseToMoney(item?.Quantity)}</span>
+											<span style={{ color: '#dd4667' }}>Số lượng: {parseToMoney(item?.Quantity)}</span>
 										</div>
 									</div>
 								</List.Item>

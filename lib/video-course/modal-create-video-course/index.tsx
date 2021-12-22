@@ -201,7 +201,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	// Handle delete image
 	const handleDeleteImage = () => {
 		setImageSelected({ name: '' });
-        setPreviewImage('');
+		setPreviewImage('');
 	};
 
 	useEffect(() => {
@@ -345,18 +345,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									<div className="col-md-6 col-12">
 										<Form.Item
 											name="Teacher"
-											label=" "
-											tooltip={{
-												title: 'Chỉ hiển thị giáo trình có video',
-												icon: (
-													<div className="row ">
-														<span className="mr-1 mt-3" style={{ color: '#000' }}>
-															Giáo viên
-														</span>
-														<i className="fas fa-question-circle"></i>
-													</div>
-												)
-											}}
+											label="Giáo viên"
 											rules={[{ required: true, message: 'Bạn không được để trống' }]}
 										>
 											<Select

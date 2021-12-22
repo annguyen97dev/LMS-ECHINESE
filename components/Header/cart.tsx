@@ -27,9 +27,11 @@ const Cart = () => {
 
 	return (
 		<>
-			<button onClick={() => router.push('cart/shopping-cart')} className="cart-icon">
-				<ShoppingCart size={18} />
-			</button>
+			<a href="/cart/shopping-cart">
+				<button className="cart-icon">
+					<ShoppingCart size={18} />
+				</button>
+			</a>
 			<div className={countNoti > 0 ? 'count-notification' : 'hide'}>
 				<span>{countNoti > 9 ? `9+` : countNoti}</span>
 			</div>
