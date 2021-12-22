@@ -10,6 +10,7 @@ import {
 import { Dropdown, Input, Popover, Skeleton, Form, Spin } from 'antd';
 import { signIn, signOut, useSession } from 'next-auth/client';
 import Link from 'next/link';
+import router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
 import { useWrap } from '~/context/wrap';
@@ -192,12 +193,35 @@ const ShoppingCart = () => {
 		}
 	};
 
+	const params = {
+		// Category: item.CategoryName,
+		// Level: item.LevelName,
+		// Create: item.CreatedOn,
+		// Thum: item.ImageThumbnails,
+		// AverageRating: item.AverageRating,
+		// TotalFeedBack: item.TotalFeedBack,
+		// slug: item.ID,
+		// Original: item.OriginalPrice,
+		// Sell: item.SellPrice,
+		// Active: item.StatusActive,
+		// TotalVideo: item.TotalVideoCourseSold
+	};
+
 	const renderCartItems = () => {
 		return cartItems?.map((item, index) => (
 			<div className=" cart__item d-flex justify-content-between align-items-center row" key={index}>
-				<div className="cart__item-img col-3">
+				<div
+					onClick={() =>
+						router.push({
+							pathname: '/video-course-student'
+							// query: { slug: item.VideoCourseID, Thum: item.ImageThumbnails, Sell: item.Price }
+						})
+					}
+					className="cart__item-img col-3"
+				>
 					<img src={item.ImageThumbnails.length ? item.ImageThumbnails : '/images/logo-thumnail.jpg'} alt="img course"></img>
 				</div>
+
 				<div className="cart__item-detail d-none d-sm-inline-block col-sm-3 mt-3 mb-3 mt-sm-0 mb-sm-0">
 					<h5>{item.VideoCourseName}</h5>
 				</div>
