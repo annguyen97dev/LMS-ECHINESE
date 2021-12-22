@@ -12,6 +12,7 @@ import { signIn, signOut, useSession } from 'next-auth/client';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
+import QuantityOfItems from '~/components/Global/Option/shopping-cart/QuantityOfItems';
 import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
 import Notifiaction from '../../../components/Header/notification';
@@ -192,6 +193,41 @@ const ShoppingCart = () => {
 		}
 	};
 
+	const renderQuantity = (item, index) => {
+		const [count, setCount] = useState(item.Quantity);
+		return (
+			<div key={index}>
+				<span
+					className="quantity-btn"
+					style={{ userSelect: 'none' }}
+					onClick={() => {
+						decreseItem(item.ID, count);
+						setClickedItem(item.ID);
+						if (count === 1) {
+							setCount(1);
+						} else {
+							setCount(count - 1);
+						}
+					}}
+				>
+					-
+				</span>
+				<span className="cart__item-quantity font-weight-green">{count}</span>
+				<span
+					className="quantity-btn"
+					style={{ userSelect: 'none' }}
+					onClick={() => {
+						increseItem(item.ID, count);
+						setClickedItem(item.ID);
+						setCount(count + 1);
+					}}
+				>
+					+
+				</span>
+			</div>
+		);
+	};
+
 	const renderCartItems = () => {
 		return cartItems?.map((item, index) => (
 			<div className=" cart__item d-flex justify-content-between align-items-center row" key={index}>
@@ -202,29 +238,14 @@ const ShoppingCart = () => {
 					<h5>{item.VideoCourseName}</h5>
 				</div>
 				<div className="cart__item-action d-none d-sm-inline-block d-none d-sm-inline-block col-sm-2">
-					<span
-						className="quantity-btn"
-						onClick={() => {
-							decreseItem(item.ID, item.Quantity), setClickedItem(item.ID);
-						}}
-					>
-						-
-					</span>
-					<span className="cart__item-quantity font-weight-green">
-						{isLoading.status == 'CHANGE_QUANTITY' && isLoading.loading && clickedItem == item.ID ? (
-							<Spin size="small" />
-						) : (
-							item.Quantity
-						)}
-					</span>
-					<span
-						className="quantity-btn"
-						onClick={() => {
-							increseItem(item.ID, item.Quantity), setClickedItem(item.ID);
-						}}
-					>
-						+
-					</span>
+					{/* Render quantity button */}
+					<QuantityOfItems
+						item={item}
+						index={index}
+						decreseItem={decreseItem}
+						increseItem={increseItem}
+						setClickedItem={setClickedItem}
+					/>
 				</div>
 				<div className="cart__item-price d-none d-sm-inline-block col-sm-2">
 					<p className="font-weight-primary">{numberWithCommas(item.Price * item.Quantity)} VND</p>
@@ -241,29 +262,14 @@ const ShoppingCart = () => {
 					</div>
 					<div className="row mt-3">
 						<div className="cart__item-action pl-5 col-8 col-sm-2">
-							<span
-								className="quantity-btn"
-								onClick={() => {
-									decreseItem(item.ID, item.Quantity), setClickedItem(item.ID);
-								}}
-							>
-								-
-							</span>
-							<span className="cart__item-quantity font-weight-green">
-								{isLoading.status == 'CHANGE_QUANTITY' && isLoading.loading && clickedItem == item.ID ? (
-									<Spin size="small" />
-								) : (
-									item.Quantity
-								)}
-							</span>
-							<span
-								className="quantity-btn"
-								onClick={() => {
-									increseItem(item.ID, item.Quantity), setClickedItem(item.ID);
-								}}
-							>
-								+
-							</span>
+							{/* Render quantity button */}
+							<QuantityOfItems
+								item={item}
+								index={index}
+								decreseItem={decreseItem}
+								increseItem={increseItem}
+								setClickedItem={setClickedItem}
+							/>
 						</div>
 						<div className="cart__item-remove col-4 col-sm-1">
 							<DeleteItem onDelete={() => deleteItem(item.ID)} />
