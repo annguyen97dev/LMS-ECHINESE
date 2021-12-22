@@ -385,7 +385,6 @@ const AddPaymentMethodForm = (props) => {
 	};
 
 	const _onFinish = async (data) => {
-		console.log(data);
 		setIsLoading({
 			type: 'UPLOADING',
 			status: true
@@ -408,6 +407,15 @@ const AddPaymentMethodForm = (props) => {
 		}
 	};
 
+	console.log(method);
+
+	useEffect(() => {
+		if (props.dataPayment) {
+			form.setFieldsValue({ PaymentCode: props.dataPayment.PaymentCode, PaymentName: props.dataPayment.PaymentName });
+			setMethod({ Name: props.dataPayment.PaymentCode, Code: props.dataPayment.PaymentName });
+		}
+	}, [props.dataPayment]);
+
 	return (
 		<>
 			{props.type == 'add' && (
@@ -427,7 +435,8 @@ const AddPaymentMethodForm = (props) => {
 					className="btn btn-icon edit"
 					onClick={() => {
 						setVisible(true);
-						form.resetFields();
+						// form.resetFields();
+						console.log(method);
 					}}
 					type="button"
 				>
@@ -464,7 +473,7 @@ const AddPaymentMethodForm = (props) => {
 				<Form form={form} onFinish={_onFinish} layout="vertical">
 					<div className="row">
 						<div className="col-12 mb-3">
-							<Form.Item>
+							<Form.Item name="PaymentName">
 								<Select
 									onChange={handleSelectMethod}
 									placeholder="Chọn phương thức"

@@ -150,12 +150,12 @@ const ChangePassword = (props) => {
 		<>
 			<TitlePage title="Đổi mật khẩu" />
 			<div className="row">
-				<div className="col-md-3 col-12">
+				<div className="col-md-4 col-12">
 					<Card className="info-profile-left" loading={isLoading.type === 'FETCH_DATA' && isLoading.status}>
 						<ProfileSummary isFix={true} dataForm={dataForm} />
 					</Card>
 				</div>
-				<div className="col-md-8 col-12">
+				<div className="col-md-7 col-12">
 					<Card className="space-top-card">
 						<Form layout="vertical" onFinish={form.handleSubmit(onSubmit)}>
 							<div className="row d-flex justify-content-center align-items-center">

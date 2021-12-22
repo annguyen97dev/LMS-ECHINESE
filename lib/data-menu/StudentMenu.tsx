@@ -63,35 +63,6 @@ export const StudentChildMenu = [
 				Text: 'Khóa học của bạn'
 			},
 			{
-				ItemType: 'single',
-				Key: '/option/services',
-				Route: '/option/services',
-				Text: 'Dịch vụ đã mua',
-				Icon: ''
-			},
-			{
-				ItemType: 'single',
-				Key: '/option/day-off',
-				Route: '/option/day-off',
-				Text: 'Ngày nghỉ',
-				Icon: ''
-			},
-			// {
-			// 	TypeItem: 'single',
-			// 	Key: '/customer/student/course-exam-student',
-			// 	Route: '/customer/student/course-exam-student',
-			// 	Icon: '',
-			// 	Text: 'Bài kiểm tra & bài tập'
-			// },
-			{
-				ItemType: 'single',
-				Key: '/option/faq',
-				Route: '/option/faq',
-				Text: 'Câu hỏi thường gặp',
-				Icon: ''
-			},
-			,
-			{
 				ItemType: 'sub-menu',
 				Key: 'video-course',
 				Icon: '',
@@ -106,12 +77,47 @@ export const StudentChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/video-course-student',
+						Route: '/video-course-student',
+						Text: 'Danh sách đơn hàng',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/video-course-list',
 						Route: '/video-course-list',
-						Text: 'Khóa học đã mua',
+						Text: 'Khóa học đã sở hữu',
 						Icon: ''
 					}
 				]
+			},
+			{
+				ItemType: 'single',
+				Key: '/option/services',
+				Route: '/option/services',
+				Text: 'Dịch vụ đã mua',
+				Icon: ''
+			},
+			// {
+			// 	ItemType: 'single',
+			// 	Key: '/option/day-off',
+			// 	Route: '/option/day-off',
+			// 	Text: 'Ngày nghỉ',
+			// 	Icon: ''
+			// },
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/customer/student/course-exam-student',
+			// 	Route: '/customer/student/course-exam-student',
+			// 	Icon: '',
+			// 	Text: 'Bài kiểm tra & bài tập'
+			// },
+			{
+				ItemType: 'single',
+				Key: '/option/faq',
+				Route: '/option/faq',
+				Text: 'Câu hỏi thường gặp',
+				Icon: ''
 			},
 			{
 				ItemType: 'single',

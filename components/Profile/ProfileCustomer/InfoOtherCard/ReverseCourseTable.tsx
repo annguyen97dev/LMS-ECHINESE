@@ -1,37 +1,35 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {courseReserveApi} from '~/apiBase/customer/student/course-reserve';
+import React, { useEffect, useState } from 'react';
+import { courseReserveApi } from '~/apiBase/customer/student/course-reserve';
 import ExpandTable from '~/components/ExpandTable';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 ReverseCourseTable.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 ReverseCourseTable.defaultProps = {
-	studentID: null,
+	studentID: null
 };
 function ReverseCourseTable(props) {
-	const {studentID} = props;
+	const { studentID } = props;
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
-	const {showNoti} = useWrap();
-	const [reverseCourseList, setReverseCourseList] = useState<ICourseReserve[]>(
-		[]
-	);
+	const { showNoti } = useWrap();
+	const [reverseCourseList, setReverseCourseList] = useState<ICourseReserve[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
 	// FILTER
 	const [filters, setFilters] = useState({
 		pageSize: 10,
 		pageIndex: 1,
-		UserInformationID: studentID,
+		UserInformationID: studentID
 	});
 	const getPagination = (pageNumber: number) => {
 		setFilters({
 			...filters,
-			pageIndex: pageNumber,
+			pageIndex: pageNumber
 		});
 	};
 
@@ -39,7 +37,7 @@ function ReverseCourseTable(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await courseReserveApi.getAll(filters);
 			if (res.status === 200) {
@@ -51,7 +49,7 @@ function ReverseCourseTable(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -61,22 +59,18 @@ function ReverseCourseTable(props) {
 	}, [filters]);
 
 	const columns = [
-		{title: 'Lớp bảo lưu', dataIndex: 'ProgramName'},
+		{ title: 'Lớp bảo lưu', dataIndex: 'ProgramName' },
 		{
 			title: 'Ngày bảo lưu',
 			dataIndex: 'ReserveDate',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Hạn bảo lưu',
 			dataIndex: 'ExpirationDate',
-			render: (date) => (
-				<p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
-			),
+			render: (date) => <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p>
 		},
-		{title: 'Trạng thái', dataIndex: 'StatusName'},
+		{ title: 'Trạng thái', dataIndex: 'StatusName' }
 	];
 
 	const expandedRowRender = (item: ICourseReserve) => {
@@ -98,7 +92,7 @@ function ReverseCourseTable(props) {
 			dataSource={reverseCourseList}
 			columns={columns}
 			Extra={<h5>Bảo lưu</h5>}
-			expandable={{expandedRowRender}}
+			expandable={{ expandedRowRender }}
 		/>
 	);
 }

@@ -43,8 +43,14 @@ const StudentCourseReserve = () => {
 		},
 		{
 			title: 'Trung tâm',
-			width: 110,
+			width: 150,
 			dataIndex: 'BranchName',
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Khóa học',
+			width: 450,
+			dataIndex: 'CourseName',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
