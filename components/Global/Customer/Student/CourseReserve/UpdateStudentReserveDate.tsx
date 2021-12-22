@@ -29,7 +29,7 @@ const UpdateStudentReserveDate = React.memo((props: any) => {
 			showNoti('danger', error.message);
 		} finally {
 			setLoading(false);
-            setIsModalVisible(false);
+			setIsModalVisible(false);
 		}
 	};
 
@@ -69,9 +69,12 @@ const UpdateStudentReserveDate = React.memo((props: any) => {
 									name="ExpirationDate"
 									label="Hạn bảo lưu"
 									rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}
-                                    // defaultValue={infoDetail.ExpirationDate}
 								>
-									<DatePicker className="style-input" onChange={(e) => setValue('ExpirationDate', e)} />
+									<DatePicker
+										className="style-input"
+										onChange={(e) => setValue('ExpirationDate', e)}
+										defaultValue={moment(infoDetail.ExpirationDate, 'YYYY-MM-DD')}
+									/>
 								</Form.Item>
 							</div>
 						</div>
