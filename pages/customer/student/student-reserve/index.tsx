@@ -122,7 +122,7 @@ const StudentCourseReserve = () => {
 								</>
 							)}
 							{/* chỉ có admin mới được update hạn bảo lưu */}
-							{(data.StatusID == 1 || data.StatusID == 4) && (
+							{userInformation.RoleID == 1 && (data.StatusID == 1 || data.StatusID == 4) && (
 								<UpdateStudentReserveDate
 									infoDetail={data}
 									onUpdateStudentReserveDate={onUpdateStudentReserveDate}
@@ -138,7 +138,7 @@ const StudentCourseReserve = () => {
 		}
 	];
 	const [currentPage, setCurrentPage] = useState(1);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const listParamsDefault = {
 		pageSize: pageSize,
 		pageIndex: currentPage,
