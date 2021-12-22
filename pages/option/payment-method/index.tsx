@@ -43,8 +43,13 @@ const PaymentMethodConfig = () => {
 			render: (text, data) => {
 				return (
 					<>
-						<AddPaymentMethodForm paymentMethod={paymentMethod} dataPayment={data} type="edit" />
-						<AddPaymentMethodForm paymentMethod={paymentMethod} dataPayment={data} type="delete" />
+						<AddPaymentMethodForm paymentMethod={paymentMethod} dataPayment={data} fetchData={getPaymentMethods} type="edit" />
+						<AddPaymentMethodForm
+							paymentMethod={paymentMethod}
+							dataPayment={data}
+							fetchData={getPaymentMethods}
+							type="delete"
+						/>
 					</>
 				);
 			}
