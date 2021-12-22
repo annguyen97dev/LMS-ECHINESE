@@ -11,6 +11,7 @@ import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
 import RequestRefundForm from '~/components/Global/Customer/Finance/Refunds/RequestRefundsForm';
+import UpdateStudentReserveDate from '~/components/Global/Customer/Student/CourseReserve/UpdateStudentReserveDate';
 
 const StudentCourseReserve = () => {
 	const [isLoading, setIsLoading] = useState({
@@ -91,22 +92,39 @@ const StudentCourseReserve = () => {
 						<></>
 					) : (
 						<>
-							<CourseReserveIntoCourse
-								infoDetail={data}
-								infoId={data.ID}
-								reloadData={(firstPage) => {
-									getDataCourseReserve(firstPage);
-								}}
-								currentPage={currentPage}
-							/>
-							<RequestRefundForm
-								isLoading={isLoading}
-								studentObj={data}
-								getInfoCourse={getInfoCourse}
-								paymentMethodOptionList={paymentMethodOptionList}
-								courseListOfStudent={courseListOfStudent}
-								onSubmit={onCreateRequestRefund}
-							/>
+							{/* chỉ có học sinh bảo lưu mới được chuyển qua khoá mới và hoàn tiền */}
+							{data.StatusID == 1 && (
+								<>
+									<CourseReserveIntoCourse
+										infoDetail={data}
+										infoId={data.ID}
+										reloadData={(firstPage) => {
+											getDataCourseReserve(firstPage);
+										}}
+										currentPage={currentPage}
+									/>
+									<RequestRefundForm
+										isLoading={isLoading}
+										studentObj={data}
+										getInfoCourse={getInfoCourse}
+										paymentMethodOptionList={paymentMethodOptionList}
+										courseStudentID={data.CourseOfStudentID}
+										courseListOfStudent={courseListOfStudent}
+										// StatusID={data.StatusID}
+										onSubmit={onCreateRequestRefund}
+									/>
+								</>
+							)}
+							{/* chỉ có admin mới được update hạn bảo lưu */}
+							{(data.StatusID == 1 || data.StatusID == 4) && (
+								<UpdateStudentReserveDate
+									infoDetail={data}
+									onUpdateStudentReserveDate={onUpdateStudentReserveDate}
+									reloadData={(firstPage) => {
+										getDataCourseReserve(firstPage);
+									}}
+								/>
+							)}
 						</>
 					)}
 				</Fragment>
@@ -312,6 +330,7 @@ const StudentCourseReserve = () => {
 		}
 	};
 
+	//  kích hoạt hoàn tiền
 	const onCreateRequestRefund = async (data: {
 		ListCourseOfStudentID: number[];
 		Price: string;
@@ -342,6 +361,30 @@ const StudentCourseReserve = () => {
 				type: 'ADD_DATA',
 				status: false
 			});
+		}
+	};
+
+	// gia hạn thời gian bảo lưu
+	const onUpdateStudentReserveDate = async (data: { ID: string; ExpirationDate: string }) => {
+		console.log(data);
+		// setIsLoading({
+		// 	type: 'UPDATE_DATA',
+		// 	status: true
+		// });
+		try {
+			const { ID, ExpirationDate } = data;
+			const res = await courseReserveApi.update({ ID, ExpirationDate });
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				return res;
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			// setIsLoading({
+			// 	type: 'UPDATE_DATA',
+			// 	status: false
+			// });
 		}
 	};
 
