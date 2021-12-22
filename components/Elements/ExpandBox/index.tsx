@@ -1,3 +1,4 @@
+import { EyeOutlined } from '@ant-design/icons';
 import { Card, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import Link from 'next/link';
@@ -91,19 +92,21 @@ export function ExpandPaymentRow(props: {
 										</Link>
 									))} */}
 
-								<Tooltip title="Xem phiếu thu">
-									<button
-										onClick={() => {
-											router.push({
-												pathname: '/customer/finance/finance-cashier-invoice',
-												query: { detail: dataRow?.ID }
-											});
-										}}
-										className="btn btn-icon exchange"
-									>
-										<Eye style={{ color: '#dd4667' }} />
-									</button>
-								</Tooltip>
+								{dataRow.DonePaid && (
+									<Tooltip title="Xem phiếu thu">
+										<button
+											onClick={() => {
+												router.push({
+													pathname: '/customer/finance/finance-cashier-invoice',
+													query: { detail: dataRow?.ID }
+												});
+											}}
+											className="btn btn-icon exchange"
+										>
+											<Eye style={{ color: '#dd4667' }} />
+										</button>
+									</Tooltip>
+								)}
 							</td>
 						</tr>
 					</tbody>
@@ -152,22 +155,21 @@ export function ExpandRefundRow(props: { isLoading: { type: string; status: bool
 							<td>{Reason || 'Không có lý do'}</td>
 							<td>{PaymentMethodsName}</td>
 							<td>
-								{infoVoucherList &&
-									infoVoucherList.map((v) => (
-										<Link
-											key={v.ID}
-											href={{
-												pathname: '/customer/finance/finance-cashier-payment/invoice-detail/[slug]',
-												query: { slug: v.ID }
+								{dataRow.StatusID == 2 && (
+									<Tooltip title="Xem danh sách phiếu chi">
+										<button
+											onClick={() => {
+												router.push({
+													pathname: '/customer/finance/finance-cashier-payment',
+													query: { detail: dataRow?.ID }
+												});
 											}}
+											className="btn btn-icon exchange "
 										>
-											<Tooltip title={moment(v.CreatedOn).format('DD/MM/YYYY')}>
-												<button className="btn btn-icon exchange ">
-													<File />
-												</button>
-											</Tooltip>
-										</Link>
-									))}
+											<Eye style={{ color: '#dd4667' }} />
+										</button>
+									</Tooltip>
+								)}
 							</td>
 						</tr>
 					</tbody>

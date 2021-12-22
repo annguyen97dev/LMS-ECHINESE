@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }) {
 	return (
 		<>
 			<Head>
-				<title>MONA LMS V2</title>
+				<title>Echinese - Learning Manager System</title>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1" />
 				<meta name="robots" content="noindex" />
 				<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />

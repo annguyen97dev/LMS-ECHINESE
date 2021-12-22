@@ -134,3 +134,12 @@
 		border-radius: 6px;
 	}
 }
+
+.customPopconfirm {
+	.ant-popover-inner {
+		background: #000 !important;
+	}
+	.ant-btn-sm {
+		padding-bottom: 10px !important;
+	}
+}

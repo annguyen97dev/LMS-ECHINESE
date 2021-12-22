@@ -282,7 +282,7 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 	return (
 		<div className="app">
 			<Head>
-				<link rel="icon" href="/favicon.ico" />
+				<link rel="icon" href="/logo.png" />
 				<meta name="description" content="Mona Media Admin" />
 				<meta name="og:title" content={siteTitle} />
 				<meta name="twitter:card" content="summary_large_image" />
