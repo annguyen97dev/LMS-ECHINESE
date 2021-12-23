@@ -61,6 +61,17 @@ const CourseStudent = () => {
 			title: 'Cam kết ',
 			dataIndex: 'Commitment'
 		},
+		{
+			width: 150,
+			title: 'Hình thức học ',
+			dataIndex: 'isTrial',
+			render: (isTrial) => (
+				<>
+					{isTrial == true && <span className="tag red">HỌC THỬ</span>}
+					{isTrial == false && <span className="tag green">CHÍNH THỨC</span>}
+				</>
+			)
+		},
 
 		{
 			render: (data) => (
@@ -78,25 +89,29 @@ const CourseStudent = () => {
 						</Tooltip>
 					</Link>
 
-					<ChangeCourseForm
-						infoDetail={data}
-						infoId={data.ID}
-						reloadData={(firstPage) => {
-							getDataCourseStudent(firstPage);
-						}}
-						currentPage={currentPage}
-					/>
+					{!data.isTrial && (
+						<>
+							<ChangeCourseForm
+								infoDetail={data}
+								infoId={data.ID}
+								reloadData={(firstPage) => {
+									getDataCourseStudent(firstPage);
+								}}
+								currentPage={currentPage}
+							/>
 
-					<ReserveCourseForm
-						infoDetail={data}
-						infoId={data.ID}
-						reloadData={(firstPage) => {
-							getDataCourseStudent(firstPage);
-						}}
-						currentPage={currentPage}
-					/>
-                    {/* yêu cầu thanh toán thêm */}
-					{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}  
+							<ReserveCourseForm
+								infoDetail={data}
+								infoId={data.ID}
+								reloadData={(firstPage) => {
+									getDataCourseStudent(firstPage);
+								}}
+								currentPage={currentPage}
+							/>
+							{/* yêu cầu thanh toán thêm */}
+							{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}
+						</>
+					)}
 				</Fragment>
 			)
 		}
