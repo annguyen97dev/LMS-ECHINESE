@@ -38,7 +38,7 @@ const UpdatePriceForm = (props) => {
 		setIsLoading({ type: 'UPDATE', status: true });
 		try {
 			let res = await courseOfStudentApi.updatePrice({
-				ID: data.ID,
+				ID: data.CourseOfStudentPriceID,
 				Price: inputField.Price,
 				Paid: inputField.Paid,
 				Note: value.Note,

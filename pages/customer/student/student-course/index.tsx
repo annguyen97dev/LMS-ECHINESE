@@ -95,7 +95,8 @@ const CourseStudent = () => {
 						}}
 						currentPage={currentPage}
 					/>
-					{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}
+                    {/* yêu cầu thanh toán thêm */}
+					{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}  
 				</Fragment>
 			)
 		}
@@ -213,10 +214,6 @@ const CourseStudent = () => {
 		type: 'GET_ALL',
 		status: false
 	});
-
-    useEffect(()=>{
-        console.log('courseStudent', courseStudent)
-    }, [courseStudent])
 
 	const setDataFunc = (name, data) => {
 		dataFilter.every((item, index) => {

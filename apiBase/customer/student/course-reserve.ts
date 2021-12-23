@@ -13,7 +13,7 @@ class CourseReserveApi {
 
   add = (data: ICourseReserve) => instance.post(url, data);
 
-  update = (data: ICourseReserve) => instance.put(url, data, {});
+  update = (data: {ID: string, ExpirationDate: string}) => instance.put(url, data, {});
 
   // reserve insert student to course
   reserveAddCourse = (data: ICourseReserve) =>
