@@ -282,15 +282,21 @@
 				background-color: #fff;
 				border-bottom: solid 1px #d1d7dc;
 				padding: 10px 0;
+				display: flex;
+
 				&:last-child {
 					border-bottom: none;
 				}
+
 				img {
 					width: 100px;
 					height: 100px;
 					border-radius: 50%;
 				}
 				.cart__item-detail {
+					padding-left: 30px;
+					padding-right: 30px;
+					flex: 1;
 					.detail__hours {
 						span:nth-child(1),
 						span:nth-child(2),
