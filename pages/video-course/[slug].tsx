@@ -223,16 +223,18 @@ const VideoCourseDetail = (props) => {
 
 						<div className="row pt-4 st-fb-center">
 							<div className="ml-3 mr-3" style={{ width: '100%' }}>
-								<h2>{parseToMoney(router.query.Sell)}đ</h2>
-								<h6
-									style={{
-										textDecorationLine: 'line-through',
-										marginTop: 5,
-										marginBottom: 15
-									}}
-								>
-									Giá gốc: {parseToMoney(router.query.Original)}đ
-								</h6>
+								{router.query.Sell !== undefined && <h2>{parseToMoney(router.query.Sell)}đ</h2>}
+								{router.query.Original !== undefined && (
+									<h6
+										style={{
+											textDecorationLine: 'line-through',
+											marginTop: 5,
+											marginBottom: 15
+										}}
+									>
+										Giá gốc: {parseToMoney(router.query.Original)}đ
+									</h6>
+								)}
 
 								{activing ? (
 									<>
@@ -320,16 +322,18 @@ const VideoCourseDetail = (props) => {
 
 						<div className="row pt-4 st-fb-center">
 							<div className="ml-3 mr-3" style={{ width: '100%' }}>
-								<h2>{parseToMoney(router.query.Sell)}đ</h2>
-								<h6
-									style={{
-										textDecorationLine: 'line-through',
-										marginTop: 5,
-										marginBottom: 15
-									}}
-								>
-									Giá gốc: {parseToMoney(router.query.Original)}đ
-								</h6>
+								{router.query.Sell !== undefined && <h2>{parseToMoney(router.query.Sell)}đ</h2>}
+								{router.query.Original !== undefined && (
+									<h6
+										style={{
+											textDecorationLine: 'line-through',
+											marginTop: 5,
+											marginBottom: 15
+										}}
+									>
+										Giá gốc: {parseToMoney(router.query.Original)}đ
+									</h6>
+								)}
 								{activing ? (
 									<>
 										<Input

@@ -1,20 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal, Form, Input, Tooltip, Select, Spin, TimePicker, DatePicker } from 'antd';
 import { RotateCcw } from 'react-feather';
 import { useWrap } from '~/context/wrap';
 import { useForm } from 'react-hook-form';
-import { serviceApi } from '~/apiBase';
 import moment from 'moment';
-import { examServiceApi } from '~/apiBase/options/examServices';
 import { courseReserveApi } from '~/apiBase/customer/student/course-reserve';
 
 moment.locale('vn');
 
-const ReserveCourseForm = React.memo((props: any) => {
+const UpdateStudentReserveDate = React.memo((props: any) => {
 	const { TextArea } = Input;
-	const { Option } = Select;
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { reloadData, infoDetail, currentPage } = props;
+	const { reloadData, infoDetail, onUpdateStudentReserveDate } = props;
 	const [form] = Form.useForm();
 	const { showNoti } = useWrap();
 	const [loading, setLoading] = useState(false);
@@ -23,24 +20,17 @@ const ReserveCourseForm = React.memo((props: any) => {
 	const onSubmit = async (data: any) => {
 		setLoading(true);
 		try {
-            console.log('date check', data)
-			let res = await courseReserveApi.add({
-				...data,
-				CourseOfStudentID: infoDetail.ID
-			});
-			afterSubmit(res?.data.message);
+			data = { ...data, ID: infoDetail.ID };
+			console.log('data', data);
+			let res = await onUpdateStudentReserveDate(data);
 			reloadData(1);
 			form.resetFields();
 		} catch (error) {
 			showNoti('danger', error.message);
+		} finally {
 			setLoading(false);
+			setIsModalVisible(false);
 		}
-	};
-
-	const afterSubmit = (mes) => {
-		showNoti('success', mes);
-		setLoading(false);
-		setIsModalVisible(false);
 	};
 
 	return (
@@ -51,12 +41,12 @@ const ReserveCourseForm = React.memo((props: any) => {
 					setIsModalVisible(true);
 				}}
 			>
-				<Tooltip title="Bảo lưu khóa">
+				<Tooltip title="Cập nhật hạn bảo lưu">
 					<RotateCcw />
 				</Tooltip>
 			</button>
 
-			<Modal title="Bảo lưu khóa" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
+			<Modal title="Cập nhật hạn bảo lưu" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
 				<div className="container-fluid">
 					<Form form={form} layout="vertical" onFinish={onSubmit}>
 						{/*  */}
@@ -80,15 +70,11 @@ const ReserveCourseForm = React.memo((props: any) => {
 									label="Hạn bảo lưu"
 									rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}
 								>
-									<DatePicker className="style-input" onChange={(e) => setValue('ExpirationDate', e)} />
-								</Form.Item>
-							</div>
-						</div>
-
-						<div className="row">
-							<div className="col-12">
-								<Form.Item name="Note" label="Ghi chú">
-									<TextArea className="style-input" onChange={(e) => setValue('Note', e.target.value)} />
+									<DatePicker
+										className="style-input"
+										onChange={(e) => setValue('ExpirationDate', e)}
+										defaultValue={moment(infoDetail.ExpirationDate, 'YYYY-MM-DD')}
+									/>
 								</Form.Item>
 							</div>
 						</div>
@@ -96,7 +82,7 @@ const ReserveCourseForm = React.memo((props: any) => {
 						<div className="row ">
 							<div className="col-12">
 								<button type="submit" className="btn btn-primary w-100">
-									Lưu
+									Cập nhật
 									{loading == true && <Spin className="loading-base" />}
 								</button>
 							</div>
@@ -108,4 +94,4 @@ const ReserveCourseForm = React.memo((props: any) => {
 	);
 });
 
-export default ReserveCourseForm;
+export default UpdateStudentReserveDate;

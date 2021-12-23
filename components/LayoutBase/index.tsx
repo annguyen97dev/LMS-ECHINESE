@@ -47,6 +47,8 @@ const LayoutBase = ({ children }) => {
 				} else {
 					setIsLoading(false);
 				}
+
+				// setIsLoading(false);
 			}
 		}
 	}, [session]);

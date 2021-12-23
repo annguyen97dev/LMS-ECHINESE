@@ -10,6 +10,7 @@ import {
 import { Dropdown, Input, Popover, Skeleton, Form, Spin } from 'antd';
 import { signIn, signOut, useSession } from 'next-auth/client';
 import Link from 'next/link';
+import router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
 import QuantityOfItems from '~/components/Global/Option/shopping-cart/QuantityOfItems';
@@ -230,13 +231,23 @@ const ShoppingCart = () => {
 
 	const renderCartItems = () => {
 		return cartItems?.map((item, index) => (
-			<div className=" cart__item d-flex justify-content-between align-items-center row" key={index}>
-				<div className="cart__item-img col-3">
+			<div className="cart__item d-flex justify-content-between align-items-center row" key={index}>
+				<div
+					onClick={() =>
+						router.push({
+							pathname: '/video-course/[slug]',
+							query: { slug: item.VideoCourseID, Thum: item.ImageThumbnails, Sell: item.Price }
+						})
+					}
+					className="cart__item-img"
+				>
 					<img src={item.ImageThumbnails.length ? item.ImageThumbnails : '/images/logo-thumnail.jpg'} alt="img course"></img>
 				</div>
-				<div className="cart__item-detail d-none d-sm-inline-block col-sm-3 mt-3 mb-3 mt-sm-0 mb-sm-0">
+
+				<div className="cart__item-detail d-none d-sm-inline-block mt-sm-0 mb-sm-0">
 					<h5>{item.VideoCourseName}</h5>
 				</div>
+
 				<div className="cart__item-action d-none d-sm-inline-block d-none d-sm-inline-block col-sm-2">
 					{/* Render quantity button */}
 					<QuantityOfItems
@@ -247,9 +258,11 @@ const ShoppingCart = () => {
 						setClickedItem={setClickedItem}
 					/>
 				</div>
-				<div className="cart__item-price d-none d-sm-inline-block col-sm-2">
+
+				<div className="cart__item-price d-none d-sm-inline-block">
 					<p className="font-weight-primary">{numberWithCommas(item.Price * item.Quantity)} VND</p>
 				</div>
+
 				<div className="cart__item-remove d-none d-sm-inline-block col-sm-1">
 					<DeleteItem onDelete={() => deleteItem(item.ID)} />
 				</div>
@@ -257,9 +270,11 @@ const ShoppingCart = () => {
 					<div className="cart__item-detail col-12 col-sm-3 mt-3  mt-sm-0 mb-sm-0">
 						<h5>{item.VideoCourseName}</h5>
 					</div>
-					<div className="cart__item-price col-12 col-sm-2">
+
+					<div className="cart__item-price">
 						<p className="font-weight-primary">{numberWithCommas(item.Price * item.Quantity)} VND</p>
 					</div>
+
 					<div className="row mt-3">
 						<div className="cart__item-action pl-5 col-8 col-sm-2">
 							{/* Render quantity button */}
