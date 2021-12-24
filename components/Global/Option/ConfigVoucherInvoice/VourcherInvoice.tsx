@@ -171,7 +171,6 @@ const ConfigVoucherInvoice = () => {
 	];
 
 	const expandedRowRender = (text) => {
-		console.log(text);
 		return <p className="invoice-content pt-5">{ReactHtmlParser(text.ConfigContent)}</p>;
 	};
 

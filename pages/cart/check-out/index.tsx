@@ -13,6 +13,7 @@ import moment from 'moment';
 import { parsePriceStrToNumber } from './../../../utils/functions/index';
 import { useRouter } from 'next/router';
 import { paymentConfig } from '~/apiBase/shopping-cart/payment-config';
+import ReactHtmlParser from 'react-html-parser';
 
 const CheckOut = () => {
 	const { showNoti } = useWrap();
@@ -21,96 +22,29 @@ const CheckOut = () => {
 	const [dataUser, setDataUser] = useState<IUser>();
 	const [cartItems, setCartItems] = useState<IShoppingCart[]>();
 	const [paymentMethods, setPaymentMethods] = useState([]);
-	const [method, setMethod] = useState();
+	const [method, setMethod] = useState<{ PaymentCode: string; transferpayment: string }>({ PaymentCode: '', transferpayment: '' });
 	// const [paymentMethods, setPaymentMethods] = useState<IPaymentMethod[]>([]);
 	const [discounts, setDiscounts] = useState(0);
 	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [promoCode, setPromoCode] = useState('');
 	const [promo, setPromo] = useState(null);
-	const [cartID, setCartID] = useState(null);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
 		loading: false
 	});
 	const { Search } = Input;
 	const { titlePage, userInformation } = useWrap();
-	const monthFormat = 'MM/YYYY';
-	const [params, setParams] = useState({
-		NameCard: '',
-		CardNumber: 0,
-		SecureCode: 0
-	});
 	const [form] = Form.useForm();
 	const [dataOrder, setDataOrder] =
 		useState<{ Note: string; OrderDetailModels: Array<any>; OrderID: number; TotalPayment: number }>(null);
+	console.log(dataOrder);
+	const [cartID, setCartID] = useState(null);
 
 	const renderPaymentMethodDetail = () => {
 		const onChangeCheckRemember = () => {};
 		return (
 			<>
-				{method == 'Momo' && (
-					<div className="card-info">
-						<Input className="style-input mb-4" size="large" placeholder="Tên chủ thẻ" />
-						<Input
-							className="style-input mb-4"
-							size="large"
-							placeholder="Số thẻ"
-							maxLength={19}
-							value={params.CardNumber.toString()
-								.match(/.{1,4}/g)
-								?.join(' ')}
-							onChange={(event) => {
-								setParams({ ...params, CardNumber: parsePriceStrToNumber(event.target.value) });
-							}}
-						/>
-						<div className="row">
-							<div className="col-6">
-								<DatePicker
-									className="style-input"
-									defaultValue={moment('01/2021', monthFormat)}
-									format={monthFormat}
-									picker="month"
-								/>
-							</div>
-							<div className="col-6">
-								<Input
-									className="style-input mb-4"
-									size="large"
-									placeholder="Mã bảo vệ"
-									maxLength={4}
-									value={params.SecureCode}
-									onChange={(event) => {
-										setParams({ ...params, SecureCode: parsePriceStrToNumber(event.target.value) });
-									}}
-								/>
-							</div>
-							<div className="col-6">
-								<Input className="style-input mb-4" size="large" placeholder="Zip/Postal code" />
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-6">
-								<Checkbox onChange={onChangeCheckRemember}>Ghi nhớ thẻ này</Checkbox>
-							</div>
-							<div className="col-6 text-right align-items-center">
-								<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
-								<span>Secure Connection</span>
-							</div>
-						</div>
-					</div>
-				)}
-
-				{method == 'Paypal Test' && (
-					<div className="paypal-info">
-						<p>Để hoàn thành thanh toán chúng tôi sẽ chuyển bạn đến trang bảo mật của Paypal!</p>
-						<div className="text-right align-items-center">
-							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
-							<span>Secure Connection</span>
-						</div>
-					</div>
-				)}
-
-				{method == 'OnePay Quốc tế' && (
+				{method.PaymentCode == 'momo_test' && (
 					<div className="paypal-info">
 						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Momo</p>
 						<div className="text-right align-items-center">
@@ -120,7 +54,46 @@ const CheckOut = () => {
 					</div>
 				)}
 
-				{method == 'OnePay Nội địa' && (
+				{method.PaymentCode == 'momo' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Momo</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+
+				{method.PaymentCode == 'paypal_test' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Paypal</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+
+				{method.PaymentCode == 'paypal' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Paypal</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+
+				{method.PaymentCode == 'onepaydomestic_test' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+				{method.PaymentCode == 'onepaydomestic' && (
 					<div className="paypal-info">
 						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
 						<div className="text-right align-items-center">
@@ -130,13 +103,70 @@ const CheckOut = () => {
 					</div>
 				)}
 
-				{method == 'Momo Test' && (
+				{method.PaymentCode == 'onepayinternational_test' && (
 					<div className="paypal-info">
-						<p>
-							Qúy khách vui lòng đến{' '}
-							<span className="text-uppercase font-weight-bold">1600 Pennsylvania Avenue NW Washington, D.C. 20500</span> để
-							hoàn tất thanh toán
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+				{method.PaymentCode == 'onepayinternational' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+				{method.PaymentCode == 'onepaydomestic_queryDR_test' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+				{method.PaymentCode == 'onepaydomestic_queryDR' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+				{method.PaymentCode == 'onepayinternational_queryDR_test' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+				{method.PaymentCode == 'onepayinternational_queryDR' && (
+					<div className="paypal-info">
+						<p>Vui lòng nhấn vào nút thanh toán để chuyển đến trang thanh toán Onepay</p>
+						<div className="text-right align-items-center">
+							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
+							<span>Secure Connection</span>
+						</div>
+					</div>
+				)}
+				{method.PaymentCode == 'transferpayment' && (
+					<div className="paypal-info">
+						<p className=" pt-5">
+							{ReactHtmlParser(paymentMethods.filter((item) => item.transferpayment.length > 0)[0].transferpayment)}
 						</p>
+					</div>
+				)}
+				{method.PaymentCode == 'cashpayment' && (
+					<div className="paypal-info">
+						<p>Qúy khách vui lòng đến trung tâm đã đăng kí để hoàn tất thanh toán</p>
 						<div className="text-right align-items-center">
 							<LockOutlined style={{ fontSize: 30, marginRight: 5 }} />
 							<span>Secure Connection</span>
@@ -147,23 +177,6 @@ const CheckOut = () => {
 		);
 	};
 
-	const renderPaymentMethod = () =>
-		paymentMethods &&
-		paymentMethods.map((item, index) => {
-			return (
-				<div className="payment-card type-checkout" key={index}>
-					<Radio value={item.PaymentName}>
-						<div className="logo-branch p-1 d-flex justify-content-between align-items-center">
-							<p className="mb-0">{item.PaymentName}</p>
-							<div>
-								<img src={item.PaymentLogo} alt="img branch cc"></img>
-							</div>
-						</div>
-					</Radio>
-				</div>
-			);
-		});
-
 	const handleCheckout = async () => {
 		setIsLoading({
 			status: 'CHECKOUT',
@@ -171,39 +184,74 @@ const CheckOut = () => {
 		});
 		let res = null;
 		try {
-			switch (method) {
-				case 'Momo':
-					res = await shoppingCartApi.checkoutMomo({ OrderID: dataOrder.OrderID });
+			switch (method.PaymentCode) {
+				case 'momo':
+					res = await shoppingCartApi.checkoutMomo({ OrderID: dataOrder.OrderID, type: method.PaymentCode });
 					break;
-				case 'Paypal Test':
-					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+				case 'momo_test':
+					res = await shoppingCartApi.checkoutMomo({ OrderID: dataOrder.OrderID, type: method.PaymentCode });
 					break;
-				case 'OnePay Quốc tế':
-					res = await shoppingCartApi.checkoutCash({ CartId: cartID && cartID });
+				case 'paypal':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID, type: method.PaymentCode });
 					break;
-				case 'OnePay Nội địa':
-					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+				case 'paypal_test':
+					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID, type: method.PaymentCode });
 					break;
-				case 'Momo Test':
-					res = await shoppingCartApi.checkoutPaypal({ OrderID: dataOrder.OrderID });
+				case 'onepayinternational':
+					res = await shoppingCartApi.checkoutPaymentWithOnePay({ OrderID: dataOrder.OrderID, type: method.PaymentCode });
+					break;
+				case 'onepayinternational_test':
+					res = await shoppingCartApi.checkoutPaymentWithOnePay({ OrderID: dataOrder.OrderID, type: method.PaymentCode });
+					break;
+				case 'onepaydomestic':
+					res = await shoppingCartApi.checkoutPaymentWithOnePay({ OrderID: dataOrder.OrderID, type: method.PaymentCode });
+					break;
+				case 'cashpayment':
+					res = await shoppingCartApi.checkoutCash({ cartID: cartID, type: method.PaymentCode });
+					break;
+				case 'transferpayment':
+					res = await shoppingCartApi.checkoutTransferPayment({ cartID: cartID, type: method.PaymentCode });
 					break;
 				default:
 					break;
 			}
 			if (res.status == 200) {
-				switch (method) {
-					case 'Momo':
+				switch (method.PaymentCode) {
+					case 'momo':
 						router.push(res.data.payUrl);
 						break;
-					case 'Paypal Test':
+					case 'momo_test':
 						router.push(res.data.payUrl);
 						break;
-					case 'OnePay Quốc tế':
-						showNoti('success', res.data.message);
+					case 'paypal':
+						router.push(res.data.payUrl);
 						break;
-					case 'OnePay Nội địa':
+					case 'paypal_test':
+						router.push(res.data.payUrl);
 						break;
-					case 'Momo Test':
+					case 'onepayinternational':
+						router.push(res.data.payUrl);
+						break;
+					case 'onepayinternational_test':
+						router.push(res.data.payUrl);
+						break;
+					case 'onepaydomestic':
+						router.push(res.data.payUrl);
+						break;
+					case 'onepaydomestic_test':
+						router.push(res.data.payUrl);
+						break;
+					case 'cashpayment':
+						router.push({
+							pathname: '/cart/success',
+							query: { type: 'cashpayment' }
+						});
+						break;
+					case 'transferpayment':
+						router.push({
+							pathname: '/cart/success',
+							query: { type: 'transferpayment' }
+						});
 						break;
 					default:
 						break;
@@ -362,7 +410,7 @@ const CheckOut = () => {
 			if (res.status == 200) {
 				setPaymentMethods(res.data.data);
 				// @ts-ignore
-				setMethod(res.data.data[0].PaymentName);
+				setMethod({ ...method, PaymentCode: res.data.data[0].PaymentCode });
 			}
 		} catch (error) {
 		} finally {
@@ -396,7 +444,7 @@ const CheckOut = () => {
 	}, []);
 
 	const onChangeRadio = (event) => {
-		setMethod(event.target.value);
+		setMethod({ PaymentCode: event.target.value, transferpayment: '' });
 	};
 
 	return (
@@ -454,8 +502,22 @@ const CheckOut = () => {
 					<div className="checkout__content col-12 col-lg-7">
 						<h1>Thanh toán</h1>
 						{/* @ts-ignore */}
-						<Radio.Group onChange={onChangeRadio} value={method}>
-							{renderPaymentMethod()}
+						<Radio.Group onChange={onChangeRadio} value={method.PaymentCode} className="radio">
+							{paymentMethods &&
+								paymentMethods.map((item, index) => {
+									return (
+										<div className="payment-card type-checkout" key={index}>
+											<Radio value={item.PaymentCode} key={index}>
+												<div className="logo-branch p-1 d-flex justify-content-between align-items-center">
+													<p className="mb-0">{item.PaymentName}</p>
+													<div>
+														<img src={item.PaymentLogo} alt="img branch cc"></img>
+													</div>
+												</div>
+											</Radio>
+										</div>
+									);
+								})}
 						</Radio.Group>
 						<div className="payment-method">{renderPaymentMethodDetail()}</div>
 						<div className="order-detail mt-4">
@@ -515,11 +577,11 @@ const CheckOut = () => {
 									<span>VND</span>
 								</div>
 							</div>
-							<p>
+							{/* <p>
 								Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
 								jurisdictions.
 							</p>
-							<p>By completing your purchase you agree to these Terms of Service.</p>
+							<p>By completing your purchase you agree to these Terms of Service.</p> */}
 							<button className="btn btn-primary w-100" onClick={handleCheckout}>
 								Thanh toán
 								{isLoading.status == 'CHECKOUT' && isLoading.loading && <Spin className="loading-base" />}
