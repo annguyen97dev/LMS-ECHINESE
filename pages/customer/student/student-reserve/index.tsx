@@ -18,6 +18,7 @@ const StudentCourseReserve = () => {
 		type: 'GET_ALL',
 		status: false
 	});
+
 	const handleReset = () => {
 		setCurrentPage(1);
 		setParams(listParamsDefault);
@@ -115,6 +116,9 @@ const StudentCourseReserve = () => {
 										getInfoCourse={getInfoCourse}
 										paymentMethodOptionList={paymentMethodOptionList}
 										courseStudentID={data.CourseOfStudentID}
+										reloadData={(firstPage) => {
+											getDataCourseReserve(firstPage);
+										}}
 										courseListOfStudent={courseListOfStudent}
 										// StatusID={data.StatusID}
 										onSubmit={onCreateRequestRefund}
@@ -387,6 +391,7 @@ const StudentCourseReserve = () => {
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
+			handleReset();
 			// setIsLoading({
 			// 	type: 'UPDATE_DATA',
 			// 	status: false

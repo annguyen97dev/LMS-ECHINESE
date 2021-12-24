@@ -24,7 +24,8 @@ RequestRefundsForm.propTypes = {
 	paymentMethodOptionList: radioCommonPropTypes,
 	onSubmit: PropTypes.func,
 	courseStudentID: PropTypes.number,
-	StatusID: PropTypes.number
+	StatusID: PropTypes.number,
+    reloadData: PropTypes.func,
 };
 
 RequestRefundsForm.defaultProps = {
@@ -35,11 +36,12 @@ RequestRefundsForm.defaultProps = {
 	paymentMethodOptionList: [],
 	onSubmit: null,
 	courseStudentID: null,
+    reloadData: null,
 	// StatusID: null
 };
 
 function RequestRefundsForm(props) {
-	const { isLoading, studentObj, getInfoCourse, courseListOfStudent, paymentMethodOptionList, onSubmit, courseStudentID } =
+	const { isLoading, studentObj, getInfoCourse, courseListOfStudent, paymentMethodOptionList, onSubmit, courseStudentID, reloadData } =
 		props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -107,6 +109,7 @@ function RequestRefundsForm(props) {
 		onSubmit(data).then((res) => {
 			if (res?.status === 200) {
 				form.reset({ ...defaultValuesInit });
+                reloadData(1);
 				closeModal();
 				// setCourseIDList([]);
 			}

@@ -41,10 +41,11 @@ const InputPassField = (props) => {
 						className="style-input"
 						allowClear={true}
 						placeholder={placeholder}
-						disabled={disabled}
-						onChange={(e) => (
+						// disabled={disabled}
+						onChange={(e) => disabled ? null : (
 							checkHandleChange(e.target.value), field.onChange(e.target.value)
 						)}
+                        
 						iconRender={(visible) =>
 							visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
 						}
