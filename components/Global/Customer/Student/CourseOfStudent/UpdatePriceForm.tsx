@@ -155,7 +155,7 @@ const UpdatePriceForm = (props) => {
 							</Form.Item>
 						</div>
 						<div className="col-12">
-							<Form.Item name="Note" label="Lý do">
+							<Form.Item name="Note" label="Ghi chú thanh toán">
 								<TextArea placeholder="Nhập lý do" rows={4} className="style-input" />
 							</Form.Item>
 						</div>
