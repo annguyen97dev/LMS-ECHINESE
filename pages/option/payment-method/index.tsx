@@ -5,7 +5,7 @@ import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 
 const PaymentMethodConfig = () => {
-	const [dataSource, setDataSource] = useState<IPaymentMethod[]>([]);
+	const [dataSource, setDataSource] = useState<IPaymentMethod[]>();
 	const [paymentMethod, setPaymentMethod] = useState<IPaymentMethodConfig[]>();
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -43,11 +43,20 @@ const PaymentMethodConfig = () => {
 			render: (text, data) => {
 				return (
 					<>
-						<AddPaymentMethodForm paymentMethod={paymentMethod} dataPayment={data} fetchData={getPaymentMethods} type="edit" />
 						<AddPaymentMethodForm
 							paymentMethod={paymentMethod}
 							dataPayment={data}
-							fetchData={getPaymentMethods}
+							fetchData={() => {
+								getPaymentMethod(), getPaymentMethods();
+							}}
+							type="edit"
+						/>
+						<AddPaymentMethodForm
+							paymentMethod={paymentMethod}
+							dataPayment={data}
+							fetchData={() => {
+								getPaymentMethod(), getPaymentMethods();
+							}}
 							type="delete"
 						/>
 					</>
@@ -62,7 +71,6 @@ const PaymentMethodConfig = () => {
 			let res = await paymentConfig.getPaymentConfig();
 			if (res.status == 200) {
 				setPaymentMethod(res.data.data);
-				setTotalPage(res.data.totalRow);
 				console.log('config', res.data.data);
 			}
 		} catch (error) {
@@ -77,6 +85,7 @@ const PaymentMethodConfig = () => {
 			let res = await paymentConfig.getAll();
 			if (res.status == 200) {
 				setDataSource(res.data.data);
+				setTotalPage(res.data.data.length);
 				console.log('payment methods', res.data.data);
 			}
 		} catch (error) {
@@ -106,7 +115,15 @@ const PaymentMethodConfig = () => {
 				dataSource={dataSource}
 				columns={columns}
 				TitlePage="Cấu hình phương thức thanh toán"
-				TitleCard={<AddPaymentMethodForm paymentMethod={paymentMethod} type="add" fetchData={getPaymentMethods} />}
+				TitleCard={
+					<AddPaymentMethodForm
+						paymentMethod={paymentMethod}
+						type="add"
+						fetchData={() => {
+							getPaymentMethod(), getPaymentMethods();
+						}}
+					/>
+				}
 			></PowerTable>
 		</>
 	);

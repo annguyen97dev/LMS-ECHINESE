@@ -896,6 +896,13 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/option/currency-config',
+						Route: '/option/currency-config',
+						Text: 'Cấu hình tiền tệ',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/option/customer-supplier',
 						Route: '/option/customer-supplier',
 						Text: 'Nguồn khách hàng',

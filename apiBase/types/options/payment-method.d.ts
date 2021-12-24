@@ -1,4 +1,23 @@
 type IPaymentMethod = IBaseApi<{
-  ID: number;
-  Name: string;
+	CreatedBy: string;
+	CreatedOn: string;
+	Enable: boolean;
+	ID: string;
+	ModifiedBy: string;
+	ModifiedOn: string;
+	PaymentCode: string;
+	PaymentLogo: string;
+	PaymentName: string;
+	accessCode: string;
+	accessKey: string;
+	clientId: string;
+	clientSecret: string;
+	endPoint: string;
+	key: string;
+	merchantID: string;
+	partnerCode: string;
+	partnerName: string;
+	secretKey: string;
+	secureSecrect: string;
+	transferpayment: string;
 }>;

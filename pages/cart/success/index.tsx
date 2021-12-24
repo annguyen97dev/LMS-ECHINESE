@@ -1,7 +1,121 @@
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { branchApi, studentApi } from '~/apiBase';
+import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
+import ResetPassStudent from '~/components/Global/Customer/Student/ResetPassStudent';
+import { useWrap } from '~/context/wrap';
 
 const SuccessCheckout = () => {
-	return <div>Thanh toán thành công</div>;
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState({ type: '', status: false });
+	const [statuPayment, setStatuPayment] = useState<IStatusPayment>(null);
+	const { userInformation } = useWrap();
+	const [branchID, setBranchID] = useState(null);
+	const [branchInfo, setBranchInfo] = useState<IBranch>(null);
+
+	const getStudentInformation = async () => {
+		try {
+			let res = await studentApi.getWithID(userInformation.UserInformationID);
+			if (res.status === 200) {
+				setBranchID(res.data.data.Branch[0].ID);
+			}
+		} catch (error) {
+		} finally {
+		}
+	};
+
+	const getStatus = async () => {
+		if (router.query.type === 'cashpayment' || router.query.type === 'transferpayment') {
+			setStatuPayment({ ...statuPayment, StatusName: 'Thành công, hệ thống đã tiếp nhận đơn hàng và đang đợi xác nhận!', Status: 2 });
+		} else if (router.query.type === 'paypal') {
+			setIsLoading({ type: 'GET_ALL', status: true });
+			try {
+				let res = await shoppingCartApi.getPaypalStatus({ PayerID: router.query.PayerID, guid: router.query.guid });
+				if (res.status === 200) {
+					setStatuPayment(res.data.data);
+				}
+			} catch (err) {
+			} finally {
+				setIsLoading({ type: 'GET_ALL', status: false });
+			}
+		} else {
+			setIsLoading({ type: 'GET_ALL', status: true });
+			try {
+				let res = await shoppingCartApi.getPaymentStatus(router.query.paymentcode);
+				if (res.status === 200) {
+					setStatuPayment(res.data.data);
+				}
+			} catch (err) {
+			} finally {
+				setIsLoading({ type: 'GET_ALL', status: false });
+			}
+		}
+	};
+
+	const getBranchInfo = async (id) => {
+		try {
+			let res = await branchApi.getByID(id);
+			if (res.status === 200) {
+				setBranchInfo(res.data.data);
+			}
+		} catch (error) {
+		} finally {
+		}
+	};
+
+	console.log(branchID);
+
+	useEffect(() => {
+		getStatus();
+		getStudentInformation();
+	}, [router.query.type]);
+
+	useEffect(() => {
+		getStudentInformation();
+	}, [userInformation]);
+
+	useEffect(() => {
+		getBranchInfo(branchID);
+	}, [branchID]);
+
+	return (
+		<div className="success__checkout">
+			<div className="success__checkout-content">
+				<div className="success__checkout-logo d-flex justify-content-center">
+					{statuPayment && statuPayment.Status === 2 && <img src="/images/checked-success.svg" alt="check icon" />}
+					{statuPayment && statuPayment.Status === 3 && <img src="/images/checked-fail.svg" alt="check icon" />}
+				</div>
+				<div className="success__checkout-text">
+					{statuPayment && statuPayment.Status === 2 && (
+						<>
+							<h3 className="font-weight-green text-center">{statuPayment && statuPayment.StatusName}</h3>
+							<p className="text-center">
+								Mọi thắc mắc xin liên hệ Email: <span>admin@gmail.com</span> hoặc số điện thoại <span>0909123123</span>
+							</p>
+						</>
+					)}
+					{statuPayment && statuPayment.Status === 3 && (
+						<>
+							<h3 className="font-weight-primary text-center">{statuPayment && statuPayment.StatusName}</h3>
+							<p className="text-center">
+								Mọi thắc mắc xin liên hệ Email: <span>admin@gmail.com</span> hoặc số điện thoại <span>0909123123</span>
+							</p>
+						</>
+					)}
+				</div>
+				<div className="success__checkout-btn  d-flex justify-content-center ">
+					<button
+						onClick={() => {
+							router.push('/');
+						}}
+						className="btn btn-primary"
+					>
+						Quay lại trang chủ
+					</button>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default SuccessCheckout;
