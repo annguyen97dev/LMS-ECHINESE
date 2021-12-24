@@ -138,6 +138,8 @@ const CourseReserveIntoCourse = React.memo((props: any) => {
 					<Move />
 				</Tooltip>
 			</button>
+
+			{/* jsdhahsgdhahgsda dhádhjáhjd ádjagsduy duyaghsdgádg  */}
 			<Modal title="Chuyển học viên vào khóa học" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
 				<div className="container-fluid">
 					<Form form={form} layout="vertical" onFinish={onSubmit}>
@@ -211,6 +213,25 @@ const CourseReserveIntoCourse = React.memo((props: any) => {
 												className="style-input w-100"
 												readOnly={true}
 												value={requestMoney != null ? Intl.NumberFormat('ja-JP').format(requestMoney) : ''}
+											/>
+										</Form.Item>
+									</div>
+								</div>
+							</Spin>
+
+							<Spin spinning={isLoadingCourseDetail}>
+								<div className="row">
+									<div className="col-md-12 col-12">
+										<Form.Item label="Số tiền bảo lưu">
+											<Input
+												disabled={true}
+												className="style-input w-100"
+												readOnly={true}
+												value={
+													infoDetail.ProgramPrice != null
+														? Intl.NumberFormat('ja-JP').format(infoDetail.ProgramPrice)
+														: ''
+												}
 											/>
 										</Form.Item>
 									</div>
