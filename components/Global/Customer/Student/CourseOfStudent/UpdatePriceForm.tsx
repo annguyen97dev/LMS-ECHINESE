@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign } from 'react-feather';
-import { Tooltip, Modal, Spin, Input, Checkbox, DatePicker, Radio, Form } from 'antd';
+import { Tooltip, Modal, Spin, Input, Popconfirm, DatePicker, Radio, Form, Button } from 'antd';
 import { numberWithCommas, parsePriceStrToNumber } from '~/utils/functions';
 import moment from 'moment';
 import { courseOfStudentApi } from '~/apiBase/customer/parents/courses-of-student';
@@ -21,6 +21,7 @@ const UpdatePriceForm = (props) => {
 		Mess: ''
 	});
 	const { TextArea } = Input;
+	const [showConfirm, setShowConfirm] = useState(false);
 
 	const paymentMethodOptionList = [
 		{
@@ -33,6 +34,26 @@ const UpdatePriceForm = (props) => {
 		}
 	];
 
+	const showModal = () => {
+		setShowConfirm(true);
+	};
+
+	const handleOk = () => {
+		setShowConfirm(false);
+
+		const temp = {
+			ID: data.CourseOfStudentPriceID,
+			Price: inputField.Price,
+			Paid: inputField.Paid,
+			PaymentMethodsID: form.getFieldValue('PaymentMethodsID'),
+			PayDate: form.getFieldValue('PayDate')._d,
+			Note: form.getFieldValue('Note')
+		};
+
+		console.log(temp);
+		_onSubmit(temp);
+	};
+
 	const _onSubmit = async (value) => {
 		console.log(value);
 		setIsLoading({ type: 'UPDATE', status: true });
@@ -43,7 +64,7 @@ const UpdatePriceForm = (props) => {
 				Paid: inputField.Paid,
 				Note: value.Note,
 				PaymentMethodsID: value.PaymentMethodsID,
-				PayDate: value.PayDate._i
+				PayDate: moment(value.PayDate).format('DD/MM/yyyy')
 			});
 			if (res.status == 200 || res.status == 204) {
 				setVisible(false);
@@ -98,6 +119,7 @@ const UpdatePriceForm = (props) => {
 								</ul>
 							</div>
 						</div>
+
 						<div className="col-12 col-md-6">
 							<Form.Item label="Số tiền thanh toán thêm" name="Price">
 								<Input
@@ -133,6 +155,7 @@ const UpdatePriceForm = (props) => {
 								<p className="font-weight-primary">{inputField.Mess}</p>
 							</Form.Item>
 						</div>
+
 						<div className="col-12 col-md-6">
 							<Form.Item name="PaymentMethodsID" label="Phương thức hoàn tiền">
 								<Radio.Group name="PaymentMethodsID" onChange={() => {}}>
@@ -159,16 +182,23 @@ const UpdatePriceForm = (props) => {
 								<TextArea placeholder="Nhập lý do" rows={4} className="style-input" />
 							</Form.Item>
 						</div>
+
 						<div className="col-12">
-							<button
-								type="submit"
+							<Button
+								// type="submit"
+								onClick={() => setShowConfirm(true)}
 								className="btn btn-primary w-100"
 								disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+								style={{ height: 38 }}
 							>
 								Xác nhận
 								{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
-							</button>
+							</Button>
 						</div>
+
+						<Modal title="Xác nhận" visible={showConfirm} onOk={handleOk} onCancel={() => setShowConfirm(false)}>
+							<p>Bạn chắc chắn muốn xác nhận yêu cầu?</p>
+						</Modal>
 					</div>
 				</Form>
 			</Modal>

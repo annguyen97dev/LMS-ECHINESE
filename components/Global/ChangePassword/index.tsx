@@ -165,15 +165,16 @@ const ChangePassword = (props) => {
 							</div>
 
 							<div className="row">
-								<div className="col-md-5 col-12">
+								<div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 									<InputPassField
 										disabled={isNewUser ? true : false}
 										form={form}
 										name="KeyForgotPassword"
 										label="Mật khẩu cũ"
+										style={{ width: 500 }}
 									/>
-									<InputPassField form={form} name="Password" label="Mật khẩu mới" />
-									<InputPassField form={form} name="RePassword" label="Xác nhận mật khẩu mới" />
+									<InputPassField form={form} name="Password" label="Mật khẩu mới" style={{ width: 500 }} />
+									<InputPassField form={form} name="RePassword" label="Xác nhận mật khẩu mới" style={{ width: 500 }} />
 								</div>
 							</div>
 
