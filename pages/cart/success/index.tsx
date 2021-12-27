@@ -9,20 +9,10 @@ const SuccessCheckout = () => {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const [statuPayment, setStatuPayment] = useState<IStatusPayment>(null);
-	const { userInformation } = useWrap();
-	const [branchID, setBranchID] = useState(null);
-	const [branchInfo, setBranchInfo] = useState<IBranch>(null);
+	const { userInformation, pageSize } = useWrap();
+	const [branchInfo, setBranchInfo] = useState<IBranch[]>(null);
 
-	const getStudentInformation = async () => {
-		try {
-			let res = await studentApi.getWithID(userInformation.UserInformationID);
-			if (res.status === 200) {
-				setBranchID(res.data.data.Branch[0].ID);
-			}
-		} catch (error) {
-		} finally {
-		}
-	};
+	console.log(branchInfo);
 
 	const getStatus = async () => {
 		if (router.query.type === 'cashpayment' || router.query.type === 'transferpayment') {
@@ -52,9 +42,9 @@ const SuccessCheckout = () => {
 		}
 	};
 
-	const getBranchInfo = async (id) => {
+	const getBranchInfo = async () => {
 		try {
-			let res = await branchApi.getByID(id);
+			let res = await branchApi.getAll({ pageIndex: 1, pageSize: pageSize });
 			if (res.status === 200) {
 				setBranchInfo(res.data.data);
 			}
@@ -63,20 +53,13 @@ const SuccessCheckout = () => {
 		}
 	};
 
-	console.log(branchID);
-
 	useEffect(() => {
 		getStatus();
-		getStudentInformation();
 	}, [router.query.type]);
 
 	useEffect(() => {
-		getStudentInformation();
-	}, [userInformation]);
-
-	useEffect(() => {
-		getBranchInfo(branchID);
-	}, [branchID]);
+		getBranchInfo();
+	}, []);
 
 	return (
 		<div className="success__checkout">
@@ -90,7 +73,8 @@ const SuccessCheckout = () => {
 						<>
 							<h3 className="font-weight-green text-center">{statuPayment && statuPayment.StatusName}</h3>
 							<p className="text-center">
-								Mọi thắc mắc xin liên hệ Email: <span>admin@gmail.com</span> hoặc số điện thoại <span>0909123123</span>
+								Mọi thắc mắc xin liên hệ Email: <span>{branchInfo && branchInfo[0].Email}</span> hoặc số điện thoại{' '}
+								<span>{branchInfo && branchInfo[0].Phone}</span>
 							</p>
 						</>
 					)}
@@ -98,7 +82,8 @@ const SuccessCheckout = () => {
 						<>
 							<h3 className="font-weight-primary text-center">{statuPayment && statuPayment.StatusName}</h3>
 							<p className="text-center">
-								Mọi thắc mắc xin liên hệ Email: <span>admin@gmail.com</span> hoặc số điện thoại <span>0909123123</span>
+								Mọi thắc mắc xin liên hệ Email: <span>{branchInfo && branchInfo[0].Email}</span> hoặc số điện thoại{' '}
+								<span>{branchInfo && branchInfo[0].Phone}</span>
 							</p>
 						</>
 					)}
