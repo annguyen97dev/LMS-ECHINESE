@@ -243,12 +243,12 @@ const StaffSalaryForm = (props) => {
 											}
 										>
 											<Select
-												showSearch
 												className="style-input"
 												placeholder="Chọn nhân viên"
-												optionFilterProp="children"
 												onChange={(value, role) => setValueStaff(value, role)}
 												onSearch={onSearch}
+												optionFilterProp="children"
+												showSearch
 												filterOption={(input, option) =>
 													!isLoading.loading && option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 												}

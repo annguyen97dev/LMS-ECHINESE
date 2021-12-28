@@ -9,6 +9,7 @@ class PaymentConfig {
 		return instance.post('/api/paymentconfiguration/uploadlogo', fData);
 	};
 	add = (data) => instance.post('/api/paymentconfiguration/insert', data, {});
+	update = (data) => instance.put('/api/paymentconfiguration/update', data);
 }
 
 export const paymentConfig = new PaymentConfig();
