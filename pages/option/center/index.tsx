@@ -80,7 +80,7 @@ const Center = () => {
 
 		try {
 			let res = await branchApi.getAll(todoApi);
-			res.status == 200 && (setCenter(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
+			res.status == 200 && (setCenter(res.data.data), setTotalPage(res.data.totalRow));
 			res.status == 204 && showNoti('danger', 'Không có dữ liệu') && setCenter([]);
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -265,6 +265,7 @@ const Center = () => {
 	const columns = [
 		{
 			title: 'Mã trung tâm',
+			width: 150,
 			dataIndex: 'BranchCode',
 			// ...FilterColumn("BranchCode"),
 			...FilterColumn('branchCode', onSearch, handleReset, 'text')
@@ -273,15 +274,22 @@ const Center = () => {
 		{
 			title: 'Tên trung tâm',
 			dataIndex: 'BranchName',
+			width: 150,
 			...FilterColumn('branchName', onSearch, handleReset, 'text')
 		},
-		{ title: 'Địa chỉ', dataIndex: 'Address' },
+		{ title: 'Địa chỉ', width: 150, dataIndex: 'Address' },
 		{
 			title: 'Số điện thoại',
+			width: 150,
 			dataIndex: 'Phone'
 		},
 		{
+			title: 'Email',
+			dataIndex: 'Email'
+		},
+		{
 			title: 'Trạng thái',
+			width: 100,
 			dataIndex: 'Enable',
 			render: (Enable, record) => (
 				<>
@@ -296,6 +304,7 @@ const Center = () => {
 			)
 		},
 		{
+			width: 100,
 			render: (text, data, index) => (
 				<>
 					<Link
