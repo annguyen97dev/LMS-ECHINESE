@@ -7,6 +7,7 @@ import { useWrap } from '~/context/wrap';
 import { AnyCnameRecord } from 'dns';
 import { parse } from 'path';
 import EditorSimple from '~/components/Elements/EditorSimple';
+import { numberWithCommas } from '~/utils/functions';
 
 const ProgramForm = React.memo((props: any) => {
 	const { TextArea } = Input;
@@ -41,7 +42,7 @@ const ProgramForm = React.memo((props: any) => {
 		value = parseInt(value.replace(/\,/g, ''), 10);
 
 		if (!isNaN(value)) {
-			form.setFieldsValue({ Price: value.toLocaleString() });
+			form.setFieldsValue({ Price: numberWithCommas(value) });
 			setValue('Price', value);
 		} else {
 			form.setFieldsValue({ Price: '' });
@@ -200,13 +201,10 @@ const ProgramForm = React.memo((props: any) => {
 							</div>
 
 							<div className="col-12">
-								<Form.Item
-									name="Description"
-									label="Mô tả"
-                                    >
+								<Form.Item name="Description" label="Mô tả">
 									<EditorSimple
-										defaultValue=''
-                                        isSimpleTool={true}
+										defaultValue=""
+										isSimpleTool={true}
 										handleChange={(value) => setValue('Description', value)}
 										isTranslate={false}
 										height={80}

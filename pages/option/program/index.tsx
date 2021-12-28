@@ -378,7 +378,7 @@ const Programs = () => {
 						</Tooltip>
 					</Link>
 
-					{userInformation.RoleID !== 2 && (
+					{userInformation && userInformation.RoleID !== 2 && (
 						<ProgramForm
 							getIndex={() => setIndexRow(index)}
 							_onSubmit={(data: any) => _onSubmit(data)}
@@ -404,6 +404,7 @@ const Programs = () => {
 				addClass="basic-header"
 				TitlePage="Danh sách chương trình"
 				TitleCard={
+					userInformation &&
 					userInformation.RoleID !== 2 && (
 						<ProgramForm
 							_onSubmit={(data: any) => _onSubmit(data)}

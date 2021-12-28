@@ -42,13 +42,13 @@ const StudentAdviseForm = React.memo((props: any) => {
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
 					break;
 				case 'SourceInformationID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					returnSchema[key] = yup.mixed();
 					break;
 				case 'CustomerConsultationStatusID':
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
 					break;
 				case 'ProgramID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					returnSchema[key] = yup.mixed();
 					break;
 				case 'Number':
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
@@ -140,7 +140,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 									name="ProgramID"
 									label="Nhu cầu học"
 									optionList={listData.Program}
-									isRequired={true}
+									isRequired={false}
 								/>
 							</div>
 							<div className="col-md-6 col-12">
@@ -161,7 +161,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 									name="SourceInformationID"
 									label="Nguồn khách"
 									optionList={listData.SourceInformation}
-									isRequired={true}
+									isRequired={false}
 								/>
 							</div>
 
