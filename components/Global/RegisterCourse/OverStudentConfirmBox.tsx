@@ -12,6 +12,7 @@ const OverStudentConfirmBox = (props) => {
 		dataSubmit,
 		isLoading
 	} = props;
+	console.log(courseOverStudentClone);
 	return (
 		<>
 			<Modal
@@ -25,9 +26,11 @@ const OverStudentConfirmBox = (props) => {
 			>
 				<div className="row">
 					<div className="col-12 mb-3">
-						{courseOverStudentClone && (
+						{courseOverStudentClone.length > 0 && (
 							<p className="font-weigth-primary">
-								Khóa học {courseOverStudentClone.map((item) => item.courseName).join(' và ')} đã đầy
+								Khóa học{' '}
+								{courseOverStudentClone.length > 0 && courseOverStudentClone.map((item) => item.courseName).join(' và ')} đã
+								đầy
 							</p>
 						)}
 					</div>

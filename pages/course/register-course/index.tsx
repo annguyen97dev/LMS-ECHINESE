@@ -25,8 +25,8 @@ const RegisterCourse = (props: any) => {
 	const [userDetail, setUserDetail] = useState<IStudent>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isContract, setIsContract] = useState(false);
-	const [courseOverStudent, setCourseOverStudent] = useState(null);
-	const [courseOverStudentClone, setCourseOverStudentClone] = useState(null);
+	const [courseOverStudent, setCourseOverStudent] = useState([]);
+	const [courseOverStudentClone, setCourseOverStudentClone] = useState([]);
 	const [visibleModalConfirm, setVisibleModalConfirm] = useState(false);
 	const [dataSubmit, setDataSubmit] = useState(null);
 	const [isFetchDataCourses, setIsFetchDataCourses] = useState(false);
