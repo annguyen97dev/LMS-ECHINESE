@@ -156,6 +156,7 @@ const VideoCourseList = () => {
 			const res =
 				userInformation.RoleID == 1 ? await VideoCourseListApi.getAll(todoApi) : await VideoCourseListApi.getByUser(todoApi);
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
+			res.status == 204 && setData([]);
 			setRender(res + '');
 		} catch (err) {
 			showNoti('danger', err);

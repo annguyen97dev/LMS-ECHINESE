@@ -85,7 +85,7 @@ const VideoCourseStore = () => {
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
 				// HOC VIEN
-				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 9 });
+				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 10 });
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
@@ -182,9 +182,10 @@ const VideoCourseStore = () => {
 			CategoryID: param.CategoryID,
 			TagArray: param.TagArray,
 			LevelID: param.LevelID,
-			ChineseName: param.ChineseName,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
+			EnglishName: param.EnglishName,
+			ChineseName: param.ChineseName,
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
@@ -337,7 +338,6 @@ const VideoCourseStore = () => {
 				<Card
 					style={{ width: '100%' }}
 					loading={isLoading.status}
-					className="video-course-list"
 					title={<div className="m-2">{Extra()}</div>}
 					extra={
 						userInformation.RoleID !== 1 ? null : (

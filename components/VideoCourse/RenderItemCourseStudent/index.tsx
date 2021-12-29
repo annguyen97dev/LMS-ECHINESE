@@ -86,7 +86,7 @@ const RenderItemCard = (props) => {
 	return (
 		<>
 			<div className="vc-store_container">
-				<div className="vc-store_item" style={{ height: userInformation.RoleID == 1 || userInformation.RoleID == 2 ? 260 : 300 }}>
+				<div className="vc-store_item" style={{ height: userInformation.RoleID == 1 || userInformation.RoleID == 2 ? 300 : 300 }}>
 					<div className="flip-card-front">
 						<div className="warp-image">
 							<Link
@@ -106,6 +106,12 @@ const RenderItemCard = (props) => {
 						<div className="content">
 							<h3 style={{ width: '90%' }} className="title ml-3 mr-3 in-1-line">
 								{item.VideoCourseName}
+							</h3>
+							<h3 style={{ width: '90%', fontSize: 12, color: '#000' }} className="title ml-3 mr-3 in-1-line">
+								{item.EnglishName}
+							</h3>
+							<h3 style={{ width: '90%', fontSize: 12, color: '#000' }} className="title ml-3 mr-3 in-1-line">
+								{item.ChineseName}
 							</h3>
 							<span style={{ width: '90%' }} className="ml-3 mr-3 in-1-line">
 								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán
