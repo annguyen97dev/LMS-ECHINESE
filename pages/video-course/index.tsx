@@ -79,30 +79,28 @@ const VideoCourseStore = () => {
 				const res = await VideoCourseStoreApi.getAll(todoApi);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				getCurriculum();
-                getTeacherOption();
-                
+				getTeacherOption();
+
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
 				// HOC VIEN
 				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 9 });
-                console.log('video course for student', res.data.data)
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			}
 		} catch (err) {}
 	};
-    // GET TEACHER LEVEL
-    const getTeacherOption = async () => {
-        const temp = {
+	// GET TEACHER LEVEL
+	const getTeacherOption = async () => {
+		const temp = {
 			pageIndex: 1,
 			pageSize: 20,
 			search: null
 		};
 		try {
 			const res = await teacherApi.getAll(temp);
-            console.log('teacher api', res.data.data)
 			res.status == 200 && setDataTeacher(res.data.data);
 			setRender(res + '');
 		} catch (err) {}
@@ -126,7 +124,6 @@ const VideoCourseStore = () => {
 		};
 		try {
 			const res = await VideoCourseCategoryApi.getAll(temp);
-            console.log('category:', res.data.data)
 			res.status == 200 && setCategory(res.data.data);
 			setRender(res + '');
 			getCategoryLevel();
@@ -142,7 +139,6 @@ const VideoCourseStore = () => {
 		};
 		try {
 			const res = await VideoCourseLevelApi.getAll(temp);
-            console.log('category level', res.data.data)
 			res.status == 200 && setCategoryLevel(res.data.data);
 			setRender(res + '');
 		} catch (err) {}
@@ -184,19 +180,20 @@ const VideoCourseStore = () => {
 		setIsLoading({ type: 'GET_ALL', status: true });
 		let temp = {
 			CategoryID: param.CategoryID,
+			TagArray: param.TagArray,
 			LevelID: param.LevelID,
+			ChineseName: param.ChineseName,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
-			TagArray: param.TagArray,
 			Slogan: param.Slogan,
 			Requirements: param.Requirements,
 			Description: param.Description,
 			ResultsAchieved: param.ResultsAchieved,
 			CourseForObject: param.CourseForObject,
-            TeacherID: param.TeacherID,
+			TeacherID: param.TeacherID
 		};
 
 		try {
@@ -216,26 +213,32 @@ const VideoCourseStore = () => {
 		setIsLoading({ type: 'GET_ALL', status: true });
 		let temp = {
 			ID: param.ID,
-			CategoryID: null,
-			LevelID: null,
+			CategoryID: param.CategoryID,
+			TeacherID: param.TeacherID,
+			LevelID: param.LevelID,
+			CurriculumID: param.CurriculumID,
+			TagArray: param.TagArray,
+			ChineseName: param.ChineseName,
 			VideoCourseName: param.VideoCourseName,
 			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
-			TagArray: null,
-            TeacherID: param.TeacherID,
-            Slogan: param.Slogan,
-            Requirements: param.Requirements,
-            Description: param.Description,
-            ResultsAchieved: param.ResultsAchieved,
-            CourseForObject: param.CourseForObject,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);
 			res.status == 200 && showNoti('success', 'Thành công');
 			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
 			getAllArea();
-		} catch (error) {}
+		} catch (error) {
+			showNoti('danger', 'Thêm không thành công');
+		} finally {
+			setIsLoading({ type: 'GET_ALL', status: false });
+		}
 	};
 
 	useEffect(() => {
@@ -286,7 +289,7 @@ const VideoCourseStore = () => {
 	// UPDATE COURSE
 	const handleActive = async (param) => {
 		setActiveLoading(true);
-        
+
 		try {
 			const res = await VideoCourseListApi.updateActiveCode(param);
 			res.status == 200 && showNoti('success', 'Thành công');
@@ -340,11 +343,11 @@ const VideoCourseStore = () => {
 						userInformation.RoleID !== 1 ? null : (
 							<div className="vc-teach-modal_header">
 								<ModalCreateVideoCourse
+									dataTeacher={dataTeacher}
+									_onSubmit={(data: any) => createNewCourse(data)}
 									dataLevel={categoryLevel}
-                                    dataTeacher={dataTeacher}
 									dataCategory={category}
 									dataCurriculum={dataCurriculum}
-									_onSubmit={(data: any) => createNewCourse(data)}
 									showAdd={false}
 									isLoading={false}
 									refeshData={() => getAllArea()}
@@ -366,8 +369,9 @@ const VideoCourseStore = () => {
 									activeLoading={activeLoading}
 									addToCard={addToCard}
 									item={item}
-                                    dataTeacher={dataTeacher}
+									dataTeacher={dataTeacher}
 									handleActive={handleActive}
+									refeshData={() => getAllArea()}
 								/>
 							)}
 							pagination={{

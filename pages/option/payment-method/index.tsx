@@ -37,6 +37,14 @@ const PaymentMethodConfig = () => {
 			}
 		},
 		{
+			title: 'Trạng thái',
+			dataIndex: 'Enable',
+			width: 80,
+			render: (text, data) => {
+				return <p className={data.Enable ? 'tag green' : 'tag red'}>{data.Enable ? 'Hiện' : 'Ẩn'}</p>;
+			}
+		},
+		{
 			title: '',
 			dataIndex: 'Action',
 			width: 100,

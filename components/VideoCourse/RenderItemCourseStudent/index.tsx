@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
 import Link from 'next/link';
 import { parseToMoney } from '~/utils/functions';
@@ -7,15 +7,24 @@ import { useWrap } from '~/context/wrap';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
 import RatingStar from '~/components/RatingStar';
+import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
+import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
+import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
+import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 
 // CARD ITEM ON VIDEO COURSE
-const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading, dataTeacher }) => {
+const RenderItemCard = (props) => {
+	const { item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading, dataTeacher, refeshData } = props;
 	const { userInformation } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
 	const [activing, setActiving] = useState(false);
 	const [code, setCode] = useState('');
+	const [dataCategory, setDataCategory] = useState([]);
+	const [categoryLevel, setCategoryLevel] = useState([]);
+	const [dataCurriculum, setDataCurriculum] = useState([]);
+	const [rerender, setRender] = useState('');
 
 	const params = {
 		Category: item.CategoryName,
@@ -30,6 +39,49 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 		Active: item.StatusActive,
 		TotalVideo: item.TotalVideoCourseSold
 	};
+
+	//GET DATA CURRICULUM LEVEL
+	const getCurriculum = async () => {
+		try {
+			const res = await VideoCourseCurriculumApi.getCurriculum();
+			res.status == 200 && setDataCurriculum(res.data.data);
+			setRender(res + '');
+		} catch (err) {}
+	};
+
+	const getCategory = async () => {
+		const temp = {
+			pageIndex: 1,
+			pageSize: 20,
+			search: null
+		};
+		try {
+			const res = await VideoCourseCategoryApi.getAll(temp);
+			res.status == 200 && setDataCategory(res.data.data);
+			setRender(res + '');
+			getCategoryLevel();
+		} catch (err) {}
+	};
+
+	//GET DATA CATEGORY LEVEL
+	const getCategoryLevel = async () => {
+		const temp = {
+			pageIndex: 1,
+			pageSize: 20,
+			search: null
+		};
+		try {
+			const res = await VideoCourseLevelApi.getAll(temp);
+			res.status == 200 && setCategoryLevel(res.data.data);
+			setRender(res + '');
+		} catch (err) {}
+	};
+
+	useEffect(() => {
+		getCategory();
+		getCurriculum();
+		getCategoryLevel()
+	}, []);
 
 	return (
 		<>
@@ -218,12 +270,16 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 				</div>
 			</div>
 			<ModalUpdateInfo
+				dataTeacher={dataTeacher}
 				_onSubmitEdit={(data: any) => _onSubmitEdit(data)}
 				programID={item.ID}
 				rowData={item}
 				isModalVisible={showModalUpdate}
 				setIsModalVisible={setShowModalUpdate}
-				dataTeacher={dataTeacher}
+				refeshData={() => refeshData()}
+				dataCategory={dataCategory}
+				dataLevel={categoryLevel}
+				dataCurriculum={dataCurriculum}
 			/>
 			<ModalUpdateDetail programID={item.ID} isModalVisible={showModalEdit} setIsModalVisible={setShowModalEdit} />
 		</>

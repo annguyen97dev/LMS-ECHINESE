@@ -12,9 +12,7 @@ const { TabPane } = Tabs;
 
 const ProgramDetail = () => {
 	const [keyTab, setKeyTab] = useState(null);
-
 	function callback(key) {
-		console.log(key);
 		setKeyTab(key);
 	}
 
