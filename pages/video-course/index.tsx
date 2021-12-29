@@ -79,30 +79,30 @@ const VideoCourseStore = () => {
 				const res = await VideoCourseStoreApi.getAll(todoApi);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				getCurriculum();
-                getTeacherOption();
-                
+				getTeacherOption();
+
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
 				// HOC VIEN
-				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 9 });
-                console.log('video course for student', res.data.data)
+				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 10 });
+				console.log('video course for student', res.data.data);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			}
 		} catch (err) {}
 	};
-    // GET TEACHER LEVEL
-    const getTeacherOption = async () => {
-        const temp = {
+	// GET TEACHER LEVEL
+	const getTeacherOption = async () => {
+		const temp = {
 			pageIndex: 1,
 			pageSize: 20,
 			search: null
 		};
 		try {
 			const res = await teacherApi.getAll(temp);
-            console.log('teacher api', res.data.data)
+			console.log('teacher api', res.data.data);
 			res.status == 200 && setDataTeacher(res.data.data);
 			setRender(res + '');
 		} catch (err) {}
@@ -126,7 +126,7 @@ const VideoCourseStore = () => {
 		};
 		try {
 			const res = await VideoCourseCategoryApi.getAll(temp);
-            console.log('category:', res.data.data)
+			console.log('category:', res.data.data);
 			res.status == 200 && setCategory(res.data.data);
 			setRender(res + '');
 			getCategoryLevel();
@@ -142,7 +142,7 @@ const VideoCourseStore = () => {
 		};
 		try {
 			const res = await VideoCourseLevelApi.getAll(temp);
-            console.log('category level', res.data.data)
+			console.log('category level', res.data.data);
 			res.status == 200 && setCategoryLevel(res.data.data);
 			setRender(res + '');
 		} catch (err) {}
@@ -187,6 +187,8 @@ const VideoCourseStore = () => {
 			LevelID: param.LevelID,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
+			EnglishName: param.EnglishName,
+			ChineseName: param.ChineseName,
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
@@ -196,7 +198,7 @@ const VideoCourseStore = () => {
 			Description: param.Description,
 			ResultsAchieved: param.ResultsAchieved,
 			CourseForObject: param.CourseForObject,
-            TeacherID: param.TeacherID,
+			TeacherID: param.TeacherID
 		};
 
 		try {
@@ -223,12 +225,12 @@ const VideoCourseStore = () => {
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
 			TagArray: null,
-            TeacherID: param.TeacherID,
-            Slogan: param.Slogan,
-            Requirements: param.Requirements,
-            Description: param.Description,
-            ResultsAchieved: param.ResultsAchieved,
-            CourseForObject: param.CourseForObject,
+			TeacherID: param.TeacherID,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);
@@ -286,7 +288,7 @@ const VideoCourseStore = () => {
 	// UPDATE COURSE
 	const handleActive = async (param) => {
 		setActiveLoading(true);
-        
+
 		try {
 			const res = await VideoCourseListApi.updateActiveCode(param);
 			res.status == 200 && showNoti('success', 'Thành công');
@@ -341,7 +343,7 @@ const VideoCourseStore = () => {
 							<div className="vc-teach-modal_header">
 								<ModalCreateVideoCourse
 									dataLevel={categoryLevel}
-                                    dataTeacher={dataTeacher}
+									dataTeacher={dataTeacher}
 									dataCategory={category}
 									dataCurriculum={dataCurriculum}
 									_onSubmit={(data: any) => createNewCourse(data)}
@@ -366,7 +368,7 @@ const VideoCourseStore = () => {
 									activeLoading={activeLoading}
 									addToCard={addToCard}
 									item={item}
-                                    dataTeacher={dataTeacher}
+									dataTeacher={dataTeacher}
 									handleActive={handleActive}
 								/>
 							)}
