@@ -58,18 +58,6 @@ const VideoCourseStudent = () => {
 		}
 	};
 
-	const handleDone = async (ID) => {
-		setLoading(true);
-		try {
-			const res = await DonePayApi.update({ ID: ID });
-			showNoti('success', 'Thành công');
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
-			getAllArea();
-		}
-	};
-
 	const getDetails = async (ID) => {
 		try {
 			const res = await shoppingCartApi.getOrderDetail(ID);
@@ -135,26 +123,6 @@ const VideoCourseStudent = () => {
 			align: 'center',
 			render: (Action, data, index) => (
 				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					{data.Status == 1 ? (
-						<Tooltip title="Xác thực thanh toán">
-							<Popconfirm
-								placement="right"
-								title={textConfirm}
-								onConfirm={() => handleDone(data.ID)}
-								okText="OK"
-								cancelText="Cancel"
-							>
-								<button onClick={() => console.log(data)} className="btn btn-icon" style={{}}>
-									<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
-								</button>
-							</Popconfirm>
-						</Tooltip>
-					) : (
-						<div onClick={() => console.log(data)} className="btn btn-icon" style={{}}>
-							<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
-						</div>
-					)}
-
 					<Tooltip title="Xem thông tin">
 						<button
 							onClick={() => {
@@ -221,7 +189,7 @@ const VideoCourseStudent = () => {
 			<Card title={Extra()} className="video-course-list" style={{ width: '100%' }}>
 				{userInformation !== null && (
 					<>
-						{userInformation.RoleID == 1 && (
+						{userInformation.RoleID == 3 && (
 							<CourseVideoTable
 								totalPage={totalPage && totalPage}
 								getPagination={(pageNumber: number) => getPagination(pageNumber)}
@@ -251,12 +219,20 @@ const VideoCourseStudent = () => {
 							renderItem={(item) => (
 								<List.Item>
 									<div className="row m-0 item">
-										<div className="row m-0 main">
-											<div className="column">
-												<span>{item?.VideoCourseName}</span>
+										<div className="row m-0 main justify-content-between">
+											<div className="imgs col-2" style={{ width: 50, height: 50 }}>
+												<img
+													style={{ width: 50, height: 50, borderRadius: 5 }}
+													src={item?.ImageThumbnails}
+													alt="img course"
+												/>
+											</div>
+											<div className="column col-4">
+												<span className="font-weight-black">{item?.VideoCourseName}</span>
 												<span>{parseToMoney(item?.VideoCoursePrice)}đ</span>
 											</div>
-											<span>Số lượng: {parseToMoney(item?.Quantity)}</span>
+											<div className="col-3">{item.ActiveCode}</div>
+											<span className="col-2 font-weight-primary">Số lượng: {parseToMoney(item?.Quantity)}</span>
 										</div>
 									</div>
 								</List.Item>

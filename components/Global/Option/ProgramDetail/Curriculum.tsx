@@ -292,11 +292,11 @@ const Curriculum = (props) => {
 		},
 
 		{
-			width: userInformation?.RoleID !== 2 ? 180 : 0,
+			width: userInformation && userInformation?.RoleID !== 2 ? 180 : 0,
 			key: 'action',
 			render: (text, data, index) => (
 				<>
-					{userInformation?.RoleID !== 2 && (
+					{userInformation && userInformation?.RoleID !== 2 && (
 						<>
 							<CurriculumForm
 								dataProgram={dataProgram}
@@ -344,6 +344,7 @@ const Curriculum = (props) => {
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				loading={isLoading}
 				TitleCard={
+					userInformation &&
 					userInformation?.RoleID !== 2 && (
 						<CurriculumForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
 					)

@@ -1007,24 +1007,16 @@ export const AdminChildMenu = [
 						Route: '/option/faq',
 						Text: 'Câu hỏi thường gặp',
 						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/option/product-type',
+						Route: '/option/product-type',
+						Text: 'Cấu hình sản phẩm',
+						Icon: ''
 					}
 				]
 			}
-			// {
-			// 	ItemType: 'sub-menu',
-			// 	Key: 'sub-tab-option-5',
-			// 	Icon: '',
-			// 	TitleSub: 'Sản phẩm',
-			// 	SubMenuList: [
-			// 		{
-			// 			ItemType: 'single',
-			// 			Key: '/option/product-type',
-			// 			Route: '/option/product-type',
-			// 			Text: 'Cấu hình sản phẩm',
-			// 			Icon: ''
-			// 		}
-			// 	]
-			// }
 		]
 		// MenuItem: [
 		// 	{
