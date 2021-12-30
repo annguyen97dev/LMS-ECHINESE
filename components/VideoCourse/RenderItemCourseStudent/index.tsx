@@ -14,16 +14,28 @@ import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-
 
 // CARD ITEM ON VIDEO COURSE
 const RenderItemCard = (props) => {
-	const { item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading, dataTeacher, refeshData } = props;
+	const {
+		item,
+		addToCard,
+		_onSubmitEdit,
+		dataCategory,
+		categoryLevel,
+		dataCurriculum,
+		loading,
+		activeLoading,
+		handleActive,
+		buyNowLoading,
+		dataTeacher,
+		refeshData,
+		tags,
+		onRefeshTags
+	} = props;
 	const { userInformation } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
 	const [activing, setActiving] = useState(false);
 	const [code, setCode] = useState('');
-	const [dataCategory, setDataCategory] = useState([]);
-	const [categoryLevel, setCategoryLevel] = useState([]);
-	const [dataCurriculum, setDataCurriculum] = useState([]);
 	const [rerender, setRender] = useState('');
 
 	const params = {
@@ -39,49 +51,6 @@ const RenderItemCard = (props) => {
 		Active: item.StatusActive,
 		TotalVideo: item.TotalVideoCourseSold
 	};
-
-	//GET DATA CURRICULUM LEVEL
-	const getCurriculum = async () => {
-		try {
-			const res = await VideoCourseCurriculumApi.getCurriculum();
-			res.status == 200 && setDataCurriculum(res.data.data);
-			setRender(res + '');
-		} catch (err) {}
-	};
-
-	const getCategory = async () => {
-		const temp = {
-			pageIndex: 1,
-			pageSize: 20,
-			search: null
-		};
-		try {
-			const res = await VideoCourseCategoryApi.getAll(temp);
-			res.status == 200 && setDataCategory(res.data.data);
-			setRender(res + '');
-			getCategoryLevel();
-		} catch (err) {}
-	};
-
-	//GET DATA CATEGORY LEVEL
-	const getCategoryLevel = async () => {
-		const temp = {
-			pageIndex: 1,
-			pageSize: 20,
-			search: null
-		};
-		try {
-			const res = await VideoCourseLevelApi.getAll(temp);
-			res.status == 200 && setCategoryLevel(res.data.data);
-			setRender(res + '');
-		} catch (err) {}
-	};
-
-	useEffect(() => {
-		getCategory();
-		getCurriculum();
-		getCategoryLevel()
-	}, []);
 
 	return (
 		<>
@@ -275,6 +244,7 @@ const RenderItemCard = (props) => {
 					</div>
 				</div>
 			</div>
+
 			<ModalUpdateInfo
 				dataTeacher={dataTeacher}
 				_onSubmitEdit={(data: any) => _onSubmitEdit(data)}
@@ -286,7 +256,10 @@ const RenderItemCard = (props) => {
 				dataCategory={dataCategory}
 				dataLevel={categoryLevel}
 				dataCurriculum={dataCurriculum}
+				tags={tags}
+				onRefeshTags={onRefeshTags}
 			/>
+
 			<ModalUpdateDetail programID={item.ID} isModalVisible={showModalEdit} setIsModalVisible={setShowModalEdit} />
 		</>
 	);
