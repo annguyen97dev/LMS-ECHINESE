@@ -15,7 +15,7 @@ import { videoTagApi } from '~/apiBase/video-tag';
 const { Option } = Select;
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
-	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData } = props;
+	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData, tags, onRefeshTags } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -34,8 +34,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [imageSelected, setImageSelected] = useState({ name: '' });
 	const [previewImage, setPreviewImage] = useState('');
 
-	const [tags, setTags] = useState([]);
-
 	const {
 		register,
 		handleSubmit,
@@ -48,10 +46,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [description, setDescription] = useState('');
 	const [resultsAchieved, setResultsAchieved] = useState('');
 	const [courseForObject, setCourseForObject] = useState('');
-
-	useEffect(() => {
-		getTags();
-	}, []);
 
 	const finalSubmit = (ImageThumbnails) => {
 		_onSubmit({
@@ -176,21 +170,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 				? (showNoti('success', 'Thêm thành công'),
 				  setIsModalVisible(true),
 				  setModalTags(false),
-				  getTags(),
+				  onRefeshTags(),
 				  setNewTag(''),
 				  form.setFieldsValue({ newTag: '' }))
 				: showNoti('danger', error.message);
 		} finally {
 			setLoading(false);
-		}
-	};
-
-	const getTags = async () => {
-		try {
-			const response = await videoTagApi.getAll();
-			response.status == 200 && setTags(response.data.data);
-		} catch (error) {
-			showNoti('danger', 'Không lấy được tag');
 		}
 	};
 
