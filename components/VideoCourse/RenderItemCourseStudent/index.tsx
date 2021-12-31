@@ -11,13 +11,14 @@ import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
+import { VideoCourseStoreApi } from '~/apiBase/video-course-store';
 
 // CARD ITEM ON VIDEO COURSE
 const RenderItemCard = (props) => {
 	const {
 		item,
 		addToCard,
-		_onSubmitEdit,
+		// _onSubmitEdit,
 		dataCategory,
 		categoryLevel,
 		dataCurriculum,
@@ -30,7 +31,7 @@ const RenderItemCard = (props) => {
 		tags,
 		onRefeshTags
 	} = props;
-	const { userInformation } = useWrap();
+	const { userInformation, showNoti } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
@@ -50,6 +51,38 @@ const RenderItemCard = (props) => {
 		Sell: item.SellPrice,
 		Active: item.StatusActive,
 		TotalVideo: item.TotalVideoCourseSold
+	};
+
+	// UPDATE COURSE
+	const updateCourse = async (param) => {
+		let temp = {
+			ID: param.ID,
+			CategoryID: param.CategoryID,
+			TeacherID: param.TeacherID,
+			LevelID: param.LevelID,
+			CurriculumID: param.CurriculumID,
+			TagArray: param.TagArray,
+			ChineseName: param.ChineseName,
+			VideoCourseName: param.VideoCourseName,
+			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
+			OriginalPrice: param.OriginalPrice,
+			SellPrice: param.SellPrice,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject
+		};
+		try {
+			const res = await VideoCourseStoreApi.update(temp);
+			res.status == 200 && showNoti('success', 'Thành công');
+			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
+		} catch (error) {
+			showNoti('danger', 'Thêm không thành công');
+		} finally {
+			setShowModalEdit(false);
+			refeshData();
+		}
 	};
 
 	return (
@@ -247,7 +280,7 @@ const RenderItemCard = (props) => {
 
 			<ModalUpdateInfo
 				dataTeacher={dataTeacher}
-				_onSubmitEdit={(data: any) => _onSubmitEdit(data)}
+				_onSubmitEdit={(data: any) => updateCourse(data)}
 				programID={item.ID}
 				rowData={item}
 				isModalVisible={showModalUpdate}

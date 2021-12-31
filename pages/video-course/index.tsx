@@ -223,39 +223,6 @@ const VideoCourseStore = () => {
 		}
 	};
 
-	// UPDATE COURSE
-	const updateCourse = async (param) => {
-		setIsLoading({ type: 'GET_ALL', status: true });
-		let temp = {
-			ID: param.ID,
-			CategoryID: param.CategoryID,
-			TeacherID: param.TeacherID,
-			LevelID: param.LevelID,
-			CurriculumID: param.CurriculumID,
-			TagArray: param.TagArray,
-			ChineseName: param.ChineseName,
-			VideoCourseName: param.VideoCourseName,
-			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
-			OriginalPrice: param.OriginalPrice,
-			SellPrice: param.SellPrice,
-			Slogan: param.Slogan,
-			Requirements: param.Requirements,
-			Description: param.Description,
-			ResultsAchieved: param.ResultsAchieved,
-			CourseForObject: param.CourseForObject
-		};
-		try {
-			const res = await VideoCourseStoreApi.update(temp);
-			res.status == 200 && showNoti('success', 'Thành công');
-			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
-			getAllArea();
-		} catch (error) {
-			showNoti('danger', 'Thêm không thành công');
-		} finally {
-			setIsLoading({ type: 'GET_ALL', status: false });
-		}
-	};
-
 	useEffect(() => {
 		getAllArea();
 	}, [todoApi]);
@@ -379,7 +346,7 @@ const VideoCourseStore = () => {
 							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
 							renderItem={(item) => (
 								<RenderItemCard
-									_onSubmitEdit={(data: any) => updateCourse(data)}
+									// _onSubmitEdit={(data: any) => updateCourse(data)}
 									loading={addToCardLoading}
 									buyNowLoading={buyNowLoading}
 									activeLoading={activeLoading}

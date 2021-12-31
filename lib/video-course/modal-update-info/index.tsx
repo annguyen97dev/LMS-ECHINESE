@@ -108,6 +108,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 				setOriginalPrice(rowData.OriginalPrice);
 				setSellPrice(rowData.SellPrice);
 				setChineseName(rowData.ChineseName);
+				setTagArray(rowData?.TagArray);
 				form.setFieldsValue({
 					Name: rowData.VideoCourseName,
 					SellPrice: rowData.SellPrice,
@@ -128,6 +129,23 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			}
 		}
 	}, [isModalVisible]);
+
+	const getDefault = (data) => {
+		if (data !== '') {
+			const temp = data.split(',');
+			let tamp = [];
+
+			if (temp.length > 0) {
+				for (let i = 0; i < temp.length; i++) {
+					tamp.push(parseInt(temp[i]));
+				}
+			}
+
+			return tamp;
+		} else {
+			return [];
+		}
+	};
 
 	// on change isModalVisible
 	React.useEffect(() => {
@@ -179,12 +197,9 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					CourseForObject: courseForObject
 				};
 				_onSubmitEdit(temp);
-				setIsModalVisible(false);
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
-		} finally {
-			setButtonLoading(false);
 		}
 	};
 
@@ -210,6 +225,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			setResultsAchieved(details?.ResultsAchieved || '');
 			setSlogan(details?.Slogan || '');
 			setLoading(false);
+
 			form.setFieldsValue({
 				Slogan: details?.Slogan,
 				Requirements: details?.Requirements,
@@ -222,6 +238,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 
 	// CALL API DETAILS
 	const getCourseDetails = async (param) => {
+		setLoading(true);
 		try {
 			const res = await VideoCourseDetailApi.getDetails(param);
 			res.status == 200 && setDetails(res.data.data);
@@ -252,15 +269,10 @@ const ModalUpdateInfo = React.memo((props: any) => {
 		try {
 			if (imageSelected.name === '') {
 				_onSubmitEdit(temp);
-				setButtonLoading(false);
-				setIsModalVisible(false);
 			} else {
 				uploadFile(imageSelected);
 			}
-		} catch (e) {
-		} finally {
-			setButtonLoading(false);
-		}
+		} catch (e) {}
 	};
 
 	const createType = async () => {
@@ -651,101 +663,110 @@ const ModalUpdateInfo = React.memo((props: any) => {
 											</div>
 										)}
 
-										<div className="col-12">
-											{tags.length > 0 && (
-												<Form.Item
-													name="Description"
-													label={
-														<div className="row m-0">
-															Từ khóa tìm kiếm{' '}
-															<Tooltip title="Thêm từ khóa tìm kiếm">
-																<button
-																	onClick={() => (setModalTags(true), setIsModalVisible(false))}
-																	className="btn btn-primary btn-vc-create ml-1"
-																>
-																	<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
-																</button>
-															</Tooltip>
-														</div>
-													}
-													rules={[{ required: true, message: 'Bạn không được để trống' }]}
-												>
-													<Select
-														mode="tags"
-														className="style-input"
-														style={{ width: '100%' }}
-														placeholder="Từ khóa tìm kiếm"
-														onChange={(e) => handleChange(e)}
+										{!loading && (
+											<div className="col-12">
+												{tags.length > 0 && (
+													<Form.Item
+														name="TagArray"
+														label={
+															<div className="row m-0">
+																Từ khóa tìm kiếm{' '}
+																<Tooltip title="Thêm từ khóa tìm kiếm">
+																	<button
+																		onClick={() => (setModalTags(true), setIsModalVisible(false))}
+																		className="btn btn-primary btn-vc-create ml-1"
+																	>
+																		<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
+																	</button>
+																</Tooltip>
+															</div>
+														}
+														rules={[{ required: true, message: 'Bạn không được để trống' }]}
 													>
-														{tags.map((item, index) => (
-															<Option key={index} value={item.ID}>
-																{item.Name}
-															</Option>
-														))}
-													</Select>
-												</Form.Item>
-											)}
-										</div>
+														<Select
+															mode="tags"
+															className="style-input"
+															style={{ width: '100%' }}
+															placeholder="Từ khóa tìm kiếm"
+															defaultValue={getDefault(tagArray)}
+															onChange={(e) => handleChange(e)}
+														>
+															{tags.map((item, index) => (
+																<Option key={index} value={item.ID}>
+																	{item.Name}
+																</Option>
+															))}
+														</Select>
+													</Form.Item>
+												)}
+											</div>
+										)}
 									</div>
 
 									<div className="row p-0 m-0 custom-scroll-bar col-md-6 col-12">
-										<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 426 : 460 }}>
-											<div className="col-md-12 col-12">
-												<Form.Item name="Slogan" label="Slogan">
-													<EditorSimple
-														defaultValue={slogan}
-														handleChange={(e) => setSlogan(e)}
-														isTranslate={false}
-														isSimpleTool={true}
-														height={90}
-													/>
-												</Form.Item>
+										{loading ? (
+											<div style={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+												<Spin size="large" />
 											</div>
-											<div className="col-md-12 col-12">
-												<Form.Item name="Requirements" label="Điều kiện học">
-													<EditorSimple
-														defaultValue={requirements}
-														handleChange={(e) => setRequirements(e)}
-														isTranslate={false}
-														isSimpleTool={true}
-														height={90}
-													/>
-												</Form.Item>
+										) : (
+											<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 426 : 460 }}>
+												<div className="col-md-12 col-12">
+													<Form.Item name="Slogan" label="Slogan">
+														<EditorSimple
+															defaultValue={slogan}
+															handleChange={(e) => setSlogan(e)}
+															isTranslate={false}
+															isSimpleTool={true}
+															height={90}
+														/>
+													</Form.Item>
+												</div>
+												<div className="col-md-12 col-12">
+													<Form.Item name="Requirements" label="Điều kiện học">
+														<EditorSimple
+															defaultValue={requirements}
+															handleChange={(e) => setRequirements(e)}
+															isTranslate={false}
+															isSimpleTool={true}
+															height={90}
+														/>
+													</Form.Item>
+												</div>
+												<div className="col-md-12 col-12">
+													<Form.Item name="CourseForObject" label="Đối tượng học">
+														<EditorSimple
+															defaultValue={courseForObject}
+															handleChange={(e) => setCourseForObject(e)}
+															isTranslate={false}
+															isSimpleTool={true}
+															height={90}
+														/>
+													</Form.Item>
+												</div>
+												<div className="col-md-12 col-12">
+													<Form.Item name="ResultsAchieved" label="Nội dung khóa học">
+														<EditorSimple
+															defaultValue={resultsAchieved}
+															handleChange={(e) => setResultsAchieved(e)}
+															isTranslate={false}
+															isSimpleTool={true}
+															height={90}
+														/>
+													</Form.Item>
+												</div>
+												<div className="col-md-12 col-12">
+													<Form.Item name="Description" label="Mô tả">
+														<EditorSimple
+															defaultValue={description}
+															handleChange={(e) => setDescription(e)}
+															isTranslate={false}
+															isSimpleTool={true}
+															height={90}
+														/>
+													</Form.Item>
+												</div>
 											</div>
-											<div className="col-md-12 col-12">
-												<Form.Item name="CourseForObject" label="Đối tượng học">
-													<EditorSimple
-														defaultValue={courseForObject}
-														handleChange={(e) => setCourseForObject(e)}
-														isTranslate={false}
-														isSimpleTool={true}
-														height={90}
-													/>
-												</Form.Item>
-											</div>
-											<div className="col-md-12 col-12">
-												<Form.Item name="ResultsAchieved" label="Nội dung khóa học">
-													<EditorSimple
-														defaultValue={resultsAchieved}
-														handleChange={(e) => setResultsAchieved(e)}
-														isTranslate={false}
-														isSimpleTool={true}
-														height={90}
-													/>
-												</Form.Item>
-											</div>
-											<div className="col-md-12 col-12">
-												<Form.Item name="Description" label="Mô tả">
-													<EditorSimple
-														defaultValue={description}
-														handleChange={(e) => setDescription(e)}
-														isTranslate={false}
-														isSimpleTool={true}
-														height={90}
-													/>
-												</Form.Item>
-											</div>
-										</div>
+										)}
 									</div>
 								</div>
 							</div>

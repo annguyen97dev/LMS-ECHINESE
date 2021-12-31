@@ -264,6 +264,10 @@ const VideoCourseList = () => {
 												<span style={{ fontWeight: 'bold' }}>{item?.VideoCourseName}</span>
 												<span>{parseToMoney(item?.VideoCoursePrice)}đ</span>
 											</div>
+											<div className="column">
+												<span style={{ fontWeight: 'bold' }}>Mã kích hoạt</span>
+												<span>{item?.ActiveCode}</span>
+											</div>
 											<span style={{ color: '#dd4667' }}>Số lượng: {parseToMoney(item?.Quantity)}</span>
 										</div>
 									</div>
