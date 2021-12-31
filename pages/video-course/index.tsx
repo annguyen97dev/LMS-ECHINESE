@@ -199,7 +199,6 @@ const VideoCourseStore = () => {
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
 			EnglishName: param.EnglishName,
-			ChineseName: param.ChineseName,
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
