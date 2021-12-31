@@ -1,14 +1,17 @@
+import { Switch } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { paymentConfig } from '~/apiBase/shopping-cart/payment-config';
 import AddPaymentMethodForm from '~/components/Global/Option/shopping-cart/AddPaymentMethodForm';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
+import { useWrap } from '~/context/wrap';
 
 const PaymentMethodConfig = () => {
 	const [dataSource, setDataSource] = useState<IPaymentMethod[]>();
 	const [paymentMethod, setPaymentMethod] = useState<IPaymentMethodConfig[]>();
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 
 	const columns = [
@@ -34,6 +37,16 @@ const PaymentMethodConfig = () => {
 			width: 80,
 			render: (text, data) => {
 				return <img style={{ width: 40, height: 40 }} src={data.PaymentLogo} />;
+			}
+		},
+		{
+			title: 'Trạng thái',
+			dataIndex: 'Enable',
+			width: 150,
+			render: (text, data) => {
+				return (
+					<Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" checked={data.Enable} onClick={() => handleChangeEnable(data)} />
+				);
 			}
 		},
 		{
@@ -72,6 +85,20 @@ const PaymentMethodConfig = () => {
 			}
 		}
 	];
+
+	const handleChangeEnable = async (data) => {
+		setIsLoading({ type: 'ENABLE', status: true });
+		try {
+			let res = await paymentConfig.update({ ID: data.ID, Enable: false });
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				getPaymentMethods();
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'ENABLE', status: false });
+		}
+	};
 
 	const getPaymentMethod = async () => {
 		setIsLoading({ type: 'GET_ALL', status: true });
