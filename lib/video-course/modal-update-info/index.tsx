@@ -41,9 +41,10 @@ const ModalUpdateInfo = React.memo((props: any) => {
 		refeshData,
 		dataCategory,
 		dataLevel,
-		dataCurriculum
+		dataCurriculum,
+		tags,
+		onRefeshTags
 	} = props;
-	console.log(dataLevel);
 	const [form] = Form.useForm();
 	const [videoCourseName, setVideoCourseName] = useState('');
 	const [originalPrice, setOriginalPrice] = useState('');
@@ -59,7 +60,6 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const [newType, setNewType] = useState('');
 	const [newLevel, setNewLevel] = useState('');
 	const [newTag, setNewTag] = useState('');
-	const [tags, setTags] = useState([]);
 	const [level, setLevel] = useState(0);
 	const [category, setCategory] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
@@ -94,8 +94,6 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			form.setFieldsValue({ SellPrice: parseToMoney(value.toString().replace(/[^0-9\.]+/g, '')) });
 		}
 	}, [form.getFieldValue('SellPrice')]);
-
-	console.log(level, curriculumID, teacherID, category);
 
 	// IS VISIBLE MODAL
 	React.useEffect(() => {
@@ -310,21 +308,12 @@ const ModalUpdateInfo = React.memo((props: any) => {
 				? (showNoti('success', 'Thêm thành công'),
 				  setIsModalVisible(true),
 				  setModalTags(false),
-				  getTags(),
+				  onRefeshTags(),
 				  setNewTag(''),
 				  form.setFieldsValue({ newTag: '' }))
 				: showNoti('danger', error.message);
 		} finally {
 			setLoading(false);
-		}
-	};
-
-	const getTags = async () => {
-		try {
-			const response = await videoTagApi.getAll();
-			response.status == 200 && setTags(response.data.data);
-		} catch (error) {
-			showNoti('danger', 'Không lấy được tag');
 		}
 	};
 
@@ -345,10 +334,6 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			previewImage !== '' && URL.revokeObjectURL(previewImage);
 		};
 	}, [imageSelected]);
-
-	useEffect(() => {
-		getTags();
-	}, []);
 
 	// RENDER
 	return (

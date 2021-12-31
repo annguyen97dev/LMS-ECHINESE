@@ -8,6 +8,7 @@ import { VideoCourseCardApi, VideoCourseStoreApi } from '~/apiBase/video-course-
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
+import { videoTagApi } from '~/apiBase/video-tag';
 import FilterVideoCourses from '~/components/Global/Option/FilterTable/FilterVideoCourses';
 import LayoutBase from '~/components/LayoutBase';
 import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
@@ -86,13 +87,13 @@ const VideoCourseStore = () => {
 			} else {
 				// HOC VIEN
 				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 10 });
-				console.log('video course for student', res.data.data);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			}
 		} catch (err) {}
 	};
+
 	// GET TEACHER LEVEL
 	const getTeacherOption = async () => {
 		const temp = {
@@ -131,6 +132,8 @@ const VideoCourseStore = () => {
 		} catch (err) {}
 	};
 
+	const [tags, setTags] = useState([]);
+
 	//GET DATA CATEGORY LEVEL
 	const getCategoryLevel = async () => {
 		const temp = {
@@ -141,8 +144,18 @@ const VideoCourseStore = () => {
 		try {
 			const res = await VideoCourseLevelApi.getAll(temp);
 			res.status == 200 && setCategoryLevel(res.data.data);
+			getTags();
 			setRender(res + '');
 		} catch (err) {}
+	};
+
+	const getTags = async () => {
+		try {
+			const response = await videoTagApi.getAll();
+			response.status == 200 && setTags(response.data.data);
+		} catch (error) {
+			showNoti('danger', 'Không lấy được tag');
+		}
 	};
 
 	// ADD COURSE VIDEO TO CART
@@ -183,7 +196,6 @@ const VideoCourseStore = () => {
 			CategoryID: param.CategoryID,
 			TagArray: param.TagArray,
 			LevelID: param.LevelID,
-			ChineseName: param.ChineseName,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
 			EnglishName: param.EnglishName,
@@ -339,7 +351,6 @@ const VideoCourseStore = () => {
 				<Card
 					style={{ width: '100%' }}
 					loading={isLoading.status}
-					className="video-course-list"
 					title={<div className="m-2">{Extra()}</div>}
 					extra={
 						userInformation.RoleID !== 1 ? null : (
@@ -353,6 +364,8 @@ const VideoCourseStore = () => {
 									showAdd={false}
 									isLoading={false}
 									refeshData={() => getAllArea()}
+									tags={tags}
+									onRefeshTags={() => getTags()}
 								/>
 							</div>
 						)
@@ -374,6 +387,11 @@ const VideoCourseStore = () => {
 									dataTeacher={dataTeacher}
 									handleActive={handleActive}
 									refeshData={() => getAllArea()}
+									categoryLevel={categoryLevel}
+									dataCategory={category}
+									dataCurriculum={dataCurriculum}
+									tags={tags}
+									onRefeshTags={() => getTags()}
 								/>
 							)}
 							pagination={{
