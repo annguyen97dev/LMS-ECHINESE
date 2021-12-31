@@ -85,7 +85,8 @@ const VideoCourseStore = () => {
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
 				// HOC VIEN
-				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 9 });
+				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 10 });
+				console.log('video course for student', res.data.data);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
@@ -185,6 +186,7 @@ const VideoCourseStore = () => {
 			ChineseName: param.ChineseName,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
+			EnglishName: param.EnglishName,
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,

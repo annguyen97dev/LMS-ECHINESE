@@ -50,6 +50,7 @@ const VideoCourseList = () => {
 		try {
 			const res = await DonePayApi.getAll(todoApi);
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
+			res.status == 204 && setData([]);
 			setRender(res + '');
 		} catch (err) {
 			showNoti('danger', err);

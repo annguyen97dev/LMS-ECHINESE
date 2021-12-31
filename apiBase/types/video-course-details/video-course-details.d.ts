@@ -2,6 +2,7 @@ import { data } from '~/lib/customer-student/data';
 type IVideoCourseDetails = IBaseApi<{
 	VideoCourseID: number;
 	VideoCourseName: string;
+	CurriculumID: string;
 	Slogan: string;
 	Requirements: string;
 	Description: string;
