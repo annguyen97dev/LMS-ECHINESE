@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { lessonApi } from '~/apiBase';
+import LayoutBase from '~/components/LayoutBase';
 
 const Nothing = () => {
 	useEffect(() => {
@@ -22,5 +23,5 @@ const Nothing = () => {
 
 	return <div>running</div>;
 };
-
+Nothing.layout = LayoutBase;
 export default Nothing;
