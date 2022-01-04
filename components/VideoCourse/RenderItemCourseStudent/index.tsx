@@ -11,19 +11,32 @@ import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
 import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
+import { VideoCourseStoreApi } from '~/apiBase/video-course-store';
 
 // CARD ITEM ON VIDEO COURSE
 const RenderItemCard = (props) => {
-	const { item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading, dataTeacher, refeshData } = props;
-	const { userInformation } = useWrap();
+	const {
+		item,
+		addToCard,
+		// _onSubmitEdit,
+		dataCategory,
+		categoryLevel,
+		dataCurriculum,
+		loading,
+		activeLoading,
+		handleActive,
+		buyNowLoading,
+		dataTeacher,
+		refeshData,
+		tags,
+		onRefeshTags
+	} = props;
+	const { userInformation, showNoti } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
 	const [activing, setActiving] = useState(false);
 	const [code, setCode] = useState('');
-	const [dataCategory, setDataCategory] = useState([]);
-	const [categoryLevel, setCategoryLevel] = useState([]);
-	const [dataCurriculum, setDataCurriculum] = useState([]);
 	const [rerender, setRender] = useState('');
 
 	const params = {
@@ -40,48 +53,37 @@ const RenderItemCard = (props) => {
 		TotalVideo: item.TotalVideoCourseSold
 	};
 
-	//GET DATA CURRICULUM LEVEL
-	const getCurriculum = async () => {
-		try {
-			const res = await VideoCourseCurriculumApi.getCurriculum();
-			res.status == 200 && setDataCurriculum(res.data.data);
-			setRender(res + '');
-		} catch (err) {}
-	};
-
-	const getCategory = async () => {
-		const temp = {
-			pageIndex: 1,
-			pageSize: 20,
-			search: null
+	// UPDATE COURSE
+	const updateCourse = async (param) => {
+		let temp = {
+			ID: param.ID,
+			CategoryID: param.CategoryID,
+			TeacherID: param.TeacherID,
+			LevelID: param.LevelID,
+			CurriculumID: param.CurriculumID,
+			TagArray: param.TagArray,
+			ChineseName: param.ChineseName,
+			VideoCourseName: param.VideoCourseName,
+			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
+			OriginalPrice: param.OriginalPrice,
+			SellPrice: param.SellPrice,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject
 		};
 		try {
-			const res = await VideoCourseCategoryApi.getAll(temp);
-			res.status == 200 && setDataCategory(res.data.data);
-			setRender(res + '');
-			getCategoryLevel();
-		} catch (err) {}
+			const res = await VideoCourseStoreApi.update(temp);
+			res.status == 200 && showNoti('success', 'Thành công');
+			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
+		} catch (error) {
+			showNoti('danger', 'Thêm không thành công');
+		} finally {
+			setShowModalEdit(false);
+			refeshData();
+		}
 	};
-
-	//GET DATA CATEGORY LEVEL
-	const getCategoryLevel = async () => {
-		const temp = {
-			pageIndex: 1,
-			pageSize: 20,
-			search: null
-		};
-		try {
-			const res = await VideoCourseLevelApi.getAll(temp);
-			res.status == 200 && setCategoryLevel(res.data.data);
-			setRender(res + '');
-		} catch (err) {}
-	};
-
-	useEffect(() => {
-		getCategory();
-		getCurriculum();
-		getCategoryLevel()
-	}, []);
 
 	return (
 		<>
@@ -275,9 +277,10 @@ const RenderItemCard = (props) => {
 					</div>
 				</div>
 			</div>
+
 			<ModalUpdateInfo
 				dataTeacher={dataTeacher}
-				_onSubmitEdit={(data: any) => _onSubmitEdit(data)}
+				_onSubmitEdit={(data: any) => updateCourse(data)}
 				programID={item.ID}
 				rowData={item}
 				isModalVisible={showModalUpdate}
@@ -286,7 +289,10 @@ const RenderItemCard = (props) => {
 				dataCategory={dataCategory}
 				dataLevel={categoryLevel}
 				dataCurriculum={dataCurriculum}
+				tags={tags}
+				onRefeshTags={onRefeshTags}
 			/>
+
 			<ModalUpdateDetail programID={item.ID} isModalVisible={showModalEdit} setIsModalVisible={setShowModalEdit} />
 		</>
 	);

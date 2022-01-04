@@ -15,7 +15,7 @@ import { videoTagApi } from '~/apiBase/video-tag';
 const { Option } = Select;
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
-	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData } = props;
+	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData, tags, onRefeshTags } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -34,8 +34,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [imageSelected, setImageSelected] = useState({ name: '' });
 	const [previewImage, setPreviewImage] = useState('');
 
-	const [tags, setTags] = useState([]);
-
 	const {
 		register,
 		handleSubmit,
@@ -48,10 +46,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [description, setDescription] = useState('');
 	const [resultsAchieved, setResultsAchieved] = useState('');
 	const [courseForObject, setCourseForObject] = useState('');
-
-	useEffect(() => {
-		getTags();
-	}, []);
 
 	const finalSubmit = (ImageThumbnails) => {
 		_onSubmit({
@@ -176,21 +170,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 				? (showNoti('success', 'Thêm thành công'),
 				  setIsModalVisible(true),
 				  setModalTags(false),
-				  getTags(),
+				  onRefeshTags(),
 				  setNewTag(''),
 				  form.setFieldsValue({ newTag: '' }))
 				: showNoti('danger', error.message);
 		} finally {
 			setLoading(false);
-		}
-	};
-
-	const getTags = async () => {
-		try {
-			const response = await videoTagApi.getAll();
-			response.status == 200 && setTags(response.data.data);
-		} catch (error) {
-			showNoti('danger', 'Không lấy được tag');
 		}
 	};
 
@@ -535,15 +520,45 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												</div>
 											)}
 										</Form.Item>
-									</div>
-									{/* end upload image */}
 
-									{/* preview image */}
-									{previewImage !== '' && (
-										<div className="col-md-6 col-12">
-											<Image className="image_wrapper" src={previewImage} />
+										{/* end preview image */}
+
+										<div className="col-12">
+											{tags.length > 0 && (
+												<Form.Item
+													name="Description"
+													label={
+														<div className="row m-0">
+															Từ khóa tìm kiếm{' '}
+															<Tooltip title="Thêm từ khóa tìm kiếm">
+																<button
+																	onClick={() => (setModalTags(true), setIsModalVisible(false))}
+																	className="btn btn-primary btn-vc-create ml-1"
+																>
+																	<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
+																</button>
+															</Tooltip>
+														</div>
+													}
+													rules={[{ required: true, message: 'Bạn không được để trống' }]}
+												>
+													<Select
+														mode="tags"
+														className="style-input"
+														style={{ width: '100%' }}
+														placeholder="Từ khóa tìm kiếm"
+														onChange={(e) => handleChange(e)}
+													>
+														{tags.map((item, index) => (
+															<Option key={index} value={item.ID}>
+																{item.Name}
+															</Option>
+														))}
+													</Select>
+												</Form.Item>
+											)}
 										</div>
-									)}
+									</div>
 
 									{/* end preview image */}
 
@@ -644,7 +659,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									</div>
 								</div>
 							</div>
-
 							<div className="footer">
 								<div className="row">
 									<div className="col-12" style={{ justifyContent: 'flex-end', display: 'flex' }}>
