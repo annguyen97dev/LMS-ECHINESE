@@ -1,13 +1,13 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Spin} from 'antd';
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import {staffSalaryApi} from '~/apiBase';
+import { staffSalaryApi } from '~/apiBase';
 import InputMoneyField from '~/components/FormControl/InputMoneyField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 let returnSchemaSalary = {};
 let schemaSalary = null;
@@ -27,16 +27,16 @@ interface listData {
 const optionGender = [
 	{
 		value: 0,
-		title: 'Nữ',
+		title: 'Nữ'
 	},
 	{
 		value: 1,
-		title: 'Nam',
+		title: 'Nam'
 	},
 	{
 		value: 0,
-		title: 'Khác',
-	},
+		title: 'Khác'
+	}
 ];
 
 let statusAdd = 'add-staff';
@@ -50,13 +50,13 @@ const SalaryForm = (props) => {
 		index,
 		onSubmitSalary,
 		submitSalary,
-		changeVisible,
+		changeVisible
 	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const {showNoti} = useWrap();
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -68,11 +68,11 @@ const SalaryForm = (props) => {
 		Salary: null,
 		UserInformationID: null,
 		Style: null, //1 lương theo tháng , 2 lương theo giờ
-		FullNameUnicode: null,
+		FullNameUnicode: null
 	};
 
 	(function returnSchemaSalaryFunc() {
-		returnSchemaSalary = {...valueSalary};
+		returnSchemaSalary = { ...valueSalary };
 		Object.keys(returnSchemaSalary).forEach(function (key) {
 			returnSchemaSalary[key] = yup.mixed().required('Bạn không được để trống');
 		});
@@ -82,7 +82,7 @@ const SalaryForm = (props) => {
 
 	const formSalary = useForm({
 		defaultValues: valueSalary,
-		resolver: yupResolver(schemaSalary),
+		resolver: yupResolver(schemaSalary)
 	});
 
 	const onSubmitFormSalary = async (data: any) => {
@@ -90,12 +90,12 @@ const SalaryForm = (props) => {
 		let cloneDataSubmit = {
 			Salary: parseFloat(data.Salary.replace(/,/g, '')),
 			UserInformationID: data.UserInformationID,
-			Style: data.Style, //1 lương theo tháng , 2 lương theo giờ
+			Style: data.Style //1 lương theo tháng , 2 lương theo giờ
 		};
 
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		let res = null;
 		try {
@@ -109,7 +109,7 @@ const SalaryForm = (props) => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -124,7 +124,7 @@ const SalaryForm = (props) => {
 			formSalary.reset({
 				UserInformationID: dataStaff.UserInformationID,
 				FullNameUnicode: dataStaff.FullNameUnicode,
-				Style: 1,
+				Style: 1
 			});
 		}
 	}, [dataStaff]);
@@ -132,19 +132,10 @@ const SalaryForm = (props) => {
 	return (
 		<>
 			<div className="box-form form-salary">
-				<Form
-					layout="vertical"
-					onFinish={formSalary.handleSubmit(onSubmitFormSalary)}
-					colon
-				>
+				<Form layout="vertical" onFinish={formSalary.handleSubmit(onSubmitFormSalary)} colon>
 					<div className="row">
 						<div className="col-12">
-							<InputTextField
-								form={formSalary}
-								name="FullNameUnicode"
-								label="Nhân viên"
-								disabled={true}
-							/>
+							<InputTextField form={formSalary} name="FullNameUnicode" label="Nhân viên" disabled={true} />
 						</div>
 						<div className="col-12">
 							<SelectField
@@ -155,29 +146,22 @@ const SalaryForm = (props) => {
 								optionList={[
 									{
 										title: 'Tính lương theo tháng',
-										value: 1,
-									},
+										value: 1
+									}
 								]}
 							/>
 						</div>
 						<div className="col-12">
-							<InputMoneyField
-								form={formSalary}
-								name="Salary"
-								label="Mức lương"
-								isRequired={true}
-							/>
+							<InputMoneyField form={formSalary} name="Salary" label="Mức lương" isRequired={true} />
 						</div>
 					</div>
 
 					<div className="row">
 						<div className="col-12 d-flex justify-content-center">
-							<div style={{paddingRight: 5}}>
+							<div style={{ paddingRight: 5 }}>
 								<button type="submit" className="btn btn-primary w-100">
 									Thêm lương
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
