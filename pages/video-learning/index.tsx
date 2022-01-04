@@ -54,7 +54,7 @@ const VideoLearning = () => {
 
 	const videoStudy = useRef(null);
 	const boxVideo = useRef(null);
-	const [currentVideo, setCurrentVideo] = useState('');
+	const [currentVideo, setCurrentVideo] = useState('h');
 	const [data, setData] = useState([]);
 	const [render, setRender] = useState('');
 	const [videos, setVideos] = useState([]);
@@ -309,17 +309,23 @@ const VideoLearning = () => {
 					<div className="wrap-video pl-3">
 						<div ref={ref} className="wrap-video__video">
 							<div className="box-video" ref={boxVideo}>
-								{currentLession.Type === 0 ? (
-									<video src={currentVideo} ref={videoStudy} controls>
-										<track default kind="captions" />
-									</video>
+								{currentVideo[0] == 'h' ? (
+									<>
+										{currentLession.Type === 0 ? (
+											<video src={currentVideo} ref={videoStudy} controls>
+												<track default kind="captions" />
+											</video>
+										) : (
+											<iframe
+												className="html-iframe"
+												// http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html
+												src={currentVideo}
+												title="cc"
+											></iframe>
+										)}
+									</>
 								) : (
-									<iframe
-										className="html-iframe"
-										// http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html
-										src={currentVideo}
-										title="cc"
-									></iframe>
+									<>{currentVideo}</>
 								)}
 
 								{data.length > 0 && currentLession.Type === 0
