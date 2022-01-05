@@ -42,7 +42,7 @@ const PaymentMethodConfig = () => {
 		{
 			title: 'Trạng thái',
 			dataIndex: 'Enable',
-			width: 150,
+			width: 100,
 			render: (text, data) => {
 				return (
 					<Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" checked={data.Enable} onClick={() => handleChangeEnable(data)} />
@@ -50,17 +50,9 @@ const PaymentMethodConfig = () => {
 			}
 		},
 		{
-			title: 'Trạng thái',
-			dataIndex: 'Enable',
-			width: 80,
-			render: (text, data) => {
-				return <p className={data.Enable ? 'tag green' : 'tag red'}>{data.Enable ? 'Hiện' : 'Ẩn'}</p>;
-			}
-		},
-		{
 			title: '',
 			dataIndex: 'Action',
-			width: 100,
+			width: 70,
 			render: (text, data) => {
 				return (
 					<>
@@ -72,14 +64,6 @@ const PaymentMethodConfig = () => {
 							}}
 							type="edit"
 						/>
-						<AddPaymentMethodForm
-							paymentMethod={paymentMethod}
-							dataPayment={data}
-							fetchData={() => {
-								getPaymentMethod(), getPaymentMethods();
-							}}
-							type="delete"
-						/>
 					</>
 				);
 			}
@@ -89,7 +73,7 @@ const PaymentMethodConfig = () => {
 	const handleChangeEnable = async (data) => {
 		setIsLoading({ type: 'ENABLE', status: true });
 		try {
-			let res = await paymentConfig.update({ ID: data.ID, Enable: false });
+			let res = await paymentConfig.update({ ID: data.ID, Enable: data.Enable ? false : true });
 			if (res.status === 200) {
 				showNoti('success', res.data.message);
 				getPaymentMethods();
