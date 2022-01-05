@@ -7,7 +7,7 @@ import Menu from '~/components/Menu';
 import { signIn, useSession } from 'next-auth/client';
 import { useWrap } from '~/context/wrap';
 import TitlePageHeader from '~/components/Elements/TitlePageHeader';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Tooltip } from 'antd';
 export const siteTitle = 'Mona Media Admin';
 import { AdminChildMenu, AdminParentMenu } from '~/lib/data-menu/AdminMenu';
 import { TeacherChildMenu, TeacherParentMenu } from '~/lib/data-menu/TeacherMenu';
@@ -303,6 +303,17 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 					userInformation?.RoleID === 2 ||
 					userInformation?.RoleID === 5 ||
 					userInformation?.RoleID === 6) && <RegCourseBtn />}
+
+				{userInformation?.RoleID === 3 && (
+					<Link href="/feedback">
+						<Tooltip title="Phản hồi" placement="left">
+							<div className="icon-feedback">
+								<img className="facebook-img" src="/icons/feedback.png"></img>
+							</div>
+						</Tooltip>
+					</Link>
+				)}
+
 				{/* FACEBOOK */}
 				<Popover content={contentFanpage} title="Fanpage" trigger="click">
 					<div className="icon-facebook">
