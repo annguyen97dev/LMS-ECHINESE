@@ -267,7 +267,7 @@ const RegisterCourse = (props: any) => {
 											<Input readOnly={true} className="style-input" value={userDetail ? userDetail.AreaName : ''} />
 										</Form.Item>
 									</div>
-									<div className="col-md-6 col-12">
+									{/* <div className="col-md-6 col-12">
 										<Form.Item label="Quận/Huyện">
 											<Input
 												readOnly={true}
@@ -275,11 +275,21 @@ const RegisterCourse = (props: any) => {
 												className="style-input"
 											/>
 										</Form.Item>
+									</div> */}
+									<div className="col-md-6 col-12">
+										<Form.Item label="Tư vấn viên">
+											<Input
+												className="style-input"
+												readOnly={true}
+												//@ts-ignore
+												value={userDetail ? userDetail.CounselorsName : ''}
+											/>
+										</Form.Item>
 									</div>
 								</div>
 								{/*  */}
 								{/*  */}
-								<div className="row">
+								{/* <div className="row">
 									<div className="col-md-6 col-12">
 										<Form.Item label="Phường xã">
 											<Input readOnly={true} value={userDetail ? userDetail.WardName : ''} className="style-input" />
@@ -300,10 +310,10 @@ const RegisterCourse = (props: any) => {
 											/>
 										</Form.Item>
 									</div>
-								</div>
+								</div> */}
 								{/*  */}
 								{/*  */}
-								<div className="row">
+								{/* <div className="row">
 									<div className="col-md-6 col-12">
 										<Form.Item label="CMND">
 											<Input readOnly={true} value={userDetail ? userDetail.CMND : ''} className="style-input" />
@@ -318,10 +328,10 @@ const RegisterCourse = (props: any) => {
 											/>
 										</Form.Item>
 									</div>
-								</div>
+								</div> */}
 								{/*  */}
 								{/*  */}
-								<div className="row">
+								{/* <div className="row">
 									<div className="col-md-6 col-12">
 										<Form.Item label="Ngày cấp">
 											<Input
@@ -336,11 +346,11 @@ const RegisterCourse = (props: any) => {
 											<Input readOnly={true} className="style-input" value={userDetail ? userDetail.JobName : ''} />
 										</Form.Item>
 									</div>
-								</div>
+								</div> */}
 								{/*  */}
 								{/*  */}
 								<div className="row">
-									<div className="col-md-6 col-12">
+									{/* <div className="col-md-6 col-12">
 										<Form.Item label="Người nhà, liên hệ">
 											<Input
 												className="style-input"
@@ -348,8 +358,8 @@ const RegisterCourse = (props: any) => {
 												value={userDetail ? userDetail.ParentsNameOf : ''}
 											/>
 										</Form.Item>
-									</div>
-									<div className="col-md-6 col-12">
+									</div> */}
+									{/* <div className="col-md-6 col-12">
 										<Form.Item label="Tư vấn viên">
 											<Input
 												className="style-input"
@@ -358,7 +368,7 @@ const RegisterCourse = (props: any) => {
 												value={userDetail ? userDetail.CounselorsName : ''}
 											/>
 										</Form.Item>
-									</div>
+									</div> */}
 								</div>
 								{/*  */}
 								{/*  */}
