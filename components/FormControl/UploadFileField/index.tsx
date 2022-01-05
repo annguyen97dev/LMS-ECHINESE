@@ -1,8 +1,8 @@
-import {PlusOutlined} from '@ant-design/icons';
-import {Form, Modal, Upload} from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Form, Modal, Upload } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useRef, useState} from 'react';
-import {Controller} from 'react-hook-form';
+import React, { useRef, useState } from 'react';
+import { Controller } from 'react-hook-form';
 
 // const checkFileTypeDemo = (file: File) => {
 // 	const {type, name} = file;
@@ -89,21 +89,9 @@ type IFileList = {
 };
 
 const UploadFileField = (props) => {
-	const {
-		form,
-		name,
-		label,
-		disabled,
-		handleBeforeUpload,
-		handleUploadFile,
-		style,
-		className,
-		max,
-		selectMultiple,
-		accept,
-	} = props;
+	const { form, name, label, disabled, handleBeforeUpload, handleUploadFile, style, className, max, selectMultiple, accept } = props;
 
-	const {errors} = form.formState;
+	const { errors } = form.formState;
 	const hasError = errors[name];
 	const isUploadImages = useRef(true);
 	const [previewVisible, setPreviewVisible] = useState(false);
@@ -144,7 +132,7 @@ const UploadFileField = (props) => {
 
 	const uiPreview = () => {
 		if (fileTypePreview === 'image') {
-			return <img alt="preview-img" style={{width: '100%'}} src={previewUrl} />;
+			return <img alt="preview-img" style={{ width: '100%' }} src={previewUrl} />;
 		}
 		if (fileTypePreview === 'video') {
 			return (
@@ -153,7 +141,7 @@ const UploadFileField = (props) => {
 						refList.current.push(video);
 					}}
 					controls
-					style={{width: '100%'}}
+					style={{ width: '100%' }}
 				>
 					<source src={previewUrl} type="video/mp4" />
 					<source src={previewUrl} type="video/ogg" />
@@ -168,7 +156,7 @@ const UploadFileField = (props) => {
 						refList.current.push(audio);
 					}}
 					controls
-					style={{width: '100%'}}
+					style={{ width: '100%' }}
 				>
 					<source src={previewUrl} type="audio/ogg" />
 					<source src={previewUrl} type="audio/mpeg" />
@@ -181,14 +169,12 @@ const UploadFileField = (props) => {
 		<Form.Item
 			style={style}
 			label={label}
-			className={`${className} ${
-				hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''
-			}`}
+			className={`${className} ${hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
 		>
 			<Controller
 				name={name}
 				control={form.control}
-				render={({field, fieldState, formState}) => {
+				render={({ field, fieldState, formState }) => {
 					/** VALUE OF FIELD MUST BE OBJECT IN ARRAY IFILE[]*/
 					const checkFileList = () => {
 						if (Array.isArray(field.value) && field.value.length) {
@@ -217,14 +203,13 @@ const UploadFileField = (props) => {
 									if (handleUploadFile) {
 										isUploadImages.current = true;
 										if (field.value?.length) {
-											const newValue = field.value.filter(
-												(f) => f.uid !== file.uid
-											);
+											const newValue = field.value.filter((f) => f.uid !== file.uid);
 											field.onChange(newValue);
 										}
 									}
 								}}
 								onChange={(obj) => {
+									console.log(obj.fileList);
 									if (handleUploadFile) {
 										const itemAlready = field.value?.length ?? 0;
 										if (itemAlready < max && isUploadImages.current) {
@@ -234,9 +219,7 @@ const UploadFileField = (props) => {
 											handleUploadFile(obj.fileList).then((res) => {
 												isUploadImages.current = true;
 												if (Array.isArray(res) && res.length) {
-													field.value
-														? field.onChange([...field.value, ...res])
-														: field.onChange(res);
+													field.value ? field.onChange([...field.value, ...res]) : field.onChange(res);
 												}
 											});
 										}
@@ -287,7 +270,7 @@ UploadFileField.propTypes = {
 	accept: PropTypes.string,
 	selectMultiple: PropTypes.bool,
 	handleUploadFile: PropTypes.func,
-	handleBeforeUpload: PropTypes.func,
+	handleBeforeUpload: PropTypes.func
 };
 UploadFileField.defaultProps = {
 	label: '',
@@ -298,6 +281,6 @@ UploadFileField.defaultProps = {
 	accept: '',
 	selectMultiple: false,
 	handleUploadFile: null,
-	handleBeforeUpload: null,
+	handleBeforeUpload: null
 };
 export default UploadFileField;

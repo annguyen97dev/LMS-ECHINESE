@@ -194,41 +194,6 @@ const ShoppingCart = () => {
 		}
 	};
 
-	const renderQuantity = (item, index) => {
-		const [count, setCount] = useState(item.Quantity);
-		return (
-			<div key={index}>
-				<span
-					className="quantity-btn"
-					style={{ userSelect: 'none' }}
-					onClick={() => {
-						decreseItem(item.ID, count);
-						setClickedItem(item.ID);
-						if (count === 1) {
-							setCount(1);
-						} else {
-							setCount(count - 1);
-						}
-					}}
-				>
-					-
-				</span>
-				<span className="cart__item-quantity font-weight-green">{count}</span>
-				<span
-					className="quantity-btn"
-					style={{ userSelect: 'none' }}
-					onClick={() => {
-						increseItem(item.ID, count);
-						setClickedItem(item.ID);
-						setCount(count + 1);
-					}}
-				>
-					+
-				</span>
-			</div>
-		);
-	};
-
 	const renderCartItems = () => {
 		return cartItems?.map((item, index) => (
 			<div className="cart__item d-flex justify-content-between align-items-center row" key={index}>
@@ -406,7 +371,17 @@ const ShoppingCart = () => {
 			</header>
 
 			<div className="shopping__cart-body container mt-5">
-				<h1>Giỏ Hàng</h1>
+				<div className="d-flex justify-content-between">
+					<h1>Giỏ Hàng</h1>
+					<button
+						className="btn btn-primary"
+						onClick={() => {
+							router.push('/video-course');
+						}}
+					>
+						Mua sắm thêm
+					</button>
+				</div>
 				{isLoading.loading && isLoading.status == 'GET_CART_DATA' ? (
 					<Skeleton active />
 				) : (

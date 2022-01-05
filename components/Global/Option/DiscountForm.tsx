@@ -115,7 +115,7 @@ const DiscountForm = (props) => {
 
 			{/*  */}
 			<Modal
-				title={<>{props.showAdd ? 'Thêm Mã Khuyết Mãi' : 'Cập Nhật Mã Khuyết Mãi'}</>}
+				title={<>{props.showAdd ? 'Thêm Mã Khuyến Mãi' : 'Cập Nhật Mã Khuyến Mãi'}</>}
 				visible={isModalVisible}
 				onCancel={() => setIsModalVisible(false)}
 				footer={null}
@@ -124,6 +124,19 @@ const DiscountForm = (props) => {
 					<Form form={form} layout="vertical" onFinish={onSubmit}>
 						{props.showAdd ? (
 							<div className="row">
+								<div className="col-12">
+									<Form.Item
+										label="Mã khuyến mãi"
+										name="DiscountCode"
+										rules={[{ required: true, message: 'Bạn không được bỏ trống' }]}
+									>
+										<Input
+											onChange={(value) => setValue('DiscountCode', value.target.value)}
+											placeholder="Thêm mã khuyến mãi"
+											className="style-input"
+										/>
+									</Form.Item>
+								</div>
 								<div className="col-9">
 									{percent ? (
 										<>

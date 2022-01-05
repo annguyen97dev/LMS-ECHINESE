@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
-import moment from 'moment';
-import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 import { useWrap } from './../../../context/wrap';
+import AddProductForm from '~/components/Global/Product/AddProductForm';
+import { productApi } from '~/apiBase/product/product';
+import { parsePriceStrToNumber } from '~/utils/functions';
+import { productTypeApi } from '~/apiBase/product/product-type';
+import { Switch } from 'antd';
+import ModalShowImage from '~/components/Global/Product/ModalShoeImage';
 
 const Products = () => {
 	const [dataSource, setDataSource] = useState<IProductType[]>([]);
 	const { showNoti, pageSize } = useWrap();
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [productIDList, setProductIDList] = useState([]);
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 
 	const paramsDefault = {
@@ -29,58 +34,242 @@ const Products = () => {
 
 	const columns = [
 		{
-			title: 'Tên loại',
+			title: 'Tên sản phẩm',
 			dataIndex: 'Name',
-			width: 130,
+			width: 180,
 			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
-			title: 'ID',
-			dataIndex: 'ID',
+			title: 'Mã loại sản phẩm',
+			dataIndex: 'ProductTypeID',
+			width: 120,
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Giá niêm yết',
+			dataIndex: 'ListedPrice',
+			width: 130,
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Giá bán',
+			dataIndex: 'Price',
+			width: 130,
+			render: (text) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Số lượng',
+			dataIndex: 'Quantity',
 			width: 80,
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			title: 'Ngày tạo',
-			dataIndex: 'CreatedOn',
-			width: 130,
-			render: (text) => <p className="font-weight-black">{moment(text).format('DD/MM/YYYY')}</p>
+			title: 'Mô tả',
+			dataIndex: 'Description',
+			width: 200,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			title: 'Tạo bởi',
-			dataIndex: 'CreatedBy',
-			width: 130,
-			render: (text) => <p className="font-weight-black">{text}</p>
+			title: 'Xem ảnh',
+			dataIndex: 'ImageOfProducts',
+			width: 100,
+			render: (text, data) => <ModalShowImage ImageList={data.ImageOfProducts} />
+		},
+		{
+			title: 'Trạng thái',
+			dataIndex: 'Enable',
+			width: 80,
+			render: (text, data) => {
+				return (
+					<Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" checked={data.Enable} onClick={() => handleChangeEnable(data)} />
+				);
+			}
 		},
 		{
 			title: 'Thao tác',
 			dataIndex: 'Action',
-			width: 100,
+			width: 80,
 			render: (text, data) => {
 				return (
 					<>
-						<DeleteTableRow handleDelete={() => updateDataDelete(data)} text="loại sản phẩm này" />
+						<AddProductForm
+							Mode="edit-type"
+							data={data}
+							_onSubmit={_onSubmit}
+							isLoading={isLoading}
+							productIDList={productIDList}
+							onFetchData={() => {
+								getPagination(1);
+								setParams({ ...params, pageIndex: 1 });
+								getDataSource();
+							}}
+						/>
 					</>
 				);
 			}
 		}
 	];
 
-	const updateDataDelete = (data) => {};
+	const getDataSource = async () => {
+		setIsLoading({ type: 'GET_ALL', status: true });
+		try {
+			let res = await productApi.getAll(params);
+			if (res.status == 200) {
+				setDataSource(res.data.data);
+				setTotalPage(res.data.totalRow);
+			}
+			if (res.status == 204) {
+				setDataSource([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'GET_ALL', status: false });
+		}
+	};
+
+	const getProductID = async () => {
+		setIsLoading({ type: 'GET_ALL', status: true });
+		try {
+			let res = await productTypeApi.getAll({
+				pageIndex: 1,
+				pageSize: pageSize
+			});
+			if (res.status == 200) {
+				let tempArr = [];
+				res.data.data.map((item) => {
+					// @ts-ignore
+					tempArr.push({ value: item.ID, title: item.Name });
+				});
+				setProductIDList(tempArr);
+			}
+			if (res.status == 204) {
+				setProductIDList(null);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'GET_ALL', status: false });
+		}
+	};
+
+	const handleChangeEnable = (data) => {};
+
+	const handleUploadImage = async (arrFile) => {
+		setIsLoading({ type: 'UPLOADING', status: true });
+		try {
+			let nextPost = 0;
+			const resArr = await Promise.all(
+				arrFile.reduce((newArr, file, idx) => {
+					if (file.originFileObj) {
+						newArr.push(productApi.uploadImage(file.originFileObj));
+					} else {
+						nextPost = idx + 1;
+						newArr;
+					}
+					return newArr;
+				}, [])
+			);
+			const result = resArr.map((r: any) => {
+				return {
+					uid: r.data.data,
+					url: r.data.data,
+					Link: r.data.data,
+					isAvatar: nextPost == 0 ? true : false
+					// ...checkFileType(arrFile[nextPost])
+				};
+			});
+			return result;
+		} catch (error) {
+			console.log('onUploadFile', error);
+		} finally {
+			setIsLoading({ type: 'UPLOADING', status: true });
+		}
+	};
+
+	const _onSubmit = async (value, Mode) => {
+		setIsLoading({ type: 'SUBMIT', status: true });
+
+		console.log(Mode);
+		if (Mode === 'add-type') {
+			try {
+				let tempArr = [];
+				value.ImageOfProducts.map((item) => {
+					return tempArr.push({ Link: item.Link, isAvatar: item.isAvatar });
+				});
+				let res = await productApi.insert({
+					...value,
+					Price: parsePriceStrToNumber(value.Price),
+					ListedPrice: parsePriceStrToNumber(value.ListedPrice),
+					ImageOfProducts: tempArr
+				});
+				if (res.status === 200) {
+					showNoti('success', 'Thêm sản phẩm thành công!');
+					return true;
+				}
+			} catch (error) {
+				showNoti('success', error.message);
+			} finally {
+				setIsLoading({ type: 'SUBMIT', status: false });
+			}
+		} else {
+			console.log({
+				...value,
+				Price: parsePriceStrToNumber(value.Price),
+				ListedPrice: parsePriceStrToNumber(value.ListedPrice),
+				ImageOfProducts: null
+			});
+			try {
+				let res = await productApi.update({
+					...value,
+					Price: parsePriceStrToNumber(value.Price),
+					ListedPrice: parsePriceStrToNumber(value.ListedPrice),
+					ImageOfProducts: null
+				});
+				if (res.status === 200) {
+					showNoti('success', 'Thay đổi thành công!');
+					return true;
+				}
+			} catch (error) {
+				showNoti('success', error.message);
+			} finally {
+				setIsLoading({ type: 'SUBMIT', status: false });
+			}
+		}
+	};
+
+	useEffect(() => {
+		getDataSource();
+		getProductID();
+	}, []);
 
 	return (
 		<>
 			<PowerTable
-				currentPage={params.pageIndex}
+				currentPage={currentPage}
 				totalPage={totalPage}
 				getPagination={getPagination}
 				loading={isLoading}
 				columns={columns}
 				dataSource={dataSource}
 				addClass="basic-header"
-				TitlePage="Sản phẩm"
+				TitleCard={
+					<AddProductForm
+						Mode="add-type"
+						isLoading={isLoading}
+						_onSubmit={_onSubmit}
+						data={null}
+						handleUploadFile={handleUploadImage}
+						productIDList={productIDList}
+						onFetchData={() => {
+							getPagination(1);
+							setParams({ ...params, pageIndex: 1 });
+							getDataSource();
+						}}
+					/>
+				}
 			/>
 		</>
 	);
 };
+
+Products.layout = LayoutBase;
 export default Products;

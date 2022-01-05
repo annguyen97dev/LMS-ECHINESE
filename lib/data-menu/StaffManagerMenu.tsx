@@ -1014,7 +1014,13 @@ export const StaffManagerChildMenu = [
 						Route: '/option/product-type',
 						Text: 'Cấu hình sản phẩm',
 						Icon: ''
-					}
+					},	{
+						ItemType: 'single',
+						Key: '/option/product',
+						Route: '/option/product',
+						Text: 'Thêm sản phẩm',
+						Icon: ''
+					},
 				]
 			}
 		]

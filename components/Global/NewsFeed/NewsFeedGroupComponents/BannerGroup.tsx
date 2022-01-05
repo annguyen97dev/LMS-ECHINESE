@@ -53,19 +53,14 @@ BannerGroup.defaultProps = {
 };
 
 function BannerGroup(props) {
-	const {
-		infoGroup,
-		totalNewsFeed,
-		//
-		bannerGroupActionListComponent
-	} = props;
+	const { infoGroup, totalNewsFeed, bannerGroupActionListComponent } = props;
 	const { info, userList } = infoGroup;
 	const popoverUserList = (userList) => {
 		return (
 			<ul className="list-user-in-group">
 				{userList.map((item, idx) => (
 					<li key={idx}>
-						<img src={item.Avatar} alt="" />
+						<img src={item.Avatar || '/images/user.png'} alt="" />
 						{item.FullNameUnicode}
 					</li>
 				))}
@@ -115,7 +110,7 @@ function BannerGroup(props) {
 								{userList.slice(0, 5).map((item, idx) => (
 									<Tooltip title={item.FullNameUnicode} key={idx}>
 										<button className="item-user">
-											<img src={item.Avatar || '/images/user.jpg'} alt="" />
+											<img src={item.Avatar || '/images/user.png'} alt="" />
 										</button>
 									</Tooltip>
 								))}
@@ -125,7 +120,7 @@ function BannerGroup(props) {
 								{userList.map((item, idx) => (
 									<Tooltip title={item.FullNameUnicode} key={idx}>
 										<button className="item-user">
-											<img src={item.Avatar || '/images/user.jpg'} alt="" />
+											<img src={item.Avatar || '/images/user.png'} alt="" />
 										</button>
 									</Tooltip>
 								))}
