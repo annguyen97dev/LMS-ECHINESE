@@ -167,7 +167,6 @@ const Discount = () => {
 	const compareField = (valueSearch, dataIndex) => {
 		let newList = null;
 		Object.keys(listField).forEach(function (key) {
-			console.log('key: ', key);
 			if (key != dataIndex) {
 				listField[key] = '';
 			} else {
@@ -179,7 +178,6 @@ const Discount = () => {
 	};
 
 	const onSearch = (valueSearch, dataIndex) => {
-		console.log(dataTable);
 		let clearKey = compareField(valueSearch, dataIndex);
 
 		setTodoApi({
@@ -261,6 +259,7 @@ const Discount = () => {
 	const columns = [
 		{
 			title: 'Mã khuyến mãi',
+			width: 150,
 			dataIndex: 'DiscountCode',
 			...FilterColumn('DiscountCode', onSearch, handleReset, 'text'),
 			className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
@@ -269,6 +268,7 @@ const Discount = () => {
 		{
 			title: 'Khuyến mãi',
 			dataIndex: 'Discount',
+			width: 150,
 			render: (text, record) => {
 				if (record.DiscountType == 2) {
 					return <p className="font-weight-primary">{text}%</p>;
@@ -280,12 +280,14 @@ const Discount = () => {
 		{
 			title: 'Gói',
 			dataIndex: 'StyleName',
+			width: 100,
 			render: (text, record) => {
 				return <p className="font-weight-black">{text}</p>;
 			}
 		},
 		{
 			title: 'Trạng thái',
+			width: 150,
 			dataIndex: 'StatusName',
 			render: (text, record) => {
 				switch (record.Status) {
@@ -301,11 +303,12 @@ const Discount = () => {
 				}
 			}
 		},
-		{ title: 'Số lượng', dataIndex: 'Quantity' },
+		{ title: 'Số lượng', width: 100, dataIndex: 'Quantity' },
 		{ title: 'Số lượng còn lại', dataIndex: 'QuantityLeft', width: 120 },
-		{ title: 'Ghi chú', dataIndex: 'Note' },
+		{ title: 'Ghi chú', width: 150, dataIndex: 'Note' },
 		{
 			title: 'Thời hạn',
+			width: 100,
 			dataIndex: 'DeadLine',
 			render: (date) => moment(date).format('DD/MM/YYYY')
 		},

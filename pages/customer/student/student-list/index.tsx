@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { Eye } from 'react-feather';
+import { Check, Eye } from 'react-feather';
 import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi, staffApi, studentApi } from '~/apiBase';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
@@ -19,7 +19,9 @@ import { useWrap } from '~/context/wrap';
 
 let listFieldSearch = {
 	pageIndex: 1,
-	FullNameUnicode: null
+	FullNameUnicode: null,
+	Mobile: null,
+	Email: null
 };
 
 let listFieldFilter = {
@@ -481,14 +483,29 @@ const StudentData = () => {
 			dataIndex: 'ChineseName',
 			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
+		{
+			title: 'Đang học',
+			width: 100,
+			dataIndex: 'isRegisteredCourse',
+			render: (text, data) =>
+				data.isRegisteredCourse ? (
+					<p className="btn btn-icon edit">
+						<Check />
+					</p>
+				) : (
+					''
+				)
+		},
 
 		{
 			title: 'SĐT',
-			dataIndex: 'Mobile'
+			dataIndex: 'Mobile',
+			...FilterColumn('Mobile', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			...FilterColumn('Email', onSearch, handleReset, 'text')
 		},
 		{
 			width: 150,

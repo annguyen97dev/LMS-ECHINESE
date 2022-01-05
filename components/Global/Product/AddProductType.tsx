@@ -97,12 +97,9 @@ const AddProductTypeForm = ({ mode, onFetchData, data }) => {
 									label="Tên loại sản phẩm"
 									name="Name"
 									rules={[{ required: true, message: 'Bạn không được để trống' }]}
+									initialValue={mode === 'edit-type' ? data.Name : ''}
 								>
-									<Input
-										placeholder="Thêm tên"
-										className="style-input"
-										defaultValue={mode === 'edit-type' ? data.Name : ''}
-									/>
+									<Input placeholder="Thêm tên" className="style-input" />
 								</Form.Item>
 							</div>
 							<div className="col-12 mt-3">

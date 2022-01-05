@@ -247,6 +247,11 @@ function FinanceInvoice() {
 			render: (a) => <p style={{ width: 100 }}>{a}</p>
 		},
 		{
+			title: 'Loại phiếu thu',
+			dataIndex: 'StyleName',
+			render: (a) => <p style={{ width: 100 }}>{a}</p>
+		},
+		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
 			render: (a) => <p>{moment(a).format('DD/MM/YYYY')}</p>
@@ -255,10 +260,10 @@ function FinanceInvoice() {
 			title: 'Người tạo',
 			dataIndex: 'CreatedBy'
 		},
-		{
-			title: 'QR Code',
-			render: (record: IInvoice) => <div style={{ width: 100 }}>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</div>
-		},
+		// {
+		// 	title: 'QR Code',
+		// 	render: (record: IInvoice) => <div style={{ width: 100 }}>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</div>
+		// },
 		{
 			render: (record: IInvoice, _, idx) => (
 				<>
