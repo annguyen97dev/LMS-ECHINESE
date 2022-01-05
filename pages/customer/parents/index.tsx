@@ -581,21 +581,18 @@ const ParentsList = () => {
 		{
 			title: 'Mã phụ huynh',
 			dataIndex: 'UserCode',
+			width: 100,
 			render: (text) => <p className="font-weight-black">{text}</p>,
 			fixed: 'left'
 		},
 		{
 			title: 'Họ tên',
+			width: 200,
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-primary">{text}</p>,
 			fixed: 'left'
 		},
-		// {
-		// 	title: 'Tên tiếng Trung',
-		// 	dataIndex: 'ChineseName',
-		// 	render: (text) => <p className="font-weight-black">{text}</p>
-		// },
 		{
 			title: 'Trung tâm',
 			dataIndex: 'Branch',

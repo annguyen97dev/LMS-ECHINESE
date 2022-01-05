@@ -12,6 +12,7 @@ import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
 import RequestRefundForm from '~/components/Global/Customer/Finance/Refunds/RequestRefundsForm';
 import UpdateStudentReserveDate from '~/components/Global/Customer/Student/CourseReserve/UpdateStudentReserveDate';
+import FilterColumn from '~/components/Tables/FilterColumn';
 
 const StudentCourseReserve = () => {
 	const [isLoading, setIsLoading] = useState({
@@ -35,11 +36,30 @@ const StudentCourseReserve = () => {
 		}
 	];
 
+	const onSearch = (valueSearch, dataIndex) => {
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'ChineseName'
+				? { ChineseName: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
+		setCurrentPage(1);
+
+		setParams({
+			...params,
+			...clearKey
+		});
+	};
+
 	const columns = [
 		{
 			title: 'Học viên',
 			width: 150,
 			dataIndex: 'FullNameUnicode',
+			fixed: 'left',
+			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{

@@ -343,10 +343,12 @@ const SalerList = () => {
 		{
 			title: 'SĐT',
 			dataIndex: 'Mobile'
+			// ...FilterColumn('Mobile', onSearch, onResetSearch, 'text')
 		},
 		{
 			title: 'Email',
 			dataIndex: 'Email'
+			// ...FilterColumn('Email', onSearch, onResetSearch, 'text')
 		},
 		{
 			title: 'Ngày nhận việc',

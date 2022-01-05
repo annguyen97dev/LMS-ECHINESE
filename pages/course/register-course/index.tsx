@@ -60,13 +60,16 @@ const RegisterCourse = (props: any) => {
 			try {
 				const _detail = await studentApi.getWithID(value);
 				//@ts-ignore
-				_detail.status == 200 && setUserDetail(_detail.data.data);
+				_detail.status == 200 &&
+					(setUserDetail(_detail.data.data), form.setFieldsValue({ UserInformationID: _detail.data.data.UserInformationID }));
 			} catch (err) {
 				showNoti('danger', err.message);
 			} finally {
 				setIsLoading(false);
 			}
 		})();
+
+		console.log('userDetail: ', userDetail);
 	};
 
 	const onSubmit = async (data: any) => {
@@ -196,6 +199,7 @@ const RegisterCourse = (props: any) => {
 												className="style-input"
 												showSearch
 												optionFilterProp="children"
+												defaultValue={userDetail ? userDetail.UserInformationID : ''}
 												onChange={(value) => handleChangeUser(value)}
 											>
 												{userAll?.map((item, index) => (
@@ -209,11 +213,19 @@ const RegisterCourse = (props: any) => {
 
 									<div className="col-md-6 col-12">
 										<Form.Item label="Họ và tên">
-											<Input
-												value={userDetail ? userDetail.FullNameUnicode : ''}
+											<Select
 												className="style-input"
-												readOnly={true}
-											/>
+												showSearch
+												optionFilterProp="children"
+												value={userDetail ? userDetail.UserInformationID : ''}
+												onChange={(value) => handleChangeUser(value)}
+											>
+												{userAll?.map((item, index) => (
+													<Option key={index} value={item.UserInformationID}>
+														{item.FullNameUnicode}
+													</Option>
+												))}
+											</Select>
 										</Form.Item>
 									</div>
 								</div>
@@ -231,7 +243,19 @@ const RegisterCourse = (props: any) => {
 									</div>
 									<div className="col-md-6 col-12">
 										<Form.Item label="SĐT">
-											<Input readOnly={true} value={userDetail ? userDetail.Mobile : ''} className="style-input" />
+											<Select
+												className="style-input"
+												showSearch
+												optionFilterProp="children"
+												value={userDetail ? userDetail.UserInformationID : ''}
+												onChange={(value) => handleChangeUser(value)}
+											>
+												{userAll?.map((item, index) => (
+													<Option key={index} value={item.UserInformationID}>
+														{item.Mobile}
+													</Option>
+												))}
+											</Select>
 										</Form.Item>
 									</div>
 								</div>

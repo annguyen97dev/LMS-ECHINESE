@@ -998,7 +998,7 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/option/config-voucher-invoice',
 						Route: '/option/config-voucher-invoice',
-						Text: 'Phiếu thu, phiếu chi',
+						Text: 'Mẫu',
 						Icon: ''
 					},
 					{

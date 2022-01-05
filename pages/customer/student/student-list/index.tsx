@@ -393,7 +393,14 @@ const StudentData = () => {
 	};
 
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'ChineseName'
+				? { ChineseName: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 		setCurrentPage(1);
 
 		setTodoApi({
@@ -479,16 +486,23 @@ const StudentData = () => {
 			title: 'Tên tiếng Trung',
 			width: 150,
 			dataIndex: 'ChineseName',
-			render: (text) => <p className="font-weight-primary">{text}</p>
+			fixed: 'left',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('ChineseName', onSearch, handleReset, 'text')
 		},
-
 		{
 			title: 'SĐT',
-			dataIndex: 'Mobile'
+			dataIndex: 'Mobile',
+			fixed: 'left',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('Mobile', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			fixed: 'left',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('Email', onSearch, handleReset, 'text')
 		},
 		{
 			width: 150,

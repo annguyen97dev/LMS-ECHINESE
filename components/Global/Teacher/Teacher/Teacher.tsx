@@ -411,7 +411,8 @@ const Teacher = () => {
 			width: 120,
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
-			render: (text) => <p className="font-weight-black">{text}</p>
+			...FilterColumn('ChineseName', onSearch, onResetSearch, 'text'),
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Tỉnh/TP',
@@ -428,12 +429,16 @@ const Teacher = () => {
 		{
 			title: 'SĐT',
 			width: 120,
-			dataIndex: 'Mobile'
+			dataIndex: 'Mobile',
+			// ...FilterColumn('Mobile', onSearch, onResetSearch, 'text'),
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Email',
 			width: 180,
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			// ...FilterColumn('Email', onSearch, onResetSearch, 'text'),
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Ngày nhận việc',
