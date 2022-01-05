@@ -546,7 +546,14 @@ const StaffList = () => {
 
 	// ------------ ON SEARCH -----------------------
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'ChineseName'
+				? { ChineseName: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 
 		setTodoApi({
 			...todoApi,
@@ -610,7 +617,7 @@ const StaffList = () => {
 
 	const columns = [
 		{
-			width: 100,
+			width: 120,
 			title: 'Mã',
 			dataIndex: 'UserCode',
 			fixed: 'left'
@@ -619,17 +626,20 @@ const StaffList = () => {
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
 			fixed: 'left',
+			width: 200,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			width: 150,
+			width: 200,
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
+			fixed: 'left',
+			...FilterColumn('ChineseName', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			width: 150,
+			width: 180,
 			title: 'Trung tâm',
 			dataIndex: 'Branch',
 			render: (branch) => (
@@ -652,7 +662,9 @@ const StaffList = () => {
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			// ...FilterColumn('Email', onSearch, handleReset, 'text'),
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Vị trí',

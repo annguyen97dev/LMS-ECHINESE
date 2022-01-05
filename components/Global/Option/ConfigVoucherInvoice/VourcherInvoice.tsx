@@ -150,9 +150,9 @@ const ConfigVoucherInvoice = () => {
 	const columns = [
 		{
 			title: 'Loại phiếu',
-			dataIndex: 'Type',
+			dataIndex: 'TypeName',
 			...FilterColumn('Type', onSearch, onResetSearch, 'select', optionFormList),
-			render: (type: number) => optionFormList.find((o) => o.value === type).title,
+			// render: (type: number) => optionFormList.find((o) => o.value === type).title,
 			className: activeColumnSearch === 'AreaID' ? 'active-column-search' : ''
 		},
 		{

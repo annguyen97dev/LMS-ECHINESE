@@ -431,7 +431,12 @@ const StudentExchange = () => {
 	};
 
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 
 		setTodoApi({
 			...todoApi,
@@ -506,34 +511,39 @@ const StudentExchange = () => {
 	const columns = [
 		{
 			title: 'Tỉnh/TP',
-			dataIndex: 'AreaName'
-
-			// ...FilterColumn("city")
+			dataIndex: 'AreaName',
+			width: 120
 		},
 		{
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
+			width: 200,
 			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'SĐT',
-			dataIndex: 'Mobile'
-			// ...FilterColumn("tel")
+			dataIndex: 'Mobile',
+			width: 120,
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('Mobile', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
-			// ...FilterColumn("email")
+			dataIndex: 'Email',
+			width: 120,
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('Email', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Tư vấn viên',
-			dataIndex: 'CounselorsName'
+			dataIndex: 'CounselorsName',
+			width: 120
 		},
 		{
 			title: 'Nguồn',
-			dataIndex: 'SourceInformationName'
-			//  ...FilterColumn("introducer")
+			dataIndex: 'SourceInformationName',
+			width: 120
 		},
 		{
 			title: 'Trạng thái',

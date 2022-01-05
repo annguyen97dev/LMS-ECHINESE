@@ -29,7 +29,7 @@ let listFieldFilter = {
 	fromDate: null,
 	toDate: null,
 	CustomerConsultationStatusID: null,
-	ProgramID: null
+	LearningNeedID: null
 };
 
 const dataOption = [
@@ -154,7 +154,7 @@ export default function StudentAdvisory() {
 			optionList: null
 		},
 		{
-			name: 'ProgramID',
+			name: 'LearningNeedID',
 			title: 'Nhu cầu học',
 			col: 'col-md-6 col-12',
 			type: 'select',
@@ -196,7 +196,7 @@ export default function StudentAdvisory() {
 					title: item.Name,
 					value: item.ID
 				}));
-				setDataFunc('ProgramID', newData);
+				setDataFunc('LearningNeedID', newData);
 				break;
 
 			case 'SourceInformation':
@@ -435,7 +435,15 @@ export default function StudentAdvisory() {
 	};
 
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		console.log('valueSearch: ', valueSearch);
+		console.log('dataIndex: ', dataIndex);
+
+		let clearKey =
+			dataIndex == 'CustomerName'
+				? { CustomerName: valueSearch }
+				: dataIndex == 'Number'
+				? { Number: valueSearch }
+				: { Email: valueSearch };
 
 		setTodoApi({
 			...todoApi,
@@ -548,16 +556,22 @@ export default function StudentAdvisory() {
 		},
 		{
 			title: 'Số điện thoại',
-			dataIndex: 'Number'
+			dataIndex: 'Number',
+			...FilterColumn('Number', onSearch, handleReset, 'text'),
+			fixed: 'left',
+			render: (a) => <p style={{ width: 130 }}>{a}</p>
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			...FilterColumn('Email', onSearch, handleReset, 'text'),
+			fixed: 'left',
+			render: (a) => <p style={{ width: 200 }}>{a}</p>
 		},
 		{
 			width: 180,
 			title: 'Nhu cầu học',
-			dataIndex: 'ProgramName'
+			dataIndex: 'LearningNeedName'
 		},
 		{
 			width: 150,
@@ -598,7 +612,8 @@ export default function StudentAdvisory() {
 		{
 			width: 150,
 			title: 'Tư vấn viên',
-			dataIndex: 'CounselorsName'
+			dataIndex: 'CounselorsName',
+			render: (CounselorsName) => <p style={{ width: 200 }}>{CounselorsName}</p>
 		},
 		{
 			title: 'Ngày đăng ký',

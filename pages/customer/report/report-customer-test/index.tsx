@@ -128,7 +128,12 @@ export default function ReportTest() {
 
 	const onSearch = (valueSearch, dataIndex) => {
 		console.log(dataTable);
-		let clearKey = compareField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 
 		setTodoApi({
 			...todoApi,
@@ -200,8 +205,18 @@ export default function ReportTest() {
 			className: activeColumnSearch === 'UserInformationID' ? 'active-column-search' : '',
 			render: (a) => <p className="font-weight-primary">{a}</p>
 		},
-		{ title: 'SĐT', dataIndex: 'Mobile' },
-		{ title: 'Email', dataIndex: 'Email' },
+		{
+			title: 'SĐT',
+			dataIndex: 'Mobile',
+			...FilterColumn('Mobile', onSearch, handleReset, 'text'),
+			render: (a) => <p className="font-weight-primary">{a}</p>
+		},
+		{
+			title: 'Email',
+			dataIndex: 'Email',
+			...FilterColumn('Mobile', onSearch, handleReset, 'text'),
+			render: (a) => <p className="font-weight-primary">{a}</p>
+		},
 		// {
 		//   title: "Nguồn",
 		//   dataIndex: "SourceInformationName"},
