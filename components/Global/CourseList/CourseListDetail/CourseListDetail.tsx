@@ -1,12 +1,13 @@
 import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users } from 'react-feather';
+import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users, Edit3 } from 'react-feather';
 import { courseApi, groupNewsFeedApi } from '~/apiBase';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
 import { useWrap } from '~/context/wrap';
+import LessionPage from '~/pages/course/lessons';
 import CourseExamAdmin from '../../CourseExam/CourseExamAdmin';
 import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
 import AddGroupFormFromCourseDetail from '../../NewsFeed/NewsFeedGroupComponents/AddGroupFormFromCourseDetail';
@@ -146,11 +147,22 @@ const CourseListDetail = () => {
 				>
 					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
 				</TabPane>
+				<TabPane
+					tab={
+						<>
+							<i className="far fa-calendar-alt" style={{ fontSize: 22, marginRight: 7 }}></i>
+							<span title="Giáo trình">Các buổi học</span>
+						</>
+					}
+					key="22"
+				>
+					{<LessionPage courseID={parseIntID} />}
+				</TabPane>
 				{(isAdmin || userInformation?.RoleID == 2 || (userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3)) && (
 					<TabPane
 						tab={
 							<>
-								<Edit />
+								<Edit3 />
 								<span title="Chỉnh sửa">
 									{userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3 ? 'Đăng ký buổi học' : 'Chỉnh sửa'}
 								</span>

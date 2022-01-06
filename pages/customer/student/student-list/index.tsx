@@ -8,6 +8,7 @@ import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
 import CourseOfStudentDetail from '~/components/Global/Customer/Student/CourseOfStudentDetail';
 import ResetPassStudent from '~/components/Global/Customer/Student/ResetPassStudent';
+import StudentAdvisoryMail from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryMail';
 
 import StudentFormModal from '~/components/Global/Customer/Student/StudentFormModal';
 
@@ -514,7 +515,6 @@ const StudentData = () => {
 		{
 			title: 'Email',
 			dataIndex: 'Email',
-			fixed: 'left',
 			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
 			...FilterColumn('Email', onSearch, handleReset, 'text')
 		},
@@ -543,9 +543,9 @@ const StudentData = () => {
 		},
 		{
 			title: '',
-			width: 150,
+			width: 160,
 			render: (record, _, index) => (
-				<div onClick={(e) => e.stopPropagation()}>
+				<div onClick={(e) => e.stopPropagation()} style={{ flexDirection: 'row', display: 'flex' }}>
 					<StudentFormModal
 						index={index}
 						dataRow={record}
@@ -574,6 +574,13 @@ const StudentData = () => {
 							</button>
 						</Tooltip>
 					</Link>
+					<StudentAdvisoryMail
+						loadingOutside={isLoading}
+						dataSource={dataSource}
+						onFetchData={() => setTodoApi({ ...todoApi })}
+						dataRow={_}
+						listCustomer={dataSource}
+					/>
 				</div>
 			)
 		}

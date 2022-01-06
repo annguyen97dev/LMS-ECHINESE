@@ -7,10 +7,6 @@ import { useWrap } from '~/context/wrap';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
 import RatingStar from '~/components/RatingStar';
-import ModalCreateVideoCourse from '~/lib/video-course/modal-create-video-course';
-import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
-import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
-import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 import { VideoCourseStoreApi } from '~/apiBase/video-course-store';
 
 // CARD ITEM ON VIDEO COURSE
@@ -18,7 +14,6 @@ const RenderItemCard = (props) => {
 	const {
 		item,
 		addToCard,
-		// _onSubmitEdit,
 		dataCategory,
 		categoryLevel,
 		dataCurriculum,
@@ -37,7 +32,6 @@ const RenderItemCard = (props) => {
 	const [showModalEdit, setShowModalEdit] = useState(false);
 	const [activing, setActiving] = useState(false);
 	const [code, setCode] = useState('');
-	const [rerender, setRender] = useState('');
 
 	const params = {
 		Category: item.CategoryName,

@@ -49,7 +49,7 @@ const optionGender = [
 ];
 
 const StudentForm = (props) => {
-	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess } = props;
+	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess, width } = props;
 	const router = useRouter();
 	const url = router.pathname;
 	const { customerID: customerID } = router.query;
@@ -163,28 +163,6 @@ const StudentForm = (props) => {
 		});
 		setListData({ ...listData });
 	};
-
-	// ------ GET LIST BRANCH ------
-	// const getListBranch = async (areaID) => {
-	// 	setLoadingBranch(true);
-	// 	try {
-	// 		let res = await branchApi.getAll({ pageSize: 9999, pageIndex: 1, Enable: true, areaID: areaID });
-	// 		if (res.status == 200) {
-	// 			let newData = res.data.data.map((item) => ({
-	// 				title: item.BranchName,
-	// 				value: item.ID
-	// 			}));
-	// 			setListBranch(newData);
-	// 		}
-	// 		if (res.status == 204) {
-	// 			setListBranch([]);
-	// 		}
-	// 	} catch (error) {
-	// 		console.log('Error Branch: ', error.message);
-	// 	} finally {
-	// 		setLoadingBranch(false);
-	// 	}
-	// };
 
 	//  ----- GET DATA DISTRICT -------
 	const getDataWithID = async (ID, name) => {
@@ -437,13 +415,13 @@ const StudentForm = (props) => {
 
 		// Nếu có param customer id
 		console.log('customerID', customerID);
-        if (cloneRowData.CustomerName){
-            form.setValue('FullNameUnicode', cloneRowData.CustomerName);
-        }
-        if (cloneRowData.Number){
-            form.setValue('Mobile', cloneRowData.Number);
-        }
-        
+		if (cloneRowData.CustomerName) {
+			form.setValue('FullNameUnicode', cloneRowData.CustomerName);
+		}
+		if (cloneRowData.Number) {
+			form.setValue('Mobile', cloneRowData.Number);
+		}
+
 		setValueEmail(cloneRowData.Email);
 	};
 
@@ -467,12 +445,14 @@ const StudentForm = (props) => {
 		}
 	}, []);
 
+	// justify-content-center
+
 	return (
 		<>
-			<div className="col-12 d-flex justify-content-center">
+			<div className="col-12 d-flex justify-content-center" style={{ width: width !== undefined ? width : '100%' }}>
 				<Card
 					title="Phiếu thông tin cá nhân"
-					className="w-70 w-100-mobile"
+					className="w-100 w-100-mobile"
 					extra={
 						<button className="btn btn-warning" onClick={handleReset}>
 							Reset
@@ -513,6 +493,7 @@ const StudentForm = (props) => {
 									<div className="col-12">
 										<Divider orientation="center">Thông tin cơ bản</Divider>
 									</div>
+
 									<div className="col-md-6 col-12">
 										<div className="search-box">
 											<InputTextField

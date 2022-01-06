@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Spin, Upload, Button, Select, Tooltip, Image } from 'antd';
 import { useForm } from 'react-hook-form';
-import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { useWrap } from '~/context/wrap';
 import { newsFeedApi } from '~/apiBase';
 import EditorSimple from '~/components/Elements/EditorSimple';
 import { parseToMoney } from '~/utils/functions';
 import 'antd/dist/antd.css';
-import { VideoCourseStoreApi } from '~/apiBase/video-course-store';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
-import { resolveSrv } from 'dns/promises';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
-import { videoTagApi } from '~/apiBase/video-tag';
-import Curriculum from './../../../components/Global/Option/ProgramDetail/Curriculum';
 
 const { Option } = Select;
 
@@ -679,9 +675,14 @@ const ModalUpdateInfo = React.memo((props: any) => {
 																		<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
 																	</button>
 																</Tooltip>
+																{tagArray !== '' && (
+																	<div style={{ color: '#f44d4f', fontSize: 12, marginLeft: 5 }}>*</div>
+																)}
 															</div>
 														}
-														rules={[{ required: true, message: 'Bạn không được để trống' }]}
+														rules={[
+															{ required: tagArray == '' ? true : false, message: 'Bạn không được để trống' }
+														]}
 													>
 														<Select
 															mode="tags"
