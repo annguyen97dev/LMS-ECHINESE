@@ -56,7 +56,7 @@ const StudentForm = (props) => {
 
 	const [isStudentDetail, setIsStudentDetail] = useState(url.includes('student-list') || url.includes('student-detail'));
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -271,9 +271,12 @@ const StudentForm = (props) => {
 		AppointmentDate: null,
 		ExamAppointmentTime: null,
 		ExamAppointmentNote: null,
+		StatusID: null,
+		StatusName: null,
 		ExamTopicID: null,
 		TeacherID: null,
-		CustomerConsultationID: null
+		CustomerConsultationID: null,
+		Username: null
 	};
 
 	(function returnSchemaFunc() {
@@ -325,6 +328,7 @@ const StudentForm = (props) => {
 
 	// ----------- SUBMI FORM ------------
 	const onSubmit = async (data: any) => {
+		console.log('datasa submit', data);
 		if (data.Branch) {
 			data.Branch = data.Branch.toString();
 		}
@@ -355,6 +359,10 @@ const StudentForm = (props) => {
 				!dataRow && !isSearch && (form.reset(defaultValuesInit), setImageUrl('')));
 		} catch (error) {
 			showNoti('danger', error.message);
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false
+			});
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
@@ -437,13 +445,16 @@ const StudentForm = (props) => {
 
 		// Nếu có param customer id
 		console.log('customerID', customerID);
-        if (cloneRowData.CustomerName){
-            form.setValue('FullNameUnicode', cloneRowData.CustomerName);
-        }
-        if (cloneRowData.Number){
-            form.setValue('Mobile', cloneRowData.Number);
-        }
-        
+		if (cloneRowData.CustomerName) {
+			form.setValue('FullNameUnicode', cloneRowData.CustomerName);
+		}
+		if (cloneRowData.Number) {
+			form.setValue('Mobile', cloneRowData.Number);
+		}
+		if (cloneRowData.StatusID) {
+			form.setValue('StatusID', cloneRowData.StatusID);
+		}
+
 		setValueEmail(cloneRowData.Email);
 	};
 
@@ -513,6 +524,11 @@ const StudentForm = (props) => {
 									<div className="col-12">
 										<Divider orientation="center">Thông tin cơ bản</Divider>
 									</div>
+									{dataRow && (
+										<div className="col-12">
+											<InputTextField form={form} name="Username" label="Tên đăng nhập" disabled={true} />
+										</div>
+									)}
 									<div className="col-md-6 col-12">
 										<div className="search-box">
 											<InputTextField
@@ -595,6 +611,19 @@ const StudentForm = (props) => {
 											label="Công việc"
 											optionList={listData.Job}
 											placeholder="Chọn công việc"
+										/>
+									</div>
+									<div className="col-12">
+										<SelectField
+											form={form}
+											optionList={[
+												{ title: 'Hoạt động', value: 0 },
+												{ title: 'Khóa', value: 1 }
+											]}
+											disabled={userInformation && userInformation.RoleID == 1 ? false : true}
+											name="StatusID"
+											label="Trạng thái"
+											placeholder="Chọn trạng thái"
 										/>
 									</div>
 									{/** ==== Địa chỉ  ====*/}
@@ -754,6 +783,7 @@ const StudentForm = (props) => {
 											isRequired={true}
 										/>
 									</div>
+
 									<div className="col-12">
 										<InputTextField
 											form={form}

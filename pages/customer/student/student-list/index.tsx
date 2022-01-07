@@ -514,7 +514,6 @@ const StudentData = () => {
 		{
 			title: 'Email',
 			dataIndex: 'Email',
-			fixed: 'left',
 			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
 			...FilterColumn('Email', onSearch, handleReset, 'text')
 		},

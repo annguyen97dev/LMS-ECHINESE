@@ -11,7 +11,8 @@ import {
 	resetPasswordApi,
 	sourceInfomationApi,
 	staffApi,
-	staffSalaryApi
+	staffSalaryApi,
+	userInformationApi
 } from '~/apiBase';
 
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
@@ -33,30 +34,6 @@ interface dataRoles {
 	title: string;
 	value: number;
 }
-
-let dataRoles = [];
-
-const Roles = [
-	{
-		id: 1,
-		RoleName: 'Admin'
-	},
-	{
-		id: 5,
-		RoleName: 'Quản lí'
-	},
-	{
-		id: 6,
-		RoleName: 'Tư vấn viên'
-	}
-];
-
-(function getListRoles() {
-	dataRoles = Roles.map((item) => ({
-		title: item.RoleName,
-		value: item.id
-	}));
-})();
 
 let listFieldSearch = {
 	pageIndex: 1,
@@ -157,6 +134,11 @@ const listApi = [
 		name: 'SourceInformation'
 	},
 	{
+		api: userInformationApi,
+		text: 'Nguồn khách hàng',
+		name: 'Role'
+	},
+	{
 		api: staffApi,
 		text: 'Nguồn khách hàng',
 		name: 'Counselors'
@@ -164,11 +146,32 @@ const listApi = [
 ];
 
 const StaffList = () => {
+	// const [dataRoles, setDataRoles] = useState([]);
+	// const getListRole = async () => {
+	// 	let tempRole = [];
+	// 	try {
+	// 		let res = await userInformationApi.getRole(1);
+	// 		if (res.status === 200) {
+	// 			tempRole = res.data.data.map((item) => ({
+	// 				title: item.name,
+	// 				value: item.ID
+	// 			}));
+	// 			setDataRoles(tempRole);
+	// 		}
+	// 	} catch (error) {
+	// 	} finally {
+	// 	}
+	// };
+
+	// useEffect(() => {
+	// 	getListRole();
+	// }, []);
+
 	const [listDataForm, setListDataForm] = useState<listDataForm>({
 		Area: [],
 		DistrictID: [],
 		WardID: [],
-		Role: dataRoles,
+		Role: [],
 		Branch: [],
 		Purposes: [],
 		SourceInformation: [],
@@ -230,7 +233,7 @@ const StaffList = () => {
 			title: 'Chức vụ',
 			col: 'col-md-6 col-12',
 			type: 'select',
-			optionList: dataRoles,
+			optionList: null,
 			value: null
 		},
 		{
@@ -322,6 +325,12 @@ const StaffList = () => {
 					value: item.UserInformationID
 				}));
 				break;
+			case 'Role':
+				newData = data.map((item) => ({
+					title: item.name,
+					value: item.ID
+				}));
+				break;
 			default:
 				break;
 		}
@@ -354,6 +363,8 @@ const StaffList = () => {
 							StatusID: 0,
 							Enable: true
 						});
+					} else if (item.name == 'Role') {
+						res = await item.api.getAll(1);
 					} else {
 						res = await item.api.getAll({
 							pageIndex: 1,
@@ -696,7 +707,6 @@ const StaffList = () => {
 		{
 			title: '',
 			dataIndex: '',
-			align: 'center',
 			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 180,
 			render: (text, data, index) => (
 				<>

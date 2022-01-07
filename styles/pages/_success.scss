@@ -1,7 +1,7 @@
 .success__checkout {
 	height: 100vh;
 	width: 100%;
-	padding: 200px;
+	padding: 150px;
 	background-color: $primary-color;
 
 	&-content {
@@ -24,5 +24,19 @@
 			margin-bottom: 50px;
 			text-transform: capitalize;
 		}
+	}
+}
+@include max-media(1024px) {
+	.success__checkout {
+		height: 100vh;
+		width: 100%;
+		padding: 80px;
+	}
+}
+@include max-media(500px) {
+	.success__checkout {
+		height: 100vh;
+		width: 100%;
+		padding: 10px;
 	}
 }

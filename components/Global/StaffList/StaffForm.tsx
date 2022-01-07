@@ -57,6 +57,7 @@ const StaffForm = (props) => {
 		setIsModalVisible(true);
 		rowID && getIndex(index);
 	};
+	const { userInformation } = useWrap();
 
 	const [loadingSelect, setLoadingSelect] = useState({
 		status: false,
@@ -251,7 +252,8 @@ const StaffForm = (props) => {
 		DegreeOfStaff: null, //file bằng cấp
 		BankAccountNumber: null,
 		BankAccountHolderName: null,
-		BankBranch: null
+		BankBranch: null,
+		UserName: null
 	};
 
 	(function returnSchemaFunc() {
@@ -461,6 +463,11 @@ const StaffForm = (props) => {
 								<div className="col-12">
 									<Divider orientation="center">Thông tin cơ bản</Divider>
 								</div>
+								{rowID && (
+									<div className="col-12">
+										<InputTextField form={form} name="UserName" label="Tên đăng nhập" disabled={true} />
+									</div>
+								)}
 								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="Email" label="Email" isRequired={true} />
 								</div>
@@ -504,7 +511,7 @@ const StaffForm = (props) => {
 								</div>
 								<div className="col-12">
 									<SelectField
-										disabled={!rowID && true}
+										disabled={!rowID ? true : userInformation.RoleID === 1 ? false : true}
 										form={form}
 										name="StatusID"
 										label="Trạng thái hoạt động"
