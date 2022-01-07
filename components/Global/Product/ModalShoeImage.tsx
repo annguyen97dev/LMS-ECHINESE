@@ -14,11 +14,13 @@ const ModalShowImage = (props) => {
 
 	const handleDeleteImage = (ID) => {
 		setInitImageArray((preState) => {
-			let tempObj = (preState.filter((item) => item.ID === ID)['Enable'] = false);
-			console.log(tempObj);
 			return preState.filter((item) => item.ID !== ID);
 		});
 	};
+
+	const handleChangeImage = (ID) => {
+
+	}
 
 	const handleSubmitImage = async () => {
 		setIsLoading(true);
@@ -66,7 +68,7 @@ const ModalShowImage = (props) => {
 									</div>
 									<div className="product__image-overlay ">
 										<div className="d-flex justify-content-center align-items-center h-100">
-											<Upload {...props}>
+											<Upload >
 												<button className="btn btn-icon edit mr-2">{<UploadOutlined />}</button>
 											</Upload>
 											<button className="btn btn-icon ml-2" onClick={() => handleDeleteImage(item.ID)}>
