@@ -43,12 +43,16 @@ const VideoCourseDetail = (props) => {
 	const [buyNowLoading, setByNowLoading] = useState(false);
 
 	useEffect(() => {
-		getCourseDetails(slug);
 		getTitlePage('Khóa học video');
-	}, []);
+		if (userInformation !== null) {
+			getCourseDetails(slug);
+		}
+	}, [userInformation]);
 
 	// CALL API DETAILS
 	const getCourseDetails = async (param) => {
+		console.log('===========================================');
+		console.log('GET DATA DETAILS');
 		try {
 			const res = await VideoCourseDetailApi.getDetails(param);
 			res.status == 200 && (setDetails(res.data.data), getCourseContent(res.data.data.CurriculumID));
@@ -76,6 +80,7 @@ const VideoCourseDetail = (props) => {
 				pageSize: 10
 			};
 			getCourseFeedback(temp);
+			getCoursePreview(slug);
 		}
 	};
 
@@ -88,8 +93,6 @@ const VideoCourseDetail = (props) => {
 			res.status == 200 && setFeedBack(res.data.data);
 		} catch (error) {
 			console.log(error);
-		} finally {
-			getCoursePreview(slug);
 		}
 	};
 
@@ -129,17 +132,19 @@ const VideoCourseDetail = (props) => {
 		getCourseFeedback(temp);
 	};
 
-	useEffect(() => {
-		onChangeIndex();
-	}, [feedbackIndex]);
+	// useEffect(() => {
+	// 	onChangeIndex();
+	// }, [feedbackIndex]);
 
 	// HANDLE SEARCH
-	const onChangeIndex = () => {
+	const onChangeIndex = (index) => {
+		console.log('onChangeIndex');
+
 		let temp = {
 			videocourseId: slug,
 			rating: 0,
 			search: '',
-			pageIndex: feedbackIndex,
+			pageIndex: index,
 			pageSize: 10
 		};
 		getCourseFeedback(temp);
@@ -235,7 +240,7 @@ const VideoCourseDetail = (props) => {
 									</h6>
 								)}
 
-								{userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
+								{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
 									<>
 										{activing ? (
 											<>
@@ -338,7 +343,7 @@ const VideoCourseDetail = (props) => {
 									</h6>
 								)}
 
-								{userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
+								{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
 									<>
 										{activing ? (
 											<>
@@ -476,7 +481,7 @@ const VideoCourseDetail = (props) => {
 										feedBack={feedBack}
 										onSearchFeedback={onSearchFeedback}
 										onFilterFeedback={onFilterFeedback}
-										getPagination={(e) => setIndex(e)}
+										getPagination={(e) => onChangeIndex(e)}
 										pageIndex={feedbackIndex}
 									/>
 								</div>

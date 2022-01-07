@@ -333,8 +333,6 @@ const StudentExchange = () => {
 		setCurrentPage(1);
 	};
 
-	console.log('LIST DATA FORM: ', listDataForm);
-
 	// ----------------- ON SUBMIT --------------------
 	const _onSubmit = async (dataSubmit: any, rowData: IStudentChange) => {
 		console.log('Data submit: ', dataSubmit);
@@ -413,23 +411,6 @@ const StudentExchange = () => {
 	};
 
 	// ------------ ON SEARCH -----------------------
-
-	const checkField = (valueSearch, dataIndex) => {
-		let newList = { ...listFieldSearch };
-		Object.keys(newList).forEach(function (key) {
-			console.log('key: ', key);
-			if (key != dataIndex) {
-				if (key != 'pageIndex') {
-					newList[key] = null;
-				}
-			} else {
-				newList[key] = valueSearch;
-			}
-		});
-
-		return newList;
-	};
-
 	const onSearch = (valueSearch, dataIndex) => {
 		let clearKey =
 			dataIndex == 'FullNameUnicode'
@@ -482,16 +463,13 @@ const StudentExchange = () => {
 	}, []);
 
 	// EXPAND ROW
-
 	const expandedRowRender = (data, index) => {
 		return (
 			<>
-				{/* <Card title="Thông tin cá nhân">
-          <InfoCusCard />
-        </Card> */}
 				<StudentForm
 					index={index}
 					dataRow={data}
+					width={1200}
 					listDataForm={listDataForm}
 					_handleSubmit={(dataSubmit, index) => {
 						let newDataSource = [...dataSource];

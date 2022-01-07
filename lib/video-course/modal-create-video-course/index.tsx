@@ -4,13 +4,10 @@ import { useForm } from 'react-hook-form';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
 import { useWrap } from '~/context/wrap';
-
 import EditorSimple from '~/components/Elements/EditorSimple';
-
-import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { newsFeedApi } from '~/apiBase';
 import { parseToMoney } from '~/utils/functions';
-import { videoTagApi } from '~/apiBase/video-tag';
 
 const { Option } = Select;
 
@@ -523,41 +520,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 
 										{/* end preview image */}
 
-										<div className="col-12">
-											{tags.length > 0 && (
-												<Form.Item
-													name="Description"
-													label={
-														<div className="row m-0">
-															Từ khóa tìm kiếm{' '}
-															<Tooltip title="Thêm từ khóa tìm kiếm">
-																<button
-																	onClick={() => (setModalTags(true), setIsModalVisible(false))}
-																	className="btn btn-primary btn-vc-create ml-1"
-																>
-																	<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
-																</button>
-															</Tooltip>
-														</div>
-													}
-													rules={[{ required: true, message: 'Bạn không được để trống' }]}
-												>
-													<Select
-														mode="tags"
-														className="style-input"
-														style={{ width: '100%' }}
-														placeholder="Từ khóa tìm kiếm"
-														onChange={(e) => handleChange(e)}
-													>
-														{tags.map((item, index) => (
-															<Option key={index} value={item.ID}>
-																{item.Name}
-															</Option>
-														))}
-													</Select>
-												</Form.Item>
-											)}
-										</div>
+										<div className="col-12"></div>
 									</div>
 
 									{/* end preview image */}

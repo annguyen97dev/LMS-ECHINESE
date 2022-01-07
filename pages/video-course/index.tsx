@@ -71,11 +71,15 @@ const VideoCourseStore = () => {
 
 	//GET DATA
 	const getAllArea = async () => {
+		console.log('===========================================');
+		console.log('GET DATA VIDEO COURSE');
 		// ADMIN & HOC VIEN
 		setIsLoading({ type: 'GET_ALL', status: true });
-		getCategory();
+		if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
+			getCategory();
+		}
 		try {
-			if (userInformation.RoleID == 1) {
+			if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
 				// ADMIN
 				const res = await VideoCourseStoreApi.getAll(todoApi);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
@@ -223,7 +227,9 @@ const VideoCourseStore = () => {
 	};
 
 	useEffect(() => {
-		getAllArea();
+		if (todoApi !== listTodoApi) {
+			getAllArea();
+		}
 	}, [todoApi]);
 
 	// HANDLE SEARCH
@@ -345,7 +351,6 @@ const VideoCourseStore = () => {
 							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
 							renderItem={(item) => (
 								<RenderItemCard
-									// _onSubmitEdit={(data: any) => updateCourse(data)}
 									loading={addToCardLoading}
 									buyNowLoading={buyNowLoading}
 									activeLoading={activeLoading}

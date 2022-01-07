@@ -244,7 +244,9 @@ const VideoCourseList = () => {
 	];
 
 	useEffect(() => {
-		getAllArea();
+		if (todoApi !== listTodoApi) {
+			getAllArea();
+		}
 	}, [todoApi]);
 
 	// HANDLE SEARCH
