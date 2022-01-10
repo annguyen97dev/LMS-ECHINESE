@@ -88,7 +88,15 @@ const ExamAppointmentPoint = (props) => {
 		}
 	];
 
-	return <NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />;
+	return (
+		<NestedTable
+			loading={isLoading}
+			addClass="basic-header"
+			dataSource={detail[0]?.isDone ? detail : {}}
+			columns={columns}
+			haveBorder={true}
+		/>
+	);
 };
 
 export default ExamAppointmentPoint;

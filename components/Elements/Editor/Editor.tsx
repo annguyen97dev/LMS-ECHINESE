@@ -15,6 +15,7 @@ import IdiomsForm from '~/components/Global/Option/IdiomsForm';
 import { BorderOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 // import "bootstrap/dist/css/bootstrap.css";
 import { Modal, Button, Input } from 'antd';
+import { Content } from 'antd/lib/layout/layout';
 
 // let keys = "";
 let arrKey = [];
@@ -333,6 +334,11 @@ const EditorSummernote = (props) => {
 
 	// Thao tác click add input vào đoạn văn
 	const handleAddSpace = () => {
+		console.log('handleAddSpace');
+		console.log('valueEditor: ', valueEditor);
+
+		// onChange(valueEditor + ' ');
+
 		// On add space
 		const onAddSpace = () => {
 			// Set id for input
@@ -501,6 +507,7 @@ const EditorSummernote = (props) => {
 	}
 
 	console.log('Key editor outside: ', keyEditor);
+
 	// ========================== HANDLE ADD INPUT =======================================
 	useEffect(() => {
 		if (isAdd) {

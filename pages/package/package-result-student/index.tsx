@@ -487,7 +487,8 @@ const PackageResultStudent = () => {
 							query: {
 								slug: `${data.ID}`,
 								examID: data.ExamTopicID,
-								packageDetailID: data.SetPackageDetailID
+								packageDetailID: data.SetPackageDetailID,
+								score: true
 							}
 						}}
 					>
