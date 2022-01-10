@@ -76,9 +76,8 @@ const CreateCourseOnline = () => {
 		curriculumList: [],
 		userInformationList: []
 	});
-	const stoneStudyTimeList = useRef(optionListForForm.studyTimeList);
 	const [dataToFetchCurriculum, setDataToFetchCurriculum] = useState<{
-		StudyTimeID: number[];
+		StudyTimeID: number;
 		ProgramID: number;
 	}>({
 		StudyTimeID: null,
@@ -102,7 +101,7 @@ const CreateCourseOnline = () => {
 	// SAVE
 	const [isSave, setIsSave] = useState(false);
 	const [scheduleShow, setScheduleShow] = useState<ICOCreateScheduleShowList>({});
-	const stoneDataToSave = useRef({
+	const stoneDataToSave = useRef<ICOStoneDataToSave>({
 		CourseName: '',
 		AcademicUID: 0,
 		BranchID: 0,
@@ -111,10 +110,9 @@ const CreateCourseOnline = () => {
 		TeacherID: 0,
 		StartDay: '',
 		GradeID: 0,
-		DaySelected: '',
-		StudyTimeID: '',
 		SalaryOfLesson: 0,
-		Price: 0
+		Price: 0,
+		TimeCourse: []
 	});
 	const [saveCourseInfo, setSaveCourseInfo] = useState<ICOSaveCourseInfo>({
 		CourseName: '',
@@ -163,7 +161,6 @@ const CreateCourseOnline = () => {
 			const newBranchList = fmSelectArr(branch.data.data, 'BranchName', 'ID');
 			// STUDY TIME
 			const newStudyTimeList = fmSelectArr(studyTime.data.data, 'Name', 'ID', ['Time', 'TimeStart', 'TimeEnd']);
-			stoneStudyTimeList.current = newStudyTimeList;
 			// GRADE
 			const newGradeList = fmSelectArr(grade.data.data, 'GradeName', 'ID');
 			setOptionListForForm({
@@ -293,57 +290,7 @@ const CreateCourseOnline = () => {
 			fetchTeacher();
 		}
 	}, [dataToFetchTeacher]);
-	// CURRICULUM
-	const checkStudyTime = async (value: [number]) => {
-		if (!value?.length) {
-			setOptionListForForm({
-				...optionListForForm,
-				studyTimeList: stoneStudyTimeList.current
-			});
-			return;
-		}
-		const newStudyTimeList = [...optionListForForm.studyTimeList];
-		let rs;
-		const studyTimeSelected = [];
-		for (let i = 0; i < value.length; i++) {
-			const timeObjBase = newStudyTimeList.find((s) => s.value === value[i]);
-			const s1 = +timeObjBase.options.TimeStart.replace(':', '');
-			const e1 = +timeObjBase.options.TimeEnd.replace(':', '');
-			const t1 = +timeObjBase.options.Time;
-			rs = newStudyTimeList.filter((st) => {
-				const s2 = +st.options.TimeStart.replace(':', '');
-				const e2 = +st.options.TimeEnd.replace(':', '');
-				const t2 = +st.options.Time;
-				if (timeObjBase.value === st.value) {
-					studyTimeSelected.push(st);
-					return st;
-				}
-				if (
-					// KIỂM TRA MỖI CA HỌC KHÔNG CÓ THỜI GIAN TRÙNG LÊN NHAU
-					// s = start time
-					// e = end time
-					!(
-						(s1 < s2 && e1 > e2 && s1 < e2) ||
-						(s1 > s2 && e1 > e2 && s1 < e2) ||
-						(s1 < s2 && e1 < e2 && e1 > s2) ||
-						(s1 > s2 && e1 < e2)
-					) &&
-					t1 === t2
-				) {
-					return st;
-				}
-			});
-		}
-		setOptionListForForm({
-			...optionListForForm,
-			studyTimeList: rs
-		});
-		setOptionListForADay({
-			...optionListForADay,
-			optionStudyTimeList: studyTimeSelected
-		});
-	};
-	// GET ENOUGH 2 VALUE TO GET CURRICULUM - NEED PROGRAM ID - STUDY TIME ID
+	// CURRICULUM: GET ENOUGH 2 VALUE TO GET CURRICULUM - NEED PROGRAM ID - STUDY TIME ID
 	const getValueBeforeFetchCurriculum = async (key: string, value: number) => {
 		setDataToFetchCurriculum((prevState) => ({
 			...prevState,
@@ -358,7 +305,7 @@ const CreateCourseOnline = () => {
 
 		try {
 			const res = await curriculumApi.getAll({
-				StudyTimeID: dataToFetchCurriculum.StudyTimeID.join(','),
+				StudyTimeID: dataToFetchCurriculum.StudyTimeID,
 				ProgramID: dataToFetchCurriculum.ProgramID
 			});
 			if (res.status === 200) {
@@ -399,19 +346,16 @@ const CreateCourseOnline = () => {
 				BranchID,
 				CurriculumID,
 				StartDay: StartDate,
-				StudyTimeID,
-				DaySelected,
 				ProgramID,
 				TeacherID,
 				GradeID,
 				CourseName,
-				// UserInformationID,
 				SalaryOfLesson,
-				Price
+				Price,
+				TimeCourse
 			} = object;
 			stoneDataToSave.current = {
 				CourseName,
-				// AcademicUID: UserInformationID,
 				AcademicUID: 0,
 				BranchID,
 				CurriculumID,
@@ -419,24 +363,23 @@ const CreateCourseOnline = () => {
 				TeacherID,
 				GradeID,
 				StartDay: StartDate,
-				DaySelected: DaySelected.join(','),
-				StudyTimeID: StudyTimeID.join(','),
 				SalaryOfLesson: +SalaryOfLesson.replace(/\D/g, ''),
-				Price: +Price.replace(/\D/g, '')
+				Price: +Price.replace(/\D/g, ''),
+				TimeCourse
 			};
 			const lessonParams = {
 				CurriculumnID: CurriculumID,
 				StartDate,
-				StudyTimeID: StudyTimeID.join(','),
 				BranchID,
-				DaySelected: DaySelected.join(','),
+				StudyTimeID: TimeCourse.map((t) => t.StudyTimeID).join(','),
+				DaySelected: TimeCourse.map((t) => t.DaySelected).join(','),
 				TeacherID
 			};
 			const studyDayParams = {
 				BranchID,
-				StudyTimeID: StudyTimeID.join(','),
 				StartDate,
-				DaySelected: DaySelected.join(',')
+				StudyTimeID: TimeCourse.map((t) => t.StudyTimeID).join(','),
+				DaySelected: TimeCourse.map((t) => t.DaySelected).join(',')
 			};
 			const arrRes = await Promise.all([lessonOnlineApi.getAll(lessonParams), studyDayOnlineApi.getAll(studyDayParams)])
 				.then(([lessonList, studyDayList]) => {
@@ -452,9 +395,10 @@ const CreateCourseOnline = () => {
 					if (lessonList.status === 200 && studyDayList.status === 200) {
 						const finalTeacherList = optionListForForm.teacherList.filter((o) => o.value === TeacherID);
 						setIsSave(true);
-						checkStudyTime(null);
 						setOptionListForADay({
-							...optionListForADay,
+							optionStudyTimeList: optionListForForm.studyTimeList.filter((opt) =>
+								TimeCourse.map((t) => t.StudyTimeID).includes(opt.value as number)
+							),
 							optionTeacherList: lessonList.data.schedule.map((s) => ({
 								id: s.ID,
 								list: finalTeacherList
@@ -773,14 +717,18 @@ const CreateCourseOnline = () => {
 
 		const fmScheduleShowToObject = fmArrayToObjectWithSpecialKey(scheduleListSorted, 'date');
 
-		const { BranchID, ProgramID, CurriculumID, DaySelected, StudyTimeID, StartDay, CourseName, TeacherID } = stoneDataToSave.current;
+		const { BranchID, ProgramID, CurriculumID, StartDay, CourseName, TeacherID, TimeCourse } = stoneDataToSave.current;
 
 		const BranchName = getTitle(branchList, BranchID);
 		const ProgramName = getTitle(programList, ProgramID);
 		const TeacherName = getTitle(teacherList, TeacherID);
 		const CurriculumName = getTitle(curriculumList, CurriculumID);
-		const DaySelectedName = getMultiTitle(dayOfWeek, DaySelected);
-		const StudyTimeName = getMultiTitle(studyTimeList, StudyTimeID);
+
+		const daySelectedListString = TimeCourse.map((t) => t.DaySelected).join(',');
+		const DaySelectedName = getMultiTitle(dayOfWeek, daySelectedListString);
+		const studyTimeListString = TimeCourse.map((t) => t.StudyTimeID).join(',');
+		const StudyTimeName = getMultiTitle(studyTimeList, studyTimeListString);
+
 		const CourseNameFinal = CourseName
 			? CourseName
 			: `[${BranchName}][${ProgramName}][${CurriculumName}][${StudyTimeName}] - ${moment(StartDay).format('DD/MM/YYYY')}`;
@@ -796,6 +744,8 @@ const CreateCourseOnline = () => {
 			CurriculumName,
 			DaySelectedName,
 			StudyTimeName,
+			DaySelected: daySelectedListString,
+			StudyTimeID: studyTimeListString,
 			EndDay: moment(endDate).format('YYYY/MM/DD'),
 			Schedule: save
 		});
@@ -843,7 +793,6 @@ const CreateCourseOnline = () => {
 									optionListForForm={optionListForForm}
 									//
 									handleGetCourse={getCourse}
-									handleCheckStudyTime={checkStudyTime}
 									handleFetchDataByBranch={fetchStaffByBranch}
 									handleFetchProgramByGrade={fetchProgramByGrade}
 									handleGetValueBeforeFetchCurriculum={getValueBeforeFetchCurriculum}

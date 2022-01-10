@@ -1,4 +1,4 @@
-import { Divider, Spin } from 'antd';
+import { Spin } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -108,8 +108,9 @@ const CreateCourseCalendar = (props) => {
 				zIndex={isSmDown ? 903 : 900}
 				title={`Chi tiết ngày ${moment(dateString).format('DD/MM/YYYY')}`}
 				visible={isVisible}
-				footer={null}
+				okButtonProps={{ style: { display: 'none' } }}
 				onCancel={closeModal}
+				cancelText="Đóng"
 			>
 				<div>
 					<div className="tt">

@@ -41,7 +41,7 @@ function CreateNewScheduleForm(props) {
 	};
 
 	const schema = yup.object().shape({
-		SubjectID: yup.number().min(1, 'Bạn cần chọn môn học'),
+		SubjectID: yup.number(),
 		StudyDay: yup.number().typeError('Bạn không được bỏ trống').nullable().required('Bạn không được bỏ trống')
 	});
 	const defaultValuesInit = {
@@ -72,11 +72,11 @@ function CreateNewScheduleForm(props) {
 						<SelectField
 							form={form}
 							name="SubjectID"
-							label="Bài học"
+							label="Môn học"
 							optionList={optionSubjectList}
 							isLoading={isLoading.type === 'FETCH_SUBJECT' && isLoading.status}
 						/>
-						<InputTextField form={form} name="StudyDay" label="Số buổi học" />
+						<InputTextField form={form} name="StudyDay" label="Số buổi học" isRequired placeholder="Nhập số buổi học" />
 						<button
 							type="submit"
 							className="btn btn-primary w-100 mt-3"
