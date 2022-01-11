@@ -8,7 +8,7 @@ const CreateFeedback = () => {
 
 	return (
 		<>
-			{userInformation !== null && userInformation.RoleID === 6 && (
+			{userInformation !== null && (userInformation.RoleID === 6 || userInformation.RoleID === 10) && (
 				<>
 					<StudentFeedbackList />
 				</>

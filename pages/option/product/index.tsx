@@ -8,6 +8,7 @@ import { parsePriceStrToNumber } from '~/utils/functions';
 import { productTypeApi } from '~/apiBase/product/product-type';
 import { Switch } from 'antd';
 import ModalShowImage from '~/components/Global/Product/ModalShoeImage';
+import { numberWithCommas } from '~/utils/functions';
 
 const Products = () => {
 	const [dataSource, setDataSource] = useState<IProductType[]>([]);
@@ -42,26 +43,26 @@ const Products = () => {
 		{
 			title: 'Mã loại sản phẩm',
 			dataIndex: 'ProductTypeID',
-			width: 120,
+			width: 150,
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Giá niêm yết',
 			dataIndex: 'ListedPrice',
 			width: 130,
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text) => <p className="font-weight-black">{numberWithCommas(text)}</p>
 		},
 		{
 			title: 'Giá bán',
 			dataIndex: 'Price',
 			width: 130,
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text) => <p className="font-weight-black">{numberWithCommas(text)}</p>
 		},
 		{
 			title: 'Số lượng',
 			dataIndex: 'Quantity',
 			width: 80,
-			render: (text) => <p className="font-weight-black">{text}</p>
+			render: (text) => <p className="font-weight-black">{numberWithCommas(text)}</p>
 		},
 		{
 			title: 'Mô tả',
@@ -73,7 +74,9 @@ const Products = () => {
 			title: 'Xem ảnh',
 			dataIndex: 'ImageOfProducts',
 			width: 100,
-			render: (text, data) => <ModalShowImage ImageList={data.ImageOfProducts} />
+			render: (text, data) => (
+				<ModalShowImage ImageList={data.ImageOfProducts} productID={data.ID} onFetchData={() => setParams({ ...params })} />
+			)
 		},
 		{
 			title: 'Trạng thái',
@@ -98,11 +101,7 @@ const Products = () => {
 							_onSubmit={_onSubmit}
 							isLoading={isLoading}
 							productIDList={productIDList}
-							onFetchData={() => {
-								getPagination(1);
-								setParams({ ...params, pageIndex: 1 });
-								getDataSource();
-							}}
+							onFetchData={() => setParams({ ...params })}
 						/>
 					</>
 				);
@@ -188,7 +187,6 @@ const Products = () => {
 	const _onSubmit = async (value, Mode) => {
 		setIsLoading({ type: 'SUBMIT', status: true });
 
-		console.log(Mode);
 		if (Mode === 'add-type') {
 			try {
 				let tempArr = [];
@@ -211,12 +209,6 @@ const Products = () => {
 				setIsLoading({ type: 'SUBMIT', status: false });
 			}
 		} else {
-			console.log({
-				...value,
-				Price: parsePriceStrToNumber(value.Price),
-				ListedPrice: parsePriceStrToNumber(value.ListedPrice),
-				ImageOfProducts: null
-			});
 			try {
 				let res = await productApi.update({
 					...value,
@@ -239,7 +231,7 @@ const Products = () => {
 	useEffect(() => {
 		getDataSource();
 		getProductID();
-	}, []);
+	}, [params]);
 
 	return (
 		<>
@@ -259,11 +251,7 @@ const Products = () => {
 						data={null}
 						handleUploadFile={handleUploadImage}
 						productIDList={productIDList}
-						onFetchData={() => {
-							getPagination(1);
-							setParams({ ...params, pageIndex: 1 });
-							getDataSource();
-						}}
+						onFetchData={() => setParams({ ...params })}
 					/>
 				}
 			/>

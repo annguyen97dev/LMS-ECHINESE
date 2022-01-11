@@ -1,3 +1,4 @@
+import { ControlOutlined } from '@ant-design/icons';
 import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ const CourseListDetail = () => {
 	const router = useRouter();
 	const [groupID, setGroupID] = useState({ groupID: null, groupInfo: null });
 	const [courseDetail, setCourseDetail] = useState<ICourseDetail>();
+	console.log(courseDetail);
 	const { showNoti, pageSize } = useWrap();
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
@@ -158,23 +160,43 @@ const CourseListDetail = () => {
 				>
 					{<LessionPage courseID={parseIntID} />}
 				</TabPane>
-				{(isAdmin || userInformation?.RoleID == 2 || (userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3)) && (
-					<TabPane
-						tab={
-							<>
-								<Edit3 />
-								<span title="Chỉnh sửa">
-									{userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3 ? 'Đăng ký buổi học' : 'Chỉnh sửa'}
-								</span>
-							</>
-						}
-						key="2"
-					>
-						<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
-							<Spin size="large" />
-						</div>
-					</TabPane>
-				)}
+
+				{courseDetail?.Status !== 2
+					? (isAdmin || userInformation?.RoleID == 2 || (userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3)) && (
+							<TabPane
+								tab={
+									<>
+										<Edit3 />
+										<span title="Chỉnh sửa">
+											{userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3
+												? 'Đăng ký buổi học'
+												: 'Chỉnh sửa'}
+										</span>
+									</>
+								}
+								key="2"
+							>
+								<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+									<Spin size="large" />
+								</div>
+							</TabPane>
+					  )
+					: userInformation &&
+					  userInformation.RoleID === 1 && (
+							<TabPane
+								tab={
+									<>
+										<Edit3 />
+										<span title="Chỉnh sửa">Chỉnh sửa</span>
+									</>
+								}
+								key="2"
+							>
+								<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+									<Spin size="large" />
+								</div>
+							</TabPane>
+					  )}
 
 				{(isAdmin || userInformation?.RoleID == 2) && (
 					<TabPane
