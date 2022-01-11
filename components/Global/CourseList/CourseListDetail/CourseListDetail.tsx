@@ -13,6 +13,7 @@ import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
 import AddGroupFormFromCourseDetail from '../../NewsFeed/NewsFeedGroupComponents/AddGroupFormFromCourseDetail';
 import LessonDetail from '../LessonDetail';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
+import Homework from './Homework/Homework';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
 
@@ -26,6 +27,8 @@ const CourseListDetail = () => {
 	const { showNoti, pageSize } = useWrap();
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
+
+	console.log('courseDetail: ', courseDetail);
 
 	const isStudent = () => {
 		let role = userInformation?.RoleID;
@@ -140,12 +143,27 @@ const CourseListDetail = () => {
 					tab={
 						<>
 							<Edit />
-							<span title="Giáo trình">Bài tâp/Kiểm tra</span>
+							<span title="Giáo trình">Kiểm tra</span>
 						</>
 					}
 					key="11"
 				>
 					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
+				</TabPane>
+				<TabPane
+					tab={
+						<>
+							<Edit />
+							<span title="Giáo trình">Bài tập</span>
+						</>
+					}
+					key="12"
+				>
+					{!isAdmin ? (
+						<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
+					) : (
+						<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
+					)}
 				</TabPane>
 				<TabPane
 					tab={

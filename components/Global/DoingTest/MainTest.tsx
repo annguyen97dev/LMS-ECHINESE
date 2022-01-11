@@ -12,6 +12,7 @@ import DecideModal from '~/components/Elements/DecideModal';
 import { courseExamApi } from '~/apiBase/package/course-exam';
 import TimeUpModal from './TimeUpModal';
 import Link from 'next/link';
+import { homeworkResultApi } from '~/apiBase/course-detail/home-work-result';
 
 const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQuestion'), {
 	loading: () => <p>...</p>,
@@ -305,6 +306,9 @@ const MainTest = (props) => {
 	const remakeData = () => {
 		let cloneData = { ...packageResult };
 		let dataSubmit = null;
+
+		console.log('packageResult: ', packageResult);
+
 		cloneData.SetPackageResultDetailInfoList.forEach((item) => {
 			if (item.Type == 3 || item.Type == 2 || item.Type == 5) {
 				item.SetPackageExerciseStudentInfoList.forEach((e) => {
@@ -422,6 +426,8 @@ const MainTest = (props) => {
 	const returnRouter = (data) => {
 		let obj = {};
 
+		console.log('returnRouter: ', data);
+
 		switch (type) {
 			case 'test':
 				obj = {
@@ -439,7 +445,7 @@ const MainTest = (props) => {
 
 			default:
 				obj = {
-					pathname: '/package/package-result-student/detail/[slug]',
+					pathname: router.query?.isExercise ? 'course/exercise/result/[slug]' : '/package/package-result-student/detail/[slug]',
 					query: { slug: data.ID, examID: data.ExamTopicID, packageDetailID: data.SetPackageDetailID }
 				};
 				break;
@@ -641,6 +647,47 @@ const MainTest = (props) => {
 		audio.current.volume = customValue;
 	};
 
+	console.log('router.query?.isExercise: ', router.query?.isExercise);
+
+	const convertData = (json) => {
+		var stringified = JSON.stringify(json);
+		stringified = stringified.replace('SetPackageResultDetailInfoList', 'HomeworkResultDetailInfoList');
+		while (
+			stringified.indexOf('SetPackageExerciseStudentInfoList') !== -1 ||
+			stringified.indexOf('SetPackageExerciseAnswerStudentList') !== -1
+		) {
+			stringified = stringified.replace('SetPackageExerciseStudentInfoList', 'HomeworkExerciseStudentInfoList');
+			stringified = stringified.replace('SetPackageExerciseAnswerStudentList', 'HomeworkExerciseAnswerStudentList');
+		}
+		var jsonObject = JSON.parse(stringified);
+		return jsonObject;
+	};
+
+	const onSubmitExercise = async () => {
+		setIsModalConfirm(false);
+		setLoadingSubmit(true);
+		let dataSubmit = remakeData();
+
+		let res = null;
+
+		console.log('dataSubmit: ', convertData({ ...dataSubmit, HomeworkID: dataSubmit.SetPackageDetailID }));
+
+		try {
+			res = await homeworkResultApi.add(convertData({ ...dataSubmit, HomeworkID: dataSubmit.SetPackageDetailID }));
+
+			if (res.status === 200) {
+				setIsModalSuccess(true);
+				setTimeout(() => {
+					router.push(returnRouter(res.data.data[0]));
+				}, 1000);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setLoadingSubmit(false);
+		}
+	};
+
 	return (
 		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
 			{/** Modal báo hết giờ làm bài */}
@@ -656,7 +703,9 @@ const MainTest = (props) => {
 			<DecideModal
 				isOpen={isModalConfirm}
 				isCancel={() => setIsModalConfirm(false)}
-				isOk={() => onSubmit_DoingTest()}
+				isOk={() => {
+					router.query?.isExercise == 'true' ? onSubmitExercise() : onSubmit_DoingTest();
+				}}
 				content={returnTextConfirm()}
 			/>
 			{/* Modal hết giờ làm bài **/}
