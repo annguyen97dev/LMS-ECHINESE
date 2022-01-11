@@ -1,33 +1,105 @@
 import { UploadOutlined } from '@ant-design/icons';
-import { Modal, Upload } from 'antd';
+import { Button, Modal, Spin, Upload } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { Eye, Trash } from 'react-feather';
 import { productApi } from '~/apiBase/product/product';
 import { useWrap } from '~/context/wrap';
 
 const ModalShowImage = (props) => {
-	const { ImageList } = props;
+	const { ImageList, productID, onFetchData } = props;
 	const [isLoading, setIsLoading] = useState(false);
 	const [isVisible, setIsVisible] = useState(false);
 	const [initImageArray, setInitImageArray] = useState(ImageList);
+	const [showImageArray, setShowImageArray] = useState(ImageList);
+	const [addImageArray, setAddImageArray] = useState([]);
 	const { showNoti } = useWrap();
 
 	const handleDeleteImage = (ID) => {
 		setInitImageArray((preState) => {
+			let tempArr = [...preState];
+			tempArr.forEach((item) => {
+				if (item.ID === ID) {
+					item.Enable = false;
+				}
+			});
+
+			return tempArr;
+		});
+		setShowImageArray((preState) => {
 			return preState.filter((item) => item.ID !== ID);
 		});
 	};
 
-	const handleChangeImage = (ID) => {
+	const handleChangeImage = async (ID, info) => {
+		if (info.file.status === 'uploading') {
+			setIsLoading(true);
+			return;
+		}
+		if (info.file.status === 'done') {
+			setIsLoading(true);
+			try {
+				let res = await productApi.uploadImage(info.file.originFileObj);
+				if ((res.status = 200)) {
+					let tempArr = [...initImageArray];
+					tempArr.forEach((item) => {
+						if (item.ID == ID) {
+							item.Link = res.data.data;
+						}
+					});
+					setInitImageArray(tempArr);
+					setShowImageArray(tempArr);
+					showNoti('success', 'Đổi ảnh thành công!');
+				}
+				if (res.status == 204) {
+				}
+			} catch (err) {
+				showNoti('danger', err.message);
+			} finally {
+				setIsLoading(false);
+			}
+		}
+	};
 
-	}
+	const handleAddImage = async (info) => {
+		if (info.file.status === 'uploading') {
+			setIsLoading(true);
+			return;
+		}
+		if (info.file.status === 'done') {
+			setIsLoading(true);
+			try {
+				let res = await productApi.uploadImage(info.file.originFileObj);
+				if ((res.status = 200)) {
+					let tempArr = [...initImageArray];
+					tempArr.push({
+						ID: Math.round((Math.random() + 1) * 1000000000000), //Thêm mới thì để mặc định là 0 hoặc bỏ trống
+						Link: res.data.data,
+						isAvatar: false, //- hình nền chính của sản phẩm
+						Enable: true //bỏ trống cũng đc
+					});
+					setAddImageArray(tempArr);
+					setShowImageArray(tempArr);
+					showNoti('success', 'Thêm ảnh thành công!');
+				}
+				if (res.status == 204) {
+				}
+			} catch (err) {
+				showNoti('danger', err.message);
+			} finally {
+				setIsLoading(false);
+			}
+		}
+	};
 
 	const handleSubmitImage = async () => {
+		console.log({ ImageOfProducts: initImageArray });
 		setIsLoading(true);
 		try {
-			let res = await productApi.update(initImageArray);
+			let res = await productApi.update({ ID: productID, ImageOfProducts: initImageArray });
 			if ((res.status = 200)) {
 				showNoti('success', 'Sửa ảnh thành công!');
+				onFetchData();
+				setIsVisible(false);
 			}
 		} catch (err) {
 			showNoti('danger', err.message);
@@ -55,11 +127,12 @@ const ModalShowImage = (props) => {
 				onCancel={() => {
 					setIsVisible(false);
 					setInitImageArray(ImageList);
+					setShowImageArray(ImageList);
 				}}
 				footer={false}
 			>
 				<div className="row">
-					{initImageArray?.map((item, index) => {
+					{showImageArray?.map((item, index) => {
 						return (
 							<div className="col-6 mb-2">
 								<div className="product__image">
@@ -68,7 +141,11 @@ const ModalShowImage = (props) => {
 									</div>
 									<div className="product__image-overlay ">
 										<div className="d-flex justify-content-center align-items-center h-100">
-											<Upload >
+											<Upload
+												showUploadList={false}
+												maxCount={1}
+												onChange={(file) => handleChangeImage(item.ID, file)}
+											>
 												<button className="btn btn-icon edit mr-2">{<UploadOutlined />}</button>
 											</Upload>
 											<button className="btn btn-icon ml-2" onClick={() => handleDeleteImage(item.ID)}>
@@ -79,12 +156,17 @@ const ModalShowImage = (props) => {
 								</div>
 							</div>
 						);
-					})}
+					})}{' '}
+					<div className="col-12">
+						<Upload showUploadList={false} onChange={handleAddImage}>
+							<Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+						</Upload>
+					</div>
 				</div>
 				<div className="row mt-4">
 					<div className="col-12">
-						<button className="btn btn-primary w-100" onClick={handleSubmitImage}>
-							Lưu
+						<button className="btn btn-primary w-100" disabled={isLoading} onClick={handleSubmitImage}>
+							{isLoading ? <Spin /> : 'Lưu'}
 						</button>
 					</div>
 				</div>

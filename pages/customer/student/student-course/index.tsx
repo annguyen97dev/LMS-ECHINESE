@@ -28,94 +28,141 @@ const CourseStudent = () => {
 		setCurrentPage(1);
 		setParams(listParamsDefault);
 	};
-	const columns = [
-		{
-			width: 200,
-			title: 'Học viên',
-			dataIndex: 'FullNameUnicode',
-			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-primary">{text}</p>
-		},
-		{
-			title: 'Trung tâm',
-			dataIndex: 'BranchName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Khóa học',
-			dataIndex: 'CourseName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Cảnh báo',
-			dataIndex: 'Warning',
-			render: (type) => (
-				<Fragment>
-					{type == true && <span className="tag red">CÓ</span>}
-					{type == false && <span className="tag green">KHÔNG</span>}
-				</Fragment>
-			)
-		},
-		{
-			width: 200,
-			title: 'Cam kết ',
-			dataIndex: 'Commitment'
-		},
-		{
-			width: 150,
-			title: 'Hình thức học ',
-			dataIndex: 'isTrial',
-			render: (isTrial) => (
-				<>
-					{isTrial == true && <span className="tag red">HỌC THỬ</span>}
-					{isTrial == false && <span className="tag green">CHÍNH THỨC</span>}
-				</>
-			)
-		},
+	const columns =
+		userInformation && userInformation.RoleID !== 10
+			? [
+					{
+						width: 200,
+						title: 'Học viên',
+						dataIndex: 'FullNameUnicode',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (text) => <p className="font-weight-primary">{text}</p>
+					},
+					{
+						title: 'Trung tâm',
+						dataIndex: 'BranchName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Khóa học',
+						dataIndex: 'CourseName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Cảnh báo',
+						dataIndex: 'Warning',
+						render: (type) => (
+							<Fragment>
+								{type == true && <span className="tag red">CÓ</span>}
+								{type == false && <span className="tag green">KHÔNG</span>}
+							</Fragment>
+						)
+					},
+					{
+						width: 200,
+						title: 'Cam kết ',
+						dataIndex: 'Commitment'
+					},
+					{
+						width: 150,
+						title: 'Hình thức học ',
+						dataIndex: 'isTrial',
+						render: (isTrial) => (
+							<>
+								{isTrial == true && <span className="tag red">HỌC THỬ</span>}
+								{isTrial == false && <span className="tag green">CHÍNH THỨC</span>}
+							</>
+						)
+					},
 
-		{
-			render: (data) => (
-				<Fragment>
-					<Link
-						href={{
-							pathname: '/customer/student/student-course/student-detail/[slug]',
-							query: { slug: data.UserInformationID }
-						}}
-					>
-						<Tooltip title="Xem chi tiết">
-							<button className="btn btn-icon">
-								<Eye />
-							</button>
-						</Tooltip>
-					</Link>
+					{
+						render: (data) => (
+							<Fragment>
+								<Link
+									href={{
+										pathname: '/customer/student/student-course/student-detail/[slug]',
+										query: { slug: data.UserInformationID }
+									}}
+								>
+									<Tooltip title="Xem chi tiết">
+										<button className="btn btn-icon">
+											<Eye />
+										</button>
+									</Tooltip>
+								</Link>
 
-					{!data.isTrial && (
-						<>
-							<ChangeCourseForm
-								infoDetail={data}
-								infoId={data.ID}
-								reloadData={(firstPage) => {
-									getDataCourseStudent(firstPage);
-								}}
-								currentPage={currentPage}
-							/>
+								{!data.isTrial && (
+									<>
+										<ChangeCourseForm
+											infoDetail={data}
+											infoId={data.ID}
+											reloadData={(firstPage) => {
+												getDataCourseStudent(firstPage);
+											}}
+											currentPage={currentPage}
+										/>
 
-							<ReserveCourseForm
-								infoDetail={data}
-								infoId={data.ID}
-								reloadData={(firstPage) => {
-									getDataCourseStudent(firstPage);
-								}}
-								currentPage={currentPage}
-							/>
-							{/* yêu cầu thanh toán thêm */}
-							{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}
-						</>
-					)}
-				</Fragment>
-			)
-		}
-	];
+										<ReserveCourseForm
+											infoDetail={data}
+											infoId={data.ID}
+											reloadData={(firstPage) => {
+												getDataCourseStudent(firstPage);
+											}}
+											currentPage={currentPage}
+										/>
+										{/* yêu cầu thanh toán thêm */}
+										{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}
+									</>
+								)}
+							</Fragment>
+						)
+					}
+			  ]
+			: [
+					{
+						width: 200,
+						title: 'Học viên',
+						dataIndex: 'FullNameUnicode',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (text) => <p className="font-weight-primary">{text}</p>
+					},
+					{
+						title: 'Trung tâm',
+						dataIndex: 'BranchName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Khóa học',
+						dataIndex: 'CourseName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Cảnh báo',
+						dataIndex: 'Warning',
+						render: (type) => (
+							<Fragment>
+								{type == true && <span className="tag red">CÓ</span>}
+								{type == false && <span className="tag green">KHÔNG</span>}
+							</Fragment>
+						)
+					},
+					{
+						width: 200,
+						title: 'Cam kết ',
+						dataIndex: 'Commitment'
+					},
+					{
+						width: 150,
+						title: 'Hình thức học ',
+						dataIndex: 'isTrial',
+						render: (isTrial) => (
+							<>
+								{isTrial == true && <span className="tag red">HỌC THỬ</span>}
+								{isTrial == false && <span className="tag green">CHÍNH THỨC</span>}
+							</>
+						)
+					}
+			  ];
 	const [currentPage, setCurrentPage] = useState(1);
 
 	const listParamsDefault = {

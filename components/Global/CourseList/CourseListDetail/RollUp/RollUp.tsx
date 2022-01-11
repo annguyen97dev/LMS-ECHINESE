@@ -36,13 +36,19 @@ type TypeDataRollUp = {
 	StudentList: IStudentRollUp[];
 };
 function RollUp(props) {
+	let today = new Date();
 	const { courseID } = props;
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
+	const [selectedDate, setSelectedDate] = useState('');
+	const [currentDate, setCurrentDate] = useState(moment(today).format('DD/MM/YYYY'));
 	const [dataRollUp, setDataRollUp] = useState<TypeDataRollUp>({
 		RollUp: [],
 		ScheduleList: [],
 		StudentList: []
 	});
+	console.log('currentDate', currentDate);
+	console.log('selectedDate', selectedDate);
+
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
 		status: false
@@ -84,6 +90,11 @@ function RollUp(props) {
 		});
 	};
 	const onSelectCourseSchedule = (CourseScheduleID: number) => {
+		dataRollUp.ScheduleList.forEach((item) => {
+			if (item.value === CourseScheduleID) {
+				setSelectedDate(item.date);
+			}
+		});
 		setFilters({
 			...filters,
 			CourseScheduleID
@@ -133,6 +144,7 @@ function RollUp(props) {
 					return {
 						value: item.ID,
 						title: `${item.RoomName ? `[${item.RoomName}]` : ''}[${date}] ${startTime} - ${endTime}`,
+						date: date,
 						options: {
 							BranchID: item.BranchID
 						}
@@ -157,7 +169,7 @@ function RollUp(props) {
 				});
 				setDataRollUp({
 					RollUp,
-					ScheduleList: [{ value: 0, title: '---Chọn ca học---' }, ...fmScheduleList],
+					ScheduleList: [{ value: 0, title: '---Chọn ca học---', date: '' }, ...fmScheduleList],
 					StudentList: filters.CourseScheduleID ? fmStudentList : []
 				});
 				setTotalPage(TotalRow);
@@ -194,6 +206,7 @@ function RollUp(props) {
 						value={status}
 						className="style-input"
 						onChange={(vl) => debounceOnChangeValue('StatusID', vl, idx)}
+						disabled={userInformation.RoleID === 2 && currentDate !== selectedDate}
 					>
 						{rollUpStatusOptionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>
@@ -215,6 +228,7 @@ function RollUp(props) {
 						value={status}
 						className="style-input"
 						onChange={(vl) => debounceOnChangeValue('LearningStatusID', vl, idx)}
+						disabled={userInformation.RoleID === 2 && currentDate !== selectedDate}
 					>
 						{leaningStatusOptionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>
@@ -237,6 +251,7 @@ function RollUp(props) {
 						placeholder="Nhập đánh giá"
 						className="style-input"
 						allowClear={true}
+						disabled={userInformation.RoleID === 2 && currentDate !== selectedDate}
 						onChange={(e) => debounceOnChangeValue('Note', e.target.value, idx)}
 					/>
 				);
@@ -250,7 +265,7 @@ function RollUp(props) {
 			render: (warning, item: IStudentRollUp, idx) => {
 				return (
 					<Checkbox
-						disabled={warning}
+						disabled={warning || (userInformation.RoleID === 2 && currentDate !== selectedDate)}
 						checked={warning}
 						onChange={(e) => debounceOnChangeValue('Warning', e.target.checked, idx)}
 					/>
