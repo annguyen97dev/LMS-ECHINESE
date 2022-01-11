@@ -1,37 +1,35 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {testCustomerApi} from '~/apiBase';
+import React, { useEffect, useState } from 'react';
+import { testCustomerApi } from '~/apiBase';
 import ExpandTable from '~/components/ExpandTable';
-import {useWrap} from '~/context/wrap';
+import { useWrap } from '~/context/wrap';
 
 ExamAppointmentTable.propTypes = {
-	studentID: PropTypes.number,
+	studentID: PropTypes.number
 };
 ExamAppointmentTable.defaultProps = {
-	studentID: null,
+	studentID: null
 };
 function ExamAppointmentTable(props) {
-	const {studentID} = props;
+	const { studentID } = props;
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
-		status: false,
+		status: false
 	});
-	const {showNoti} = useWrap();
-	const [examAppointmentList, setExamAppointmentList] = useState<
-		ITestCustomer[]
-	>([]);
+	const { showNoti } = useWrap();
+	const [examAppointmentList, setExamAppointmentList] = useState<ITestCustomer[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
 	// FILTER
 	const [filters, setFilters] = useState({
 		pageSize: 10,
 		pageIndex: 1,
-		UserInformationID: studentID,
+		UserInformationID: studentID
 	});
 	const getPagination = (pageNumber: number) => {
 		setFilters({
 			...filters,
-			pageIndex: pageNumber,
+			pageIndex: pageNumber
 		});
 	};
 
@@ -39,7 +37,7 @@ function ExamAppointmentTable(props) {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: true,
+				status: true
 			});
 			const res = await testCustomerApi.getAll(filters);
 			if (res.status === 200) {
@@ -51,7 +49,7 @@ function ExamAppointmentTable(props) {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -61,30 +59,23 @@ function ExamAppointmentTable(props) {
 	}, [filters]);
 
 	const columns = [
-		{title: 'Trung tâm', dataIndex: 'BranchName'},
+		{ title: 'Trung tâm', dataIndex: 'BranchName' },
 		{
 			title: 'Ngày hẹn',
 			dataIndex: 'AppointmentDate',
-			render: (date) =>
-				date ? (
-					<p className="font-weight-black">
-						{moment(date).format('DD/MM/YYYY')}
-					</p>
-				) : (
-					''
-				),
+			render: (date) => (date ? <p className="font-weight-black">{moment(date).format('DD/MM/YYYY')}</p> : '')
 		},
 		{
 			title: 'Thời gian',
 			dataIndex: 'Time',
-			render: (time) => <p className="font-weight-black">{time}</p>,
+			render: (time) => <p className="font-weight-black">{time}</p>
 		},
-		{title: 'Nhân viên tư vấn', dataIndex: 'CounselorsName'},
+		{ title: 'Nhân viên tư vấn', dataIndex: 'CounselorsName' },
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusName',
-			render: (statusName) => <p className="font-weight-black">{statusName}</p>,
-		},
+			render: (statusName) => <p className="font-weight-black">{statusName}</p>
+		}
 	];
 
 	const expandedRowRender = (item: ITestCustomer) => {
@@ -106,7 +97,7 @@ function ExamAppointmentTable(props) {
 			dataSource={examAppointmentList}
 			columns={columns}
 			Extra={<h5>Hẹn đăng ký khóa học</h5>}
-			expandable={{expandedRowRender}}
+			expandable={{ expandedRowRender }}
 		/>
 	);
 }

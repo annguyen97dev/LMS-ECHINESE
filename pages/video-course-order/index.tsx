@@ -86,7 +86,7 @@ const VideoCourseList = () => {
 
 	const columnsVideoCourse = [
 		{
-			title: 'Mã',
+			title: 'Mã đơn hàng',
 			dataIndex: 'OrderCode',
 			key: 'OrderCode',
 			align: 'center'
@@ -121,7 +121,17 @@ const VideoCourseList = () => {
 			title: 'Ngày mua',
 			dataIndex: 'CreatedOn',
 			key: 'CreatedOn',
-			render: (Action, data, index) => <div>{moment(data.CreatedOn).format('DD/MM/yyyy')}</div>
+			render: (Action, data, index) => (
+				<div>{moment(data.CreatedOn).format('DD/MM/yyyy') + ' ' + moment(data.CreatedOn).format('hh:mm')}</div>
+			)
+		},
+		{
+			title: 'Ngày xác nhận',
+			dataIndex: 'PaymentDate',
+			key: 'PaymentDate',
+			render: (Action, data, index) => (
+				<div>{moment(data.PaymentDate).format('DD/MM/yyyy') + ' ' + moment(data.PaymentDate).format('hh:mm')}</div>
+			)
 		},
 		{
 			title: 'Trạng thái kích hoạt',

@@ -33,4 +33,5 @@ type IStudent = IBaseApi<{
 	ParentsIDOf: number;
 	ParentsNameOf: string;
 	CounselorsName: string;
+	ChineseName: string;
 }>;

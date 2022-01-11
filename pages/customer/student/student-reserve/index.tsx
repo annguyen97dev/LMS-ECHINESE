@@ -19,6 +19,7 @@ const StudentCourseReserve = () => {
 		type: 'GET_ALL',
 		status: false
 	});
+	const { showNoti, pageSize, userInformation } = useWrap();
 
 	const handleReset = () => {
 		setCurrentPage(1);
@@ -53,116 +54,177 @@ const StudentCourseReserve = () => {
 		});
 	};
 
-	const columns = [
-		{
-			title: 'Học viên',
-			width: 150,
-			dataIndex: 'FullNameUnicode',
-			fixed: 'left',
-			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-primary">{text}</p>
-		},
-		{
-			title: 'Trung tâm',
-			width: 150,
-			dataIndex: 'BranchName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Khóa học',
-			width: 450,
-			dataIndex: 'CourseName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Chương trình học',
-			width: 150,
-			dataIndex: 'ProgramName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Số tiền',
-			width: 100,
-			dataIndex: 'ProgramPrice',
-			render: (price) => <span>{Intl.NumberFormat('en-US').format(price)}</span>
-		},
-		{
-			title: 'Ngày bảo lưu',
-			width: 130,
-			dataIndex: 'ReserveDate',
-			render: (DOB) => moment(DOB).format('DD/MM/YYYY')
-		},
-		{
-			title: 'Ngày hết hạn',
-			width: 130,
-			dataIndex: 'ExpirationDate',
-			render: (DOB) => moment(DOB).format('DD/MM/YYYY')
-		},
-		{
-			title: 'Trạng thái',
-			width: 130,
-			dataIndex: 'StatusID',
-			render: (status) => (
-				<>
-					{status == 1 && <span className="tag yellow">Đang bảo lưu</span>}
-					{status == 2 && <span className="tag blue">Đã hoàn tiền</span>}
-					{status == 3 && <span className="tag green">Đã chuyễn vào khóa mới</span>}
-					{status == 4 && <span className="tag red">Hết hạn bảo lưu</span>}
-				</>
-			)
-		},
-		{
-			width: 130,
-			render: (data) => (
-				<Fragment>
-					{data.StatusID == 3 ? (
-						<></>
-					) : (
-						<>
-							{/* chỉ có học sinh bảo lưu mới được chuyển qua khoá mới và hoàn tiền */}
-							{data.StatusID == 1 && (
-								<>
-									<CourseReserveIntoCourse
-										infoDetail={data}
-										infoId={data.ID}
-										reloadData={(firstPage) => {
-											getDataCourseReserve(firstPage);
-										}}
-										currentPage={currentPage}
-									/>
-									<RequestRefundForm
-										isLoading={isLoading}
-										studentObj={data}
-										getInfoCourse={getInfoCourse}
-										paymentMethodOptionList={paymentMethodOptionList}
-										courseStudentID={data.CourseOfStudentID}
-										reloadData={(firstPage) => {
-											getDataCourseReserve(firstPage);
-										}}
-										courseListOfStudent={courseListOfStudent}
-										// StatusID={data.StatusID}
-										onSubmit={onCreateRequestRefund}
-									/>
-								</>
-							)}
-							{/* chỉ có admin mới được update hạn bảo lưu */}
-							{userInformation.RoleID == 1 && (data.StatusID == 1 || data.StatusID == 4) && (
-								<UpdateStudentReserveDate
-									infoDetail={data}
-									onUpdateStudentReserveDate={onUpdateStudentReserveDate}
-									reloadData={(firstPage) => {
-										getDataCourseReserve(firstPage);
-									}}
-								/>
-							)}
-						</>
-					)}
-				</Fragment>
-			)
-		}
-	];
+	const columns =
+		userInformation && userInformation.RoleID !== 10
+			? [
+					{
+						title: 'Học viên',
+						width: 150,
+						dataIndex: 'FullNameUnicode',
+						fixed: 'left',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (text) => <p className="font-weight-primary">{text}</p>
+					},
+					{
+						title: 'Trung tâm',
+						width: 150,
+						dataIndex: 'BranchName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Khóa học',
+						width: 450,
+						dataIndex: 'CourseName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Chương trình học',
+						width: 150,
+						dataIndex: 'ProgramName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Số tiền',
+						width: 100,
+						dataIndex: 'ProgramPrice',
+						render: (price) => <span>{Intl.NumberFormat('en-US').format(price)}</span>
+					},
+					{
+						title: 'Ngày bảo lưu',
+						width: 130,
+						dataIndex: 'ReserveDate',
+						render: (DOB) => moment(DOB).format('DD/MM/YYYY')
+					},
+					{
+						title: 'Ngày hết hạn',
+						width: 130,
+						dataIndex: 'ExpirationDate',
+						render: (DOB) => moment(DOB).format('DD/MM/YYYY')
+					},
+					{
+						title: 'Trạng thái',
+						width: 130,
+						dataIndex: 'StatusID',
+						render: (status) => (
+							<>
+								{status == 1 && <span className="tag yellow">Đang bảo lưu</span>}
+								{status == 2 && <span className="tag blue">Đã hoàn tiền</span>}
+								{status == 3 && <span className="tag green">Đã chuyễn vào khóa mới</span>}
+								{status == 4 && <span className="tag red">Hết hạn bảo lưu</span>}
+							</>
+						)
+					},
+					{
+						width: 130,
+						render: (data) => (
+							<Fragment>
+								{data.StatusID == 3 ? (
+									<></>
+								) : (
+									<>
+										{/* chỉ có học sinh bảo lưu mới được chuyển qua khoá mới và hoàn tiền */}
+										{data.StatusID == 1 && (
+											<>
+												<CourseReserveIntoCourse
+													infoDetail={data}
+													infoId={data.ID}
+													reloadData={(firstPage) => {
+														getDataCourseReserve(firstPage);
+													}}
+													currentPage={currentPage}
+												/>
+												<RequestRefundForm
+													isLoading={isLoading}
+													studentObj={data}
+													getInfoCourse={getInfoCourse}
+													paymentMethodOptionList={paymentMethodOptionList}
+													courseStudentID={data.CourseOfStudentID}
+													reloadData={(firstPage) => {
+														getDataCourseReserve(firstPage);
+													}}
+													courseListOfStudent={courseListOfStudent}
+													// StatusID={data.StatusID}
+													onSubmit={onCreateRequestRefund}
+												/>
+											</>
+										)}
+										{/* chỉ có admin mới được update hạn bảo lưu */}
+										{userInformation.RoleID == 1 && (data.StatusID == 1 || data.StatusID == 4) && (
+											<UpdateStudentReserveDate
+												infoDetail={data}
+												onUpdateStudentReserveDate={onUpdateStudentReserveDate}
+												reloadData={(firstPage) => {
+													getDataCourseReserve(firstPage);
+												}}
+											/>
+										)}
+									</>
+								)}
+							</Fragment>
+						)
+					}
+			  ]
+			: [
+					{
+						title: 'Học viên',
+						width: 150,
+						dataIndex: 'FullNameUnicode',
+						fixed: 'left',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (text) => <p className="font-weight-primary">{text}</p>
+					},
+					{
+						title: 'Trung tâm',
+						width: 150,
+						dataIndex: 'BranchName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Khóa học',
+						width: 450,
+						dataIndex: 'CourseName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Chương trình học',
+						width: 150,
+						dataIndex: 'ProgramName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Số tiền',
+						width: 100,
+						dataIndex: 'ProgramPrice',
+						render: (price) => <span>{Intl.NumberFormat('en-US').format(price)}</span>
+					},
+					{
+						title: 'Ngày bảo lưu',
+						width: 130,
+						dataIndex: 'ReserveDate',
+						render: (DOB) => moment(DOB).format('DD/MM/YYYY')
+					},
+					{
+						title: 'Ngày hết hạn',
+						width: 130,
+						dataIndex: 'ExpirationDate',
+						render: (DOB) => moment(DOB).format('DD/MM/YYYY')
+					},
+					{
+						title: 'Trạng thái',
+						width: 130,
+						dataIndex: 'StatusID',
+						render: (status) => (
+							<>
+								{status == 1 && <span className="tag yellow">Đang bảo lưu</span>}
+								{status == 2 && <span className="tag blue">Đã hoàn tiền</span>}
+								{status == 3 && <span className="tag green">Đã chuyễn vào khóa mới</span>}
+								{status == 4 && <span className="tag red">Hết hạn bảo lưu</span>}
+							</>
+						)
+					}
+			  ];
 	const [currentPage, setCurrentPage] = useState(1);
-	const { showNoti, pageSize, userInformation } = useWrap();
+
 	const listParamsDefault = {
 		pageSize: pageSize,
 		pageIndex: currentPage,

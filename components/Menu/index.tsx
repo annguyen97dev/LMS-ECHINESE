@@ -1,25 +1,11 @@
 import { Menu, Button } from 'antd';
 import React, { useEffect, useState, useReducer, PureComponent, useRef } from 'react';
 import { useRouter } from 'next/router';
-
-import { BarChart, Bar, LineChart, Line } from 'recharts';
-
-import {
-	PaperClipOutlined,
-	AppstoreOutlined,
-	MenuUnfoldOutlined,
-	MenuFoldOutlined,
-	PieChartOutlined,
-	DesktopOutlined,
-	ContainerOutlined,
-	MailOutlined
-} from '@ant-design/icons';
 import ReactHtmlParser from 'react-html-parser';
 import { AdminChildMenu, AdminParentMenu } from '~/lib/data-menu/AdminMenu';
 import { TeacherChildMenu, TeacherParentMenu } from '~/lib/data-menu/TeacherMenu';
 import { StudentChildMenu, StudentParentMenu } from '~/lib/data-menu/StudentMenu';
 import { SellerChildMenu, SellerParentMenu } from '~/lib/data-menu/SellerMenu';
-import { useWrap } from '~/context/wrap';
 import { useSession } from 'next-auth/client';
 import Link from 'next/link';
 import { ParentsChildMenu, ParentsParentMenu } from '~/lib/data-menu/ParentsMenu';
@@ -27,6 +13,7 @@ import { StaffManagerChildMenu, StaffManagerParentMenu } from '~/lib/data-menu/S
 import { AcademicChildMenu, AcademicParentMenu } from '~/lib/data-menu/AcademinMenu';
 import { ProfessionalManagerChildMenu, ProfessionalManagerParentMenu } from '~/lib/data-menu/ProfessionalManagerMenu';
 import { AccountantChildMenu, AccountantParentMenu } from '~/lib/data-menu/AccountantMenu';
+import { StaffChildMenu, StaffParentMenu } from '~/lib/data-menu/StaffMenu';
 
 type childMenu = [];
 
@@ -352,6 +339,10 @@ const MenuDefault = ({
 				case 9:
 					setParentMenu(AccountantParentMenu);
 					setChildMenu(AccountantChildMenu);
+					break;
+				case 10:
+					setParentMenu(StaffParentMenu);
+					setChildMenu(StaffChildMenu);
 					break;
 				default:
 					break;

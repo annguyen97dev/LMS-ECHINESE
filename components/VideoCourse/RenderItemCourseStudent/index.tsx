@@ -200,7 +200,7 @@ const RenderItemCard = (props) => {
 													<button
 														onClick={(e) => {
 															e.stopPropagation();
-															handleActive({ ID: item.ID, ActiveCode: code });
+															handleActive({ VdieoCourseID: item.ID, ActiveCode: code });
 														}}
 														className="btn btn-warning btn-add mt-2"
 													>

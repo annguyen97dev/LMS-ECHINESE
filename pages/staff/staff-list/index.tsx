@@ -364,7 +364,7 @@ const StaffList = () => {
 							Enable: true
 						});
 					} else if (item.name == 'Role') {
-						res = await item.api.getAll(1);
+						res = await item.api.getRole(1);
 					} else {
 						res = await item.api.getAll({
 							pageIndex: 1,
