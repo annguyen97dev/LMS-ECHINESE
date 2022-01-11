@@ -2,17 +2,49 @@ import { Form, Select } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller } from 'react-hook-form';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 const SelectField = (props) => {
-	const { form, name, label, optionList, placeholder, disabled, mode, onChangeSelect, isLoading, style, className, isRequired } = props;
+	const {
+		form,
+		name,
+		isDynamicField,
+		label,
+		optionList,
+		placeholder,
+		disabled,
+		mode,
+		onChangeSelect,
+		isLoading,
+		style,
+		className,
+		isRequired,
+		optionDisabledList
+	} = props;
 	const { Option } = Select;
 	const { errors } = form.formState;
-	const hasError = errors[name];
+
+	let hasError;
+	let errorMessage;
+	if (isDynamicField) {
+		// NAME.INDEX.KEY;
+		const nameSlice = name.slice(0, name.indexOf('.'));
+		const index = name.slice(name.indexOf('.') + 1, name.lastIndexOf('.'));
+		const key = name.slice(name.lastIndexOf('.') + 1);
+		// IF HAVE NAME SLICE
+		if (errors[nameSlice] && errors[nameSlice][index]) {
+			hasError = errors[nameSlice][index][key];
+			errorMessage = errors[nameSlice][index][key]?.message;
+		}
+	} else {
+		hasError = errors[name];
+		errorMessage = errors[name]?.message;
+	}
+
 	const checkOnChangeSelect = (value) => {
 		if (!onChangeSelect) return;
 		onChangeSelect(value);
 	};
-
 	return (
 		<Form.Item
 			style={style}
@@ -41,7 +73,7 @@ const SelectField = (props) => {
 							}}
 						>
 							{optionList.map((o, idx) => (
-								<Option key={idx} value={o.value}>
+								<Option key={idx} value={o.value} disabled={o.disabled || optionDisabledList?.includes(o.value)}>
 									{o.title}
 								</Option>
 							))}
@@ -51,7 +83,7 @@ const SelectField = (props) => {
 			/>
 			{hasError && (
 				<div className="ant-form-item-explain ant-form-item-explain-error">
-					<div role="alert">{errors[name]?.message}</div>
+					<div role="alert">{errorMessage}</div>
 				</div>
 			)}
 		</Form.Item>
@@ -61,12 +93,8 @@ const SelectField = (props) => {
 SelectField.propTypes = {
 	form: PropTypes.object.isRequired,
 	name: PropTypes.string.isRequired,
-	optionList: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-			value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
-		})
-	),
+	isDynamicField: PropTypes.bool,
+	optionList: optionCommonPropTypes,
 	label: PropTypes.string,
 	placeholder: PropTypes.string,
 	disabled: PropTypes.bool,
@@ -75,9 +103,11 @@ SelectField.propTypes = {
 	isLoading: PropTypes.bool,
 	style: PropTypes.shape({}),
 	className: PropTypes.string,
-	isRequired: PropTypes.bool
+	isRequired: PropTypes.bool,
+	optionDisabledList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
 };
 SelectField.defaultProps = {
+	isDynamicField: false,
 	optionList: [],
 	label: '',
 	placeholder: '',
@@ -87,6 +117,7 @@ SelectField.defaultProps = {
 	isLoading: false,
 	style: {},
 	className: '',
-	isRequired: false
+	isRequired: false,
+	optionDisabledList: []
 };
 export default SelectField;

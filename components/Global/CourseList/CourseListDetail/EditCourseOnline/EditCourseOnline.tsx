@@ -63,6 +63,147 @@ const EditCourseOnline = (props) => {
 	const [scheduleListToSave, setScheduleListToSave] = useState<ICOScheduleListToSave[]>([]);
 	const stoneScheduleListToFindDifference = useRef<ICourseDetailSchedule[]>([]);
 	const [isClickAheadSchedule, setIsClickAheadSchedule] = useState(false);
+	const [saveBeforeAheadSchedule, setSaveBeforeAheadSchedule] = useState(true);
+
+	// -----------SAVE COURSE-----------
+	const onFindScheduleChanged = (arr: ICourseDetailSchedule[]) => {
+		const { current: stoneScheduleList } = stoneScheduleListToFindDifference;
+		const rs: ICourseDetailSchedule[] = [];
+		for (let i = 0, len = arr.length; i < len; i++) {
+			const s = arr[i];
+			if (typeof s.ID === 'string') {
+				rs.push(s);
+				continue;
+			}
+			for (let i2 = 0; i2 < stoneScheduleList.length; i2++) {
+				const s2 = stoneScheduleList[i2];
+				if (
+					s.ID === s2.ID &&
+					(moment(s.Date).format('YYYY/MM/DD') !== moment(s2.StartTime).format('YYYY/MM/DD') ||
+						s.StudyTimeID !== s2.StudyTimeID ||
+						s.TeacherID !== s2.TeacherID)
+				) {
+					// Date, StudyTimeID, TeacherID
+					rs.push(s);
+				}
+			}
+		}
+		return rs;
+	};
+	const onValidateDateToSave = (arr: ICourseDetailSchedule[]) => {
+		const { unavailable } = scheduleList;
+		const rs: {
+			show: Array<{
+				ID: number;
+				Date: string;
+				dayOffWeek: string;
+				StudyTimeID: number;
+				studyTimeName: string;
+				TeacherID: number;
+				teacherName: string;
+				isValid: boolean;
+			}>;
+			save: ICOEditScheduleListToSave[];
+		} = {
+			show: [],
+			save: []
+		};
+		for (let i = 0, len = arr.length; i < len; i++) {
+			const s = arr[i];
+			const { ID, Date, StudyTimeName, TeacherID, TeacherName, StudyTimeID, CourseID, BranchID, SubjectID, CurriculumID } = s;
+			const dayArr = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+			const dayOffWeek = dayArr[moment(s.Date).day()];
+			let isValid = !s.TeacherID;
+			for (let i2 = 0; i2 < unavailable.length; i2++) {
+				const s2 = unavailable[i2];
+				if (s.ID !== s2.ID && s.Date === s2.Date) {
+					if (studyTimeOverFlow([s, s2])) {
+						isValid = true;
+						break;
+					}
+					if (s.StudyTimeID === s2.StudyTimeID) {
+						isValid = true;
+						break;
+					}
+				}
+			}
+			rs.show.push({
+				ID: typeof ID === 'string' ? 0 : ID,
+				Date,
+				dayOffWeek,
+				StudyTimeID,
+				studyTimeName: StudyTimeName || optionListForADay.optionStudyTimeList.find((s) => s.value === StudyTimeID).title,
+				TeacherID,
+				teacherName: TeacherName,
+				isValid
+			});
+			rs.save.push({
+				ID: typeof ID === 'string' ? 0 : ID,
+				CourseID,
+				BranchID,
+				CurriculumsDetailID: CurriculumID || 0,
+				SubjectID,
+				Date,
+				StudyTimeID,
+				TeacherID
+			});
+		}
+		return rs;
+	};
+	const onFetchDataToSave = () => {
+		const { unavailable } = scheduleList;
+
+		const scheduleListChanged = onFindScheduleChanged(unavailable);
+		const { show, save } = onValidateDateToSave(scheduleListChanged);
+
+		const scheduleListSorted = show.sort((a, b) => moment(a.Date).valueOf() - moment(b.Date).valueOf());
+		const fmScheduleListToShow = fmArrayToObjectWithSpecialKey(scheduleListSorted, 'Date');
+
+		setScheduleShow(fmScheduleListToShow);
+		setScheduleListToSave(save);
+	};
+	const onSaveCourse = async () => {
+		setIsLoading({
+			type: 'SAVE_COURSE',
+			status: true
+		});
+		let res;
+		try {
+			const haveErrors = Object.keys(scheduleShow).find((date, idx) => scheduleShow[date].find((s) => s.isValid));
+			if (haveErrors) {
+				showNoti('danger', 'Đã xảy ra lỗi. Xin kiểm tra lại');
+				return;
+			}
+			if (!scheduleListToSave.length) {
+				showNoti('danger', 'Khóa học không có sự thay đổi');
+				return;
+			}
+			res = await courseDetailApi.update(scheduleListToSave);
+			if (res.status === 200) {
+				setSaveBeforeAheadSchedule(true);
+				showNoti('success', res.data.message);
+				router.push(`/course/course-list/course-list-detail/${courseID}?type=2`);
+			}
+		} catch (error) {
+			showNoti('error', error.message);
+		} finally {
+			setIsLoading({
+				type: 'SAVE_COURSE',
+				status: false
+			});
+		}
+		return res;
+	};
+	const onCheckSaveBeforeAheadSchedule = () => {
+		const { unavailable } = scheduleList;
+		const scheduleListChanged = onFindScheduleChanged(unavailable);
+		if (Array.from(scheduleListChanged) && scheduleListChanged.length >= 1) {
+			setSaveBeforeAheadSchedule(false);
+		}
+	};
+	useEffect(() => {
+		onCheckSaveBeforeAheadSchedule();
+	}, [scheduleList.unavailable]);
 	// -----------SCHEDULE-----------
 	const studyTimeOverFlow = (scheduleList: ICourseDetailSchedule[]) => {
 		let rs = false;
@@ -143,7 +284,6 @@ const EditCourseOnline = (props) => {
 		if (studyTimeOverFlow(scheduleList)) {
 			showNoti('danger', 'Dữ liệu không phù hợp');
 		}
-
 		setDataModalCalendar({
 			...dataModalCalendar,
 			scheduleList: scheduleList
@@ -336,134 +476,6 @@ const EditCourseOnline = (props) => {
 			});
 		}
 	}, [dataModalCalendar.scheduleList]);
-	// -----------SAVE COURSE-----------
-	const onFindScheduleChanged = (arr: ICourseDetailSchedule[]) => {
-		const { current: stoneScheduleList } = stoneScheduleListToFindDifference;
-		const rs: ICourseDetailSchedule[] = [];
-		for (let i = 0, len = arr.length; i < len; i++) {
-			const s = arr[i];
-			if (typeof s.ID === 'string') {
-				rs.push(s);
-				continue;
-			}
-			for (let i2 = 0; i2 < stoneScheduleList.length; i2++) {
-				const s2 = stoneScheduleList[i2];
-				if (
-					s.ID === s2.ID &&
-					(moment(s.Date).format('YYYY/MM/DD') !== moment(s2.StartTime).format('YYYY/MM/DD') ||
-						s.StudyTimeID !== s2.StudyTimeID ||
-						s.TeacherID !== s2.TeacherID)
-				) {
-					// Date, StudyTimeID, TeacherID
-					rs.push(s);
-				}
-			}
-		}
-		return rs;
-	};
-	const onValidateDateToSave = (arr: ICourseDetailSchedule[]) => {
-		const { unavailable } = scheduleList;
-		const rs: {
-			show: Array<{
-				ID: number;
-				Date: string;
-				dayOffWeek: string;
-				StudyTimeID: number;
-				studyTimeName: string;
-				TeacherID: number;
-				teacherName: string;
-				isValid: boolean;
-			}>;
-			save: ICOEditScheduleListToSave[];
-		} = {
-			show: [],
-			save: []
-		};
-		for (let i = 0, len = arr.length; i < len; i++) {
-			const s = arr[i];
-			const { ID, Date, StudyTimeName, TeacherID, TeacherName, StudyTimeID, CourseID, BranchID, SubjectID, CurriculumID } = s;
-			const dayArr = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-			const dayOffWeek = dayArr[moment(s.Date).day()];
-			let isValid = !s.TeacherID;
-			for (let i2 = 0; i2 < unavailable.length; i2++) {
-				const s2 = unavailable[i2];
-				if (s.ID !== s2.ID && s.Date === s2.Date) {
-					if (studyTimeOverFlow([s, s2])) {
-						isValid = true;
-						break;
-					}
-					if (s.StudyTimeID === s2.StudyTimeID) {
-						isValid = true;
-						break;
-					}
-				}
-			}
-			rs.show.push({
-				ID: typeof ID === 'string' ? 0 : ID,
-				Date,
-				dayOffWeek,
-				StudyTimeID,
-				studyTimeName: StudyTimeName || optionListForADay.optionStudyTimeList.find((s) => s.value === StudyTimeID).title,
-				TeacherID,
-				teacherName: TeacherName,
-				isValid
-			});
-			rs.save.push({
-				ID: typeof ID === 'string' ? 0 : ID,
-				CourseID,
-				BranchID,
-				CurriculumsDetailID: CurriculumID || 0,
-				SubjectID,
-				Date,
-				StudyTimeID,
-				TeacherID
-			});
-		}
-		return rs;
-	};
-	const onFetchDataToSave = () => {
-		const { unavailable } = scheduleList;
-
-		const scheduleListChanged = onFindScheduleChanged(unavailable);
-		const { show, save } = onValidateDateToSave(scheduleListChanged);
-
-		const scheduleListSorted = show.sort((a, b) => moment(a.Date).valueOf() - moment(b.Date).valueOf());
-		const fmScheduleListToShow = fmArrayToObjectWithSpecialKey(scheduleListSorted, 'Date');
-
-		setScheduleShow(fmScheduleListToShow);
-		setScheduleListToSave(save);
-	};
-	const onSaveCourse = async () => {
-		setIsLoading({
-			type: 'SAVE_COURSE',
-			status: true
-		});
-		let res;
-		try {
-			const haveErrors = Object.keys(scheduleShow).find((date, idx) => scheduleShow[date].find((s) => s.isValid));
-			if (haveErrors) {
-				showNoti('danger', 'Đã xảy ra lỗi. Xin kiểm tra lại');
-				return;
-			}
-			if (!scheduleListToSave.length) {
-				showNoti('danger', 'Khóa học không có sự thay đổi');
-				return;
-			}
-			res = await courseDetailApi.update(scheduleListToSave);
-			if (res.status === 200) {
-				showNoti('success', res.data.message);
-				router.push(`/course/course-list/course-list-detail/${courseID}?type=2`);
-			}
-		} catch (error) {
-			showNoti('error', error.message);
-		} finally {
-			setIsLoading({
-				type: 'SAVE_COURSE',
-				status: false
-			});
-		}
-		return res;
-	};
 	// -----------EDIT COURSE-----------
 	const fmCourseDetail = (res: IApiCourseSchedule<ICourseDetailSchedule[]>, isAheadSchedule?: boolean) => {
 		const data = res.data;
@@ -628,7 +640,8 @@ const EditCourseOnline = (props) => {
 					SubjectID,
 					SubjectName: optionSubjectList.find((s) => s.value === SubjectID).title,
 					CurriculumID: scheduleList.unavailable[0].CurriculumID,
-					ProgramID: scheduleList.unavailable[0].ProgramID
+					ProgramID: scheduleList.unavailable[0].ProgramID,
+					TeacherAttendanceID: 0
 				};
 				const newOption = {
 					id: newSchedule.ID,
@@ -775,6 +788,7 @@ const EditCourseOnline = (props) => {
 										optionStudyTime={optionListForADay.optionStudyTimeList}
 										handleAheadSchedule={onAheadSchedule}
 										isClickAheadSchedule={isClickAheadSchedule}
+										saveBeforeAheadSchedule={saveBeforeAheadSchedule}
 									/>
 								))}
 							</ScheduleList>

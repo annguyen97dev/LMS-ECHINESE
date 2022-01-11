@@ -86,7 +86,7 @@ const PowerList = (props) => {
 				TypeCourse,
 				TypeCourseName,
 				BranchID,
-                MaximumStudent,
+				MaximumStudent,
 				SalaryOfLesson
 			}: ICourse) => (
 				<List.Item
@@ -119,6 +119,11 @@ const PowerList = (props) => {
 									<li>
 										<span>Học phí: </span> <span>{numberWithCommas(Price)} VNĐ</span>
 									</li>
+									{userInformation?.RoleID === 1 && (
+										<li>
+											<span>Lương/Buổi: </span> <span>{numberWithCommas(SalaryOfLesson)} VNĐ</span>
+										</li>
+									)}
 								</ul>
 								<ul className="list-hor">
 									<li>
@@ -133,7 +138,7 @@ const PowerList = (props) => {
 									<li>
 										Số học viên: <span>{TotalStudents}</span>
 									</li>
-                                    {MaximumStudent && (
+									{MaximumStudent && (
 										<li>
 											Số học viên tối đa: <span>{MaximumStudent}</span>
 										</li>
