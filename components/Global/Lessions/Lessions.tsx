@@ -17,7 +17,6 @@ const RenderItem = (props: any) => {
 	const getStrDate = (date: any) => {
 		return moment(date).format('DD/MM');
 	};
-
 	return (
 		<div style={{ marginBottom: 10, flexDirection: 'column', display: 'flex', alignItems: 'center' }}>
 			<div
@@ -25,7 +24,7 @@ const RenderItem = (props: any) => {
 					width: 60,
 					height: 60,
 					margin: 10,
-					background: '#dd4667',
+					background: item.Status === 1 ? '#bdbdbd' : '#dd4667',
 					borderRadius: 999,
 					display: 'flex',
 					alignItems: 'center',

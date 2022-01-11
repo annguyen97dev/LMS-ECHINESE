@@ -69,13 +69,13 @@ function CreateNewScheduleForm(props) {
 			<Modal width="350px" title="Tạo buổi học" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} footer={null}>
 				<div className="wrap-form">
 					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleOnCreateSchedule)}>
-						<SelectField
+						{/* <SelectField
 							form={form}
 							name="SubjectID"
 							label="Môn học"
 							optionList={optionSubjectList}
 							isLoading={isLoading.type === 'FETCH_SUBJECT' && isLoading.status}
-						/>
+						/> */}
 						<InputTextField form={form} name="StudyDay" label="Số buổi học" isRequired placeholder="Nhập số buổi học" />
 						<button
 							type="submit"

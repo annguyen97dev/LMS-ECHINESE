@@ -165,7 +165,6 @@ const TeacherForm = (props) => {
 		form.setValue('WardID', null);
 		handleFetchWard(value);
 	};
-
 	const teacherSwitchFunc = (data) => {
 		switch (isUpdate) {
 			case true:

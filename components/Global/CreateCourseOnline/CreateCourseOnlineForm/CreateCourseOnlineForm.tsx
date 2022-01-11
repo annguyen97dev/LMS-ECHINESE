@@ -152,19 +152,18 @@ const CreateCourseOnlineForm = (props) => {
 												const timeCourse = form.watch('TimeCourse');
 
 												const disabledDaySelectedList = timeCourse.map((obj) => obj.DaySelected).filter(Boolean);
-												const disabledStudyTimeList = timeCourse.map((obj) => obj.StudyTimeID).filter(Boolean);
 
 												const time =
-													disabledStudyTimeList[0] &&
-													optionListForForm.studyTimeList.find((opt) => opt.value === disabledStudyTimeList[0])
+													timeCourse[0]?.StudyTimeID &&
+													optionListForForm.studyTimeList.find((opt) => opt.value === timeCourse[0]?.StudyTimeID)
 														?.options.Time;
 
-												const disabledStudyTimeList_2 = time
-													? optionListForForm.studyTimeList
-															.filter((opt) => opt.options.Time !== time)
-															.map((opt) => opt.value)
-															.concat(disabledStudyTimeList)
-													: [];
+												const disabledStudyTimeList =
+													time && timeCourse.length >= 2
+														? optionListForForm.studyTimeList
+																.filter((opt) => opt.options.Time !== time)
+																.map((opt) => opt.value)
+														: [];
 												return (
 													<div className="more-revenue-item" key={item.id}>
 														<div className="row">
@@ -192,9 +191,7 @@ const CreateCourseOnlineForm = (props) => {
 																	onChangeSelect={(value) => {
 																		checkHandleGetValueBeforeFetchCurriculum('StudyTimeID', value);
 																	}}
-																	optionDisabledList={
-																		time ? disabledStudyTimeList_2 : disabledStudyTimeList
-																	}
+																	optionDisabledList={disabledStudyTimeList}
 																	isDynamicField
 																/>
 															</div>
@@ -280,7 +277,7 @@ const CreateCourseOnlineForm = (props) => {
 								<InputTextField
 									form={form}
 									name="MaximumStudent"
-									label="Số học viên tối đa"
+									label="Số học viên tối đa (mặc định 20)"
 									placeholder="Nhập số học viên tối đa trong lớp"
 								/>
 							</div>

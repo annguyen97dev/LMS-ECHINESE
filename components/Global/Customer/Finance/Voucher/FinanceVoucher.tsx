@@ -243,10 +243,10 @@ function FinanceVoucher() {
 			dataIndex: 'CreatedOn',
 			render: (a) => <p>{moment(a).format('DD/MM/YYYY')}</p>
 		},
-		{
-			title: 'QR Code',
-			render: (record: IInvoice) => <div style={{ width: 100 }}>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</div>
-		},
+		// {
+		// 	title: 'QR Code',
+		// 	render: (record: IInvoice) => <div style={{ width: 100 }}>{record.Qrcode && <Image width={50} src={record.Qrcode} />}</div>
+		// },
 		{
 			render: (record: IInvoice, _, idx) => (
 				<>

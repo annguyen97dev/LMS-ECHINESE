@@ -82,15 +82,15 @@ export default function FinanceReward() {
 				}
 			],
 			onFilter: (value, record) => record.fnStatus.indexOf(value) === 0
-		},
-		{
-			title: 'QR Code',
-			render: () => (
-				<>
-					<Image alt="" />
-				</>
-			)
 		}
+		// {
+		// 	title: 'QR Code',
+		// 	render: () => (
+		// 		<>
+		// 			<Image alt="" />
+		// 		</>
+		// 	)
+		// }
 	];
 
 	return (
