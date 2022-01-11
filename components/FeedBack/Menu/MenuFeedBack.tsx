@@ -80,9 +80,11 @@ function MenuFeedBack(props) {
 	const Menu = () => (
 		<div className="wrap-fb-menu">
 			<Card loading={loading} className="card-newsfeed" bordered={false}>
-				<Button onClick={handleCreateNew} type="primary" className="student-fb__btn-add">
-					Tạo phản hồi
-				</Button>
+				{userInformation && userInformation.RoleID !== 10 && (
+					<Button onClick={handleCreateNew} type="primary" className="student-fb__btn-add">
+						Tạo phản hồi
+					</Button>
+				)}
 
 				<ItemMenu
 					onClick={() => {

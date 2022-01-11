@@ -43,7 +43,7 @@ export default function Header({
 	const [isSearch, setIsSearch] = useState(false);
 	const { titlePage, userInformation } = useWrap();
 	const [session, loading] = useSession();
-    // console.log("session: " + JSON.stringify(session));
+	// console.log("session: " + JSON.stringify(session));
 	const [dataUser, setDataUser] = useState<IUser>();
 	const [openMenuCustom, setOpenMenuCustom] = useState(false);
 	const showDrawer = () => {
@@ -248,7 +248,8 @@ export default function Header({
 							userInformation.RoleID !== 1 &&
 							userInformation.RoleID !== 2 &&
 							userInformation.RoleID !== 5 &&
-							userInformation.RoleID !== 6 && (
+							userInformation.RoleID !== 6 &&
+							userInformation.RoleID !== 10 && (
 								<li className="notification" style={{ marginRight: -15 }}>
 									<Cart />
 								</li>
