@@ -123,7 +123,7 @@ const listApi = [
 ];
 
 const StudentData = () => {
-	const { showNoti, pageSize, isAdmin, userInformation } = useWrap();
+	const { showNoti, pageSize, isAdmin } = useWrap();
 	const [currentPage, setCurrentPage] = useState(1);
 	const listTodoApi = {
 		pageSize: pageSize,
@@ -470,201 +470,121 @@ const StudentData = () => {
 	};
 
 	// Columns
-	const columns =
-		userInformation && userInformation.RoleID !== 10
-			? [
-					{
-						width: 120,
-						title: 'Mã học viên',
-						dataIndex: 'UserCode',
-						fixed: 'left',
-						render: (UserCode) => <p className="font-weight-black">{UserCode}</p>
-					},
-					{
-						title: 'Họ tên',
-						dataIndex: 'FullNameUnicode',
-						fixed: 'left',
-						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
-						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
-					},
-					{
-						title: 'Tên tiếng Trung',
-						width: 150,
-						dataIndex: 'ChineseName',
-						fixed: 'left',
-						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
-						...FilterColumn('ChineseName', onSearch, handleReset, 'text')
-					},
-					{
-						title: 'Đang học',
-						width: 100,
-						dataIndex: 'isRegisteredCourse',
-						render: (text, data) =>
-							data.isRegisteredCourse ? (
-								<p className="btn btn-icon edit">
-									<Check />
-								</p>
-							) : (
-								''
-							)
-					},
+	const columns = [
+		{
+			width: 120,
+			title: 'Mã học viên',
+			dataIndex: 'UserCode',
+			fixed: 'left',
+			render: (UserCode) => <p className="font-weight-black">{UserCode}</p>
+		},
+		{
+			title: 'Họ tên',
+			dataIndex: 'FullNameUnicode',
+			fixed: 'left',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
+		},
+		{
+			title: 'Tên tiếng Trung',
+			width: 150,
+			dataIndex: 'ChineseName',
+			fixed: 'left',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('ChineseName', onSearch, handleReset, 'text')
+		},
+		{
+			title: 'Đang học',
+			width: 100,
+			dataIndex: 'isRegisteredCourse',
+			render: (text, data) =>
+				data.isRegisteredCourse ? (
+					<p className="btn btn-icon edit">
+						<Check />
+					</p>
+				) : (
+					''
+				)
+		},
 
-					{
-						title: 'SĐT',
-						dataIndex: 'Mobile',
-						...FilterColumn('Mobile', onSearch, handleReset, 'text')
-					},
-					{
-						title: 'Email',
-						dataIndex: 'Email',
-						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
-						...FilterColumn('Email', onSearch, handleReset, 'text')
-					},
-					{
-						width: 150,
-						title: 'Nguồn',
-						dataIndex: 'SourceInformationName'
-					},
-					// {
-					// 	title: 'Facebook',
-					// 	dataIndex: 'LinkFaceBook',
-					// 	render: (link) =>
-					// 		link && (
-					// 			<a className="font-weight-black" href={link} target="_blank">
-					// 				Link
-					// 			</a>
-					// 		)
-					// },
-					{
-						title: 'Trạng thái',
-						dataIndex: 'StatusID',
-						align: 'center',
-						render: (status) => {
-							return (
-								<>
-									{status == 0 ? <span className="tag green">Hoạt động</span> : <span className="tag gray">Đã khóa</span>}
-								</>
-							);
-						}
-					},
-					{
-						title: '',
-						width: 150,
-						render: (record, _, index) => (
-							<div onClick={(e) => e.stopPropagation()}>
-								<StudentFormModal
-									index={index}
-									dataRow={record}
-									listDataForm={checkEmptyData && listDataForm}
-									_handleSubmit={(dataSubmit, index) => {
-										let newDataSource = [...dataSource];
-										newDataSource.splice(index, 1, {
-											...dataSubmit,
-											AreaName:
-												dataSubmit.AreaID &&
-												listDataForm.Area.find((item) => item.value == dataSubmit.AreaID).title,
-											SourceInformationName: dataSubmit.SourceInformationName,
-											Branch:
-												dataSubmit.Branch == ''
-													? []
-													: dataSubmit.Branch.split(',').map((item) => ({ ID: parseInt(item) }))
-										});
-										setDataSource(newDataSource);
-									}}
-								/>
-								<ResetPassStudent dataRow={record} />
-								<Link
-									href={{
-										pathname: '/customer/student/student-list/student-detail/[slug]',
-										query: { slug: record.UserInformationID }
-									}}
-								>
-									<Tooltip title="Xem chi tiết">
-										<button className="btn btn-icon">
-											<Eye />
-										</button>
-									</Tooltip>
-								</Link>
-							</div>
-						)
-					}
-			  ]
-			: [
-					{
-						width: 120,
-						title: 'Mã học viên',
-						dataIndex: 'UserCode',
-						fixed: 'left',
-						render: (UserCode) => <p className="font-weight-black">{UserCode}</p>
-					},
-					{
-						title: 'Họ tên',
-						dataIndex: 'FullNameUnicode',
-						fixed: 'left',
-						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
-						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
-					},
-					{
-						title: 'Tên tiếng Trung',
-						width: 150,
-						dataIndex: 'ChineseName',
-						fixed: 'left',
-						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
-						...FilterColumn('ChineseName', onSearch, handleReset, 'text')
-					},
-					{
-						title: 'Đang học',
-						width: 100,
-						dataIndex: 'isRegisteredCourse',
-						render: (text, data) =>
-							data.isRegisteredCourse ? (
-								<p className="btn btn-icon edit">
-									<Check />
-								</p>
-							) : (
-								''
-							)
-					},
-
-					{
-						title: 'SĐT',
-						dataIndex: 'Mobile',
-						...FilterColumn('Mobile', onSearch, handleReset, 'text')
-					},
-					{
-						title: 'Email',
-						dataIndex: 'Email',
-						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
-						...FilterColumn('Email', onSearch, handleReset, 'text')
-					},
-					{
-						width: 150,
-						title: 'Nguồn',
-						dataIndex: 'SourceInformationName'
-					},
-					// {
-					// 	title: 'Facebook',
-					// 	dataIndex: 'LinkFaceBook',
-					// 	render: (link) =>
-					// 		link && (
-					// 			<a className="font-weight-black" href={link} target="_blank">
-					// 				Link
-					// 			</a>
-					// 		)
-					// },
-					{
-						title: 'Trạng thái',
-						dataIndex: 'StatusID',
-						align: 'center',
-						render: (status) => {
-							return (
-								<>
-									{status == 0 ? <span className="tag green">Hoạt động</span> : <span className="tag gray">Đã khóa</span>}
-								</>
-							);
-						}
-					}
-			  ];
+		{
+			title: 'SĐT',
+			dataIndex: 'Mobile',
+			...FilterColumn('Mobile', onSearch, handleReset, 'text')
+		},
+		{
+			title: 'Email',
+			dataIndex: 'Email',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('Email', onSearch, handleReset, 'text')
+		},
+		{
+			width: 150,
+			title: 'Nguồn',
+			dataIndex: 'SourceInformationName'
+		},
+		// {
+		// 	title: 'Facebook',
+		// 	dataIndex: 'LinkFaceBook',
+		// 	render: (link) =>
+		// 		link && (
+		// 			<a className="font-weight-black" href={link} target="_blank">
+		// 				Link
+		// 			</a>
+		// 		)
+		// },
+		{
+			title: 'Trạng thái',
+			dataIndex: 'StatusID',
+			align: 'center',
+			render: (status) => {
+				return <>{status == 0 ? <span className="tag green">Hoạt động</span> : <span className="tag gray">Đã khóa</span>}</>;
+			}
+		},
+		{
+			title: '',
+			width: 160,
+			render: (record, _, index) => (
+				<div onClick={(e) => e.stopPropagation()} style={{ flexDirection: 'row', display: 'flex' }}>
+					<StudentFormModal
+						index={index}
+						dataRow={record}
+						listDataForm={checkEmptyData && listDataForm}
+						_handleSubmit={(dataSubmit, index) => {
+							let newDataSource = [...dataSource];
+							newDataSource.splice(index, 1, {
+								...dataSubmit,
+								AreaName: dataSubmit.AreaID && listDataForm.Area.find((item) => item.value == dataSubmit.AreaID).title,
+								SourceInformationName: dataSubmit.SourceInformationName,
+								Branch: dataSubmit.Branch == '' ? [] : dataSubmit.Branch.split(',').map((item) => ({ ID: parseInt(item) }))
+							});
+							setDataSource(newDataSource);
+						}}
+					/>
+					<ResetPassStudent dataRow={record} />
+					<Link
+						href={{
+							pathname: '/customer/student/student-list/student-detail/[slug]',
+							query: { slug: record.UserInformationID }
+						}}
+					>
+						<Tooltip title="Xem chi tiết">
+							<button className="btn btn-icon">
+								<Eye />
+							</button>
+						</Tooltip>
+					</Link>
+					<StudentAdvisoryMail
+						loadingOutside={isLoading}
+						dataSource={dataSource}
+						onFetchData={() => setTodoApi({ ...todoApi })}
+						dataRow={_}
+						listCustomer={dataSource}
+					/>
+				</div>
+			)
+		}
+	];
 
 	return (
 		<ExpandTable

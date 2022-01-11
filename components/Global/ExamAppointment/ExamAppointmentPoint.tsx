@@ -4,9 +4,10 @@ import { packageResultApi } from '~/apiBase/package/package-result';
 import NestedTable from '~/components/Elements/NestedTable';
 import { useWrap } from '~/context/wrap';
 import { examAppointmentResultApi } from '~/apiBase';
+import { homeworkResultApi } from '~/apiBase/course-detail/home-work-result';
 
 const ExamAppointmentPoint = (props) => {
-	const { infoID, userID } = props;
+	const { infoID, userID, isExercise, visible } = props;
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -40,8 +41,36 @@ const ExamAppointmentPoint = (props) => {
 		}
 	};
 
+	const fetchDetailExercise = async () => {
+		if (visible == true) {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: true
+			});
+			try {
+				let res = await homeworkResultApi.getAll({
+					selectAll: true,
+					UserInformationID: userID,
+					ExamAppointmentID: infoID
+				});
+				if (res.status == 200) {
+					let arr = [];
+					arr.push(res.data.data[0]);
+					setDetail(arr);
+				}
+			} catch (err) {
+				showNoti('danger', err.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false
+				});
+			}
+		}
+	};
+
 	useEffect(() => {
-		fetchDetailInfo();
+		isExercise ? fetchDetailExercise() : fetchDetailInfo();
 	}, []);
 
 	const columns = [

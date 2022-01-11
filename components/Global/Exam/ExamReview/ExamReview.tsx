@@ -10,7 +10,7 @@ ExamReview.propTypes = {};
 
 function ExamReview() {
 	const route = useRouter();
-	const { examID: ID } = route.query;
+	const { examID: ID, isExercise: isExercise } = route.query;
 	const { packageDetailID: packageDetailID, type: type, CurriculumDetailID: CurriculumDetailID } = route.query;
 	const [examInfo, setExamInfo] = useState<IExamTopic>(null);
 	const fetchExam = async () => {
@@ -111,7 +111,7 @@ function ExamReview() {
 						pathname: '/doing-test',
 						query:
 							type !== 'check'
-								? { examID: ID, packageDetailID: packageDetailID, type: type }
+								? { examID: ID, packageDetailID: packageDetailID, type: type, isExercise: isExercise }
 								: { examID: ID, packageDetailID: packageDetailID, type: type, CurriculumDetailID: CurriculumDetailID }
 					}}
 				>

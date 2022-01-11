@@ -290,6 +290,10 @@ const CreateExamForm = (props) => {
 									{
 										value: 3,
 										title: 'Đề kiểm tra'
+									},
+									{
+										value: 4,
+										title: 'Bài tập'
 									}
 								]}
 							/>
