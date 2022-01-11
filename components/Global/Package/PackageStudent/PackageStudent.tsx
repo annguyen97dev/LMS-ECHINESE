@@ -1,23 +1,21 @@
-import {Card, Image, List} from 'antd';
+import { Card, Image, List } from 'antd';
 import Link from 'next/link';
-import React, {useEffect, useRef, useState} from 'react';
-import {packageStudentApi} from '~/apiBase';
+import React, { useEffect, useRef, useState } from 'react';
+import { packageStudentApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import TitlePage from '~/components/Elements/TitlePage';
-import {useWrap} from '~/context/wrap';
-import {numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 import PackageStudentFilterForm from './PackageStudentFilterForm';
 
 const PackageStudent = () => {
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
-	const [packageOfStudentList, setPackageOfStudentList] = useState<
-		IPackageStudent[]
-	>([]);
+	const [packageOfStudentList, setPackageOfStudentList] = useState<IPackageStudent[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti, userInformation} = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -28,59 +26,59 @@ const PackageStudent = () => {
 		Type: null,
 		StudentID: null,
 		fromDate: '',
-		toDate: '',
+		toDate: ''
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	const typeOptionList = [
 		{
 			value: 1,
-			title: 'Miễn phí',
+			title: 'Miễn phí'
 		},
 		{
 			value: 2,
-			title: 'Cao cấp',
-		},
+			title: 'Cao cấp'
+		}
 	];
 	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Level tăng dần',
+			text: 'Level tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Level giảm dần',
+			text: 'Level giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Giá tăng dần',
+			text: 'Giá tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Giá giảm dần',
-		},
+			text: 'Giá giảm dần'
+		}
 	];
 	// FILTER
 	const onFilter = (obj) => {
@@ -88,7 +86,7 @@ const PackageStudent = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			...obj,
+			...obj
 		});
 	};
 	// PAGINATION
@@ -97,11 +95,11 @@ const PackageStudent = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -109,31 +107,31 @@ const PackageStudent = () => {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// GET DATA IN FIRST TIME
 	const fetchPackageOfStudent = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			if (!userInformation) return;
 			const res = await packageStudentApi.getAll({
 				...filters,
-				StudentID: userInformation.UserInformationID,
+				StudentID: userInformation.UserInformationID
 			});
 
 			if (res.status === 200) {
@@ -150,7 +148,7 @@ const PackageStudent = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -183,7 +181,7 @@ const PackageStudent = () => {
 									onChange: getPagination,
 									total: totalPage,
 									size: 'small',
-									current: filters.pageIndex,
+									current: filters.pageIndex
 								}}
 								itemLayout="horizontal"
 								dataSource={packageOfStudentList}
@@ -198,32 +196,29 @@ const PackageStudent = () => {
 										TypeName,
 										Price,
 										Approval,
-										ApprovalName,
+										ApprovalName
 									} = item;
 									return (
 										<List.Item>
 											<div className="wrap-set d-flex">
-												{Type === 1 && (
-													<div className="tag-free">{TypeName}</div>
-												)}
+												{Type === 1 && <div className="tag-free">{TypeName}</div>}
 												<div className="wrap-set-avatar">
 													{(Approval === 1 || Approval === 2) && (
 														<Image
 															width="100%"
 															height="100%"
 															preview={false}
-															src={SetPackageAvatar}
+															src={SetPackageAvatar === '' ? '/images/default-book.jpeg' : SetPackageAvatar}
 															title="Ảnh bìa bộ đề"
 															alt="Ảnh bìa bộ đề"
-															style={{objectFit: 'cover'}}
+															style={{ objectFit: 'cover' }}
 														/>
 													)}
 													{Approval === 3 && (
 														<Link
 															href={{
-																pathname:
-																	'/package/package-student/package-student-detail/[slug]',
-																query: {slug: ID},
+																pathname: '/package/package-student/package-student-detail/[slug]',
+																query: { slug: ID }
 															}}
 														>
 															<a>
@@ -231,10 +226,14 @@ const PackageStudent = () => {
 																	width="100%"
 																	height="100%"
 																	preview={false}
-																	src={SetPackageAvatar}
+																	src={
+																		SetPackageAvatar === ''
+																			? '/images/default-book.jpeg'
+																			: SetPackageAvatar
+																	}
 																	title="Ảnh bìa bộ đề"
 																	alt="Ảnh bìa bộ đề"
-																	style={{objectFit: 'cover'}}
+																	style={{ objectFit: 'cover' }}
 																/>
 															</a>
 														</Link>
@@ -242,14 +241,12 @@ const PackageStudent = () => {
 												</div>
 												<div className="wrap-set-content">
 													<h6 className="set-title">
-														{(Approval === 1 || Approval === 2) &&
-															SetPackageName}
+														{(Approval === 1 || Approval === 2) && SetPackageName}
 														{Approval === 3 && (
 															<Link
 																href={{
-																	pathname:
-																		'/package/package-student/package-student-detail/[slug]',
-																	query: {slug: ID},
+																	pathname: '/package/package-student/package-student-detail/[slug]',
+																	query: { slug: ID }
 																}}
 															>
 																<a>{SetPackageName}</a>
@@ -269,25 +266,18 @@ const PackageStudent = () => {
 													</ul>
 													<div className="set-btn">
 														{(Approval === 1 || Approval === 2) && (
-															<button
-																type="button"
-																className="btn btn-secondary"
-																disabled={true}
-															>
+															<button type="button" className="btn btn-secondary" disabled={true}>
 																{ApprovalName}
 															</button>
 														)}
 														{Approval === 3 && (
 															<Link
 																href={{
-																	pathname:
-																		'/package/package-student/package-student-detail/[slug]',
-																	query: {slug: SetPackageID},
+																	pathname: '/package/package-student/package-student-detail/[slug]',
+																	query: { slug: SetPackageID }
 																}}
 															>
-																<a className="btn btn-warning">
-																	Chi tiết bộ đề
-																</a>
+																<a className="btn btn-warning">Chi tiết bộ đề</a>
 															</Link>
 														)}
 													</div>

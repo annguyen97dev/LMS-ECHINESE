@@ -37,7 +37,7 @@ const ChoiceList = (props) => {
 	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
 	const { doneTestData } = useDoneTest();
 	const { showNoti } = useWrap();
-	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
+	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest, showScore } = props;
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
 		id: null,
@@ -265,9 +265,11 @@ const ChoiceList = (props) => {
 									<ChangePosition questionID={dataQuestion.ID} />
 								</>
 							)}
-							<div className="point-question mt-2">
-								<p className="text">{ques.Point}</p>
-							</div>
+							{showScore && (
+								<div className="point-question mt-2">
+									<p className="text">{ques.Point}</p>
+								</div>
+							)}
 						</div>
 					)}
 				</div>

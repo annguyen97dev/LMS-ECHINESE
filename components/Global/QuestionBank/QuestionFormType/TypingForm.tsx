@@ -376,17 +376,13 @@ const TypingForm = (props) => {
 											visible={visible}
 										/>
 									</Form.Item>
+
 									{/* <Form.Item label="Tải lên link Audio">
-                    <Upload
-                      onChange={onchange_UploadFile}
-                      showUploadList={false}
-                    >
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                      <div className="d-block">
-                        {loadingUpload ? <Spin /> : linkUpload && linkUpload}
-                      </div>
-                    </Upload>
-                  </Form.Item> */}
+										<Upload onChange={onchange_UploadFile} showUploadList={false}>
+											<Button icon={<UploadOutlined />}>Click to Upload</Button>
+											<div className="d-block">{loadingUpload ? <Spin /> : linkUpload && linkUpload}</div>
+										</Upload>
+									</Form.Item> */}
 								</div>
 								<div className="col-md-6 col-12" style={{ borderLeft: '2px dotted #dbdbdb' }}>
 									<p className="style-label" style={{ textDecoration: 'underline' }}>

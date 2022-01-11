@@ -18,7 +18,7 @@ import { examAppointmentResultApi } from '~/apiBase';
 const ExamAppointmentResult = () => {
 	// ---- Get Router ----
 
-	const { ExamAppointmentResultID: ExamAppointmentResultID, examID: examID } = router.query;
+	const { ExamAppointmentResultID: ExamAppointmentResultID, examID: examID, score: score } = router.query;
 	const ExamAppointmentID = router.query.slug as string;
 	const {} = useDoneTest();
 	const { teacherMarking: teacherMarking } = router.query;
@@ -26,6 +26,8 @@ const ExamAppointmentResult = () => {
 	const [detailResult, setDetailResult] = useState([]);
 	const [visibleNofi, setVisibleNofi] = useState(false);
 	const boxEl = useRef(null);
+
+	// console.log('score: ', score);
 
 	const paramsDefault = {
 		pageSize: 999,
@@ -201,6 +203,8 @@ const ExamAppointmentResult = () => {
 		}
 	}, [userInformation]);
 
+	console.log(infoTest?.isDone);
+
 	return (
 		<>
 			{showMainTest ? (
@@ -257,16 +261,18 @@ const ExamAppointmentResult = () => {
 								<div className="test-body done-test-card " ref={boxEl}>
 									<div className="wrap-box-info mb-2">
 										<div className="box-info">
-											<div className="box-info__item box-info__score">
-												Số điểm
-												<span className="number">
-													{loadingInfoTest ? (
-														<Skeleton paragraph={false} loading={true} title={true} active />
-													) : (
-														infoTest?.PointTotal
-													)}
-												</span>
-											</div>
+											{(infoTest?.isDone || score) && (
+												<div className="box-info__item box-info__score">
+													Số điểm
+													<span className="number">
+														{loadingInfoTest ? (
+															<Skeleton paragraph={false} loading={true} title={true} active />
+														) : (
+															infoTest?.PointTotal
+														)}
+													</span>
+												</div>
+											)}
 											<div className="box-info__item box-info__correct">
 												Số câu đúng
 												<span className="number">
@@ -317,6 +323,7 @@ const ExamAppointmentResult = () => {
 
 																	<div>
 																		<ListQuestion
+																			showScore={score}
 																			isMarked={isMarked}
 																			dataQuestion={item}
 																			listQuestionID={listQuestionID}

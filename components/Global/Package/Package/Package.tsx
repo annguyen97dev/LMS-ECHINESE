@@ -290,7 +290,18 @@ function Package() {
 			title: 'Ảnh bìa',
 			dataIndex: 'Avatar',
 			render: (url) => {
-				return <Image width={80} height={80} src={url} title="Ảnh bìa bộ đề" alt="Ảnh bìa bộ đề" style={{ objectFit: 'cover' }} />;
+				console.log(url);
+
+				return (
+					<Image
+						width={70}
+						height={70}
+						src={url === '' ? '/images/default-book.jpeg' : url}
+						title="Ảnh bìa bộ đề"
+						alt="Ảnh bìa bộ đề"
+						style={{ objectFit: 'cover' }}
+					/>
+				);
 			}
 		},
 		{

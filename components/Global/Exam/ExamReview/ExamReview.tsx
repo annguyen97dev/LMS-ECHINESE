@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { Card } from 'antd';
+import { Button, Card, Divider } from 'antd';
 import { examTopicApi } from '~/apiBase';
 import Link from 'next/link';
+import ControlVolume from '~/components/Elements/ControlVolume';
+import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 ExamReview.propTypes = {};
 
 function ExamReview() {
@@ -24,6 +26,53 @@ function ExamReview() {
 	useEffect(() => {
 		fetchExam();
 	}, []);
+
+	const SoundTest = () => {
+		const [isPlaying, setIsPlaying] = useState(false);
+		const audio = useRef(null);
+
+		const playSound = () => {
+			if (!isPlaying) {
+				audio.current.play();
+				setIsPlaying(true);
+			} else {
+				audio.current.pause();
+				setIsPlaying(false);
+			}
+		};
+
+		const controlVolume = (value) => {
+			let customValue = value / 100;
+			audio.current.volume = customValue;
+		};
+
+		return (
+			<div className="sound-test doing-test-box">
+				<Divider orientation="center">Kiểm tra âm thanh</Divider>
+				<div className="sound-img">
+					<img src="/images/headphone-icon.jpg" alt="" />
+				</div>
+				<div className="sound-test-content position-relative">
+					<p>Đeo tai nghe và bấm vào nút bên dưới để kiểm tra âm thanh.</p>
+					<div className="position-absolute" style={{ opacity: 0 }}>
+						<audio controls ref={audio} onEnded={() => setIsPlaying(false)}>
+							<source
+								src="https://s3-eu-west-1.amazonaws.com/oep2stt/sample-listening-multiple-choice-one-answer/sample-audio.ogg"
+								type="audio/mpeg"
+							/>
+						</audio>
+					</div>
+					<div className="w-100 d-flex justify-content-center">
+						<ControlVolume getValueControl={(value) => controlVolume(value)} />
+					</div>
+					<Button onClick={playSound} icon={!isPlaying ? <CaretRightOutlined /> : <PauseOutlined />}>
+						Nghe thử
+					</Button>
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<div className="exam-review">
 			<Card title={`${examInfo?.Code || '...'} - ${examInfo?.Name || '...'}`}>
@@ -53,6 +102,9 @@ function ExamReview() {
 				<Card.Grid className="exam-review-item span-3" hoverable={false}>
 					<p className="title">Hướng dẫn làm bài</p>
 					<p className="desc">{examInfo?.Description || '...'}</p>
+				</Card.Grid>
+				<Card.Grid className="exam-review-item span-3" hoverable={false}>
+					<SoundTest />
 				</Card.Grid>
 				<Link
 					href={{

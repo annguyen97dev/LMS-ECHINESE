@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Checkbox, Spin, Modal, Skeleton, Button } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, Checkbox, Spin, Modal, Skeleton, Button, Tooltip } from 'antd';
 import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined, QuestionCircleOutlined, ProfileFilled } from '@ant-design/icons';
 import { examDetailApi, examTopicApi, doingTestApi, examAppointmentResultApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
@@ -37,6 +37,8 @@ const MainTest = (props) => {
 		pageSize: 999,
 		ExamTopicID: examID
 	};
+	// console.log('infoExam: ', infoExam);
+
 	const { showNoti } = useWrap();
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [isLoading, setIsLoading] = useState(false);
@@ -220,7 +222,9 @@ const MainTest = (props) => {
 
 	const onChange_pagination = (e, page: number) => {
 		setPageCurrent(page);
-		e.preventDefault();
+		if (e !== 'x') {
+			e.preventDefault();
+		}
 		// setActiveID(listQuestionID[page - 1]);
 		getActiveID(listQuestionID[page - 1]);
 
@@ -569,6 +573,10 @@ const MainTest = (props) => {
 				});
 			}
 		}
+
+		if (dataQuestion !== null && dataQuestion !== undefined) {
+			onChange_pagination('x', 1);
+		}
 	}, [dataQuestion]);
 
 	useEffect(() => {
@@ -613,6 +621,26 @@ const MainTest = (props) => {
 		}
 	}, [activeID]);
 
+	console.log(addMinutes);
+
+	const [isPlaying, setIsPlaying] = useState(false);
+	const audio = useRef(null);
+
+	const playSound = () => {
+		if (!isPlaying) {
+			audio.current.play();
+			setIsPlaying(true);
+		} else {
+			audio.current.pause();
+			setIsPlaying(false);
+		}
+	};
+
+	const controlVolume = (value) => {
+		let customValue = value / 100;
+		audio.current.volume = customValue;
+	};
+
 	return (
 		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
 			{/** Modal báo hết giờ làm bài */}
@@ -640,11 +668,26 @@ const MainTest = (props) => {
 			<Card
 				className="test-card"
 				title={
-					<div className="test-title-info">
-						<h6 className="name-type-test">{infoExam?.Name}</h6>
-						<p className="info-user">
-							<span>{infoExam?.ProgramName}</span>
-						</p>
+					<div className="test-info">
+						<div className="test-title-info">
+							<h6 className="name-type-test">{infoExam?.Name}</h6>
+							<p className="info-user">
+								<span>{infoExam?.ProgramName}</span>
+							</p>
+						</div>
+
+						{infoExam !== null && infoExam?.Audio !== undefined && infoExam.Audio !== null && infoExam.Audio !== '' && (
+							<audio
+								className="none-poiter"
+								autoPlay={true}
+								controls
+								ref={audio}
+								onEnded={() => setIsPlaying(false)}
+								// style={{ width: isPlaying ? 300 : 0 }}
+							>
+								<source src={infoExam.Audio} type="audio/mpeg" />
+							</audio>
+						)}
 					</div>
 				}
 				extra={

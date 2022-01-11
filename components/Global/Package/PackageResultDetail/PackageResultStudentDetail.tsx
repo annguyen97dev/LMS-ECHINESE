@@ -15,7 +15,7 @@ import Link from 'next/link';
 
 const PackageResultStudentDetail = () => {
 	const {} = useDoneTest();
-	const { teacherMarking: teacherMarking } = router.query;
+	const { teacherMarking: teacherMarking, score: score } = router.query;
 	const { getDoneTestData, doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const [detailResult, setDetailResult] = useState([]);
 	const [visibleNofi, setVisibleNofi] = useState(false);
@@ -310,6 +310,7 @@ const PackageResultStudentDetail = () => {
 
 																	<div>
 																		<ListQuestion
+																			showScore={score}
 																			isMarked={isMarked}
 																			dataQuestion={item}
 																			listQuestionID={listQuestionID}
@@ -322,6 +323,7 @@ const PackageResultStudentDetail = () => {
 														return (
 															<div key={index}>
 																<ListQuestion
+																	showScore={score}
 																	isMarked={isMarked}
 																	dataQuestion={item}
 																	listQuestionID={listQuestionID}
