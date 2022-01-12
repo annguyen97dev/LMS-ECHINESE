@@ -50,7 +50,7 @@ const optionGender = [
 ];
 
 const StudentForm = (props) => {
-	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess, width } = props;
+	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess, width, hideReset, haveDefault } = props;
 	const router = useRouter();
 	const url = router.pathname;
 	const { customerID: customerID } = router.query;
@@ -77,6 +77,7 @@ const StudentForm = (props) => {
 
 	const fetchDataUser = () => {
 		(async () => {
+			setIsLoading({ type: '', status: true });
 			try {
 				const res = await studentApi.getAll({
 					pageIndex: 1,
@@ -86,6 +87,8 @@ const StudentForm = (props) => {
 				res.status == 200 && setUserAll(res.data.data);
 			} catch (err) {
 				showNoti('danger', err.message);
+			} finally {
+				setIsLoading({ type: '', status: false });
 			}
 		})();
 	};
@@ -533,6 +536,8 @@ const StudentForm = (props) => {
 		console.log('userDetail: ', userDetail);
 	};
 
+	console.log('dataRow: ', dataRow);
+
 	return (
 		<>
 			<div className="col-12 d-flex justify-content-center" style={{ width: width !== undefined ? width : '100%' }}>
@@ -540,9 +545,11 @@ const StudentForm = (props) => {
 					title="Phiếu thông tin cá nhân"
 					className="w-100 w-100-mobile"
 					extra={
-						<button className="btn btn-warning" onClick={handleReset}>
-							Reset
-						</button>
+						hideReset ? null : (
+							<button className="btn btn-warning" onClick={handleReset}>
+								Reset
+							</button>
+						)
 					}
 				>
 					<div className="form-staff">
@@ -615,8 +622,17 @@ const StudentForm = (props) => {
 												<Select
 													className="style-input"
 													showSearch
+													loading={isLoading.status}
+													defaultValue={708}
 													optionFilterProp="children"
-													value={userDetail ? userDetail.UserInformationID : ''}
+													disabled={haveDefault ? true : false}
+													value={
+														haveDefault
+															? dataRow.UserInformationID
+															: userDetail
+															? userDetail.UserInformationID
+															: ''
+													}
 													onChange={(value) => handleChangeUser(value)}
 												>
 													{userAll?.map((item, index) => (
@@ -641,8 +657,12 @@ const StudentForm = (props) => {
 											<Select
 												className="style-input"
 												showSearch
+												loading={isLoading.status}
 												optionFilterProp="children"
-												value={userDetail ? userDetail.UserInformationID : ''}
+												disabled={haveDefault ? true : false}
+												value={
+													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+												}
 												onChange={(value) => handleChangeUser(value)}
 											>
 												{userAll?.map((item, index) => (
@@ -664,8 +684,12 @@ const StudentForm = (props) => {
 											<Select
 												className="style-input"
 												showSearch
+												loading={isLoading.status}
 												optionFilterProp="children"
-												value={userDetail ? userDetail.UserInformationID : ''}
+												disabled={haveDefault ? true : false}
+												value={
+													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+												}
 												onChange={(value) => handleChangeUser(value)}
 											>
 												{userAll?.map((item, index) => (
@@ -687,10 +711,14 @@ const StudentForm = (props) => {
 										/> */}
 										<Form.Item label="Số điện thoại">
 											<Select
+												loading={isLoading.status}
 												className="style-input"
 												showSearch
 												optionFilterProp="children"
-												value={userDetail ? userDetail.UserInformationID : ''}
+												disabled={haveDefault ? true : false}
+												value={
+													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+												}
 												onChange={(value) => handleChangeUser(value)}
 											>
 												{userAll?.map((item, index) => (

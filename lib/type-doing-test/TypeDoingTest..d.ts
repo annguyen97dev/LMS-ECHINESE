@@ -39,6 +39,15 @@ type ITestCheck = {
 	}>;
 };
 
+type ITestHW = {
+	StudentID: any;
+	CourseID: any;
+	CurriculumDetailID: any;
+	ExamAppointmentID: any;
+	HomeworkID: any;
+	HomeworkResultDetailInfoList: any[];
+};
+
 type ITestExamination = {
 	StudentID: number;
 	SetPackageDetailID: number;

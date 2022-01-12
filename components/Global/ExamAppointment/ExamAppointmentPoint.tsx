@@ -1,6 +1,5 @@
 //@ts-nocheck
 import React, { useEffect, useState } from 'react';
-import { packageResultApi } from '~/apiBase/package/package-result';
 import NestedTable from '~/components/Elements/NestedTable';
 import { useWrap } from '~/context/wrap';
 import { examAppointmentResultApi } from '~/apiBase';
@@ -13,7 +12,8 @@ const ExamAppointmentPoint = (props) => {
 		status: false
 	});
 	const [detail, setDetail] = useState<IExamAppointmentResult>([]);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
+	const [isDone, setIsDone] = useState(false);
 
 	const fetchDetailInfo = async () => {
 		setIsLoading({
@@ -27,6 +27,7 @@ const ExamAppointmentPoint = (props) => {
 				ExamAppointmentID: infoID
 			});
 			if (res.status == 200) {
+				setIsDone(res.data.data[0].isDone);
 				let arr = [];
 				arr.push(res.data.data[0]);
 				setDetail(arr);
@@ -51,9 +52,10 @@ const ExamAppointmentPoint = (props) => {
 				let res = await homeworkResultApi.getAll({
 					selectAll: true,
 					UserInformationID: userID,
-					ExamAppointmentID: infoID
+					HomeworkID: infoID
 				});
 				if (res.status == 200) {
+					setIsDone(res.data.data[0].isDone);
 					let arr = [];
 					arr.push(res.data.data[0]);
 					setDetail(arr);
@@ -118,13 +120,17 @@ const ExamAppointmentPoint = (props) => {
 	];
 
 	return (
-		<NestedTable
-			loading={isLoading}
-			addClass="basic-header"
-			dataSource={detail[0]?.isDone ? detail : {}}
-			columns={columns}
-			haveBorder={true}
-		/>
+		<>
+			{(isDone || userInformation?.RoleID == 1 || userInformation?.RoleID == 2) && (
+				<NestedTable
+					loading={isLoading}
+					addClass="basic-header"
+					dataSource={detail[0]?.isDone ? detail : {}}
+					columns={columns}
+					haveBorder={true}
+				/>
+			)}
+		</>
 	);
 };
 

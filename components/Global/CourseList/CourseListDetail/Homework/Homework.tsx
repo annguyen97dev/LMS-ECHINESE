@@ -11,7 +11,7 @@ import Link from 'next/link';
 import ExpandTable from '~/components/ExpandTable';
 import TableDetail from './TableDetail';
 import ExamAppointmentPoint from '~/components/Global/ExamAppointment/ExamAppointmentPoint';
-import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined, ExclamationCircleOutlined, FormOutlined } from '@ant-design/icons';
 
 Homework.propTypes = {
 	courseID: PropTypes.number,
@@ -191,7 +191,7 @@ function Homework(props) {
 			render: (warning, item: any, idx) => {
 				return (
 					<>
-						{isAdmin ? (
+						{userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? (
 							<Popconfirm
 								title="Bạn muốn xóa bài tập này?"
 								onConfirm={() => deleteHomework({ ID: item.ID, Enable: false })}
@@ -338,7 +338,7 @@ function Homework(props) {
 					) : null
 				}
 				TitleCard={
-					isAdmin && (
+					(userInformation?.RoleID == 1 || userInformation?.RoleID == 2) && (
 						<div className="d-flex align-items-center">
 							<div className="">
 								<b>Ca học:</b>
