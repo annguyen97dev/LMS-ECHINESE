@@ -470,6 +470,7 @@ const StudentExchange = () => {
 					index={index}
 					dataRow={data}
 					width={1200}
+					hideReset={true}
 					listDataForm={listDataForm}
 					_handleSubmit={(dataSubmit, index) => {
 						let newDataSource = [...dataSource];

@@ -50,7 +50,7 @@ const optionGender = [
 ];
 
 const StudentForm = (props) => {
-	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess, width } = props;
+	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess, width, hideReset } = props;
 	const router = useRouter();
 	const url = router.pathname;
 	const { customerID: customerID } = router.query;
@@ -540,9 +540,11 @@ const StudentForm = (props) => {
 					title="Phiếu thông tin cá nhân"
 					className="w-100 w-100-mobile"
 					extra={
-						<button className="btn btn-warning" onClick={handleReset}>
-							Reset
-						</button>
+						hideReset ? null : (
+							<button className="btn btn-warning" onClick={handleReset}>
+								Reset
+							</button>
+						)
 					}
 				>
 					<div className="form-staff">

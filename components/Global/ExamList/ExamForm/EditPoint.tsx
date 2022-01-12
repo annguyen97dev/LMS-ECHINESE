@@ -31,9 +31,17 @@ const EditPoint = (props) => {
 		setIsModalVisible(false);
 	};
 
+	const numberCheck = (str) => {
+		if (str === undefined || str === null) {
+			return false;
+		} else {
+			return /^[0-9,. ]*$/.test(str);
+		}
+	};
+
 	const onChange_EditPoint = (e) => {
-		let value = e.target.value;
-		setValuePoint(value);
+		let value = numberCheck(e.target.value) ? e.target.value : valuePoint;
+		setValuePoint(value.replace(',', '.'));
 		if (!quesItem) {
 			listQuestion.forEach((element) => {
 				element.Point = value;
@@ -43,18 +51,27 @@ const EditPoint = (props) => {
 	};
 
 	const onSubmitData = async () => {
+		console.log('onSubmitData');
+
 		let itemDelete = {
 			ID: dataQuestion.ID,
 			Enable: true,
 			ExerciseOrExerciseGroup: quesItem
 				? [
 						{
-							Point: valuePoint.replace(',', '.'),
+							Point: valuePoint,
 							ExerciseOrExerciseGroupID: quesItem.ExerciseID
 						}
 				  ]
 				: listQuestion
 		};
+
+		console.log('=======================================');
+		console.log('quesItem: ', quesItem);
+
+		console.log('listQuestion: ', listQuestion);
+
+		console.log('itemDelete.ExerciseOrExerciseGroup: ', itemDelete.ExerciseOrExerciseGroup);
 
 		setIsLoading(true);
 		try {
