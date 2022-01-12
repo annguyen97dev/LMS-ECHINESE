@@ -13,4 +13,11 @@ type IHomeWork = IBaseApi<{
 	Note: string;
 	Status: number;
 	StatusName: string;
+	ExerciseType: number;
+	ExerciseTypeName: string;
+	LevelName: string;
+	HomeworkExerciseStudent: any;
+	HomeworkResultID: number;
+	ExamTopicDetailID: number;
+	ExerciseGroupID: number;
 }>;

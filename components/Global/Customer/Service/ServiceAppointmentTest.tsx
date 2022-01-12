@@ -616,7 +616,7 @@ export default function ServiceAppointmentTest(props) {
 			dataIndex: 'TeacherName'
 		},
 		{
-			width: 170,
+			width: 190,
 			title: 'Tư vấn viên',
 			dataIndex: 'CounselorsName'
 		},

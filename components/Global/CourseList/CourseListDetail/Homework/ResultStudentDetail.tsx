@@ -1,31 +1,34 @@
-import { Card, Popover, Radio, Skeleton, Spin, Tooltip } from 'antd';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { Card, Skeleton, Spin } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bookmark } from 'react-feather';
-import { packageResultDetailApi } from '~/apiBase/package/package-result-detail';
 import { useWrap } from '~/context/wrap';
 import TitlePage from '~/components/Elements/TitlePage';
 import router from 'next/router';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import ReactHtmlParser from 'react-html-parser';
 import ListQuestion from '~/components/Global/DoingTest/ListQuestion';
 import { useDoneTest } from '~/context/useDoneTest';
-import { ProfileOutlined, RedoOutlined } from '@ant-design/icons';
-import { doingTestApi, testCustomerApi } from '~/apiBase';
-import Link from 'next/link';
+import { ProfileOutlined } from '@ant-design/icons';
 import MainTest from '~/components/Global/DoingTest/MainTest';
+import { homeworkResultApi } from '~/apiBase/course-detail/home-work-result';
+import { homeworkResultDetailApi } from '~/apiBase/course-detail/home-work-result-details';
 
-const PackageResultStudentDetail = () => {
+const HomeworkStudentResult = () => {
+	// ---- Get Router ----
+
+	const { ExamAppointmentResultID: ExamAppointmentResultID, examID: examID, score: score } = router.query;
+	const HomeworkResultID = router.query.slug as string;
 	const {} = useDoneTest();
-	const { teacherMarking: teacherMarking, score: score } = router.query;
-	const { getDoneTestData, doneTestData, dataMarking, getDataMarking } = useDoneTest();
+	const { getDoneTestData, doneTestData, dataMarking } = useDoneTest();
 	const [detailResult, setDetailResult] = useState([]);
 	const [visibleNofi, setVisibleNofi] = useState(false);
 	const boxEl = useRef(null);
 
+	// console.log('score: ', score);
+
 	const paramsDefault = {
 		pageSize: 999,
 		pageIndex: 1,
-		SetPackageResultID: parseInt(router.query.slug as string),
-		ExerciseType: teacherMarking ? 2 : null
+		ExamAppointmentResultID: parseInt(ExamAppointmentResultID as string)
 	};
 	const [params, setParams] = useState(paramsDefault);
 	const [loading, setLoading] = useState(false);
@@ -34,82 +37,63 @@ const PackageResultStudentDetail = () => {
 
 	const [showMainTest, setShowMainTest] = useState(false);
 	const { showNoti, userInformation } = useWrap();
-	const [isShowAll, setIsShowAll] = useState(false);
 	const [isMarked, setIsMarked] = useState(false);
 	const [showNote, setShowNote] = useState(false);
 	const [infoTest, setInfoTest] = useState(null);
 	const [loadingInfoTest, setLoadingInfoTest] = useState(false);
 
-	// ---- Get Router ----
-
-	const { packageDetailID: packageDetailID, examID: examID } = router.query;
-	const SetPackageResultID = router.query.slug as string;
-
 	const getInfoTest = async () => {
 		setLoadingInfoTest(true);
 		try {
-			let res = await doingTestApi.getByID(SetPackageResultID);
+			let res = await homeworkResultApi.getAll({
+				HomeworkID: HomeworkResultID,
+				UserInformationID: userInformation.UserInformationID
+			});
 			if (res.status === 200) {
-				let dataInfo: any = { ...res.data.data };
+				let dataInfo: any = res.data.data[0];
 				let totalQuestion = dataInfo.ListeningNumber + dataInfo.ReadingNumber;
 				setInfoTest({
-					...res.data.data,
+					...res.data.data[0],
 					TotalQuestion: totalQuestion
 				});
+
+				getDataSetPackageResult(res.data.data[0].ID);
 			}
 		} catch (error) {
-			// showNoti('danger', error.message);
 			console.log('error', error.message);
 		} finally {
 			setLoadingInfoTest(false);
 		}
 	};
 
-	const getDataSetPackageResult = async () => {
+	const getDataSetPackageResult = async (ID) => {
 		let cloneListQuestionID = [...listQuestionID];
 		let cloneListGroupID = [...listGroupID];
 		setLoading(true);
 
 		try {
-			let res = await packageResultDetailApi.getAll(params);
+			let res = await homeworkResultDetailApi.getAll({ ...params, HomeworkResultID: ID });
 
 			//@ts-ignore
 			if (res.status == 200) {
+				console.log('res.status == 200');
+
 				convertDataDoneTest(res.data.data);
-				setIsMarked(res.data.isDone);
-				// Add to data marking if have teacher marking
-				if (teacherMarking) {
-					if (!dataMarking) {
-						let newDataMarking = {
-							SetPackageResultID: parseInt(router.query.slug as string),
-							Note: '',
-							setPackageExerciseStudentsList: []
-						};
-						res.data.data.forEach((item) => {
-							if (item.ExerciseType == 2) {
-								item.SetPackageExerciseStudent.forEach((ques) => {
-									newDataMarking.setPackageExerciseStudentsList.push({
-										ID: ques.ID,
-										Point: 0
-									});
-								});
-							}
-						});
-						getDataMarking({ ...newDataMarking });
-					}
-				}
 
 				// Add questionid to list
 				res.data.data.forEach((item, index) => {
 					if (item.Enable) {
 						item.ExerciseGroupID !== 0 && cloneListGroupID.push(item.ExerciseGroupID);
-						item.SetPackageExerciseStudent.forEach((ques) => {
+						item.HomeworkExerciseStudent.forEach((ques) => {
 							cloneListQuestionID.push(ques.ExerciseID);
 						});
 					}
 				});
 
 				// ----- //
+
+				console.log('cloneListQuestionID: ', cloneListQuestionID);
+				console.log('cloneListGroupID: ', cloneListGroupID);
 
 				getDoneTestData(res.data.data);
 				setListGroupID([...cloneListGroupID]);
@@ -126,14 +110,13 @@ const PackageResultStudentDetail = () => {
 		}
 	};
 
-	//
-
 	const convertDataDoneTest = (data) => {
 		let cloneData = [...data];
+
 		cloneData.forEach((item) => {
-			item.ExerciseTopic = [...item.SetPackageExerciseStudent];
+			item.ExerciseTopic = [...item.HomeworkExerciseStudent];
 			item.ExerciseTopic.forEach((ques) => {
-				ques.ExerciseAnswer = [...ques.SetPackageExerciseAnswerStudent];
+				ques.ExerciseAnswer = [...ques.HomeworkExerciseAnswerStudent];
 			});
 		});
 
@@ -150,27 +133,9 @@ const PackageResultStudentDetail = () => {
 		} else {
 			text = 'Câu ' + (indexStart + 1).toString() + ' - ' + (indexEnd + 1).toString();
 		}
+
 		return <p className="space-question">{text}</p>;
 	};
-
-	const showWritingQuestion = () => {
-		if (isShowAll) {
-			setParams({
-				...paramsDefault,
-				ExerciseType: 2
-			});
-		} else {
-			setParams({
-				...paramsDefault,
-				ExerciseType: null
-			});
-		}
-		setIsShowAll(!isShowAll);
-	};
-
-	useEffect(() => {
-		getDataSetPackageResult();
-	}, [params]);
 
 	useEffect(() => {
 		if (dataMarking && !showNote) {
@@ -191,8 +156,10 @@ const PackageResultStudentDetail = () => {
 	}, [dataMarking]);
 
 	useEffect(() => {
-		getInfoTest();
-	}, []);
+		if (userInformation) {
+			getInfoTest();
+		}
+	}, [userInformation]);
 
 	return (
 		<>
@@ -210,7 +177,7 @@ const PackageResultStudentDetail = () => {
 					<div className="row">
 						<div className="col-md-10 col-12">
 							<Card
-								className="table-medium"
+								className=""
 								title={
 									<div className="title-question-bank">
 										<h3 className="title-big">
@@ -221,6 +188,23 @@ const PackageResultStudentDetail = () => {
 								}
 								extra={
 									<>
+										{/* <Link
+											href={{
+												pathname: '/doing-test',
+												query: {
+													examID: examID,
+													packageDetailID: packageDetailID
+												}
+											}}
+										>
+											<a className="btn btn-warning">
+												<span className="d-flex align-items-center">
+													<RedoOutlined className="mr-2" />
+													Làm lại đề
+												</span>
+											</a>
+										</Link> */}
+
 										<button className="btn btn-secondary ml-2" onClick={() => setShowMainTest(true)}>
 											<span className="d-flex align-items-center">
 												<ProfileOutlined className="mr-2" />
@@ -233,16 +217,18 @@ const PackageResultStudentDetail = () => {
 								<div className="test-body done-test-card " ref={boxEl}>
 									<div className="wrap-box-info mb-2">
 										<div className="box-info">
-											<div className="box-info__item box-info__score">
-												Số điểm
-												<span className="number">
-													{loadingInfoTest ? (
-														<Skeleton paragraph={false} loading={true} title={true} active />
-													) : (
-														infoTest?.PointTotal
-													)}
-												</span>
-											</div>
+											{(infoTest?.isDone || score) && (
+												<div className="box-info__item box-info__score">
+													Số điểm
+													<span className="number">
+														{loadingInfoTest ? (
+															<Skeleton paragraph={false} loading={true} title={true} active />
+														) : (
+															infoTest?.PointTotal
+														)}
+													</span>
+												</div>
+											)}
 											<div className="box-info__item box-info__correct">
 												Số câu đúng
 												<span className="number">
@@ -266,7 +252,7 @@ const PackageResultStudentDetail = () => {
 											<Spin />
 										</div>
 									) : detailResult?.length == 0 ? (
-										<p className="text-center font-weight-bold">Không có dữ liệu</p>
+										<p className="text-center font-weight-bold mt-2">Không có dữ liệu</p>
 									) : (
 										doneTestData && (
 											<>
@@ -306,7 +292,6 @@ const PackageResultStudentDetail = () => {
 														return (
 															<div key={index}>
 																<ListQuestion
-																	showScore={score}
 																	isMarked={isMarked}
 																	dataQuestion={item}
 																	listQuestionID={listQuestionID}
@@ -328,4 +313,4 @@ const PackageResultStudentDetail = () => {
 	);
 };
 
-export default PackageResultStudentDetail;
+export default HomeworkStudentResult;
