@@ -470,6 +470,7 @@ const StudentExchange = () => {
 					index={index}
 					dataRow={data}
 					width={1200}
+					haveDefault={true}
 					hideReset={true}
 					listDataForm={listDataForm}
 					_handleSubmit={(dataSubmit, index) => {
@@ -493,7 +494,7 @@ const StudentExchange = () => {
 					{
 						title: 'Tỉnh/TP',
 						dataIndex: 'AreaName',
-						width: 120
+						width: 150
 					},
 					{
 						title: 'Họ tên',

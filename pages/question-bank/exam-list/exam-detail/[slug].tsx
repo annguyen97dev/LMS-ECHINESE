@@ -221,6 +221,7 @@ const ExamDetail = () => {
 								listQuestionID={listQuestionID}
 								dataQuestion={item}
 								listAlphabet={listAlphabet}
+								showScore={true}
 							/>
 						</WrapList>
 					</div>

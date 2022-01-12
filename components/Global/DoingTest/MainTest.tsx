@@ -307,8 +307,6 @@ const MainTest = (props) => {
 		let cloneData = { ...packageResult };
 		let dataSubmit = null;
 
-		console.log('packageResult: ', packageResult);
-
 		cloneData.SetPackageResultDetailInfoList.forEach((item) => {
 			if (item.Type == 3 || item.Type == 2 || item.Type == 5) {
 				item.SetPackageExerciseStudentInfoList.forEach((e) => {
@@ -414,6 +412,7 @@ const MainTest = (props) => {
 				break;
 			case 'examination':
 				dataSubmit = { ...cloneData };
+
 				break;
 			default:
 				break;
@@ -446,7 +445,11 @@ const MainTest = (props) => {
 			default:
 				obj = {
 					pathname: router.query?.isExercise ? 'course/exercise/result/[slug]' : '/package/package-result-student/detail/[slug]',
-					query: { slug: data.ID, examID: data.ExamTopicID, packageDetailID: data.SetPackageDetailID }
+					query: {
+						slug: router.query?.isExercise ? data.HomeworkID : data.ID,
+						examID: data.ExamTopicID,
+						packageDetailID: data.SetPackageDetailID
+					}
 				};
 				break;
 		}
@@ -458,6 +461,8 @@ const MainTest = (props) => {
 		setIsModalConfirm(false);
 		setLoadingSubmit(true);
 		let dataSubmit = remakeData();
+
+		console.log('dataSubmit: ', dataSubmit);
 
 		let res = null;
 
@@ -472,7 +477,7 @@ const MainTest = (props) => {
 					break;
 
 				case 'examination': // Thi cử - đề bán
-					res = await doingTestApi.add(dataSubmit);
+					res = router.query?.isExercise ? await homeworkResultApi.add({ ...dataSubmit }) : await doingTestApi.add(dataSubmit);
 					break;
 				default:
 					break;
@@ -664,6 +669,9 @@ const MainTest = (props) => {
 	};
 
 	const onSubmitExercise = async () => {
+		console.log('====================================');
+		console.log('onSubmitExercise');
+
 		setIsModalConfirm(false);
 		setLoadingSubmit(true);
 		let dataSubmit = remakeData();

@@ -19,7 +19,7 @@ const SpeakingList = (props) => {
 	const { doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const { onDeleteQuestion } = useExamDetail();
 	const { activeID, packageResult, getPackageResult, getListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest, isMarked } = props;
+	const { dataQuestion, listQuestionID, isDoingTest, isMarked, hideScore } = props;
 	const { showNoti, userInformation } = useWrap();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({

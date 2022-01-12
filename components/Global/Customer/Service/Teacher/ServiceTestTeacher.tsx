@@ -517,8 +517,8 @@ export default function ServiceTestTeacher(props) {
 			render: (a) => <p className="font-weight-primary">{a}</p>,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
 		},
-
 		{
+			width: 150,
 			title: 'Đề test',
 			dataIndex: 'ExamTopicName',
 
@@ -545,15 +545,14 @@ export default function ServiceTestTeacher(props) {
 			render: (date: any) => moment(date).format('DD/MM/YYYY')
 		},
 		{
+			width: 150,
 			title: 'Giờ hẹn',
 			dataIndex: 'Time'
 		},
-
 		{
 			title: 'Tư vấn viên',
 			dataIndex: 'CounselorsName'
 		},
-
 		{
 			title: 'Trạng thái',
 			dataIndex: 'isDone',

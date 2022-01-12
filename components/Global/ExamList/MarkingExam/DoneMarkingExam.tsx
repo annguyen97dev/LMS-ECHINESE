@@ -6,6 +6,7 @@ import { useWrap } from '~/context/wrap';
 import { Modal, Input, Spin, Button } from 'antd';
 import { examAppointmentResultApi } from '~/apiBase';
 import { courseExamResultApi } from '~/apiBase/package/course-exam-result';
+import { homeworkPonimentApi } from '~/apiBase/course-detail/home-work-pontment';
 
 const { TextArea } = Input;
 
@@ -56,6 +57,16 @@ const DoneMarkingExam = (props) => {
 				dataSubmit = { ...dataCheck };
 				break;
 
+			case 'homework':
+				let dataHW = {
+					HomeworkResultID: dataMarking.SetPackageResultID,
+					Note: dataMarking.Note,
+					homeworkExerciseStudenttList: [...dataMarking.setPackageExerciseStudentsList]
+				};
+
+				dataSubmit = { ...dataHW };
+				break;
+
 			default:
 				dataSubmit = { ...dataMarking };
 				break;
@@ -80,6 +91,10 @@ const DoneMarkingExam = (props) => {
 
 				case 'check':
 					res = await courseExamResultApi.updatePoint(dataSubmit);
+					break;
+
+				case 'homework':
+					res = await homeworkPonimentApi.update(dataSubmit);
 					break;
 
 				default:

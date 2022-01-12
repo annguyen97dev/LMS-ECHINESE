@@ -5,6 +5,9 @@ import { useWrap } from '~/context/wrap';
 import ExpandTable from '~/components/ExpandTable';
 import { homeworkResultApi } from '~/apiBase/course-detail/home-work-result';
 import ExamAppointmentPoint from '~/components/Global/ExamAppointment/ExamAppointmentPoint';
+import { DeleteOutlined, ExclamationCircleOutlined, FormOutlined } from '@ant-design/icons';
+import Link from 'next/link';
+import { Tooltip } from 'antd';
 
 TableDetail.propTypes = {
 	courseID: PropTypes.number,
@@ -58,6 +61,35 @@ function TableDetail(props) {
 			render: (value) => (
 				<>{value == 'Chưa bắt đầu' ? <span className="tag gray">{value}</span> : <span className="tag green">{value}</span>}</>
 			)
+		},
+		{
+			width: 120,
+			title: 'Hành động',
+			dataIndex: 'Warning',
+			align: 'center',
+			render: (warning, item: any, idx) => {
+				return (
+					<>
+						<Link
+							href={{
+								pathname: '/course/exercise/result-teacher/[slug]',
+								query: {
+									slug: `${item.ID}`,
+									teacherMarking: item.TeacherID,
+									packageResultID: item.ID,
+									type: 'test'
+								}
+							}}
+						>
+							<Tooltip title={!item.isDone ? 'Chấm bài ngay' : 'Xem chi tiết'}>
+								<button className="btn btn-icon edit">
+									<FormOutlined />
+								</button>
+							</Tooltip>
+						</Link>
+					</>
+				);
+			}
 		}
 	];
 
