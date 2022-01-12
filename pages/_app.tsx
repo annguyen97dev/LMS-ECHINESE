@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { WrapProvider } from '~/context/wrap';
 import '../styles/global.scss';
+export const siteTitle = 'Mona Media Admin';
 
 export default function App({ Component, pageProps }) {
 	const { session } = pageProps;
@@ -34,6 +35,11 @@ export default function App({ Component, pageProps }) {
 				<title>Echinese - Learning Manager System</title>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1" />
 				<meta name="robots" content="noindex" />
+				<meta name="description" content="Mona Media Admin" />
+				<meta name="og:title" content={siteTitle} />
+				<meta name="twitter:card" content="summary_large_image" />
+				<link rel="icon" href="/logo.png" />
+
 				<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
 				<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx.common.css" />
 				<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.7/css/dx.light.css" />
