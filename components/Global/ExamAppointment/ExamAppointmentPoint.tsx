@@ -12,7 +12,7 @@ const ExamAppointmentPoint = (props) => {
 		status: false
 	});
 	const [detail, setDetail] = useState<IExamAppointmentResult>([]);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [isDone, setIsDone] = useState(false);
 
 	const fetchDetailInfo = async () => {
@@ -121,7 +121,7 @@ const ExamAppointmentPoint = (props) => {
 
 	return (
 		<>
-			{isDone && (
+			{(isDone || userInformation?.RoleID == 1 || userInformation?.RoleID == 2) && (
 				<NestedTable
 					loading={isLoading}
 					addClass="basic-header"

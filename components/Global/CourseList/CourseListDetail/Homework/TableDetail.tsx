@@ -127,7 +127,7 @@ function TableDetail(props) {
 	const expandedRowRender = (data, index, y, visible: boolean) => {
 		return (
 			<>
-				<ExamAppointmentPoint isExercise={true} visible={visible} infoID={data.ID} userID={data.UserInformationID} />
+				<ExamAppointmentPoint isExercise={true} visible={visible} infoID={data.HomeworkID} userID={data.UserInformationID} />
 			</>
 		);
 	};
