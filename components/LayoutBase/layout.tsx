@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
+import { Breadcrumb, Popover, Tooltip } from 'antd';
+import { signIn } from 'next-auth/client';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import TitlePageHeader from '~/components/Elements/TitlePageHeader';
 import Header from '~/components/Header';
 import Menu from '~/components/Menu';
-import { signIn, useSession } from 'next-auth/client';
 import { useWrap } from '~/context/wrap';
-import TitlePageHeader from '~/components/Elements/TitlePageHeader';
-import { Breadcrumb, Tooltip } from 'antd';
-export const siteTitle = 'Mona Media Admin';
-import { AdminChildMenu, AdminParentMenu } from '~/lib/data-menu/AdminMenu';
-import { TeacherChildMenu, TeacherParentMenu } from '~/lib/data-menu/TeacherMenu';
-import { StudentChildMenu, StudentParentMenu } from '~/lib/data-menu/StudentMenu';
-import { SellerChildMenu, SellerParentMenu } from '~/lib/data-menu/SellerMenu';
-import { ParentsChildMenu, ParentsParentMenu } from '~/lib/data-menu/ParentsMenu';
-import { StaffManagerChildMenu, StaffManagerParentMenu } from '~/lib/data-menu/StaffManagerMenu';
-import { AcademicChildMenu, AcademicParentMenu } from '~/lib/data-menu/AcademinMenu';
-import { ProfessionalManagerChildMenu, ProfessionalManagerParentMenu } from '~/lib/data-menu/ProfessionalManagerMenu';
-import { AccountantChildMenu, AccountantParentMenu } from '~/lib/data-menu/AccountantMenu';
-import { Popover } from 'antd';
+import { AcademicChildMenu } from '~/lib/data-menu/AcademinMenu';
+import { AccountantChildMenu } from '~/lib/data-menu/AccountantMenu';
+import { AdminChildMenu } from '~/lib/data-menu/AdminMenu';
+import { ParentsChildMenu } from '~/lib/data-menu/ParentsMenu';
+import { ProfessionalManagerChildMenu } from '~/lib/data-menu/ProfessionalManagerMenu';
+import { SellerChildMenu } from '~/lib/data-menu/SellerMenu';
+import { StaffManagerChildMenu } from '~/lib/data-menu/StaffManagerMenu';
+import { StudentChildMenu } from '~/lib/data-menu/StudentMenu';
+import { TeacherChildMenu } from '~/lib/data-menu/TeacherMenu';
 import InComingClassBtn from '../Global/CreateCourseOnline/InComingClassBtn';
 import RegCourseBtn from '../Global/RegisterCourse/RegCourseBtn';
 
@@ -281,12 +278,6 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 
 	return (
 		<div className="app">
-			<Head>
-				<link rel="icon" href="/logo.png" />
-				<meta name="description" content="Mona Media Admin" />
-				<meta name="og:title" content={siteTitle} />
-				<meta name="twitter:card" content="summary_large_image" />
-			</Head>
 			<Header isOpenMenu={isOpenMenu} isOpen={isOpen} funcMenuMobile={funcMenuMobile} openMenuMobile={openMenuMobile} />
 			<Menu
 				resetMenuMobile={resetMenuMobile}

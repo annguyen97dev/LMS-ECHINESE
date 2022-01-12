@@ -158,7 +158,7 @@ function CDCalendar(props) {
 			}
 		}
 		// GIÁO VIÊN
-		if (userInformation?.RoleID === 2) {
+		if (userInformation?.RoleID === 2 || userInformation?.RoleID === 5) {
 			if (btnID === 1) {
 				return (
 					<Button
@@ -188,7 +188,10 @@ function CDCalendar(props) {
 							size="middle"
 							className="btn-primary w-100"
 							onClick={() => {
-								navigator.clipboard.writeText(`${_.API_URL}/course/zoom-view/${data.scheduleID}`);
+								if (typeof window !== 'undefined') {
+									const url = window.location.origin;
+									navigator.clipboard.writeText(`${url}/course/zoom-view/${data.scheduleID}`);
+								}
 							}}
 							style={{ marginTop: 4 }}
 						>
@@ -327,8 +330,6 @@ function CDCalendar(props) {
 				</ul>
 			</div>
 		);
-
-		console.log('TeacherAttendanceID: ', TeacherAttendanceID);
 
 		return (
 			<div

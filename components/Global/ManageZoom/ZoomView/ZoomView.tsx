@@ -64,7 +64,7 @@ function ZoomView() {
 		const module = await import('@zoomus/websdk');
 		// DECLARE MODULE
 		const { ZoomMtg } = module;
-		ZoomMtg.setZoomJSLib('https://source.zoom.us/1.9.9/lib', '/av');
+		ZoomMtg.setZoomJSLib('https://source.zoom.us/2.1.1/lib', '/av');
 		ZoomMtg.preLoadWasm();
 		ZoomMtg.prepareWebSDK();
 
@@ -80,11 +80,14 @@ function ZoomView() {
 			isSupportAV: true,
 			success: (success) => {
 				// JOIN MEETING
+				console.log('ZoomMtg.init', success);
 				ZoomMtg.join({
 					...dataZoom,
-					success: (success) => {},
+					success: (success) => {
+						console.log('ZoomMtg.join', success);
+					},
 					error: (error) => {
-						console.log(error);
+						console.log('ZoomMtg.join', error);
 					}
 				});
 				// ZoomMtg.inMeetingServiceListener('onUserJoin', function (data) {
@@ -117,7 +120,7 @@ function ZoomView() {
 				// });
 			},
 			error: (error) => {
-				console.log(error);
+				console.log('ZoomMtg.init', error);
 			}
 		});
 	};
@@ -129,8 +132,8 @@ function ZoomView() {
 	return (
 		<>
 			<Head>
-				<link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.9/css/bootstrap.css" />
-				<link type="text/css" rel="stylesheet" href="https://source.zoom.us/1.9.9/css/react-select.css" />
+				<link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.1.1/css/bootstrap.css" />
+				<link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.1.1/css/react-select.css" />
 			</Head>
 			<div className="zoom-view" style={{ height: '100vh', width: '100vw', position: 'relative' }}>
 				<Spin size="large" />
