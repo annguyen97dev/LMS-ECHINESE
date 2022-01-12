@@ -2,14 +2,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Form, Modal, Spin } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { useState, FC } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useState } from 'react';
+import { MinusCircle, PlusCircle } from 'react-feather';
+import { useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-import { optionCommonPropTypes } from '~/utils/proptypes';
 import { numberWithCommas } from '~/utils/functions';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 const CreateCourseOnlineForm = (props) => {
 	const {
@@ -19,48 +20,50 @@ const CreateCourseOnlineForm = (props) => {
 		optionListForForm,
 		//
 		handleGetCourse,
-		handleCheckStudyTime,
-		handleFetchDataByBranch,
 		handleFetchProgramByGrade,
 		handleGetValueBeforeFetchCurriculum,
 		handleGetValueBeforeFetchTeacher
 	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
-
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 
 	const schema = yup.object().shape({
 		BranchID: yup.number().nullable().required('Bạn không được để trống'),
-		// UserInformationID: yup.number().nullable().required('Bạn không được để trống'),
-		StudyTimeID: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ca học').required('Bạn không được để trống'),
 		GradeID: yup.number().nullable().required('Bạn không được để trống'),
 		ProgramID: yup.number().nullable().required('Bạn không được để trống'),
 		TeacherID: yup.number().nullable().required('Bạn không được để trống'),
 		CurriculumID: yup.number().nullable().required('Bạn không được để trống'),
 		StartDay: yup.string().required('Bạn không được để trống'),
-		DaySelected: yup.array().min(1, 'Bạn phải chọn ít nhất 1 ngày trong tuần').required('Bạn không được để trống'),
 		Price: yup.string().required('Bạn không được để trống'),
 		SalaryOfLesson: yup.string().required('Bạn không được để trống'),
-		CourseName: yup.string()
+		CourseName: yup.string(),
+		TimeCourse: yup.array().of(
+			yup.object().shape({
+				DaySelected: yup.number().nullable().required('Bạn không được để trống'),
+				StudyTimeID: yup.number().nullable().required('Bạn không được để trống')
+			})
+		)
 	});
 	const defaultValuesInit = {
 		BranchID: null,
-		// UserInformationID: null,
-		StudyTimeID: undefined,
 		GradeID: null,
 		ProgramID: null,
 		TeacherID: null,
 		CurriculumID: null,
 		StartDay: moment().format('YYYY/MM/DD'),
-		DaySelected: [],
 		Price: '',
 		SalaryOfLesson: '',
-		CourseName: ''
+		CourseName: '',
+		TimeCourse: [{ DaySelected: null, StudyTimeID: null }]
 	};
 	const form = useForm<ICOCreateForm>({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema)
+	});
+	const { fields, append, remove } = useFieldArray({
+		control: form.control,
+		name: 'TimeCourse'
 	});
 	const createCourseSwitchFunc = (data) => {
 		switch (isUpdate) {
@@ -77,12 +80,6 @@ const CreateCourseOnlineForm = (props) => {
 				break;
 		}
 	};
-	// ONCHANGE OF BRANCH FIELD
-	// const checkHandleFetchUserInformation = (value) => {
-	// 	if (!handleFetchDataByBranch) return;
-	// 	form.setValue('UserInformationID', undefined);
-	// 	handleFetchDataByBranch(value);
-	// };
 	// ONCHANGE OF GRADE FIELD
 	const checkHandleFetchProgramByGrade = (value) => {
 		if (!handleFetchProgramByGrade) return;
@@ -107,7 +104,7 @@ const CreateCourseOnlineForm = (props) => {
 			<button type="button" className="btn btn-warning" onClick={openModal}>
 				Thông tin khóa học
 			</button>
-			<Modal title="Thông tin khóa học" visible={isModalVisible} footer={null} width={800} onCancel={closeModal}>
+			<Modal style={{ top: 25 }} title="Thông tin khóa học" visible={isModalVisible} footer={null} width={800} onCancel={closeModal}>
 				<div className="wrap-form">
 					<Form layout="vertical" onFinish={form.handleSubmit(createCourseSwitchFunc)}>
 						<div className="row">
@@ -121,38 +118,7 @@ const CreateCourseOnlineForm = (props) => {
 									optionList={optionListForForm.branchList}
 									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
 									onChangeSelect={(value) => {
-										// checkHandleFetchUserInformation(value);
 										checkHandleGetValueBeforeFetchTeacher('BranchID', value);
-									}}
-								/>
-							</div>
-							{/* <div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="UserInformationID"
-									label="Học vụ"
-									isRequired
-									placeholder="Chọn học vụ"
-									isLoading={isLoading.type === 'BranchID' && isLoading.status}
-									optionList={optionListForForm.userInformationList}
-								/>
-							</div> */}
-							<div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="StudyTimeID"
-									label="Ca học"
-									isRequired
-									placeholder="Chọn ca học"
-									isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
-									optionList={optionListForForm.studyTimeList}
-									mode="multiple"
-									onChangeSelect={(value) => {
-										if (handleCheckStudyTime) {
-											// value = [1, 2, ...];
-											handleCheckStudyTime(value);
-										}
-										checkHandleGetValueBeforeFetchCurriculum('StudyTimeID', value);
 									}}
 								/>
 							</div>
@@ -168,6 +134,83 @@ const CreateCourseOnlineForm = (props) => {
 									onChangeSelect={checkHandleFetchProgramByGrade}
 								/>
 							</div>
+							<div className="col-12">
+								<div className="more-revenue">
+									<PlusCircle
+										size="20px"
+										className="add"
+										onClick={() => {
+											append({ DaySelected: null, StudyTimeID: null });
+										}}
+										style={{
+											right: 0
+										}}
+									/>
+									<Form.Item label="Khung thời gian" required>
+										<div className="more-revenue-list" style={{ maxHeight: 'inherit' }}>
+											{fields.map((item, index) => {
+												const timeCourse = form.watch('TimeCourse');
+
+												const disabledDaySelectedList = timeCourse.map((obj) => obj.DaySelected).filter(Boolean);
+
+												const time =
+													timeCourse[0]?.StudyTimeID &&
+													optionListForForm.studyTimeList.find((opt) => opt.value === timeCourse[0]?.StudyTimeID)
+														?.options.Time;
+
+												const disabledStudyTimeList =
+													time && timeCourse.length >= 2
+														? optionListForForm.studyTimeList
+																.filter((opt) => opt.options.Time !== time)
+																.map((opt) => opt.value)
+														: [];
+												return (
+													<div className="more-revenue-item" key={item.id}>
+														<div className="row">
+															<div className="col-md-6 col-12">
+																<SelectField
+																	form={form}
+																	name={`TimeCourse.${index}.DaySelected`}
+																	isRequired
+																	label="Thứ"
+																	placeholder="Chọn thứ"
+																	optionList={optionListForForm.dayOfWeek}
+																	optionDisabledList={disabledDaySelectedList}
+																	isDynamicField
+																/>
+															</div>
+															<div className="col-md-6 col-12">
+																<SelectField
+																	form={form}
+																	name={`TimeCourse.${index}.StudyTimeID`}
+																	isRequired
+																	label="Ca"
+																	placeholder="Chọn ca học"
+																	isLoading={isLoading.type === 'FETCH_DATA' && isLoading.status}
+																	optionList={optionListForForm.studyTimeList}
+																	onChangeSelect={(value) => {
+																		checkHandleGetValueBeforeFetchCurriculum('StudyTimeID', value);
+																	}}
+																	optionDisabledList={disabledStudyTimeList}
+																	isDynamicField
+																/>
+															</div>
+														</div>
+														<MinusCircle
+															size="20px"
+															className="remove"
+															onClick={() => {
+																remove(index);
+															}}
+														/>
+													</div>
+												);
+											})}
+										</div>
+									</Form.Item>
+								</div>
+							</div>
+
 							<div className="col-md-6 col-12">
 								<SelectField
 									form={form}
@@ -207,20 +250,8 @@ const CreateCourseOnlineForm = (props) => {
 									optionList={optionListForForm.teacherList}
 								/>
 							</div>
-
 							<div className="col-md-6 col-12">
 								<DateField form={form} name="StartDay" label="Ngày mở" isRequired placeholder="Chọn ngày mở" />
-							</div>
-							<div className="col-md-6 col-12">
-								<SelectField
-									form={form}
-									name="DaySelected"
-									label="Thứ"
-									isRequired
-									placeholder="Chọn thứ"
-									optionList={optionListForForm.dayOfWeek}
-									mode="multiple"
-								/>
 							</div>
 							<div className="col-md-6 col-12">
 								<InputTextField
@@ -242,11 +273,11 @@ const CreateCourseOnlineForm = (props) => {
 									handleFormatCurrency={numberWithCommas}
 								/>
 							</div>
-                            <div className="col-6">
+							<div className="col-6">
 								<InputTextField
 									form={form}
 									name="MaximumStudent"
-									label="Số học viên tối đa"
+									label="Số học viên tối đa (mặc định 20)"
 									placeholder="Nhập số học viên tối đa trong lớp"
 								/>
 							</div>
@@ -294,7 +325,6 @@ CreateCourseOnlineForm.propTypes = {
 	}),
 	//
 	handleGetCourse: PropTypes.func,
-	handleCheckStudyTime: PropTypes.func,
 	handleFetchDataByBranch: PropTypes.func,
 	handleFetchProgramByGrade: PropTypes.func,
 	handleGetValueBeforeFetchCurriculum: PropTypes.func,
@@ -314,8 +344,8 @@ CreateCourseOnlineForm.defaultProps = {
 		curriculumList: [],
 		userInformationList: []
 	},
+	//
 	handleGetCourse: null,
-	handleCheckStudyTime: null,
 	handleFetchDataByBranch: null,
 	handleFetchProgramByGrade: null,
 	handleGetValueBeforeFetchCurriculum: null,

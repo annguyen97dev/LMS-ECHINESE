@@ -7,5 +7,6 @@ type IOptionCommon = {
 	title: string;
 	value: string | number;
 	options?: { [k: string]: any };
-	date: string;
+	date?: string;
+	disabled?: boolean;
 };

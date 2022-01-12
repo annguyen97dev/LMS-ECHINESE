@@ -16,10 +16,18 @@
 	height: calc(100% - 16px);
 	.content-body {
 		color: #000;
-		> p {
-			margin-bottom: 5px;
-			> span {
+		> div {
+			padding-bottom: 5px;
+			~ div {
+				padding-top: 5px;
+				border-top: 1px solid #f0f0f0;
+			}
+			p {
+				margin-bottom: 0;
 				font-weight: 500;
+			}
+			span {
+				font-weight: normal;
 			}
 		}
 	}

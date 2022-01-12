@@ -720,7 +720,8 @@ const EditCourse = (props) => {
 					SubjectID,
 					SubjectName: optionSubjectList.find((s) => s.value === SubjectID).title,
 					CurriculumID: 0,
-					ProgramID: scheduleList.unavailable[0].ProgramID
+					ProgramID: scheduleList.unavailable[0].ProgramID,
+					TeacherAttendanceID: 0
 				};
 				rs.push(newSchedule);
 			}

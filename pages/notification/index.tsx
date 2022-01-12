@@ -84,7 +84,7 @@ const Notification = () => {
 
 		let res = null;
 		try {
-			res = await notificationApi.upadteSeen(data);
+			res = await notificationApi.updateSeen(data);
 			res?.status == 200 && (showNoti('success', 'Cập nhật thành công'), getDataTable());
 		} catch (error) {
 			showNoti('danger', error.message);

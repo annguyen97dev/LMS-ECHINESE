@@ -195,9 +195,11 @@ const CourseList = () => {
 	useEffect(() => {
 		if (userInformation) {
 			const role = userInformation.RoleID;
-			if (role == 1 || role == 5) {
-				fetchDataForFilterForm();
+			if (role === 1) {
 				setIsShowUpdate(true);
+			}
+			if (role === 1 || role === 5) {
+				fetchDataForFilterForm();
 			}
 		}
 	}, [userInformation]);

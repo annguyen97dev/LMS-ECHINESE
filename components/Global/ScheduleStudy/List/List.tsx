@@ -23,16 +23,33 @@ const ScheduleStudyList = (props) => {
 									{data[item]
 										.sort((a, b) => +moment(a.StartTime).format('X') - +moment(b.StartTime).format('X'))
 										.map((i, idx) => (
-											<p key={idx}>
-												{i.TeacherID && <span>GV: {i.TeacherName}</span>}
-												{i.RoomStudyTimeNameID && <span>Ca: {i.StudyTimeName}</span>}
-												{title == 'undefined' && (
-													<span>
-														<br />
-														Ca: {i.StudyTimeName}
-													</span>
+											<div key={idx}>
+												{i.CourseName && (
+													<p>
+														Khóa học:<span> {i.CourseName}</span>
+													</p>
 												)}
-											</p>
+												{i.TeacherID && (
+													<p>
+														GV:<span> {i.TeacherName}</span>
+													</p>
+												)}
+												{i.SubjectName && (
+													<p>
+														Môn:<span> {i.SubjectName}</span>
+													</p>
+												)}
+												{i.RoomStudyTimeNameID && (
+													<p>
+														Ca:<span> {i.StudyTimeName}</span>
+													</p>
+												)}
+												{title == 'undefined' && (
+													<p>
+														Ca:<span> {i.StudyTimeName}</span>
+													</p>
+												)}
+											</div>
 										))}
 								</div>
 							</Card>

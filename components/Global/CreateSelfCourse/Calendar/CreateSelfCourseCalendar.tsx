@@ -98,8 +98,9 @@ const CreateSelfCourseCalendar = (props) => {
 				zIndex={isSmDown ? 903 : 900}
 				title={`Chi tiết ngày ${moment(dateString).format('DD/MM/YYYY')}`}
 				visible={isVisible}
-				footer={null}
+				okButtonProps={{ style: { display: 'none' } }}
 				onCancel={closeModal}
+				cancelText="Đóng"
 			>
 				<div>
 					<div className="tt">

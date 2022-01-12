@@ -33,6 +33,25 @@ type ICOScheduleListToSave = {
 	TeacherID: number;
 	SubjectID: number;
 };
+type ITimeCourse = {
+	StudyTimeID: number;
+	StudyTimeName?: string;
+	DaySelected: number;
+	DaySelectedName?: string;
+};
+type ICOStoneDataToSave = {
+	CourseName: string;
+	AcademicUID: number;
+	BranchID: number;
+	CurriculumID: number;
+	ProgramID: number;
+	TeacherID: number;
+	StartDay: string;
+	GradeID: number;
+	SalaryOfLesson: number;
+	Price: number;
+	TimeCourse: ITimeCourse[];
+};
 type ICOSaveCourseInfo = {
 	CourseName: string;
 	AcademicUID: number;
@@ -59,16 +78,15 @@ type ICOSaveCourseInfo = {
 type ICOCreateForm = {
 	BranchID: number;
 	UserInformationID: number;
-	StudyTimeID: number[];
 	GradeID: number;
 	ProgramID: number;
 	TeacherID: number;
 	CurriculumID: number;
 	StartDay: string;
-	DaySelected: number[];
 	Price: string;
 	SalaryOfLesson: string;
 	CourseName: string;
+	TimeCourse: ITimeCourse[];
 };
 
 // EDIT COURSE ONLINE

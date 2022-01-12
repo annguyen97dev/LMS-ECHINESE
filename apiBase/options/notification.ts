@@ -21,7 +21,7 @@ class Notification {
     });
 
     // Cập nhật data đã xem
-    upadteSeen = ( data: any ) => instance.put("/api/NotificationUser", data, {});
+    updateSeen = ( data: any ) => instance.put("/api/NotificationUser", data, {});
 }
 
 export const notificationApi = new Notification();
