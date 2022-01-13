@@ -62,13 +62,13 @@ export const StudentChildMenu = [
 				Icon: '',
 				Text: 'Khóa học của bạn'
 			},
-			{
-				TypeItem: 'single',
-				Key: '/stationery',
-				Route: '/stationery',
-				Icon: '',
-				Text: 'Cửa hàng văn phòng phẩm'
-			},
+			// {
+			// 	TypeItem: 'single',
+			// 	Key: '/stationery',
+			// 	Route: '/stationery',
+			// 	Icon: '',
+			// 	Text: 'Cửa hàng văn phòng phẩm'
+			// },
 			{
 				ItemType: 'sub-menu',
 				Key: 'video-course',
