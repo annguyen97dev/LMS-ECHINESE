@@ -74,12 +74,13 @@ function AddProductForm(props) {
 	});
 
 	const defaultValuesInit = {
-		Name: data ? data.Name : null,
-		ProductTypeID: data ? data.ProductTypeID : null,
-		ListedPrice: data ? data.ListedPrice : null,
-		Price: data ? data.Price : null,
-		Description: data ? data.Description : null,
-		Quantity: data ? data.Quantity : null,
+		ID: null,
+		Name: null,
+		ProductTypeID: null,
+		ListedPrice: null,
+		Price: null,
+		Description: null,
+		Quantity: null,
 		ImageOfProducts: []
 	};
 
@@ -93,9 +94,9 @@ function AddProductForm(props) {
 		return handleUploadFile(arrFile);
 	};
 
-	const checkHandleSubmit = (data) => {
+	const checkHandleSubmit = (info) => {
 		if (!_onSubmit) return;
-		_onSubmit(data, Mode).then((res) => {
+		_onSubmit(info, Mode, data?.ID).then((res) => {
 			if (res) {
 				setIsVisible(false);
 				onFetchData && onFetchData();
@@ -103,6 +104,21 @@ function AddProductForm(props) {
 			}
 		});
 	};
+
+	useEffect(() => {
+		if (isVisible) {
+			if (data) {
+				console.log(data);
+				form.setValue('ID', data.ID);
+				form.setValue('Name', data.Name);
+				form.setValue('ProductTypeID', data.ProductTypeID);
+				form.setValue('ListedPrice', data.ListedPrice);
+				form.setValue('Price', data.Price);
+				form.setValue('Description', data.Description);
+				form.setValue('Quantity', data.Quantity);
+			}
+		}
+	}, [isVisible]);
 
 	return (
 		<>
@@ -143,9 +159,9 @@ function AddProductForm(props) {
 							<div className="col-12">
 								<SelectField
 									form={form}
-									label="ID sản phẩm"
+									label="Loại sản phẩm"
 									name="ProductTypeID"
-									placeholder="Thêm ID sản phẩm"
+									placeholder="Chọn loại sản phẩm"
 									className="style-input"
 									isRequired={true}
 									optionList={productIDList}
@@ -168,7 +184,7 @@ function AddProductForm(props) {
 									form={form}
 									label="Giá niêm yết"
 									name="ListedPrice"
-									placeholder="Thêm tên giá niêm yết"
+									placeholder="Thêm giá niêm yết"
 									className="style-input"
 									isRequired={true}
 								/>
@@ -179,7 +195,7 @@ function AddProductForm(props) {
 									form={form}
 									label="Giá thực bán"
 									name="Price"
-									placeholder="Thêm tên giá"
+									placeholder="Thêm giá thực bán"
 									className="style-input"
 									isRequired={true}
 								/>
