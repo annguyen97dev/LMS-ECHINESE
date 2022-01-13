@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { parseToMoney } from '~/utils/functions';
+import { numberWithCommas } from './../../../utils/functions/index';
 
 const InputMoneyField = (props) => {
 	const { form, name, label, placeholder, disabled, handleChange, style, className, isRequired } = props;
@@ -41,7 +42,7 @@ const InputMoneyField = (props) => {
 						allowClear={true}
 						placeholder={placeholder}
 						disabled={disabled}
-						value={salary}
+						value={salary.length === 0 ? numberWithCommas(field?.value) : salary}
 						onChange={(e) => {
 							setSalary(e.target.value);
 							field.onChange(e.target.value.toLocaleString());

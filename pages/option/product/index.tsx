@@ -9,6 +9,8 @@ import { productTypeApi } from '~/apiBase/product/product-type';
 import { Switch } from 'antd';
 import ModalShowImage from '~/components/Global/Product/ModalShoeImage';
 import { numberWithCommas } from '~/utils/functions';
+import ModalAddImage from '~/components/Global/Product/ModalAddImage';
+import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
 
 const Products = () => {
 	const [dataSource, setDataSource] = useState<IProductType[]>([]);
@@ -71,27 +73,20 @@ const Products = () => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			title: 'Xem ảnh',
+			title: 'Ảnh sản phẩm',
 			dataIndex: 'ImageOfProducts',
-			width: 100,
+			width: 150,
 			render: (text, data) => (
-				<ModalShowImage ImageList={data.ImageOfProducts} productID={data.ID} onFetchData={() => setParams({ ...params })} />
+				<>
+					<ModalShowImage ImageList={data.ImageOfProducts} productID={data.ID} onFetchData={() => setParams({ ...params })} />
+					<ModalAddImage ImageList={data.ImageOfProducts} productID={data.ID} onFetchData={() => setParams({ ...params })} />
+				</>
 			)
-		},
-		{
-			title: 'Trạng thái',
-			dataIndex: 'Enable',
-			width: 80,
-			render: (text, data) => {
-				return (
-					<Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" checked={data.Enable} onClick={() => handleChangeEnable(data)} />
-				);
-			}
 		},
 		{
 			title: 'Thao tác',
 			dataIndex: 'Action',
-			width: 80,
+			width: 100,
 			render: (text, data) => {
 				return (
 					<>
@@ -103,6 +98,7 @@ const Products = () => {
 							productIDList={productIDList}
 							onFetchData={() => setParams({ ...params })}
 						/>
+						<DeleteTableRow handleDelete={() => handleChangeEnable(data)} text="sản phẩm này" title="Xóa sản phẩm" />
 					</>
 				);
 			}
@@ -150,7 +146,17 @@ const Products = () => {
 		}
 	};
 
-	const handleChangeEnable = (data) => {};
+	const handleChangeEnable = async (data) => {
+		try {
+			let res = await productApi.update({ ID: data.ID, Enable: !data.Enable });
+			if (res.status === 200) {
+				setParams({ ...params });
+				showNoti('success', data.Enable ? 'Đã xóa sản phẩm' : 'Đã hiện sản phẩm');
+			}
+		} catch (error) {
+		} finally {
+		}
+	};
 
 	const handleUploadImage = async (arrFile) => {
 		setIsLoading({ type: 'UPLOADING', status: true });
@@ -184,7 +190,7 @@ const Products = () => {
 		}
 	};
 
-	const _onSubmit = async (value, Mode) => {
+	const _onSubmit = async (value, Mode, productID) => {
 		setIsLoading({ type: 'SUBMIT', status: true });
 
 		if (Mode === 'add-type') {
@@ -214,7 +220,8 @@ const Products = () => {
 					...value,
 					Price: parsePriceStrToNumber(value.Price),
 					ListedPrice: parsePriceStrToNumber(value.ListedPrice),
-					ImageOfProducts: null
+					ImageOfProducts: null,
+					ID: productID
 				});
 				if (res.status === 200) {
 					showNoti('success', 'Thay đổi thành công!');

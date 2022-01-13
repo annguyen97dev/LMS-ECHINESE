@@ -29,6 +29,7 @@ const ShoppingCart = () => {
 		status: '',
 		loading: false
 	});
+	const [isDisabledPayButton, setIsDisabledPayButton] = useState(false);
 	const [clickedItem, setClickedItem] = useState(null);
 
 	const { Search } = Input;
@@ -118,6 +119,7 @@ const ShoppingCart = () => {
 			}
 			if (res.status == 204) {
 				setCartItems([]);
+				setIsDisabledPayButton(true);
 			}
 		} catch (error) {
 		} finally {
@@ -396,7 +398,9 @@ const ShoppingCart = () => {
 								</h5>
 							</div>
 							<Link href="/cart/check-out">
-								<button className="btn btn-primary w-100">Thanh toán</button>
+								<button disabled={isDisabledPayButton} className="btn btn-primary w-100">
+									Thanh toán
+								</button>
 							</Link>
 						</div>
 					</div>
