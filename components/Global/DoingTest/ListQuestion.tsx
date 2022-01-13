@@ -14,8 +14,11 @@ import { useDoneTest } from '~/context/useDoneTest';
 
 const ListQuestion = (props) => {
 	//   const { listQuestionID } = useDoingTest();
-	const { dataQuestion, listQuestionID, isMarked } = props;
+	const { dataQuestion, listQuestionID, isMarked, showScore } = props;
 	const { doneTestData } = useDoneTest();
+	console.log('showScore: ', showScore);
+
+	console.log('isMarked: ', isMarked);
 
 	// console.log("Data question in list: ", dataQuestion);
 
@@ -26,6 +29,7 @@ const ListQuestion = (props) => {
 			case 1:
 				return (
 					<ChoiceList
+						showScore={showScore}
 						isDoingTest={doneTestData ? false : true}
 						listQuestionID={listQuestionID}
 						dataQuestion={dataQuestion}
@@ -76,6 +80,7 @@ const ListQuestion = (props) => {
 			case 6:
 				return (
 					<WrittingList
+						hideScore={!showScore}
 						isDoingTest={doneTestData ? false : true}
 						listQuestionID={listQuestionID}
 						dataQuestion={dataQuestion}
@@ -87,6 +92,7 @@ const ListQuestion = (props) => {
 			case 7:
 				return (
 					<SpeakingList
+						hideScore={!showScore}
 						isDoingTest={doneTestData ? false : true}
 						listQuestionID={listQuestionID}
 						dataQuestion={dataQuestion}

@@ -98,7 +98,7 @@ const WrittingList = (props) => {
 	const { doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const { onDeleteQuestion } = useExamDetail();
 	const { activeID, packageResult, getPackageResult, getListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest, isMarked } = props;
+	const { dataQuestion, listQuestionID, isDoingTest, isMarked, hideScore } = props;
 	const { showNoti, userInformation } = useWrap();
 	const [contentOfStudent, setContentOfStudent] = useState('');
 
@@ -300,24 +300,28 @@ const WrittingList = (props) => {
 								</>
 							)}
 						</div>
-						<div className="point-question">
-							<p className="text mb-2">
-								{!dataMarking
-									? ques.Point
-									: dataMarking.setPackageExerciseStudentsList.find((item) => item['ID'] === ques.ID).Point}
-							</p>
-						</div>
+						{hideScore == true ? (
+							<></>
+						) : (
+							<div className="point-question">
+								<p className="text mb-2">
+									{!dataMarking
+										? ques?.Point
+										: dataMarking.setPackageExerciseStudentsList.find((item) => item['ID'] === ques.ID)?.Point}
+								</p>
+							</div>
+						)}
 
 						{dataMarking && !isMarked && (
 							<div className="point-marking">
 								<MarkingExam onGetPoint={(point) => onGetPoint(point, ques.ID)} dataRow={ques} dataMarking={dataMarking} />
 							</div>
 						)}
-						{/* {dataMarking && (
+						{dataMarking && ques?.Point !== undefined && (
 							<div className="point-show mt-3">
-								<p className="mb-0">Điểm tối đa: {ques.PointMax}</p>
+								<p className="mb-0">Điểm: {ques?.Point}</p>
 							</div>
-						)} */}
+						)}
 					</div>
 				</div>
 			))}

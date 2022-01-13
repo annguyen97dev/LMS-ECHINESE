@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Checkbox, Spin, Modal, Skeleton, Button } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, Checkbox, Spin, Modal, Skeleton, Button, Tooltip } from 'antd';
 import { CloseOutlined, RightOutlined, LeftOutlined, CheckCircleOutlined, QuestionCircleOutlined, ProfileFilled } from '@ant-design/icons';
 import { examDetailApi, examTopicApi, doingTestApi, examAppointmentResultApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
@@ -12,6 +12,7 @@ import DecideModal from '~/components/Elements/DecideModal';
 import { courseExamApi } from '~/apiBase/package/course-exam';
 import TimeUpModal from './TimeUpModal';
 import Link from 'next/link';
+import { homeworkResultApi } from '~/apiBase/course-detail/home-work-result';
 
 const ListQuestion = dynamic(() => import('~/components/Global/DoingTest/ListQuestion'), {
 	loading: () => <p>...</p>,
@@ -37,6 +38,8 @@ const MainTest = (props) => {
 		pageSize: 999,
 		ExamTopicID: examID
 	};
+	// console.log('infoExam: ', infoExam);
+
 	const { showNoti } = useWrap();
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [isLoading, setIsLoading] = useState(false);
@@ -220,7 +223,9 @@ const MainTest = (props) => {
 
 	const onChange_pagination = (e, page: number) => {
 		setPageCurrent(page);
-		e.preventDefault();
+		if (e !== 'x') {
+			e.preventDefault();
+		}
 		// setActiveID(listQuestionID[page - 1]);
 		getActiveID(listQuestionID[page - 1]);
 
@@ -301,6 +306,7 @@ const MainTest = (props) => {
 	const remakeData = () => {
 		let cloneData = { ...packageResult };
 		let dataSubmit = null;
+
 		cloneData.SetPackageResultDetailInfoList.forEach((item) => {
 			if (item.Type == 3 || item.Type == 2 || item.Type == 5) {
 				item.SetPackageExerciseStudentInfoList.forEach((e) => {
@@ -406,6 +412,7 @@ const MainTest = (props) => {
 				break;
 			case 'examination':
 				dataSubmit = { ...cloneData };
+
 				break;
 			default:
 				break;
@@ -417,6 +424,8 @@ const MainTest = (props) => {
 	// ===== ON SUBMIT DOING TEST =====
 	const returnRouter = (data) => {
 		let obj = {};
+
+		console.log('returnRouter: ', data);
 
 		switch (type) {
 			case 'test':
@@ -435,8 +444,12 @@ const MainTest = (props) => {
 
 			default:
 				obj = {
-					pathname: '/package/package-result-student/detail/[slug]',
-					query: { slug: data.ID, examID: data.ExamTopicID, packageDetailID: data.SetPackageDetailID }
+					pathname: router.query?.isExercise ? 'course/exercise/result/[slug]' : '/package/package-result-student/detail/[slug]',
+					query: {
+						slug: router.query?.isExercise ? data.HomeworkID : data.ID,
+						examID: data.ExamTopicID,
+						packageDetailID: data.SetPackageDetailID
+					}
 				};
 				break;
 		}
@@ -448,6 +461,8 @@ const MainTest = (props) => {
 		setIsModalConfirm(false);
 		setLoadingSubmit(true);
 		let dataSubmit = remakeData();
+
+		console.log('dataSubmit: ', dataSubmit);
 
 		let res = null;
 
@@ -462,7 +477,7 @@ const MainTest = (props) => {
 					break;
 
 				case 'examination': // Thi cử - đề bán
-					res = await doingTestApi.add(dataSubmit);
+					res = router.query?.isExercise ? await homeworkResultApi.add({ ...dataSubmit }) : await doingTestApi.add(dataSubmit);
 					break;
 				default:
 					break;
@@ -569,6 +584,10 @@ const MainTest = (props) => {
 				});
 			}
 		}
+
+		if (dataQuestion !== null && dataQuestion !== undefined) {
+			onChange_pagination('x', 1);
+		}
 	}, [dataQuestion]);
 
 	useEffect(() => {
@@ -613,6 +632,70 @@ const MainTest = (props) => {
 		}
 	}, [activeID]);
 
+	console.log(addMinutes);
+
+	const [isPlaying, setIsPlaying] = useState(false);
+	const audio = useRef(null);
+
+	const playSound = () => {
+		if (!isPlaying) {
+			audio.current.play();
+			setIsPlaying(true);
+		} else {
+			audio.current.pause();
+			setIsPlaying(false);
+		}
+	};
+
+	const controlVolume = (value) => {
+		let customValue = value / 100;
+		audio.current.volume = customValue;
+	};
+
+	console.log('router.query?.isExercise: ', router.query?.isExercise);
+
+	const convertData = (json) => {
+		var stringified = JSON.stringify(json);
+		stringified = stringified.replace('SetPackageResultDetailInfoList', 'HomeworkResultDetailInfoList');
+		while (
+			stringified.indexOf('SetPackageExerciseStudentInfoList') !== -1 ||
+			stringified.indexOf('SetPackageExerciseAnswerStudentList') !== -1
+		) {
+			stringified = stringified.replace('SetPackageExerciseStudentInfoList', 'HomeworkExerciseStudentInfoList');
+			stringified = stringified.replace('SetPackageExerciseAnswerStudentList', 'HomeworkExerciseAnswerStudentList');
+		}
+		var jsonObject = JSON.parse(stringified);
+		return jsonObject;
+	};
+
+	const onSubmitExercise = async () => {
+		console.log('====================================');
+		console.log('onSubmitExercise');
+
+		setIsModalConfirm(false);
+		setLoadingSubmit(true);
+		let dataSubmit = remakeData();
+
+		let res = null;
+
+		console.log('dataSubmit: ', convertData({ ...dataSubmit, HomeworkID: dataSubmit.SetPackageDetailID }));
+
+		try {
+			res = await homeworkResultApi.add(convertData({ ...dataSubmit, HomeworkID: dataSubmit.SetPackageDetailID }));
+
+			if (res.status === 200) {
+				setIsModalSuccess(true);
+				setTimeout(() => {
+					router.push(returnRouter(res.data.data[0]));
+				}, 1000);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setLoadingSubmit(false);
+		}
+	};
+
 	return (
 		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
 			{/** Modal báo hết giờ làm bài */}
@@ -628,7 +711,9 @@ const MainTest = (props) => {
 			<DecideModal
 				isOpen={isModalConfirm}
 				isCancel={() => setIsModalConfirm(false)}
-				isOk={() => onSubmit_DoingTest()}
+				isOk={() => {
+					router.query?.isExercise == 'true' ? onSubmitExercise() : onSubmit_DoingTest();
+				}}
 				content={returnTextConfirm()}
 			/>
 			{/* Modal hết giờ làm bài **/}
@@ -640,11 +725,26 @@ const MainTest = (props) => {
 			<Card
 				className="test-card"
 				title={
-					<div className="test-title-info">
-						<h6 className="name-type-test">{infoExam?.Name}</h6>
-						<p className="info-user">
-							<span>{infoExam?.ProgramName}</span>
-						</p>
+					<div className="test-info">
+						<div className="test-title-info">
+							<h6 className="name-type-test">{infoExam?.Name}</h6>
+							<p className="info-user">
+								<span>{infoExam?.ProgramName}</span>
+							</p>
+						</div>
+
+						{infoExam !== null && infoExam?.Audio !== undefined && infoExam.Audio !== null && infoExam.Audio !== '' && (
+							<audio
+								className="none-poiter"
+								autoPlay={true}
+								controls
+								ref={audio}
+								onEnded={() => setIsPlaying(false)}
+								// style={{ width: isPlaying ? 300 : 0 }}
+							>
+								<source src={infoExam.Audio} type="audio/mpeg" />
+							</audio>
+						)}
 					</div>
 				}
 				extra={

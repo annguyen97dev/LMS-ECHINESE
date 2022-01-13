@@ -25,8 +25,7 @@ const Contract = () => {
 		{ label: '{dachi}', desc: ' số tiền chi ra' },
 		{ label: '{dathu}', desc: ' số tiền thu vào' },
 		{ label: '{nguoinhanphieu}', desc: ' người nhận phiếu ký tên' },
-		{ label: '{nhanvienxuat}', desc: ' nhân viên xuất phiếu ký tên' },
-		{ label: '{maqr}', desc: ' mã qr' }
+		{ label: '{nhanvienxuat}', desc: ' nhân viên xuất phiếu ký tên' }
 	];
 
 	const fetchContract = async () => {

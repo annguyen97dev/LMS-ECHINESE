@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { productTypeApi } from '~/apiBase/product/product-type';
-import AddProductTypeForm from '~/components/Global/Product/AddProductType';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
-import { useWrap } from '~/context/wrap';
 import moment from 'moment';
 import DeleteTableRow from '~/components/Elements/DeleteTableRow/DeleteTableRow';
+import { useWrap } from '~/context/wrap';
+import { productTypeApi } from '~/apiBase/product/product-type';
+import AddProductTypeForm from '~/components/Global/Product/AddProductType';
 
 const ProductType = () => {
 	const [dataSource, setDataSource] = useState<IProductType[]>([]);
@@ -25,26 +25,32 @@ const ProductType = () => {
 		{
 			title: 'Tên loại',
 			dataIndex: 'Name',
-			// width: 30,
+			width: 130,
 			render: (text) => <p className="font-weight-primary">{text}</p>
+		},
+		{
+			title: 'ID',
+			dataIndex: 'ID',
+			width: 80,
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Ngày tạo',
 			dataIndex: 'CreatedOn',
-			// width: 30,
+			width: 130,
 			render: (text) => <p className="font-weight-black">{moment(text).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Tạo bởi',
 			dataIndex: 'CreatedBy',
-			// width: 30,
+			width: 130,
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Thao tác',
 			dataIndex: 'Action',
-			// width: 30,
-			render: (text, data, index) => {
+			width: 100,
+			render: (text, data) => {
 				return (
 					<>
 						<AddProductTypeForm
@@ -64,7 +70,6 @@ const ProductType = () => {
 	];
 
 	const updateDataDelete = async (data) => {
-		console.log(data);
 		let fetchDelete = {
 			ID: data.ID,
 			Name: data.Name,
@@ -121,7 +126,7 @@ const ProductType = () => {
 			columns={columns}
 			dataSource={dataSource}
 			addClass="basic-header"
-			TitlePage="Product Type"
+			TitlePage="Loại sản phẩm"
 			TitleCard={
 				<AddProductTypeForm
 					mode="add-type"

@@ -23,12 +23,14 @@ interface RegisterInputs {
 	FullNameUnicode: Inputs;
 	Email: Inputs;
 	Mobile: Inputs;
+	Note: Inputs;
 }
 
 interface dataNewAccount {
 	FullNameUnicode: string;
 	Email: string;
 	Mobile: string;
+	Note: string;
 }
 
 function RegisterForm(props) {
@@ -110,14 +112,12 @@ function RegisterForm(props) {
 										rules={[{ required: true, message: 'Hãy điền tên đăng nhập!' }]}
 									>
 										<div className="form-control-input">
-											{/* <label className={styles.fcontrol}>Họ và tên</label> */}
 											<input
 												name="FullNameUnicode"
 												placeholder="Nhập họ và tên"
 												defaultValue=""
 												{...register('FullNameUnicode', { required: true })}
 											/>
-											{/* {errors.FullNameUnicode && <span className={styles.errorText}>Hãy điền tên đăng nhập</span>} */}
 										</div>
 									</Form.Item>
 
@@ -158,6 +158,24 @@ function RegisterForm(props) {
 											{/* {errors.Mobile && <span className={styles.errorText}>Hãy điền số điện thoại</span>} */}
 										</div>
 									</Form.Item>
+
+									<Form.Item
+										label=" Ghi chú"
+										name="Note"
+										rules={[{ required: false, message: 'Hãy điền số điện thoại!' }]}
+									>
+										<div className="form-control-input">
+											{/* <label className={styles.fcontrol}>Số điện thoại</label> */}
+											<input
+												name="Note"
+												defaultValue=""
+												{...register('Note', { required: false })}
+												placeholder="Ghi chú"
+											/>
+											{/* {errors.Mobile && <span className={styles.errorText}>Hãy điền số điện thoại</span>} */}
+										</div>
+									</Form.Item>
+
 									<div className={styles.boxSubmit}>
 										<input type="submit" value={'Đăng ký'} />
 										{loading && <Spin className="loading-login" />}

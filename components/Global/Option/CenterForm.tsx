@@ -180,6 +180,19 @@ const CenterForm = React.memo((props: any) => {
 
 						<div className="row">
 							<div className="col-12">
+								<Form.Item name="Email" label="Email" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
+									<Input
+										placeholder=""
+										className="style-input"
+										onChange={(e) => setValue('Email', e.target.value)}
+										allowClear={true}
+									/>
+								</Form.Item>
+							</div>
+						</div>
+
+						<div className="row">
+							<div className="col-12">
 								<Form.Item name="Address" label="Địa chỉ" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
 									<Input
 										placeholder=""

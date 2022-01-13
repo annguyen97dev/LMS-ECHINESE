@@ -1,13 +1,14 @@
 import { Tooltip } from 'antd';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { Eye } from 'react-feather';
+import { Check, Eye } from 'react-feather';
 import { areaApi, branchApi, jobApi, parentsApi, puroseApi, sourceInfomationApi, staffApi, studentApi } from '~/apiBase';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import ExpandTable from '~/components/ExpandTable';
 import CourseOfStudentDetail from '~/components/Global/Customer/Student/CourseOfStudentDetail';
 import ResetPassStudent from '~/components/Global/Customer/Student/ResetPassStudent';
+import StudentAdvisoryMail from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryMail';
 
 import StudentFormModal from '~/components/Global/Customer/Student/StudentFormModal';
 
@@ -19,7 +20,9 @@ import { useWrap } from '~/context/wrap';
 
 let listFieldSearch = {
 	pageIndex: 1,
-	FullNameUnicode: null
+	FullNameUnicode: null,
+	Mobile: null,
+	Email: null
 };
 
 let listFieldFilter = {
@@ -393,7 +396,14 @@ const StudentData = () => {
 	};
 
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'ChineseName'
+				? { ChineseName: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 		setCurrentPage(1);
 
 		setTodoApi({
@@ -479,16 +489,34 @@ const StudentData = () => {
 			title: 'Tên tiếng Trung',
 			width: 150,
 			dataIndex: 'ChineseName',
-			render: (text) => <p className="font-weight-primary">{text}</p>
+			fixed: 'left',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('ChineseName', onSearch, handleReset, 'text')
+		},
+		{
+			title: 'Đang học',
+			width: 100,
+			dataIndex: 'isRegisteredCourse',
+			render: (text, data) =>
+				data.isRegisteredCourse ? (
+					<p className="btn btn-icon edit">
+						<Check />
+					</p>
+				) : (
+					''
+				)
 		},
 
 		{
 			title: 'SĐT',
-			dataIndex: 'Mobile'
+			dataIndex: 'Mobile',
+			...FilterColumn('Mobile', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+			...FilterColumn('Email', onSearch, handleReset, 'text')
 		},
 		{
 			width: 150,
@@ -515,9 +543,9 @@ const StudentData = () => {
 		},
 		{
 			title: '',
-			width: 150,
+			width: 160,
 			render: (record, _, index) => (
-				<div onClick={(e) => e.stopPropagation()}>
+				<div onClick={(e) => e.stopPropagation()} style={{ flexDirection: 'row', display: 'flex' }}>
 					<StudentFormModal
 						index={index}
 						dataRow={record}
@@ -546,6 +574,13 @@ const StudentData = () => {
 							</button>
 						</Tooltip>
 					</Link>
+					<StudentAdvisoryMail
+						loadingOutside={isLoading}
+						dataSource={dataSource}
+						onFetchData={() => setTodoApi({ ...todoApi })}
+						dataRow={_}
+						listCustomer={dataSource}
+					/>
 				</div>
 			)
 		}

@@ -11,7 +11,8 @@ import {
 	resetPasswordApi,
 	sourceInfomationApi,
 	staffApi,
-	staffSalaryApi
+	staffSalaryApi,
+	userInformationApi
 } from '~/apiBase';
 
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
@@ -33,30 +34,6 @@ interface dataRoles {
 	title: string;
 	value: number;
 }
-
-let dataRoles = [];
-
-const Roles = [
-	{
-		id: 1,
-		RoleName: 'Admin'
-	},
-	{
-		id: 5,
-		RoleName: 'Quản lí'
-	},
-	{
-		id: 6,
-		RoleName: 'Tư vấn viên'
-	}
-];
-
-(function getListRoles() {
-	dataRoles = Roles.map((item) => ({
-		title: item.RoleName,
-		value: item.id
-	}));
-})();
 
 let listFieldSearch = {
 	pageIndex: 1,
@@ -157,6 +134,11 @@ const listApi = [
 		name: 'SourceInformation'
 	},
 	{
+		api: userInformationApi,
+		text: 'Nguồn khách hàng',
+		name: 'Role'
+	},
+	{
 		api: staffApi,
 		text: 'Nguồn khách hàng',
 		name: 'Counselors'
@@ -164,11 +146,32 @@ const listApi = [
 ];
 
 const StaffList = () => {
+	// const [dataRoles, setDataRoles] = useState([]);
+	// const getListRole = async () => {
+	// 	let tempRole = [];
+	// 	try {
+	// 		let res = await userInformationApi.getRole(1);
+	// 		if (res.status === 200) {
+	// 			tempRole = res.data.data.map((item) => ({
+	// 				title: item.name,
+	// 				value: item.ID
+	// 			}));
+	// 			setDataRoles(tempRole);
+	// 		}
+	// 	} catch (error) {
+	// 	} finally {
+	// 	}
+	// };
+
+	// useEffect(() => {
+	// 	getListRole();
+	// }, []);
+
 	const [listDataForm, setListDataForm] = useState<listDataForm>({
 		Area: [],
 		DistrictID: [],
 		WardID: [],
-		Role: dataRoles,
+		Role: [],
 		Branch: [],
 		Purposes: [],
 		SourceInformation: [],
@@ -230,7 +233,7 @@ const StaffList = () => {
 			title: 'Chức vụ',
 			col: 'col-md-6 col-12',
 			type: 'select',
-			optionList: dataRoles,
+			optionList: null,
 			value: null
 		},
 		{
@@ -322,6 +325,12 @@ const StaffList = () => {
 					value: item.UserInformationID
 				}));
 				break;
+			case 'Role':
+				newData = data.map((item) => ({
+					title: item.name,
+					value: item.ID
+				}));
+				break;
 			default:
 				break;
 		}
@@ -354,6 +363,8 @@ const StaffList = () => {
 							StatusID: 0,
 							Enable: true
 						});
+					} else if (item.name == 'Role') {
+						res = await item.api.getRole(1);
 					} else {
 						res = await item.api.getAll({
 							pageIndex: 1,
@@ -546,7 +557,14 @@ const StaffList = () => {
 
 	// ------------ ON SEARCH -----------------------
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'ChineseName'
+				? { ChineseName: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 
 		setTodoApi({
 			...todoApi,
@@ -610,7 +628,7 @@ const StaffList = () => {
 
 	const columns = [
 		{
-			width: 100,
+			width: 120,
 			title: 'Mã',
 			dataIndex: 'UserCode',
 			fixed: 'left'
@@ -619,17 +637,20 @@ const StaffList = () => {
 			title: 'Họ tên',
 			dataIndex: 'FullNameUnicode',
 			fixed: 'left',
+			width: 200,
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			width: 150,
+			width: 200,
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
+			fixed: 'left',
+			...FilterColumn('ChineseName', onSearch, handleReset, 'text'),
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			width: 150,
+			width: 180,
 			title: 'Trung tâm',
 			dataIndex: 'Branch',
 			render: (branch) => (
@@ -652,7 +673,9 @@ const StaffList = () => {
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			// ...FilterColumn('Email', onSearch, handleReset, 'text'),
+			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Vị trí',
@@ -684,7 +707,6 @@ const StaffList = () => {
 		{
 			title: '',
 			dataIndex: '',
-			align: 'center',
 			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 180,
 			render: (text, data, index) => (
 				<>

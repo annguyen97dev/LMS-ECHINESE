@@ -7,7 +7,11 @@ class ProductApi {
 	getByID = (id) => instance.get<IApiResultData<IProduct>>(`${url}/${id}`);
 	insert = (data) => instance.post(url, data);
 	update = (data) => instance.put(url, data);
-    uploadImage = (data) => instance.post(`${url}UploadImage`)
+	uploadImage = (data) => {
+		let formData = new FormData();
+		formData.append('File', data);
+		return instance.post(`/api/ProductUploadImage`, formData);
+	};
 }
 
 export const productApi = new ProductApi();

@@ -535,9 +535,9 @@ export const DetailsModal = (props) => {
 												/>
 
 												<div className="text-right mt-3">
-													<button className="btn btn-secondary" onClick={() => moveToTest(selected)}>
+													{/* <button className="btn btn-secondary" onClick={() => moveToTest(selected)}>
 														Làm bài tập
-													</button>
+													</button> */}
 													{isAdmin && (
 														<Tooltip title="Chỉnh sửa thông tin">
 															{size[0] > 470 ? (

@@ -442,7 +442,12 @@ export default function ServiceAppointmentTest(props) {
 	};
 
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 
 		setTodoApi({
 			...todoApi,
@@ -559,11 +564,17 @@ export default function ServiceAppointmentTest(props) {
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			fixed: 'left',
+			render: (a) => <p className="font-weight-primary">{a}</p>,
+			...FilterColumn('Email', onSearch, handleReset, 'text')
 		},
 		{
 			title: 'SDT',
-			dataIndex: 'Mobile'
+			dataIndex: 'Mobile',
+			fixed: 'left',
+			render: (a) => <p className="font-weight-primary">{a}</p>,
+			...FilterColumn('Mobile', onSearch, handleReset, 'text')
 		},
 		{
 			width: 170,
@@ -605,7 +616,7 @@ export default function ServiceAppointmentTest(props) {
 			dataIndex: 'TeacherName'
 		},
 		{
-			width: 170,
+			width: 190,
 			title: 'Tư vấn viên',
 			dataIndex: 'CounselorsName'
 		},

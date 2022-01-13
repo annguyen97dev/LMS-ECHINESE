@@ -19,6 +19,9 @@ const StudentAdvisoryMail = (props) => {
 	const { showNoti } = useWrap();
 	const [listSendEmail, setListSendEmail] = useState([]);
 
+	// console.log('dataRow: ', dataRow);
+	// console.log('listCustomer: ', listCustomer);
+
 	const showModal = () => {
 		if (!dataRow) {
 			if (listCustomer.length < 1) {
@@ -85,10 +88,17 @@ const StudentAdvisoryMail = (props) => {
 				customerIDs: listSendEmail
 			};
 		} else {
-			dataSubmit = {
-				...data,
-				customerIDs: [dataRow.ID]
-			};
+			if (dataRow.ID == null) {
+				dataSubmit = {
+					...data,
+					customerIDs: [dataRow.UserInformationID]
+				};
+			} else {
+				dataSubmit = {
+					...data,
+					customerIDs: [dataRow.ID]
+				};
+			}
 		}
 
 		setIsLoading(true);
@@ -108,17 +118,6 @@ const StudentAdvisoryMail = (props) => {
 			setIsLoading(false);
 		}
 	};
-
-	// useEffect(() => {
-	// 	if (listCustomer?.length > 0) {
-	// 		if (!dataRow) {
-	// 			setListSendEmail([...listCustomer]);
-	// 		} else {
-	// 			listSendEmail.push(dataRow.ID);
-	// 			setListSendEmail([...listSendEmail]);
-	// 		}
-	// 	}
-	// }, [listCustomer]);
 
 	useEffect(() => {
 		if (isModalVisible) {

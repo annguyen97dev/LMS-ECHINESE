@@ -22,7 +22,7 @@
 		"@fullcalendar/daygrid": "^5.7.0",
 		"@fullcalendar/react": "^5.7.0",
 		"@hookform/resolvers": "^2.6.0",
-		"@zoomus/websdk": "^1.9.9",
+		"@zoomus/websdk": "^2.1.1",
 		"animate.css": "^4.1.1",
 		"antd": "^4.15.4",
 		"antd-img-crop": "^3.14.1",

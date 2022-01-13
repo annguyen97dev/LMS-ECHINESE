@@ -51,7 +51,7 @@ export default function StudentCourseChange() {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IStudentChangeCourse[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -236,56 +236,91 @@ export default function StudentCourseChange() {
 		getDataCenter();
 	}, [todoApi]);
 
-	const columns = [
-		{
-			title: 'Học viên',
-			dataIndex: 'FullNameUnicode',
-			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>
-		},
-		{
-			title: 'Khóa trước',
-			dataIndex: 'CourseNameBefore',
-			render: (course) => <p className="font-weight-black">{course}</p>
-		},
-		{
-			title: 'Khóa sau',
-			dataIndex: 'CourseNameAfter',
-			render: (course) => <p className="font-weight-black">{course}</p>
-		},
-		{
-			width: 150,
-			title: 'Trung tâm',
-			dataIndex: 'BranchName'
-		},
-		{
-			width: 180,
-			title: 'Ghi chú',
-			dataIndex: 'Note'
-		},
-		{
-			width: 150,
-			title: 'Cam kết',
-			dataIndex: 'Commitment'
-		},
-		{
-			title: '',
-			render: (data) => (
-				<Link
-					href={{
-						pathname: '/customer/student/student-change-course/student-detail/[slug]',
-						query: { slug: data.UserInformationID }
-					}}
-				>
-					<Tooltip title="Xem chi tiết">
-						<button className="btn btn-icon view">
-							<Eye />
-						</button>
-					</Tooltip>
-				</Link>
-			)
-		}
-	];
+	const columns =
+		userInformation && userInformation.RoleID !== 10
+			? [
+					{
+						title: 'Học viên',
+						dataIndex: 'FullNameUnicode',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>
+					},
+					{
+						title: 'Khóa trước',
+						dataIndex: 'CourseNameBefore',
+						render: (course) => <p className="font-weight-black">{course}</p>
+					},
+					{
+						title: 'Khóa sau',
+						dataIndex: 'CourseNameAfter',
+						render: (course) => <p className="font-weight-black">{course}</p>
+					},
+					{
+						width: 150,
+						title: 'Trung tâm',
+						dataIndex: 'BranchName'
+					},
+					{
+						width: 180,
+						title: 'Ghi chú',
+						dataIndex: 'Note'
+					},
+					{
+						width: 150,
+						title: 'Cam kết',
+						dataIndex: 'Commitment'
+					},
+					{
+						title: '',
+						render: (data) => (
+							<Link
+								href={{
+									pathname: '/customer/student/student-change-course/student-detail/[slug]',
+									query: { slug: data.UserInformationID }
+								}}
+							>
+								<Tooltip title="Xem chi tiết">
+									<button className="btn btn-icon view">
+										<Eye />
+									</button>
+								</Tooltip>
+							</Link>
+						)
+					}
+			  ]
+			: [
+					{
+						title: 'Học viên',
+						dataIndex: 'FullNameUnicode',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>
+					},
+					{
+						title: 'Khóa trước',
+						dataIndex: 'CourseNameBefore',
+						render: (course) => <p className="font-weight-black">{course}</p>
+					},
+					{
+						title: 'Khóa sau',
+						dataIndex: 'CourseNameAfter',
+						render: (course) => <p className="font-weight-black">{course}</p>
+					},
+					{
+						width: 150,
+						title: 'Trung tâm',
+						dataIndex: 'BranchName'
+					},
+					{
+						width: 180,
+						title: 'Ghi chú',
+						dataIndex: 'Note'
+					},
+					{
+						width: 150,
+						title: 'Cam kết',
+						dataIndex: 'Commitment'
+					}
+			  ];
 
 	return (
 		<PowerTable

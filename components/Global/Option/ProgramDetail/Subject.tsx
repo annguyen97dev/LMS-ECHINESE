@@ -250,10 +250,10 @@ const Subject = (props) => {
 			render: (text, data, index) => <>{text == true && <CheckCircle className="icon-additional" />}</>
 		},
 		{
-			width: userInformation.RoleID !== 2 ? 50 : 0,
+			width: userInformation && userInformation.RoleID !== 2 ? 50 : 0,
 			render: (text, data, index) => (
 				<>
-					{userInformation.RoleID !== 2 && (
+					{userInformation && userInformation.RoleID !== 2 && (
 						<SubjectForm
 							dataProgram={dataProgram}
 							getIndex={() => setIndexRow(index)}
@@ -292,6 +292,7 @@ const Subject = (props) => {
 				addClass="table-fix-column table-small"
 				loading={isLoading}
 				TitleCard={
+					userInformation &&
 					userInformation?.RoleID !== 2 && (
 						<SubjectForm dataProgram={dataProgram} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />
 					)

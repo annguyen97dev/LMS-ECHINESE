@@ -6,5 +6,7 @@ declare type IFormBaseProps = {
 type IOptionCommon = {
 	title: string;
 	value: string | number;
-	options?: {[k: string]: any};
+	options?: { [k: string]: any };
+	date?: string;
+	disabled?: boolean;
 };

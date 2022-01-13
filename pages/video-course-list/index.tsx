@@ -8,6 +8,7 @@ import Link from 'next/link';
 import CourseVideoTable from '~/components/CourseVideoTable';
 import { DollarOutlined } from '@ant-design/icons';
 import { Filter, Eye, CheckCircle } from 'react-feather';
+import moment from 'moment';
 
 const { TextArea, Search } = Input;
 
@@ -156,6 +157,7 @@ const VideoCourseList = () => {
 			const res =
 				userInformation.RoleID == 1 ? await VideoCourseListApi.getAll(todoApi) : await VideoCourseListApi.getByUser(todoApi);
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
+			res.status == 204 && setData([]);
 			setRender(res + '');
 		} catch (err) {
 			showNoti('danger', err);
@@ -181,7 +183,7 @@ const VideoCourseList = () => {
 
 	const columnsVideoCourse = [
 		{
-			title: 'ID',
+			title: 'Mã đơn hàng',
 			dataIndex: 'ID',
 			key: 'ID'
 		},
@@ -193,7 +195,18 @@ const VideoCourseList = () => {
 		{
 			title: 'Ngày mua',
 			dataIndex: 'CreatedOn',
-			key: 'CreatedOn'
+			key: 'CreatedOn',
+			render: (Action, data, index) => (
+				<div>{moment(data.CreatedOn).format('DD/MM/yyyy') + ' ' + moment(data.CreatedOn).format('hh:mm')}</div>
+			)
+		},
+		{
+			title: 'Ngày xác nhận',
+			dataIndex: 'PaymentDate',
+			key: 'PaymentDate',
+			render: (Action, data, index) => (
+				<div>{moment(data.PaymentDate).format('DD/MM/yyyy - hh:mm') + ' ' + moment(data.PaymentDate).format('hh:mm')}</div>
+			)
 		},
 		{
 			title: 'Tên học sinh',
@@ -243,7 +256,9 @@ const VideoCourseList = () => {
 	];
 
 	useEffect(() => {
-		getAllArea();
+		if (todoApi !== listTodoApi) {
+			getAllArea();
+		}
 	}, [todoApi]);
 
 	// HANDLE SEARCH

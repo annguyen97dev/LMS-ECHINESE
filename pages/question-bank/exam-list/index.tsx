@@ -423,6 +423,7 @@ const ExamList = (props) => {
 										<Option value={1}>Đề hẹn test</Option>
 										<Option value={2}>Đề bán</Option>
 										<Option value={3}>Đề Kiểm tra</Option>
+										<Option value={4}>Bài tập</Option>
 									</Select>
 								</div>
 							</div>

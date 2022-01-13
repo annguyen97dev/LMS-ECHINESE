@@ -12,7 +12,7 @@ const HeaderVideo: FC<hProps> = ({ params, onClick }): JSX.Element => {
 		<div className="row video-header pl-5 pr-5 video-shadow">
 			<div className="row p-0">
 				<div className="app-header-logo">
-					<Link href="/dashboard">
+					<Link href="/">
 						<a href="#">
 							<img className="logo-img" src="/images/logo-final.jpg"></img>
 						</a>

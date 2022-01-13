@@ -12,6 +12,7 @@ import InputPassField from '~/components/FormControl/InputPassField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import UploadAvatarField from '~/components/FormControl/UploadAvatarField';
+import { useWrap } from '~/context/wrap';
 import { optionCommonPropTypes } from '~/utils/proptypes';
 
 SalerListForm.propTypes = {
@@ -74,6 +75,7 @@ function SalerListForm(props) {
 	} = props;
 	const { areaList, districtList, wardList } = optionAreaSystemList;
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const { userInformation } = useWrap();
 	const openModal = () => {
 		setIsModalVisible(true);
 		if (isUpdate && updateObj && updateObj.AreaID) {
@@ -137,7 +139,8 @@ function SalerListForm(props) {
 		CMNDRegister: '',
 		Extension: '',
 		StatusID: 0,
-		Password: ''
+		Password: '',
+		UserName: null
 	};
 
 	const form = useForm({
@@ -185,8 +188,6 @@ function SalerListForm(props) {
 
 	useEffect(() => {}, []);
 
-	console.log('optionBranchList: ', optionBranchList);
-
 	return (
 		<>
 			{isUpdate ? (
@@ -202,7 +203,7 @@ function SalerListForm(props) {
 			)}
 			<Modal
 				style={{ top: 20 }}
-				title={isUpdate ? 'Cập nhật giáo viên' : 'Thêm giáo viên'}
+				title={isUpdate ? 'Cập nhật tư vấn viên' : 'Thêm tư vấn viên'}
 				visible={isModalVisible}
 				onCancel={closeModal}
 				footer={
@@ -260,6 +261,11 @@ function SalerListForm(props) {
 							<div className="col-12">
 								<Divider orientation="center">Thông tin cơ bản</Divider>
 							</div>
+							{isUpdate && (
+								<div className="col-12">
+									<InputTextField form={form} name="UserName" label="Tên đăng nhập" disabled={true} />
+								</div>
+							)}
 							<div className="col-md-6 col-12">
 								<InputTextField form={form} name="Email" label="Email" placeholder="Nhập email" />
 							</div>
@@ -297,7 +303,7 @@ function SalerListForm(props) {
 									label="Trạng thái hoạt động"
 									optionList={optionStatusList}
 									placeholder="Chọn trạng thái hoạt động"
-									disabled={!isUpdate && true}
+									disabled={!isUpdate ? true : userInformation.RoleID === 1 ? false : true}
 								/>
 							</div>
 							<div className="col-md-6 col-12">

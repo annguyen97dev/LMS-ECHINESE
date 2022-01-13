@@ -1,22 +1,7 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import React, { useEffect, useState } from 'react';
-
 import TitlePage from '~/components/TitlePage';
 import LayoutBase from '~/components/LayoutBase';
-import {
-	studentApi,
-	areaApi,
-	districtApi,
-	wardApi,
-	jobApi,
-	puroseApi,
-	branchApi,
-	sourceInfomationApi,
-	parentsApi,
-	staffApi,
-	teacherApi,
-	examTopicApi
-} from '~/apiBase';
+import { areaApi, jobApi, puroseApi, branchApi, sourceInfomationApi, parentsApi, staffApi, teacherApi, examTopicApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import StudentForm from '~/components/Global/Customer/Student/StudentForm';
 
@@ -254,6 +239,7 @@ const StudentAppointmentCreate = () => {
 	useEffect(() => {
 		getDataStudentForm(listApi);
 	}, []);
+
 	return (
 		<div>
 			<div className="row">

@@ -27,7 +27,7 @@ const Notifiaction = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const listTodoApi = {
-		pageSize: 999,
+		pageSize: 10,
 		pageIndex: 1
 	};
 	const [todoApi, setTodoApi] = useState(listTodoApi);
@@ -67,7 +67,7 @@ const Notifiaction = () => {
 
 		let res = null;
 		try {
-			res = await notificationApi.upadteSeen(data);
+			res = await notificationApi.updateSeen(data);
 			res.Status == 200 && console.log('update thành công'), getDataNotification();
 		} catch (error) {
 			console.log('error', error.message);

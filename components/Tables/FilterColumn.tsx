@@ -1,21 +1,14 @@
-import {SearchOutlined} from '@ant-design/icons';
-import {Button, DatePicker, Input, Select, Space} from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, DatePicker, Input, Select, Space } from 'antd';
 import moment from 'moment';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-const FilterColumn = (
-	dataIndex = null,
-	handleSearch = null,
-	handleReset = null,
-	type = 'text',
-	optionList = [],
-	isLoading = {}
-) => {
+const FilterColumn = (dataIndex = null, handleSearch = null, handleReset = null, type = 'text', optionList = [], isLoading = {}) => {
 	const [isVisible, setIsVisible] = useState(false);
 	const [valueSearch, setValueSearch] = useState<any>(null);
-	const {RangePicker} = DatePicker;
+	const { RangePicker } = DatePicker;
 	const inputRef = useRef<any>(null);
-	const {Option} = Select;
+	const { Option } = Select;
 	const getValueSearch = (value) => {
 		setValueSearch(value);
 	};
@@ -39,7 +32,7 @@ const FilterColumn = (
 				let toDate = moment(valueSearch[1].toDate()).format('YYYY/MM/DD');
 				let listRange = {
 					fromDate: fromDate,
-					toDate: toDate,
+					toDate: toDate
 				};
 				handleSearch(listRange, dataIndex);
 				break;
@@ -69,7 +62,7 @@ const FilterColumn = (
 						placeholder={`Search ${dataIndex}`}
 						onPressEnter={(e) => checkHandleSearch(valueSearch)}
 						onChange={(e) => getValueSearch(e.target.value)}
-						style={{marginBottom: 8, display: 'block'}}
+						style={{ marginBottom: 8, display: 'block' }}
 					/>
 				);
 				break;
@@ -79,7 +72,7 @@ const FilterColumn = (
 						ref={inputRef}
 						value={valueSearch}
 						onChange={(value) => getValueSearch(value)}
-						style={{marginBottom: 8, display: 'block'}}
+						style={{ marginBottom: 8, display: 'block' }}
 						placeholder={`Search ${dataIndex}`}
 						optionFilterProp="children"
 						showSearch={true}
@@ -95,7 +88,7 @@ const FilterColumn = (
 			case 'date':
 				fControl = (
 					<DatePicker
-						style={{marginBottom: 8, display: 'block'}}
+						style={{ marginBottom: 8, display: 'block' }}
 						autoFocus={true}
 						format="DD/MM/YYYY"
 						onChange={(date, dateString) => getValueSearch(date)}
@@ -104,16 +97,13 @@ const FilterColumn = (
 				break;
 			case 'date-range':
 				fControl = (
-					<div style={{marginBottom: 8, display: 'block'}}>
+					<div style={{ marginBottom: 8, display: 'block' }}>
 						<RangePicker
 							format="DD/MM/YYYY"
 							autoFocus={true}
 							ranges={{
 								Today: [moment(), moment()],
-								'This Month': [
-									moment().startOf('month'),
-									moment().endOf('month'),
-								],
+								'This Month': [moment().startOf('month'), moment().endOf('month')]
 							}}
 							onChange={(date, dateString) => getValueSearch(date)}
 						/>
@@ -134,7 +124,7 @@ const FilterColumn = (
 	}, [isVisible]);
 	const getColumnSearchProps = (dataIndex) => ({
 		filterDropdown: () => (
-			<div style={{padding: 8}}>
+			<div style={{ padding: 8 }}>
 				{checkType()}
 				<Space>
 					<Button
@@ -142,11 +132,11 @@ const FilterColumn = (
 						onClick={() => checkHandleSearch(valueSearch)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{width: 90}}
+						style={{ width: 90 }}
 					>
 						Search
 					</Button>
-					<Button onClick={checkHandleReset} size="small" style={{width: 90}}>
+					<Button onClick={checkHandleReset} size="small" style={{ width: 90 }}>
 						Reset
 					</Button>
 				</Space>
@@ -156,7 +146,7 @@ const FilterColumn = (
 		filterIcon: (filtered) => <SearchOutlined />,
 		onFilterDropdownVisibleChange: (visible) => {
 			visible ? setIsVisible(true) : setIsVisible(false);
-		},
+		}
 	});
 
 	return getColumnSearchProps(dataIndex);

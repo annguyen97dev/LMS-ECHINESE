@@ -37,11 +37,9 @@ const CheckOut = () => {
 	const [form] = Form.useForm();
 	const [dataOrder, setDataOrder] =
 		useState<{ Note: string; OrderDetailModels: Array<any>; OrderID: number; TotalPayment: number }>(null);
-	console.log(dataOrder);
 	const [cartID, setCartID] = useState(null);
 
 	const renderPaymentMethodDetail = () => {
-		const onChangeCheckRemember = () => {};
 		return (
 			<>
 				{method.PaymentCode == 'momo_test' && (
@@ -577,11 +575,6 @@ const CheckOut = () => {
 									<span>VND</span>
 								</div>
 							</div>
-							{/* <p>
-								Udemy is required by law to collect applicable transaction taxes for purchases made in certain tax
-								jurisdictions.
-							</p>
-							<p>By completing your purchase you agree to these Terms of Service.</p> */}
 							<button className="btn btn-primary w-100" onClick={handleCheckout}>
 								Thanh toán
 								{isLoading.status == 'CHECKOUT' && isLoading.loading && <Spin className="loading-base" />}

@@ -1,17 +1,20 @@
+import { ControlOutlined } from '@ant-design/icons';
 import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users } from 'react-feather';
+import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users, Edit3 } from 'react-feather';
 import { courseApi, groupNewsFeedApi } from '~/apiBase';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
 import StudentsList from '~/components/Global/CourseList/CourseListDetail/StudentList/StudentList';
 import { useWrap } from '~/context/wrap';
+import LessionPage from '~/pages/course/lessons';
 import CourseExamAdmin from '../../CourseExam/CourseExamAdmin';
 import CourseExamStudent from '../../CourseExamStudent/CourseExamStudent';
 import AddGroupFormFromCourseDetail from '../../NewsFeed/NewsFeedGroupComponents/AddGroupFormFromCourseDetail';
 import LessonDetail from '../LessonDetail';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
+import Homework from './Homework/Homework';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
 import TimelineCourse from './Timeline/Timeline';
 
@@ -22,9 +25,12 @@ const CourseListDetail = () => {
 	const router = useRouter();
 	const [groupID, setGroupID] = useState({ groupID: null, groupInfo: null });
 	const [courseDetail, setCourseDetail] = useState<ICourseDetail>();
+	console.log(courseDetail);
 	const { showNoti, pageSize } = useWrap();
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
+
+	console.log('courseDetail: ', courseDetail);
 
 	const isStudent = () => {
 		let role = userInformation?.RoleID;
@@ -139,30 +145,76 @@ const CourseListDetail = () => {
 					tab={
 						<>
 							<Edit />
-							<span title="Giáo trình">Bài tâp/Kiểm tra</span>
+							<span title="Giáo trình">Kiểm tra</span>
 						</>
 					}
 					key="11"
 				>
 					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
 				</TabPane>
-				{(isAdmin || userInformation?.RoleID == 2 || (userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3)) && (
-					<TabPane
-						tab={
-							<>
-								<Edit />
-								<span title="Chỉnh sửa">
-									{userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3 ? 'Đăng ký buổi học' : 'Chỉnh sửa'}
-								</span>
-							</>
-						}
-						key="2"
-					>
-						<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
-							<Spin size="large" />
-						</div>
-					</TabPane>
-				)}
+				<TabPane
+					tab={
+						<>
+							<Edit />
+							<span title="Giáo trình">Bài tập</span>
+						</>
+					}
+					key="12"
+				>
+					{!isAdmin ? (
+						<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
+					) : (
+						<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
+					)}
+				</TabPane>
+				<TabPane
+					tab={
+						<>
+							<i className="far fa-calendar-alt" style={{ fontSize: 22, marginRight: 7 }}></i>
+							<span title="Giáo trình">Các buổi học</span>
+						</>
+					}
+					key="22"
+				>
+					{<LessionPage courseID={parseIntID} />}
+				</TabPane>
+
+				{courseDetail?.Status !== 2
+					? (isAdmin || userInformation?.RoleID == 2 || (userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3)) && (
+							<TabPane
+								tab={
+									<>
+										<Edit3 />
+										<span title="Chỉnh sửa">
+											{userInformation?.RoleID === 3 && courseDetail?.TypeCourse === 3
+												? 'Đăng ký buổi học'
+												: 'Chỉnh sửa'}
+										</span>
+									</>
+								}
+								key="2"
+							>
+								<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+									<Spin size="large" />
+								</div>
+							</TabPane>
+					  )
+					: userInformation &&
+					  userInformation.RoleID === 1 && (
+							<TabPane
+								tab={
+									<>
+										<Edit3 />
+										<span title="Chỉnh sửa">Chỉnh sửa</span>
+									</>
+								}
+								key="2"
+							>
+								<div className="d-flex align-items-center justify-content-center" style={{ height: 200 }}>
+									<Spin size="large" />
+								</div>
+							</TabPane>
+					  )}
 
 				{(isAdmin || userInformation?.RoleID == 2) && (
 					<TabPane

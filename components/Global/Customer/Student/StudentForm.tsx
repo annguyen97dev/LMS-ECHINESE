@@ -1,6 +1,6 @@
 import { LoadingOutlined, MailOutlined, SearchOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Card, Divider, Form, Modal, Skeleton, Spin, Tooltip } from 'antd';
+import { Card, Divider, Form, Modal, Select, Skeleton, Spin, Tooltip } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState, useRef } from 'react';
 import { RotateCcw } from 'react-feather';
@@ -16,6 +16,7 @@ import TimePickerField from '~/components/FormControl/TimePickerField';
 import LayoutBase from '~/components/LayoutBase';
 import { useWrap } from '~/context/wrap';
 
+const { Option } = Select;
 let returnSchema = {};
 let schema = null;
 
@@ -49,14 +50,15 @@ const optionGender = [
 ];
 
 const StudentForm = (props) => {
-	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess } = props;
+	const { dataRow, listDataForm, _handleSubmit, index, isSubmitOutSide, isHideButton, isSuccess, width, hideReset, haveDefault } = props;
 	const router = useRouter();
 	const url = router.pathname;
 	const { customerID: customerID } = router.query;
+	// const [form] = Form.useForm();
 
 	const [isStudentDetail, setIsStudentDetail] = useState(url.includes('student-list') || url.includes('student-detail'));
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -70,6 +72,27 @@ const StudentForm = (props) => {
 	const [valueEmail, setValueEmail] = useState();
 	const [isSearch, setIsSearch] = useState(false);
 	const [loadingCustomer, setLoadingCustomer] = useState(false);
+	const [userAll, setUserAll] = useState<IStudent[]>();
+	const [userDetail, setUserDetail] = useState<IStudent>();
+
+	const fetchDataUser = () => {
+		(async () => {
+			setIsLoading({ type: '', status: true });
+			try {
+				const res = await studentApi.getAll({
+					pageIndex: 1,
+					pageSize: 99999
+				});
+				//@ts-ignore
+				res.status == 200 && setUserAll(res.data.data);
+			} catch (err) {
+				showNoti('danger', err.message);
+			} finally {
+				setIsLoading({ type: '', status: false });
+			}
+		})();
+	};
+
 	// ------------- GET DATA CUSTOMER ---------------
 	const getDataCustomer = async () => {
 		setLoadingCustomer(true);
@@ -77,6 +100,7 @@ const StudentForm = (props) => {
 			let res = await studentAdviseApi.getWithID(parseInt(customerID as string));
 			if (res.status === 200) {
 				handleDataRow(res.data.data);
+				fetchDataUserWithMail(res.data.data.Email);
 			} else {
 				showNoti('error', 'Đường truyền mạng đang không ổn định');
 			}
@@ -85,6 +109,22 @@ const StudentForm = (props) => {
 		} finally {
 			setLoadingCustomer(false);
 		}
+	};
+
+	const fetchDataUserWithMail = (mail) => {
+		(async () => {
+			try {
+				const res = await studentApi.getAll({
+					pageIndex: 1,
+					pageSize: 99999,
+					Email: mail
+				});
+				//@ts-ignore
+				res.status == 200 && handleChangeUser(res.data.data[0].UserInformationID);
+			} catch (err) {
+				showNoti('danger', err.message);
+			}
+		})();
 	};
 
 	// ------------- ADD data to list --------------
@@ -164,28 +204,6 @@ const StudentForm = (props) => {
 		setListData({ ...listData });
 	};
 
-	// ------ GET LIST BRANCH ------
-	// const getListBranch = async (areaID) => {
-	// 	setLoadingBranch(true);
-	// 	try {
-	// 		let res = await branchApi.getAll({ pageSize: 9999, pageIndex: 1, Enable: true, areaID: areaID });
-	// 		if (res.status == 200) {
-	// 			let newData = res.data.data.map((item) => ({
-	// 				title: item.BranchName,
-	// 				value: item.ID
-	// 			}));
-	// 			setListBranch(newData);
-	// 		}
-	// 		if (res.status == 204) {
-	// 			setListBranch([]);
-	// 		}
-	// 	} catch (error) {
-	// 		console.log('Error Branch: ', error.message);
-	// 	} finally {
-	// 		setLoadingBranch(false);
-	// 	}
-	// };
-
 	//  ----- GET DATA DISTRICT -------
 	const getDataWithID = async (ID, name) => {
 		let res = null;
@@ -245,6 +263,7 @@ const StudentForm = (props) => {
 
 	// -----  HANDLE ALL IN FORM -------------
 	const defaultValuesInit = {
+		ID: null,
 		FullNameUnicode: null,
 		ChineseName: null,
 		LinkFaceBook: null,
@@ -271,9 +290,12 @@ const StudentForm = (props) => {
 		AppointmentDate: null,
 		ExamAppointmentTime: null,
 		ExamAppointmentNote: null,
+		StatusID: null,
+		StatusName: null,
 		ExamTopicID: null,
 		TeacherID: null,
-		CustomerConsultationID: null
+		CustomerConsultationID: null,
+		Username: null
 	};
 
 	(function returnSchemaFunc() {
@@ -325,6 +347,7 @@ const StudentForm = (props) => {
 
 	// ----------- SUBMI FORM ------------
 	const onSubmit = async (data: any) => {
+		console.log('datasa submit', data);
 		if (data.Branch) {
 			data.Branch = data.Branch.toString();
 		}
@@ -333,13 +356,15 @@ const StudentForm = (props) => {
 			type: 'ADD_DATA',
 			status: true
 		});
+
 		let res = null;
+
 		try {
 			if (data.UserInformationID) {
 				if (isSearch) {
-					res = await studentApi.add(data);
+					res = await studentApi.add({ ...data, ID: data.UserInformationID });
 				} else {
-					res = await studentApi.update(data);
+					res = await studentApi.update({ ...data, ID: data.UserInformationID });
 
 					if (res.status == 200) {
 						_handleSubmit && _handleSubmit(data, index);
@@ -347,7 +372,7 @@ const StudentForm = (props) => {
 					}
 				}
 			} else {
-				res = await studentApi.add(data);
+				res = await studentApi.add({ ...data, ID: data.UserInformationID });
 			}
 
 			res?.status == 200 &&
@@ -355,6 +380,10 @@ const StudentForm = (props) => {
 				!dataRow && !isSearch && (form.reset(defaultValuesInit), setImageUrl('')));
 		} catch (error) {
 			showNoti('danger', error.message);
+			setIsLoading({
+				type: 'ADD_DATA',
+				status: false
+			});
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
@@ -395,15 +424,15 @@ const StudentForm = (props) => {
 		try {
 			let res = await studentAdviseApi.getAll({ Email: valueEmail });
 			console.log('student info', res.data.data);
-			res?.status == 200 &&
-				(form.setValue('CustomerConsultationID', res.data.data[0].ID),
-				showNoti('success', 'Tìm kiếm thành công'),
-				handleDataRow(res.data.data[0]),
-				setIsSearch(true),
-				setIsLoading({
-					type: 'SEARCH_EMAIL',
-					status: false
-				}));
+			// res?.status == 200 &&
+			// 	(form.setValue('CustomerConsultationID', res.data.data[0].ID),
+			// 	showNoti('success', 'Tìm kiếm thành công'),
+			// 	handleDataRow(res.data.data[0]),
+			// 	setIsSearch(true),
+			// 	setIsLoading({
+			// 		type: 'SEARCH_EMAIL',
+			// 		status: false
+			// 	}));
 			res?.status == 204 && searchFromStudent();
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -437,13 +466,16 @@ const StudentForm = (props) => {
 
 		// Nếu có param customer id
 		console.log('customerID', customerID);
-        if (cloneRowData.CustomerName){
-            form.setValue('FullNameUnicode', cloneRowData.CustomerName);
-        }
-        if (cloneRowData.Number){
-            form.setValue('Mobile', cloneRowData.Number);
-        }
-        
+		if (cloneRowData.CustomerName) {
+			form.setValue('FullNameUnicode', cloneRowData.CustomerName);
+		}
+		if (cloneRowData.Number) {
+			form.setValue('Mobile', cloneRowData.Number);
+		}
+		if (cloneRowData.StatusID) {
+			form.setValue('StatusID', cloneRowData.StatusID);
+		}
+
 		setValueEmail(cloneRowData.Email);
 	};
 
@@ -462,21 +494,62 @@ const StudentForm = (props) => {
 
 	useEffect(() => {
 		if (customerID) {
+			fetchDataUser();
 			getDataCustomer();
 			form.setValue('CustomerConsultationID', 0);
 		}
+		if (customerID === undefined) {
+			fetchDataUser();
+		}
 	}, []);
+
+	const handleChangeUser = (value) => {
+		setIsLoading({
+			type: 'SEARCH_EMAIL',
+			status: true
+		}),
+			(async () => {
+				try {
+					const _detail = await studentApi.getWithID(value);
+					//@ts-ignore
+					_detail.status == 200 &&
+						(setUserDetail(_detail.data.data),
+						form.setValue('ID', _detail.data.data.UserInformationID),
+						form.setValue('Email', _detail.data.data.Email),
+						form.setValue('FullNameUnicode', _detail.data.data.FullNameUnicode));
+
+					_detail?.status == 200 &&
+						(form.setValue('CustomerConsultationID', _detail.data.data.UserInformationID),
+						showNoti('success', 'Tìm kiếm thành công'),
+						handleDataRow(_detail.data.data),
+						setIsSearch(true));
+				} catch (err) {
+					showNoti('danger', err.message);
+				} finally {
+					setIsLoading({
+						type: 'SEARCH_EMAIL',
+						status: false
+					});
+				}
+			})();
+
+		console.log('userDetail: ', userDetail);
+	};
+
+	console.log('dataRow: ', dataRow);
 
 	return (
 		<>
-			<div className="col-12 d-flex justify-content-center">
+			<div className="col-12 d-flex justify-content-center" style={{ width: width !== undefined ? width : '100%' }}>
 				<Card
 					title="Phiếu thông tin cá nhân"
-					className="w-70 w-100-mobile"
+					className="w-100 w-100-mobile"
 					extra={
-						<button className="btn btn-warning" onClick={handleReset}>
-							Reset
-						</button>
+						hideReset ? null : (
+							<button className="btn btn-warning" onClick={handleReset}>
+								Reset
+							</button>
+						)
 					}
 				>
 					<div className="form-staff">
@@ -510,14 +583,16 @@ const StudentForm = (props) => {
 											</div>
 										</div>
 									</div>
+
 									<div className="col-12">
 										<Divider orientation="center">Thông tin cơ bản</Divider>
 									</div>
+
 									<div className="col-md-6 col-12">
-										<div className="search-box">
+										{/* <div className="search-box">
 											<InputTextField
 												form={form}
-												name="Email"
+												// name="Email"
 												label="Email"
 												handleChange={(value) => setValueEmail(value)}
 												placeholder="Nhập email"
@@ -532,35 +607,127 @@ const StudentForm = (props) => {
 													)}
 												</button>
 											)}
+										</div> */}
+										<div className="search-box">
+											<Form.Item
+												label="Email"
+												rules={[
+													{
+														required: true,
+														message: 'Vui lòng điền đủ thông tin!'
+													}
+												]}
+												required={true}
+											>
+												<Select
+													className="style-input"
+													showSearch
+													loading={isLoading.status}
+													defaultValue={708}
+													optionFilterProp="children"
+													disabled={haveDefault ? true : false}
+													value={
+														haveDefault
+															? dataRow.UserInformationID
+															: userDetail
+															? userDetail.UserInformationID
+															: ''
+													}
+													onChange={(value) => handleChangeUser(value)}
+												>
+													{userAll?.map((item, index) => (
+														<Option key={index} value={item.UserInformationID}>
+															{item.Email}
+														</Option>
+													))}
+												</Select>
+											</Form.Item>
 										</div>
 									</div>
 
 									<div className="col-md-6 col-12">
-										<InputTextField
+										{/* <InputTextField
 											form={form}
 											name="FullNameUnicode"
 											label="Họ và tên"
 											placeholder="Nhập họ và tên"
 											isRequired={true}
-										/>
+										/> */}
+										<Form.Item label="Họ và tên">
+											<Select
+												className="style-input"
+												showSearch
+												loading={isLoading.status}
+												optionFilterProp="children"
+												disabled={haveDefault ? true : false}
+												value={
+													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+												}
+												onChange={(value) => handleChangeUser(value)}
+											>
+												{userAll?.map((item, index) => (
+													<Option key={index} value={item.UserInformationID}>
+														{item.FullNameUnicode}
+													</Option>
+												))}
+											</Select>
+										</Form.Item>
 									</div>
 									<div className="col-md-6 col-12">
-										<InputTextField
+										{/* <InputTextField
 											form={form}
 											name="ChineseName"
 											label="Tên tiếng Trung"
 											placeholder="Nhập tên tiếng Trung"
-										/>
+										/> */}
+										<Form.Item label="Tên tiếng Trung">
+											<Select
+												className="style-input"
+												showSearch
+												loading={isLoading.status}
+												optionFilterProp="children"
+												disabled={haveDefault ? true : false}
+												value={
+													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+												}
+												onChange={(value) => handleChangeUser(value)}
+											>
+												{userAll?.map((item, index) => (
+													<Option key={index} value={item.UserInformationID}>
+														{item.ChineseName}
+													</Option>
+												))}
+											</Select>
+										</Form.Item>
 									</div>
 									{/*  */}
 									<div className="col-md-6 col-12">
-										<InputTextField
+										{/* <InputTextField
 											form={form}
 											name="Mobile"
 											label="Số điện thoại"
 											placeholder="Nhập số điện thoại"
 											isRequired={true}
-										/>
+										/> */}
+										<Form.Item label="Số điện thoại">
+											<Select
+												loading={isLoading.status}
+												className="style-input"
+												showSearch
+												optionFilterProp="children"
+												disabled={haveDefault ? true : false}
+												value={
+													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+												}
+												onChange={(value) => handleChangeUser(value)}
+											>
+												{userAll?.map((item, index) => (
+													<Option key={index} value={item.UserInformationID}>
+														{item.Mobile}
+													</Option>
+												))}
+											</Select>
+										</Form.Item>
 									</div>
 									<div className="col-md-6 col-12">
 										<DateField form={form} name="DOB" label="Ngày sinh" placeholder="Chọn ngày sinh" />
@@ -595,6 +762,19 @@ const StudentForm = (props) => {
 											label="Công việc"
 											optionList={listData.Job}
 											placeholder="Chọn công việc"
+										/>
+									</div>
+									<div className="col-12">
+										<SelectField
+											form={form}
+											optionList={[
+												{ title: 'Hoạt động', value: 0 },
+												{ title: 'Khóa', value: 1 }
+											]}
+											disabled={userInformation && userInformation.RoleID == 1 ? false : true}
+											name="StatusID"
+											label="Trạng thái"
+											placeholder="Chọn trạng thái"
 										/>
 									</div>
 									{/** ==== Địa chỉ  ====*/}
@@ -754,6 +934,7 @@ const StudentForm = (props) => {
 											isRequired={true}
 										/>
 									</div>
+
 									<div className="col-12">
 										<InputTextField
 											form={form}

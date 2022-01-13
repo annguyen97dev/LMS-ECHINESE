@@ -120,7 +120,7 @@ const listApi = [
 const StudentExchange = () => {
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IStudentChange[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -333,8 +333,6 @@ const StudentExchange = () => {
 		setCurrentPage(1);
 	};
 
-	console.log('LIST DATA FORM: ', listDataForm);
-
 	// ----------------- ON SUBMIT --------------------
 	const _onSubmit = async (dataSubmit: any, rowData: IStudentChange) => {
 		console.log('Data submit: ', dataSubmit);
@@ -413,25 +411,13 @@ const StudentExchange = () => {
 	};
 
 	// ------------ ON SEARCH -----------------------
-
-	const checkField = (valueSearch, dataIndex) => {
-		let newList = { ...listFieldSearch };
-		Object.keys(newList).forEach(function (key) {
-			console.log('key: ', key);
-			if (key != dataIndex) {
-				if (key != 'pageIndex') {
-					newList[key] = null;
-				}
-			} else {
-				newList[key] = valueSearch;
-			}
-		});
-
-		return newList;
-	};
-
 	const onSearch = (valueSearch, dataIndex) => {
-		let clearKey = checkField(valueSearch, dataIndex);
+		let clearKey =
+			dataIndex == 'FullNameUnicode'
+				? { FullNameUnicode: valueSearch }
+				: dataIndex == 'Mobile'
+				? { Mobile: valueSearch }
+				: { Email: valueSearch };
 
 		setTodoApi({
 			...todoApi,
@@ -477,16 +463,15 @@ const StudentExchange = () => {
 	}, []);
 
 	// EXPAND ROW
-
 	const expandedRowRender = (data, index) => {
 		return (
 			<>
-				{/* <Card title="Thông tin cá nhân">
-          <InfoCusCard />
-        </Card> */}
 				<StudentForm
 					index={index}
 					dataRow={data}
+					width={1200}
+					haveDefault={true}
+					hideReset={true}
 					listDataForm={listDataForm}
 					_handleSubmit={(dataSubmit, index) => {
 						let newDataSource = [...dataSource];
@@ -503,76 +488,137 @@ const StudentExchange = () => {
 	};
 
 	// Columns
-	const columns = [
-		{
-			title: 'Tỉnh/TP',
-			dataIndex: 'AreaName'
+	const columns =
+		userInformation && userInformation.RoleID !== 10
+			? [
+					{
+						title: 'Tỉnh/TP',
+						dataIndex: 'AreaName',
+						width: 150
+					},
+					{
+						title: 'Họ tên',
+						dataIndex: 'FullNameUnicode',
+						width: 200,
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
+					},
+					{
+						title: 'SĐT',
+						dataIndex: 'Mobile',
+						width: 120,
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+						...FilterColumn('Mobile', onSearch, handleReset, 'text')
+					},
+					{
+						title: 'Email',
+						dataIndex: 'Email',
+						width: 120,
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+						...FilterColumn('Email', onSearch, handleReset, 'text')
+					},
+					{
+						title: 'Tư vấn viên',
+						dataIndex: 'CounselorsName',
+						width: 120
+					},
+					{
+						title: 'Nguồn',
+						dataIndex: 'SourceInformationName',
+						width: 120
+					},
+					{
+						title: 'Trạng thái',
+						dataIndex: 'StatusID',
+						align: 'center',
+						render: (status) => {
+							return (
+								<>
+									{status == 0 ? <span className="tag green">Hoạt động</span> : <span className="tag gray">Đã khóa</span>}
+								</>
+							);
+						}
+					},
 
-			// ...FilterColumn("city")
-		},
-		{
-			title: 'Họ tên',
-			dataIndex: 'FullNameUnicode',
-			render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
-			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
-		},
-		{
-			title: 'SĐT',
-			dataIndex: 'Mobile'
-			// ...FilterColumn("tel")
-		},
-		{
-			title: 'Email',
-			dataIndex: 'Email'
-			// ...FilterColumn("email")
-		},
-		{
-			title: 'Tư vấn viên',
-			dataIndex: 'CounselorsName'
-		},
-		{
-			title: 'Nguồn',
-			dataIndex: 'SourceInformationName'
-			//  ...FilterColumn("introducer")
-		},
-		{
-			title: 'Trạng thái',
-			dataIndex: 'StatusID',
-			align: 'center',
-			render: (status) => {
-				return <>{status == 0 ? <span className="tag green">Hoạt động</span> : <span className="tag gray">Đã khóa</span>}</>;
-			}
-		},
-
-		{
-			title: '',
-			render: (text, data, index) => (
-				<>
-					<Link
-						href={{
-							pathname: '/customer/student/student-list/student-detail/[slug]',
-							query: { slug: data.UserInformationID }
-						}}
-					>
-						<Tooltip title="Xem chi tiết">
-							<button className="btn btn-icon">
-								<Eye />
-							</button>
-						</Tooltip>
-					</Link>
-					<StudentExchangeForm
-						getIndex={() => setIndexRow(index)}
-						index={index}
-						rowData={data}
-						rowID={data.UserInformationID}
-						listData={listDataForm}
-						isLoading={isLoading}
-						_onSubmit={(data: any, rowData: IStudentChange) => _onSubmit(data, rowData)}
-					/>
-				</>
-			)
-		}
-	];
+					{
+						title: '',
+						render: (text, data, index) => (
+							<>
+								<Link
+									href={{
+										pathname: '/customer/student/student-list/student-detail/[slug]',
+										query: { slug: data.UserInformationID }
+									}}
+								>
+									<Tooltip title="Xem chi tiết">
+										<button className="btn btn-icon">
+											<Eye />
+										</button>
+									</Tooltip>
+								</Link>
+								<StudentExchangeForm
+									getIndex={() => setIndexRow(index)}
+									index={index}
+									rowData={data}
+									rowID={data.UserInformationID}
+									listData={listDataForm}
+									isLoading={isLoading}
+									_onSubmit={(data: any, rowData: IStudentChange) => _onSubmit(data, rowData)}
+								/>
+							</>
+						)
+					}
+			  ]
+			: [
+					{
+						title: 'Tỉnh/TP',
+						dataIndex: 'AreaName',
+						width: 120
+					},
+					{
+						title: 'Họ tên',
+						dataIndex: 'FullNameUnicode',
+						width: 200,
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text')
+					},
+					{
+						title: 'SĐT',
+						dataIndex: 'Mobile',
+						width: 120,
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+						...FilterColumn('Mobile', onSearch, handleReset, 'text')
+					},
+					{
+						title: 'Email',
+						dataIndex: 'Email',
+						width: 120,
+						render: (nameStudent) => <p className="font-weight-primary">{nameStudent}</p>,
+						...FilterColumn('Email', onSearch, handleReset, 'text')
+					},
+					{
+						title: 'Tư vấn viên',
+						dataIndex: 'CounselorsName',
+						width: 120
+					},
+					{
+						title: 'Nguồn',
+						dataIndex: 'SourceInformationName',
+						width: 120
+					},
+					{
+						title: 'Trạng thái',
+						dataIndex: 'StatusID',
+						align: 'center',
+						render: (status) => {
+							return (
+								<>
+									{status == 0 ? <span className="tag green">Hoạt động</span> : <span className="tag gray">Đã khóa</span>}
+								</>
+							);
+						}
+					}
+			  ];
 
 	return (
 		<ExpandTable

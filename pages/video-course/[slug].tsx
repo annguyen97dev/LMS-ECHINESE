@@ -34,7 +34,7 @@ const VideoCourseDetail = (props) => {
 	path = pathString[pathString.length - 2];
 
 	const [isLoading, setLoading] = useState(true);
-	const { showNoti, getTitlePage, handleReloadNoti } = useWrap();
+	const { showNoti, getTitlePage, handleReloadNoti, userInformation } = useWrap();
 	const [details, setDetails] = useState(initDetails);
 	const [content, setContent] = useState({});
 
@@ -43,16 +43,19 @@ const VideoCourseDetail = (props) => {
 	const [buyNowLoading, setByNowLoading] = useState(false);
 
 	useEffect(() => {
-		getCourseDetails(slug);
-		getCourseContent(slug);
 		getTitlePage('Khóa học video');
-	}, []);
+		if (userInformation !== null) {
+			getCourseDetails(slug);
+		}
+	}, [userInformation]);
 
 	// CALL API DETAILS
 	const getCourseDetails = async (param) => {
+		console.log('===========================================');
+		console.log('GET DATA DETAILS');
 		try {
 			const res = await VideoCourseDetailApi.getDetails(param);
-			res.status == 200 && setDetails(res.data.data);
+			res.status == 200 && (setDetails(res.data.data), getCourseContent(res.data.data.CurriculumID));
 		} catch (error) {
 			console.log(error);
 		}
@@ -77,6 +80,7 @@ const VideoCourseDetail = (props) => {
 				pageSize: 10
 			};
 			getCourseFeedback(temp);
+			getCoursePreview(slug);
 		}
 	};
 
@@ -89,8 +93,6 @@ const VideoCourseDetail = (props) => {
 			res.status == 200 && setFeedBack(res.data.data);
 		} catch (error) {
 			console.log(error);
-		} finally {
-			getCoursePreview(slug);
 		}
 	};
 
@@ -130,17 +132,19 @@ const VideoCourseDetail = (props) => {
 		getCourseFeedback(temp);
 	};
 
-	useEffect(() => {
-		onChangeIndex();
-	}, [feedbackIndex]);
+	// useEffect(() => {
+	// 	onChangeIndex();
+	// }, [feedbackIndex]);
 
 	// HANDLE SEARCH
-	const onChangeIndex = () => {
+	const onChangeIndex = (index) => {
+		console.log('onChangeIndex');
+
 		let temp = {
 			videocourseId: slug,
 			rating: 0,
 			search: '',
-			pageIndex: feedbackIndex,
+			pageIndex: index,
 			pageSize: 10
 		};
 		getCourseFeedback(temp);
@@ -236,64 +240,68 @@ const VideoCourseDetail = (props) => {
 									</h6>
 								)}
 
-								{activing ? (
+								{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
 									<>
-										<Input
-											value={code}
-											onChange={(e) => setCode(e.target.value)}
-											placeholder="Mã kích hoạt"
-											style={{ height: 36, borderRadius: 6 }}
-										/>
-										<button
-											onClick={() => handleActive({ ID: slug, ActiveCode: code })}
-											className="btn btn-warning btn-add mt-2"
-										>
-											Kích hoạt {activeLoading && <Spin className="loading-base" />}
-										</button>
-										<button onClick={() => setActiving(false)} className="btn btn-primary btn-add mt-2">
-											Huỷ
-										</button>
-									</>
-								) : (
-									<>
-										<button
-											onClick={(e) => {
-												e.stopPropagation();
-												addToCard(1);
-											}}
-											className="btn btn-primary btn-add"
-										>
-											Thêm vào giỏ {buyLoading && <Spin className="loading-base" />}
-										</button>
-
-										{router.query.Active == 'activated' ? (
-											<Link
-												href={{
-													pathname: '/video-learning',
-													query: {
-														ID: slug,
-														course: slug,
-														complete: 0 + '/' + 0,
-														name: details.VideoCourseName
-													}
-												}}
-											>
-												<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
-											</Link>
+										{activing ? (
+											<>
+												<Input
+													value={code}
+													onChange={(e) => setCode(e.target.value)}
+													placeholder="Mã kích hoạt"
+													style={{ height: 36, borderRadius: 6 }}
+												/>
+												<button
+													onClick={() => handleActive({ VdieoCourseID: slug, ActiveCode: code })}
+													className="btn btn-warning btn-add mt-2"
+												>
+													Kích hoạt {activeLoading && <Spin className="loading-base" />}
+												</button>
+												<button onClick={() => setActiving(false)} className="btn btn-primary btn-add mt-2">
+													Huỷ
+												</button>
+											</>
 										) : (
-											<button onClick={() => setActiving(true)} className="btn btn-warning btn-add mt-2">
-												Kích hoạt
-											</button>
+											<>
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														addToCard(1);
+													}}
+													className="btn btn-primary btn-add"
+												>
+													Thêm vào giỏ {buyLoading && <Spin className="loading-base" />}
+												</button>
+
+												{router.query.Active == 'activated' ? (
+													<Link
+														href={{
+															pathname: '/video-learning',
+															query: {
+																ID: slug,
+																course: slug,
+																complete: 0 + '/' + 0,
+																name: details.VideoCourseName
+															}
+														}}
+													>
+														<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
+													</Link>
+												) : (
+													<button onClick={() => setActiving(true)} className="btn btn-warning btn-add mt-2">
+														Kích hoạt
+													</button>
+												)}
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														addToCard(0);
+													}}
+													className="btn btn-light btn-add mt-2"
+												>
+													Mua ngay {buyNowLoading && <Spin className="loading-base" />}
+												</button>
+											</>
 										)}
-										<button
-											onClick={(e) => {
-												e.stopPropagation();
-												addToCard(0);
-											}}
-											className="btn btn-light btn-add mt-2"
-										>
-											Mua ngay {buyNowLoading && <Spin className="loading-base" />}
-										</button>
 									</>
 								)}
 							</div>
@@ -334,64 +342,69 @@ const VideoCourseDetail = (props) => {
 										Giá gốc: {parseToMoney(router.query.Original)}đ
 									</h6>
 								)}
-								{activing ? (
-									<>
-										<Input
-											value={code}
-											onChange={(e) => setCode(e.target.value)}
-											placeholder="Mã kích hoạt"
-											style={{ height: 36, borderRadius: 6 }}
-										/>
-										<button
-											onClick={() => handleActive({ ID: slug, ActiveCode: code })}
-											className="btn btn-warning btn-add mt-2"
-										>
-											Kích hoạt {activeLoading && <Spin className="loading-base" />}
-										</button>
-										<button onClick={() => setActiving(false)} className="btn btn-primary btn-add mt-2">
-											Huỷ
-										</button>
-									</>
-								) : (
-									<>
-										<button
-											onClick={(e) => {
-												e.stopPropagation();
-												addToCard(1);
-											}}
-											className="btn btn-primary btn-add"
-										>
-											Thêm vào giỏ {buyLoading && <Spin className="loading-base" />}
-										</button>
 
-										{router.query.Active == 'activated' ? (
-											<Link
-												href={{
-													pathname: '/video-learning',
-													query: {
-														ID: slug,
-														course: slug,
-														complete: 0 + '/' + 0,
-														name: details.VideoCourseName
-													}
-												}}
-											>
-												<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
-											</Link>
+								{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
+									<>
+										{activing ? (
+											<>
+												<Input
+													value={code}
+													onChange={(e) => setCode(e.target.value)}
+													placeholder="Mã kích hoạt"
+													style={{ height: 36, borderRadius: 6 }}
+												/>
+												<button
+													onClick={() => handleActive({ VdieoCourseID: slug, ActiveCode: code })}
+													className="btn btn-warning btn-add mt-2"
+												>
+													Kích hoạt {activeLoading && <Spin className="loading-base" />}
+												</button>
+												<button onClick={() => setActiving(false)} className="btn btn-primary btn-add mt-2">
+													Huỷ
+												</button>
+											</>
 										) : (
-											<button onClick={() => setActiving(true)} className="btn btn-warning btn-add mt-2">
-												Kích hoạt
-											</button>
+											<>
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														addToCard(1);
+													}}
+													className="btn btn-primary btn-add"
+												>
+													Thêm vào giỏ {buyLoading && <Spin className="loading-base" />}
+												</button>
+
+												{router.query.Active == 'activated' ? (
+													<Link
+														href={{
+															pathname: '/video-learning',
+															query: {
+																ID: slug,
+																course: slug,
+																complete: 0 + '/' + 0,
+																name: details.VideoCourseName
+															}
+														}}
+													>
+														<button className="btn btn-dark btn-add mt-2">Xem khóa học</button>
+													</Link>
+												) : (
+													<button onClick={() => setActiving(true)} className="btn btn-warning btn-add mt-2">
+														Kích hoạt
+													</button>
+												)}
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														addToCard(0);
+													}}
+													className="btn btn-light btn-add mt-2"
+												>
+													Mua ngay {buyNowLoading && <Spin className="loading-base" />}
+												</button>
+											</>
 										)}
-										<button
-											onClick={(e) => {
-												e.stopPropagation();
-												addToCard(0);
-											}}
-											className="btn btn-light btn-add mt-2"
-										>
-											Mua ngay {buyNowLoading && <Spin className="loading-base" />}
-										</button>
 									</>
 								)}
 							</div>
@@ -468,7 +481,7 @@ const VideoCourseDetail = (props) => {
 										feedBack={feedBack}
 										onSearchFeedback={onSearchFeedback}
 										onFilterFeedback={onFilterFeedback}
-										getPagination={(e) => setIndex(e)}
+										getPagination={(e) => onChangeIndex(e)}
 										pageIndex={feedbackIndex}
 									/>
 								</div>

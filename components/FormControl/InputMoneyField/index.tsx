@@ -1,7 +1,9 @@
 import { Form, Input } from 'antd';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
+import { parseToMoney } from '~/utils/functions';
+import { numberWithCommas } from './../../../utils/functions/index';
 
 const InputMoneyField = (props) => {
 	const { form, name, label, placeholder, disabled, handleChange, style, className, isRequired } = props;
@@ -13,6 +15,15 @@ const InputMoneyField = (props) => {
 		if (!handleChange) return;
 		handleChange(value);
 	};
+
+	const [salary, setSalary] = useState('');
+
+	useEffect(() => {
+		const value = salary;
+		if (value !== null && value !== undefined) {
+			setSalary(parseToMoney(value.replace(/[^0-9\.]+/g, '')));
+		}
+	}, [salary]);
 
 	return (
 		<Form.Item
@@ -31,16 +42,25 @@ const InputMoneyField = (props) => {
 						allowClear={true}
 						placeholder={placeholder}
 						disabled={disabled}
+						value={salary.length === 0 ? numberWithCommas(field?.value) : salary}
 						onChange={(e) => {
-							let convertValue = e.target.value.toString();
-							let value = parseInt(convertValue.replace(/\,/g, ''), 10);
-
-							if (!isNaN(value)) {
-								field.onChange(value.toLocaleString());
-							} else {
-								field.onChange('');
-							}
+							setSalary(e.target.value);
+							field.onChange(e.target.value.toLocaleString());
 						}}
+
+						// onChange={(e) => {
+						// 	console.log(e.target.value);
+
+						// 	let convertValue = e.target.value.toString();
+						// 	// parseToMoney(value.replace(/[^0-9\.]+/g, ''))
+						// 	let value = parseToMoney(convertValue.replace(/[^0-9\.]+/g, ''));
+
+						// 	if (!isNaN(value)) {
+						// 		field.onChange(value.toLocaleString());
+						// 	} else {
+						// 		field.onChange('');
+						// 	}
+						// }}
 					/>
 				)}
 			/>

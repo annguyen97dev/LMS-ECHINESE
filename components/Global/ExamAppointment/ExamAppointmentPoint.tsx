@@ -1,18 +1,19 @@
 //@ts-nocheck
 import React, { useEffect, useState } from 'react';
-import { packageResultApi } from '~/apiBase/package/package-result';
 import NestedTable from '~/components/Elements/NestedTable';
 import { useWrap } from '~/context/wrap';
 import { examAppointmentResultApi } from '~/apiBase';
+import { homeworkResultApi } from '~/apiBase/course-detail/home-work-result';
 
 const ExamAppointmentPoint = (props) => {
-	const { infoID, userID } = props;
+	const { infoID, userID, isExercise, visible } = props;
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
 	});
 	const [detail, setDetail] = useState<IExamAppointmentResult>([]);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
+	const [isDone, setIsDone] = useState(false);
 
 	const fetchDetailInfo = async () => {
 		setIsLoading({
@@ -26,6 +27,7 @@ const ExamAppointmentPoint = (props) => {
 				ExamAppointmentID: infoID
 			});
 			if (res.status == 200) {
+				setIsDone(res.data.data[0].isDone);
 				let arr = [];
 				arr.push(res.data.data[0]);
 				setDetail(arr);
@@ -40,8 +42,37 @@ const ExamAppointmentPoint = (props) => {
 		}
 	};
 
+	const fetchDetailExercise = async () => {
+		if (visible == true) {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: true
+			});
+			try {
+				let res = await homeworkResultApi.getAll({
+					selectAll: true,
+					UserInformationID: userID,
+					HomeworkID: infoID
+				});
+				if (res.status == 200) {
+					setIsDone(res.data.data[0].isDone);
+					let arr = [];
+					arr.push(res.data.data[0]);
+					setDetail(arr);
+				}
+			} catch (err) {
+				showNoti('danger', err.message);
+			} finally {
+				setIsLoading({
+					type: 'GET_ALL',
+					status: false
+				});
+			}
+		}
+	};
+
 	useEffect(() => {
-		fetchDetailInfo();
+		isExercise ? fetchDetailExercise() : fetchDetailInfo();
 	}, []);
 
 	const columns = [
@@ -88,7 +119,19 @@ const ExamAppointmentPoint = (props) => {
 		}
 	];
 
-	return <NestedTable loading={isLoading} addClass="basic-header" dataSource={detail} columns={columns} haveBorder={true} />;
+	return (
+		<>
+			{(isDone || userInformation?.RoleID == 1 || userInformation?.RoleID == 2) && (
+				<NestedTable
+					loading={isLoading}
+					addClass="basic-header"
+					dataSource={detail[0]?.isDone ? detail : {}}
+					columns={columns}
+					haveBorder={true}
+				/>
+			)}
+		</>
+	);
 };
 
 export default ExamAppointmentPoint;

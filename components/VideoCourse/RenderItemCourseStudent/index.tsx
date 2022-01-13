@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
 import Link from 'next/link';
 import { parseToMoney } from '~/utils/functions';
@@ -7,10 +7,26 @@ import { useWrap } from '~/context/wrap';
 import ModalUpdateDetail from '~/lib/video-course/modal-update-details';
 import ModalUpdateInfo from '~/lib/video-course/modal-update-info';
 import RatingStar from '~/components/RatingStar';
+import { VideoCourseStoreApi } from '~/apiBase/video-course-store';
 
 // CARD ITEM ON VIDEO COURSE
-const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading, handleActive, buyNowLoading, dataTeacher }) => {
-	const { userInformation } = useWrap();
+const RenderItemCard = (props) => {
+	const {
+		item,
+		addToCard,
+		dataCategory,
+		categoryLevel,
+		dataCurriculum,
+		loading,
+		activeLoading,
+		handleActive,
+		buyNowLoading,
+		dataTeacher,
+		refeshData,
+		tags,
+		onRefeshTags
+	} = props;
+	const { userInformation, showNoti } = useWrap();
 
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
@@ -31,10 +47,42 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 		TotalVideo: item.TotalVideoCourseSold
 	};
 
+	// UPDATE COURSE
+	const updateCourse = async (param) => {
+		let temp = {
+			ID: param.ID,
+			CategoryID: param.CategoryID,
+			TeacherID: param.TeacherID,
+			LevelID: param.LevelID,
+			CurriculumID: param.CurriculumID,
+			TagArray: param.TagArray,
+			ChineseName: param.ChineseName,
+			VideoCourseName: param.VideoCourseName,
+			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
+			OriginalPrice: param.OriginalPrice,
+			SellPrice: param.SellPrice,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject
+		};
+		try {
+			const res = await VideoCourseStoreApi.update(temp);
+			res.status == 200 && showNoti('success', 'Thành công');
+			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
+		} catch (error) {
+			showNoti('danger', 'Thêm không thành công');
+		} finally {
+			setShowModalEdit(false);
+			refeshData();
+		}
+	};
+
 	return (
 		<>
 			<div className="vc-store_container">
-				<div className="vc-store_item" style={{ height: userInformation.RoleID == 1 || userInformation.RoleID == 2 ? 260 : 300 }}>
+				<div className="vc-store_item" style={{ height: userInformation.RoleID == 1 || userInformation.RoleID == 2 ? 300 : 300 }}>
 					<div className="flip-card-front">
 						<div className="warp-image">
 							<Link
@@ -54,6 +102,12 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 						<div className="content">
 							<h3 style={{ width: '90%' }} className="title ml-3 mr-3 in-1-line">
 								{item.VideoCourseName}
+							</h3>
+							<h3 style={{ width: '90%', fontSize: 12, color: '#000' }} className="title ml-3 mr-3 in-1-line">
+								{item.EnglishName}
+							</h3>
+							<h3 style={{ width: '90%', fontSize: 12, color: '#000' }} className="title ml-3 mr-3 in-1-line">
+								{item.ChineseName}
 							</h3>
 							<span style={{ width: '90%' }} className="ml-3 mr-3 in-1-line">
 								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán
@@ -146,7 +200,7 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 													<button
 														onClick={(e) => {
 															e.stopPropagation();
-															handleActive({ ID: item.ID, ActiveCode: code });
+															handleActive({ VdieoCourseID: item.ID, ActiveCode: code });
 														}}
 														className="btn btn-warning btn-add mt-2"
 													>
@@ -217,14 +271,22 @@ const RenderItemCard = ({ item, addToCard, _onSubmitEdit, loading, activeLoading
 					</div>
 				</div>
 			</div>
+
 			<ModalUpdateInfo
-				_onSubmitEdit={(data: any) => _onSubmitEdit(data)}
+				dataTeacher={dataTeacher}
+				_onSubmitEdit={(data: any) => updateCourse(data)}
 				programID={item.ID}
 				rowData={item}
 				isModalVisible={showModalUpdate}
 				setIsModalVisible={setShowModalUpdate}
-				dataTeacher={dataTeacher}
+				refeshData={() => refeshData()}
+				dataCategory={dataCategory}
+				dataLevel={categoryLevel}
+				dataCurriculum={dataCurriculum}
+				tags={tags}
+				onRefeshTags={onRefeshTags}
 			/>
+
 			<ModalUpdateDetail programID={item.ID} isModalVisible={showModalEdit} setIsModalVisible={setShowModalEdit} />
 		</>
 	);

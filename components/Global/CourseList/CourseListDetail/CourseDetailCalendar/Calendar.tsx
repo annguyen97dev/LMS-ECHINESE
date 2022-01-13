@@ -39,6 +39,7 @@ CDCalendar.propTypes = {
 	handleStudyZoom: PropTypes.func,
 	handleEndStudyZoom: PropTypes.func
 };
+
 CDCalendar.defaultProps = {
 	isLoading: { type: '', status: false },
 	eventList: [],
@@ -54,6 +55,7 @@ CDCalendar.defaultProps = {
 	handleStudyZoom: null,
 	handleEndStudyZoom: null
 };
+
 function CDCalendar(props) {
 	const router = useRouter();
 	const {
@@ -62,14 +64,13 @@ function CDCalendar(props) {
 		isLoaded,
 		isUploadDocument,
 		handleUploadDocument,
-		//
 		isGetRecordList,
-		//
 		isStudyZoom,
 		fetchStudyZoom,
 		handleStudyZoom,
 		handleEndStudyZoom
 	} = props;
+
 	const [courseScheduleID, setCourseScheduleID] = useState(0);
 	const [isModalVisible, setIsModalVisible] = useState<{
 		type: 'record' | 'document' | '';
@@ -157,7 +158,7 @@ function CDCalendar(props) {
 			}
 		}
 		// GIÁO VIÊN
-		if (userInformation?.RoleID === 2) {
+		if (userInformation?.RoleID === 2 || userInformation?.RoleID === 5) {
 			if (btnID === 1) {
 				return (
 					<Button
@@ -187,7 +188,10 @@ function CDCalendar(props) {
 							size="middle"
 							className="btn-primary w-100"
 							onClick={() => {
-								navigator.clipboard.writeText(`${_.API_URL}/course/zoom-view/${data.scheduleID}`);
+								if (typeof window !== 'undefined') {
+									const url = window.location.origin;
+									navigator.clipboard.writeText(`${url}/course/zoom-view/${data.scheduleID}`);
+								}
 							}}
 							style={{ marginTop: 4 }}
 						>
@@ -245,7 +249,8 @@ function CDCalendar(props) {
 			ButtonName: btnName,
 			idx,
 			IsExam,
-			CurriculumDetailID
+			CurriculumDetailID,
+			TeacherAttendanceID
 		} = event.resource;
 
 		const dataDetail = event.resource;
@@ -335,7 +340,9 @@ function CDCalendar(props) {
 				// 0 - ,1-Bắt đầu , 2-Vào lớp học, 3-Kết thúc
 				style={{
 					backgroundColor:
-						checkDate == 0
+						TeacherAttendanceID == 1
+							? '#43A047'
+							: checkDate == 0
 							? btnID == undefined || btnID == null || btnID == ''
 								? '#fac10a'
 								: btnID == 3

@@ -50,6 +50,7 @@ const VideoCourseList = () => {
 		try {
 			const res = await DonePayApi.getAll(todoApi);
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
+			res.status == 204 && setData([]);
 			setRender(res + '');
 		} catch (err) {
 			showNoti('danger', err);
@@ -85,7 +86,7 @@ const VideoCourseList = () => {
 
 	const columnsVideoCourse = [
 		{
-			title: 'Mã',
+			title: 'Mã đơn hàng',
 			dataIndex: 'OrderCode',
 			key: 'OrderCode',
 			align: 'center'
@@ -120,7 +121,17 @@ const VideoCourseList = () => {
 			title: 'Ngày mua',
 			dataIndex: 'CreatedOn',
 			key: 'CreatedOn',
-			render: (Action, data, index) => <div>{moment(data.CreatedOn).format('DD/MM/yyyy')}</div>
+			render: (Action, data, index) => (
+				<div>{moment(data.CreatedOn).format('DD/MM/yyyy') + ' ' + moment(data.CreatedOn).format('hh:mm')}</div>
+			)
+		},
+		{
+			title: 'Ngày xác nhận',
+			dataIndex: 'PaymentDate',
+			key: 'PaymentDate',
+			render: (Action, data, index) => (
+				<div>{moment(data.PaymentDate).format('DD/MM/yyyy') + ' ' + moment(data.PaymentDate).format('hh:mm')}</div>
+			)
 		},
 		{
 			title: 'Trạng thái kích hoạt',
@@ -175,7 +186,9 @@ const VideoCourseList = () => {
 	];
 
 	useEffect(() => {
-		getAllArea();
+		if (todoApi !== listTodoApi) {
+			getAllArea();
+		}
 	}, [todoApi]);
 
 	// HANDLE SEARCH
@@ -262,6 +275,10 @@ const VideoCourseList = () => {
 											<div className="column">
 												<span style={{ fontWeight: 'bold' }}>{item?.VideoCourseName}</span>
 												<span>{parseToMoney(item?.VideoCoursePrice)}đ</span>
+											</div>
+											<div className="column">
+												<span style={{ fontWeight: 'bold' }}>Mã kích hoạt</span>
+												<span>{item?.ActiveCode}</span>
 											</div>
 											<span style={{ color: '#dd4667' }}>Số lượng: {parseToMoney(item?.Quantity)}</span>
 										</div>

@@ -998,7 +998,7 @@ export const AdminChildMenu = [
 						ItemType: 'single',
 						Key: '/option/config-voucher-invoice',
 						Route: '/option/config-voucher-invoice',
-						Text: 'Phiếu thu, phiếu chi',
+						Text: 'Mẫu',
 						Icon: ''
 					},
 					{
@@ -1007,24 +1007,23 @@ export const AdminChildMenu = [
 						Route: '/option/faq',
 						Text: 'Câu hỏi thường gặp',
 						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/option/product-type',
+						Route: '/option/product-type',
+						Text: 'Cấu hình sản phẩm',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/option/product',
+						Route: '/option/product',
+						Text: 'Thêm sản phẩm',
+						Icon: ''
 					}
 				]
 			}
-			// {
-			// 	ItemType: 'sub-menu',
-			// 	Key: 'sub-tab-option-5',
-			// 	Icon: '',
-			// 	TitleSub: 'Sản phẩm',
-			// 	SubMenuList: [
-			// 		{
-			// 			ItemType: 'single',
-			// 			Key: '/option/product-type',
-			// 			Route: '/option/product-type',
-			// 			Text: 'Cấu hình sản phẩm',
-			// 			Icon: ''
-			// 		}
-			// 	]
-			// }
 		]
 		// MenuItem: [
 		// 	{

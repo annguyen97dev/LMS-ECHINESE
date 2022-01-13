@@ -241,22 +241,22 @@ const StudentFormModal = (props) => {
 				case 'Mobile':
 					returnSchema[key] = yup.number().typeError('SDT phải là số').required('Bạn không được để trống');
 					break;
-				case 'CMND':
-					returnSchema[key] = yup.number().typeError('CMND phải là số').required('Bạn không được để trống');
+				case 'FullNameUnicode':
+					returnSchema[key] = yup.string().typeError('Họ tên phải là chữ').required('Bạn không được để trống');
 					break;
 				case 'CounselorsID':
-					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+					returnSchema[key] = yup.mixed();
 					break;
 				case 'Branch':
-					returnSchema[key] = yup.array().required('Bạn không được để trống');
+					returnSchema[key] = yup.array();
 				case 'AppointmentDate':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				case 'ExamAppointmentTime':
 					if (!dataRow) {
-						returnSchema[key] = yup.mixed().required('Bạn không được để trống');
+						returnSchema[key] = yup.mixed();
 					}
 					break;
 				default:
@@ -275,9 +275,36 @@ const StudentFormModal = (props) => {
 
 	// ----------- SUBMI FORM ------------
 	const onSubmit = async (data: any) => {
+		console.log(data);
+		let dataUpdate = {
+			UserInformationID: data.UserInformationID,
+			FullNameUnicode: data.FullNameUnicode,
+			ChineseName: data.ChineseName,
+			LinkFaceBook: data.LinkFaceBook,
+			Email: data.Email,
+			Mobile: data.Mobile,
+			AreaID: data.AreaID,
+			DistrictID: data.DistrictID,
+			WardID: data.WardID,
+			HouseNumber: data.HouseNumber,
+			Address: data.Address,
+			Avatar: data.Avatar,
+			DOB: data.DOB,
+			Gender: data.Gender,
+			CMND: data.CMND,
+			CMNDDate: data.CMNDDate,
+			CMNDRegister: data.CMNDRegister,
+			Extension: data.Extension,
+			Branch: data.Branch.toString(),
+			AcademicPurposesID: data.AcademicPurposesID,
+			JobID: data.JobID,
+			SourceInformationID: data.SourceInformationID,
+			ParentsOf: data.ParentsOf,
+			StatusID: data.StatusID,
+			CounselorsID: data.CounselorsID,
+			Password: data.Password
+		};
 		data.Branch = data.Branch.toString();
-
-		// console.log("DATA SUBMIT: ", data);
 
 		setIsLoading({
 			type: 'ADD_DATA',
@@ -289,7 +316,7 @@ const StudentFormModal = (props) => {
 				if (isSearch) {
 					res = await studentApi.add(data);
 				} else {
-					res = await studentApi.update(data);
+					res = await studentApi.update(dataUpdate);
 					res?.status == 200 && _handleSubmit && _handleSubmit(data, index);
 				}
 			} else {
@@ -575,7 +602,6 @@ const StudentFormModal = (props) => {
 									label="Trung tâm"
 									optionList={listData.Branch}
 									placeholder="Chọn trung tâm"
-									isRequired={true}
 								/>
 							</div>
 							{!isStudentDetail && (

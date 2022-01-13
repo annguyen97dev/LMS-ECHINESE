@@ -29,6 +29,7 @@ const ShoppingCart = () => {
 		status: '',
 		loading: false
 	});
+	const [isDisabledPayButton, setIsDisabledPayButton] = useState(false);
 	const [clickedItem, setClickedItem] = useState(null);
 
 	const { Search } = Input;
@@ -118,6 +119,7 @@ const ShoppingCart = () => {
 			}
 			if (res.status == 204) {
 				setCartItems([]);
+				setIsDisabledPayButton(true);
 			}
 		} catch (error) {
 		} finally {
@@ -192,41 +194,6 @@ const ShoppingCart = () => {
 				loading: false
 			});
 		}
-	};
-
-	const renderQuantity = (item, index) => {
-		const [count, setCount] = useState(item.Quantity);
-		return (
-			<div key={index}>
-				<span
-					className="quantity-btn"
-					style={{ userSelect: 'none' }}
-					onClick={() => {
-						decreseItem(item.ID, count);
-						setClickedItem(item.ID);
-						if (count === 1) {
-							setCount(1);
-						} else {
-							setCount(count - 1);
-						}
-					}}
-				>
-					-
-				</span>
-				<span className="cart__item-quantity font-weight-green">{count}</span>
-				<span
-					className="quantity-btn"
-					style={{ userSelect: 'none' }}
-					onClick={() => {
-						increseItem(item.ID, count);
-						setClickedItem(item.ID);
-						setCount(count + 1);
-					}}
-				>
-					+
-				</span>
-			</div>
-		);
 	};
 
 	const renderCartItems = () => {
@@ -406,7 +373,17 @@ const ShoppingCart = () => {
 			</header>
 
 			<div className="shopping__cart-body container mt-5">
-				<h1>Giỏ Hàng</h1>
+				<div className="d-flex justify-content-between">
+					<h1>Giỏ Hàng</h1>
+					<button
+						className="btn btn-primary"
+						onClick={() => {
+							router.push('/video-course');
+						}}
+					>
+						Mua sắm thêm
+					</button>
+				</div>
 				{isLoading.loading && isLoading.status == 'GET_CART_DATA' ? (
 					<Skeleton active />
 				) : (
@@ -421,7 +398,9 @@ const ShoppingCart = () => {
 								</h5>
 							</div>
 							<Link href="/cart/check-out">
-								<button className="btn btn-primary w-100">Thanh toán</button>
+								<button disabled={isDisabledPayButton} className="btn btn-primary w-100">
+									Thanh toán
+								</button>
 							</Link>
 						</div>
 					</div>

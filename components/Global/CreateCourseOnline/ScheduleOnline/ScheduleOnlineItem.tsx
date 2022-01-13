@@ -37,7 +37,9 @@ const ScheduleOnlineItem = (props) => {
 		isClickAheadSchedule,
 		//
 		optionTeacherList,
-		optionStudyTime
+		optionStudyTime,
+		//
+		saveBeforeAheadSchedule
 	} = props;
 	const {
 		ID,
@@ -152,7 +154,7 @@ const ScheduleOnlineItem = (props) => {
 							}}
 						/>
 					</div>
-					{isEditView && !isClickAheadSchedule && typeof ID === 'number' && (
+					{isEditView && !isClickAheadSchedule && typeof ID === 'number' && saveBeforeAheadSchedule && (
 						<div className="col-12 text-right">
 							<button
 								className="btn btn-secondary"
@@ -199,7 +201,9 @@ ScheduleOnlineItem.propTypes = {
 	isClickAheadSchedule: PropTypes.bool,
 	//
 	optionTeacherList: optionCommonPropTypes,
-	optionStudyTime: optionCommonPropTypes
+	optionStudyTime: optionCommonPropTypes,
+	//
+	saveBeforeAheadSchedule: PropTypes.bool
 };
 ScheduleOnlineItem.defaultProps = {
 	handleChangeValueSchedule: null,
@@ -213,6 +217,8 @@ ScheduleOnlineItem.defaultProps = {
 	isClickAheadSchedule: false,
 	//
 	optionTeacherList: [],
-	optionStudyTime: []
+	optionStudyTime: [],
+	//
+	saveBeforeAheadSchedule: true
 };
 export default ScheduleOnlineItem;

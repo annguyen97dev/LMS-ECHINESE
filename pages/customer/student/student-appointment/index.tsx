@@ -16,6 +16,7 @@ import PowerTable from '~/components/PowerTable';
 const CourseRegistration = () => {
 	const [listStudent, setListStudent] = useState([]);
 	const [listChecked, setListChecked] = useState([]);
+	const { userInformation } = useWrap();
 
 	const onSearch = (data) => {
 		setCurrentPage(1);
@@ -48,53 +49,77 @@ const CourseRegistration = () => {
 		setListChecked([...listChecked]);
 	}
 
-	const columns = [
-		{
-			title: 'Học viên',
-			dataIndex: 'FullNameUnicode',
-			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
-			render: (text) => <p className="font-weight-primary">{text}</p>
-		},
-		{
-			title: 'Trung tâm',
-			dataIndex: 'BranchName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Chương trình học',
-			dataIndex: 'ProgramName',
-			render: (text) => <p className="font-weight-black">{text}</p>
-		},
-		{
-			title: 'Ca học',
-			dataIndex: 'StudyTimeName'
-		},
-		{
-			render: (text, data, index) => (
-				<div className="d-flex align-items-center">
-					<Link
-						href={{
-							pathname: '/customer/student/student-appointment/student-detail/[slug]',
-							query: { slug: data.UserInformationID }
-						}}
-					>
-						<Tooltip title="Xem chi tiết">
-							<button className="btn btn-icon">
-								<Eye />
-							</button>
-						</Tooltip>
-					</Link>
+	const columns =
+		userInformation && userInformation.RoleID !== 10
+			? [
+					{
+						title: 'Học viên',
+						dataIndex: 'FullNameUnicode',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (text) => <p className="font-weight-primary">{text}</p>
+					},
+					{
+						title: 'Trung tâm',
+						dataIndex: 'BranchName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Chương trình học',
+						dataIndex: 'ProgramName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Ca học',
+						dataIndex: 'StudyTimeName'
+					},
+					{
+						render: (text, data, index) => (
+							<div className="d-flex align-items-center">
+								<Link
+									href={{
+										pathname: '/customer/student/student-appointment/student-detail/[slug]',
+										query: { slug: data.UserInformationID }
+									}}
+								>
+									<Tooltip title="Xem chi tiết">
+										<button className="btn btn-icon">
+											<Eye />
+										</button>
+									</Tooltip>
+								</Link>
 
-					<Checkbox
-						style={{ marginLeft: '5px' }}
-						// checked={data.ID == listChecked[index]?.id && listChecked[index].checked}
-						checked={listStudent.includes(data.ID) ? true : false}
-						onChange={(value) => onChange(value, data.ID)}
-					></Checkbox>
-				</div>
-			)
-		}
-	];
+								<Checkbox
+									style={{ marginLeft: '5px' }}
+									// checked={data.ID == listChecked[index]?.id && listChecked[index].checked}
+									checked={listStudent.includes(data.ID) ? true : false}
+									onChange={(value) => onChange(value, data.ID)}
+								></Checkbox>
+							</div>
+						)
+					}
+			  ]
+			: [
+					{
+						title: 'Học viên',
+						dataIndex: 'FullNameUnicode',
+						...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
+						render: (text) => <p className="font-weight-primary">{text}</p>
+					},
+					{
+						title: 'Trung tâm',
+						dataIndex: 'BranchName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Chương trình học',
+						dataIndex: 'ProgramName',
+						render: (text) => <p className="font-weight-black">{text}</p>
+					},
+					{
+						title: 'Ca học',
+						dataIndex: 'StudyTimeName'
+					}
+			  ];
 
 	const [currentPage, setCurrentPage] = useState(1);
 	const { showNoti, pageSize, isAdmin } = useWrap();

@@ -1,14 +1,17 @@
+import { Switch } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { paymentConfig } from '~/apiBase/shopping-cart/payment-config';
 import AddPaymentMethodForm from '~/components/Global/Option/shopping-cart/AddPaymentMethodForm';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
+import { useWrap } from '~/context/wrap';
 
 const PaymentMethodConfig = () => {
 	const [dataSource, setDataSource] = useState<IPaymentMethod[]>();
 	const [paymentMethod, setPaymentMethod] = useState<IPaymentMethodConfig[]>();
 	const [totalPage, setTotalPage] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 
 	const columns = [
@@ -37,9 +40,19 @@ const PaymentMethodConfig = () => {
 			}
 		},
 		{
+			title: 'Trạng thái',
+			dataIndex: 'Enable',
+			width: 100,
+			render: (text, data) => {
+				return (
+					<Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" checked={data.Enable} onClick={() => handleChangeEnable(data)} />
+				);
+			}
+		},
+		{
 			title: '',
 			dataIndex: 'Action',
-			width: 100,
+			width: 70,
 			render: (text, data) => {
 				return (
 					<>
@@ -51,19 +64,25 @@ const PaymentMethodConfig = () => {
 							}}
 							type="edit"
 						/>
-						<AddPaymentMethodForm
-							paymentMethod={paymentMethod}
-							dataPayment={data}
-							fetchData={() => {
-								getPaymentMethod(), getPaymentMethods();
-							}}
-							type="delete"
-						/>
 					</>
 				);
 			}
 		}
 	];
+
+	const handleChangeEnable = async (data) => {
+		setIsLoading({ type: 'ENABLE', status: true });
+		try {
+			let res = await paymentConfig.update({ ID: data.ID, Enable: data.Enable ? false : true });
+			if (res.status === 200) {
+				showNoti('success', res.data.message);
+				getPaymentMethods();
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'ENABLE', status: false });
+		}
+	};
 
 	const getPaymentMethod = async () => {
 		setIsLoading({ type: 'GET_ALL', status: true });

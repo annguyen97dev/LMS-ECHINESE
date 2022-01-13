@@ -19,10 +19,12 @@ const Teacher = () => {
 	const [teacherList, setTeacherList] = useState<ITeacher[]>([]);
 	const [optionAreaSystemList, setOptionAreaSystemList] = useState<{
 		areaList: IOptionCommon[];
+		branchListTotal: IOptionCommon[];
 		districtList: IOptionCommon[];
 		wardList: IOptionCommon[];
 	}>({
 		areaList: [],
+		branchListTotal: [],
 		districtList: [],
 		wardList: []
 	});
@@ -162,17 +164,35 @@ const Teacher = () => {
 			});
 			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
 				const newAreaList = fmSelectArr(res.data.data, 'AreaName', 'AreaID');
-				setOptionAreaSystemList({
-					...optionAreaSystemList,
+				setOptionAreaSystemList((prevState) => ({
+					...prevState,
 					areaList: newAreaList
-				});
+				}));
 			}
 		} catch (error) {
 			// showNoti('danger', error.message);
 		}
 	};
+	// BRANCH BY AREA
+	const fetchBranchList = async () => {
+		try {
+			let res = await branchApi.getAll({
+				pageSize: 9999
+			});
+			if (res.status === 200 && res.data.totalRow && res.data.data.length) {
+				const newBranchList = fmSelectArr(res.data.data, 'BranchName', 'ID');
+				setOptionAreaSystemList((prevState) => ({
+					...prevState,
+					branchListTotal: newBranchList
+				}));
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		}
+	};
 	useEffect(() => {
 		fetchAreaList();
+		fetchBranchList();
 	}, []);
 	// DISTRICT BY AREA
 	const fetchDistrictByAreaID = async (id: number) => {
@@ -322,7 +342,6 @@ const Teacher = () => {
 			};
 			res = await teacherApi.add(newTeacher);
 			if (res.status === 200) {
-				console.log(res.data);
 				onOpenSalaryForm(res.data.data.UserInformationID);
 				showNoti('success', res.data.message);
 				onResetSearch(); // <== khi tạo xong r reset search để trở về trang đầu tiên
@@ -352,7 +371,7 @@ const Teacher = () => {
 			res = await teacherApi.update(newTeacherAPI);
 			if (res.status === 200) {
 				const newTeacherList = [...teacherList];
-				const newBranch = branchList
+				const newBranch = optionAreaSystemList.branchListTotal
 					.filter((ob) => newObj.Branch.some((nb) => nb === ob.value))
 					.map((b) => ({
 						ID: b.value,
@@ -391,7 +410,6 @@ const Teacher = () => {
 			setIsLoading({ type: 'PROMOTE', status: false });
 		}
 	};
-
 	const columns = [
 		{
 			title: 'Mã giáo viên',
@@ -411,7 +429,8 @@ const Teacher = () => {
 			width: 120,
 			title: 'Tên tiếng Trung',
 			dataIndex: 'ChineseName',
-			render: (text) => <p className="font-weight-black">{text}</p>
+			...FilterColumn('ChineseName', onSearch, onResetSearch, 'text'),
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Tỉnh/TP',
@@ -428,12 +447,16 @@ const Teacher = () => {
 		{
 			title: 'SĐT',
 			width: 120,
-			dataIndex: 'Mobile'
+			dataIndex: 'Mobile',
+			// ...FilterColumn('Mobile', onSearch, onResetSearch, 'text'),
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Email',
 			width: 180,
-			dataIndex: 'Email'
+			dataIndex: 'Email',
+			// ...FilterColumn('Email', onSearch, onResetSearch, 'text'),
+			render: (text) => <p className="font-weight-primary">{text}</p>
 		},
 		{
 			title: 'Ngày nhận việc',
@@ -490,8 +513,7 @@ const Teacher = () => {
 						optionAreaSystemList={optionAreaSystemList}
 						handleFetchDistrict={fetchDistrictByAreaID}
 						handleFetchWard={fetchWardByDistrictID}
-						optionBranchList={branchList}
-						handleFetchBranch={fetchBranchByAreaId}
+						optionBranchList={optionAreaSystemList.branchListTotal}
 					/>
 					{userInformation && userInformation.RoleID == 1 && (
 						<PromoteTeacher

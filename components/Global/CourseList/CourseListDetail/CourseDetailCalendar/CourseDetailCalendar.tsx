@@ -28,7 +28,19 @@ function CourseDetailCalendar(props) {
 	// -----------CALENDAR-----------
 	const calendarDateFormat = (calendarArr: ICourseDetailSchedule[]) => {
 		const rs = calendarArr.map((c, idx) => {
-			const { ID, CourseID, CourseName, RoomName, BranchName, TeacherName, SubjectName, StartTime, EndTime, LinkDocument } = c;
+			const {
+				ID,
+				CourseID,
+				CourseName,
+				RoomName,
+				BranchName,
+				TeacherName,
+				SubjectName,
+				StartTime,
+				EndTime,
+				LinkDocument,
+				TeacherAttendanceID
+			} = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
 			const studyTime = `${studyTimeStart} - ${studyTimeEnd}`;
@@ -38,6 +50,7 @@ function CourseDetailCalendar(props) {
 				title: '',
 				start: moment(StartTime).toDate(),
 				end: moment(EndTime).toDate(),
+				TeacherAttendanceID,
 				resource: {
 					ID,
 					CourseID,
@@ -46,7 +59,6 @@ function CourseDetailCalendar(props) {
 					TeacherName,
 					SubjectName,
 					LinkDocument,
-					//
 					StudyTimeName: studyTime
 				}
 			};

@@ -93,9 +93,17 @@ const SuccessCheckout = () => {
 						onClick={() => {
 							router.push('/');
 						}}
-						className="btn btn-primary"
+						className="btn btn-primary mr-1"
 					>
 						Quay lại trang chủ
+					</button>
+					<button
+						onClick={() => {
+							router.push('/video-course-student');
+						}}
+						className="btn btn-warning ml-1"
+					>
+						Xem đơn hàng
 					</button>
 				</div>
 			</div>

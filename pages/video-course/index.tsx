@@ -8,6 +8,7 @@ import { VideoCourseCardApi, VideoCourseStoreApi } from '~/apiBase/video-course-
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseCurriculumApi } from '~/apiBase/video-course-store/get-list-curriculum';
 import { VideoCourseLevelApi } from '~/apiBase/video-course-store/level';
+import { videoTagApi } from '~/apiBase/video-tag';
 import FilterVideoCourses from '~/components/Global/Option/FilterTable/FilterVideoCourses';
 import LayoutBase from '~/components/LayoutBase';
 import RenderItemCard from '~/components/VideoCourse/RenderItemCourseStudent';
@@ -70,39 +71,42 @@ const VideoCourseStore = () => {
 
 	//GET DATA
 	const getAllArea = async () => {
+		console.log('===========================================');
+		console.log('GET DATA VIDEO COURSE');
 		// ADMIN & HOC VIEN
 		setIsLoading({ type: 'GET_ALL', status: true });
-		getCategory();
+		if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
+			getCategory();
+		}
 		try {
-			if (userInformation.RoleID == 1) {
+			if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
 				// ADMIN
 				const res = await VideoCourseStoreApi.getAll(todoApi);
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				getCurriculum();
-                getTeacherOption();
-                
+				getTeacherOption();
+
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			} else {
 				// HOC VIEN
-				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 9 });
-                console.log('video course for student', res.data.data)
+				const res = await VideoCourseStoreApi.getAllForStudent({ ...todoApi, pageSize: 10 });
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				setRender(res + '');
 				setIsLoading({ type: 'GET_ALL', status: false });
 			}
 		} catch (err) {}
 	};
-    // GET TEACHER LEVEL
-    const getTeacherOption = async () => {
-        const temp = {
+
+	// GET TEACHER LEVEL
+	const getTeacherOption = async () => {
+		const temp = {
 			pageIndex: 1,
 			pageSize: 20,
 			search: null
 		};
 		try {
 			const res = await teacherApi.getAll(temp);
-            console.log('teacher api', res.data.data)
 			res.status == 200 && setDataTeacher(res.data.data);
 			setRender(res + '');
 		} catch (err) {}
@@ -126,12 +130,13 @@ const VideoCourseStore = () => {
 		};
 		try {
 			const res = await VideoCourseCategoryApi.getAll(temp);
-            console.log('category:', res.data.data)
 			res.status == 200 && setCategory(res.data.data);
 			setRender(res + '');
 			getCategoryLevel();
 		} catch (err) {}
 	};
+
+	const [tags, setTags] = useState([]);
 
 	//GET DATA CATEGORY LEVEL
 	const getCategoryLevel = async () => {
@@ -142,10 +147,19 @@ const VideoCourseStore = () => {
 		};
 		try {
 			const res = await VideoCourseLevelApi.getAll(temp);
-            console.log('category level', res.data.data)
 			res.status == 200 && setCategoryLevel(res.data.data);
+			getTags();
 			setRender(res + '');
 		} catch (err) {}
+	};
+
+	const getTags = async () => {
+		try {
+			const response = await videoTagApi.getAll();
+			response.status == 200 && setTags(response.data.data);
+		} catch (error) {
+			showNoti('danger', 'Không lấy được tag');
+		}
 	};
 
 	// ADD COURSE VIDEO TO CART
@@ -184,19 +198,20 @@ const VideoCourseStore = () => {
 		setIsLoading({ type: 'GET_ALL', status: true });
 		let temp = {
 			CategoryID: param.CategoryID,
+			TagArray: param.TagArray,
 			LevelID: param.LevelID,
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
+			EnglishName: param.EnglishName,
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,
-			TagArray: param.TagArray,
 			Slogan: param.Slogan,
 			Requirements: param.Requirements,
 			Description: param.Description,
 			ResultsAchieved: param.ResultsAchieved,
 			CourseForObject: param.CourseForObject,
-            TeacherID: param.TeacherID,
+			TeacherID: param.TeacherID
 		};
 
 		try {
@@ -211,35 +226,10 @@ const VideoCourseStore = () => {
 		}
 	};
 
-	// UPDATE COURSE
-	const updateCourse = async (param) => {
-		setIsLoading({ type: 'GET_ALL', status: true });
-		let temp = {
-			ID: param.ID,
-			CategoryID: null,
-			LevelID: null,
-			VideoCourseName: param.VideoCourseName,
-			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
-			OriginalPrice: param.OriginalPrice,
-			SellPrice: param.SellPrice,
-			TagArray: null,
-            TeacherID: param.TeacherID,
-            Slogan: param.Slogan,
-            Requirements: param.Requirements,
-            Description: param.Description,
-            ResultsAchieved: param.ResultsAchieved,
-            CourseForObject: param.CourseForObject,
-		};
-		try {
-			const res = await VideoCourseStoreApi.update(temp);
-			res.status == 200 && showNoti('success', 'Thành công');
-			res.status !== 200 && showNoti('danger', 'Thêm không thành công');
-			getAllArea();
-		} catch (error) {}
-	};
-
 	useEffect(() => {
-		getAllArea();
+		if (todoApi !== listTodoApi) {
+			getAllArea();
+		}
 	}, [todoApi]);
 
 	// HANDLE SEARCH
@@ -286,7 +276,6 @@ const VideoCourseStore = () => {
 	// UPDATE COURSE
 	const handleActive = async (param) => {
 		setActiveLoading(true);
-        
 		try {
 			const res = await VideoCourseListApi.updateActiveCode(param);
 			res.status == 200 && showNoti('success', 'Thành công');
@@ -334,20 +323,21 @@ const VideoCourseStore = () => {
 				<Card
 					style={{ width: '100%' }}
 					loading={isLoading.status}
-					className="video-course-list"
 					title={<div className="m-2">{Extra()}</div>}
 					extra={
 						userInformation.RoleID !== 1 ? null : (
 							<div className="vc-teach-modal_header">
 								<ModalCreateVideoCourse
+									dataTeacher={dataTeacher}
+									_onSubmit={(data: any) => createNewCourse(data)}
 									dataLevel={categoryLevel}
-                                    dataTeacher={dataTeacher}
 									dataCategory={category}
 									dataCurriculum={dataCurriculum}
-									_onSubmit={(data: any) => createNewCourse(data)}
 									showAdd={false}
 									isLoading={false}
 									refeshData={() => getAllArea()}
+									tags={tags}
+									onRefeshTags={() => getTags()}
 								/>
 							</div>
 						)
@@ -360,14 +350,19 @@ const VideoCourseStore = () => {
 							grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
 							renderItem={(item) => (
 								<RenderItemCard
-									_onSubmitEdit={(data: any) => updateCourse(data)}
 									loading={addToCardLoading}
 									buyNowLoading={buyNowLoading}
 									activeLoading={activeLoading}
 									addToCard={addToCard}
 									item={item}
-                                    dataTeacher={dataTeacher}
+									dataTeacher={dataTeacher}
 									handleActive={handleActive}
+									refeshData={() => getAllArea()}
+									categoryLevel={categoryLevel}
+									dataCategory={category}
+									dataCurriculum={dataCurriculum}
+									tags={tags}
+									onRefeshTags={() => getTags()}
 								/>
 							)}
 							pagination={{

@@ -4,18 +4,15 @@ import { useForm } from 'react-hook-form';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
 import { useWrap } from '~/context/wrap';
-
 import EditorSimple from '~/components/Elements/EditorSimple';
-
-import { UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 import { newsFeedApi } from '~/apiBase';
 import { parseToMoney } from '~/utils/functions';
-import { videoTagApi } from '~/apiBase/video-tag';
 
 const { Option } = Select;
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
-	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData } = props;
+	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData, tags, onRefeshTags } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -25,6 +22,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [teacherID, setTeacherID] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
 	const [videoCourseName, setVideoCourseName] = useState('');
+	const [vietnamName, setVietnamName] = useState('');
 	const [videoChinaCourseName, setVideoCourseChinaName] = useState('');
 	const [originalPrice, setOriginalPrice] = useState('');
 	const [sellPrice, setSellPrice] = useState('');
@@ -32,8 +30,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const { showNoti } = useWrap();
 	const [imageSelected, setImageSelected] = useState({ name: '' });
 	const [previewImage, setPreviewImage] = useState('');
-
-	const [tags, setTags] = useState([]);
 
 	const {
 		register,
@@ -48,17 +44,14 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [resultsAchieved, setResultsAchieved] = useState('');
 	const [courseForObject, setCourseForObject] = useState('');
 
-	useEffect(() => {
-		getTags();
-	}, []);
-
 	const finalSubmit = (ImageThumbnails) => {
-		console.log(teacherID);
 		_onSubmit({
 			CurriculumID: curriculumID,
 			CategoryID: category,
 			LevelID: level,
-			VideoCourseName: videoCourseName,
+			VideoCourseName: vietnamName,
+			EnglishName: videoCourseName,
+			ChineseName: videoChinaCourseName,
 			ImageThumbnails: ImageThumbnails,
 			OriginalPrice: originalPrice.replace(/[^0-9\.]+/g, ''),
 			SellPrice: sellPrice.replace(/[^0-9\.]+/g, ''),
@@ -174,21 +167,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 				? (showNoti('success', 'Thêm thành công'),
 				  setIsModalVisible(true),
 				  setModalTags(false),
-				  getTags(),
+				  onRefeshTags(),
 				  setNewTag(''),
 				  form.setFieldsValue({ newTag: '' }))
 				: showNoti('danger', error.message);
 		} finally {
 			setLoading(false);
-		}
-	};
-
-	const getTags = async () => {
-		try {
-			const response = await videoTagApi.getAll();
-			response.status == 200 && setTags(response.data.data);
-		} catch (error) {
-			showNoti('danger', 'Không lấy được tag');
 		}
 	};
 
@@ -213,7 +197,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 
 	function handleChange(value) {
 		setTagArray(`${value}`);
-		form.setFieldsValue({ newTag: `${value}` });
+		form.setFieldsValue({ tags: `${value}` });
 	}
 
 	// RENDER
@@ -228,12 +212,13 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 				>
 					Thêm mới
 				</button>
+
 				<Modal
 					confirmLoading={loading}
 					title="Thêm loại"
 					width={400}
 					visible={modalCate}
-					onCancel={() => (setModalCate(false), setIsModalVisible(true))}
+					onCancel={() => setModalCate(false)}
 					onOk={() => createType()}
 				>
 					<Form form={form} layout="vertical" onFinish={() => createType()}>
@@ -255,7 +240,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 					title="Thêm cấp độ"
 					width={400}
 					visible={modalLevel}
-					onCancel={() => (setModalLevel(false), setIsModalVisible(true))}
+					onCancel={() => setModalLevel(false)}
 					onOk={() => createLevel()}
 				>
 					<Form form={form} layout="vertical" onFinish={() => createLevel()}>
@@ -277,16 +262,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 					title="Thêm từ khóa tìm kiếm"
 					width={400}
 					visible={modalTags}
-					onCancel={() => (setModalTags(false), setIsModalVisible(true))}
+					onCancel={() => setModalTags(false)}
 					onOk={() => createTag()}
 				>
 					<Form form={form} layout="vertical" onFinish={() => createTag()}>
 						<div className="col-md-12 col-12">
-							<Form.Item
-								name="newTag"
-								label="Từ khóa tìm kiếm mới"
-								rules={[{ required: true, message: 'Bạn không được để trống' }]}
-							>
+							<Form.Item name="newTag" label="Từ khóa tìm kiếm mới">
 								<Input
 									placeholder=""
 									className="style-input"
@@ -310,7 +291,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 						<Form className="" form={form} layout="vertical" onFinish={() => onSubmit()}>
 							<div className="row p-0 m-0">
 								<div className="row p-0 m-0 col-md-6 col-12">
-									<div className="col-md-6 col-12">
+									<div className="col-md-12 col-12">
 										<Form.Item
 											name="Name"
 											label="Tên tiếng Anh"
@@ -322,6 +303,22 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												defaultValue={videoCourseName}
 												value={videoCourseName}
 												onChange={(e) => setVideoCourseName(e.target.value)}
+											/>
+										</Form.Item>
+									</div>
+
+									<div className="col-md-6 col-12">
+										<Form.Item
+											name="VietNamName"
+											label="Tên tiếng Việt"
+											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<Input
+												placeholder=""
+												className="style-input"
+												defaultValue={videoCourseName}
+												value={videoCourseName}
+												onChange={(e) => setVietnamName(e.target.value)}
 											/>
 										</Form.Item>
 									</div>
@@ -406,12 +403,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												<div className="row m-0">
 													Loại{' '}
 													<Tooltip title="Thêm loại mới">
-														<button
-															onClick={() => (setModalCate(true), setIsModalVisible(false))}
+														<Button
+															onClick={() => setModalCate(true)}
 															className="btn btn-primary btn-vc-create ml-1"
 														>
 															<div style={{ marginTop: -2 }}>+</div>
-														</button>
+														</Button>
 													</Tooltip>
 												</div>
 											}
@@ -443,12 +440,12 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												<div className="row m-0">
 													Cấp độ{' '}
 													<Tooltip title="Thêm cấp độ mới">
-														<button
-															onClick={() => (setModalLevel(true), setIsModalVisible(false))}
+														<Button
+															onClick={() => setModalLevel(true)}
 															className="btn btn-primary btn-vc-create ml-1"
 														>
 															<div style={{ marginTop: -2 }}>+</div>
-														</button>
+														</Button>
 													</Tooltip>
 												</div>
 											}
@@ -517,37 +514,31 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 													<Button danger onClick={handleDeleteImage}>
 														Xoá hình ảnh
 													</Button>
-													{/* <PaperClipOutlined /> */}
-													{/* <span>...{imageSelected.name.slice(-20, imageSelected.name.length)}</span> */}
 												</div>
 											)}
 										</Form.Item>
-									</div>
-									{/* end upload image */}
 
-									{/* preview image */}
-									{previewImage !== '' && (
-										<div className="col-md-6 col-12">
-											<Image className="image_wrapper" src={previewImage} />
-										</div>
-									)}
+										{/* end preview image */}
+
+										<div className="col-12"></div>
+									</div>
 
 									{/* end preview image */}
 
 									<div className="col-12">
 										{tags.length > 0 && (
 											<Form.Item
-												name="Description"
+												name="Tags"
 												label={
 													<div className="row m-0">
 														Từ khóa tìm kiếm{' '}
 														<Tooltip title="Thêm từ khóa tìm kiếm">
-															<button
-																onClick={() => (setModalTags(true), setIsModalVisible(false))}
+															<Button
+																onClick={() => setModalTags(true)}
 																className="btn btn-primary btn-vc-create ml-1"
 															>
 																<div style={{ marginTop: -2, marginLeft: 1 }}>+</div>
-															</button>
+															</Button>
 														</Tooltip>
 													</div>
 												}
@@ -631,7 +622,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									</div>
 								</div>
 							</div>
-
 							<div className="footer">
 								<div className="row">
 									<div className="col-12" style={{ justifyContent: 'flex-end', display: 'flex' }}>
