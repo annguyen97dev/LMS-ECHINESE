@@ -24,10 +24,6 @@ import TitlePageHeader from '../Elements/TitlePageHeader';
 import Notifiaction from './notification';
 import Cart from './cart';
 
-const { Search } = Input;
-
-const { Option } = Select;
-
 let countOpen = 0;
 export default function Header({
 	isOpenMenu,
@@ -43,7 +39,6 @@ export default function Header({
 	const [isSearch, setIsSearch] = useState(false);
 	const { titlePage, userInformation } = useWrap();
 	const [session, loading] = useSession();
-	// console.log("session: " + JSON.stringify(session));
 	const [dataUser, setDataUser] = useState<IUser>();
 	const [openMenuCustom, setOpenMenuCustom] = useState(false);
 	const showDrawer = () => {
@@ -60,9 +55,6 @@ export default function Header({
 		</div>
 	);
 
-	function onChange(value) {
-		console.log(`selected ${value}`);
-	}
 
 	const moveToLogin = () => {
 		signIn();

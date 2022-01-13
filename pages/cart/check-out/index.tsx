@@ -289,7 +289,12 @@ const CheckOut = () => {
 		return cartItems?.map((item, index) => (
 			<div className=" cart__item d-flex justify-content-between align-items-center row" key={index}>
 				<div className="cart__item-img col-3">
-					<Link href="/">
+					<Link
+						href={{
+							pathname: '/video-course/[slug]',
+							query: { slug: item.VideoCourseID, Thum: item.ImageThumbnails, Sell: item.Price }
+						}}
+					>
 						<a href="#">
 							<img src={item.ImageThumbnails.length ? item.ImageThumbnails : '/images/cat-ben.jpg'} alt="img course"></img>
 						</a>
