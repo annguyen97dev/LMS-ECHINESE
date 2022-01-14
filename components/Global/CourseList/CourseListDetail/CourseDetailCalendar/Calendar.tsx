@@ -331,6 +331,8 @@ function CDCalendar(props) {
 			</div>
 		);
 
+		console.log('eventList?.isExam: ', eventList);
+
 		return (
 			<div
 				onClick={(e) => {
@@ -340,7 +342,9 @@ function CDCalendar(props) {
 				// 0 - ,1-Bắt đầu , 2-Vào lớp học, 3-Kết thúc
 				style={{
 					backgroundColor:
-						TeacherAttendanceID == 1
+						IsExam !== undefined && IsExam == true
+							? '#80DEEA'
+							: TeacherAttendanceID == 1
 							? '#43A047'
 							: checkDate == 0
 							? btnID == undefined || btnID == null || btnID == ''

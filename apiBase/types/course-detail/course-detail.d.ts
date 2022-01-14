@@ -21,4 +21,5 @@ type ICourseDetailSchedule = {
 	LinkDocument?: string;
 	TeacherAttendanceID?: any;
 	Status?: number;
+	IsExam: any;
 };
