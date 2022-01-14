@@ -139,7 +139,7 @@ function ProfileCustomer(props) {
 			case 'Parent':
 				newData = data.map((item) => ({
 					title: item.FullNameUnicode,
-					value: item.UserInformationID
+					value: item?.UserInformationID
 				}));
 				break;
 			case 'SourceInformation':
@@ -152,7 +152,7 @@ function ProfileCustomer(props) {
 			case 'Counselors':
 				newData = data.map((item) => ({
 					title: item.FullNameUnicode,
-					value: item.UserInformationID
+					value: item?.UserInformationID
 				}));
 				break;
 			default:
@@ -348,6 +348,7 @@ function ProfileCustomer(props) {
 								) : (
 									<StudentForm
 										isHideButton={true}
+										haveDefault={true}
 										isSubmitOutSide={isSubmit}
 										dataRow={info}
 										listDataForm={checkEmptyData && listDataForm}

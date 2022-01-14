@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { InputNumber, Spin, Tooltip, Select, Popconfirm, Dropdown, Card, Menu } from 'antd';
+import { InputNumber, DatePicker, Tooltip, Select, Popconfirm, Dropdown, Card, Menu } from 'antd';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
 import { staffSalaryApi } from '~/apiBase/staff-manage/staff-salary';
@@ -18,6 +18,7 @@ import ConfirmForm from '../../../components/Global/StaffList/StaffSalary/admin-
 import { Input } from 'antd';
 import { Form } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -360,7 +361,7 @@ const SalaryReview = () => {
 	};
 
 	const onChangeMonth = (value) => {
-		setParams({ ...params, Month: Number(value) });
+		setParams({ ...params, Month: Number(value.getMonth() + 1), Year: Number(value.getFullYear()) });
 	};
 
 	function daysInMonth(month, year) {
@@ -409,18 +410,14 @@ const SalaryReview = () => {
 							Tính lương tháng trước
 						</button>
 					</Popconfirm>
-					<Select
-						onChange={onChangeMonth}
-						disabled={false}
-						className="style-input d-md-none w-100 mb-4"
-						defaultValue={months[new Date().getMonth() - 1]}
-					>
-						{months.map((item, index) => (
-							<Option key={index} value={index + 1}>
-								{item}
-							</Option>
-						))}
-					</Select>
+					<DatePicker
+						defaultValue={moment(new Date(), 'MM/yyyy')}
+						onChange={(e, a) => {
+							// @ts-ignore
+							onChangeMonth(e._d);
+						}}
+						picker="month"
+					/>
 					<div className="w-100 d-md-none">
 						<SortBox space={false} width={278} handleSort={onSort} dataOption={sortOptionList} />
 					</div>
@@ -488,19 +485,14 @@ const SalaryReview = () => {
 			Extra={
 				<div className="d-none d-md-inline-block">
 					<div className="extra-table">
-						<Select
-							onChange={onChangeMonth}
-							disabled={false}
-							style={{ width: 200, marginRight: 5 }}
-							className="style-input"
-							defaultValue={months[new Date().getMonth() - 1]}
-						>
-							{months.map((item, index) => (
-								<Option key={index} value={index + 1}>
-									{item}
-								</Option>
-							))}
-						</Select>
+						<DatePicker
+							defaultValue={moment(new Date(), 'MM/yyyy')}
+							onChange={(e, a) => {
+								// @ts-ignore
+								onChangeMonth(e._d);
+							}}
+							picker="month"
+						/>
 						<SortBox space={true} width={200} handleSort={onSort} dataOption={sortOptionList} />
 					</div>
 				</div>

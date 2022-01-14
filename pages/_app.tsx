@@ -5,7 +5,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { WrapProvider } from '~/context/wrap';
+import OneSignal from 'react-onesignal';
 import '../styles/global.scss';
+import _ from '~/appConfig';
 export const siteTitle = 'Mona Media Admin';
 
 export default function App({ Component, pageProps }) {
@@ -14,6 +16,12 @@ export default function App({ Component, pageProps }) {
 	const router = useRouter();
 
 	useEffect(() => {
+		OneSignal.init({ appId: _.oneSignalKey }).then(() => {
+			OneSignal.showSlidedownPrompt().then(() => {
+				// do other stuff
+			});
+		});
+
 		const handleRouteChangeError = (err, url) => {
 			console.log('handleRouteChangeError', err);
 			if (err.cancelled) {

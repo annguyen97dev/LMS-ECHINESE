@@ -1,4 +1,4 @@
-import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input, Dropdown, Card } from 'antd';
+import { InputNumber, DatePicker, Tooltip, Select, Popconfirm, Input, Dropdown, Card } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
@@ -18,6 +18,7 @@ import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teac
 import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/confirm-form';
 import { isBuffer } from 'util';
 import { EllipsisOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -337,7 +338,7 @@ const SalaryReview = () => {
 	};
 
 	const onChangeMonth = (value) => {
-		setParams({ ...params, Month: Number(value) });
+		setParams({ ...params, Month: Number(value.getMonth() + 1), Year: Number(value.getFullYear()) });
 	};
 
 	function daysInMonth(month, year) {
@@ -378,7 +379,7 @@ const SalaryReview = () => {
 								Tính lương tháng trước
 							</button>
 						</Popconfirm>
-						<Select
+						{/* <Select
 							onChange={onChangeMonth}
 							style={{ width: 200 }}
 							disabled={false}
@@ -390,7 +391,16 @@ const SalaryReview = () => {
 									{item}
 								</Option>
 							))}
-						</Select>
+						</Select> */}
+
+						<DatePicker
+							defaultValue={moment(new Date(), 'MM/yyyy')}
+							onChange={(e, a) => {
+								// @ts-ignore
+								onChangeMonth(e._d);
+							}}
+							picker="month"
+						/>
 						<div className="d-md-none">
 							<SortBox space={false} width={278} handleSort={onSort} dataOption={sortOptionList} />
 						</div>
@@ -446,7 +456,7 @@ const SalaryReview = () => {
 			}
 			Extra={
 				<div className="extra-table d-none d-sm-inline-block">
-					<Select
+					{/* <Select
 						onChange={onChangeMonth}
 						style={{ width: 200 }}
 						disabled={false}
@@ -458,7 +468,15 @@ const SalaryReview = () => {
 								{item}
 							</Option>
 						))}
-					</Select>
+					</Select> */}
+					<DatePicker
+						defaultValue={moment(new Date(), 'MM/yyyy')}
+						onChange={(e, a) => {
+							// @ts-ignore
+							onChangeMonth(e._d);
+						}}
+						picker="month"
+					/>
 					<SortBox space={true} width={200} handleSort={onSort} dataOption={sortOptionList} />
 				</div>
 			}

@@ -126,18 +126,6 @@ function SideBarNewsFeed(props) {
 					onSearch={(value) => checkHandleFilters('name', value)}
 				/>
 			</Card>
-			{/* PACKAGE ONLY STUDENT */}
-			{userInformation?.RoleID === 3 && (
-				<Card className="card-newsfeed" bordered={false}>
-					<div className="card-newsfeed__label font-weight-black d-flex justify-content-between">
-						BỘ ĐỀ CAO CẤP
-						<Link href="/package/package-store?type=2">
-							<a className="label-nf font-weight-black">Xem thêm</a>
-						</Link>
-					</div>
-					<TopPackageNewsFeed isLoading={isLoading} topPackageList={topPackageList} handleBuyPackage={onBuyPackage} />
-				</Card>
-			)}
 			<Card className="card-newsfeed" bordered={false}>
 				<div className="card-newsfeed-wrap__label">
 					<p className="card-newsfeed__label font-weight-black">Trung tâm</p>
@@ -194,6 +182,18 @@ function SideBarNewsFeed(props) {
 					))}
 				</ul>
 			</Card>
+			{/* PACKAGE ONLY STUDENT */}
+			{userInformation?.RoleID === 3 && (
+				<Card className="card-newsfeed" bordered={false}>
+					<div className="card-newsfeed__label font-weight-black d-flex justify-content-between">
+						BỘ ĐỀ CAO CẤP
+						<Link href="/package/package-store?type=2">
+							<a className="label-nf font-weight-black">Xem thêm</a>
+						</Link>
+					</div>
+					<TopPackageNewsFeed isLoading={isLoading} topPackageList={topPackageList} handleBuyPackage={onBuyPackage} />
+				</Card>
+			)}
 		</>
 	);
 	return (

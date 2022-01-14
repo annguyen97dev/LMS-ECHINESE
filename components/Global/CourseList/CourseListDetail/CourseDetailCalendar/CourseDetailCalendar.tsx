@@ -39,7 +39,8 @@ function CourseDetailCalendar(props) {
 				StartTime,
 				EndTime,
 				LinkDocument,
-				TeacherAttendanceID
+				TeacherAttendanceID,
+				IsExam
 			} = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
@@ -59,7 +60,8 @@ function CourseDetailCalendar(props) {
 					TeacherName,
 					SubjectName,
 					LinkDocument,
-					StudyTimeName: studyTime
+					StudyTimeName: studyTime,
+					IsExam
 				}
 			};
 		});
