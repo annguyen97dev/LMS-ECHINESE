@@ -44,7 +44,8 @@ const RenderItemCard = (props) => {
 		Original: item.OriginalPrice,
 		Sell: item.SellPrice,
 		Active: item.StatusActive,
-		TotalVideo: item.TotalVideoCourseSold
+		TotalVideo: item.TotalVideoCourseSold,
+		TotalVideoViews: item?.TotalVideoViews
 	};
 
 	// UPDATE COURSE
@@ -80,6 +81,8 @@ const RenderItemCard = (props) => {
 		}
 	};
 
+	console.log('item: ', item);
+
 	return (
 		<>
 			<div className="vc-store_container">
@@ -111,7 +114,8 @@ const RenderItemCard = (props) => {
 								{item.ChineseName}
 							</h3>
 							<span style={{ width: '90%' }} className="ml-3 mr-3 in-1-line">
-								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán
+								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán - {item.TotalVideoViews} lượt
+								xem
 							</span>
 
 							<Link

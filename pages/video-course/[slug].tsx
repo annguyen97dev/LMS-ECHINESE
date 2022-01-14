@@ -425,6 +425,7 @@ const VideoCourseDetail = (props) => {
 										<Rate disabled value={details.RatingNumber} className="rate" />
 										<span className="total-student ml-3">({details.TotalRating} lượt đánh giá)</span>
 										<span className="total-student ml-3">{details.TotalStudent} học sinh</span>
+										<span className="total-student ml-3">{router.query?.TotalVideoViews || 0} lượt xem</span>
 									</div>
 									<span className="total-student mt-2">
 										Tạo bởi: <span>{details.CreatedBy || 'Không rõ'}</span>
