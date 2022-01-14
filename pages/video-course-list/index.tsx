@@ -183,42 +183,25 @@ const VideoCourseList = () => {
 
 	const columnsVideoCourse = [
 		{
-			title: 'Mã đơn hàng',
-			dataIndex: 'ID',
-			key: 'ID'
-		},
-		{
 			title: 'Tên khóa học',
 			dataIndex: 'VideoCourseName',
 			key: 'VideoCourseName'
 		},
 		{
+			title: 'Người mua',
+			dataIndex: 'StudentName',
+			key: 'StudentName'
+		},
+		{
 			title: 'Ngày mua',
 			dataIndex: 'CreatedOn',
 			key: 'CreatedOn',
-			render: (Action, data, index) => (
-				<div>{moment(data.CreatedOn).format('DD/MM/yyyy') + ' ' + moment(data.CreatedOn).format('hh:mm')}</div>
-			)
-		},
-		{
-			title: 'Ngày xác nhận',
-			dataIndex: 'PaymentDate',
-			key: 'PaymentDate',
-			render: (Action, data, index) => (
-				<div>{moment(data.PaymentDate).format('DD/MM/yyyy - hh:mm') + ' ' + moment(data.PaymentDate).format('hh:mm')}</div>
-			)
-		},
-		{
-			title: 'Tên học sinh',
-			dataIndex: 'StudentName',
-			key: 'StudentName',
-			align: 'center'
+			render: (Action, data, index) => <div>{data.CreatedOn}</div>
 		},
 		{
 			title: 'Điện thoại',
 			dataIndex: 'Phone',
-			key: 'Phone',
-			align: 'center'
+			key: 'Phone'
 		},
 		{
 			title: 'Trạng thái kích hoạt',
@@ -226,33 +209,6 @@ const VideoCourseList = () => {
 			key: 'StatusName',
 			align: 'center'
 		}
-		// {
-		// 	title: 'Thao tác',
-		// 	dataIndex: 'Action',
-		// 	key: 'action',
-		// 	align: 'center',
-		// 	render: (Action, data, index) => (
-		// 		<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-		// 			<Tooltip title="Xác thực thanh toán">
-		// 				<Popconfirm
-		// 					placement="right"
-		// 					title={textConfirm}
-		// 					onConfirm={() => handleDone(data.ID)}
-		// 					okText="OK"
-		// 					cancelText="Cancel"
-		// 				>
-		// 					<button
-		// 						onClick={() => console.log(data)}
-		// 						className="btn btn-icon"
-		// 						style={{ marginRight: -10, marginLeft: -10 }}
-		// 					>
-		// 						<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
-		// 					</button>
-		// 				</Popconfirm>
-		// 			</Tooltip>
-		// 		</div>
-		// 	)
-		// }
 	];
 
 	useEffect(() => {

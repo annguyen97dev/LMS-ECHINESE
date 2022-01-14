@@ -120,7 +120,7 @@ const StudentForm = (props) => {
 					Email: mail
 				});
 				//@ts-ignore
-				res.status == 200 && handleChangeUser(res.data.data[0].UserInformationID);
+				res.status == 200 && handleChangeUser(res.data.data[0]?.UserInformationID);
 			} catch (err) {
 				showNoti('danger', err.message);
 			}
@@ -171,7 +171,7 @@ const StudentForm = (props) => {
 			case 'Parent':
 				newData = data.map((item) => ({
 					title: item.FullNameUnicode,
-					value: item.UserInformationID
+					value: item?.UserInformationID
 				}));
 				break;
 			case 'SourceInformation':
@@ -183,7 +183,7 @@ const StudentForm = (props) => {
 			case 'Counselors':
 				newData = data.map((item) => ({
 					title: item.FullNameUnicode,
-					value: item.UserInformationID
+					value: item?.UserInformationID
 				}));
 				break;
 			default:
@@ -360,11 +360,11 @@ const StudentForm = (props) => {
 		let res = null;
 
 		try {
-			if (data.UserInformationID) {
+			if (data?.UserInformationID) {
 				if (isSearch) {
-					res = await studentApi.add({ ...data, ID: data.UserInformationID });
+					res = await studentApi.add({ ...data, ID: data?.UserInformationID });
 				} else {
-					res = await studentApi.update({ ...data, ID: data.UserInformationID });
+					res = await studentApi.update({ ...data, ID: data?.UserInformationID });
 
 					if (res.status == 200) {
 						_handleSubmit && _handleSubmit(data, index);
@@ -372,11 +372,11 @@ const StudentForm = (props) => {
 					}
 				}
 			} else {
-				res = await studentApi.add({ ...data, ID: data.UserInformationID });
+				res = await studentApi.add({ ...data, ID: data?.UserInformationID });
 			}
 
 			res?.status == 200 &&
-				(showNoti('success', data.UserInformationID ? 'Cập nhật học viên thành công' : 'Hẹn test thành công'),
+				(showNoti('success', data?.UserInformationID ? 'Cập nhật học viên thành công' : 'Hẹn test thành công'),
 				!dataRow && !isSearch && (form.reset(defaultValuesInit), setImageUrl('')));
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -514,12 +514,12 @@ const StudentForm = (props) => {
 					//@ts-ignore
 					_detail.status == 200 &&
 						(setUserDetail(_detail.data.data),
-						form.setValue('ID', _detail.data.data.UserInformationID),
+						form.setValue('ID', _detail.data.data?.UserInformationID),
 						form.setValue('Email', _detail.data.data.Email),
 						form.setValue('FullNameUnicode', _detail.data.data.FullNameUnicode));
 
 					_detail?.status == 200 &&
-						(form.setValue('CustomerConsultationID', _detail.data.data.UserInformationID),
+						(form.setValue('CustomerConsultationID', _detail.data.data?.UserInformationID),
 						showNoti('success', 'Tìm kiếm thành công'),
 						handleDataRow(_detail.data.data),
 						setIsSearch(true));
@@ -628,15 +628,15 @@ const StudentForm = (props) => {
 													disabled={haveDefault ? true : false}
 													value={
 														haveDefault
-															? dataRow.UserInformationID
+															? dataRow?.UserInformationID
 															: userDetail
-															? userDetail.UserInformationID
+															? userDetail?.UserInformationID
 															: ''
 													}
 													onChange={(value) => handleChangeUser(value)}
 												>
 													{userAll?.map((item, index) => (
-														<Option key={index} value={item.UserInformationID}>
+														<Option key={index} value={item?.UserInformationID}>
 															{item.Email}
 														</Option>
 													))}
@@ -661,12 +661,16 @@ const StudentForm = (props) => {
 												optionFilterProp="children"
 												disabled={haveDefault ? true : false}
 												value={
-													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+													haveDefault
+														? dataRow?.UserInformationID
+														: userDetail
+														? userDetail?.UserInformationID
+														: ''
 												}
 												onChange={(value) => handleChangeUser(value)}
 											>
 												{userAll?.map((item, index) => (
-													<Option key={index} value={item.UserInformationID}>
+													<Option key={index} value={item?.UserInformationID}>
 														{item.FullNameUnicode}
 													</Option>
 												))}
@@ -688,12 +692,16 @@ const StudentForm = (props) => {
 												optionFilterProp="children"
 												disabled={haveDefault ? true : false}
 												value={
-													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+													haveDefault
+														? dataRow?.UserInformationID
+														: userDetail
+														? userDetail?.UserInformationID
+														: ''
 												}
 												onChange={(value) => handleChangeUser(value)}
 											>
 												{userAll?.map((item, index) => (
-													<Option key={index} value={item.UserInformationID}>
+													<Option key={index} value={item?.UserInformationID}>
 														{item.ChineseName}
 													</Option>
 												))}
@@ -717,12 +725,16 @@ const StudentForm = (props) => {
 												optionFilterProp="children"
 												disabled={haveDefault ? true : false}
 												value={
-													haveDefault ? dataRow.UserInformationID : userDetail ? userDetail.UserInformationID : ''
+													haveDefault
+														? dataRow?.UserInformationID
+														: userDetail
+														? userDetail?.UserInformationID
+														: ''
 												}
 												onChange={(value) => handleChangeUser(value)}
 											>
 												{userAll?.map((item, index) => (
-													<Option key={index} value={item.UserInformationID}>
+													<Option key={index} value={item?.UserInformationID}>
 														{item.Mobile}
 													</Option>
 												))}

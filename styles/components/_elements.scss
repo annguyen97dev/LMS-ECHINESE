@@ -728,6 +728,10 @@ textarea.ant-input {
 .extra-table {
 	display: flex;
 	align-items: center;
+	.ant-picker {
+		border-radius: 6px !important;
+		height: 34px;
+	}
 }
 
 .app-main {
