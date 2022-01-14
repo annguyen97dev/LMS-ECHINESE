@@ -17,7 +17,7 @@ export default function App({ Component, pageProps }) {
 
 	useEffect(() => {
 		OneSignal.init({ appId: _.oneSignalKey }).then(() => {
-			OneSignal.showNativePrompt().then(() => {
+			OneSignal.showSlidedownPrompt().then(() => {
 				// do other stuff
 			});
 		});
