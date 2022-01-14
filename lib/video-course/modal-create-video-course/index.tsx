@@ -549,6 +549,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 													className="style-input"
 													style={{ width: '100%' }}
 													placeholder="Từ khóa tìm kiếm"
+													searchValue=""
 													onChange={(e) => handleChange(e)}
 												>
 													{tags.map((item, index) => (

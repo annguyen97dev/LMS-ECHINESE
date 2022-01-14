@@ -195,6 +195,8 @@ const VideoCourseStore = () => {
 
 	// CREATE NEW COURSE
 	const createNewCourse = async (param) => {
+		console.log('param: ', param);
+
 		setIsLoading({ type: 'GET_ALL', status: true });
 		let temp = {
 			CategoryID: param.CategoryID,
@@ -203,6 +205,7 @@ const VideoCourseStore = () => {
 			CurriculumID: param.CurriculumID,
 			VideoCourseName: param.VideoCourseName,
 			EnglishName: param.EnglishName,
+			ChineseName: param.ChineseName,
 			ImageThumbnails: param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
 			SellPrice: param.SellPrice,

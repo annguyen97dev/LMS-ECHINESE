@@ -61,6 +61,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const [curriculumID, setCurriculumID] = useState(0);
 	const [tagArray, setTagArray] = useState('');
 	const [chineseName, setChineseName] = useState('');
+	const [englishName, setEnglishName] = useState('');
 
 	const {
 		register,
@@ -96,6 +97,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 		if (isModalVisible) {
 			if (programID) {
 				setVideoCourseName(rowData.VideoCourseName);
+				setEnglishName(rowData.EnglishName);
 				setChineseName(rowData.ChineseName);
 				setLevel(rowData.LevelID);
 				setCurriculumID(rowData.CurriculumID);
@@ -110,6 +112,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					SellPrice: rowData.SellPrice,
 					Teacher: rowData.TeacherName,
 					ChineseName: rowData.ChineseName,
+					EnglishName: rowData.EnglishName,
 					Curriculum: rowData.CurriculumID,
 					Level: rowData.LevelName,
 					Type: rowData.CategoryName,
@@ -183,6 +186,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					TagArray: tagArray,
 					ChineseName: chineseName,
 					VideoCourseName: videoCourseName,
+					EnglishName: englishName,
 					OriginalPrice: originalPrice.toString().replace(/[^0-9\.]+/g, ''),
 					SellPrice: sellPrice.toString().replace(/[^0-9\.]+/g, ''),
 					ImageThumbnails: res.data.data,
@@ -252,6 +256,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			TeacherID: teacherID,
 			TagArray: tagArray,
 			ChineseName: chineseName,
+			EnglishName: englishName,
 			VideoCourseName: videoCourseName,
 			OriginalPrice: originalPrice.toString().replace(/[^0-9\.]+/g, ''),
 			SellPrice: sellPrice.toString().replace(/[^0-9\.]+/g, ''),
@@ -431,10 +436,26 @@ const ModalUpdateInfo = React.memo((props: any) => {
 							<div className="row p-0 m-0 custom-scroll-bar col-md-12 col-12">
 								<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 390 : 390, display: 'flex' }}>
 									<div className="row p-0 m-0 col-md-6 col-12">
+										<div className="col-md-12 col-12">
+											<Form.Item
+												name="EnglishName"
+												label="Tên tiếng Anh"
+												rules={[{ required: true, message: 'Bạn không được để trống' }]}
+											>
+												<Input
+													placeholder=""
+													className="style-input"
+													defaultValue={englishName}
+													value={englishName}
+													onChange={(e) => setEnglishName(e.target.value)}
+												/>
+											</Form.Item>
+										</div>
+
 										<div className="col-md-6 col-12">
 											<Form.Item
 												name="Name"
-												label="Tên khóa học"
+												label="Tên tiếng Việt"
 												rules={[{ required: true, message: 'Bạn không được để trống' }]}
 											>
 												<Input
@@ -689,6 +710,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 															className="style-input"
 															style={{ width: '100%' }}
 															placeholder="Từ khóa tìm kiếm"
+															searchValue=""
 															defaultValue={getDefault(tagArray)}
 															onChange={(e) => handleChange(e)}
 														>
