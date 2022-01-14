@@ -73,10 +73,21 @@ function Homework(props) {
 		});
 	};
 
-	const [scheduleSelected, setScheduleSelected] = useState(0);
+	const [scheduleSelected, setScheduleSelected] = useState(-1);
+	const [itemSelected, setItemSelected] = useState(-1);
 
-	const onSelectCourseSchedule = (CourseScheduleID: number) => {
+	const onSelectCourseSchedule = (CourseScheduleID) => {
 		setScheduleSelected(CourseScheduleID);
+
+		const item: any = dataRollUp.ScheduleList.find((na: any) => na.value == CourseScheduleID);
+		console.log('item: ', item);
+		// @ts-ignore
+		setItemSelected(item?.CurriculumsDetailID);
+		getHomeWorkList({
+			CourseID: props.courseID,
+			CurriculumDetailID: CourseScheduleID == -1 ? null : item?.CurriculumsDetailID,
+			...filters
+		});
 	};
 
 	// GET ROLL UP
@@ -95,6 +106,8 @@ function Homework(props) {
 					const endTime = moment(item.EndTime).format('HH:mm');
 					return {
 						value: item.ID,
+						// @ts-ignore
+						CurriculumsDetailID: item.CurriculumsDetailID,
 						title: `${item.RoomName ? `[${item.RoomName}]` : ''}[${date}] ${startTime} - ${endTime}`,
 						options: {
 							BranchID: item.BranchID
@@ -120,7 +133,8 @@ function Homework(props) {
 				});
 				setDataRollUp({
 					RollUp,
-					ScheduleList: [{ value: 0, title: '---Chọn ca học---' }, ...fmScheduleList],
+					// @ts-ignore
+					ScheduleList: [{ value: -1, CurriculumsDetailID: -1, title: '---Chọn ca học---' }, ...fmScheduleList],
 					StudentList: fmStudentList
 				});
 				setTotalPage(TotalRow);
@@ -142,6 +156,7 @@ function Homework(props) {
 		getRollUpList();
 		getHomeWorkList({
 			CourseID: props.courseID,
+			CurriculumDetailID: scheduleSelected == -1 ? null : itemSelected,
 			...filters
 		});
 	}, [filters]);
@@ -152,6 +167,7 @@ function Homework(props) {
 			res.status == 200 &&
 				getHomeWorkList({
 					CourseID: props.courseID,
+					CurriculumDetailID: scheduleSelected == -1 ? null : itemSelected,
 					...filters
 				});
 		} catch (error) {
@@ -287,6 +303,9 @@ function Homework(props) {
 			if (res.status === 200) {
 				setHomeWorks(res.data.data);
 			}
+			if (res.status === 204) {
+				setHomeWorks([]);
+			}
 		} catch (error) {
 			showNoti('danger', error.message);
 		}
@@ -323,42 +342,41 @@ function Homework(props) {
 				dataSource={homeWorks}
 				columns={columns}
 				Extra={
-					scheduleSelected !== 0 ? (
+					scheduleSelected !== -1 && (userInformation?.RoleID == 1 || userInformation?.RoleID == 2) ? (
 						<ModalCreateExercise
 							dataExam={examTopics}
 							courseID={props.courseID}
 							onFetchData={() =>
 								getHomeWorkList({
 									CourseID: props.courseID,
+									CurriculumDetailID: scheduleSelected == -1 ? null : itemSelected,
 									...filters
 								})
 							}
-							CurriculumID={props.CurriculumID}
+							CurriculumID={scheduleSelected}
 						/>
 					) : null
 				}
 				TitleCard={
-					(userInformation?.RoleID == 1 || userInformation?.RoleID == 2) && (
-						<div className="d-flex align-items-center">
-							<div className="">
-								<b>Ca học:</b>
-							</div>
-							<div>
-								<Select
-									defaultValue={0}
-									style={{ width: 280, paddingLeft: 20, marginBottom: 0 }}
-									className="style-input"
-									onChange={onSelectCourseSchedule}
-								>
-									{dataRollUp.ScheduleList.map((o, idx) => (
-										<Option key={idx} value={o.value}>
-											{o.title}
-										</Option>
-									))}
-								</Select>
-							</div>
+					<div className="d-flex align-items-center">
+						<div className="">
+							<b>Ca học:</b>
 						</div>
-					)
+						<div>
+							<Select
+								defaultValue={-1}
+								style={{ width: 280, paddingLeft: 20, marginBottom: 0 }}
+								className="style-input"
+								onChange={onSelectCourseSchedule}
+							>
+								{dataRollUp.ScheduleList.map((o, idx) => (
+									<Option key={idx} value={o.value}>
+										{o.title}
+									</Option>
+								))}
+							</Select>
+						</div>
+					</div>
 				}
 				expandable={{ expandedRowRender }}
 			/>

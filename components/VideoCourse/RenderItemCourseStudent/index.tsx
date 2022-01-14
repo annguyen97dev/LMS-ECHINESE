@@ -57,6 +57,7 @@ const RenderItemCard = (props) => {
 			CurriculumID: param.CurriculumID,
 			TagArray: param.TagArray,
 			ChineseName: param.ChineseName,
+			EnglishName: param.EnglishName,
 			VideoCourseName: param.VideoCourseName,
 			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
 			OriginalPrice: param.OriginalPrice,
