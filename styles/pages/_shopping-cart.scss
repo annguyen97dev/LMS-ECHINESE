@@ -198,6 +198,42 @@
 		}
 	}
 }
+.shopping__cart {
+	&-detail {
+		position: relative;
+		.count-notification {
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #dd4667;
+			-webkit-box-shadow: 0px 5px 20px #00000017;
+			box-shadow: 0px 15px 20px rgba($color: #000000, $alpha: 0.16);
+			border: 3px solid white;
+			span {
+				padding: 3px;
+				font-size: 11px;
+				display: block;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: white;
+				font-weight: bold;
+			}
+			position: absolute;
+			top: -10px;
+			right: -9px;
+		}
+	}
+	&-cancel {
+		display: inline-block;
+		cursor: pointer;
+		&:hover {
+			text-decoration: underline;
+			color: $primary-color;
+		}
+	}
+}
 .user {
 	cursor: pointer;
 	padding-right: 0;

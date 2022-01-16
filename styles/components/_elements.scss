@@ -2219,6 +2219,22 @@ hr {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.limit-text-two-line {
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	width: 100%;
+	display: -webkit-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.limit-text-three-line {
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	width: 100%;
+	display: -webkit-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .info-profile-left {
 	.box-icon {
 		line-height: 0;
