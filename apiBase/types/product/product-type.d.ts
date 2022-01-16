@@ -6,4 +6,4 @@ type IProductType = IBaseApi<{
 	CreatedBy: string;
 	ModifiedOn: string;
 	ModifiedBy: string;
-}>[];
+}>;

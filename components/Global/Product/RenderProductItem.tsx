@@ -37,32 +37,26 @@ function RenderProductItem(props) {
 
 	return (
 		<>
-			<div className="product row justify-content-center ">
-				<>
+			<Link
+				href={{
+					pathname: '/stationery/[slug]',
+					query: product
+				}}
+			>
+				<div className="product row justify-content-center ">
 					<div className="product__img col-12" style={{ cursor: 'pointer' }}>
-						<Link
-							href={{
-								pathname: '/stationery/[slug]',
-								query: product
-							}}
-						>
-							<div className="product__img-wrap">
-								<img
-									className=""
-									src={
-										product.ImageOfProducts[0].Link !== ''
-											? product.ImageOfProducts[0].Link
-											: '/images/logo-thumnail.jpg'
-									}
-								/>
-							</div>
-						</Link>
+						<div className="product__img-wrap">
+							<img
+								className=""
+								src={product.ImageOfProducts[0].Link !== '' ? product.ImageOfProducts[0].Link : '/images/logo-thumnail.jpg'}
+							/>
+						</div>
 					</div>
 					<div className="product__info col-12">
-						<div className="product__name limit-text">{product.Name}</div>
-						<div className="product__desc">{product.Description}</div>
+						<div className="product__name limit-text-two-line">{product.Name}</div>
+						<div className="product__desc limit-text-three-line">{product.Description}</div>
 						<div className="product__prices">
-							<div className="product__selled">Đã bán {numberWithCommas(Math.round(Math.random() + 1) * 100)}</div>
+							{/* <div className="product__selled">Đã bán {numberWithCommas(Math.round(Math.random() + 1) * 100)}</div> */}
 							<div className="product__price">
 								<p>
 									{numberWithCommas(product.Price)} đ{' '}
@@ -72,18 +66,9 @@ function RenderProductItem(props) {
 								</p>{' '}
 							</div>
 						</div>
-						<button
-							style={{ zIndex: 1000 }}
-							className="btn btn-primary"
-							onClick={() => {
-								console.log('click');
-							}}
-						>
-							Thêm vào giỏ
-						</button>
 					</div>
-				</>
-			</div>
+				</div>
+			</Link>
 		</>
 	);
 }

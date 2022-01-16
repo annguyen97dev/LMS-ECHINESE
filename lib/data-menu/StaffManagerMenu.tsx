@@ -397,6 +397,13 @@ export const StaffManagerChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/customer/finance/product-paid',
+						Route: '/customer/finance/product-paid',
+						Text: 'Bán sản phẩm',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/customer/finance/finance-cashier-refund',
 						Route: '/customer/finance/finance-cashier-refund',
 						Text: 'Yêu cầu hoàn tiền',
@@ -1014,13 +1021,14 @@ export const StaffManagerChildMenu = [
 						Route: '/option/product-type',
 						Text: 'Cấu hình sản phẩm',
 						Icon: ''
-					},	{
+					},
+					{
 						ItemType: 'single',
 						Key: '/option/product',
 						Route: '/option/product',
 						Text: 'Thêm sản phẩm',
 						Icon: ''
-					},
+					}
 				]
 			}
 		]
