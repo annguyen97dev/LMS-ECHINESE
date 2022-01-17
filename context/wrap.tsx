@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { userApi, userInformationApi } from '~/apiBase';
+import { oneSignalAPI, userApi, userInformationApi } from '~/apiBase';
 import { signIn, useSession } from 'next-auth/client';
+import OneSignal from 'react-onesignal';
 
 export type IProps = {
 	titlePage: string;
@@ -147,6 +148,15 @@ export const WrapProvider = ({ children }) => {
 		setReloadCart(!reloadCart);
 	};
 
+	const postOnesignalID = async () => {
+		try {
+			const userId = await OneSignal.getUserId();
+			let res = await oneSignalAPI.update(userId);
+		} catch (error) {
+			console.log('Lỗi lấy thông tin user: ', error);
+		}
+	};
+
 	useEffect(() => {
 		// console.log('Session: ', session);
 		if (loading && typeof session !== 'undefined' && session !== null) {
@@ -154,6 +164,7 @@ export const WrapProvider = ({ children }) => {
 				getNewDataUser();
 				getRoles(0);
 				getRoles(1);
+				postOnesignalID();
 			}
 		}
 	}, [session]);

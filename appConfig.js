@@ -1,8 +1,7 @@
 const _ = {
-	oneSignalKey: '399d06e2-c6b6-4402-b5de-e5bde1fe74df',
-	// oneSignalKey: '7b71e045-0b0b-4e7f-a35c-c7bf82dffdb6',
+	oneSignalKey: 'dfd4360c-a2cf-4d3a-9dad-9e0f3cf3234d', // ID HEROKU
 	API_URL: 'https://lmsv2.monamedia.net' // TEST LINK
-	// API_URL: 'http://api.echinese.vn/' // LIVE LINKk
+	// API_URL: 'http://api.echinese.vn/' // LIVE LINK
 };
 
 export default _;

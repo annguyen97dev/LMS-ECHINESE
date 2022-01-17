@@ -16,11 +16,21 @@ export default function App({ Component, pageProps }) {
 	const router = useRouter();
 
 	useEffect(() => {
+		console.log('CHAY VO NE NHA');
+
+		OneSignal.setSubscription(true);
+
 		OneSignal.init({ appId: _.oneSignalKey }).then(() => {
 			OneSignal.showSlidedownPrompt().then(() => {
 				// do other stuff
 			});
 		});
+
+		OneSignal.on('popoverShown', function () {
+			console.log('Slide Prompt Shown');
+		});
+
+		getID();
 
 		const handleRouteChangeError = (err, url) => {
 			console.log('handleRouteChangeError', err);
@@ -34,6 +44,11 @@ export default function App({ Component, pageProps }) {
 			router.events.off('routeChangeError', handleRouteChangeError);
 		};
 	}, []);
+
+	const getID = async () => {
+		const id = await OneSignal.getUserId();
+		console.log('OID: ', id);
+	};
 
 	const Layout = Component.layout || ((props) => <>{props.children}</>);
 
