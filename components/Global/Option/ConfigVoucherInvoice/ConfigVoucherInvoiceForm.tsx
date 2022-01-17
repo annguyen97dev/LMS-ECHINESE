@@ -34,6 +34,20 @@ ConfigVoucherInvoiceForm.defaultProps = {
 function ConfigVoucherInvoiceForm(props) {
 	const { isLoading, isUpdate, updateObj, handleSubmit, optionFormList } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [codeEditorList, setCodeEditorList] = useState([
+		{ label: '{hinhthucthanhtoan}', desc: 'Hình thức thanh toán' },
+		{ label: '{hovaten}', desc: ' Họ và tên' },
+		{ label: '{sodienthoai}', desc: ' Số điện thoại' },
+		{ label: '{cmnd}', desc: ' CMND' },
+		{ label: '{ngaycap}', desc: ' Ngày cấp' },
+		{ label: '{noicap}', desc: ' Nơi cấp' },
+		{ label: '{diachi}', desc: ' địa chỉ' },
+		{ label: '{lydo}', desc: ' lý do xuất phiếu' },
+		{ label: '{dachi}', desc: ' số tiền chi ra' },
+		{ label: '{dathu}', desc: ' số tiền thu vào' },
+		{ label: '{nguoinhanphieu}', desc: ' người nhận phiếu ký tên' },
+		{ label: '{nhanvienxuat}', desc: ' nhân viên xuất phiếu ký tên' }
+	]);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 
@@ -50,6 +64,87 @@ function ConfigVoucherInvoiceForm(props) {
 		resolver: yupResolver(schema)
 	});
 
+	const handleChangeCodeEditorList = (Type) => {
+		Type === 1 &&
+			setCodeEditorList([
+				{ label: '{hinhthucthanhtoan}', desc: 'Hình thức thanh toán' },
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{sodienthoai}', desc: ' Số điện thoại' },
+				{ label: '{cmnd}', desc: ' CMND' },
+				{ label: '{ngaycap}', desc: ' Ngày cấp' },
+				{ label: '{noicap}', desc: ' Nơi cấp' },
+				{ label: '{diachi}', desc: ' địa chỉ' },
+				{ label: '{lydo}', desc: ' lý do xuất phiếu' },
+				{ label: '{dachi}', desc: ' số tiền chi ra' },
+				{ label: '{dathu}', desc: ' số tiền thu vào' },
+				{ label: '{nguoinhanphieu}', desc: ' người nhận phiếu ký tên' },
+				{ label: '{nhanvienxuat}', desc: ' nhân viên xuất phiếu ký tên' }
+			]);
+		Type === 2 &&
+			setCodeEditorList([
+				{ label: '{hinhthucthanhtoan}', desc: 'Hình thức thanh toán' },
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{sodienthoai}', desc: ' Số điện thoại' },
+				{ label: '{cmnd}', desc: ' CMND' },
+				{ label: '{ngaycap}', desc: ' Ngày cấp' },
+				{ label: '{noicap}', desc: ' Nơi cấp' },
+				{ label: '{diachi}', desc: ' địa chỉ' },
+				{ label: '{lydo}', desc: ' lý do xuất phiếu' },
+				{ label: '{dachi}', desc: ' số tiền chi ra' },
+				{ label: '{dathu}', desc: ' số tiền thu vào' },
+				{ label: '{nguoinhanphieu}', desc: ' người nhận phiếu ký tên' },
+				{ label: '{nhanvienxuat}', desc: ' nhân viên xuất phiếu ký tên' }
+			]);
+		Type === 3 &&
+			setCodeEditorList([
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{thoigianbatdau}', desc: ' Thời gian bắt đầu' },
+				{ label: '{thoigianketthuc}', desc: ' Thời gian kết thúc' },
+				{ label: '{tenkhoahoc}', desc: ' Tên khóa học' }
+			]);
+		Type === 5 &&
+			setCodeEditorList([
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{tenkhoahoc}', desc: ' Tên khóa học' },
+				{ label: '{thoigianbatdau}', desc: ' Thời gian bắt đầu' }
+			]);
+
+		Type === 6 &&
+			setCodeEditorList([
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{tenkhoahoc}', desc: ' Tên khóa học' }
+			]);
+		Type === 7 &&
+			setCodeEditorList([
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{loaibai}', desc: ' Loại bài(Bài kiểm tra, bài hẹn test, bộ đề, bài tập)' }
+			]);
+		Type === 8 &&
+			setCodeEditorList([
+				{ label: '{hotengiaovien}', desc: ' Họ và tên' },
+				{ label: '{thoigianbatdau}', desc: ' Thời gian bắt đầu' },
+				{ label: '{thoigianketthuc}', desc: ' Thời gian kết thúc' },
+				{ label: '{tenkhoahoc}', desc: ' Tên khóa học' }
+			]);
+		Type === 9 &&
+			setCodeEditorList([
+				{ label: '{hotengiaovien}', desc: ' Họ và tên' },
+				{ label: '{thoigianbatdau}', desc: ' Thời gian bắt đầu' },
+				{ label: '{tenkhoahoc}', desc: ' Tên khóa học' }
+			]);
+		Type === 10 &&
+			setCodeEditorList([
+				{ label: '{hotengiaovien}', desc: ' Họ và tên' },
+				{ label: '{loaibai}', desc: ' Loại bài(Bài kiểm tra, bài hẹn test, bộ đề, bài tập)' }
+			]);
+		Type === 11 &&
+			setCodeEditorList([
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{taikhoan}', desc: ' Tài khoản' },
+				{ label: '{matkhau}', desc: ' Mật khẩu' }
+			]);
+	};
+
 	useEffect(() => {
 		if (isUpdate && updateObj.ID) {
 			const { ConfigContent, Type } = updateObj;
@@ -57,6 +152,7 @@ function ConfigVoucherInvoiceForm(props) {
 				ConfigContent,
 				Type
 			});
+			handleChangeCodeEditorList(Type);
 		}
 	}, [updateObj]);
 
@@ -71,21 +167,6 @@ function ConfigVoucherInvoiceForm(props) {
 			}
 		});
 	};
-
-	const codeEditorList = [
-		{ label: '{hinhthucthanhtoan}', desc: 'Hình thức thanh toán' },
-		{ label: '{hovaten}', desc: ' Họ và tên' },
-		{ label: '{sodienthoai}', desc: ' Số điện thoại' },
-		{ label: '{cmnd}', desc: ' CMND' },
-		{ label: '{ngaycap}', desc: ' Ngày cấp' },
-		{ label: '{noicap}', desc: ' Nơi cấp' },
-		{ label: '{diachi}', desc: ' địa chỉ' },
-		{ label: '{lydo}', desc: ' lý do xuất phiếu' },
-		{ label: '{dachi}', desc: ' số tiền chi ra' },
-		{ label: '{dathu}', desc: ' số tiền thu vào' },
-		{ label: '{nguoinhanphieu}', desc: ' người nhận phiếu ký tên' },
-		{ label: '{nhanvienxuat}', desc: ' nhân viên xuất phiếu ký tên' }
-	];
 
 	return (
 		<>
@@ -119,6 +200,7 @@ function ConfigVoucherInvoiceForm(props) {
 									placeholder="Chọn loại phiếu"
 									optionList={optionFormList}
 									disabled={isUpdate || false}
+									onChangeSelect={(value) => handleChangeCodeEditorList(value)}
 								/>
 							</div>
 							<div className="col-12">
@@ -128,7 +210,7 @@ function ConfigVoucherInvoiceForm(props) {
 										placement="bottomRight"
 										content={
 											<div className="invoice-editor-list">
-												{codeEditorList.map((c, idx) => (
+												{codeEditorList?.map((c, idx) => (
 													<Tooltip title="Nhấn để sao chép" placement="left" className="invoice-editor-item">
 														<p
 															key={idx}
