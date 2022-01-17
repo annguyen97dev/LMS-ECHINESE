@@ -330,6 +330,15 @@ const VideoLearning = () => {
 									</>
 								) : (
 									<Iframe iframe={currentVideo} allow="autoplay" />
+									// <>
+									// 	<iframe
+									// 		width="560"
+									// 		height="315"
+									// 		src="https://video.monamedia.net/streamer/embed.php?v=MzQ0Nw==\"
+									// 		frameborder="0"
+									// 		allowfullscreen
+									// 	></iframe>
+									// </>
 								)}
 
 								{data.length > 0 && currentLession.Type === 0

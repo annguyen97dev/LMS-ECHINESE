@@ -239,7 +239,7 @@ const StudentFormModal = (props) => {
 					returnSchema[key] = yup.string().email('Email nhập sai cú pháp').required('Bạn không được để trống');
 					break;
 				case 'Mobile':
-					returnSchema[key] = yup.number().typeError('SDT phải là số').required('Bạn không được để trống');
+					returnSchema[key] = yup.string().required('Bạn không được để trống');
 					break;
 				case 'FullNameUnicode':
 					returnSchema[key] = yup.string().typeError('Họ tên phải là chữ').required('Bạn không được để trống');

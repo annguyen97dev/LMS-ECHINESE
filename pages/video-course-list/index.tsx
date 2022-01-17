@@ -181,6 +181,11 @@ const VideoCourseList = () => {
 		getAllArea();
 	};
 
+	const checkStatus = (vl, ctn) => {
+		const rs = ['yellow', 'green', 'green', 'gray'];
+		return <span className={`tag ${rs[vl - 1]}`}>{ctn}</span>;
+	};
+
 	const columnsVideoCourse = [
 		{
 			title: 'Tên khóa học',
@@ -204,10 +209,11 @@ const VideoCourseList = () => {
 			key: 'Phone'
 		},
 		{
-			title: 'Trạng thái kích hoạt',
+			title: 'Trạng thái',
 			dataIndex: 'StatusName',
 			key: 'StatusName',
-			align: 'center'
+			align: 'center',
+			render: (Action, data, index) => checkStatus(data?.Status, data?.StatusName)
 		}
 	];
 

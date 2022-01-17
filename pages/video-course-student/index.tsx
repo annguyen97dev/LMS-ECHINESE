@@ -69,7 +69,10 @@ const VideoCourseStudent = () => {
 		}
 	};
 
-	const textConfirm = 'Khóa học này đã được thanh toán?';
+	const checkStatus = (vl, ctn) => {
+		const rs = ['yellow', 'green', 'green', 'gray'];
+		return <span className={`tag ${rs[vl - 1]}`}>{ctn}</span>;
+	};
 
 	const columnsVideoCourse = [
 		{
@@ -77,11 +80,6 @@ const VideoCourseStudent = () => {
 			dataIndex: 'OrderCode',
 			key: 'OrderCode',
 			align: 'center'
-		},
-		{
-			title: 'Tên người mua',
-			dataIndex: 'FullNameUnicode',
-			key: 'FullNameUnicode'
 		},
 		{
 			title: 'Tổng thanh toán',
@@ -113,18 +111,11 @@ const VideoCourseStudent = () => {
 			)
 		},
 		{
-			title: 'Ngày xác nhận',
-			dataIndex: 'PaymentDate',
-			key: 'PaymentDate',
-			render: (Action, data, index) => (
-				<div>{moment(data.PaymentDate).format('DD/MM/yyyy') + ' ' + moment(data.PaymentDate).format('hh:mm')}</div>
-			)
-		},
-		{
-			title: 'Trạng thái kích hoạt',
+			title: 'Trạng thái',
 			dataIndex: 'StatusName',
 			key: 'StatusName',
-			align: 'center'
+			align: 'center',
+			render: (Action, data, index) => checkStatus(data?.Status, data?.StatusName)
 		},
 		{
 			title: 'Thao tác',
