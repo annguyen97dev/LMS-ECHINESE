@@ -390,6 +390,13 @@ export const AdminChildMenu = [
 					},
 					{
 						ItemType: 'single',
+						Key: '/customer/finance/product-paid',
+						Route: '/customer/finance/product-paid',
+						Text: 'Bán sản phẩm',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
 						Key: '/customer/finance/finance-cashier-refund',
 						Route: '/customer/finance/finance-cashier-refund',
 						Text: 'Yêu cầu hoàn tiền',

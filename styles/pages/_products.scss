@@ -19,7 +19,7 @@
 // Show in student
 .product {
 	background: #fff;
-	height: 400px;
+	height: 350px;
 	margin: 0px 5px;
 	border-radius: 6px;
 	&:hover {
@@ -92,5 +92,42 @@
 		border: 1px solid $color-success;
 		background-color: #0da7795c;
 		border-radius: 6px;
+	}
+}
+
+.product__detail {
+	&-listedPrice {
+		text-decoration: line-through;
+	}
+	&-price {
+		font-size: 29px;
+	}
+	&-listedPrice {
+		font-size: 13px;
+	}
+	&-quantity {
+		.quantity__btn-wrap {
+			margin-left: 10px;
+		}
+		.quantity-btn {
+			font-weight: 700;
+			cursor: pointer;
+			transition: all 0.2s ease-in-out;
+			font-size: 1.3rem;
+			height: 30px;
+			&:hover {
+				transform: scale(1.2);
+				color: $primary-color;
+			}
+		}
+		.cart__item-quantity {
+			text-align: center;
+			display: inline-block;
+			padding: 5px 10px;
+			border: solid 1px #d1d7dc;
+			border-radius: 10px;
+			margin: 0 5px 0 6px;
+			font-weight: 700;
+		}
 	}
 }
