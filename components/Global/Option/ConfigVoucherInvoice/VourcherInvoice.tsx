@@ -9,7 +9,6 @@ import ExpandTable from '~/components/ExpandTable';
 
 const ConfigVoucherInvoice = () => {
 	const [dataTable, setDataTable] = useState<IConfig[]>([]);
-	console.log(dataTable);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -31,7 +30,15 @@ const ConfigVoucherInvoice = () => {
 	const [filters, setFilters] = useState(listFieldInit);
 	const optionFormList = [
 		{ title: 'Phiếu chi', value: 1 },
-		{ title: 'Phiếu thu', value: 2 }
+		{ title: 'Phiếu thu', value: 2 },
+		{ title: 'Mẫu mail sắp tới giờ học', value: 3 },
+		{ title: 'Mẫu mail được thêm vào khóa học mới', value: 5 },
+		{ title: 'Mẫu mail lịch học thay đổi', value: 6 },
+		{ title: 'Mẫu mail bài tập đã chấm', value: 7 },
+		{ title: 'Mẫu mail sắp tới lịch dạy', value: 8 },
+		{ title: 'Mẫu mail được chỉ định dạy khóa mới', value: 9 },
+		{ title: 'Mẫu mail có bài tập cần chấm', value: 10 },
+		{ title: 'Mẫu mail tạo được tài khoản mới', value: 11 }
 	];
 
 	// PAGINATION

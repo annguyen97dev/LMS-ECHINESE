@@ -4,15 +4,12 @@ import { orderProductApi } from '~/apiBase/product/order-product';
 import ExpandTable from '~/components/ExpandTable';
 import ModalUpdatePaidStatus from '~/components/Global/Product/ModalUpdatePaidStatus';
 import LayoutBase from '~/components/LayoutBase';
-import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
 import NestedTable from '~/components/Elements/NestedTable';
 
 const ProductPaid = (props) => {
 	const [dataSource, setDataSource] = useState<IOrderProduct[]>([]);
-	const [dataExpandable, setDataExpandable] = useState([]);
 	const { pageSize, userInformation } = useWrap();
-	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const [isLoading, setIsLoading] = useState({
 		type: '',
@@ -172,7 +169,6 @@ const ProductPaid = (props) => {
 	};
 
 	const expandedRowRender = (record) => {
-		console.log(record);
 		return <NestedTable columns={nestedTable} dataSource={record.OrderProductDetail} loading={isLoading} />;
 	};
 

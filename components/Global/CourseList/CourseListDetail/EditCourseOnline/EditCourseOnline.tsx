@@ -641,7 +641,8 @@ const EditCourseOnline = (props) => {
 					SubjectName: optionSubjectList.find((s) => s.value === SubjectID).title,
 					CurriculumID: scheduleList.unavailable[0].CurriculumID,
 					ProgramID: scheduleList.unavailable[0].ProgramID,
-					TeacherAttendanceID: 0
+					TeacherAttendanceID: 0,
+					IsExam: false
 				};
 				const newOption = {
 					id: newSchedule.ID,
