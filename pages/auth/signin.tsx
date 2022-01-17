@@ -39,7 +39,7 @@ function SignIn({ providers, csrfToken }) {
 		return () => {};
 	}, []);
 	const _Submit = (data) => {
-        console.log('data', data)
+		console.log('data', data);
 		signIn('credentials-signin', {
 			...data,
 			callbackUrl: router.query?.callbackUrl ?? '/'
@@ -48,12 +48,18 @@ function SignIn({ providers, csrfToken }) {
 	return (
 		<>
 			{Object.values(providers).map((provider: { id; name }) => {
-                console.log('name', provider.name)
+				console.log('name', provider.name);
 				switch (provider.id) {
 					case 'credentials-signin':
 						return (
 							<div key={provider.name}>
-								<LoginForm key={provider.name} onSubmit={_Submit} csrfToken={csrfToken} error={haveError} />
+								<LoginForm
+									key={provider.name}
+									onSubmit={_Submit}
+									onGoogleLogin={_Submit}
+									csrfToken={csrfToken}
+									error={haveError}
+								/>
 
 								{/* <form method="post" action="/api/auth/callback/credentials-signin">
 									<input
@@ -105,7 +111,7 @@ export default SignIn;
 
 export async function getServerSideProps(context) {
 	const providers = await getProviders();
-    console.log('providers', providers)
+	console.log('providers', providers);
 	return {
 		props: { providers }
 	};

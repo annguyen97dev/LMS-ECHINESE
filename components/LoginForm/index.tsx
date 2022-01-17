@@ -6,6 +6,7 @@ import styles from './LoginForm.module.scss';
 import { useRouter } from 'next/router';
 import { Spin } from 'antd';
 import Link from 'next/link';
+import GoogleLogin from 'react-google-login';
 
 type Inputs = {
 	text: string;
@@ -16,6 +17,8 @@ interface LoginInputs {
 	username: Inputs;
 	password: Inputs;
 }
+
+const ID = '286438363258-na4sogt87nerb8q0k4em373qmbglf83e.apps.googleusercontent.com';
 
 function index(props: any) {
 	const {
@@ -44,43 +47,23 @@ function index(props: any) {
 		router.push('/account/register');
 	};
 
+	const handleGoogleLogin = (param) => {
+		console.log('handleGoogleLogin: ', param);
+
+		setLoading(true);
+		props?.onGoogleLogin({ ...param, type: 'google' });
+	};
+
 	return (
 		<>
 			<div className={styles.container}>
 				<div className={styles.wrapBox}>
-					{/* <div className={styles.imgLogin}>
-            <img src="/images/symbol-login.jpg" alt="" />
-          </div> */}
 					<div className={styles.wrapForm}>
 						<form onSubmit={handleSubmit(_Submit)} className={`${styles.loginForm}`}>
 							<div className={styles.loginFormImg}>
 								<img src="/images/logo.jpg" alt="" />
 							</div>
 							<h6 className={styles.title}>Đăng nhập</h6>
-
-							{/* <div className={styles.boxSocial}>
-                <ul>
-                  <li>
-                    <a href="">
-                      <img src="/images/google.png" alt="" />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="">
-                      <img src="/images/facebook.png" alt="" />
-                    </a>
-                  </li>
-                  <li>
-                    <a href="">
-                      <img src="/images/twitter.png" alt="" />
-                    </a>{" "}
-                  </li>
-                </ul>
-              </div>
-
-              <div className={styles.noteLogin}>
-                <p>Hoặc đăng nhập với tên đăng nhập</p>
-              </div> */}
 
 							<input name="csrfToken" type="hidden" defaultValue={props?.csrfToken} />
 							<label className={styles.fcontrol}>Tên đăng nhập</label>
@@ -94,7 +77,7 @@ function index(props: any) {
 										//@ts-ignore
 										return !!value.trim();
 									},
-                                    setValueAs: (value) => value.trim()
+									setValueAs: (value) => value.trim()
 								})}
 								placeholder="Enter user name"
 							/>
@@ -111,14 +94,6 @@ function index(props: any) {
 							{errors.password && <span className="form-error">Hãy điền mật khẩu</span>}
 
 							<div className="mt-2 d-flex justify-content-end">
-								{/* <div className={styles.checkbox}>
-                  <input type="checkbox" id="check" name="check" value="" />
-
-                  <label htmlFor="check">
-                    <span> </span>Nhớ mật khẩu
-                  </label>
-                </div> */}
-
 								<div className={styles.forgetPass}>
 									<Link href="/reset-password">
 										<a>Quên mật khẩu?</a>
@@ -131,6 +106,20 @@ function index(props: any) {
 								{loading && <Spin className="loading-login" />}
 								<div className="w-100 m-1 text-center color-red fw-bold">{props.error && props.error}</div>
 							</div>
+
+							{/* <div className="wrap-google-login">
+								<GoogleLogin
+									clientId={ID}
+									onSuccess={handleGoogleLogin}
+									onFailure={(e) => console.log(e)}
+									style={{ borderRadius: 999, backgroundColor: 'red' }}
+									icon={false}
+								>
+									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', paddingTop: 2 }}>
+										<i className="fab fa-google" style={{ fontSize: 20, marginRight: 8 }}></i> Google
+									</div>
+								</GoogleLogin>
+							</div> */}
 
 							<div className={styles.boxSignup}>
 								Bạn chưa có tài khoản?{' '}

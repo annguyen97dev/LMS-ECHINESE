@@ -300,6 +300,10 @@ const VideoLearning = () => {
 		videoStudy.current.pause();
 	};
 
+	function Iframe(props) {
+		return <div dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }} />;
+	}
+
 	// RENDER
 	return (
 		<div className="container-fluid p-0" style={{ overflow: 'hidden' }}>
@@ -325,7 +329,7 @@ const VideoLearning = () => {
 										)}
 									</>
 								) : (
-									<>{currentVideo}</>
+									<Iframe iframe={currentVideo} allow="autoplay" />
 								)}
 
 								{data.length > 0 && currentLession.Type === 0
