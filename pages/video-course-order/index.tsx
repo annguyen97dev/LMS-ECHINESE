@@ -84,6 +84,11 @@ const VideoCourseList = () => {
 
 	const textConfirm = 'Khóa học này đã được thanh toán?';
 
+	const checkStatus = (vl, ctn) => {
+		const rs = ['yellow', 'yellow', 'green', 'gray'];
+		return <span className={`tag ${rs[vl - 1]}`}>{ctn}</span>;
+	};
+
 	const columnsVideoCourse = [
 		{
 			title: 'Mã đơn hàng',
@@ -122,7 +127,13 @@ const VideoCourseList = () => {
 			dataIndex: 'CreatedOn',
 			key: 'CreatedOn',
 			render: (Action, data, index) => (
-				<div>{moment(data.CreatedOn).format('DD/MM/yyyy') + ' ' + moment(data.CreatedOn).format('hh:mm')}</div>
+				<>
+					{data?.CreatedOn == null ? (
+						''
+					) : (
+						<div>{moment(data?.CreatedOn).format('DD/MM/yyyy') + ' ' + moment(data?.CreatedOn).format('hh:mm')}</div>
+					)}
+				</>
 			)
 		},
 		{
@@ -130,14 +141,21 @@ const VideoCourseList = () => {
 			dataIndex: 'PaymentDate',
 			key: 'PaymentDate',
 			render: (Action, data, index) => (
-				<div>{moment(data.PaymentDate).format('DD/MM/yyyy') + ' ' + moment(data.PaymentDate).format('hh:mm')}</div>
+				<>
+					{data?.PaymentDate == null ? (
+						''
+					) : (
+						<div>{moment(data?.PaymentDate).format('DD/MM/yyyy') + ' ' + moment(data?.PaymentDate).format('hh:mm')}</div>
+					)}
+				</>
 			)
 		},
 		{
-			title: 'Trạng thái kích hoạt',
+			title: 'Trạng thái',
 			dataIndex: 'StatusName',
 			key: 'StatusName',
-			align: 'center'
+			align: 'center',
+			render: (Action, data, index) => checkStatus(data?.Status, data?.StatusName)
 		},
 		{
 			title: 'Thao tác',
@@ -146,7 +164,7 @@ const VideoCourseList = () => {
 			align: 'center',
 			render: (Action, data, index) => (
 				<div className="row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-					{data.Status == 1 ? (
+					{data?.Status == 2 || data?.Status == 4 ? (
 						<Tooltip title="Xác thực thanh toán">
 							<Popconfirm
 								placement="right"
@@ -157,13 +175,13 @@ const VideoCourseList = () => {
 								className="customPopconfirm"
 							>
 								<button onClick={() => console.log(data)} className="btn btn-icon" style={{}}>
-									<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
+									<CheckCircle style={{ color: '#1cc474' }} />
 								</button>
 							</Popconfirm>
 						</Tooltip>
 					) : (
 						<div onClick={() => console.log(data)} className="btn btn-icon" style={{}}>
-							<CheckCircle style={{ color: data.Status == 1 ? '#1cc474' : '#CFD8DC' }} />
+							<CheckCircle style={{ color: '#CFD8DC' }} />
 						</div>
 					)}
 

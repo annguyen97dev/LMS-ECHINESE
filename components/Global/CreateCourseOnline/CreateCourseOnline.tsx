@@ -224,7 +224,8 @@ const CreateCourseOnline = () => {
 
 		try {
 			const res = await programApi.getAll({
-				GradeID: id
+				GradeID: id,
+				isNotVideo: true
 			});
 			if (res.status === 200) {
 				const newProgramList = fmSelectArr(res.data.data, 'ProgramName', 'ID', ['Price']);

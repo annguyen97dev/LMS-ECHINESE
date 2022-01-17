@@ -300,6 +300,10 @@ const VideoLearning = () => {
 		videoStudy.current.pause();
 	};
 
+	function Iframe(props) {
+		return <div dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }} />;
+	}
+
 	// RENDER
 	return (
 		<div className="container-fluid p-0" style={{ overflow: 'hidden' }}>
@@ -325,7 +329,16 @@ const VideoLearning = () => {
 										)}
 									</>
 								) : (
-									<>{currentVideo}</>
+									<Iframe iframe={currentVideo} allow="autoplay" />
+									// <>
+									// 	<iframe
+									// 		width="560"
+									// 		height="315"
+									// 		src="https://video.monamedia.net/streamer/embed.php?v=MzQ0Nw==\"
+									// 		frameborder="0"
+									// 		allowfullscreen
+									// 	></iframe>
+									// </>
 								)}
 
 								{data.length > 0 && currentLession.Type === 0
