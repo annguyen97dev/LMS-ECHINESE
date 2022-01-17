@@ -1,3 +1,4 @@
+import { oneSignalAPI } from './oneSignal/oneSignal';
 export { areaApi } from './options/area';
 export { branchApi } from './options/branch';
 export { contractApi } from './options/contract';
@@ -96,6 +97,7 @@ export { VideoCourseOfStudent, VideoCourseInteraction } from './video-learning';
 export { resetPasswordApi } from './reset-password/reset-password';
 export { doingTestApi } from './doing-test/doing-test';
 export { FeedbackApi } from './feed-back';
+export { oneSignalAPI } from './oneSignal/oneSignal';
 export { studyRoleApi } from './study-role/study-role';
 export { comingCourseApi } from './zoom/coming-course';
 export * from './self-course';
