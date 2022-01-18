@@ -45,62 +45,12 @@ function SignIn({ providers, csrfToken }) {
 			callbackUrl: router.query?.callbackUrl ?? '/'
 		});
 	};
+
+	console.log('Object: ', Object);
+
 	return (
 		<>
-			{Object.values(providers).map((provider: { id; name }) => {
-				console.log('name', provider.name);
-				switch (provider.id) {
-					case 'credentials-signin':
-						return (
-							<div key={provider.name}>
-								<LoginForm
-									key={provider.name}
-									onSubmit={_Submit}
-									onGoogleLogin={_Submit}
-									csrfToken={csrfToken}
-									error={haveError}
-								/>
-
-								{/* <form method="post" action="/api/auth/callback/credentials-signin">
-									<input
-										name="csrfToken"
-										type="hidden"
-										defaultValue={csrfToken}
-										// value={csrfToken}
-									/>
-									<label>
-										Username
-										<input name="username" type="text" />
-									</label>
-									<label>
-										Password
-										<input name="password" type="password" />
-									</label>
-									<button type="submit">Đăng nhập</button>
-								</form> */}
-							</div>
-						);
-					case 'email':
-						return (
-							<div key={provider.name}>
-								<form method="post" action="/api/auth/signin/email">
-									<input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-									<label>
-										Email address
-										<input type="text" id="email" name="email" />
-									</label>
-									<button type="submit">Đăng nhập với Email</button>
-								</form>
-							</div>
-						);
-					default:
-						return (
-							<div key={provider.name}>
-								<button onClick={() => signIn(provider.id)}>Đăng nhập với {provider.name}</button>
-							</div>
-						);
-				}
-			})}
+			<LoginForm onSubmit={_Submit} onGoogleLogin={_Submit} csrfToken={csrfToken} error={haveError} />
 		</>
 	);
 }
