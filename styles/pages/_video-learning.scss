@@ -570,3 +570,11 @@
 .vl-t-sb {
 	justify-content: space-between;
 }
+
+.iframe-video {
+	//
+	iframe {
+		width: 100%;
+		height: 100%;
+	}
+}

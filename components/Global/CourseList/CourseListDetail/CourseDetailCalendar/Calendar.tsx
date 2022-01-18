@@ -71,6 +71,8 @@ function CDCalendar(props) {
 		handleEndStudyZoom
 	} = props;
 
+	console.log('eventList: ', eventList);
+
 	const [courseScheduleID, setCourseScheduleID] = useState(0);
 	const [isModalVisible, setIsModalVisible] = useState<{
 		type: 'record' | 'document' | '';
@@ -330,6 +332,8 @@ function CDCalendar(props) {
 				</ul>
 			</div>
 		);
+
+		console.log('TeacherAttendanceID: ', TeacherAttendanceID);
 
 		return (
 			<div

@@ -66,10 +66,3 @@ export async function getServerSideProps(context) {
 		props: { providers }
 	};
 }
-
-// SignIn.getInitialProps = async (context) => {
-//   return {
-//     providers: await providers(context),
-//     csrfToken: await csrfToken(context),
-//   };
-// };

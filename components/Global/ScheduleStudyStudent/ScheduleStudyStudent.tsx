@@ -95,7 +95,8 @@ const ScheduleStudyStudent = () => {
 				//
 				IsExam,
 				ExamTopicID,
-				CurriculumsDetailID
+				CurriculumsDetailID,
+				TeacherAttendanceID
 			} = c;
 			const studyTimeStart = moment(StartTime).format('HH:mm');
 			const studyTimeEnd = moment(EndTime).format('HH:mm');
@@ -106,6 +107,7 @@ const ScheduleStudyStudent = () => {
 				title: '',
 				start: moment(StartTime).toDate(),
 				end: moment(EndTime).toDate(),
+				CurriculumsDetailID: CurriculumsDetailID,
 				resource: {
 					ID,
 					CourseID,
@@ -121,7 +123,8 @@ const ScheduleStudyStudent = () => {
 					idx,
 					IsExam,
 					ExamTopicID,
-					CurriculumsDetailID
+					CurriculumsDetailID,
+					TeacherAttendanceID
 				}
 			};
 		});
