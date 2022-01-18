@@ -155,7 +155,7 @@ const VideoLearning = () => {
 			pageSize: 10,
 			VideoCourseID: router.query.ID,
 			LessonDetailID: LessonDetailID,
-			searchCreateby: userInformation.UserAccountID,
+			searchCreateby: userInformation?.UserAccountID,
 			sort: 0
 		};
 		try {
@@ -300,8 +300,29 @@ const VideoLearning = () => {
 		videoStudy.current.pause();
 	};
 
+	const fake =
+		"<iframe width='560' height='315' src='https://www.youtube.com/embed/m_IN8LPRlcs' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+
 	function Iframe(props) {
-		return <div dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }} />;
+		const [hei, setHei] = useState(0);
+		const ref = useRef(null);
+
+		useEffect(() => {
+			// console.log('eleValue?.offsetWidth: ', ref.current.clientWidth);
+			if (ref.current.clientWidth > 0) {
+				setHei(ref.current.clientWidth / 2);
+			}
+		}, [ref.current]);
+
+		return (
+			<div
+				className="iframe-video"
+				ref={ref}
+				style={{ width: '100%', height: hei || 'auto' }}
+				id="PStyle"
+				dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }}
+			/>
+		);
 	}
 
 	// RENDER
@@ -330,15 +351,6 @@ const VideoLearning = () => {
 									</>
 								) : (
 									<Iframe iframe={currentVideo} allow="autoplay" />
-									// <>
-									// 	<iframe
-									// 		width="560"
-									// 		height="315"
-									// 		src="https://video.monamedia.net/streamer/embed.php?v=MzQ0Nw==\"
-									// 		frameborder="0"
-									// 		allowfullscreen
-									// 	></iframe>
-									// </>
 								)}
 
 								{data.length > 0 && currentLession.Type === 0
