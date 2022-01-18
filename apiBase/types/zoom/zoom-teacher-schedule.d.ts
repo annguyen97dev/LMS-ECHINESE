@@ -23,8 +23,11 @@ type IScheduleZoom = {
 	UserName: string;
 	IsOff: boolean;
 	IsExam: boolean;
+	CurriculumsDetailID: number;
+	TeacherAttendanceID: number;
 	ExamTopicID: number;
 	CurriculumsDetailID: number;
+	TeacherAttendanceID: number;
 };
 
 type IScheduleZoomDetail = {
