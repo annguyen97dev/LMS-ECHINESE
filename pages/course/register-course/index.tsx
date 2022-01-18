@@ -15,6 +15,8 @@ import { courseStudentPriceApi } from '~/apiBase/customer/student/course-student
 import CreateCustomer from './../../../components/Global/RegisterCourse/CreateCustomer';
 import OverStudentConfirmBox from '~/components/Global/RegisterCourse/OverStudentConfirmBox';
 
+const now = new Date();
+
 const RegisterCourse = (props: any) => {
 	const { Option } = Select;
 	const [option, setOption] = useState(null);
@@ -109,6 +111,8 @@ const RegisterCourse = (props: any) => {
 				data.Course = '';
 			}
 
+			console.log('data.PayDate: ', data.PayDate);
+
 			if (courseOverStudent && courseOverStudent.length > 0) {
 				setVisibleModalConfirm(true);
 				setCourseOverStudent(null);
@@ -117,7 +121,8 @@ const RegisterCourse = (props: any) => {
 				try {
 					let res = await courseStudentPriceApi.add({
 						...data,
-						isContract: isContract
+						isContract: isContract,
+						PayDate: data.PayDate == undefined ? now : data.PayDate
 					});
 					if (res.status === 200) {
 						showNoti('success', res?.data.message);

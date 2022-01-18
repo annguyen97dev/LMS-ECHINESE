@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import { login } from '~/services/auth';
+import { GoogleLogin, login } from '~/services/auth';
 var FormData = require('form-data');
 // .env.local.example variable
 
@@ -33,32 +33,16 @@ const options = {
 			//   password: { label: 'password', type: 'password' },
 			// },
 			authorize: async (credentials: any) => {
+				console.log('==================================');
+				console.log('==================================');
+
 				console.log('DATA LOGIN: ', credentials);
 
-				// sample code
-				// const user = (credentials) => {
-				//   // You need to provide your own logic here that takes the credentials
-				//   // submitted and returns either a object representing a user or value
-				//   // that is false/null if the credentials are invalid.
-
-				//   return { id: 1, name: 'J Smith', email: 'jsmith@example.com' };
-				//   // return { credentials: credentials };
-				// };
-				// if (user) {
-				//   // Any user object returned here will be saved in the JSON Web Token
-				//   return Promise.resolve(user);
-				// } else {
-				//   // If you return null or false then the credentials will be rejected
-				//   return Promise.resolve(null);
-				//   // You can also Reject this callback with an Error or with a URL:
-				//   // return Promise.reject(new Error('error message')) // Redirect to error page
-				//   // return Promise.reject('/path/to/redirect')        // Redirect to a URL
-				// }
-
 				try {
-					const rs = await login(credentials);
+					const rs = credentials?.type == 'google' ? await GoogleLogin(credentials) : await login(credentials);
 
 					// console.log("DATA: ", rs.data);
+					// @ts-ignore
 					return Promise.resolve(rs.data);
 				} catch (error) {
 					// return Promise.reject(new Error(JSON.stringify(error)));

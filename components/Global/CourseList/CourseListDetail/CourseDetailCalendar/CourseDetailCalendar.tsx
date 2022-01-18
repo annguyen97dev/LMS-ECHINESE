@@ -61,7 +61,8 @@ function CourseDetailCalendar(props) {
 					SubjectName,
 					LinkDocument,
 					StudyTimeName: studyTime,
-					IsExam
+					IsExam,
+					TeacherAttendanceID
 				}
 			};
 		});

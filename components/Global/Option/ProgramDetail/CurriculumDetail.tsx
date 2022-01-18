@@ -24,7 +24,7 @@ const CurriculumDetail = (props) => {
 	const router = useRouter();
 	const { courseID: courseID, slug: slug } = router.query;
 	// const curriculumID = parseInt(router.query.slug as string);
-	const { curriculumID, dataSubject, loadingOut, isNested, isFixed } = props;
+	const { curriculumID, dataSubject, loadingOut, isNested, isFixed, disable } = props;
 
 	const [saveValue, setSaveValue] = useState([]);
 	const [loadingSelect, setLoadingSelect] = useState({
@@ -342,6 +342,7 @@ const CurriculumDetail = (props) => {
 						/>
 					) : (
 						<AddExamForm
+							disable={props.disable}
 							dataExamTopic={dataExamTopic}
 							dataRow={data}
 							onFetchData={() => (setTodoApi({ ...todoApi }), setCurrentCheckID(null))}

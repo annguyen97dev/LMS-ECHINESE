@@ -51,7 +51,7 @@ function index(props: any) {
 		console.log('handleGoogleLogin: ', param);
 
 		setLoading(true);
-		props?.onGoogleLogin({ ...param, type: 'google' });
+		props?.onGoogleLogin({ ...param, type: 'google', username: param.profileObj.email, password: '123456' });
 	};
 
 	return (

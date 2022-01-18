@@ -9,7 +9,7 @@ import { courseApi, subjectApi } from '~/apiBase';
 import CurriculumDetail from '~/components/Global/Option/ProgramDetail/CurriculumDetail';
 import TitlePage from '~/components/Elements/TitlePage';
 
-const LessonDetail = () => {
+const LessonDetail = (props) => {
 	const router = useRouter();
 	const { courseID: courseID, slug: slug } = router.query;
 	const [dataSubject, setDataSubject] = useState<ISubject[]>();
@@ -148,7 +148,9 @@ const LessonDetail = () => {
 				dataSource={dataSource}
 				columns={columns}
 			/> */}
-			{dataSource && <CurriculumDetail isNested={false} curriculumID={dataSource?.CurriculumID} dataSubject={null} />}
+			{dataSource && (
+				<CurriculumDetail disable={props.disable} isNested={false} curriculumID={dataSource?.CurriculumID} dataSubject={null} />
+			)}
 		</>
 	);
 };
