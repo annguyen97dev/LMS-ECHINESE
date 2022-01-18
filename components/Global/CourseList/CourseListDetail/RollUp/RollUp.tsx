@@ -189,6 +189,9 @@ function RollUp(props) {
 	useEffect(() => {
 		getRollUpList();
 	}, [filters]);
+
+	// console.log('selectedDate: ', selectedDate);
+
 	const columns = [
 		{
 			title: 'Học viên',

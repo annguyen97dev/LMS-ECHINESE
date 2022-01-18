@@ -136,7 +136,7 @@ const AddTrialStudentForm = (props) => {
 			}
 		} else {
 			try {
-				let res = await courseOfStudentPriceApi.add({ ...data, CourseID: CourseID, isContract: true, PayDate: '2021/11/01' });
+				let res = await courseOfStudentPriceApi.add({ ...data, Course: CourseID, isContract: false, PayDate: '2021/11/01' });
 				if (res.status == 200) {
 					showNoti('success', 'Thêm học viên thành công!');
 					setVisible(false);

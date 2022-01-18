@@ -5,6 +5,7 @@ import { branchApi, courseApi, discountApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import { useForm } from 'react-hook-form';
 import { PaymentMethod } from '~/lib/payment-method/payment-method';
+import moment from 'moment';
 
 const RegCourse = React.memo((props: any) => {
 	const { TextArea } = Input;
@@ -172,6 +173,8 @@ const RegCourse = React.memo((props: any) => {
 		name = percent + name + ` (${data.TypeCourseName})`;
 		return name;
 	};
+
+	const now = new Date();
 
 	return (
 		<Card title="Đăng ký khóa học">
@@ -357,8 +360,18 @@ const RegCourse = React.memo((props: any) => {
 						</Form.Item>
 					</div>
 					<div className="col-md-6 col-12">
-						<Form.Item name="PayDate" label="Ngày hẹn trả" rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}>
-							<DatePicker allowClear={true} className="style-input" onChange={(e) => setValue('PayDate', e)} />
+						<Form.Item
+							name="PayDate"
+							label="Ngày hẹn trả"
+							rules={[{ required: false, message: 'Vui lòng điền đủ thông tin!' }]}
+						>
+							<DatePicker
+								defaultValue={moment(new Date(), 'DD/MM/YYYY')}
+								allowClear={true}
+								format="DD/MM/YYYY"
+								className="style-input"
+								onChange={(e) => setValue('PayDate', e)}
+							/>
 						</Form.Item>
 					</div>
 				</div>

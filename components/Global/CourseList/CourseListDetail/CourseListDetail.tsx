@@ -139,7 +139,7 @@ const CourseListDetail = () => {
 					}
 					key="10"
 				>
-					<LessonDetail />
+					<LessonDetail disable={true} />
 				</TabPane>
 				<TabPane
 					tab={
