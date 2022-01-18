@@ -388,13 +388,13 @@ export const AdminChildMenu = [
 						Text: 'Thông tin thanh toán',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/finance/product-paid',
-						Route: '/customer/finance/product-paid',
-						Text: 'Bán sản phẩm',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/finance/product-paid',
+					// 	Route: '/customer/finance/product-paid',
+					// 	Text: 'Bán sản phẩm',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/customer/finance/finance-cashier-refund',
@@ -1014,21 +1014,21 @@ export const AdminChildMenu = [
 						Route: '/option/faq',
 						Text: 'Câu hỏi thường gặp',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/option/product-type',
-						Route: '/option/product-type',
-						Text: 'Cấu hình sản phẩm',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/option/product',
-						Route: '/option/product',
-						Text: 'Thêm sản phẩm',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/product-type',
+					// 	Route: '/option/product-type',
+					// 	Text: 'Cấu hình sản phẩm',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/product',
+					// 	Route: '/option/product',
+					// 	Text: 'Thêm sản phẩm',
+					// 	Icon: ''
+					// }
 				]
 			}
 		]
