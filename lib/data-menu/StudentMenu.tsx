@@ -105,13 +105,13 @@ export const StudentChildMenu = [
 				Text: 'Dịch vụ đã mua',
 				Icon: ''
 			},
-			{
-				ItemType: 'single',
-				Key: '/customer/finance/product-paid',
-				Route: '/customer/finance/product-paid',
-				Text: 'Sản phẩm đã mua',
-				Icon: ''
-			},
+			// {
+			// 	ItemType: 'single',
+			// 	Key: '/customer/finance/product-paid',
+			// 	Route: '/customer/finance/product-paid',
+			// 	Text: 'Sản phẩm đã mua',
+			// 	Icon: ''
+			// },
 			// {
 			// 	ItemType: 'single',
 			// 	Key: '/option/day-off',

@@ -1014,21 +1014,21 @@ export const StaffManagerChildMenu = [
 						Route: '/option/faq',
 						Text: 'Câu hỏi thường gặp',
 						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/option/product-type',
-						Route: '/option/product-type',
-						Text: 'Cấu hình sản phẩm',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/option/product',
-						Route: '/option/product',
-						Text: 'Thêm sản phẩm',
-						Icon: ''
 					}
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/product-type',
+					// 	Route: '/option/product-type',
+					// 	Text: 'Cấu hình sản phẩm',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/option/product',
+					// 	Route: '/option/product',
+					// 	Text: 'Thêm sản phẩm',
+					// 	Icon: ''
+					// }
 				]
 			}
 		]

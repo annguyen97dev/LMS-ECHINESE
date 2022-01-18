@@ -14,23 +14,36 @@ import LayoutBase from '~/components/LayoutBase';
 import { statisticalApi } from './../../apiBase/statistical/statistical-total';
 import { useWrap } from '~/context/wrap';
 import CourseChart from '~/components/Dashboard/CourseChart';
-import { Skeleton } from 'antd';
+import { DatePicker, Skeleton } from 'antd';
+import BarChartStatistical from '~/components/Dashboard/BarChart';
+import moment from 'moment';
+import StatisticalTotalLessonOfTeacher from '~/components/Dashboard/StatisticalTable';
+import StatisticalRankTeacher from '~/components/Dashboard/StatisticalRankTeacher';
 
 const Dashboard = () => {
 	const [statisticalTotal, setStatisticalTotal] = useState<IStatistical[]>([]);
 	const [statisticalCourse, setStatisticalCourse] = useState<IStatCourse[]>([]);
 	const [statisticalRate, setStatisticalRate] = useState<IStatRate[]>([]);
+	const [statisticalAverageAgeOfStudent, setStatisticalAverageAgeOfStudent] = useState<IStatDataBarChart[]>([]);
+	const [statisticalPercentStudentByArea, setStatisticalPercentStudentByArea] = useState<IStatDataBarChart[]>([]);
+	const [statisticalPercentStudentBySource, setStatisticalPercentStudentBySource] = useState<IStatDataBarChart[]>([]);
+	const [statisticalCoursePurchases, setStatisticalCoursePurchases] = useState<IStatDataBarChart[]>([]);
+	const [statisticalJobOfStudent, setStatisticalJobOfStudent] = useState<IStatDataBarChart[]>([]);
+	const [statisticalSalaryOfStaff, setStatisticalSalaryOfStaff] = useState<IStatDataBarChart[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
 		loading: false
 	});
-	const { showNoti } = useWrap();
 	const [todoApi, setTodoApi] = useState({
 		branch: 0,
 		StartYear: 2017,
 		EndYear: 2022,
 		Year: new Date().getFullYear(),
 		Month: new Date().getMonth() + 1
+	});
+	const [period, setPeriod] = useState({
+		fromDate: '',
+		toDate: ''
 	});
 
 	const getStatisticalTotal = async () => {
@@ -71,7 +84,6 @@ const Dashboard = () => {
 		setIsLoading({ status: 'STAT_GET_RATE', loading: true });
 		try {
 			let res = await statisticalApi.getStatisticalRate(todoApi);
-			console.log(res.data);
 			if (res.status == 200) {
 				setStatisticalRate(res.data.data);
 			}
@@ -85,10 +97,155 @@ const Dashboard = () => {
 		}
 	};
 
+	const getAgerageAgeOfStudent = async () => {
+		setIsLoading({ status: 'GET_STAT_AVERAGE_AGE', loading: true });
+		try {
+			let res = await statisticalApi.getAverageAgeOfStudent();
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item) =>
+					temp.push({ ID: item.ID, dataKey: item.Age, value: item.Amount, title: 'SỐ HỌC VIÊN THEO ĐỘ TUỔI' })
+				);
+				setStatisticalAverageAgeOfStudent(temp);
+			}
+			if (res.status === 204) {
+				setStatisticalAverageAgeOfStudent([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_STAT_AVERAGE_AGE', loading: false });
+		}
+	};
+
+	const getPercentOfStudentByArea = async () => {
+		setIsLoading({ status: 'GET_STAT_PERCENT_STUDENT_BY_AREA', loading: true });
+		try {
+			let res = await statisticalApi.getPercentOfStudentByArea();
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item) =>
+					temp.push({ ID: item.AreaID, dataKey: item.AreaName, value: item.Amount, title: 'TỈ LỆ HỌC VIÊN THEO TỈNH THÀNH' })
+				);
+				setStatisticalPercentStudentByArea(temp);
+			}
+			if (res.status === 204) {
+				setStatisticalPercentStudentByArea([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_STAT_PERCENT_STUDENT_BY_AREA', loading: false });
+		}
+	};
+
+	const getPercentOfStudentBySource = async () => {
+		setIsLoading({ status: 'GET_STAT_PERCENT_STUDENT_BY_SOURCE', loading: true });
+		try {
+			let res = await statisticalApi.getPercentOfStudentBySource();
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item) =>
+					temp.push({
+						ID: item.SourceInformationID,
+						dataKey: item.SourceInformationName,
+						value: item.Amount,
+						title: 'TỈ LỆ HỌC VIÊN THEO NGUỒN'
+					})
+				);
+				setStatisticalPercentStudentBySource(temp);
+			}
+			if (res.status === 204) {
+				setStatisticalPercentStudentBySource([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_STAT_PERCENT_STUDENT_BY_SOURCE', loading: false });
+		}
+	};
+
+	const getStatisticalCoursePurchases = async () => {
+		setIsLoading({ status: 'GET_STAT_COURSE_PURCHASES', loading: true });
+		try {
+			let res = await statisticalApi.getStatisticalCoursePurchases();
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item) =>
+					temp.push({
+						ID: item.ID,
+						dataKey: item.CourseName.slice(0, 13).concat('...'),
+						value: item.TotalPurchases,
+						title: 'Khóa học có lượt mua cao nhất'
+					})
+				);
+				setStatisticalCoursePurchases(temp);
+			}
+			if (res.status === 204) {
+				setStatisticalCoursePurchases([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_STAT_COURSE_PURCHASES', loading: false });
+		}
+	};
+
+	const getStatisticalJobOfStudent = async () => {
+		setIsLoading({ status: 'GET_STAT_JOB_OF_STUDENT', loading: true });
+		try {
+			let res = await statisticalApi.getStatisticalJobOfStudent();
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item) =>
+					temp.push({
+						ID: item.JobID,
+						dataKey: item.JobName,
+						value: item.Amount,
+						title: 'Nghề nghiệp của học viên'
+					})
+				);
+				setStatisticalJobOfStudent(temp);
+			}
+			if (res.status === 204) {
+				setStatisticalJobOfStudent([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_STAT_JOB_OF_STUDENT', loading: false });
+		}
+	};
+
+	const getStatisticalSalaryOfStaff = async () => {
+		setIsLoading({ status: 'GET_STAT_SALARY_OF_STAFF', loading: true });
+		try {
+			let res = await statisticalApi.getStatisticalSalaryOfStaff(period);
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item) =>
+					temp.push({
+						ID: item.RoleID,
+						dataKey: item.RoleName,
+						value: item.SalaryTotal,
+						title: 'Tổng lương theo chức vụ'
+					})
+				);
+				setStatisticalSalaryOfStaff(temp);
+			}
+			if (res.status === 204) {
+				setStatisticalSalaryOfStaff([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_STAT_SALARY_OF_STAFF', loading: false });
+		}
+	};
+
 	useEffect(() => {
 		getStatisticalTotal();
 		getStatisticalRate();
 		getStatisticalCourse();
+		getAgerageAgeOfStudent();
+		getPercentOfStudentByArea();
+		getPercentOfStudentBySource();
+		getStatisticalCoursePurchases();
+		getStatisticalJobOfStudent();
 	}, []);
 
 	const renderStatisticalTotal = () => {
@@ -341,6 +498,166 @@ const Dashboard = () => {
 		}
 	};
 
+	const renderAverageAgeOfStudent = () => {
+		if (isLoading.status === 'GET_STAT_AVERAGE_AGE' && isLoading.loading == true) {
+			return (
+				<div className="row pt-5 pb-5">
+					<Skeleton active />
+				</div>
+			);
+		} else {
+			return (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<BarChartStatistical title={'Thống kê độ tuổi của học viên'} dataStatistical={statisticalAverageAgeOfStudent} />
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const renderPercentOfStudentByArea = () => {
+		if (isLoading.status === 'GET_STAT_PERCENT_STUDENT_BY_AREA' && isLoading.loading == true) {
+			return (
+				<div className="row pt-5 pb-5">
+					<Skeleton active />
+				</div>
+			);
+		} else {
+			return (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<BarChartStatistical
+							title={'Thống kê phần trăm học viên theo tỉnh thành'}
+							dataStatistical={statisticalPercentStudentByArea}
+						/>
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const renderPercentOfStudentBySource = () => {
+		if (isLoading.status === 'GET_STAT_PERCENT_STUDENT_BY_SOURCE' && isLoading.loading == true) {
+			return (
+				<div className="row pt-5 pb-5">
+					<Skeleton active />
+				</div>
+			);
+		} else {
+			return (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<BarChartStatistical
+							title={'Thống kê phần trăm học viên theo nguồn'}
+							dataStatistical={statisticalPercentStudentBySource}
+						/>
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const renderStatisticalCoursePurchases = () => {
+		if (isLoading.status === 'GET_STAT_COURSE_PURCHASES' && isLoading.loading == true) {
+			return (
+				<div className="row pt-5 pb-5">
+					<Skeleton active />
+				</div>
+			);
+		} else {
+			return (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<BarChartStatistical
+							title={'Thống kê khóa học có lượt mua cao nhất'}
+							dataStatistical={statisticalCoursePurchases}
+						/>
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const renderStatisticalJobOfStudent = () => {
+		if (isLoading.status === 'GET_STAT_JOB_OF_STUDENT' && isLoading.loading == true) {
+			return (
+				<div className="row pt-5 pb-5">
+					<Skeleton active />
+				</div>
+			);
+		} else {
+			return (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<BarChartStatistical title={'Thống kê nghề nghiệp của học viên'} dataStatistical={statisticalJobOfStudent} />
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const { RangePicker } = DatePicker;
+	const renderRangePickerDate = () => {
+		return (
+			<RangePicker
+				allowClear={true}
+				className="style-input"
+				onChange={(date) => {
+					setPeriod({
+						fromDate: moment(date[0]).format('YYYY/MM/DD'),
+						toDate: moment(date[1]).format('YYYY/MM/DD')
+					});
+				}}
+			/>
+		);
+	};
+	const renderStatisticalSalaryOfStaff = () => {
+		if (isLoading.status === 'GET_STAT_SALARY_OF_STAFF' && isLoading.loading == true) {
+			return (
+				<div className="row pt-5 pb-5">
+					<Skeleton active />
+				</div>
+			);
+		} else {
+			return (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<BarChartStatistical
+							title={'Lương theo chức vụ'}
+							dataStatistical={statisticalSalaryOfStaff}
+							extra={renderRangePickerDate()}
+						/>
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const renderStatisticalTotalLessonOfTeacher = () => {
+		return (
+			<div className="row pt-5 pb-5">
+				<div className="col-12">
+					<StatisticalTotalLessonOfTeacher />;
+				</div>
+			</div>
+		);
+	};
+
+	const renderStatisticalRankTeacher = () => {
+		return (
+			<div className="row pt-5 pb-5">
+				<div className="col-12">
+					<StatisticalRankTeacher />;
+				</div>
+			</div>
+		);
+	};
+
+	useEffect(() => {
+		getStatisticalSalaryOfStaff();
+	}, [period]);
+
 	return (
 		<div>
 			<TitlePage title="Dashboard" />
@@ -354,6 +671,14 @@ const Dashboard = () => {
 			</div>
 
 			{renderStatisticalCourse()}
+			{renderAverageAgeOfStudent()}
+			{renderPercentOfStudentByArea()}
+			{renderPercentOfStudentBySource()}
+			{renderStatisticalCoursePurchases()}
+			{renderStatisticalJobOfStudent()}
+			{renderStatisticalSalaryOfStaff()}
+			{renderStatisticalTotalLessonOfTeacher()}
+			{renderStatisticalRankTeacher()}
 		</div>
 	);
 };
