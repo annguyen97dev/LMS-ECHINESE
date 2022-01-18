@@ -1,19 +1,16 @@
-import {Collapse} from 'antd';
+import { Collapse } from 'antd';
 import PropTypes from 'prop-types';
 import React from 'react';
 const ScheduleList = (props) => {
-	const {panelActiveListInModal} = props;
-
-	return (
-		<Collapse activeKey={panelActiveListInModal}>{props.children}</Collapse>
-	);
+	const { panelActiveListInModal, children } = props;
+	return <Collapse activeKey={panelActiveListInModal}>{children}</Collapse>;
 };
 ScheduleList.propTypes = {
 	panelActiveListInModal: PropTypes.arrayOf(PropTypes.number),
-	children: PropTypes.node,
+	children: PropTypes.node
 };
 ScheduleList.defaultProps = {
 	panelActiveListInModal: [],
-	children: null,
+	children: null
 };
 export default ScheduleList;

@@ -3,10 +3,11 @@ import { Collapse, Spin } from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
+import { useWrap } from '~/context/wrap';
 import { optionCommonPropTypes } from '~/utils/proptypes';
 const { Panel } = Collapse;
 
@@ -41,6 +42,10 @@ const ScheduleOnlineItem = (props) => {
 		//
 		saveBeforeAheadSchedule
 	} = props;
+	// IF NOT OWNER SCHEDULE < LOCK
+	const [isLockSchedule, setIsLockSchedule] = useState(false);
+	const { userInformation } = useWrap();
+
 	const {
 		ID,
 		eventName,
@@ -100,6 +105,13 @@ const ScheduleOnlineItem = (props) => {
 		}
 	}, [scheduleObj, optionTeacherList, isLoading]);
 
+	useEffect(() => {
+		setIsLockSchedule(false);
+		if (userInformation?.RoleID === 2 && TeacherID !== 0 && TeacherID !== userInformation?.UserInformationID) {
+			setIsLockSchedule(true);
+		}
+	}, [scheduleObj]);
+
 	return (
 		<Panel
 			{...props}
@@ -118,6 +130,7 @@ const ScheduleOnlineItem = (props) => {
 							}
 						}}
 						checked={isUnavailable}
+						disabled={isLockSchedule}
 					/>
 					<p className="title">{eventName || `${moment(Date).format('DD/MM')} - ${TeacherName}`}</p>
 					<ul className="info-course-list">
@@ -138,6 +151,7 @@ const ScheduleOnlineItem = (props) => {
 								setSiblingsFieldToDefault();
 								checkHandleChangeValueSchedule(ID, 'CaID', value);
 							}}
+							disabled={isLockSchedule}
 						/>
 					</div>
 					<div className="col-12">
@@ -152,13 +166,14 @@ const ScheduleOnlineItem = (props) => {
 									checkHandleChangeValueSchedule(ID, 'TeacherID', value);
 								}
 							}}
+							disabled={isLockSchedule}
 						/>
 					</div>
 					{isEditView && !isClickAheadSchedule && typeof ID === 'number' && saveBeforeAheadSchedule && (
 						<div className="col-12 text-right">
 							<button
 								className="btn btn-secondary"
-								disabled={isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status}
+								disabled={(isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status) || isLockSchedule}
 								onClick={() => checkHandleAheadSchedule(ID, TeacherID)}
 							>
 								Lùi buổi học

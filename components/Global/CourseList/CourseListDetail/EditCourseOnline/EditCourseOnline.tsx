@@ -25,6 +25,7 @@ import AvailableScheduleOnlineForm from './AvailableScheduleOnlineForm';
 const EditCourseOnline = (props) => {
 	const router = useRouter();
 	const { slug: courseID } = router.query;
+	const { userInformation } = useWrap();
 	// -----------STATE-----------
 	// CREATE COURSE FORM STATE
 	const { showNoti } = useWrap();
@@ -418,7 +419,11 @@ const EditCourseOnline = (props) => {
 			}
 			const res = await checkTeacherApi.getAllTeacherAvailable(rest);
 			if (res.status === 200) {
-				const newList = fmSelectArr(res.data.data, 'FullNameUnicode', 'UserInformationID');
+				let data = res.data.data;
+				if (userInformation?.RoleID === 2 && (TeacherID === userInformation?.UserInformationID || TeacherID === 0)) {
+					data = data.filter((d) => d.UserInformationID === userInformation?.UserInformationID);
+				}
+				const newList = fmSelectArr(data, 'FullNameUnicode', 'UserInformationID');
 				const finalList = [{ title: '----Giáo viên trống----', value: 0 }, ...newList];
 
 				const isHadTeacherInList = finalList.some((o) => o.value === TeacherID); // kiểm tra nếu như trong buổi học còn giữ lại giá trị cũ nhưng api lại không có giá trị thỏa giá trị cũ
@@ -454,6 +459,7 @@ const EditCourseOnline = (props) => {
 				return false;
 			}
 		} catch (error) {
+			console.log('onCheckTeacherAvailable', error);
 		} finally {
 			setIsLoading({
 				type: 'CHECK_SCHEDULE',
