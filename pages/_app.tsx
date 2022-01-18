@@ -16,8 +16,6 @@ export default function App({ Component, pageProps }) {
 	const router = useRouter();
 
 	useEffect(() => {
-		console.log('CHAY VO NE NHA');
-
 		OneSignal.setSubscription(true);
 
 		OneSignal.init({ appId: _.oneSignalKey }).then(() => {
