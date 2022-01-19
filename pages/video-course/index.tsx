@@ -214,7 +214,8 @@ const VideoCourseStore = () => {
 			Description: param.Description,
 			ResultsAchieved: param.ResultsAchieved,
 			CourseForObject: param.CourseForObject,
-			TeacherID: param.TeacherID
+			TeacherID: param.TeacherID,
+			ExpiryDays: param.ExpiryDays
 		};
 
 		try {

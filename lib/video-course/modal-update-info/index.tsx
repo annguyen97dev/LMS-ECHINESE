@@ -45,6 +45,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const [videoCourseName, setVideoCourseName] = useState('');
 	const [originalPrice, setOriginalPrice] = useState('');
 	const [sellPrice, setSellPrice] = useState('');
+	const [expiryDays, setExpiryDays] = useState(0);
 	const [imageSelected, setImageSelected] = useState({ name: '' });
 	const [previewImage, setPreviewImage] = useState('');
 	const [buttonLoading, setButtonLoading] = useState(false);
@@ -107,6 +108,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 				setSellPrice(rowData.SellPrice);
 				setChineseName(rowData.ChineseName);
 				setTagArray(rowData?.TagArray);
+				setExpiryDays(rowData?.ExpiryDays);
 				form.setFieldsValue({
 					Name: rowData.VideoCourseName,
 					SellPrice: rowData.SellPrice,
@@ -121,6 +123,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					Requirements: rowData.Requirements,
 					Description: rowData.Description,
 					ResultsAchieved: rowData.ResultsAchieved,
+					ExpiryDays: rowData.ExpiryDays,
 					CourseForObject: rowData.CourseForObject
 				});
 
@@ -152,6 +155,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			setVideoCourseName('');
 			setOriginalPrice('');
 			setSellPrice('');
+			setExpiryDays(0);
 			setImageSelected({ name: '' });
 			form.setFieldsValue({
 				Name: '',
@@ -166,7 +170,8 @@ const ModalUpdateInfo = React.memo((props: any) => {
 				Description: '',
 				ResultsAchieved: '',
 				CourseForObject: '',
-				Image: ''
+				Image: '',
+				ExpiryDays: ''
 			});
 		}
 	}, [isModalVisible]);
@@ -194,7 +199,8 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					Requirements: requirements,
 					Description: description,
 					ResultsAchieved: resultsAchieved,
-					CourseForObject: courseForObject
+					CourseForObject: courseForObject,
+					ExpiryDays: expiryDays
 				};
 				_onSubmitEdit(temp);
 			}
@@ -265,7 +271,8 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			Requirements: requirements,
 			Description: description,
 			ResultsAchieved: resultsAchieved,
-			CourseForObject: courseForObject
+			CourseForObject: courseForObject,
+			ExpiryDays: expiryDays
 		};
 		try {
 			if (imageSelected.name === '') {
@@ -436,7 +443,34 @@ const ModalUpdateInfo = React.memo((props: any) => {
 							<div className="row p-0 m-0 custom-scroll-bar col-md-12 col-12">
 								<div className="row vc-e-d" style={{ height: imageSelected.name === '' ? 390 : 390, display: 'flex' }}>
 									<div className="row p-0 m-0 col-md-6 col-12">
-										<div className="col-md-12 col-12">
+										<div className="col-md-6 col-12">
+											<Form.Item
+												name="ExpiryDays"
+												label=" " // CHỔ NÀY BÙA ĐỀ HIỆN CÁI TOOLTIP. XÓA KHOẢN TRẮNG MẤT LUÔN TOOLTIP
+												tooltip={{
+													title: 'Nhập 0 hoặc bỏ trống thì không có hạn sử dụng',
+													icon: (
+														<div className="row ">
+															<span className="mr-1 mt-3" style={{ color: '#000' }}>
+																Số ngày sử dụng
+															</span>
+															<i className="fas fa-question-circle"></i>
+														</div>
+													)
+												}}
+												rules={[{ required: false, message: 'Bạn không được để trống' }]}
+											>
+												<Input
+													placeholder=""
+													className="style-input"
+													value={expiryDays}
+													// @ts-ignore
+													onChange={(e) => setExpiryDays(e.target.value)}
+												/>
+												{/* <InputNumber min={1} max={99999} defaultValue={3} onChange={(e: number) => setExpiryDays(e)} /> */}
+											</Form.Item>
+										</div>
+										<div className="col-md-6 col-12">
 											<Form.Item
 												name="EnglishName"
 												label="Tên tiếng Anh"

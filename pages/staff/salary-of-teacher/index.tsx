@@ -1,4 +1,5 @@
-import { InputNumber, Spin, Tooltip, Select, Popconfirm } from 'antd';
+import { InputNumber, Spin, Tooltip, Select, Popconfirm, DatePicker } from 'antd';
+import moment from 'moment';
 import React, { Fragment, useEffect, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
@@ -16,6 +17,8 @@ import { numberWithCommas } from '~/utils/functions';
 import SalaryOfTeacherDetail from '../../../components/Global/Teacher/TeacherSalary/salary-of-teacher-detail';
 import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/teacher-confirm-form';
 import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
+
+const now = new Date();
 
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -42,13 +45,22 @@ const SalaryReview = () => {
 		'Tháng 11',
 		'Tháng 12'
 	];
+
+	const getLastYear = () => {
+		return now.getMonth() == 0 ? now.getFullYear() - 1 : now.getFullYear();
+	};
+
+	const getDateNumber = (number) => {
+		return number > 10 ? number : number == 0 ? '12' : '0' + number;
+	};
+
 	const paramDefault = {
 		pageIndex: currentPage,
 		pageSize: pageSize,
 		sortType: true,
 		selectAll: true,
-		Year: new Date().getFullYear(),
-		Month: new Date().getMonth(),
+		Year: getLastYear(),
+		Month: getDateNumber(now.getMonth()),
 		TeacherName: null,
 		TeacherID: null,
 		StatusID: null
@@ -187,7 +199,7 @@ const SalaryReview = () => {
 
 	const onChangeMonth = (value) => {
 		console.log(value);
-		setParams({ ...params, Month: Number(value) });
+		setParams({ ...params, Month: Number(value.getMonth() + 1), Year: Number(value.getFullYear()) });
 	};
 
 	function daysInMonth(month, year) {
@@ -239,19 +251,15 @@ const SalaryReview = () => {
 			dataSource={payRoll}
 			columns={columns}
 			Extra={
-				<Select
-					onChange={onChangeMonth}
-					style={{ width: 200 }}
-					disabled={false}
-					className="style-input"
-					defaultValue={months[new Date().getMonth() - 1]}
-				>
-					{months.map((item, index) => (
-						<Option key={index} value={index + 1}>
-							{item}
-						</Option>
-					))}
-				</Select>
+				<DatePicker
+					defaultValue={moment(new Date(getLastYear() + '-' + getDateNumber(now.getMonth())), 'MM/yyyy')}
+					onChange={(e, a) => {
+						// @ts-ignore
+						onChangeMonth(e._d);
+					}}
+					picker="month"
+					style={{ borderRadius: 6, height: 34 }}
+				/>
 			}
 		/>
 	);

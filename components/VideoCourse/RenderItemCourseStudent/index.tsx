@@ -67,7 +67,8 @@ const RenderItemCard = (props) => {
 			Requirements: param.Requirements,
 			Description: param.Description,
 			ResultsAchieved: param.ResultsAchieved,
-			CourseForObject: param.CourseForObject
+			CourseForObject: param.CourseForObject,
+			ExpiryDays: param?.ExpiryDays
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);
@@ -175,6 +176,12 @@ const RenderItemCard = (props) => {
 									<span className="mb-1 in-1-line">
 										<i className="fas fa-check"></i> {item.CreatedOn}
 									</span>
+
+									<span className="mb-1 in-1-line">
+										<i className="fas fa-check"></i> Thời gian:{' '}
+										{item?.ExpiryDays !== null || item?.ExpiryDays > 0 ? item?.ExpiryDays + ' ngày' : 'vĩnh viễn'}
+									</span>
+
 									<div style={{ flex: 1 }} />
 									{/* button action */}
 									{userInformation.RoleID == 1 || userInformation.RoleID == 2 ? (

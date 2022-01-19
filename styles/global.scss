@@ -28,6 +28,12 @@ a {
 	box-sizing: border-box;
 }
 
+.ant-popover {
+	.ant-btn-sm {
+		padding-bottom: 1px;
+	}
+}
+
 // ======= HEADER ====== //
 @import './components/header';
 
