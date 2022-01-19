@@ -20,6 +20,8 @@ import { isBuffer } from 'util';
 import { EllipsisOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
+const now = new Date();
+
 const SalaryReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [visible, setVisible] = React.useState(false);
@@ -45,13 +47,21 @@ const SalaryReview = () => {
 		'Tháng 11',
 		'Tháng 12'
 	];
-	const { Option } = Select;
+
+	const getLastYear = () => {
+		return now.getMonth() == 0 ? now.getFullYear() - 1 : now.getFullYear();
+	};
+
+	const getDateNumber = (number) => {
+		return number > 10 ? number : number == 0 ? '12' : '0' + number;
+	};
+
 	const paramDefault = {
 		pageIndex: currentPage,
 		pageSize: pageSize,
 		// selectAll: true,
-		Year: new Date().getFullYear(),
-		Month: new Date().getMonth(),
+		Year: getLastYear(),
+		Month: getDateNumber(now.getMonth()),
 		TeacherName: null,
 		TeacherID: null,
 		StatusID: null,
@@ -356,8 +366,8 @@ const SalaryReview = () => {
 	const renderTitle = () => {
 		return (
 			<p className="font-weight-primary">
-				Xác nhận tính lương từ 01-{params.Month}-{params.Year} đến {daysInMonth(params.Month, params.Year)}-{params.Month}-
-				{params.Year} ?
+				Xác nhận tính lương từ 01-{getDateNumber(now.getMonth())}-{getLastYear()} đến{' '}
+				{daysInMonth(getDateNumber(now.getMonth()), getLastYear())}-{getDateNumber(now.getMonth())}-{getLastYear()} ?
 			</p>
 		);
 	};
@@ -379,19 +389,6 @@ const SalaryReview = () => {
 								Tính lương tháng trước
 							</button>
 						</Popconfirm>
-						{/* <Select
-							onChange={onChangeMonth}
-							style={{ width: 200 }}
-							disabled={false}
-							className="style-input w-100 mb-4"
-							defaultValue={months[new Date().getMonth() - 1]}
-						>
-							{months.map((item, index) => (
-								<Option key={index} value={index + 1}>
-									{item}
-								</Option>
-							))}
-						</Select> */}
 
 						<DatePicker
 							defaultValue={moment(new Date(), 'MM/yyyy')}
@@ -413,6 +410,11 @@ const SalaryReview = () => {
 	useEffect(() => {
 		getDataPayroll(currentPage);
 	}, [params]);
+
+	console.log(
+		'now.getMonth() == 0 ? now.getFullYear() : now.getFullYear(): ',
+		now.getMonth() == 0 ? now.getFullYear() - 1 : now.getFullYear()
+	);
 
 	return (
 		<PowerTable
@@ -470,7 +472,7 @@ const SalaryReview = () => {
 						))}
 					</Select> */}
 					<DatePicker
-						defaultValue={moment(new Date(), 'MM/yyyy')}
+						defaultValue={moment(new Date(getLastYear() + '-' + getDateNumber(now.getMonth())), 'MM/yyyy')}
 						onChange={(e, a) => {
 							// @ts-ignore
 							onChangeMonth(e._d);

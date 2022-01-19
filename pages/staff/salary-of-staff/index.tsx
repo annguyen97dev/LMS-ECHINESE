@@ -1,23 +1,19 @@
-import { InputNumber, Spin, Tooltip, Select, Popconfirm, Input, Dropdown } from 'antd';
+import { Select, Popconfirm, Input, Dropdown, DatePicker } from 'antd';
 import { useSession } from 'next-auth/client';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { RotateCcw } from 'react-feather';
-import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
+import React, { useEffect, useRef, useState } from 'react';
 import { staffSalaryApi } from '~/apiBase/staff-manage/staff-salary';
-import { teacherSalaryApi } from '~/apiBase/staff-manage/teacher-salary';
-import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
 import LayoutBase from '~/components/LayoutBase';
 import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import { useDebounce } from '~/context/useDebounce';
 import { useWrap } from '~/context/wrap';
-import { month, year } from '~/lib/month-year';
-import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
 import ConfirmForm from '../../../components/Global/StaffList/StaffSalary/staff-confirm-salary';
 import { Card } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
+import moment from 'moment';
+
+const now = new Date();
 
 const SalaryStaffReview = () => {
 	const [totalPage, setTotalPage] = useState(null);
@@ -52,13 +48,22 @@ const SalaryStaffReview = () => {
 		'Tháng 11',
 		'Tháng 12'
 	];
+
+	const getLastYear = () => {
+		return now.getMonth() == 0 ? now.getFullYear() - 1 : now.getFullYear();
+	};
+
+	const getDateNumber = (number) => {
+		return number > 10 ? number : number == 0 ? '12' : '0' + number;
+	};
+
 	const paramDefault = {
 		pageIndex: currentPage,
 		pageSize: pageSize,
 		sortType: null,
 		sort: null,
-		Year: new Date().getFullYear(),
-		Month: new Date().getMonth(),
+		Year: getLastYear(),
+		Month: getDateNumber(now.getMonth()),
 		StaffName: null,
 		// selectAll: true,
 		StaffID: null,
@@ -358,7 +363,7 @@ const SalaryStaffReview = () => {
 	};
 
 	const onChangeMonth = (value) => {
-		setParams({ ...params, Month: Number(value) });
+		setParams({ ...params, Month: Number(value.getMonth() + 1), Year: Number(value.getFullYear()) });
 	};
 
 	function daysInMonth(month, year) {
@@ -376,8 +381,8 @@ const SalaryStaffReview = () => {
 	const renderTitle = () => {
 		return (
 			<p className="font-weight-primary">
-				Xác nhận tính lương từ 01-{params.Month}-{params.Year} đến {daysInMonth(params.Month, params.Year)}-{params.Month}-
-				{params.Year} ?
+				Xác nhận tính lương từ 01-{getDateNumber(now.getMonth())}-{now.getFullYear()} đến{' '}
+				{daysInMonth(getDateNumber(now.getMonth()), now.getFullYear())}-{getDateNumber(now.getMonth())}-{now.getFullYear()} ?
 			</p>
 		);
 	};
@@ -503,19 +508,14 @@ const SalaryStaffReview = () => {
 			Extra={
 				<div className="d-none d-md-inline-block">
 					<div className="extra-table">
-						<Select
-							onChange={onChangeMonth}
-							style={{ width: 200 }}
-							disabled={false}
-							className="style-input"
-							defaultValue={months[new Date().getMonth() - 1]}
-						>
-							{months.map((item, index) => (
-								<Option key={index} value={index + 1}>
-									{item}
-								</Option>
-							))}
-						</Select>
+						<DatePicker
+							defaultValue={moment(new Date(getLastYear() + '-' + getDateNumber(now.getMonth())), 'MM/yyyy')}
+							onChange={(e, a) => {
+								// @ts-ignore
+								onChangeMonth(e._d);
+							}}
+							picker="month"
+						/>
 						{roleID == 5 && <SortBox space={true} width={200} handleSort={onSort} dataOption={sortOptionList} />}
 					</div>
 				</div>

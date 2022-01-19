@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button, Image } from 'antd';
+import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button, InputNumber } from 'antd';
 import { useForm } from 'react-hook-form';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
@@ -21,6 +21,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [level, setLevel] = useState(0);
 	const [teacherID, setTeacherID] = useState(0);
 	const [curriculumID, setCurriculumID] = useState(0);
+	const [expiryDays, setExpiryDays] = useState(0);
 	const [videoCourseName, setVideoCourseName] = useState('');
 	const [vietnamName, setVietnamName] = useState('');
 	const [videoChinaCourseName, setVideoCourseChinaName] = useState('');
@@ -61,7 +62,8 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			Description: description,
 			ResultsAchieved: resultsAchieved,
 			CourseForObject: courseForObject,
-			TeacherID: teacherID
+			TeacherID: teacherID,
+			ExpiryDays: expiryDays
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
 		setIsModalVisible(false);
@@ -84,11 +86,20 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	}, [form.getFieldValue('OriginalPrice')]);
 
 	useEffect(() => {
-		const value = form.getFieldValue('SellPrice');
+		const value = form.getFieldValue('OriginalPrice');
 		if (value !== null && value !== undefined) {
-			form.setFieldsValue({ SellPrice: parseToMoney(value.replace(/[^0-9\.]+/g, '')) });
+			form.setFieldsValue({ OriginalPrice: parseToMoney(value.replace(/[^0-9\.]+/g, '')) });
 		}
-	}, [form.getFieldValue('SellPrice')]);
+	}, [form.getFieldValue('OriginalPrice')]);
+
+	useEffect(() => {
+		let value = form.getFieldValue('ExpiryDays');
+		console.log('value');
+
+		if (value !== null && value !== undefined) {
+			form.setFieldsValue({ ExpiryDays: value.replace(/[^0-9\.]+/g, '') });
+		}
+	}, [form.getFieldValue('ExpiryDays')]);
 
 	// Call api upload image
 	const uploadFile = async (file) => {
@@ -291,7 +302,34 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 						<Form className="" form={form} layout="vertical" onFinish={() => onSubmit()}>
 							<div className="row p-0 m-0">
 								<div className="row p-0 m-0 col-md-6 col-12">
-									<div className="col-md-12 col-12">
+									<div className="col-md-6 col-12">
+										<Form.Item
+											name="ExpiryDays"
+											label=" " // CHỔ NÀY BÙA ĐỀ HIỆN CÁI TOOLTIP. XÓA KHOẢN TRẮNG MẤT LUÔN TOOLTIP
+											tooltip={{
+												title: 'Nhập 0 hoặc bỏ trống thì không có hạn sử dụng',
+												icon: (
+													<div className="row ">
+														<span className="mr-1 mt-3" style={{ color: '#000' }}>
+															Số ngày sử dụng
+														</span>
+														<i className="fas fa-question-circle"></i>
+													</div>
+												)
+											}}
+											rules={[{ required: false, message: 'Bạn không được để trống' }]}
+										>
+											<Input
+												placeholder=""
+												className="style-input"
+												value={expiryDays}
+												// @ts-ignore
+												onChange={(e) => setExpiryDays(e.target.value)}
+											/>
+											{/* <InputNumber min={1} max={99999} defaultValue={3} onChange={(e: number) => setExpiryDays(e)} /> */}
+										</Form.Item>
+									</div>
+									<div className="col-md-6 col-12">
 										<Form.Item
 											name="Name"
 											label="Tên tiếng Anh"
