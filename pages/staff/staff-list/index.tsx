@@ -27,6 +27,8 @@ import PromoteTeacher from '~/components/Global/Teacher/Teacher/PromoteTeacher';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
+import Link from 'next/link';
+import { Eye } from 'react-feather';
 
 let pageIndex = 1;
 
@@ -618,6 +620,7 @@ const StaffList = () => {
 			if (res.status == 200) {
 				setTodoApi({ ...todoApi });
 				showNoti('success', 'Chuyển vị trí thành công!');
+				return true;
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -723,14 +726,26 @@ const StaffList = () => {
 								listDataForm={listDataForm}
 							/>
 							<ResetPassForm dataRow={data} />
+							{data.RoleID === 5 && (
+								<Link
+									href={{
+										pathname: '/staff/teacher-list/teacher-detail/[slug]',
+										query: { slug: data.UserInformationID }
+									}}
+								>
+									<Tooltip title="Chi tiết giảng dạy">
+										<a className="btn btn-icon">
+											<Eye />
+										</a>
+									</Tooltip>
+								</Link>
+							)}
 							{userInformation && userInformation.RoleID == 1 && data.RoleID == 5 && (
 								<PromoteTeacher
 									isLoading={isLoading}
 									type="staff"
 									record={data}
-									_onSubmitPromoteStaff={() => {
-										_onSubmitPromoteStaff(data.UserInformationID);
-									}}
+									_onSubmitPromoteStaff={() => _onSubmitPromoteStaff(data.UserInformationID)}
 								/>
 							)}
 						</div>

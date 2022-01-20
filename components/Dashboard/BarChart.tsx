@@ -11,11 +11,12 @@ BarChartStatistical.propTypes = {
 		ID: PropTypes.number,
 		dataKey: PropTypes.string
 	}),
-	extra: PropTypes.node
+	extra: PropTypes.node,
+	colorTick: PropTypes.string
 };
 
 function BarChartStatistical(props) {
-	const { title, dataStatistical, extra } = props;
+	const { title, dataStatistical, extra, colorTick } = props;
 
 	const formatYAxis = (tickItem) => {
 		return new Intl.NumberFormat('de-DE').format(tickItem);
@@ -25,11 +26,22 @@ function BarChartStatistical(props) {
 		return new Intl.NumberFormat('de-DE').format(value);
 	};
 
+	const customizedAxisTick = ({ x, y, stroke, payload }) => {
+		console.log(payload);
+		return (
+			<g transform={`translate(${x},${y})`}>
+				<text x={0} y={0} dy={16} textAnchor="end" fill="#666">
+					{payload.value}
+				</text>
+			</g>
+		);
+	};
+
 	return (
 		<Card
 			title={
 				<div>
-					<h4>{dataStatistical[0]?.title}</h4>
+					<h4 style={{ textTransform: 'uppercase' }}>{dataStatistical[0]?.title}</h4>
 				</div>
 			}
 			style={{ borderRadius: 20 }}
@@ -40,9 +52,14 @@ function BarChartStatistical(props) {
 					<XAxis dataKey="dataKey" />
 					<YAxis type="number" tickFormatter={formatYAxis} />
 					<CartesianGrid strokeDasharray="3 3" />
-					<Tooltip formatter={formatTooltip} labelFormatter={(value) => ` ${value}`} />
+					<Tooltip
+						formatter={formatTooltip}
+						labelFormatter={(value) => {
+							return `${value}`;
+						}}
+					/>
 					<Legend />
-					<Bar dataKey="value" fill="#0080FF" name={title} />
+					<Bar dataKey="value" fill={colorTick} name={title} />
 				</BarChart>
 			</ResponsiveContainer>
 		</Card>

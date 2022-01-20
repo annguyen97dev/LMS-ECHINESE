@@ -67,14 +67,22 @@ const Cart = () => {
 
 	return (
 		<>
-			<Dropdown overlay={menu} placement="bottomRight">
+			{/* <Dropdown overlay={menu} placement="bottomRight">
 				<button className="cart-icon">
 					<ShoppingCart size={18} />
 					<div className={countNoti > 0 || countNotiProduct > 0 ? 'count-notification' : 'hide'}>
 						<span>{countNoti + countNotiProduct > 9 ? `9+` : countNoti + countNotiProduct}</span>
 					</div>
 				</button>
-			</Dropdown>
+			</Dropdown> */}
+			<div className="shopping__cart-detail d-flex justify-content-center align-items-center">
+				<a href="/cart/shopping-cart" style={{ textDecoration: 'none' }}>
+					<ShoppingCart size={18} />
+				</a>
+				<span className={countNoti > 0 ? 'count-notification' : 'hide'}>
+					<span>{countNoti > 9 ? `9+` : countNoti}</span>
+				</span>
+			</div>
 		</>
 	);
 };

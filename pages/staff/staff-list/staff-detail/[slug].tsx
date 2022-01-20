@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import ProfileBase from "~/components/Profile";
-import LayoutBase from "~/components/LayoutBase";
+import ProfileBase from '~/components/Profile';
+import LayoutBase from '~/components/LayoutBase';
 
 const StaffDetail = () => {
-  return <ProfileBase dataUser={{}} />;
+	return <ProfileBase dataUser={{}} />;
 };
 
 StaffDetail.layout = LayoutBase;
