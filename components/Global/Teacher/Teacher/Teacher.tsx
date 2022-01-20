@@ -403,6 +403,7 @@ const Teacher = () => {
 			if (res.status == 200) {
 				setFilters({ ...filters });
 				showNoti('success', 'Thăng cấp thành công!');
+				return true;
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -520,9 +521,7 @@ const Teacher = () => {
 							isLoading={isLoading}
 							type="teacher"
 							record={_}
-							_onSubmitPromoteTeacher={() => {
-								_onSubmitPromoteTeacher(_.UserInformationID);
-							}}
+							_onSubmitPromoteTeacher={() => _onSubmitPromoteTeacher(_.UserInformationID)}
 						/>
 					)}
 				</div>

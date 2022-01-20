@@ -1,26 +1,26 @@
-import {Input, Modal} from 'antd';
+import { Input, Modal } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import PowerTable from '~/components/PowerTable';
-import {useDebounce} from '~/context/useDebounce';
+import { useDebounce } from '~/context/useDebounce';
 import PackageExaminerSalary from './PackageExaminerSalary';
 
 PackageExaminerForm.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	teacherList: PropTypes.array,
-	handleCreateExaminer: PropTypes.func,
+	handleCreateExaminer: PropTypes.func
 };
 PackageExaminerForm.defaultProps = {
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	teacherList: [],
-	handleCreateExaminer: null,
+	handleCreateExaminer: null
 };
-const {Search} = Input;
+const { Search } = Input;
 function PackageExaminerForm(props) {
-	const {isLoading, teacherList, handleCreateExaminer} = props;
+	const { isLoading, teacherList, handleCreateExaminer } = props;
 	const [teacherListLocal, setTeacherListLocal] = useState<ITeacher[]>([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -34,14 +34,13 @@ function PackageExaminerForm(props) {
 	useEffect(() => {
 		teacherList.length && setTeacherListLocal(teacherList);
 	}, [teacherList]);
+
 	const onSearchTeacher = (value: string) => {
 		if (!value) {
 			setTeacherListLocal(teacherList);
 			return;
 		}
-		const newTeacherListLocal = teacherListLocal.filter((t) =>
-			t.FullNameUnicode.includes(value)
-		);
+		const newTeacherListLocal = teacherListLocal.filter((t) => t.FullNameUnicode.includes(value));
 		setTeacherListLocal(newTeacherListLocal);
 	};
 	const debounceOnSearchTeacher = useDebounce(onSearchTeacher, 500, []);
@@ -54,28 +53,24 @@ function PackageExaminerForm(props) {
 	const columns = [
 		{
 			title: 'Tên giáo viên',
-			dataIndex: 'FullNameUnicode',
+			dataIndex: 'FullNameUnicode'
 		},
 		{
 			title: 'Email',
-			dataIndex: 'Email',
+			dataIndex: 'Email'
 		},
 		{
 			title: 'SĐT',
-			dataIndex: 'Mobile',
+			dataIndex: 'Mobile'
 		},
 		{
 			title: 'Thêm',
 			width: '50px',
 			align: 'center',
 			render: (_, record: ITeacher, idx: number) => (
-				<PackageExaminerSalary
-					isLoading={isLoading}
-					examinerObj={record}
-					handleSubmit={checkHandleCreateExaminer(idx)}
-				/>
-			),
-		},
+				<PackageExaminerSalary isLoading={isLoading} examinerObj={record} handleSubmit={checkHandleCreateExaminer(idx)} />
+			)
+		}
 	];
 
 	return (
@@ -84,7 +79,7 @@ function PackageExaminerForm(props) {
 				Thêm giáo viên
 			</button>
 			<Modal
-				style={{top: 50}}
+				style={{ top: 50 }}
 				title="Danh sách giáo viên"
 				visible={isModalVisible}
 				onOk={closeModal}
@@ -102,7 +97,7 @@ function PackageExaminerForm(props) {
 						<div
 							style={{
 								width: 200,
-								marginLeft: 'auto',
+								marginLeft: 'auto'
 							}}
 						>
 							<Search

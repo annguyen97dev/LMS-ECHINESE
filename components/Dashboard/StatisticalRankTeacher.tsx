@@ -46,21 +46,21 @@ const StatisticalRankTeacher = (props) => {
 				(data.MyRank === 1 && (
 					<img
 						style={{ width: 40, height: 40, borderRadius: '100%' }}
-						src={data.Avatar.length > 0 ? data.Avatar : '/images/user.png'}
+						src={data.Avatar.length > 0 ? data.Avatar : '/images/first-place.jpg'}
 						alt="trophy img"
 					/>
 				)) ||
 				(data.MyRank === 2 && (
 					<img
 						style={{ width: 40, height: 40, borderRadius: '100%' }}
-						src={data.Avatar.length > 0 ? data.Avatar : '/images/user.png'}
+						src={data.Avatar.length > 0 ? data.Avatar : '/images/second-place.jpg'}
 						alt="trophy img"
 					/>
 				)) ||
 				(data.MyRank === 3 && (
 					<img
 						style={{ width: 40, height: 40, borderRadius: '100%' }}
-						src={data.Avatar.length > 0 ? data.Avatar : '/images/user.png'}
+						src={data.Avatar.length > 0 ? data.Avatar : '/images/third-place.jpg'}
 						alt="trophy img"
 					/>
 				))
@@ -96,7 +96,11 @@ const StatisticalRankTeacher = (props) => {
 			dataSource={dataSource}
 			getPagination={getPagination}
 			columns={columns}
-			Extra={<>Thông kê số lớp dạy của giáo viên</>}
+			Extra={
+				<>
+					<h4 style={{ textTransform: 'uppercase' }}>Thông kê xếp hạng giáo viên</h4>
+				</>
+			}
 		/>
 	);
 };

@@ -8,12 +8,18 @@ const PromoteTeacher = (props) => {
 	const onSubmit = () => {
 		if (type == 'teacher') {
 			_onSubmitPromoteTeacher().then((res) => {
-				setVisible(false);
+				console.log(res);
+				if (res) {
+					setVisible(false);
+				}
 			});
 		}
 		if (type == 'staff') {
 			_onSubmitPromoteStaff().then((res) => {
-				setVisible(false);
+				console.log(res);
+				if (res) {
+					setVisible(false);
+				}
 			});
 		}
 	};
@@ -21,6 +27,7 @@ const PromoteTeacher = (props) => {
 	return (
 		<>
 			<button
+				type="button"
 				onClick={() => {
 					setVisible(true);
 				}}

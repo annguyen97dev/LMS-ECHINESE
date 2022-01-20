@@ -20,10 +20,57 @@ import moment from 'moment';
 import StatisticalTotalLessonOfTeacher from '~/components/Dashboard/StatisticalTable';
 import StatisticalRankTeacher from '~/components/Dashboard/StatisticalRankTeacher';
 
+const StatisticalTotalDefault = {
+	Warning: 0,
+	Prewarning: 0,
+	AverageView: 0,
+	CompleteHomework: 0,
+	PrecompleteHomework: 0,
+	NotDonePaidCoursePrice: 0,
+	PrenotDonePaidCoursePrice: 0,
+	TotalVideoViews: 0,
+	PretotalVideoViews: 0,
+	VideoCourseRevenue: 0,
+	PrevideoCourseRevenue: 0,
+	ExamAppointmentResultNotDone: 0,
+	CourseExamresultNotDone: 0,
+	SetPackageResultNotDone: 0,
+	DonePaidCoursePrice: 0,
+	PredonePaidCoursePrice: 0,
+	CourseSecond3Month: 0,
+	Customer: 0,
+	PreCustomer: 0,
+	TestAppointment: 0,
+	PreTestAppointment: 0,
+	TestDone: 0,
+	PreTestDone: 0,
+	RegisterAppointment: 0,
+	PreRegisterAppointment: 0,
+	Studying: 0,
+	PreStudying: 0,
+	Reserve: 0,
+	Prereserve: 0,
+	Changecourse: 0,
+	PreChangecourse: 0,
+	Teacher: 0,
+	PreTeacher: 0,
+	Employee: 0,
+	PreEmployee: 0,
+	Submittopic: 0,
+	Marktopic: 0,
+	Remaketopic: 0,
+	Enable: true,
+	CreatedOn: '',
+	CreatedBy: '',
+	ModifiedOn: '',
+	ModifiedBy: ''
+};
+
 const Dashboard = () => {
-	const [statisticalTotal, setStatisticalTotal] = useState<IStatistical[]>([]);
+	const [statisticalTotal, setStatisticalTotal] = useState<IStatistical>(StatisticalTotalDefault);
 	const [statisticalCourse, setStatisticalCourse] = useState<IStatCourse[]>([]);
 	const [statisticalRate, setStatisticalRate] = useState<IStatRate[]>([]);
+	const [statisticalRateVideoCourse, setStatisticalRateVideoCourse] = useState<IStatRate[]>([]);
 	const [statisticalAverageAgeOfStudent, setStatisticalAverageAgeOfStudent] = useState<IStatDataBarChart[]>([]);
 	const [statisticalPercentStudentByArea, setStatisticalPercentStudentByArea] = useState<IStatDataBarChart[]>([]);
 	const [statisticalPercentStudentBySource, setStatisticalPercentStudentBySource] = useState<IStatDataBarChart[]>([]);
@@ -54,7 +101,7 @@ const Dashboard = () => {
 				setStatisticalTotal(res.data.data);
 			}
 			if (res.status == 204) {
-				setStatisticalTotal([]);
+				setStatisticalTotal(null);
 			}
 		} catch (error) {
 			// showNoti("danger", "lỗi tải dữ liệu statistical total");
@@ -171,7 +218,8 @@ const Dashboard = () => {
 				res.data.data.forEach((item) =>
 					temp.push({
 						ID: item.ID,
-						dataKey: item.CourseName.slice(0, 13).concat('...'),
+						dataKey: item.CourseName,
+						sortName: item.CourseName.slice(0, 13).concat('...'),
 						value: item.TotalPurchases,
 						title: 'Khóa học có lượt mua cao nhất'
 					})
@@ -237,9 +285,26 @@ const Dashboard = () => {
 		}
 	};
 
+	const getStatisticalRateVideoCourse = async () => {
+		setIsLoading({ status: 'GET_STAT_RATE', loading: true });
+		try {
+			let res = await statisticalApi.getStatisticalRateVideoCourse();
+			if (res.status === 200) {
+				setStatisticalRateVideoCourse(res.data.data);
+			}
+			if (res.status === 204) {
+				setStatisticalRateVideoCourse([]);
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ status: 'GET_STAT_RATE', loading: false });
+		}
+	};
+
 	useEffect(() => {
 		getStatisticalTotal();
 		getStatisticalRate();
+		getStatisticalRateVideoCourse();
 		getStatisticalCourse();
 		getAgerageAgeOfStudent();
 		getPercentOfStudentByArea();
@@ -256,170 +321,88 @@ const Dashboard = () => {
 				<>
 					<div className="row">
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={1}
-								prize="0"
-								percent="100"
-								styleName="down"
-								title="Khóa học đang mở"
-								children={<LineCard dataCard={increamentData} />}
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={1} styleName="down" title="Khóa học đang mở" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={2}
-								title="Học viên đang học"
-								prize="20"
-								percent="88"
-								children={<ModelCard dataCard={increamentData} />}
-								styleName="up"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={2} title="Học viên đang học" styleName="up" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={3}
-								prize="3"
-								percent="8"
-								children={<RippleCard dataCard={increamentData} />}
-								styleName="down"
-								title="Học viên mới đăng kí"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={3} styleName="down" title="Học viên mới đăng kí" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={2}
-								prize="3"
-								percent="10"
-								children={<AreaCard dataCard={increamentData} />}
-								styleName="down"
-								title="Học viên hẹn đăng kí"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={2} styleName="down" title="Học viên hẹn đăng kí" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							{' '}
-							<ChartCard
-								typeChart={3}
-								prize="12"
-								percent="23"
-								styleName="up"
-								title="Học viên hẹn test"
-								children={<ModelCard dataCard={increamentData} />}
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={3} styleName="up" title="Học viên hẹn test" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={1}
-								title="Học viên đến test"
-								prize="19"
-								percent="45"
-								children={<RippleCard dataCard={increamentData} />}
-								styleName="up"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={1} title="Học viên đến test" styleName="up" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={2}
-								prize="3"
-								percent="8"
-								children={<AreaCard dataCard={increamentData} />}
-								styleName="up"
-								title="Học viên đăng kí"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={2} styleName="up" title="Học viên đăng kí" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={1}
-								prize="40"
-								percent="85"
-								children={<LineCard dataCard={lineData} />}
-								styleName="up"
-								title="Học viên bảo lưu"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={1} styleName="up" title="Học viên bảo lưu" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={3}
-								prize="12"
-								percent="23"
-								styleName="up"
-								title="Bài tập đã nộp"
-								children={<ModelCard dataCard={increamentData} />}
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={3} styleName="up" title="Bài tập đã nộp" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={1}
-								title="Bài đã chấm"
-								prize="4"
-								percent="90"
-								children={<RippleCard dataCard={increamentData} />}
-								styleName="down"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={1} title="Bài đã chấm" styleName="down" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={2}
-								prize="100"
-								percent="100"
-								children={<AreaCard dataCard={increamentData} />}
-								styleName="up"
-								title="Bài không đạt"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={2} styleName="up" title="Bài không đạt" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={3} styleName="up" title="Tỷ lệ lấp đầy phòng trống" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={1} styleName="up" title="Học viên chuyển khóa" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={2} styleName="up" title="Giáo viên" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={3} styleName="up" title="Nhân viên" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={4} styleName="up" title="Học viên bị cảnh cáo" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={1} styleName="up" title="Doanh thu khóa học video" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={2} styleName="up" title="Lượt xem khóa học video" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={4} styleName="up" title="Lượt xem video trung bình" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={3} styleName="up" title="Tỉ lệ nợ học phí" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={1} styleName="up" title="Tỉ lệ hoàn thành học phí" statisticalTotal={statisticalTotal} />
+						</div>
+						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+							<ChartCard typeChart={2} styleName="up" title="Tỉ lệ nộp bài đúng hạn" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard
 								typeChart={3}
-								prize="12"
-								percent="47"
-								children={<LineCard dataCard={lineData} />}
 								styleName="up"
-								title="Tỷ lệ lấp đầy phòng trống"
+								title="Tỉ lệ quay lại sau 3 tháng"
 								statisticalTotal={statisticalTotal}
 							/>
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={1}
-								prize="12"
-								percent="47"
-								children={<LineCard dataCard={lineData} />}
-								styleName="up"
-								title="Học viên chuyển khóa"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={1} styleName="up" title="Bài hẹn test chưa chấm" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={2}
-								prize="12"
-								percent="47"
-								children={<LineCard dataCard={lineData} />}
-								styleName="up"
-								title="Giáo viên"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={2} styleName="up" title="Bài kiểm tra chưa chấm" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard
-								typeChart={3}
-								prize="12"
-								percent="47"
-								children={<LineCard dataCard={lineData} />}
-								styleName="up"
-								title="Nhân viên"
-								statisticalTotal={statisticalTotal}
-							/>
+							<ChartCard typeChart={3} styleName="up" title="Bộ đề chưa chấm" statisticalTotal={statisticalTotal} />
 						</div>
 					</div>
 				</>
@@ -444,13 +427,13 @@ const Dashboard = () => {
 	const renderStatisticalAcademic = () => {
 		if (isLoading.status === 'GET_STAT_STUDENT' && isLoading.loading == true) {
 			return (
-				<div className="col-xl-7 col-12 mb-5">
+				<div className="col-12 mb-5">
 					<Skeleton active />
 				</div>
 			);
 		} else {
 			return (
-				<div className="col-xl-7 col-12 mb-5">
+				<div className="col-12 mb-5">
 					<AcademicChart />
 				</div>
 			);
@@ -460,15 +443,38 @@ const Dashboard = () => {
 	const renderStatisticalRate = () => {
 		if (isLoading.status === 'GET_STAT_RATE' && isLoading.loading == true) {
 			return (
-				<div className="col-xl-5 col-12">
+				<div className="col-xl-6 col-12">
 					<Skeleton active />;
 				</div>
 			);
 		} else {
 			return (
-				<div className="col-xl-5 col-12">
+				<div className="col-xl-6 col-12">
 					<div className="chart-comment">
-						<RateChart statisticalRate={statisticalRate} dataPie={dataPie} isLoading={isLoading} />
+						<RateChart statisticalRate={statisticalRate} dataPie={dataPie} isLoading={isLoading} type="SELLER" />
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const renderStatisticalRateVideoCourse = () => {
+		if (isLoading.status === 'GET_STAT_RATE' && isLoading.loading == true) {
+			return (
+				<div className="col-xl-6 col-12">
+					<Skeleton active />;
+				</div>
+			);
+		} else {
+			return (
+				<div className="col-xl-6 col-12">
+					<div className="chart-comment">
+						<RateChart
+							statisticalRate={statisticalRateVideoCourse}
+							dataPie={dataPie}
+							isLoading={isLoading}
+							type="VIDEO_COURSE"
+						/>
 					</div>
 				</div>
 			);
@@ -509,7 +515,11 @@ const Dashboard = () => {
 			return (
 				<div className="row pt-5 pb-5">
 					<div className="col-12">
-						<BarChartStatistical title={'Thống kê độ tuổi của học viên'} dataStatistical={statisticalAverageAgeOfStudent} />
+						<BarChartStatistical
+							title={'Thống kê độ tuổi của học viên'}
+							dataStatistical={statisticalAverageAgeOfStudent}
+							colorTick="#c0183c"
+						/>
 					</div>
 				</div>
 			);
@@ -530,6 +540,7 @@ const Dashboard = () => {
 						<BarChartStatistical
 							title={'Thống kê phần trăm học viên theo tỉnh thành'}
 							dataStatistical={statisticalPercentStudentByArea}
+							colorTick="#0da779"
 						/>
 					</div>
 				</div>
@@ -551,6 +562,7 @@ const Dashboard = () => {
 						<BarChartStatistical
 							title={'Thống kê phần trăm học viên theo nguồn'}
 							dataStatistical={statisticalPercentStudentBySource}
+							colorTick="#dd4667"
 						/>
 					</div>
 				</div>
@@ -572,6 +584,7 @@ const Dashboard = () => {
 						<BarChartStatistical
 							title={'Thống kê khóa học có lượt mua cao nhất'}
 							dataStatistical={statisticalCoursePurchases}
+							colorTick="#162b5b"
 						/>
 					</div>
 				</div>
@@ -590,7 +603,11 @@ const Dashboard = () => {
 			return (
 				<div className="row pt-5 pb-5">
 					<div className="col-12">
-						<BarChartStatistical title={'Thống kê nghề nghiệp của học viên'} dataStatistical={statisticalJobOfStudent} />
+						<BarChartStatistical
+							title={'Thống kê nghề nghiệp của học viên'}
+							dataStatistical={statisticalJobOfStudent}
+							colorTick="#ff7c38"
+						/>
 					</div>
 				</div>
 			);
@@ -627,6 +644,7 @@ const Dashboard = () => {
 							title={'Lương theo chức vụ'}
 							dataStatistical={statisticalSalaryOfStaff}
 							extra={renderRangePickerDate()}
+							colorTick="#4cbbb9"
 						/>
 					</div>
 				</div>
@@ -638,7 +656,7 @@ const Dashboard = () => {
 		return (
 			<div className="row pt-5 pb-5">
 				<div className="col-12">
-					<StatisticalTotalLessonOfTeacher />;
+					<StatisticalTotalLessonOfTeacher />
 				</div>
 			</div>
 		);
@@ -648,7 +666,7 @@ const Dashboard = () => {
 		return (
 			<div className="row pt-5 pb-5">
 				<div className="col-12">
-					<StatisticalRankTeacher />;
+					<StatisticalRankTeacher />
 				</div>
 			</div>
 		);
@@ -665,9 +683,11 @@ const Dashboard = () => {
 
 			{renderStatisticalRevenue()}
 
+			<div className="row mt-5">{renderStatisticalAcademic()}</div>
+
 			<div className="row mt-5">
-				{renderStatisticalAcademic()}
 				{renderStatisticalRate()}
+				{renderStatisticalRateVideoCourse()}
 			</div>
 
 			{renderStatisticalCourse()}

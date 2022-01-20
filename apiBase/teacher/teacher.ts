@@ -38,6 +38,9 @@ export const teacherApi = {
 	updateTeacherForSubject(data: any) {
 		return instance.put('/api/AssignTeacherForSubject', data);
 	},
+	updateTeacherForAllSubject(params) {
+		return instance.put('/api/AssignTeacherForAllSubject', params);
+	},
 	getTeacherByProgram(params: { ProgramID: number; BranchID: number }) {
 		return instance.get<IApiResultData<{ UserInformationID: number; FullNameUnicode: string }[]>>('/api/TeacherByProgram', {
 			params

@@ -2219,6 +2219,16 @@ hr {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.limit-text-three-word {
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	width: 50px;
+	display: -webkit-box;
+	white-space: nowrap;
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .limit-text-two-line {
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;

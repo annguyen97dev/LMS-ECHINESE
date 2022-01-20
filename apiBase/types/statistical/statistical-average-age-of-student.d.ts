@@ -36,6 +36,7 @@ type IStatSalaryOfStaff = IBaseApi<{
 type IStatDataBarChart = IBaseApi<{
 	ID: number;
 	dataKey: string;
+	sortName: sting;
 	value: number;
 	title: string;
 }>;

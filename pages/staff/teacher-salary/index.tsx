@@ -14,7 +14,7 @@ import { month, year } from '~/lib/month-year';
 import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
 import SalaryOfTeacherDetail from '../../../components/Global/Teacher/TeacherSalary/salary-of-teacher-detail';
-import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
+import TeacherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
 import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/confirm-form';
 import { isBuffer } from 'util';
 import { EllipsisOutlined } from '@ant-design/icons';
@@ -264,7 +264,7 @@ const SalaryReview = () => {
 			title: 'Lương Chấm Bài',
 			width: 150,
 			dataIndex: 'SalaryFixExam',
-			render: (price, record: ITeacherSalary) => <TecherFixExam price={price} record={record} />
+			render: (price, record: ITeacherSalary) => <TeacherFixExam price={price} record={record} />
 		},
 		{
 			title: 'Lương Tổng',
