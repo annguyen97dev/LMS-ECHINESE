@@ -1,26 +1,20 @@
 import { Card, Checkbox, DatePicker, Form, Select, Spin, Table, Tabs } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useWrap } from '~/context/wrap';
+import { Modal } from 'antd';
+import { RotateCcw } from 'react-feather';
+import ConfirmAssignModal from './Teacher/ConfirmAssignModal';
+import { teacherApi } from '~/apiBase';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
 
 const { TabPane } = Tabs;
 
-const columns = [
-	{
-		title: 'Tên Chương trình học',
-		width: 200,
-		dataIndex: 'ProgramName',
-		// key: "classname",
-
-		render: (text) => <p className="font-weight-primary">{text}</p>
-	}
-];
-
 const TeacherProfile = (props) => {
 	const [form] = Form.useForm();
+	const [loading, setLoading] = useState({ type: '', status: false });
 	const {
 		register,
 		handleSubmit,
@@ -34,7 +28,7 @@ const TeacherProfile = (props) => {
 	// if (props.dataUser) {
 	//   dataUser = props.dataUser;
 	// }
-	const { dataUser, isLoading, updateTeacherID, userID, dataSubject, updateTeacherForSubject } = props;
+	const { dataUser, isLoading, updateTeacherID, userID, dataSubject, updateTeacherForSubject, onFetchData } = props;
 	const { Option } = Select;
 
 	const onSubmit = handleSubmit((data) => {
@@ -48,6 +42,55 @@ const TeacherProfile = (props) => {
 			});
 		}
 	});
+
+	const columns = [
+		{
+			title: 'Tên Chương trình học',
+			width: 200,
+			dataIndex: 'ProgramName',
+			render: (text) => <p className="font-weight-primary">{text}</p>
+		},
+
+		{
+			title: 'Trạng thái',
+			width: 150,
+			dataIndex: 'IsSelected',
+			render: (text, data) => (
+				<p className={data.IsSelected ? 'tag green' : 'tag red'}>{data.IsSelected ? 'Dạy tất cả' : 'Không được dạy tất cả'}</p>
+			)
+		},
+
+		{
+			title: 'Thao tác',
+			width: 100,
+			render: (text, data) => {
+				return (
+					<>
+						<ConfirmAssignModal data={data} _onSubmit={(info) => handleSubmitAssignment(info)} loading={loading} />
+					</>
+				);
+			}
+		}
+	];
+
+	const handleSubmitAssignment = async (info) => {
+		setLoading({ type: 'ASSIGN_TEACHER', status: true });
+		try {
+			let res = await teacherApi.updateTeacherForAllSubject({
+				teacherId: userID,
+				programId: info.key,
+				IsSelected: info.IsSelected ? false : true
+			});
+			if (res.status === 200) {
+				showNoti('success', 'Thay đổi thành công!');
+				onFetchData && onFetchData();
+				return true;
+			}
+		} catch (error) {
+		} finally {
+			setLoading({ type: 'ASSIGN_TEACHER', status: false });
+		}
+	};
 
 	const expandedRowRender = (record) => {
 		const columns = [];
@@ -78,7 +121,6 @@ const TeacherProfile = (props) => {
 				UserInformationID: userID,
 				SubjectID: e.target.value
 			};
-			console.log('Data submit:', data);
 			let res = updateTeacherForSubject(data);
 			res.then(function (rs: any) {
 				rs && rs.status == 200;
@@ -98,7 +140,6 @@ const TeacherProfile = (props) => {
 
 	useEffect(() => {
 		setValue('UserInformationID', userID);
-		console.log('Data Subject', dataSubject);
 	}, []);
 
 	if (isLoading.status == true) {

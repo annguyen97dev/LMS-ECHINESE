@@ -4,7 +4,7 @@ import NestedTable from '~/components/Elements/NestedTable';
 import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
 import SalaryOfTeacherDetail from '../TeacherSalary/salary-of-teacher-detail';
-import TecherFixExam from '../TeacherSalary/teacher-fix-exam';
+import TeacherFixExam from '../TeacherSalary/teacher-fix-exam';
 
 const SalaryTeacherNested = (props) => {
 	const { showNoti, pageSize } = useWrap();
@@ -103,7 +103,7 @@ const SalaryTeacherNested = (props) => {
 		{
 			title: 'Lương Chấm Bài',
 			dataIndex: 'SalaryFixExam',
-			render: (price, record: ITeacherSalary) => <TecherFixExam price={price} record={record} />
+			render: (price, record: ITeacherSalary) => <TeacherFixExam price={price} record={record} />
 		},
 		{
 			title: 'Lương Tổng',

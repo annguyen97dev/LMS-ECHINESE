@@ -3,7 +3,7 @@ import { instance } from '~/apiBase/instance';
 class StatisticalApi {
 	// Lấy tất cả data
 	getStatisticalTotal = (params) =>
-		instance.get<IApiResultData<IStatistical[]>>('/api/StatisticalTotal', {
+		instance.get<IApiResultData<IStatistical>>('/api/StatisticalTotal', {
 			params
 		});
 	getStatisticalRevenueYear = (params) => instance.get<IApiResultData<IStatRevenueYear[]>>('/api/StatisticalRevenueYear', { params });
@@ -29,6 +29,7 @@ class StatisticalApi {
 		instance.get<IApiResultData<IStatRankTeacherByLessons[]>>('/api/StatisticalTeacher', { params });
 	getStatisticalTotalLessonsOfTeacher = (params) =>
 		instance.get<IApiResultData<IStatTotalLessonOfTeacher[]>>('/api/StatisticalTotalLesson_Teacher', { params });
+	getStatisticalRateVideoCourse = () => instance.get<IApiResultData<IStatRate[]>>('/api/EvaluateVideoCourse', {});
 }
 
 export const statisticalApi = new StatisticalApi();

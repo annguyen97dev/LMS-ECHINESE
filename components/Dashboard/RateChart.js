@@ -4,7 +4,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF00FF'];
 
-const RateChart = ({ dataPie, statisticalRate, isLoading }) => {
+const RateChart = ({ dataPie, statisticalRate, isLoading, type }) => {
 	const renderListRate = () => {
 		return (
 			statisticalRate.length &&
@@ -30,7 +30,8 @@ const RateChart = ({ dataPie, statisticalRate, isLoading }) => {
 						<div>
 							<h4>ĐÁNH GIÁ</h4>
 						</div>
-						<div>Biểu đồ lượt đánh giá tư vấn viên</div>
+						{type === 'SELLER' && <div>Biểu đồ lượt đánh giá tư vấn viên</div>}
+						{type === 'VIDEO_COURSE' && <div>Biểu đồ đánh giá độ hài lòng với khóa học video</div>}
 					</>
 				}
 				style={{

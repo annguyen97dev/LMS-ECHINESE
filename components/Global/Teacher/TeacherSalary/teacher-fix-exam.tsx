@@ -5,8 +5,9 @@ import { numberWithCommas } from '~/utils/functions';
 import { useWrap } from '~/context/wrap';
 import PowerTable from '~/components/PowerTable';
 import { teacherSalaryApi } from '~/apiBase/staff-manage/teacher-salary';
+import  moment  from 'moment';
 
-const TecherFixExam = ({ price, record }) => {
+const TeacherFixExam = ({ price, record }) => {
 	const [visible, setVisible] = useState(false);
 	const [dataSource, setDataSource] = useState<ITeacherSalaryFixExam[]>([]);
 	const { showNoti, pageSize } = useWrap();
@@ -26,23 +27,33 @@ const TecherFixExam = ({ price, record }) => {
 	const columns = [
 		{
 			title: 'Giáo viên',
+			width: 150,
 			dataIndex: 'TeacherName',
 			render: (price, record) => <p className="font-weight-primary">{price}</p>
 		},
 		{
 			title: 'Môn học',
+			width: 100,
 			dataIndex: 'SetPackageName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Buổi học',
+			width: 100,
 			dataIndex: 'ExamTopicName',
 			render: (price, record) => <p>{price}</p>
 		},
 		{
 			title: 'Tên học viên',
+			width: 150,
 			dataIndex: 'StudentName',
 			render: (price, record) => <p>{price}</p>
+		},
+		{
+			title: 'Thời gian chấm bài',
+			width: 150,
+			dataIndex: 'CreateOn',
+			render: (price, record) => <p>{moment(price).format('DD-MM-YYYY')}</p>
 		}
 	];
 
@@ -81,4 +92,4 @@ const TecherFixExam = ({ price, record }) => {
 	);
 };
 
-export default TecherFixExam;
+export default TeacherFixExam;

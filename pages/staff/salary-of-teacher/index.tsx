@@ -16,7 +16,7 @@ import { Roles } from '~/lib/roles/listRoles';
 import { numberWithCommas } from '~/utils/functions';
 import SalaryOfTeacherDetail from '../../../components/Global/Teacher/TeacherSalary/salary-of-teacher-detail';
 import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/teacher-confirm-form';
-import TecherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
+import TeacherFixExam from '../../../components/Global/Teacher/TeacherSalary/teacher-fix-exam';
 
 const now = new Date();
 
@@ -133,7 +133,7 @@ const SalaryReview = () => {
 			title: 'Lương Chấm Bài',
 			width: 150,
 			dataIndex: 'SalaryFixExam',
-			render: (price, record: ITeacherSalary) => <TecherFixExam price={price} record={record} />
+			render: (price, record: ITeacherSalary) => <TeacherFixExam price={price} record={record} />
 		},
 		{
 			title: 'Lương Tổng',

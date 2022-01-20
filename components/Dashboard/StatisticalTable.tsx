@@ -118,7 +118,11 @@ const StatisticalTotalLessonOfTeacher = (props) => {
 				dataSource={dataSource}
 				getPagination={getPagination}
 				columns={columns}
-				Extra={<>Thông kê số lớp dạy của giáo viên</>}
+				Extra={
+					<>
+						<h4 style={{ textTransform: 'uppercase' }}>Thông kê số lớp dạy của giáo viên</h4>
+					</>
+				}
 				TitleCard={extra()}
 			/>
 		);
