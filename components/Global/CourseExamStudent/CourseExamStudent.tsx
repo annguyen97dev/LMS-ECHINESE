@@ -26,7 +26,7 @@ const CourseExamStudent = (props) => {
 		pageSize: pageSize,
 		pageIndex: 1,
 		sort: null,
-		sortType: null,
+		sortType: 1,
 		ProgramCode: null,
 		ProgramName: null,
 		Type: null,
@@ -184,12 +184,12 @@ const CourseExamStudent = (props) => {
 		if (value === 0) {
 			setTodoApi({
 				...todoApi,
-				Type: null
+				sortType: null
 			});
 		} else {
 			setTodoApi({
 				...todoApi,
-				Type: value
+				sortType: value
 			});
 		}
 	}
@@ -198,10 +198,9 @@ const CourseExamStudent = (props) => {
 		<>
 			<PowerTable
 				Extra={
-					<Select className="style-input" defaultValue={0} style={{ width: 150 }} onChange={handleChange}>
-						<Option value={0}>Tất cả</Option>
-						<Option value={1}>Bài tập</Option>
-						<Option value={2}>Bài kiểm tra</Option>
+					<Select className="style-input" defaultValue={1} style={{ width: 150 }} onChange={handleChange}>
+						<Option value={1}>Mới cập nhật</Option>
+						<Option value={2}>Từ dưới lên</Option>
 					</Select>
 				}
 				currentPage={currentPage}

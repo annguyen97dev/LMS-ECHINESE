@@ -53,67 +53,6 @@ const CourseExamAdmin = () => {
 				</>
 			)
 		}
-
-		// {
-		// 	title: 'Đề thi',
-		// 	dataIndex: 'ExamTopicName',
-		// 	render: (text, data) => (
-		// 		<Link
-		// 			href={{
-		// 				pathname: '/package/package-set-result/detail/[slug]',
-		// 				query: { slug: `${data.ID}` }
-		// 			}}
-		// 		>
-		// 			<a href="#" className="font-weight-black">
-		// 				{text}
-		// 			</a>
-		// 		</Link>
-		// 	)
-		// },
-		// {
-		// 	title: 'Level',
-		// 	dataIndex: 'SetPackageLevel',
-		// 	render: (text) => <p className="font-weight-black">{text}</p>
-		// },
-		// {
-		// 	title: 'Hình thức',
-		// 	dataIndex: 'ExamTopicTypeName',
-		// 	render: (text) => <p className="font-weight-black">{text}</p>
-		// },
-		// {
-		// 	title: 'Giáo viên chấm bài',
-		// 	dataIndex: 'TeacherName',
-		// 	render: (text) => <p className="font-weight-primary">{text}</p>
-		// },
-		// {
-		// 	title: 'Trạng thái chấm bài',
-		// 	dataIndex: 'isDone',
-		// 	render: (type) => (
-		// 		<Fragment>
-		// 			{type == true && <span className="tag green">Đã chấm xong</span>}
-		// 			{type == false && <span className="tag gray">Chưa chấm xong</span>}
-		// 		</Fragment>
-		// 	)
-		// },
-
-		// {
-		// 	render: (data) => (
-		// 		<>
-		// 			<Link
-		// 				href={{
-		// 					pathname: '/package/package-set-result/detail/[slug]',
-		// 					query: { slug: `${data.ID}` }
-		// 				}}
-		// 			>
-		// 				<Tooltip title="Kết quả bài làm">
-		// 					<button className="btn btn-icon">
-		// 						<ExclamationCircleOutlined />
-		// 					</button>
-		// 				</Tooltip>
-		// 			</Link>
-		// 		</>
-		// 	)
-		// }
 	];
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemDetail, setItemDetail] = useState();
