@@ -5,6 +5,7 @@ type IShoppingCart = IBaseApi<{
 	ImageThumbnails: string;
 	Price: number;
 	Quantity: number;
+	ExpiryDays: number;
 }>;
 
 type ICurrency = IBaseApi<{

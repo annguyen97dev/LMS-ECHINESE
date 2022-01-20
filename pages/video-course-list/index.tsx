@@ -77,6 +77,8 @@ const ItemVideo = ({ item, onRate }) => {
 							status="active"
 						/>
 
+						<div style={{}}>Thời gian còn lại: {item?.DaysLeft} ngày</div>
+
 						<div className="pr-3 pl-3 pt-3 row rate-container">
 							<Rate className="rate-start" disabled value={item.RatingNumber} />
 							<a
