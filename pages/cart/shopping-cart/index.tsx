@@ -215,6 +215,10 @@ const ShoppingCart = () => {
 					<h5>{item.VideoCourseName}</h5>
 				</div>
 
+				<div className="cart__item-detail d-none d-sm-inline-block mt-sm-0 mb-sm-0">
+					<h5 style={{ fontSize: 14 }}>Hạn: {item.ExpiryDays} ngày</h5>
+				</div>
+
 				<div className="cart__item-action d-none d-sm-inline-block d-none d-sm-inline-block col-sm-2">
 					{/* Render quantity button */}
 					<QuantityOfItems
@@ -236,6 +240,10 @@ const ShoppingCart = () => {
 				<div className="col-8 d-sm-none">
 					<div className="cart__item-detail col-12 col-sm-3 mt-3  mt-sm-0 mb-sm-0">
 						<h5>{item.VideoCourseName}</h5>
+					</div>
+
+					<div className="cart__item-detail col-12 col-sm-3 mt-3  mt-sm-0 mb-sm-0">
+						<h5 style={{ fontSize: 14 }}>Hạn: {item.ExpiryDays} ngày</h5>
 					</div>
 
 					<div className="cart__item-price">
@@ -409,4 +417,5 @@ const ShoppingCart = () => {
 		</div>
 	);
 };
+
 export default ShoppingCart;

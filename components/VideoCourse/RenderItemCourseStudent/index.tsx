@@ -87,7 +87,7 @@ const RenderItemCard = (props) => {
 	return (
 		<>
 			<div className="vc-store_container">
-				<div className="vc-store_item" style={{ height: userInformation.RoleID == 1 || userInformation.RoleID == 2 ? 300 : 300 }}>
+				<div className="vc-store_item" style={{ height: userInformation.RoleID == 1 || userInformation.RoleID == 2 ? 300 : 305 }}>
 					<div className="flip-card-front">
 						<div className="warp-image">
 							<Link
@@ -163,7 +163,7 @@ const RenderItemCard = (props) => {
 								style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', height: '100%' }}
 							>
 								<div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-									<h3 className="title mb-3">{item.VideoCourseName}</h3>
+									<h3 className="title mb-2">{item.VideoCourseName}</h3>
 									<span className="in-1-line mb-1 ">
 										<i className="fas fa-check"></i> {item.TeacherName}
 									</span>
