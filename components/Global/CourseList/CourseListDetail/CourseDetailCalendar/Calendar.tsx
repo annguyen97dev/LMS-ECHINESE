@@ -333,10 +333,9 @@ function CDCalendar(props) {
 			</div>
 		);
 
-		console.log('TeacherAttendanceID: ', TeacherAttendanceID);
-
 		return (
 			<div
+				className="calendar-item"
 				onClick={(e) => {
 					e.stopPropagation();
 					e.nativeEvent.stopImmediatePropagation();
@@ -347,7 +346,7 @@ function CDCalendar(props) {
 						TeacherAttendanceID !== 0
 							? '#80DEEA'
 							: IsExam !== undefined && IsExam == true
-							? '#FFB74D'
+							? '#FF9800'
 							: checkDate == 0
 							? btnID == undefined || btnID == null || btnID == ''
 								? '#fac10a'
@@ -356,8 +355,7 @@ function CDCalendar(props) {
 								: '#fac10a'
 							: checkDate == -1
 							? '#bdbdbd'
-							: '#3174ad',
-					borderRadius: 6
+							: '#3174ad'
 				}}
 			>
 				<Popover
@@ -651,6 +649,18 @@ function CDCalendar(props) {
 					onCloseModal={closeModal}
 				/>
 			)}
+			<div className="row m-0 p-0 pt-3" style={{ alignItems: 'center' }}>
+				<div style={{ width: 15, height: 15, backgroundColor: '#3174ad', marginRight: 10 }} />
+				<div>Chưa học</div>
+				<div style={{ width: 15, height: 15, backgroundColor: '#fac10a', marginRight: 10, marginLeft: 10 }} />
+				<div>Buổi học trong ngày</div>
+				<div style={{ width: 15, height: 15, backgroundColor: '#FF9800', marginRight: 10, marginLeft: 10 }} />
+				<div>Kiểm tra</div>
+				<div style={{ width: 15, height: 15, backgroundColor: '#bdbdbd', marginRight: 10, marginLeft: 10 }} />
+				<div>Chưa điểm danh</div>
+				<div style={{ width: 15, height: 15, backgroundColor: '#80DEEA', marginRight: 10, marginLeft: 10 }} />
+				<div>Đã điểm danh</div>
+			</div>
 		</div>
 	);
 }

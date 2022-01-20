@@ -33,17 +33,15 @@ const options = {
 			//   password: { label: 'password', type: 'password' },
 			// },
 			authorize: async (credentials: any) => {
-				console.log('==================================');
-				console.log('==================================');
-
 				console.log('DATA LOGIN: ', credentials);
 
 				try {
 					const rs = credentials?.type == 'google' ? await GoogleLogin(credentials) : await login(credentials);
 
-					// console.log("DATA: ", rs.data);
 					// @ts-ignore
-					return Promise.resolve(rs.data);
+					console.log('DATA: ', credentials?.type == 'google' ? rs : rs.data);
+					// @ts-ignore
+					return credentials?.type == 'google' ? Promise.resolve(rs) : Promise.resolve(rs.data);
 				} catch (error) {
 					// return Promise.reject(new Error(JSON.stringify(error)));
 					return Promise.reject(new Error(encodeURIComponent(JSON.stringify(error))));

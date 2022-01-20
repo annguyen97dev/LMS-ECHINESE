@@ -308,9 +308,9 @@ const VideoLearning = () => {
 		const ref = useRef(null);
 
 		useEffect(() => {
-			// console.log('eleValue?.offsetWidth: ', ref.current.clientWidth);
+			console.log('eleValue?.offsetWidth: ', ref.current.clientWidth);
 			if (ref.current.clientWidth > 0) {
-				setHei(ref.current.clientWidth / 2);
+				setHei(ref.current.clientWidth / 1.75);
 			}
 		}, [ref.current]);
 

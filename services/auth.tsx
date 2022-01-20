@@ -4,6 +4,7 @@
 // getCurrentUser(): get stored user information (including JWT)
 
 // import axios from "axios";
+import _ from '~/appConfig';
 import { instance } from './instance';
 const FormData = require('form-data');
 export const login = async (params) => {
