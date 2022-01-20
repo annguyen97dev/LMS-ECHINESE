@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { Spin } from 'antd';
 import Link from 'next/link';
 import GoogleLogin from 'react-google-login';
+import _ from '~/appConfig';
 
 type Inputs = {
 	text: string;
@@ -17,8 +18,6 @@ interface LoginInputs {
 	username: Inputs;
 	password: Inputs;
 }
-
-const ID = '286438363258-na4sogt87nerb8q0k4em373qmbglf83e.apps.googleusercontent.com';
 
 function index(props: any) {
 	const {
@@ -109,7 +108,7 @@ function index(props: any) {
 
 							{/* <div className="wrap-google-login">
 								<GoogleLogin
-									clientId={ID}
+									clientId={_.googleCredentials}
 									onSuccess={handleGoogleLogin}
 									onFailure={(e) => console.log(e)}
 									style={{ borderRadius: 999, backgroundColor: 'red' }}
