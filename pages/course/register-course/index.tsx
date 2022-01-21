@@ -272,15 +272,7 @@ const RegisterCourse = (props: any) => {
 											<Input readOnly={true} className="style-input" value={userDetail ? userDetail.AreaName : ''} />
 										</Form.Item>
 									</div>
-									{/* <div className="col-md-6 col-12">
-										<Form.Item label="Quận/Huyện">
-											<Input
-												readOnly={true}
-												value={userDetail ? userDetail.DistrictName : ''}
-												className="style-input"
-											/>
-										</Form.Item>
-									</div> */}
+
 									<div className="col-md-6 col-12">
 										<Form.Item label="Tư vấn viên">
 											<Input

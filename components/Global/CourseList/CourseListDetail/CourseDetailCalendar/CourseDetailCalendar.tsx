@@ -133,22 +133,25 @@ function CourseDetailCalendar(props) {
 	return (
 		<>
 			<TitlePage title="Chi tiết khóa học" />
-			{isAdmin ? (
-				<CDCalendar
-					isLoading={isLoading}
-					isGetRecordList={true}
-					isUploadDocument={true}
-					isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
-					eventList={calendarDateFormat(calendarList)}
-					handleUploadDocument={onUploadDocument}
-				/>
-			) : (
-				<CDCalendar
-					isLoading={isLoading}
-					isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
-					eventList={calendarDateFormat(calendarList)}
-				/>
-			)}
+
+			<div className="hide-rbc-event">
+				{isAdmin ? (
+					<CDCalendar
+						isLoading={isLoading}
+						isGetRecordList={true}
+						isUploadDocument={true}
+						isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
+						eventList={calendarDateFormat(calendarList)}
+						handleUploadDocument={onUploadDocument}
+					/>
+				) : (
+					<CDCalendar
+						isLoading={isLoading}
+						isLoaded={isLoading.type === 'FETCH_COURSE_DETAIL_CALENDAR' && isLoading.status ? false : true}
+						eventList={calendarDateFormat(calendarList)}
+					/>
+				)}
+			</div>
 		</>
 	);
 }

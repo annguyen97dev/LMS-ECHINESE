@@ -178,7 +178,7 @@ const ScheduleStudyTeacher = () => {
 	return (
 		<div className="row">
 			<TitlePage title="Lịch dạy giáo viên" />
-			<div className="col-12">
+			<div className="col-12 hide-rbc-event">
 				<Card>
 					<CDCalendar
 						isLoaded={isLoading.type === 'FETCH_SCHEDULE_TEACHER' && isLoading.status ? false : true}

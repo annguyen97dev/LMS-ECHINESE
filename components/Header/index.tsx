@@ -3,6 +3,7 @@ import { Popover, Button, Input, Select, Drawer } from 'antd';
 import { Grid } from 'react-feather';
 import { useWrap } from '~/context/wrap';
 import { signIn, signOut, useSession } from 'next-auth/client';
+import _ from '~/appConfig';
 
 import Link from 'next/link';
 
@@ -23,6 +24,7 @@ import TitlePage from '../Elements/TitlePage';
 import TitlePageHeader from '../Elements/TitlePageHeader';
 import Notifiaction from './notification';
 import Cart from './cart';
+import { GoogleLogout, GoogleLoginProps } from 'react-google-login';
 
 let countOpen = 0;
 export default function Header({
@@ -54,7 +56,6 @@ export default function Header({
 			<SearchOutlined />
 		</div>
 	);
-
 
 	const moveToLogin = () => {
 		signIn();
@@ -90,6 +91,18 @@ export default function Header({
 					<span className="function-name">Log out</span>
 				</a>
 			</li>
+			{/* <li>
+				<div className="wrap-google-logout">
+					<GoogleLogout clientId={_.googleCredentials} icon={false} onLogoutSuccess={signOut}>
+						<a href="#" onClick={() => (signOut(), localStorage.removeItem('dataUserEchinese'))}>
+							<span className="icon logout">
+								<LogoutOutlined />
+							</span>
+							<span className="function-name">Log out</span>
+						</a>
+					</GoogleLogout>
+				</div>
+			</li> */}
 		</ul>
 	);
 

@@ -10,6 +10,7 @@ import { useWrap } from '~/context/wrap';
 import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
 import { usePageVisibility } from '~/utils/functions';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
+// import YoutubePlayer from 'react-native-youtube-iframe';
 
 const initDetails = {
 	VideoCourseName: '',
@@ -46,6 +47,8 @@ const useBeforeUnload = (fn) => {
 		return 'Bạn thật sự muốn đóng video đang xem?';
 	};
 };
+
+let ytplayer = '';
 
 const VideoLearning = () => {
 	const router = useRouter();
@@ -300,8 +303,7 @@ const VideoLearning = () => {
 		videoStudy.current.pause();
 	};
 
-	const fake =
-		"<iframe width='560' height='315' src='https://www.youtube.com/embed/m_IN8LPRlcs' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+	const fake = 'https://www.youtube.com/embed/m_IN8LPRlcs';
 
 	function Iframe(props) {
 		const [hei, setHei] = useState(0);
@@ -325,6 +327,12 @@ const VideoLearning = () => {
 		);
 	}
 
+	console.log('videoStudy: ', videoStudy);
+
+	// useEffect(() => {
+	// 	ytplayer = document.getElementById('movie_player');
+	// }, []);
+
 	// RENDER
 	return (
 		<div className="container-fluid p-0" style={{ overflow: 'hidden' }}>
@@ -334,19 +342,30 @@ const VideoLearning = () => {
 					<div className="wrap-video pl-3">
 						<div ref={ref} className="wrap-video__video">
 							<div className="box-video" ref={boxVideo}>
+								{/* <h1
+									onClick={() => {
+										console.log('ytplayer.getCurrentTime(): ', videoStudy?.getCurrentTime());
+									}}
+								>
+									sssss
+								</h1> */}
 								{currentVideo[0] == 'h' ? (
 									<>
-										{currentLession.Type === 0 ? (
-											<video src={currentVideo} ref={videoStudy} controls>
+										{currentLession.Type !== 0 ? (
+											<video src={fake} ref={videoStudy} controls>
 												<track default kind="captions" />
 											</video>
 										) : (
 											<iframe
+												id="movie_player"
+												ref={videoStudy}
 												className="html-iframe"
 												// http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html
-												src={currentVideo}
+												src={fake}
 												title="cc"
+												allowFullScreen
 											></iframe>
+											// <YoutubePlayer height={250} ref={playerRef} videoId={'DC471a9qrU4'} />
 										)}
 									</>
 								) : (
