@@ -351,22 +351,20 @@ const VideoLearning = () => {
 								</h1> */}
 								{currentVideo[0] == 'h' ? (
 									<>
-										{currentLession.Type !== 0 ? (
-											<video src={fake} ref={videoStudy} controls>
+										{/* {currentLession.Type !== 0 ? (
+											<video src={currentVideo} ref={videoStudy} controls>
 												<track default kind="captions" />
 											</video>
-										) : (
-											<iframe
-												id="movie_player"
-												ref={videoStudy}
-												className="html-iframe"
-												// http://lmsv2.monamedia.net/Upload/HTML5LessonDetail/dac149ea-e684-4803-aa58-e872cdcc4aa6/index.html
-												src={fake}
-												title="cc"
-												allowFullScreen
-											></iframe>
-											// <YoutubePlayer height={250} ref={playerRef} videoId={'DC471a9qrU4'} />
-										)}
+										) : ( */}
+										<iframe
+											id="movie_player"
+											ref={videoStudy}
+											className="html-iframe"
+											src={currentVideo}
+											title="cc"
+											allowFullScreen
+										/>
+										{/* )} */}
 									</>
 								) : (
 									<Iframe iframe={currentVideo} allow="autoplay" />
