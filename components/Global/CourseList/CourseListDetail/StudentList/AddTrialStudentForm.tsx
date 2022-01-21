@@ -37,6 +37,9 @@ const AddTrialStudentForm = (props) => {
 				const _detail = await studentApi.getWithID(value);
 				//@ts-ignore
 				_detail.status == 200 && setUserDetail(_detail.data.data);
+				//@ts-ignore
+				_detail.status == 200 &&
+					(setUserDetail(_detail.data.data), form.setFieldsValue({ UserInformationID: _detail.data.data.UserInformationID }));
 			} catch (err) {
 				showNoti('danger', err.message);
 			} finally {
@@ -216,7 +219,19 @@ const AddTrialStudentForm = (props) => {
 
 							<div className="col-md-6 col-12">
 								<Form.Item label="Họ và tên">
-									<Input value={userDetail ? userDetail.FullNameUnicode : ''} className="style-input" readOnly={true} />
+									<Select
+										className="style-input"
+										showSearch
+										optionFilterProp="children"
+										value={userDetail ? userDetail.UserInformationID : ''}
+										onChange={(value) => handleChangeUser(value)}
+									>
+										{students?.map((item, index) => (
+											<Option key={index} value={item.UserInformationID}>
+												{item.FullNameUnicode}
+											</Option>
+										))}
+									</Select>
 								</Form.Item>
 							</div>
 						</div>
@@ -234,7 +249,19 @@ const AddTrialStudentForm = (props) => {
 							</div>
 							<div className="col-md-6 col-12">
 								<Form.Item label="SĐT">
-									<Input readOnly={true} value={userDetail ? userDetail.Mobile : ''} className="style-input" />
+									<Select
+										className="style-input"
+										showSearch
+										optionFilterProp="children"
+										value={userDetail ? userDetail.UserInformationID : ''}
+										onChange={(value) => handleChangeUser(value)}
+									>
+										{students?.map((item, index) => (
+											<Option key={index} value={item.UserInformationID}>
+												{item.Mobile}
+											</Option>
+										))}
+									</Select>
 								</Form.Item>
 							</div>
 						</div>

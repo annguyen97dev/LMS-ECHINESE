@@ -33,8 +33,41 @@ function index(props: any) {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
+		// Load the required SDK asynchronously for facebook, google and linkedin
+		(function (d, s, id) {
+			var js,
+				fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s);
+			js.id = id;
+			js.src = '//connect.facebook.net/en_US/sdk.js';
+			fjs.parentNode.insertBefore(js, fjs);
+		})(document, 'script', 'facebook-jssdk');
+
+		// @ts-ignore
+		window.fbAsyncInit = function () {
+			// @ts-ignore
+			window.FB.init({
+				appId: '4898676230192926',
+				cookie: true, // enable cookies to allow the server to access the session
+				xfbml: true, // parse social plugins on this page
+				version: 'v2.8' // use version 2.1
+			});
+		};
 		return () => {};
 	}, []);
+
+	const facebookLogin = () => {
+		/*window.FB.login(
+            this.checkLoginState(), 
+            { scope : 'email, public_profile' } //Add scope whatever you need about the facebook user
+        ); */
+
+		// @ts-ignore
+		window.FB.login(function (resp) {
+			console.log('resp: ', resp);
+		});
+	};
 
 	const _Submit = async (data: {}) => {
 		setLoading(true);
@@ -118,6 +151,20 @@ function index(props: any) {
 										<i className="fab fa-google" style={{ fontSize: 20, marginRight: 8 }}></i> Google
 									</div>
 								</GoogleLogin>
+							</div>
+							<div className="wrap-google-login">
+								<div
+									onClick={facebookLogin}
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center',
+										paddingTop: 2,
+										backgroundColor: 'red'
+									}}
+								>
+									<i className="fab fa-google" style={{ fontSize: 20, marginRight: 8 }}></i> Google
+								</div>
 							</div> */}
 
 							<div className={styles.boxSignup}>
