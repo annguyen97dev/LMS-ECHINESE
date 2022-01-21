@@ -144,15 +144,50 @@
 	}
 }
 
+.social-login {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
 .wrap-google-login {
+	margin-top: -20px;
 	button {
 		border-radius: 99px !important;
 		box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px !important;
 		background: #dd4a3a !important;
+		height: 54px;
+		width: 130px;
+		margin-top: -10px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 	div {
 		color: #fff;
+		text-transform: none;
 	}
+}
+
+.wrap-google-facebook {
+	border-radius: 99px !important;
+	box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px !important;
+	background: #1c6fd0 !important;
+	height: 54px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 130px;
+	cursor: pointer;
+
+	div {
+		color: #fff;
+	}
+}
+
+.wrap-google-facebook:hover {
+	background: #2e86eb !important;
 }
 
 .wrap-google-logout {

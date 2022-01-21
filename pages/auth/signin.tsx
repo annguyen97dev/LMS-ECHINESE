@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { providers, signIn, csrfToken, getProviders } from 'next-auth/client';
+import { signIn, getProviders } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import LoginForm from '~/components/LoginForm';
 import { useWrap } from '~/context/wrap';
@@ -9,14 +9,11 @@ function SignIn({ providers, csrfToken }) {
 	const { showNoti } = useWrap();
 	const router = useRouter();
 	const [haveError, setHaveError] = useState('');
-	// console.log("Csrf token: ", csrfToken);
 
 	useEffect(() => {
 		if (router.query?.error) {
 			const { error } = router.query;
-
 			const erData = JSON.parse(error.toString().split('Error:')[0]);
-
 			switch (erData.status) {
 				case 200:
 					showNoti('success', 'Đăng nhập thành công');
@@ -34,24 +31,20 @@ function SignIn({ providers, csrfToken }) {
 					console.log(JSON.stringify(erData));
 					break;
 			}
-			// router.replace("/", undefined, { shallow: true });
 		}
 		return () => {};
 	}, []);
 
 	const _Submit = (data) => {
-		console.log('data', data);
 		signIn('credentials-signin', {
 			...data,
 			callbackUrl: router.query?.callbackUrl ?? '/'
 		});
 	};
 
-	console.log('Object: ', Object);
-
 	return (
 		<>
-			<LoginForm onSubmit={_Submit} onGoogleLogin={_Submit} csrfToken={csrfToken} error={haveError} />
+			<LoginForm onSubmit={_Submit} csrfToken={csrfToken} error={haveError} />
 		</>
 	);
 }
@@ -62,7 +55,6 @@ export default SignIn;
 
 export async function getServerSideProps(context) {
 	const providers = await getProviders();
-	console.log('providers', providers);
 	return {
 		props: { providers }
 	};
