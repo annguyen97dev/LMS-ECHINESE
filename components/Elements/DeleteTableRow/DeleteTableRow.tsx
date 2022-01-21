@@ -15,7 +15,7 @@ const DeleteTableRow = (props) => {
 	};
 	return (
 		<>
-			<Tooltip title={title || 'Đóng phòng học'}>
+			<Tooltip title={title || 'Xóa bộ đề'}>
 				<button
 					type="button"
 					className="btn btn-icon delete"
