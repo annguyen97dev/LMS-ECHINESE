@@ -1,0 +1,36 @@
+.dev__screen {
+	background: url(../../public/images/accessme.jpg) no-repeat center center;
+	height: 100vh;
+	&-content {
+		height: 200px;
+		background: rgba(255, 255, 255, 0.25);
+		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		border-radius: 10px;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+	}
+}
+
+.dev__main {
+	background: url(../../public/images/devwallpaper.jpg) no-repeat center center;
+	background-size: cover;
+	height: 100vh;
+	&-screen {
+		height: 90vh;
+		width: 1000px;
+		background: rgba(255, 255, 255, 0.25);
+		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		border-radius: 10px;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		text-overflow: hidden;
+	}
+	&-redirect {
+		height: 60px;
+		.ant-form-item {
+			margin: 0 !important;
+		}
+	}
+}

@@ -7,9 +7,10 @@ import moment from 'moment';
 import { courseOfStudentApi } from '~/apiBase/customer/parents/courses-of-student';
 import { courseOfStudentPriceApi } from '~/apiBase/course/course-of-student-price';
 import { PaymentMethod } from '~/lib/payment-method/payment-method';
+import { numberWithCommas } from '~/utils/functions';
 
 const AddTrialStudentForm = (props) => {
-	const { CourseID, onFetchData } = props;
+	const { CourseID, onFetchData, coursePrice } = props;
 	const [visible, setVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const [branch, setBranch] = useState<IBranch[]>();
@@ -174,6 +175,9 @@ const AddTrialStudentForm = (props) => {
 			>
 				<Form form={form} onFinish={_onSubmit} layout="vertical">
 					<div className="row">
+						<div className="col-12">
+							<p className="font-weight-green">Giá khóa học: {numberWithCommas(coursePrice)}vnd</p>
+						</div>
 						<div className="row m-0" style={{ width: '100%' }}>
 							<div className="col-md-6 col-12">
 								<Form.Item name="isTrial" label=" " required={false}>

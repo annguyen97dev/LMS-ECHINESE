@@ -9,14 +9,15 @@ import { useWrap } from '~/context/wrap';
 import AddTrialStudentForm from './AddTrialStudentForm';
 
 StudentsList.propTypes = {
-	courseID: PropTypes.number
+	courseID: PropTypes.number,
+	coursePrice: PropTypes.number
 };
 StudentsList.defaultProps = {
 	courseID: 0
 };
 
 function StudentsList(props) {
-	const { courseID: ID } = props;
+	const { courseID: ID, coursePrice } = props;
 	const { showNoti, userInformation } = useWrap();
 	const [studentList, setStudentList] = useState<IStudentListInCourse[]>([]);
 	const [isLoading, setIsLoading] = useState({
@@ -110,6 +111,7 @@ function StudentsList(props) {
 					(userInformation.RoleID == 1 || userInformation.RoleID == 2 || userInformation.RoleID == 5) && (
 						<AddTrialStudentForm
 							CourseID={ID}
+							coursePrice={coursePrice}
 							onFetchData={() => {
 								setFilters({ ...filters });
 							}}
