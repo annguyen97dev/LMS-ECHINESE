@@ -4,6 +4,7 @@ import { RotateCcw } from 'react-feather';
 
 const ConfirmAssignModal = (props) => {
 	const { data, _onSubmit, loading } = props;
+	console.log(data);
 	const [isVisible, setIsVisible] = useState(false);
 
 	const handleSubmit = () => {
@@ -35,7 +36,11 @@ const ConfirmAssignModal = (props) => {
 			>
 				<div className="row">
 					<div className="col-12">
-						<h5>Xác nhận giáo viên được dạy tất cả các môn trong chương trình</h5>
+						{data && data.IsSelected ? (
+							<h5>Xác nhận giáo viên không được dạy tất cả các môn trong chương trình</h5>
+						) : (
+							<h5>Xác nhận giáo viên được dạy tất cả các môn trong chương trình</h5>
+						)}
 					</div>
 					<div className="col-12">
 						<button

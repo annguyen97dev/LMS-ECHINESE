@@ -252,6 +252,7 @@ export default function Header({
 						{userInformation?.RoleID !== undefined &&
 							userInformation.RoleID !== 1 &&
 							userInformation.RoleID !== 2 &&
+							userInformation.RoleID !== 4 &&
 							userInformation.RoleID !== 5 &&
 							userInformation.RoleID !== 6 &&
 							userInformation.RoleID !== 10 && (
