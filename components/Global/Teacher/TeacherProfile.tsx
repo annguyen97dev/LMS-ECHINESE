@@ -86,6 +86,11 @@ const TeacherProfile = (props) => {
 				onFetchData && onFetchData();
 				return true;
 			}
+			if (res.status === 204) {
+				showNoti('danger', 'Chưa có môn học trong chương trình này!');
+				onFetchData && onFetchData();
+				return true;
+			}
 		} catch (error) {
 		} finally {
 			setLoading({ type: 'ASSIGN_TEACHER', status: false });
