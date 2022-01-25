@@ -1,11 +1,14 @@
-import { Form, Input, Spin } from 'antd';
+import { Form, Input, Spin, Select } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { devApi } from '~/apiBase/dev/dev';
-import { Select } from 'antd';
-import AuthLayout from '~/components/AuthLayout';
+import { signIn, getProviders } from 'next-auth/client';
 
 export default function BelongingToDev(props) {
 	const [isAccess, setIsAccess] = useState(false);
+	const [level, setLevel] = useState([]);
+	const [grandMenu, setGrandMenu] = useState([]);
+	const [parentMenu, setParentMenu] = useState([]);
+	const [childMenu, setChildMenu] = useState([]);
 	const [form] = Form.useForm();
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const { Option } = Select;
@@ -54,16 +57,32 @@ export default function BelongingToDev(props) {
 	};
 
 	const handleRedirect = async (data) => {
-		console.log(data);
 		setIsLoading({ type: 'REDIRECT', status: true });
 		try {
 			let res = await devApi.loginByDev(data);
 			if (res.status === 200) {
+				console.log(res.data);
+				console.log(res.headers);
 				setIsAccess(true);
+				signIn('credentials-dev-signin', {
+					...data,
+					callbackUrl: '/'
+				});
 			}
 		} catch (error) {
 		} finally {
 			setIsLoading({ type: 'REDIRECT', status: true });
+		}
+	};
+
+	const handleSelect = async (event) => {
+		console.log(event);
+		setIsLoading({ type: 'SELECT_ROLE', status: true });
+		try {
+			let res = await devApi.getAllMenuByRole({ roleId: 1 });
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'SELECT_ROLE', status: true });
 		}
 	};
 
@@ -79,7 +98,7 @@ export default function BelongingToDev(props) {
 									className="d-flex justify-content-center align-items-center"
 									style={{ width: '100%' }}
 								>
-									<Select className="style-input">
+									<Select className="style-input" onChange={handleSelect}>
 										{useAllRoles &&
 											useAllRoles.map((item, index) => {
 												return (
@@ -105,4 +124,10 @@ export default function BelongingToDev(props) {
 	};
 
 	return <>{isAccess ? renderMainScreen() : renderInputPassScreen()}</>;
+}
+export async function getServerSideProps(context) {
+	const providers = await getProviders();
+	return {
+		props: { providers }
+	};
 }

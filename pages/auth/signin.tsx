@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import LoginForm from '~/components/LoginForm';
 import { useWrap } from '~/context/wrap';
 import AuthLayout from '~/components/AuthLayout';
+import { Console } from 'console';
 
 function SignIn({ providers, csrfToken }) {
 	const { showNoti } = useWrap();
@@ -36,6 +37,7 @@ function SignIn({ providers, csrfToken }) {
 	}, []);
 
 	const _Submit = (data) => {
+		console.log(data);
 		signIn('credentials-signin', {
 			...data,
 			callbackUrl: router.query?.callbackUrl ?? '/'

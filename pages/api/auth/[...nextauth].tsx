@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import { SocialLogin, login } from '~/services/auth';
+import { SocialLogin, login, loginByDev } from '~/services/auth';
 
 const options = {
 	providers: [
@@ -12,6 +12,19 @@ const options = {
 				try {
 					const rs: any = credentials?.isSocial ? await SocialLogin(credentials) : await login(credentials);
 					return credentials?.isSocial ? Promise.resolve(rs) : Promise.resolve(rs.data);
+				} catch (error) {
+					return Promise.reject(new Error(encodeURIComponent(JSON.stringify(error))));
+				}
+			}
+		}),
+		Providers.Credentials({
+			id: 'credentials-dev-signin',
+			name: 'Dev signin',
+			authorize: async (credentials: any) => {
+				console.log('DEV LOGIN: ', credentials);
+				try {
+					const rs: any = await loginByDev(credentials);
+					return Promise.resolve(rs.data);
 				} catch (error) {
 					return Promise.reject(new Error(encodeURIComponent(JSON.stringify(error))));
 				}

@@ -129,6 +129,7 @@ export default function ContractList() {
 					setContractCustomerList([]);
 				}
 				if (res.status == 200) {
+					console.log(res.data.data);
 					setContractCustomerList(res.data.data);
 					if (res.data.data.length < 1) {
 						handleReset();
@@ -179,7 +180,6 @@ export default function ContractList() {
 						title: item.CourseName,
 						value: item.ID
 					}));
-					console.log(newData);
 					setDataFunc('CourseID', newData);
 				}
 			} catch (error) {
@@ -289,6 +289,7 @@ export default function ContractList() {
 	const columns = [
 		{
 			title: 'Học viên',
+			width: 140,
 			dataIndex: 'FullNameUnicode',
 			...FilterColumn('FullNameUnicode', onSearch, handleReset, 'text'),
 			className: activeColumnSearch === 'ID' ? 'active-column-search' : '',
@@ -296,17 +297,35 @@ export default function ContractList() {
 		},
 		{
 			title: 'Khóa học',
+			width: 200,
 			dataIndex: 'CourseName'
-			// ...FilterColumn("city")
+		},
+		{
+			title: 'Chương trình',
+			width: 120,
+			dataIndex: 'ProgramName'
+		},
+		{
+			title: 'Bắt đầu',
+			width: 120,
+			dataIndex: 'StartDay',
+			render: (a) => <p>{a ? moment(a).format('DD/MM/YYYY') : ''}</p>
+		},
+		{
+			title: 'Kết thúc',
+			width: 120,
+			dataIndex: 'EndDay',
+			render: (a) => <p>{a ? moment(a).format('DD/MM/YYYY') : ''}</p>
 		},
 		{
 			title: 'Ngày tạo',
+			width: 120,
 			dataIndex: 'CreatedOn',
-			// ...FilterDateColumn("city")
 			render: (a) => <p>{moment(a).format('DD/MM/YYYY')}</p>
 		},
 		{
 			title: 'Chấp nhận',
+			width: 120,
 			dataIndex: 'Accept',
 			render: (Accept, record: IContractCustomerList, idx) => (
 				<Switch
@@ -320,6 +339,7 @@ export default function ContractList() {
 		},
 		{
 			title: '',
+			width: 120,
 			render: (record) => (
 				<>
 					<Link
