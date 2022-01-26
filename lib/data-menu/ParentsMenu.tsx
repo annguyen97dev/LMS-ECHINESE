@@ -1,5 +1,5 @@
 import React from 'react';
-import { Airplay, FileText, Home, User, UserCheck } from 'react-feather';
+import { Home } from 'react-feather';
 
 export const ParentsParentMenu = [
 	{
@@ -19,7 +19,7 @@ export const ParentsChildMenu = [
 				Key: '/newsfeed',
 				Route: '/newsfeed',
 				Icon: '',
-				Text: 'Newsfeed'
+				Text: 'Tin tức'
 			},
 			{
 				TypeItem: 'single',
@@ -54,7 +54,7 @@ export const ParentsChildMenu = [
 				Key: '/parents/roll-up-student',
 				Route: '/parents/roll-up-student',
 				Icon: '',
-				Text: 'Chi tiêt điểm danh'
+				Text: 'Chi tiết điểm danh'
 			}
 		]
 	}

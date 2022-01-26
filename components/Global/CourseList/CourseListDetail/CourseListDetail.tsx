@@ -226,7 +226,7 @@ const CourseListDetail = () => {
 						}
 						key="3"
 					>
-						<StudentsList courseID={parseIntID} coursePrice={courseDetail.Price} />
+						<StudentsList courseID={parseIntID} coursePrice={courseDetail?.Price} />
 					</TabPane>
 				)}
 
