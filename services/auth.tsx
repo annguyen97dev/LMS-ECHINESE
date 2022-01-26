@@ -16,6 +16,20 @@ export const login = async (params) => {
 	}
 };
 
+export const loginByDev = async (params) => {
+	try {
+		const formData = new FormData();
+		formData.append('roleId', params.roleId);
+		const res = await instance.post('/api/LoginByDev', formData, {
+			headers: formData.getHeaders()
+		});
+		return res;
+	} catch (error) {
+		console.log('login error', error);
+		return Promise.reject(error);
+	}
+};
+
 export const registerAPI = async (params: { username: String; email: String; password: String; roles: Array<String> }) => {
 	try {
 		const res = await instance.post('/auth/signup', params);

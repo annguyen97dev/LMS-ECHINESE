@@ -158,10 +158,8 @@ export const WrapProvider = ({ children }) => {
 	};
 
 	useEffect(() => {
-		// console.log('Session: ', session);
-
 		if (loading && typeof session !== 'undefined' && session !== null) {
-			if (path.search('signin') < 1) {
+			if (path.search('signin') < 1 && path.search('dev') < 1) {
 				getNewDataUser();
 				getRoles(0);
 				getRoles(1);
