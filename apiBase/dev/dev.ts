@@ -1,5 +1,4 @@
 import { instance } from '../instance';
-const url = '/api/Document';
 
 export const devApi = {
 	// Lấy tất cả data

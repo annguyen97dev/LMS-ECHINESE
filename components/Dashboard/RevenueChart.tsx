@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-	Area,
-	Bar,
-	CartesianGrid,
-	ComposedChart,
-	Legend,
-	Line,
-	ResponsiveContainer,
-	Tooltip,
-	XAxis,
-	YAxis,
-	AreaChart,
-	Brush,
-	LineChart
-} from 'recharts';
-import { Card, Radio, Select } from 'antd';
+import { Bar, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, LineChart } from 'recharts';
+import { Card, Radio, Select, Skeleton } from 'antd';
 import { statisticalApi } from './../../apiBase/statistical/statistical-total';
 
 const RevenueChart = () => {
@@ -206,24 +192,32 @@ const RevenueChart = () => {
 	}, [todoApi]);
 	return (
 		<>
-			<Card
-				title={<h4>BIỂU ĐỒ DOANH THU</h4>}
-				style={{ borderRadius: 20 }}
-				extra={
-					<>
-						{renderExtra()}
-						<Radio.Group onChange={onChange} optionType="button" buttonStyle="solid" value={typeView}>
-							<Radio.Button value={3}>Ngày</Radio.Button>
-							<Radio.Button value={1}>Tháng</Radio.Button>
-							<Radio.Button value={2}>Năm</Radio.Button>
-						</Radio.Group>
-					</>
-				}
-			>
-				<ResponsiveContainer width="100%" height={280}>
-					{renderView()}
-				</ResponsiveContainer>
-			</Card>
+			{isLoading.status === 'GET_STAT_REVENUE' && isLoading.loading == true ? (
+				<Skeleton active />
+			) : (
+				<div className="row pt-5">
+					<div className="col-12">
+						<Card
+							title={<h4>BIỂU ĐỒ DOANH THU</h4>}
+							style={{ borderRadius: 20 }}
+							extra={
+								<>
+									{renderExtra()}
+									<Radio.Group onChange={onChange} optionType="button" buttonStyle="solid" value={typeView}>
+										<Radio.Button value={3}>Ngày</Radio.Button>
+										<Radio.Button value={1}>Tháng</Radio.Button>
+										<Radio.Button value={2}>Năm</Radio.Button>
+									</Radio.Group>
+								</>
+							}
+						>
+							<ResponsiveContainer width="100%" height={280}>
+								{renderView()}
+							</ResponsiveContainer>
+						</Card>
+					</div>
+				</div>
+			)}
 		</>
 	);
 };

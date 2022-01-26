@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWrap } from '~/context/wrap';
 import PowerTable from '~/components/PowerTable';
 import { statisticalApi } from '~/apiBase/statistical/statistical-total';
+import { Skeleton } from 'antd';
 
 const StatisticalRankTeacher = (props) => {
 	const [dataSource, setDataSource] = useState<IStatRankTeacherByLessons[]>();
@@ -90,18 +91,30 @@ const StatisticalRankTeacher = (props) => {
 	};
 
 	return (
-		<PowerTable
-			loading={isLoading}
-			totalPage={totalPage}
-			dataSource={dataSource}
-			getPagination={getPagination}
-			columns={columns}
-			Extra={
-				<>
-					<h4 style={{ textTransform: 'uppercase' }}>Thông kê xếp hạng giáo viên</h4>
-				</>
-			}
-		/>
+		<>
+			{isLoading.type === 'GET_ALL' && isLoading.status == true ? (
+				<div className="col-xl-6 col-12">
+					<Skeleton active />
+				</div>
+			) : (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<PowerTable
+							loading={isLoading}
+							totalPage={totalPage}
+							dataSource={dataSource}
+							getPagination={getPagination}
+							columns={columns}
+							Extra={
+								<>
+									<h4 style={{ textTransform: 'uppercase' }}>Thông kê xếp hạng giáo viên</h4>
+								</>
+							}
+						/>
+					</div>
+				</div>
+			)}
+		</>
 	);
 };
 
