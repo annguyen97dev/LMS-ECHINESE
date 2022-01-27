@@ -11,3 +11,12 @@ type IMenuByRole = IBaseApi<{
 	Route: string;
 	RoleID: number;
 }>;
+
+type IMenuAddData = {
+	MenuName: string;
+	Level: number;
+	Icon: string;
+	ParentID: number;
+	Route: string;
+	RoleID: number;
+};

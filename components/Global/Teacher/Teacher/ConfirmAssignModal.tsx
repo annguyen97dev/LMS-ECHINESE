@@ -4,7 +4,6 @@ import { RotateCcw } from 'react-feather';
 
 const ConfirmAssignModal = (props) => {
 	const { data, _onSubmit, loading } = props;
-	console.log(data);
 	const [isVisible, setIsVisible] = useState(false);
 
 	const handleSubmit = () => {

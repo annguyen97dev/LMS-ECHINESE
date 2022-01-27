@@ -31,6 +31,8 @@ const TeacherProfile = (props) => {
 	const { dataUser, isLoading, updateTeacherID, userID, dataSubject, updateTeacherForSubject, onFetchData } = props;
 	const { Option } = Select;
 
+	console.log(dataSubject);
+
 	const onSubmit = handleSubmit((data) => {
 		console.log('Data submit:', data);
 		if (Object.keys(data).length === 1) {

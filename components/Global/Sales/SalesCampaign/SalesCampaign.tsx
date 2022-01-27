@@ -420,7 +420,7 @@ const SalesCampaign = () => {
 			TitlePage="Danh sách chiến dịch"
 			dataSource={saleCampaignList}
 			columns={columns}
-			// TitleCard={isAdmin && <SalesCampaignForm isLoading={isLoading} handleSubmit={onCreateSaleCampaign} />}
+			TitleCard={<p className="font-weight-primary">Lưu ý: Chiến dịch sẽ tự động tạo vào đầu tháng</p>}
 			Extra={
 				<div className="extra-table">
 					<SalesCampaignFilter handleFilter={onFilter} handleResetFilter={onResetSearch} />

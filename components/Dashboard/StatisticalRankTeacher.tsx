@@ -40,7 +40,7 @@ const StatisticalRankTeacher = (props) => {
 
 	const columns = [
 		{
-			title: '',
+			title: 'Hạng',
 			width: 120,
 			dataIndex: 'Trophy',
 			render: (text, data) =>
@@ -64,7 +64,8 @@ const StatisticalRankTeacher = (props) => {
 						src={data.Avatar.length > 0 ? data.Avatar : '/images/third-place.jpg'}
 						alt="trophy img"
 					/>
-				))
+				)) ||
+				(data.MyRank > 3 && <p className="pl-3 font-weight-black">{data.MyRank}</p>)
 		},
 		{
 			title: 'Ảnh đại diện',

@@ -2,13 +2,22 @@ import { Form, Input, Spin, Select } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { signIn, getProviders } from 'next-auth/client';
 import { devApi } from './../../apiBase/dev/dev';
+import { Collapse } from 'antd';
+import AddParentMenuModal from '~/components/Dev/AddLevelOneMenuModal';
+import { htmlparser2, ReactHtmlParser } from 'react-html-parser';
+import { RotateCcw, Trash } from 'react-feather';
+
+const { Panel } = Collapse;
 
 export default function BelongingToDev(props) {
 	const [isAccess, setIsAccess] = useState(false);
-	const [level, setLevel] = useState([]);
-	const [grandMenu, setGrandMenu] = useState([]);
-	const [parentMenu, setParentMenu] = useState([]);
-	const [childMenu, setChildMenu] = useState([]);
+	const [levelOne, setLevelOne] = useState<IMenuByRole[]>(null);
+	const [levelTwo, setLevelTwo] = useState<IMenuByRole[]>(null);
+	const [levelThree, setLevelThree] = useState<IMenuByRole[]>(null);
+	const [levelFour, setLevelFour] = useState<IMenuByRole[]>(null);
+	const [levelFive, setLevelFive] = useState<IMenuByRole[]>(null);
+	const [levelSix, setLevelSix] = useState<IMenuByRole[]>(null);
+	const [roleID, setRoleID] = useState(null);
 	const [form] = Form.useForm();
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const { Option } = Select;
@@ -25,7 +34,7 @@ export default function BelongingToDev(props) {
 	const handleAccess = async (data) => {
 		setIsLoading({ type: 'ACCESS', status: true });
 		try {
-			let res = await devApi.checkPass(data);
+			let res = await devApi.checkPass({ pass: 'mon4medi4' });
 			if (res.status === 200) {
 				setIsAccess(true);
 			}
@@ -61,8 +70,6 @@ export default function BelongingToDev(props) {
 		try {
 			let res = await devApi.loginByDev(data);
 			if (res.status === 200) {
-				console.log(res.data);
-				console.log(res.headers);
 				setIsAccess(true);
 				signIn('credentials-dev-signin', {
 					...data,
@@ -79,47 +86,107 @@ export default function BelongingToDev(props) {
 		console.log(event);
 		setIsLoading({ type: 'SELECT_ROLE', status: true });
 		try {
-			let res = await devApi.getAllMenuByRole({ roleId: 1 });
+			let res = await devApi.getAllMenuByRole({ roleId: event });
+			if (res.status === 200) {
+				setLevelOne(res.data.data);
+				setRoleID(event);
+			}
+			if (res.status === 204) {
+				setLevelOne([]);
+				setRoleID(null);
+			}
 		} catch (error) {
 		} finally {
 			setIsLoading({ type: 'SELECT_ROLE', status: true });
 		}
 	};
 
+	const text = `
+  A dog is a type of domesticated animal.
+  Known for its loyalty and faithfulness,
+  it can be found as a welcome guest in many households across the world.
+`;
+
+	const callBack = () => {
+		console.log('callback');
+	};
+
+	const renderMenu = () => {
+		return (
+			<div className="mb-5">
+				<Collapse onChange={callBack}>
+					{levelOne &&
+						levelOne?.map((itemFirst, indexFirst) => {
+							return (
+								<Panel
+									header={
+										<div className="d-flex justify-content-between align-items-center">
+											<div>{itemFirst.MenuName}</div>
+											<div className="d-flex">
+												<AddParentMenuModal type="edit" roleID={roleID} />
+												<button className="btn-icon btn delete">
+													<Trash />
+												</button>
+											</div>
+										</div>
+									}
+									key={indexFirst}
+								>
+									<Collapse defaultActiveKey={null}>
+										<Panel header="This is panel nest panel" key="1">
+											<p>{text}</p>
+											<Collapse defaultActiveKey={null}>
+												<Panel header="This is panel nest panel" key="1">
+													<p>{text}</p>
+												</Panel>
+											</Collapse>
+										</Panel>
+									</Collapse>
+								</Panel>
+							);
+						})}
+				</Collapse>
+				<AddParentMenuModal type="add" roleID={roleID} />
+			</div>
+		);
+	};
+
 	const renderMainScreen = () => {
 		return (
-			<Form form={form} onFinish={handleRedirect}>
-				<div className="dev__main d-flex justify-content-center align-items-center p-5">
-					<div className="dev__main-screen row">
-						<div className="dev__main-redirect col-12 d-flex justify-content-between ">
-							<div className="d-flex justify-content-center align-items-center" style={{ width: '80%' }}>
-								<Form.Item
-									name="roleId"
-									className="d-flex justify-content-center align-items-center"
-									style={{ width: '100%' }}
-								>
-									<Select className="style-input" onChange={handleSelect}>
-										{useAllRoles &&
-											useAllRoles.map((item, index) => {
-												return (
-													<Option value={item.ID} key={index}>
-														{item.name}
-													</Option>
-												);
-											})}
-									</Select>
-								</Form.Item>
+			<div className="dev__main d-flex justify-content-center align-items-center p-5">
+				<div className="dev__main-screen row">
+					<div className="col-12">
+						<Form form={form} onFinish={handleRedirect}>
+							<div className="dev__main-redirect col-12 d-flex justify-content-between">
+								<div className="d-flex justify-content-center align-items-center" style={{ width: '80%' }}>
+									<Form.Item
+										name="roleId"
+										className="d-flex justify-content-center align-items-center"
+										style={{ width: '100%' }}
+									>
+										<Select className="style-input" onChange={handleSelect}>
+											{useAllRoles &&
+												useAllRoles.map((item, index) => {
+													return (
+														<Option value={item.ID} key={index}>
+															{item.name}
+														</Option>
+													);
+												})}
+										</Select>
+									</Form.Item>
+								</div>
+								<div className="d-flex justify-content-center align-items-center" style={{ width: '10%' }}>
+									<button type="submit" className="btn btn-primary">
+										GO
+									</button>
+								</div>
 							</div>
-							<div className="d-flex justify-content-center align-items-center" style={{ width: '10%' }}>
-								<button type="submit" className="btn btn-primary">
-									GO
-								</button>
-							</div>
-						</div>
-						<div className="dev__main-menu col-12"></div>
+						</Form>
 					</div>
+					<div className="dev__main-menu col-12 mb-3">{roleID && renderMenu()}</div>
 				</div>
-			</Form>
+			</div>
 		);
 	};
 
