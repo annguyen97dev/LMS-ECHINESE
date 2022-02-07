@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWrap } from '~/context/wrap';
 import PowerTable from '~/components/PowerTable';
 import { statisticalApi } from '~/apiBase/statistical/statistical-total';
+import { Skeleton } from 'antd';
 
 const StatisticalRankTeacher = (props) => {
 	const [dataSource, setDataSource] = useState<IStatRankTeacherByLessons[]>();
@@ -39,7 +40,7 @@ const StatisticalRankTeacher = (props) => {
 
 	const columns = [
 		{
-			title: '',
+			title: 'Hạng',
 			width: 120,
 			dataIndex: 'Trophy',
 			render: (text, data) =>
@@ -63,7 +64,8 @@ const StatisticalRankTeacher = (props) => {
 						src={data.Avatar.length > 0 ? data.Avatar : '/images/third-place.jpg'}
 						alt="trophy img"
 					/>
-				))
+				)) ||
+				(data.MyRank > 3 && <p className="pl-3 font-weight-black">{data.MyRank}</p>)
 		},
 		{
 			title: 'Ảnh đại diện',
@@ -90,18 +92,30 @@ const StatisticalRankTeacher = (props) => {
 	};
 
 	return (
-		<PowerTable
-			loading={isLoading}
-			totalPage={totalPage}
-			dataSource={dataSource}
-			getPagination={getPagination}
-			columns={columns}
-			Extra={
-				<>
-					<h4 style={{ textTransform: 'uppercase' }}>Thông kê xếp hạng giáo viên</h4>
-				</>
-			}
-		/>
+		<>
+			{isLoading.type === 'GET_ALL' && isLoading.status == true ? (
+				<div className="col-xl-6 col-12">
+					<Skeleton active />
+				</div>
+			) : (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">
+						<PowerTable
+							loading={isLoading}
+							totalPage={totalPage}
+							dataSource={dataSource}
+							getPagination={getPagination}
+							columns={columns}
+							Extra={
+								<>
+									<h4 style={{ textTransform: 'uppercase' }}>Thông kê xếp hạng giáo viên</h4>
+								</>
+							}
+						/>
+					</div>
+				</div>
+			)}
+		</>
 	);
 };
 

@@ -1,4 +1,3 @@
-import { FilterTwoTone } from '@ant-design/icons';
 import { Card, DatePicker, Radio, Select, Skeleton } from 'antd';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
@@ -128,7 +127,19 @@ const StatisticalTotalLessonOfTeacher = (props) => {
 		);
 	};
 
-	return <>{renderTable()}</>;
+	return (
+		<>
+			{isLoading.type === 'GET_ALL' && isLoading.status == true ? (
+				<div className="row pt-5 pb-5">
+					<Skeleton active />
+				</div>
+			) : (
+				<div className="row pt-5 pb-5">
+					<div className="col-12">{renderTable()}</div>
+				</div>
+			)}
+		</>
+	);
 };
 
 export default StatisticalTotalLessonOfTeacher;

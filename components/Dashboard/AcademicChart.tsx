@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Select, Card, Radio } from 'antd';
+import { Select, Card, Radio, Skeleton } from 'antd';
 import { statisticalApi } from '~/apiBase/statistical/statistical-total';
 
 const AcademicChart = () => {
@@ -190,27 +190,37 @@ const AcademicChart = () => {
 
 	return (
 		<>
-			<Card
-				title={
-					<div>
-						<h4>HỌC VIÊN</h4>
-						<div>Số lượng học viên</div>
+			{isLoading.status === 'GET_STAT_STUDENT' && isLoading.loading == true ? (
+				<div className="col-12 mb-5">
+					<Skeleton active />
+				</div>
+			) : (
+				<div className="row pt-5">
+					<div className="col-12">
+						<Card
+							title={
+								<div>
+									<h4>HỌC VIÊN</h4>
+									<div>Số lượng học viên</div>
+								</div>
+							}
+							style={{ borderRadius: 20 }}
+							extra={
+								<>
+									{renderExtra()}
+									<Radio.Group onChange={onChange} optionType="button" buttonStyle="solid" value={typeView}>
+										<Radio.Button value={1}>Ngày</Radio.Button>
+										<Radio.Button value={2}>Tháng</Radio.Button>
+										<Radio.Button value={3}>Năm</Radio.Button>
+									</Radio.Group>
+								</>
+							}
+						>
+							{renderView()}
+						</Card>
 					</div>
-				}
-				style={{ borderRadius: 20 }}
-				extra={
-					<>
-						{renderExtra()}
-						<Radio.Group onChange={onChange} optionType="button" buttonStyle="solid" value={typeView}>
-							<Radio.Button value={1}>Ngày</Radio.Button>
-							<Radio.Button value={2}>Tháng</Radio.Button>
-							<Radio.Button value={3}>Năm</Radio.Button>
-						</Radio.Group>
-					</>
-				}
-			>
-				{renderView()}
-			</Card>
+				</div>
+			)}
 		</>
 	);
 };

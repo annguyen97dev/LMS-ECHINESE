@@ -1,5 +1,4 @@
 import { instance } from '../instance';
-const url = '/api/Document';
 
 export const devApi = {
 	// Lấy tất cả data
@@ -13,5 +12,8 @@ export const devApi = {
 		let formdata = new FormData();
 		formdata.append('roleId', params.roleId);
 		return instance.post('/api/LoginByDev', formdata);
+	},
+	insertMenu(data: IMenuAddData) {
+		return instance.post('/api/Menu', data, {});
 	}
 };

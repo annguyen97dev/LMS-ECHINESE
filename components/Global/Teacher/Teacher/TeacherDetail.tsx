@@ -65,6 +65,7 @@ const TeacherDetail = () => {
 		try {
 			let res = await teacherApi.getAllTeacherForSubject(Number(slug));
 			if (res.status === 200) {
+				console.log('data subject', res.data.data);
 				const result = res.data.data.map((item, i) => ({
 					key: item.ProgramID,
 					ProgramName: item.ProgramName,

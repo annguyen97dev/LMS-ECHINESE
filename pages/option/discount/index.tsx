@@ -304,7 +304,7 @@ const Discount = () => {
 			}
 		},
 		{ title: 'Số lượng', width: 100, dataIndex: 'Quantity' },
-		{ title: 'Số lượng còn lại', dataIndex: 'QuantityLeft', width: 120 },
+		{ title: 'Số lượng đã dùng', dataIndex: 'QuantityLeft', width: 120 },
 		{ title: 'Ghi chú', width: 150, dataIndex: 'Note' },
 		{
 			title: 'Thời hạn',
