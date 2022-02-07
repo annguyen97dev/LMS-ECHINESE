@@ -75,23 +75,6 @@ export function ExpandPaymentRow(props: {
 							) : null}
 							<td>{(infoInvoiceList && infoInvoiceList[0]?.Reason) || 'Không có lý do'}</td>
 							<td>
-								{/* {infoInvoiceList &&
-									infoInvoiceList.map((v) => (
-										<Link
-											key={v.ID}
-											href={{
-												pathname: '/customer/finance/finance-cashier-invoice/invoice-detail/[slug]',
-												query: { slug: v.ID }
-											}}
-										>
-											<Tooltip title={moment(v.CreatedOn).format('DD/MM/YYYY')}>
-												<button className="btn btn-icon exchange ">
-													<File />
-												</button>
-											</Tooltip>
-										</Link>
-									))} */}
-
 								{dataRow.DonePaid && (
 									<Tooltip title="Xem phiếu thu">
 										<button

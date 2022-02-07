@@ -1,12 +1,11 @@
-import { LoadingOutlined, MailOutlined, SearchOutlined, WhatsAppOutlined } from '@ant-design/icons';
+import { MailOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Card, Divider, Form, Modal, Select, Skeleton, Spin, Tooltip } from 'antd';
+import { Card, Divider, Form, Select, Skeleton, Spin } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState, useRef } from 'react';
-import { RotateCcw } from 'react-feather';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { districtApi, studentApi, wardApi, branchApi, studentAdviseApi } from '~/apiBase';
+import { districtApi, studentApi, wardApi, studentAdviseApi } from '~/apiBase';
 import AvatarBase from '~/components/Elements/AvatarBase';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
@@ -54,10 +53,7 @@ const StudentForm = (props) => {
 	const router = useRouter();
 	const url = router.pathname;
 	const { customerID: customerID } = router.query;
-	// const [form] = Form.useForm();
-
 	const [isStudentDetail, setIsStudentDetail] = useState(url.includes('student-list') || url.includes('student-detail'));
-	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { showNoti, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
@@ -69,7 +65,6 @@ const StudentForm = (props) => {
 		name: ''
 	});
 	const [listData, setListData] = useState<listData>(listDataForm);
-	const [valueEmail, setValueEmail] = useState();
 	const [isSearch, setIsSearch] = useState(false);
 	const [loadingCustomer, setLoadingCustomer] = useState(false);
 	const [userAll, setUserAll] = useState<IStudent[]>();
@@ -83,7 +78,6 @@ const StudentForm = (props) => {
 					pageIndex: 1,
 					pageSize: 99999
 				});
-				//@ts-ignore
 				res.status == 200 && setUserAll(res.data.data);
 			} catch (err) {
 				showNoti('danger', err.message);
@@ -119,7 +113,6 @@ const StudentForm = (props) => {
 					pageSize: 99999,
 					Email: mail
 				});
-				//@ts-ignore
 				res.status == 200 && handleChangeUser(res.data.data[0]?.UserInformationID);
 			} catch (err) {
 				showNoti('danger', err.message);
@@ -128,7 +121,6 @@ const StudentForm = (props) => {
 	};
 
 	// ------------- ADD data to list --------------
-
 	const makeNewData = (data, name) => {
 		let newData = null;
 		switch (name) {
@@ -189,13 +181,11 @@ const StudentForm = (props) => {
 			default:
 				break;
 		}
-
 		return newData;
 	};
 
 	const getDataTolist = (data: any, name: any) => {
 		let newData = makeNewData(data, name);
-
 		Object.keys(listData).forEach(function (key) {
 			if (key == name) {
 				listData[key] = newData;
@@ -230,9 +220,7 @@ const StudentForm = (props) => {
 				default:
 					break;
 			}
-
 			res.status == 200 && getDataTolist(res.data.data, name);
-
 			res.status == 204 && console.log(name + ' không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -248,14 +236,9 @@ const StudentForm = (props) => {
 	const handleChange_select = (value, name) => {
 		if (name == 'DistrictID') {
 			form.setValue('WardID', null);
-			// form.setValue('Branch', null);
-
 			listData.DistrictID = [];
 			listData.WardID = [];
 			setListData({ ...listData });
-
-			// setListBranch([]);
-			// getListBranch(value);
 		}
 		form.setValue(name, null);
 		getDataWithID(value, name);
@@ -269,23 +252,23 @@ const StudentForm = (props) => {
 		LinkFaceBook: null,
 		Email: '',
 		Mobile: null,
-		AreaID: null, //int id Tỉnh/TP
-		DistrictID: null, //int id Quận/Huyện
-		WardID: null, //int id Phường/Xã
-		HouseNumber: null, //Nhập số nhà tên đường
-		Address: null, //bỏ trống - chỉ nhập khi khách hàng có địa chỉ không cụ thể
-		Avatar: null, //Lưu link file hình
-		DOB: null, //ngày sinh
-		Gender: null, //int 0-Nữ 1-Nam 2-Khác
-		CMND: null, //int số CMND
-		CMNDDate: null, //Ngày làm
-		CMNDRegister: null, //Nơi làm CMND
-		Extension: null, //giới thiệu thêm
-		Branch: undefined, //string : id của trung tâm - LƯU Ý NẾU TỪ 2 TRUNG TÂM TRỞ LÊN THÌ NHẬP(ID,ID,ID)
-		AcademicPurposesID: null, // int id mục đích học
-		JobID: null, //int mã công việc
-		SourceInformationID: null, //int id nguồn
-		ParentsOf: null, //int id phụ huynh
+		AreaID: null,
+		DistrictID: null,
+		WardID: null,
+		HouseNumber: null,
+		Address: null,
+		Avatar: null,
+		DOB: null,
+		Gender: null,
+		CMND: null,
+		CMNDDate: null,
+		CMNDRegister: null,
+		Extension: null,
+		Branch: undefined,
+		AcademicPurposesID: null,
+		JobID: null,
+		SourceInformationID: null,
+		ParentsOf: null,
 		CounselorsID: null,
 		AppointmentDate: null,
 		ExamAppointmentTime: null,
@@ -332,7 +315,6 @@ const StudentForm = (props) => {
 					}
 					break;
 				default:
-					// returnSchema[key] = yup.mixed().required("Bạn không được để trống");
 					break;
 			}
 		});
@@ -347,7 +329,6 @@ const StudentForm = (props) => {
 
 	// ----------- SUBMI FORM ------------
 	const onSubmit = async (data: any) => {
-		console.log('datasa submit', data);
 		if (data.Branch) {
 			data.Branch = data.Branch.toString();
 		}
@@ -392,58 +373,6 @@ const StudentForm = (props) => {
 		}
 	};
 
-	// Search from student
-	const searchFromStudent = async () => {
-		try {
-			let res = await studentApi.getAll({ Email: valueEmail });
-
-			res?.status == 200 && (showNoti('success', 'Tìm kiếm thành công'), handleDataRow(res.data.data[0]), setIsSearch(true));
-
-			res?.status == 204 &&
-				(showNoti('danger', 'Không tìm thấy email'),
-				form.reset(defaultValuesInit),
-				form.setValue('Email', valueEmail),
-				setIsSearch(false),
-				setImageUrl(''));
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
-			setIsLoading({
-				type: 'SEARCH_EMAIL',
-				status: false
-			});
-		}
-	};
-
-	// Search from customer
-	const searchFromCustomer = async () => {
-		setIsLoading({
-			type: 'SEARCH_EMAIL',
-			status: true
-		});
-		try {
-			let res = await studentAdviseApi.getAll({ Email: valueEmail });
-			console.log('student info', res.data.data);
-			// res?.status == 200 &&
-			// 	(form.setValue('CustomerConsultationID', res.data.data[0].ID),
-			// 	showNoti('success', 'Tìm kiếm thành công'),
-			// 	handleDataRow(res.data.data[0]),
-			// 	setIsSearch(true),
-			// 	setIsLoading({
-			// 		type: 'SEARCH_EMAIL',
-			// 		status: false
-			// 	}));
-			res?.status == 204 && searchFromStudent();
-		} catch (error) {
-			showNoti('danger', error.message);
-		}
-	};
-
-	// Search Email to compare with data
-	const searchValue = () => {
-		searchFromCustomer();
-	};
-
 	const handleReset = () => {
 		form.reset(defaultValuesInit);
 		setImageUrl('');
@@ -458,14 +387,10 @@ const StudentForm = (props) => {
 			});
 			cloneRowData.Branch = arrBranch;
 		}
-
 		form.reset(cloneRowData);
 		cloneRowData.AreaID && getDataWithID(cloneRowData.AreaID, 'DistrictID');
 		cloneRowData.DistrictID && getDataWithID(cloneRowData.DistrictID, 'WardID');
 		setImageUrl(cloneRowData.Avatar);
-
-		// Nếu có param customer id
-		console.log('customerID', customerID);
 		if (cloneRowData.CustomerName) {
 			form.setValue('FullNameUnicode', cloneRowData.CustomerName);
 		}
@@ -475,15 +400,13 @@ const StudentForm = (props) => {
 		if (cloneRowData.StatusID) {
 			form.setValue('StatusID', cloneRowData.StatusID);
 		}
-
-		setValueEmail(cloneRowData.Email);
 	};
 
 	useEffect(() => {
 		if (dataRow) {
 			handleDataRow(dataRow);
 		}
-	}, [isModalVisible]);
+	}, []);
 
 	useEffect(() => {
 		if (isSubmitOutSide) {
@@ -511,7 +434,6 @@ const StudentForm = (props) => {
 			(async () => {
 				try {
 					const _detail = await studentApi.getWithID(value);
-					//@ts-ignore
 					_detail.status == 200 &&
 						(setUserDetail(_detail.data.data),
 						form.setValue('ID', _detail.data.data?.UserInformationID),
@@ -532,11 +454,7 @@ const StudentForm = (props) => {
 					});
 				}
 			})();
-
-		console.log('userDetail: ', userDetail);
 	};
-
-	console.log('dataRow: ', dataRow);
 
 	return (
 		<>
@@ -589,25 +507,6 @@ const StudentForm = (props) => {
 									</div>
 
 									<div className="col-md-6 col-12">
-										{/* <div className="search-box">
-											<InputTextField
-												form={form}
-												// name="Email"
-												label="Email"
-												handleChange={(value) => setValueEmail(value)}
-												placeholder="Nhập email"
-												isRequired={true}
-											/>
-											{!dataRow && (
-												<button type="button" className="btn-search" onClick={searchValue}>
-													{isLoading.type == 'SEARCH_EMAIL' && isLoading.status ? (
-														<Spin indicator={<LoadingOutlined style={{ fontSize: 16 }} spin />} />
-													) : (
-														<SearchOutlined />
-													)}
-												</button>
-											)}
-										</div> */}
 										<div className="search-box">
 											<Form.Item
 												label="Email"
@@ -646,13 +545,6 @@ const StudentForm = (props) => {
 									</div>
 
 									<div className="col-md-6 col-12">
-										{/* <InputTextField
-											form={form}
-											name="FullNameUnicode"
-											label="Họ và tên"
-											placeholder="Nhập họ và tên"
-											isRequired={true}
-										/> */}
 										<Form.Item label="Họ và tên">
 											<Select
 												className="style-input"
@@ -678,12 +570,6 @@ const StudentForm = (props) => {
 										</Form.Item>
 									</div>
 									<div className="col-md-6 col-12">
-										{/* <InputTextField
-											form={form}
-											name="ChineseName"
-											label="Tên tiếng Trung"
-											placeholder="Nhập tên tiếng Trung"
-										/> */}
 										<Form.Item label="Tên tiếng Trung">
 											<Select
 												className="style-input"
@@ -710,13 +596,6 @@ const StudentForm = (props) => {
 									</div>
 									{/*  */}
 									<div className="col-md-6 col-12">
-										{/* <InputTextField
-											form={form}
-											name="Mobile"
-											label="Số điện thoại"
-											placeholder="Nhập số điện thoại"
-											isRequired={true}
-										/> */}
 										<Form.Item label="Số điện thoại">
 											<Select
 												loading={isLoading.status}
@@ -812,9 +691,7 @@ const StudentForm = (props) => {
 											name="DistrictID"
 											label="Quận/Huyện"
 											optionList={listData.DistrictID}
-											onChangeSelect={
-												(value) => handleChange_select(value, 'WardID') // Select District to load Ward
-											}
+											onChangeSelect={(value) => handleChange_select(value, 'WardID')}
 											placeholder="Chọn quận/huyện"
 										/>
 									</div>
@@ -846,7 +723,6 @@ const StudentForm = (props) => {
 									</div>
 									<div className="col-12">
 										<SelectField
-											// isLoading={loadingBranch}
 											mode={dataRow ? 'multiple' : ''}
 											form={form}
 											name="Branch"
@@ -983,5 +859,6 @@ const StudentForm = (props) => {
 		</>
 	);
 };
+
 StudentForm.layout = LayoutBase;
 export default StudentForm;
