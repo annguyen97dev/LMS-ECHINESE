@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import TitlePage from '~/components/TitlePage';
 import LayoutBase from '~/components/LayoutBase';
 import { areaApi, jobApi, puroseApi, branchApi, sourceInfomationApi, parentsApi, staffApi, teacherApi, examTopicApi } from '~/apiBase';
-import { useWrap } from '~/context/wrap';
 import StudentForm from '~/components/Global/Customer/Student/StudentForm';
 
 // -- FOR DIFFERENT VIEW --
@@ -98,10 +97,8 @@ const StudentAppointmentCreate = () => {
 		Teacher: [],
 		Exam: []
 	});
-	const { showNoti } = useWrap();
 	// FOR STUDENT FORM
 	// ------------- ADD data to list --------------
-
 	const makeNewData = (data, name) => {
 		let newData = null;
 		switch (name) {
@@ -228,7 +225,6 @@ const StudentAppointmentCreate = () => {
 
 					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
-					// showNoti('danger', error.message);
 					console.log(error);
 				} finally {
 				}
@@ -247,7 +243,7 @@ const StudentAppointmentCreate = () => {
 					<TitlePage title="Lịch hẹn" />
 				</div>
 			</div>
-			<StudentForm listDataForm={listDataForm} />
+			<StudentForm listDataForm={listDataForm} hideReset={true} />
 		</div>
 	);
 };

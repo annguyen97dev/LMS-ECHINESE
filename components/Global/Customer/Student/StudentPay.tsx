@@ -9,7 +9,6 @@ import NestedTable from '~/components/Elements/NestedTable';
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-import CourseOfStudentPriceForm from '../Finance/CourseOfStudentPrice/CourseStudentPriceForm';
 
 const StudentPay = (props) => {
 	const { CourseOfStudentPriceID } = props;
@@ -25,6 +24,7 @@ const StudentPay = (props) => {
 		setCurrentPage(1);
 		setParams(listParamsDefault);
 	};
+
 	const columns = [
 		{
 			title: 'Học viên',
@@ -76,24 +76,6 @@ const StudentPay = (props) => {
 							</button>
 						</Tooltip>
 					</Link>
-
-					{/* <CourseOfStudentPriceForm
-						infoDetail={data}
-						infoId={data.ID}
-						reloadData={(firstPage) => {
-							getDataCourseStudentPrice(firstPage);
-						}}
-						currentPage={currentPage}
-					/> */}
-					{/* <CourseOfStudentPriceForm
-						isPayTuition={true}
-						isLoading={isLoading}
-						isUpdate={true}
-						updateObj={record}
-						optionBranchList={optionListForFilter.optionBranchList}
-						paymentMethodOptionList={paymentMethodOptionList}
-						handleSubmit={onUpdateStudentPay(record.ID)}
-					/> */}
 				</>
 			)
 		}
@@ -112,23 +94,6 @@ const StudentPay = (props) => {
 		FullNameUnicode: null,
 		DonePaid: null
 	};
-
-	const sortOption = [
-		{
-			dataSort: {
-				sortType: null
-			},
-			value: 1,
-			text: 'Mới cập nhật'
-		},
-		{
-			dataSort: {
-				sortType: true
-			},
-			value: 2,
-			text: 'Từ dưới lên'
-		}
-	];
 
 	const [dataFilter, setDataFilter] = useState([
 		{
@@ -155,33 +120,6 @@ const StudentPay = (props) => {
 			value: null
 		}
 	]);
-
-	const handleFilter = (listFilter) => {
-		let newListFilter = {
-			pageIndex: 1,
-			fromDate: null,
-			toDate: null,
-			BranchID: null,
-			CourseID: null,
-			DonePaid: null
-		};
-		listFilter.forEach((item, index) => {
-			let key = item.name;
-			Object.keys(newListFilter).forEach((keyFilter) => {
-				if (keyFilter == key) {
-					newListFilter[key] = item.value;
-				}
-			});
-		});
-		setParams({ ...listParamsDefault, ...newListFilter, pageIndex: 1 });
-	};
-
-	const handleSort = async (option) => {
-		setParams({
-			...listParamsDefault,
-			sortType: option.title.sortType
-		});
-	};
 
 	const [params, setParams] = useState(listParamsDefault);
 	const { showNoti } = useWrap();
@@ -213,7 +151,6 @@ const StudentPay = (props) => {
 				}));
 				setDataFunc('PayBranchID', newData);
 			}
-
 			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -231,7 +168,6 @@ const StudentPay = (props) => {
 				}));
 				setDataFunc('CourseID', newData);
 			}
-
 			res.status == 204 && showNoti('danger', 'Trung tâm Không có dữ liệu');
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -262,13 +198,11 @@ const StudentPay = (props) => {
 		(async () => {
 			try {
 				let res = await courseStudentPriceApi.getDetail(CourseOfStudentPriceID);
-				//@ts-ignore
 				if (res.status == 200) {
 					let arr = [];
 					arr.push(res.data.data);
 					setCourseStudentPrice(arr);
 				}
-
 				if (res.status == 204) {
 					showNoti('danger', 'Không tìm thấy dữ liệu!');
 					setCurrentPage(1);
@@ -301,5 +235,6 @@ const StudentPay = (props) => {
 		/>
 	);
 };
+
 StudentPay.layout = LayoutBase;
 export default StudentPay;
