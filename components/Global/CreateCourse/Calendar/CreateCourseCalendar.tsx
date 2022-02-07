@@ -1,8 +1,8 @@
-import { Spin } from 'antd';
+import { Button, Spin } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useWrap } from '~/context/wrap';
@@ -77,6 +77,9 @@ const CreateCourseCalendar = (props) => {
 			};
 		}
 	};
+	useEffect(() => {
+		setIsVisible(false);
+	}, [props?.isCloseModal]);
 	return (
 		<div className="wrap-calendar">
 			<Spin spinning={!isLoaded} size="large" wrapperClassName="calendar-loading">
@@ -178,7 +181,8 @@ CreateCourseCalendar.propTypes = {
 	//
 	unAvailableList: PropTypes.node,
 	//
-	children: PropTypes.node
+	children: PropTypes.node,
+	isCloseModal: PropTypes.any
 };
 CreateCourseCalendar.defaultProps = {
 	eventList: [],
@@ -192,6 +196,7 @@ CreateCourseCalendar.defaultProps = {
 		scheduleList: []
 	},
 	//
-	unAvailableList: null
+	unAvailableList: null,
+	isCloseModal: null
 };
 export default CreateCourseCalendar;

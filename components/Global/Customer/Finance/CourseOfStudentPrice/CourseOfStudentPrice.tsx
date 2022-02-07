@@ -439,10 +439,13 @@ const CourseOfStudentPrice = () => {
 					<RequestRefundForm
 						isLoading={isLoading}
 						studentObj={data}
+						showCourse={true}
 						getInfoCourse={getInfoCourse}
 						paymentMethodOptionList={paymentMethodOptionList}
 						courseListOfStudent={courseListOfStudent}
 						onSubmit={onCreateRequestRefund}
+						dataRow={record}
+						reloadData={fetchDataFilter}
 					/>
 				</div>
 			)

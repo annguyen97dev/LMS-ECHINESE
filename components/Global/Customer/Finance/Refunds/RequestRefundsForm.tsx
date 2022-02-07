@@ -1,11 +1,9 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Checkbox, Form, Modal, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { DollarSign } from 'react-feather';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import CheckboxField from '~/components/FormControl/CheckboxField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import RadioField from '~/components/FormControl/RadioField';
@@ -25,7 +23,9 @@ RequestRefundsForm.propTypes = {
 	onSubmit: PropTypes.func,
 	courseStudentID: PropTypes.number,
 	StatusID: PropTypes.number,
-    reloadData: PropTypes.func,
+	reloadData: PropTypes.func,
+	dataRow: PropTypes.any,
+	showCourse: PropTypes.any
 };
 
 RequestRefundsForm.defaultProps = {
@@ -36,39 +36,31 @@ RequestRefundsForm.defaultProps = {
 	paymentMethodOptionList: [],
 	onSubmit: null,
 	courseStudentID: null,
-    reloadData: null,
-	// StatusID: null
+	reloadData: null,
+	dataRow: null,
+	showCourse: null
 };
 
 function RequestRefundsForm(props) {
-	const { isLoading, studentObj, getInfoCourse, courseListOfStudent, paymentMethodOptionList, onSubmit, courseStudentID, reloadData } =
-		props;
+	const {
+		isLoading,
+		studentObj,
+		getInfoCourse,
+		dataRow,
+		courseListOfStudent,
+		paymentMethodOptionList,
+		onSubmit,
+		courseStudentID,
+		reloadData,
+		showCourse
+	} = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
-
 	const [courseIDList, setCourseIDList] = useState<number[]>([]);
-	const [customErrorCheckbox, setCustomErrorCheckbox] = useState({
-		message: '',
-		hasError: false
-	});
-
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 
-	// const schema = yup.object().shape({
-	// 	ListCourseOfStudentID: yup
-	// 		.array(yup.number())
-	// 		.min(1, 'Bạn phải chọn ít nhất 1 khóa học')
-	// 		.nullable()
-	// 		.required('Bạn không được để trống'),
-	// 	Price: yup.string().required('Bạn không được để trống'),
-	// 	PaymentMethodsID: yup.number().oneOf([1, 2], 'Bạn không được để trống'),
-	// 	Reason: yup.string(),
-	// 	isExpulsion: yup.bool()
-	// });
-
 	const defaultValuesInit = {
-		// ListCourseOfStudentID: null,
 		ListCourseOfStudentID: [courseStudentID],
 		Price: '',
 		PaymentMethodsID: 1,
@@ -78,43 +70,24 @@ function RequestRefundsForm(props) {
 
 	const form = useForm({
 		defaultValues: defaultValuesInit
-		// resolver: yupResolver(schema)
 	});
 
-	// useEffect(() => {
-	// 	const { errors } = form.formState;
-	// 	const hasError = errors['ListCourseOfStudentID'];
-	// 	const listCourseID = form.watch('ListCourseOfStudentID');
-	// 	if (hasError) {
-	// 		setCustomErrorCheckbox({
-	// 			hasError,
-	// 			message: errors['ListCourseOfStudentID']?.message
-	// 		});
-	// 	}
-	// 	if (listCourseID?.length) {
-	// 		setCustomErrorCheckbox({
-	// 			hasError: false,
-	// 			message: ''
-	// 		});
-	// 	}
-	// }, [form.watch('ListCourseOfStudentID'), form.formState.errors]);
-
 	useEffect(() => {
-		isModalVisible && studentObj.ID && getInfoCourse && getInfoCourse(studentObj.ID);
+		isModalVisible && studentObj?.ID && getInfoCourse && getInfoCourse(dataRow?.ID);
 	}, [isModalVisible]);
 
 	const checkOnSubmit = (data) => {
 		console.log('data', data);
 		if (!onSubmit) return;
-		onSubmit(data).then((res) => {
+		onSubmit({ ...data, ListCourseOfStudentID: courseIDList }).then((res) => {
 			if (res?.status === 200) {
 				form.reset({ ...defaultValuesInit });
-                reloadData(1);
+				reloadData(1);
 				closeModal();
-				// setCourseIDList([]);
 			}
 		});
 	};
+
 	return (
 		<>
 			<Tooltip title="Yêu cầu hoàn tiền">
@@ -126,17 +99,15 @@ function RequestRefundsForm(props) {
 				<div className="request-refund-form">
 					<Form layout="vertical" onFinish={form.handleSubmit(checkOnSubmit)}>
 						<div className="row">
-							{/* <div className="col-12">
-								<div
-									className={`refund-branch ${
-										isLoading.type === 'FETCH_INFO_COURSE' && isLoading.status ? 'custom-loading' : ''
-									} ${customErrorCheckbox.hasError ? 'ant-form-item-with-help ant-form-item-has-error' : ''}`}
-								> */}
-							{/* <Checkbox.Group
+							{showCourse == true && (
+								<div className="ml-3 mb-3">
+									<Checkbox.Group
 										{...form.register('ListCourseOfStudentID')}
 										name="ListCourseOfStudentID"
 										value={courseIDList}
 										onChange={(arrID: number[]) => {
+											console.log('arrID: ', arrID);
+
 											form.setValue('ListCourseOfStudentID', arrID);
 											setCourseIDList(arrID);
 										}}
@@ -167,15 +138,9 @@ function RequestRefundsForm(props) {
 												</>
 											);
 										})}
-									</Checkbox.Group> */}
-							{/* {customErrorCheckbox.hasError && (
-										<div className="ant-form-item-explain ant-form-item-explain-error">
-											<div role="alert">{customErrorCheckbox.message}</div>
-										</div>
-									)}
-									<Spin className="custom-loading-icon" size="large" />
+									</Checkbox.Group>
 								</div>
-							</div> */}
+							)}
 							<div className="col-12">
 								<InputTextField
 									form={form}
@@ -196,21 +161,21 @@ function RequestRefundsForm(props) {
 							<div className="col-12">
 								<TextAreaField form={form} name="Reason" label="Lý do" placeholder="Nhập lý do" rows={5} />
 							</div>
-							{/* <div className="col-12">
-								<CheckboxField form={form} name="isExpulsion" text="Xóa học viên ra khỏi lớp" />
-							</div> */}
-							{/* {StatusID==1 && ( */}
+							{showCourse == true && (
 								<div className="col-12">
-									<button
-										type="submit"
-										className="btn btn-primary w-100"
-										disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
-									>
-										Xác nhận
-										{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
-									</button>
+									<CheckboxField form={form} name="isExpulsion" text="Xóa học viên ra khỏi lớp" />
 								</div>
-							{/* )} */}
+							)}
+							<div className="col-12">
+								<button
+									type="submit"
+									className="btn btn-primary w-100"
+									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
+								>
+									Xác nhận
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
+								</button>
+							</div>
 						</div>
 					</Form>
 				</div>

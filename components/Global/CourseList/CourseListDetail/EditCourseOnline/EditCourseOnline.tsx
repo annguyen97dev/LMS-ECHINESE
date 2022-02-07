@@ -25,7 +25,7 @@ import AvailableScheduleOnlineForm from './AvailableScheduleOnlineForm';
 const EditCourseOnline = (props) => {
 	const router = useRouter();
 	const { slug: courseID } = router.query;
-	const { userInformation } = useWrap();
+	const { userInformation, isAdmin } = useWrap();
 	// -----------STATE-----------
 	// CREATE COURSE FORM STATE
 	const { showNoti } = useWrap();
@@ -724,6 +724,7 @@ const EditCourseOnline = (props) => {
 			isMounted = false;
 		};
 	}, []);
+	const [isCloseModal, setIsCloseModal] = useState(true);
 	return (
 		<div className="create-course edit-course">
 			<TitlePage title="Cập nhật khóa học" />
@@ -766,6 +767,7 @@ const EditCourseOnline = (props) => {
 							handleSetDataModalCalendar={setDataModalCalendar}
 							dataModalCalendar={dataModalCalendar}
 							//
+							isCloseModal={isCloseModal}
 							unAvailableList={
 								<Schedule>
 									<ScheduleList>
@@ -789,6 +791,13 @@ const EditCourseOnline = (props) => {
 										isEditView={true}
 										scheduleObj={s}
 										isLoading={isLoading}
+										reloadData={() => {
+											fetchSubject();
+											fetchStudyTime();
+											fetchCourseDetail();
+											fetchAvailableScheduleFirstTime();
+											setIsCloseModal(!isCloseModal);
+										}}
 										handleChangeValueSchedule={changeValueSchedule}
 										handleChangeStatusSchedule={onToggleSchedule}
 										optionTeacherList={optionListForADay.optionTeacherList.find((o) => o.id === s.ID)?.list || []}

@@ -1,9 +1,10 @@
-import { Tooltip } from 'antd';
+import { Tooltip, Popconfirm } from 'antd';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Eye } from 'react-feather';
 import { studentListInCourseApi } from '~/apiBase';
+import { courseOfStudentApi } from '~/apiBase/customer/parents/courses-of-student';
 import PowerTable from '~/components/PowerTable';
 import { useWrap } from '~/context/wrap';
 import AddTrialStudentForm from './AddTrialStudentForm';
@@ -18,7 +19,7 @@ StudentsList.defaultProps = {
 
 function StudentsList(props) {
 	const { courseID: ID, coursePrice } = props;
-	const { showNoti, userInformation } = useWrap();
+	const { showNoti, userInformation, isAdmin } = useWrap();
 	const [studentList, setStudentList] = useState<IStudentListInCourse[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
@@ -37,6 +38,13 @@ function StudentsList(props) {
 			pageIndex
 		});
 	};
+	const deleteStudent = async (param) => {
+		let temp: any = { ID: param, Enable: false };
+		try {
+			const res = courseOfStudentApi.update(temp);
+			fetchTeacherList();
+		} catch (error) {}
+	};
 	const columns = [
 		{ title: 'Tên học viên', width: 150, dataIndex: 'StudentName' },
 		{ title: 'SĐT', width: 150, dataIndex: 'Mobile' },
@@ -51,21 +59,38 @@ function StudentsList(props) {
 		},
 		{ title: 'Ghi chú', width: 200, dataIndex: 'Note' },
 		{
-			title: '',
+			title: 'Hành động',
 			width: 150,
-			render: (value) => (
-				<Link
-					href={{
-						pathname: '/customer/student/student-list/student-detail/[slug]',
-						query: { slug: value.StudentID }
-					}}
-				>
-					<Tooltip title="Xem chi tiết">
-						<button className="btn btn-icon">
-							<Eye />
-						</button>
-					</Tooltip>
-				</Link>
+			render: (value, data) => (
+				<>
+					<Link
+						href={{
+							pathname: '/customer/student/student-list/student-detail/[slug]',
+							query: { slug: value.StudentID }
+						}}
+					>
+						<Tooltip title="Xem chi tiết">
+							<button className="btn btn-icon">
+								<Eye />
+							</button>
+						</Tooltip>
+					</Link>
+
+					{isAdmin && (
+						<Tooltip title="Xoá học viên khỏi lớp">
+							<Popconfirm
+								title="Are you sure to delete this task?"
+								onConfirm={() => deleteStudent(data?.ID)}
+								okText="Yes"
+								cancelText="No"
+							>
+								<button className="btn btn-icon">
+									<i className="fas fa-ban" style={{ fontSize: 16, color: '#dd4667' }}></i>
+								</button>
+							</Popconfirm>
+						</Tooltip>
+					)}
+				</>
 			)
 		}
 	];

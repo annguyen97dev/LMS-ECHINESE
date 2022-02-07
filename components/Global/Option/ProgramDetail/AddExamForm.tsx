@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Tooltip } from 'antd';
+import { Modal, Tooltip, Divider, Button } from 'antd';
 import { curriculumDetailApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import { Select } from 'antd';
@@ -66,8 +66,10 @@ const AddExamForm = (props) => {
 				visible={isModalVisible}
 				okText={disable ? 'OK' : 'LƯU'}
 				cancelText="Hủy"
+				cancelButtonProps={null}
 				okButtonProps={{ loading: isLoading }}
 				onOk={handleOk}
+				footer={null}
 				onCancel={handleCancel}
 			>
 				<p className="font-weight-black mb-2">Chọn đề kiểm tra</p>
@@ -78,6 +80,12 @@ const AddExamForm = (props) => {
 						</Option>
 					))}
 				</Select>
+				<Divider style={{ width: 550, marginLeft: -25, marginRight: -25, marginBottom: 0 }} />
+				<div style={{ display: 'flex', width: '100%', alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+					<Button onClick={handleOk} className="btn btn-primary" style={{ marginTop: 15, marginBottom: -7 }}>
+						OK
+					</Button>
+				</div>
 			</Modal>
 		</>
 	);
