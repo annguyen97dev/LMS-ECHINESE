@@ -1,10 +1,8 @@
-import { EyeOutlined } from '@ant-design/icons';
 import { Card, Spin, Tooltip } from 'antd';
-import moment from 'moment';
 import Link from 'next/link';
 import router from 'next/router';
 import React from 'react';
-import { Eye, File } from 'react-feather';
+import { Eye } from 'react-feather';
 
 export default function ExpandBox() {
 	return (
@@ -33,14 +31,10 @@ export default function ExpandBox() {
 	);
 }
 
-export function ExpandPaymentRow(props: {
-	isLoading: { type: string; status: boolean };
-	// dataRow: ICourseOfStudentPrice;
-	dataRow: any;
-	infoInvoiceList?: IInvoice[];
-}) {
+export function ExpandPaymentRow(props: { isLoading: { type: string; status: boolean }; dataRow: any; infoInvoiceList?: IInvoice[] }) {
 	const { isLoading, dataRow, infoInvoiceList } = props;
 	const { Course } = dataRow;
+
 	return (
 		<div className="feedback-detail-text">
 			<Spin spinning={isLoading.type === 'FETCH_INFO_INVOICE' && isLoading.status}>
@@ -75,7 +69,7 @@ export function ExpandPaymentRow(props: {
 							) : null}
 							<td>{(infoInvoiceList && infoInvoiceList[0]?.Reason) || 'Không có lý do'}</td>
 							<td>
-								{dataRow.DonePaid && (
+								{dataRow?.Paid > 0 && (
 									<Tooltip title="Xem phiếu thu">
 										<button
 											onClick={() => {

@@ -51,6 +51,10 @@ const CreateExamForm = (props) => {
 
 	const { Option } = Select;
 
+	useEffect(() => {
+		handleChange_type(dataItem?.Type);
+	}, []);
+
 	// GET DATA PROGRAM
 	const getDataProgram = async () => {
 		setLoadingProgram(true);
@@ -304,29 +308,35 @@ const CreateExamForm = (props) => {
 						<div className="col-md-6 col-12">
 							<InputTextField form={form} name="Code" label="Mã đề thi" isRequired={true} />
 						</div>
-						<div className="col-md-6 col-12">
-							<SelectField
-								disabled={isTest ? true : dataItem?.ID ? true : false}
-								form={form}
-								name="ProgramID"
-								label="Chương trình"
-								onChangeSelect={(value) => handleChange_selectProgram(value)}
-								isLoading={loadingProgram}
-								optionList={dataProgram}
-								isRequired={!isTest ? true : false}
-							/>
-						</div>
-						<div className="col-md-6 col-12">
-							<SelectField
-								disabled={isTest ? true : dataItem?.ID ? true : false}
-								form={form}
-								name="CurriculumID"
-								label="Giáo trình"
-								isLoading={loadingCurriculum}
-								optionList={dataCurriculum}
-								isRequired={!isTest ? true : false}
-							/>
-						</div>
+
+						{!isTest && (
+							<div className="col-md-6 col-12">
+								<SelectField
+									disabled={isTest ? true : dataItem?.ID ? true : false}
+									form={form}
+									name="ProgramID"
+									label="Chương trình"
+									onChangeSelect={(value) => handleChange_selectProgram(value)}
+									isLoading={loadingProgram}
+									optionList={dataProgram}
+									isRequired={!isTest ? true : false}
+								/>
+							</div>
+						)}
+
+						{!isTest && (
+							<div className="col-md-6 col-12">
+								<SelectField
+									disabled={isTest ? true : dataItem?.ID ? true : false}
+									form={form}
+									name="CurriculumID"
+									label="Giáo trình"
+									isLoading={loadingCurriculum}
+									optionList={dataCurriculum}
+									isRequired={!isTest ? true : false}
+								/>
+							</div>
+						)}
 
 						<div className="col-md-6 col-12">
 							<InputTextField form={form} name="Time" label="Thời gian làm bài" isRequired={true} />

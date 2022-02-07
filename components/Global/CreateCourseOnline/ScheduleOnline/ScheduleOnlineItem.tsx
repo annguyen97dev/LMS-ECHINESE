@@ -1,34 +1,22 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Collapse, Spin } from 'antd';
+import { Button, Collapse, Spin, Popconfirm } from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import { deleteCourseScheduleApi } from '~/apiBase/deleteCourseSchedule/delete-course-schedule';
 import SelectField from '~/components/FormControl/SelectField';
 import { useWrap } from '~/context/wrap';
 import { optionCommonPropTypes } from '~/utils/proptypes';
 const { Panel } = Collapse;
 
-//   scheduleObj = {
-//     "ID": 1,
-//     "eventName": "26/07 - Hữu Minh Teacher 10 [20:00-21:00]-[Phòng 2]",
-//     "Color": "orange",
-//     "Tiet": {
-//         "CurriculumsDetailID": 140,
-//         "CurriculumsDetailName": "1: Sinh"
-//     },
-//     "date": "2021-07-26",
-//     "TeacherID": 1060,
-//     "TeacherName": "Hữu Minh Teacher 10[20:00-21:00]",
-//     "CaID": 5,
-//     "CaName": "Ca: 20:00 - 21:00",
-// }
 const ScheduleOnlineItem = (props) => {
 	const {
 		handleChangeStatusSchedule,
 		handleChangeValueSchedule,
+		reloadData,
 		handleAheadSchedule,
 		//
 		scheduleObj,
@@ -44,7 +32,7 @@ const ScheduleOnlineItem = (props) => {
 	} = props;
 	// IF NOT OWNER SCHEDULE < LOCK
 	const [isLockSchedule, setIsLockSchedule] = useState(false);
-	const { userInformation } = useWrap();
+	const { userInformation, showNoti, isAdmin } = useWrap();
 
 	const {
 		ID,
@@ -112,6 +100,18 @@ const ScheduleOnlineItem = (props) => {
 		}
 	}, [scheduleObj]);
 
+	const onDelete = async () => {
+		try {
+			const res: any = await deleteCourseScheduleApi.delete(ID);
+			reloadData();
+			res?.message == 'Thành công !' && showNoti('success', 'Thành công!');
+		} catch (error) {
+			error?.status === 400 && showNoti('danger', 'Không thành công');
+		}
+	};
+
+	// console.log('ID: ', ID);
+
 	return (
 		<Panel
 			{...props}
@@ -169,18 +169,29 @@ const ScheduleOnlineItem = (props) => {
 							disabled={isLockSchedule}
 						/>
 					</div>
-					{isEditView && !isClickAheadSchedule && typeof ID === 'number' && saveBeforeAheadSchedule && (
-						<div className="col-12 text-right">
-							<button
-								className="btn btn-secondary"
-								disabled={(isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status) || isLockSchedule}
-								onClick={() => checkHandleAheadSchedule(ID, TeacherID)}
-							>
-								Lùi buổi học
-								{isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status && <Spin className="loading-base" />}
-							</button>
-						</div>
-					)}
+
+					<div className="col-12 text-right">
+						{isEditView && !isClickAheadSchedule && typeof ID === 'number' && saveBeforeAheadSchedule && (
+							<>
+								{isAdmin && (
+									<Popconfirm title="Bạn muốn xóa buổi học này?" onConfirm={onDelete} okText="Yes" cancelText="No">
+										<Button className="btn btn-primary" style={{ height: 39 }}>
+											Xóa Buổi Học
+										</Button>
+									</Popconfirm>
+								)}
+
+								<button
+									className="btn btn-secondary ml-3"
+									disabled={(isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status) || isLockSchedule}
+									onClick={() => checkHandleAheadSchedule(ID, TeacherID)}
+								>
+									Lùi buổi học
+									{isLoading.type === 'AHEAD_SCHEDULE' && isLoading.status && <Spin className="loading-base" />}
+								</button>
+							</>
+						)}
+					</div>
 				</div>
 			</div>
 		</Panel>
@@ -218,7 +229,8 @@ ScheduleOnlineItem.propTypes = {
 	optionTeacherList: optionCommonPropTypes,
 	optionStudyTime: optionCommonPropTypes,
 	//
-	saveBeforeAheadSchedule: PropTypes.bool
+	saveBeforeAheadSchedule: PropTypes.bool,
+	reloadData: PropTypes.func
 };
 ScheduleOnlineItem.defaultProps = {
 	handleChangeValueSchedule: null,
@@ -234,6 +246,7 @@ ScheduleOnlineItem.defaultProps = {
 	optionTeacherList: [],
 	optionStudyTime: [],
 	//
-	saveBeforeAheadSchedule: true
+	saveBeforeAheadSchedule: true,
+	reloadData: null
 };
 export default ScheduleOnlineItem;

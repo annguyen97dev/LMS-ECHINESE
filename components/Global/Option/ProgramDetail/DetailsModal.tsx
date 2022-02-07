@@ -476,8 +476,6 @@ export const DetailsModal = (props) => {
 														</Form.Item>
 													)}
 
-													{/* 81361 123761278361826371783127   1783 17823 7812 78 78 72 71637812683617817 78132 73781267317 */}
-
 													{!enableEdit ? (
 														<Input
 															className="item-info"
