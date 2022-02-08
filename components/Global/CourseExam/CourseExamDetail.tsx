@@ -107,7 +107,7 @@ const CourseExamDetail = (props) => {
 			dataIndex: 'ExamTopicName',
 			render: (text, data) => (
 				<>
-					{userInformation.RoleID !== 2 ? (
+					{userInformation?.RoleID !== 2 ? (
 						<Link
 							href={{
 								pathname: '/course-exam/detail/[slug]',
@@ -190,7 +190,7 @@ const CourseExamDetail = (props) => {
 		{
 			render: (data) => (
 				<>
-					{userInformation.RoleID !== 2 ? (
+					{userInformation?.RoleID !== 2 ? (
 						<>
 							<CourseExamUpdate dataTeacher={dataTeacher} dataRow={data} onFetchData={() => setTodoApi({ ...todoApi })} />
 							<Link

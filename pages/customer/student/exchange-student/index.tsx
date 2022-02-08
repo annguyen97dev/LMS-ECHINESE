@@ -489,7 +489,7 @@ const StudentExchange = () => {
 
 	// Columns
 	const columns =
-		userInformation && userInformation.RoleID !== 10
+		userInformation && userInformation?.RoleID !== 10
 			? [
 					{
 						title: 'Tỉnh/TP',

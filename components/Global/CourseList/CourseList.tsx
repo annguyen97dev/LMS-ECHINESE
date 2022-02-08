@@ -194,7 +194,7 @@ const CourseList = () => {
 
 	useEffect(() => {
 		if (userInformation) {
-			const role = userInformation.RoleID;
+			const role = userInformation?.RoleID;
 			if (role === 1) {
 				setIsShowUpdate(true);
 			}

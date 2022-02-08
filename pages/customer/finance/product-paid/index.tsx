@@ -43,7 +43,7 @@ const ProductPaid = (props) => {
 	}, [params]);
 
 	const columns =
-		userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 5)
+		userInformation && (userInformation?.RoleID === 1 || userInformation?.RoleID === 5)
 			? [
 					{
 						title: 'Tên học sinh',

@@ -58,7 +58,7 @@ const RenderItem: FC<iProps> = ({ item, onPress, onDelete, onEdit }) => {
 				</div>
 
 				<div className="row mr-3 ml-3 vocab-item__menu">
-					{userInformation.RoleID === 1 && (
+					{userInformation?.RoleID === 1 && (
 						<>
 							<Tooltip title="Sửa">
 								<button
@@ -158,7 +158,7 @@ const NotificationTab: FC<props> = ({ dataNotification, createNewNotification, o
 	// RENDER
 	return (
 		<div className="pr-5 pl-5 wrap-vocab">
-			{userInformation.RoleID === 1 && (
+			{userInformation?.RoleID === 1 && (
 				<>
 					{!showAdd ? (
 						<Button

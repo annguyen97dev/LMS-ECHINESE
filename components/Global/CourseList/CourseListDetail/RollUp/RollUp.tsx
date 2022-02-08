@@ -209,7 +209,7 @@ function RollUp(props) {
 						value={status}
 						className="style-input"
 						onChange={(vl) => debounceOnChangeValue('StatusID', vl, idx)}
-						disabled={userInformation.RoleID === 2 && currentDate !== selectedDate}
+						disabled={userInformation?.RoleID === 2 && currentDate !== selectedDate}
 					>
 						{rollUpStatusOptionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>
@@ -231,7 +231,7 @@ function RollUp(props) {
 						value={status}
 						className="style-input"
 						onChange={(vl) => debounceOnChangeValue('LearningStatusID', vl, idx)}
-						disabled={userInformation.RoleID === 2 && currentDate !== selectedDate}
+						disabled={userInformation?.RoleID === 2 && currentDate !== selectedDate}
 					>
 						{leaningStatusOptionList.map((o, idx) => (
 							<Option key={idx} value={o.value}>
@@ -254,7 +254,7 @@ function RollUp(props) {
 						placeholder="Nhập đánh giá"
 						className="style-input"
 						allowClear={true}
-						disabled={userInformation.RoleID === 2 && currentDate !== selectedDate}
+						disabled={userInformation?.RoleID === 2 && currentDate !== selectedDate}
 						onChange={(e) => debounceOnChangeValue('Note', e.target.value, idx)}
 					/>
 				);
@@ -268,7 +268,7 @@ function RollUp(props) {
 			render: (warning, item: IStudentRollUp, idx) => {
 				return (
 					<Checkbox
-						disabled={warning || (userInformation.RoleID === 2 && currentDate !== selectedDate)}
+						disabled={warning || (userInformation?.RoleID === 2 && currentDate !== selectedDate)}
 						checked={warning}
 						onChange={(e) => debounceOnChangeValue('Warning', e.target.checked, idx)}
 					/>

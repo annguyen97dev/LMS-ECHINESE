@@ -192,7 +192,7 @@ const VideoCourseStudent = () => {
 			<Card title={Extra()} className="video-course-list" style={{ width: '100%' }}>
 				{userInformation !== null && (
 					<>
-						{userInformation.RoleID == 3 && (
+						{userInformation?.RoleID == 3 && (
 							<CourseVideoTable
 								totalPage={totalPage && totalPage}
 								getPagination={(pageNumber: number) => getPagination(pageNumber)}

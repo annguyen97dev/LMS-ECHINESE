@@ -303,7 +303,7 @@ function SalerListForm(props) {
 									label="Trạng thái hoạt động"
 									optionList={optionStatusList}
 									placeholder="Chọn trạng thái hoạt động"
-									disabled={!isUpdate ? true : userInformation.RoleID === 1 ? false : true}
+									disabled={!isUpdate ? true : userInformation?.RoleID === 1 ? false : true}
 								/>
 							</div>
 							<div className="col-md-6 col-12">

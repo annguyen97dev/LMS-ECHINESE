@@ -314,7 +314,7 @@ const TeacherForm = (props) => {
 								<div className="col-md-6 col-12">
 									<SelectField
 										form={form}
-										disabled={userInformation.RoleID === 1 ? false : true}
+										disabled={userInformation?.RoleID === 1 ? false : true}
 										name="StatusID"
 										label="Trạng thái hoạt động"
 										optionList={optionStatusList}

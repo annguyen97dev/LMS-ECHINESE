@@ -144,7 +144,7 @@ const FeedbackList = () => {
 			TypeID: 3
 		};
 
-		await getAllFeedBack(userInformation.RoleID == 6 ? temp2 : temp);
+		await getAllFeedBack(userInformation?.RoleID == 6 ? temp2 : temp);
 		getFeedBackCategory();
 		setLoading(false);
 	};
@@ -161,7 +161,7 @@ const FeedbackList = () => {
 
 	// GET DATA
 	const getAllFeedBack = async (param) => {
-		if (userInformation !== null && (userInformation.RoleID == 1 || userInformation.RoleID == 6)) {
+		if (userInformation !== null && (userInformation?.RoleID == 1 || userInformation?.RoleID == 6)) {
 			try {
 				const res = await FeedbackApi.getAll(param);
 				res.status == 200 && setAllFeedback(res.data.data);
@@ -224,7 +224,7 @@ const FeedbackList = () => {
 
 	return (
 		<>
-			{userInformation !== null && (userInformation.RoleID === 1 || userInformation.RoleID === 6) && (
+			{userInformation !== null && (userInformation?.RoleID === 1 || userInformation?.RoleID === 6) && (
 				<>
 					<Modal title="Xác nhận thông tin" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
 						<p>Bạn chắc chắn đã xử lí xong phản hồi</p>
@@ -249,7 +249,7 @@ const FeedbackList = () => {
 									/>
 								</div>
 
-								{userInformation.RoleID !== 6 && (
+								{userInformation?.RoleID !== 6 && (
 									<Popover
 										placement="bottomLeft"
 										title="Chọn lọc"
@@ -288,7 +288,7 @@ const FeedbackList = () => {
 				</>
 			)}
 
-			{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 6 && (
+			{userInformation !== null && userInformation?.RoleID !== 1 && userInformation?.RoleID !== 6 && (
 				<>
 					<StudentFeedbackList />
 				</>

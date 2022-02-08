@@ -3,13 +3,13 @@ import SortBox from '~/components/Elements/SortBox';
 import moment from 'moment';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import LayoutBase from '~/components/LayoutBase';
-import { studentAdviseApi, sourceInfomationApi, areaApi, staffApi, consultationStatusApi, programApi } from '~/apiBase';
+import { studentAdviseApi, sourceInfomationApi, areaApi, staffApi, consultationStatusApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
 import StudentAdviseForm from '~/components/Global/Customer/Student/StudentAdviseForm';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import Link from 'next/link';
-import { Checkbox, Popconfirm, Tooltip } from 'antd';
-import { CalendarOutlined, UserAddOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+import { CalendarOutlined } from '@ant-design/icons';
 import ExpandTable from '~/components/ExpandTable';
 import StudentAdvisoryNote from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryNote';
 import StudentAdvisoryMail from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryMail';
@@ -86,7 +86,6 @@ const listApi = [
 	},
 	{
 		api: learningNeeds,
-		// api: programApi,
 		text: 'Nhu cầu học',
 		name: 'Program'
 	}
@@ -100,8 +99,6 @@ export default function StudentAdvisory() {
 		ConsultationStatus: [],
 		Program: []
 	});
-	const [confirmLoading, setConfirmLoading] = useState(false);
-	const [showGroup, setShowGroup] = useState(false);
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IStudentAdvise[]>([]);
 	const { showNoti, pageSize, isAdmin, userInformation } = useWrap();
@@ -121,7 +118,6 @@ export default function StudentAdvisory() {
 		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const [indexRow, setIndexRow] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 	const [listCustomer, setListCustomer] = useState([]);
@@ -135,7 +131,7 @@ export default function StudentAdvisory() {
 			title: 'Nguồn khách',
 			col: 'col-md-6 col-12',
 			type: 'select',
-			optionList: null, // Gọi api xong trả data vào đây
+			optionList: null,
 			value: null
 		},
 		{
@@ -259,12 +255,9 @@ export default function StudentAdvisory() {
 							Enable: true
 						});
 					}
-
 					res.status == 200 && getDataTolist(res.data.data, item.name);
-
 					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
-					// showNoti('danger', error.message);
 					console.log(error.message);
 				} finally {
 				}
@@ -278,7 +271,6 @@ export default function StudentAdvisory() {
 			type: 'GET_ALL',
 			status: true
 		});
-
 		try {
 			let res = await studentAdviseApi.getAll(todoApi);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), setIsResetKey(true));
@@ -297,8 +289,7 @@ export default function StudentAdvisory() {
 	};
 
 	// ---------------- AFTER SUBMIT -----------------
-	const afterPost = (mes) => {
-		// showNoti("success", mes);
+	const afterPost = () => {
 		setTodoApi({
 			...listTodoApi,
 			pageIndex: 1
@@ -308,29 +299,15 @@ export default function StudentAdvisory() {
 
 	// ----------------- ON SUBMIT --------------------
 	const _onSubmit = async (dataSubmit: any) => {
-		console.log('Data submit: ', dataSubmit);
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
 		});
-
 		let res = null;
-
 		if (dataSubmit.ID) {
 			try {
 				res = await studentAdviseApi.update(dataSubmit);
-
 				if (res.status == 200) {
-					// let newDataSource = [...dataSource];
-					// newDataSource.splice(indexRow, 1, {
-					// 	...dataSubmit,
-					// 	AreaName: listDataForm.Area.find((item) => item.value == dataSubmit.AreaID)?.title,
-					// 	CounselorsName: listDataForm.Counselors.find((item) => item.value == dataSubmit.CounselorsID)?.title,
-					// 	SourceInformationName:
-					// 		dataSubmit.SourceInformationID &&
-					// 		listDataForm.SourceInformation.find((item) => item.value == dataSubmit.SourceInformationID).title
-					// });
-					// setDataSource(newDataSource);
 					setTodoApi({ ...todoApi });
 					showNoti('success', res.data.message);
 				}
@@ -347,7 +324,7 @@ export default function StudentAdvisory() {
 			dataSubmit.CounselorsID = 0;
 			try {
 				res = await studentAdviseApi.add(dataSubmit);
-				res?.status == 200 && afterPost(res.data.message);
+				res?.status == 200 && afterPost();
 			} catch (error) {
 				showNoti('danger', error.message);
 			} finally {
@@ -357,7 +334,6 @@ export default function StudentAdvisory() {
 				});
 			}
 		}
-
 		return res;
 	};
 
@@ -375,24 +351,8 @@ export default function StudentAdvisory() {
 		return res;
 	};
 
-	// show group customer
-	const showGroupCustomer = () => {
-		if (!showGroup) {
-			setTodoApi({
-				...todoApi,
-				isGroup: true
-			});
-			setShowGroup(true);
-		} else {
-			setTodoApi(listTodoApi);
-			setShowGroup(false);
-		}
-	};
-
 	// -------------- HANDLE FILTER ------------------
 	const handleFilter = (listFilter) => {
-		console.log('List Filter when submit: ', listFilter);
-
 		let newListFilter = { ...listFieldFilter };
 		listFilter.forEach((item, index) => {
 			let key = item.name;
@@ -417,27 +377,7 @@ export default function StudentAdvisory() {
 	};
 
 	// ------------ ON SEARCH -----------------------
-
-	const checkField = (valueSearch, dataIndex) => {
-		let newList = { ...listFieldSearch };
-		Object.keys(newList).forEach(function (key) {
-			console.log('key: ', key);
-			if (key != dataIndex) {
-				if (key != 'pageIndex') {
-					newList[key] = null;
-				}
-			} else {
-				newList[key] = valueSearch;
-			}
-		});
-
-		return newList;
-	};
-
 	const onSearch = (valueSearch, dataIndex) => {
-		console.log('valueSearch: ', valueSearch);
-		console.log('dataIndex: ', dataIndex);
-
 		let clearKey =
 			dataIndex == 'CustomerName'
 				? { CustomerName: valueSearch }
@@ -475,42 +415,8 @@ export default function StudentAdvisory() {
 		setCurrentPage(pageNumber);
 		setTodoApi({
 			...todoApi,
-			// ...listFieldSearch,
 			pageIndex: pageIndex
 		});
-	};
-
-	// --------- ADD TO GROUP ---------
-	const addToGroup = async (data) => {
-		let dataSubmit = {
-			ID: data.ID,
-			isGroup: true
-		};
-		setConfirmLoading(true);
-		try {
-			let res = await studentAdviseApi.update(dataSubmit);
-			if (res.status == 200) {
-				setTodoApi({
-					...todoApi
-				});
-				showNoti('success', 'Thêm vào nhóm thành công');
-			}
-		} catch (error) {
-			showNoti('danger', error.message);
-		} finally {
-			setConfirmLoading(false);
-		}
-	};
-
-	const onChange_sendEmail = (e, ID) => {
-		let checked = e.target.checked;
-		if (checked) {
-			listCustomer.push(ID);
-		} else {
-			let index = listCustomer.indexOf(ID);
-			listCustomer.splice(index, 1);
-		}
-		setListCustomer([...listCustomer]);
 	};
 
 	const resetListCustomer = () => {
@@ -608,7 +514,6 @@ export default function StudentAdvisory() {
 							return (
 								<div className="d-flex align-items-center">
 									<StudentAdviseForm
-										getIndex={() => setIndexRow(index)}
 										index={index}
 										rowData={data}
 										rowID={data.ID}
@@ -713,7 +618,7 @@ export default function StudentAdvisory() {
 			TitlePage="Danh sách khách hàng"
 			TitleCard={
 				<div className="d-flex align-items-center justify-content-end">
-					{userInformation && userInformation.RoleID !== 10 && (
+					{userInformation && userInformation?.RoleID !== 10 && (
 						<>
 							<StudentAdvisoryMail
 								showCheckBox={() => setShowCheckbox(!showCheckbox)}

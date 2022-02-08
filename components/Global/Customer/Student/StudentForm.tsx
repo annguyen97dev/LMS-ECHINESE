@@ -662,7 +662,7 @@ const StudentForm = (props) => {
 												{ title: 'Hoạt động', value: 0 },
 												{ title: 'Khóa', value: 1 }
 											]}
-											disabled={userInformation && userInformation.RoleID == 1 ? false : true}
+											disabled={userInformation && userInformation?.RoleID == 1 ? false : true}
 											name="StatusID"
 											label="Trạng thái"
 											placeholder="Chọn trạng thái"

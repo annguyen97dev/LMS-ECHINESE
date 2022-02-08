@@ -9,14 +9,10 @@ import ExpandTable from '~/components/ExpandTable';
 import CourseOfStudentDetail from '~/components/Global/Customer/Student/CourseOfStudentDetail';
 import ResetPassStudent from '~/components/Global/Customer/Student/ResetPassStudent';
 import StudentAdvisoryMail from '~/components/Global/Customer/Student/StudentAdvisory/StudentAdvisoryMail';
-
 import StudentFormModal from '~/components/Global/Customer/Student/StudentFormModal';
-
 import LayoutBase from '~/components/LayoutBase';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-
-// let pageIndex = 1;
 
 let listFieldSearch = {
 	pageIndex: 1,
@@ -30,7 +26,8 @@ let listFieldFilter = {
 	SourceInformationID: null,
 	BranchID: null,
 	fromDate: null,
-	toDate: null
+	toDate: null,
+	isRegisteredCourse: null
 };
 
 const dataOption = [
@@ -67,21 +64,6 @@ interface listDataForm {
 	Parent: Array<optionObj>;
 	Counselors: Array<optionObj>;
 }
-
-const optionGender = [
-	{
-		value: 0,
-		title: 'Nữ'
-	},
-	{
-		value: 1,
-		title: 'Nam'
-	},
-	{
-		value: 0,
-		title: 'Khác'
-	}
-];
 
 const listApi = [
 	{
@@ -123,8 +105,10 @@ const listApi = [
 ];
 
 const StudentData = () => {
-	const { showNoti, pageSize, isAdmin } = useWrap();
+	const { showNoti, pageSize, isAdmin, userInformation } = useWrap();
 	const [currentPage, setCurrentPage] = useState(1);
+	const [showCheckbox, setShowCheckbox] = useState(false);
+	const [listCustomer, setListCustomer] = useState([]);
 	const listTodoApi = {
 		pageSize: pageSize,
 		pageIndex: 1,
@@ -134,11 +118,9 @@ const StudentData = () => {
 		SourceInformationID: null,
 		BranchID: null,
 		fromDate: null,
-		toDate: null
+		toDate: null,
+		isRegisteredCourse: null
 	};
-	const [dataCenter, setDataCenter] = useState<IBranch[]>([]);
-	const [dataRow, setDataRow] = useState([]);
-
 	const [listDataForm, setListDataForm] = useState<listDataForm>({
 		Area: [],
 		DistrictID: [],
@@ -170,6 +152,18 @@ const StudentData = () => {
 			value: null
 		},
 		{
+			name: 'isRegisteredCourse',
+			title: 'Trạng thái đăng ký',
+			col: 'col-md-6 col-12',
+			type: 'select',
+			optionList: [
+				{ value: null, title: 'Tất cả' },
+				{ value: true, title: 'Đã đăng ký khóa học' },
+				{ value: false, title: 'Chưa đăng ký khóa học' }
+			],
+			value: null
+		},
+		{
 			name: 'date-range',
 			title: 'Từ - đến',
 			col: 'col-12',
@@ -180,7 +174,6 @@ const StudentData = () => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IStudent[]>([]);
-
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -188,9 +181,7 @@ const StudentData = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
-	// FOR STUDENT FORM
 	// ------------- ADD data to list --------------
-
 	const makeNewData = (data, name) => {
 		let newData = null;
 		switch (name) {
@@ -253,13 +244,11 @@ const StudentData = () => {
 			default:
 				break;
 		}
-
 		return newData;
 	};
 
 	const getDataTolist = (data: any, name: any) => {
 		let newData = makeNewData(data, name);
-
 		Object.keys(listDataForm).forEach(function (key) {
 			if (key == name) {
 				listDataForm[key] = newData;
@@ -289,10 +278,7 @@ const StudentData = () => {
 							Enable: true
 						});
 					}
-
 					res.status == 200 && getDataTolist(res.data.data, item.name);
-
-					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
 					console.log(error.message);
 				} finally {
@@ -307,7 +293,6 @@ const StudentData = () => {
 			type: 'GET_ALL',
 			status: true
 		});
-
 		try {
 			let res = await studentApi.getAll(todoApi);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
@@ -333,25 +318,6 @@ const StudentData = () => {
 		});
 		setDataFilter([...dataFilter]);
 	};
-
-	// ------ HANDLE SUBMIT -------
-	// const _handleSubmitForm = (dataSubmit: any, index: number) => {
-	//   console.log("DATA SUBMIT: ", data);
-	//   console.log("INDEX: ", index);
-	//   if (dataSubmit.UserInformationID) {
-	//     let newDataSource = [...dataSource];
-	//     newDataSource.splice(index, 1, {
-	//       ...dataSubmit,
-	//       FullNameUnicode: dataSource.find(
-	//         (item) => item.UserInformationID == dataSubmit.UserInformationID
-	//       ).FullNameUnicode,
-	//       AreaName: listDataForm.Area.find(
-	//         (item) => item.value == dataSubmit.AreaID
-	//       ).title,
-	//     });
-	//     setDataSource(newDataSource);
-	//   }
-	// };
 
 	// -------------- HANDLE FILTER ------------------
 	const handleFilter = (listFilter) => {
@@ -379,22 +345,6 @@ const StudentData = () => {
 	};
 
 	// ------------ ON SEARCH -----------------------
-
-	const checkField = (valueSearch, dataIndex) => {
-		let newList = { ...listFieldSearch };
-		Object.keys(newList).forEach(function (key) {
-			if (key != dataIndex) {
-				if (key != 'pageIndex') {
-					newList[key] = null;
-				}
-			} else {
-				newList[key] = valueSearch;
-			}
-		});
-
-		return newList;
-	};
-
 	const onSearch = (valueSearch, dataIndex) => {
 		let clearKey =
 			dataIndex == 'FullNameUnicode'
@@ -405,7 +355,6 @@ const StudentData = () => {
 				? { Mobile: valueSearch }
 				: { Email: valueSearch };
 		setCurrentPage(1);
-
 		setTodoApi({
 			...todoApi,
 			...clearKey
@@ -445,11 +394,9 @@ const StudentData = () => {
 
 	// -------------- GET PAGE_NUMBER -----------------
 	const getPagination = (pageNumber: number) => {
-		// pageIndex = pageNumber;
 		setCurrentPage(pageNumber);
 		setTodoApi({
 			...todoApi,
-			// ...listFieldSearch,
 			pageIndex: pageNumber
 		});
 	};
@@ -464,9 +411,14 @@ const StudentData = () => {
 	}, [isAdmin]);
 
 	// EXPAND ROW
-
 	const expandedRowRender = (data, index) => {
 		return <CourseOfStudentDetail studentID={data.UserInformationID} />;
+	};
+
+	// -------- ON SELECT ROW ---------
+	const onSelectRow = (selectRow) => {
+		let listID = selectRow?.map((item) => item.UserInformationID);
+		setListCustomer(listID);
 	};
 
 	// Columns
@@ -523,16 +475,6 @@ const StudentData = () => {
 			title: 'Nguồn',
 			dataIndex: 'SourceInformationName'
 		},
-		// {
-		// 	title: 'Facebook',
-		// 	dataIndex: 'LinkFaceBook',
-		// 	render: (link) =>
-		// 		link && (
-		// 			<a className="font-weight-black" href={link} target="_blank">
-		// 				Link
-		// 			</a>
-		// 		)
-		// },
 		{
 			title: 'Trạng thái',
 			dataIndex: 'StatusID',
@@ -580,6 +522,7 @@ const StudentData = () => {
 						onFetchData={() => setTodoApi({ ...todoApi })}
 						dataRow={_}
 						listCustomer={dataSource}
+						isStudent={true}
 					/>
 				</div>
 			)
@@ -596,6 +539,23 @@ const StudentData = () => {
 			TitlePage="DANH SÁCH HỌC VIÊN"
 			dataSource={dataSource}
 			columns={columns}
+			TitleCard={
+				<div className="d-flex align-items-center justify-content-end">
+					{userInformation && userInformation?.RoleID !== 10 && (
+						<>
+							<StudentAdvisoryMail
+								showCheckBox={() => setShowCheckbox(!showCheckbox)}
+								loadingOutside={isLoading}
+								dataSource={dataSource}
+								onFetchData={() => setTodoApi({ ...todoApi })}
+								listCustomer={listCustomer}
+								resetListCustomer={() => setListCustomer([])}
+								isStudent={true}
+							/>
+						</>
+					)}
+				</div>
+			}
 			Extra={
 				<div className="extra-table">
 					<FilterBase
@@ -606,10 +566,12 @@ const StudentData = () => {
 					<SortBox handleSort={(value) => handleSort(value)} dataOption={dataOption} />
 				</div>
 			}
+			isSelect={showCheckbox}
+			onSelectRow={(selectRows) => onSelectRow(selectRows)}
 			expandable={{ expandedRowRender }}
 		/>
 	);
 };
-StudentData.layout = LayoutBase;
 
+StudentData.layout = LayoutBase;
 export default StudentData;

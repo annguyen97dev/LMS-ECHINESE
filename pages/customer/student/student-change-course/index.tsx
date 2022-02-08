@@ -237,7 +237,7 @@ export default function StudentCourseChange() {
 	}, [todoApi]);
 
 	const columns =
-		userInformation && userInformation.RoleID !== 10
+		userInformation && userInformation?.RoleID !== 10
 			? [
 					{
 						title: 'Học viên',

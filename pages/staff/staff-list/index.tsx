@@ -710,10 +710,10 @@ const StaffList = () => {
 		{
 			title: '',
 			dataIndex: '',
-			width: userInformation !== null && userInformation.RoleID === 5 ? 0 : 180,
+			width: userInformation !== null && userInformation?.RoleID === 5 ? 0 : 180,
 			render: (text, data, index) => (
 				<>
-					{userInformation !== null && userInformation.RoleID !== 5 && (
+					{userInformation !== null && userInformation?.RoleID !== 5 && (
 						<div onClick={(e) => e.stopPropagation()}>
 							<StaffForm
 								getIndex={() => setIndexRow(index)}
@@ -740,7 +740,7 @@ const StaffList = () => {
 									</Tooltip>
 								</Link>
 							)}
-							{userInformation && userInformation.RoleID == 1 && data.RoleID == 5 && (
+							{userInformation && userInformation?.RoleID == 1 && data.RoleID == 5 && (
 								<PromoteTeacher
 									isLoading={isLoading}
 									type="staff"
@@ -775,7 +775,7 @@ const StaffList = () => {
 				dataSource={dataSource}
 				TitlePage="Danh sách nhân viên"
 				TitleCard={
-					userInformation !== null && userInformation.RoleID !== 5 ? (
+					userInformation !== null && userInformation?.RoleID !== 5 ? (
 						<StaffForm isLoading={isLoading} onSubmit={(data: any) => onSubmit(data)} listDataForm={listDataForm} />
 					) : null
 				}

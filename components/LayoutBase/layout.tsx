@@ -242,7 +242,7 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 
 	useEffect(() => {
 		if (userInformation) {
-			switch (userInformation.RoleID) {
+			switch (userInformation?.RoleID) {
 				case 1:
 					setMainMenu(AdminChildMenu);
 					break;

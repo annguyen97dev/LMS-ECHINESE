@@ -157,7 +157,7 @@ const VideoCourseList = () => {
 		setLoading(true);
 		try {
 			const res =
-				userInformation.RoleID == 1 ? await VideoCourseListApi.getAll(todoApi) : await VideoCourseListApi.getByUser(todoApi);
+				userInformation?.RoleID == 1 ? await VideoCourseListApi.getAll(todoApi) : await VideoCourseListApi.getByUser(todoApi);
 			res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 			res.status == 204 && setData([]);
 			setRender(res + '');
@@ -269,7 +269,7 @@ const VideoCourseList = () => {
 			<Card title={Extra()} className="video-course-list" style={{ width: '100%' }}>
 				{userInformation !== null && (
 					<>
-						{userInformation.RoleID == 1 ? (
+						{userInformation?.RoleID == 1 ? (
 							<CourseVideoTable
 								totalPage={totalPage && totalPage}
 								getPagination={(pageNumber: number) => getPagination(pageNumber)}

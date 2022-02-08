@@ -378,7 +378,7 @@ const Programs = () => {
 						</Tooltip>
 					</Link>
 
-					{userInformation && userInformation.RoleID !== 2 && (
+					{userInformation && userInformation?.RoleID !== 2 && (
 						<ProgramForm
 							getIndex={() => setIndexRow(index)}
 							_onSubmit={(data: any) => _onSubmit(data)}
@@ -405,7 +405,7 @@ const Programs = () => {
 				TitlePage="Danh sách chương trình"
 				TitleCard={
 					userInformation &&
-					userInformation.RoleID !== 2 && (
+					userInformation?.RoleID !== 2 && (
 						<ProgramForm
 							_onSubmit={(data: any) => _onSubmit(data)}
 							dataGrade={dataGrade}

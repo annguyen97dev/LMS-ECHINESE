@@ -133,7 +133,7 @@ function StudentsList(props) {
 				columns={columns}
 				TitleCard={
 					userInformation &&
-					(userInformation.RoleID == 1 || userInformation.RoleID == 2 || userInformation.RoleID == 5) && (
+					(userInformation?.RoleID == 1 || userInformation?.RoleID == 2 || userInformation?.RoleID == 5) && (
 						<AddTrialStudentForm
 							CourseID={ID}
 							coursePrice={coursePrice}
