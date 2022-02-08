@@ -71,8 +71,6 @@ const VideoCourseStore = () => {
 
 	//GET DATA
 	const getAllArea = async () => {
-		console.log('===========================================');
-		console.log('GET DATA VIDEO COURSE');
 		// ADMIN & HOC VIEN
 		setIsLoading({ type: 'GET_ALL', status: true });
 		if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
@@ -81,7 +79,7 @@ const VideoCourseStore = () => {
 		try {
 			if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
 				// ADMIN
-				const res = await VideoCourseStoreApi.getAll(todoApi);
+				const res = await VideoCourseStoreApi.getAll({ ...todoApi, pageSize: 10 });
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
 				getCurriculum();
 				getTeacherOption();
@@ -195,8 +193,6 @@ const VideoCourseStore = () => {
 
 	// CREATE NEW COURSE
 	const createNewCourse = async (param) => {
-		console.log('param: ', param);
-
 		setIsLoading({ type: 'GET_ALL', status: true });
 		let temp = {
 			CategoryID: param.CategoryID,

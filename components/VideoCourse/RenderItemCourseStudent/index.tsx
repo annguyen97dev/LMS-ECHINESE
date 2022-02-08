@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import Link from 'next/link';
 import { parseToMoney } from '~/utils/functions';
@@ -81,8 +81,6 @@ const RenderItemCard = (props) => {
 			refeshData();
 		}
 	};
-
-	console.log('item: ', item);
 
 	return (
 		<>
