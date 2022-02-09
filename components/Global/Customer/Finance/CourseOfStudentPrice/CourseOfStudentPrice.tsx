@@ -3,7 +3,7 @@ import moment from 'moment';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import { Eye } from 'react-feather';
-import { branchApi, courseApi, courseStudentApi, invoiceApi, refundsApi } from '~/apiBase';
+import { branchApi, courseApi, courseStudentApi, invoiceApi, refundsApi, staffApi } from '~/apiBase';
 import { courseStudentPriceApi } from '~/apiBase/customer/student/course-student-price';
 import { ExpandPaymentRow } from '~/components/Elements/ExpandBox';
 import SortBox from '~/components/Elements/SortBox';
@@ -22,6 +22,7 @@ const CourseOfStudentPrice = () => {
 	const [totalPage, setTotalPage] = useState(null);
 	const [courseStudentPrice, setCourseStudentPrice] = useState<ICourseOfStudentPrice[]>([]);
 	const [courseListOfStudent, setCourseListOfStudent] = useState<ICourseOfStudent[]>([]);
+	const [counselors, setCounselors] = useState<IStaff[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
 		status: false
@@ -50,7 +51,7 @@ const CourseOfStudentPrice = () => {
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: -1,
 		sortType: false
 	});
@@ -139,7 +140,8 @@ const CourseOfStudentPrice = () => {
 			pageIndex: 1,
 			...obj,
 			fromDate: moment(obj.fromDate).format('YYYY/MM/DD'),
-			toDate: moment(obj.toDate).format('YYYY/MM/DD')
+			toDate: moment(obj.toDate).format('YYYY/MM/DD'),
+			CounselorsID: obj.CounselorID
 		});
 	};
 	// PAGINATION
@@ -220,6 +222,7 @@ const CourseOfStudentPrice = () => {
 			});
 			const res = await courseStudentPriceApi.getAll(filters);
 			if (res.status === 200) {
+				console.log(res.data.data);
 				setTotalPage(res.data.totalRow);
 				setCourseStudentPrice(res.data.data);
 			}
@@ -238,6 +241,7 @@ const CourseOfStudentPrice = () => {
 
 	useEffect(() => {
 		getDataCourseStudentPrice();
+		getCounselorList();
 	}, [filters]);
 
 	// UPDATE COURSE OF STUDENT PRICE => CREATE NEW INVOICE
@@ -352,6 +356,11 @@ const CourseOfStudentPrice = () => {
 			title: 'Trung tâm',
 			dataIndex: 'PayBranchName',
 			fixed: 'left'
+		},
+		{
+			title: 'Tư vấn viên',
+			dataIndex: 'CounselorsName',
+			render: (price) => <p>{price}</p>
 		},
 		{
 			width: 180,
@@ -477,6 +486,31 @@ const CourseOfStudentPrice = () => {
 		}
 	};
 
+	const getCounselorList = async () => {
+		try {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: true
+			});
+			const res = await staffApi.getAll({ pageIndex: 1, pageSize: pageSize, RoleID: 6 });
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item) => temp.push({ title: item.FullNameUnicode, value: item.UserInformationID }));
+				setCounselors(temp);
+			}
+			if (res.status === 204) {
+				setCounselors([]);
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: false
+			});
+		}
+	};
+
 	const expandableObj = {
 		expandedRowRender: (record) => (
 			<ExpandPaymentRow isLoading={isLoading} key={record.ID} dataRow={record} infoInvoiceList={infoInvoiceList} />
@@ -503,6 +537,7 @@ const CourseOfStudentPrice = () => {
 						optionListForFilter={optionListForFilter}
 						handleFilter={onFilter}
 						handleResetFilter={onResetSearch}
+						counselors={counselors}
 					/>
 					<SortBox dataOption={sortOptionList} handleSort={onSort} />
 				</div>

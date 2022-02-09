@@ -38,7 +38,9 @@ const ConfigVoucherInvoice = () => {
 		{ title: 'Mẫu mail sắp tới lịch dạy', value: 8 },
 		{ title: 'Mẫu mail được chỉ định dạy khóa mới', value: 9 },
 		{ title: 'Mẫu mail có bài tập cần chấm', value: 10 },
-		{ title: 'Mẫu mail tạo được tài khoản mới', value: 11 }
+		{ title: 'Mẫu mail tạo được tài khoản mới', value: 11 },
+		{ title: 'Mẫu mail yêu cầu thanh toán thêm', value: 12 },
+		{ title: 'Mẫu mail kích hoạt thành công', value: 13 }
 	];
 
 	// PAGINATION

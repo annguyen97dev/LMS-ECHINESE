@@ -148,20 +148,20 @@ export const SellerChildMenu = [
 						Text: 'Dữ liệu học viên',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/student-appointment',
-						Route: '/customer/student/student-appointment',
-						Text: 'HV chờ xếp lớp',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/student-course',
-						Route: '/customer/student/student-course',
-						Text: 'HV trong khóa',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/student/student-appointment',
+					// 	Route: '/customer/student/student-appointment',
+					// 	Text: 'HV chờ xếp lớp',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/student/student-course',
+					// 	Route: '/customer/student/student-course',
+					// 	Text: 'HV trong khóa',
+					// 	Icon: ''
+					// },
 					{
 						ItemType: 'single',
 						Key: '/customer/student/student-change-course',
@@ -169,20 +169,20 @@ export const SellerChildMenu = [
 						Text: 'HV chuyển khóa',
 						Icon: ''
 					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/student-reserve',
-						Route: '/customer/student/student-reserve',
-						Text: 'HV bảo lưu',
-						Icon: ''
-					},
-					{
-						ItemType: 'single',
-						Key: '/customer/student/exchange-student',
-						Route: '/customer/student/exchange-student',
-						Text: 'HV chuyển giao',
-						Icon: ''
-					},
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/student/student-reserve',
+					// 	Route: '/customer/student/student-reserve',
+					// 	Text: 'HV bảo lưu',
+					// 	Icon: ''
+					// },
+					// {
+					// 	ItemType: 'single',
+					// 	Key: '/customer/student/exchange-student',
+					// 	Route: '/customer/student/exchange-student',
+					// 	Text: 'HV chuyển giao',
+					// 	Icon: ''
+					// },
 
 					{
 						ItemType: 'single',

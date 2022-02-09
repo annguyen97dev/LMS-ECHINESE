@@ -201,19 +201,21 @@ const SpeakingList = (props) => {
 							{!doneTestData && !isDoingTest && (
 								<>
 									<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
-									<Popconfirm
-										title="Bạn có chắc muốn xóa?"
-										// visible={item.ID == visible.id && visible.status}
-										onConfirm={() => handleOk(ques)}
-										okButtonProps={{ loading: confirmLoading }}
-										onCancel={() => handleCancel(ques.ID)}
-									>
-										<Tooltip title="Xóa câu hỏi" placement="rightTop">
-											<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
-												<Trash2 />
-											</button>
-										</Tooltip>
-									</Popconfirm>
+									{userInformation && userInformation.RoleID !== 2 && (
+										<Popconfirm
+											title="Bạn có chắc muốn xóa?"
+											// visible={item.ID == visible.id && visible.status}
+											onConfirm={() => handleOk(ques)}
+											okButtonProps={{ loading: confirmLoading }}
+											onCancel={() => handleCancel(ques.ID)}
+										>
+											<Tooltip title="Xóa câu hỏi" placement="rightTop">
+												<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
+													<Trash2 />
+												</button>
+											</Tooltip>
+										</Popconfirm>
+									)}
 									<ChangePosition questionID={dataQuestion.ID} />
 								</>
 							)}

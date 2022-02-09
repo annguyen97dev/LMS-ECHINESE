@@ -143,6 +143,21 @@ function ConfigVoucherInvoiceForm(props) {
 				{ label: '{taikhoan}', desc: ' Tài khoản' },
 				{ label: '{matkhau}', desc: ' Mật khẩu' }
 			]);
+		Type === 12 &&
+			setCodeEditorList([
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{sotiendongthem}', desc: ' Số tiền đóng thêm' },
+				{ label: '{trungtamthu}', desc: ' Trung tâm thu tiền' },
+				{ label: '{ngayhenthanhtoan}', desc: ' Ngày hẹn thanh toán' }
+			]);
+		Type === 13 &&
+			setCodeEditorList([
+				{ label: '{hovaten}', desc: ' Họ và tên' },
+				{ label: '{tenkhoahoc}', desc: ' Tên khóa học' },
+				{ label: '{mota}', desc: ' Mô tả' },
+				{ label: '{thoigian}', desc: ' Thời gian' },
+				{ label: '{makichhoat}', desc: ' Mã kích hoạt' }
+			]);
 	};
 
 	useEffect(() => {

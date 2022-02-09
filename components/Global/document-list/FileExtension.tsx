@@ -6,6 +6,7 @@ import { useWrap } from '~/context/wrap';
 const FileExtension = (props) => {
 	const { docList, isLoading, docInfo, onFetchData, categoryID, docListFromDetail } = props;
 	const [searchDoc, setSearchDoc] = useState<IDocumentList[]>(docList);
+	const { userInformation } = useWrap();
 
 	useEffect(() => {
 		setSearchDoc(docList);
@@ -29,15 +30,17 @@ const FileExtension = (props) => {
 		<div className="card-file-box">
 			<div className="col-12 d-flex justify-content-end align-items-center">
 				<div className="d-flex">
-					<DocListModal
-						type="ADD_DOC"
-						docInfo={docInfo}
-						onFetchDataForm={() => {
-							onFetchData();
-						}}
-						docID={null}
-						docName={null}
-					/>
+					{userInformation && userInformation.RoleID !== 2 && (
+						<DocListModal
+							type="ADD_DOC"
+							docInfo={docInfo}
+							onFetchDataForm={() => {
+								onFetchData();
+							}}
+							docID={null}
+							docName={null}
+						/>
+					)}
 				</div>
 			</div>
 			<Spin spinning={isLoading.type === 'GET_ALL' && isLoading.loading}>
@@ -58,24 +61,28 @@ const FileExtension = (props) => {
 										</div>
 									</a>
 									<div className="d-flex doc__list-action justify-content-end">
-										<DocListModal
-											type="EDIT_DOC"
-											docInfo={docInfo}
-											onFetchDataForm={() => {
-												onFetchData();
-											}}
-											docID={doc.ID}
-											docName={doc.DocumentName}
-										/>
-										<DocListModal
-											type="DELETE_DOC"
-											docInfo={docInfo}
-											onFetchDataForm={() => {
-												onFetchData();
-											}}
-											docID={doc.ID}
-											docName={doc.DocumentName}
-										/>
+										{userInformation && userInformation.RoleID !== 2 && (
+											<DocListModal
+												type="EDIT_DOC"
+												docInfo={docInfo}
+												onFetchDataForm={() => {
+													onFetchData();
+												}}
+												docID={doc.ID}
+												docName={doc.DocumentName}
+											/>
+										)}
+										{userInformation && userInformation.RoleID !== 2 && (
+											<DocListModal
+												type="DELETE_DOC"
+												docInfo={docInfo}
+												onFetchDataForm={() => {
+													onFetchData();
+												}}
+												docID={doc.ID}
+												docName={doc.DocumentName}
+											/>
+										)}
 									</div>
 								</div>
 							</div>

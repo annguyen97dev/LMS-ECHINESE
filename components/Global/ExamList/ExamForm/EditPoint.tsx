@@ -13,7 +13,7 @@ const EditPoint = (props) => {
 		quesItem ? quesItem.Point : listQuestionGroup.length > 0 ? listQuestionGroup[0].Point : null
 	);
 	const [isLoading, setIsLoading] = useState(false);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const { onEditPoint } = useExamDetail();
 	const [listQuestion, setListQuestion] = useState(listQuestionGroup);
 
@@ -92,11 +92,13 @@ const EditPoint = (props) => {
 
 	return (
 		<>
-			<Tooltip title="Sửa điểm">
-				<button className="btn btn-icon edit" onClick={showModal}>
-					<Edit />
-				</button>
-			</Tooltip>
+			{userInformation && userInformation.RoleID !== 2 && (
+				<Tooltip title="Sửa điểm">
+					<button className="btn btn-icon edit" onClick={showModal}>
+						<Edit />
+					</button>
+				</Tooltip>
+			)}
 			<Modal
 				title="Sửa điểm"
 				visible={isModalVisible}
