@@ -13,6 +13,7 @@ import RegCourse from '~/components/Global/RegisterCourse/RegCourse';
 import { courseStudentPriceApi } from '~/apiBase/customer/student/course-student-price';
 import CreateCustomer from './../../../components/Global/RegisterCourse/CreateCustomer';
 import OverStudentConfirmBox from '~/components/Global/RegisterCourse/OverStudentConfirmBox';
+import TitlePage from '~/components/TitlePage';
 
 const now = new Date();
 
@@ -143,6 +144,7 @@ const RegisterCourse = () => {
 
 	return (
 		<div className="container-fluid">
+			<TitlePage title="Đăng ký khóa học" />
 			<Form form={form} layout="vertical" onFinish={onSubmit}>
 				<OverStudentConfirmBox
 					visibleModalConfirm={visibleModalConfirm}

@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ProfileBase from '~/components/Profile';
 import LayoutBase from '~/components/LayoutBase';
 import { useSession } from 'next-auth/client';
 
 const ProFileStaff = () => {
-	const [fileList, setFileList] = useState([]);
-	const [session, loading] = useSession();
-
+	const [session] = useSession();
 	let dataUser = null;
 
 	function parseJwt(token) {
@@ -20,7 +18,6 @@ const ProFileStaff = () => {
 				})
 				.join('')
 		);
-
 		return JSON.parse(jsonPayload);
 	}
 

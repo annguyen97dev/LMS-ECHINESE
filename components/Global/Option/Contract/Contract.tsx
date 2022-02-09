@@ -81,7 +81,7 @@ const Contract = () => {
 
 	return (
 		<div className="row">
-			<TitlePage title="Contract Detail" />
+			<TitlePage title="Hợp đồng" />
 			<div className="col-12">
 				<Card
 					className={`${isLoading ? 'custom-loading' : ''}`}

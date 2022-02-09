@@ -257,7 +257,7 @@ export const TeacherChildMenu = [
 	},
 	{
 		MenuName: 'tab-document',
-		MenuTitle: 'Document List',
+		MenuTitle: 'Danh sách tài liệu',
 		MenuKey: '/document-list',
 		MenuItem: [
 			{

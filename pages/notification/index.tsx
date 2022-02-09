@@ -201,7 +201,7 @@ const Notification = () => {
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}
 				addClass="basic-header"
-				TitlePage="NOTIFICATION list"
+				TitlePage="Danh sách thông báo"
 				// TitleCard={
 				//     <PurposeForm
 				//         showAdd={true}

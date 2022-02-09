@@ -297,7 +297,7 @@ const CustomerSupplier = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={getPagination}
 			addClass="basic-header"
-			TitlePage="CUSTOMER SUPPLIER LIST"
+			TitlePage="Nguồn khách hàng"
 			TitleCard={<CustomerSupplierForm showAdd={true} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
 			dataSource={dataTable}
 			columns={columns}

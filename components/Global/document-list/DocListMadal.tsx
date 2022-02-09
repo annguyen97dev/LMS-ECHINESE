@@ -1,10 +1,8 @@
 import { Modal, Spin, Form, Input, Button, Upload } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { RotateCcw, X } from 'react-feather';
-import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
 import { useWrap } from '~/context/wrap';
 import { UploadOutlined } from '@ant-design/icons';
-import { lessonDetailApi } from '~/apiBase/options/lesson-detail';
 import { documentListApi } from '~/apiBase/document-list/document-list';
 
 const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
@@ -163,7 +161,6 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 									</Form.Item>
 								</div>
 							))}
-
 						<div className="col-12 mt-3">
 							<button type="submit" className="btn btn-primary w-100">
 								{type == 'DELETE_DOC' ? 'Xóa' : 'Lưu'}

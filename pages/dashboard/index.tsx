@@ -52,7 +52,7 @@ const Dashboard = () => {
 
 	return (
 		<div>
-			<TitlePage title="Dashboard" />
+			<TitlePage title="Thống kê" />
 			<DynamicStatisticalTotal />
 
 			{userInformation?.RoleID !== 6 && <DynamicStatisticalRevenue />}

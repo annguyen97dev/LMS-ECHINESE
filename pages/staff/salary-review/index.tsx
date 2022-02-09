@@ -349,7 +349,7 @@ const SalaryReview = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="Duyệt lương office"
+			TitlePage="Duyệt Cấu hình lương"
 			dataSource={payRoll}
 			columns={columns}
 			TitleCard={
