@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import { discountApi } from '~/apiBase';
 import PowerTable from '~/components/PowerTable';
@@ -28,7 +29,8 @@ const InfoDiscountCard = (props) => {
 			status: true
 		});
 		try {
-			let res = await discountApi.getAll(todoApi);
+			let res = await discountApi.getAllNew(todoApi);
+			console.log(res.data.data);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow));
 
 			res.status == 204 && setDataSource([]);
@@ -60,24 +62,24 @@ const InfoDiscountCard = (props) => {
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
-			title: 'Giá trị',
-			dataIndex: 'Discount',
-			render: (text, data) => <p className="font-weight-black">{data.DiscountType == 1 ? numberWithCommas(text) : text + '%'}</p>
+			title: 'Khóa học',
+			dataIndex: 'Name',
+			render: (text, data) => <p className="font-weight-black">{text}</p>
+		},
+		{
+			title: 'Đã giảm',
+			dataIndex: 'Reduced',
+			render: (text, data) => <p className="font-weight-black">{numberWithCommas(text)}</p>
 		},
 		{
 			title: 'Loại',
-			dataIndex: 'DiscountType',
-			render: (type) => (
-				<>
-					{type == 1 && <span className="tag gray">Tính theo tiền</span>}
-					{type == 2 && <span className="tag yellow">Tính theo phần trăm</span>}
-				</>
-			)
+			dataIndex: 'Type',
+			render: (type) => <p className="font-weight-black">{type}</p>
 		},
 		{
-			title: 'Tiền khuyến mãi tối đa',
-			dataIndex: 'MaxDiscountPrice',
-			render: (text) => <p className="font-weight-black">{numberWithCommas(text)}</p>
+			title: 'Ngày khuyến mãi',
+			dataIndex: 'DiscountDate',
+			render: (type) => <p className="font-weight-black">{moment(type).format('DD/MM/YYYY')}</p>
 		}
 	];
 

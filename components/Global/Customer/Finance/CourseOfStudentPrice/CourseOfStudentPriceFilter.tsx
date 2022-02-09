@@ -1,32 +1,33 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Popover} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Popover } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useState} from 'react';
-import {Filter} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useState } from 'react';
+import { Filter } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import SelectField from '~/components/FormControl/SelectField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 CourseOfStudentPriceFilter.propTypes = {
 	handleFilter: PropTypes.func,
 	handleResetFilter: PropTypes.func,
 	optionListForFilter: PropTypes.shape({
 		optionBranchList: optionCommonPropTypes,
-		optionCourseList: optionCommonPropTypes,
+		optionCourseList: optionCommonPropTypes
 	}),
+	counselors: PropTypes.array
 };
 CourseOfStudentPriceFilter.defaultProps = {
 	handleFilter: null,
 	handleResetFilter: null,
-	optionListForFilter: {optionBranchList: [], optionCourseList: []},
+	optionListForFilter: { optionBranchList: [], optionCourseList: [] }
 };
 
 function CourseOfStudentPriceFilter(props) {
-	const {optionListForFilter, handleFilter, handleResetFilter} = props;
-	const {optionBranchList, optionCourseList} = optionListForFilter;
+	const { optionListForFilter, handleFilter, handleResetFilter, counselors } = props;
+	const { optionBranchList, optionCourseList } = optionListForFilter;
 
 	const [showFilter, showFilterSet] = useState(false);
 
@@ -38,20 +39,18 @@ function CourseOfStudentPriceFilter(props) {
 		toDate: yup
 			.date()
 			.required('Bạn không được để trống')
-			.when(
-				'fromDate',
-				(startDate, schema) =>
-					startDate && schema.min(startDate, `Ngày không hợp lệ`)
-			),
+			.when('fromDate', (startDate, schema) => startDate && schema.min(startDate, `Ngày không hợp lệ`)),
+		CounselorID: yup.number()
 	});
 
 	const defaultValuesInit = {
 		fromDate: moment().format('YYYY/MM/DD'),
 		toDate: moment().add(1, 'months').format('YYYY/MM/DD'),
+		CounselorID: null
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 	const checkHandleFilter = (createdBy) => {
 		if (!handleFilter) return;
@@ -65,6 +64,7 @@ function CourseOfStudentPriceFilter(props) {
 		form.reset({
 			fromDate: undefined,
 			toDate: undefined,
+			CounselorID: null
 		});
 	};
 	const content = (
@@ -90,37 +90,28 @@ function CourseOfStudentPriceFilter(props) {
 						/>
 					</div>
 					<div className="col-12 col-md-6">
-						<DateField
-							form={form}
-							name="fromDate"
-							label="Ngày tạo thanh toán từ"
-							placeholder="Chọn ngày"
-						/>
+						<DateField form={form} name="fromDate" label="Ngày tạo thanh toán từ" placeholder="Chọn ngày" />
 					</div>
 					<div className="col-12 col-md-6">
-						<DateField
+						<DateField form={form} name="toDate" label="Đến ngày" placeholder="Chọn ngày" />
+					</div>
+					<div className="col-12">
+						<SelectField
+							optionList={counselors}
 							form={form}
-							name="toDate"
-							label="Đến ngày"
-							placeholder="Chọn ngày"
+							name="CounselorID"
+							label="Tư vấn viên"
+							placeholder="Chọn tư vấn viên"
 						/>
 					</div>
 					<div className="col-md-12 mt-3">
-						<button
-							type="submit"
-							className="btn btn-primary"
-							style={{marginRight: '10px'}}
-						>
+						<button type="submit" className="btn btn-primary" style={{ marginRight: '10px' }}>
 							Tìm kiếm
 							{/* {isLoading.type === 'FILTER_CREATED' && isLoading.status && (
 								<Spin className="loading-base" />
 							)} */}
 						</button>
-						<button
-							type="button"
-							className="light btn btn-secondary"
-							onClick={checkHandleResetFilter}
-						>
+						<button type="button" className="light btn btn-secondary" onClick={checkHandleResetFilter}>
 							Reset
 						</button>
 					</div>

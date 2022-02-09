@@ -34,7 +34,7 @@ const Dashboard = () => {
 		<DynamicStatisticalJobOfStudent />,
 		<DynamicStatisticalSalaryOfStaff />,
 		<DynamicStatisticalTotalLessonOfTeacher />,
-		<DynamicStatisticalRankTeacher />
+		<DynamicStatisticalRevenue />
 	];
 	const loadMore = () => {
 		setCountItem((preState) => (preState += 2));
@@ -55,7 +55,7 @@ const Dashboard = () => {
 			<TitlePage title="Thống kê" />
 			<DynamicStatisticalTotal />
 
-			{userInformation?.RoleID !== 6 && <DynamicStatisticalRevenue />}
+			<DynamicStatisticalRankTeacher />
 
 			<div className="mt-5">
 				<DynamicStatisticalAcademic />

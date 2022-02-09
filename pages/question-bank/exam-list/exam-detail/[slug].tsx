@@ -69,7 +69,7 @@ const ExamDetailContext = createContext<IProps>({
 });
 
 const ExamDetail = () => {
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [tabActive, setTabActive] = useState(0);
 	const router = useRouter();
 	const examID = parseInt(router.query.slug as string);
@@ -515,8 +515,10 @@ const ExamDetail = () => {
 					{isChangePosition ? 'Lưu' : 'Sắp xếp'}
 				</div>
 			</button>
-			<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
-			<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} />
+			{userInformation && userInformation.RoleID !== 2 && (
+				<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
+			)}
+			{userInformation && userInformation.RoleID !== 2 && <AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} />}
 		</div>
 	);
 

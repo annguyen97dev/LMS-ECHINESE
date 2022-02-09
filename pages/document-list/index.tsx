@@ -14,7 +14,7 @@ import { DashOutlined, EllipsisOutlined } from '@ant-design/icons';
 const DocumentList = (props) => {
 	const [isLoading, setIsLoading] = useState({ type: '', loading: false });
 	const [categoryDoc, setCategoryDoc] = useState<ICategoryDoc[]>([]);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const [categoryID, setCategoryID] = useState(null);
 	const [activeID, setActiveID] = useState<any>();
 	const [docList, setDocList] = useState(null);
@@ -177,14 +177,16 @@ const DocumentList = (props) => {
 					<div className="d-none d-md-block col-md-3 document-menu">
 						<div className="pb-3 col-12 d-flex justify-content-between align-items-center box-header">
 							<div className="title">Danh sách</div>
-							<DocModal
-								type="ADD_DOC"
-								CategoryName={null}
-								cateID={null}
-								onFetchData={() => {
-									setParams({ ...params, pageIndex: 1 });
-								}}
-							/>
+							{userInformation && userInformation.RoleID !== 2 && (
+								<DocModal
+									type="ADD_DOC"
+									CategoryName={null}
+									cateID={null}
+									onFetchData={() => {
+										setParams({ ...params, pageIndex: 1 });
+									}}
+								/>
+							)}
 						</div>
 						<Menu mode="vertical">
 							{categoryDoc.map((cate) => {
@@ -208,20 +210,22 @@ const DocumentList = (props) => {
 												<Folder /> <p>{cate.CategoryName}</p>
 											</div>
 										</div>
-										<Dropdown
-											className={
-												activeID == cate.ID
-													? 'doc__list-active d-flex justify-content-between align-items-center pr-1'
-													: 'd-flex justify-content-between align-items-center pr-1'
-											}
-											overlay={() => menu(cate)}
-											trigger={['hover']}
-											placement="topRight"
-										>
-											<a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-												<DashOutlined />
-											</a>
-										</Dropdown>
+										{userInformation && userInformation.RoleID !== 2 && (
+											<Dropdown
+												className={
+													activeID == cate.ID
+														? 'doc__list-active d-flex justify-content-between align-items-center pr-1'
+														: 'd-flex justify-content-between align-items-center pr-1'
+												}
+												overlay={() => menu(cate)}
+												trigger={['hover']}
+												placement="topRight"
+											>
+												<a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+													<DashOutlined />
+												</a>
+											</Dropdown>
+										)}
 									</div>
 								);
 							})}

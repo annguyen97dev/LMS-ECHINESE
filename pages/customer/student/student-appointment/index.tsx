@@ -16,6 +16,7 @@ import PowerTable from '~/components/PowerTable';
 const CourseRegistration = () => {
 	const [listStudent, setListStudent] = useState([]);
 	const [listChecked, setListChecked] = useState([]);
+	const [programList, setProgramList] = useState([]);
 	const { userInformation } = useWrap();
 
 	const onSearch = (data) => {
@@ -261,10 +262,30 @@ const CourseRegistration = () => {
 		}
 	};
 
+	const getDataProgramNotVideo = async () => {
+		try {
+			let res = await programApi.getAll({ pageSize: 99999, pageIndex: 1, isNotVideo: true });
+			if (res.status == 200) {
+				setProgramList(res.data.data);
+				const newData = res.data.data.map((item) => ({
+					title: item.ProgramName,
+					value: item.ID
+				}));
+				setDataFunc('ProgramID', newData);
+			}
+
+			res.status == 204 && console.log('Chương trình Không có dữ liệu');
+		} catch (error) {
+			// showNoti('danger', error.message);
+		} finally {
+		}
+	};
+
 	useEffect(() => {
 		if (isAdmin) {
 			getDataCenter();
 			getDataProgram();
+			getDataProgramNotVideo();
 		}
 	}, [isAdmin]);
 
@@ -326,7 +347,7 @@ const CourseRegistration = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={(pageNumber: number) => getPagination(pageNumber)}
 			addClass="basic-header"
-			TitlePage="DANH SÁCH HỌC VIÊN hẹn đăng kí"
+			TitlePage="DANH SÁCH HỌC VIÊN HẸN ĐĂNG KÝ"
 			dataSource={courseReg}
 			columns={columns}
 			Extra={
@@ -350,6 +371,7 @@ const CourseRegistration = () => {
 							getDataCourseReg(firstPage);
 						}}
 						currentPage={currentPage}
+						programList={programList}
 					/>
 				)
 			}

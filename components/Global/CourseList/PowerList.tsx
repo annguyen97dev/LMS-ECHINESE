@@ -87,7 +87,8 @@ const PowerList = (props) => {
 				TypeCourseName,
 				BranchID,
 				MaximumStudent,
-				SalaryOfLesson
+				SalaryOfLesson,
+				TotalDayStudieds
 			}: ICourse) => (
 				<List.Item
 					extra={cloneElement(children, {
@@ -124,6 +125,9 @@ const PowerList = (props) => {
 											<span>Lương/Buổi: </span> <span>{numberWithCommas(SalaryOfLesson)} VNĐ</span>
 										</li>
 									)}
+									<li>
+										<span>Số buổi đã học: </span> <span>{TotalDayStudieds}</span>
+									</li>
 								</ul>
 								<ul className="list-hor">
 									<li>

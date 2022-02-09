@@ -6,6 +6,10 @@ class DiscountApi {
 		instance.get<IApiResultData<IDiscount[]>>('/api/Discount', {
 			params: todoApi
 		});
+	getAllNew = (todoApi: object) =>
+		instance.get<IApiResultData>('/api/DiscountStudent', {
+			params: todoApi
+		});
 
 	// Thêm mới data
 	add = (data: IDiscount) => instance.post('/api/Discount', data, {});

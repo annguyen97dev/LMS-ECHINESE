@@ -106,6 +106,13 @@ export const TeacherChildMenu = [
 						Route: '/course/course-list',
 						Text: 'Danh sách khóa học',
 						Icon: ''
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course',
+						Route: '/video-course',
+						Icon: '',
+						Text: 'Danh sách khóa học video'
 					}
 					// {
 					//   ItemType: "single",

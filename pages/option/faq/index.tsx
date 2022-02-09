@@ -14,7 +14,7 @@ const FAQ = () => {
 	const [totalPage, setTotalPage] = useState([]);
 	const [fetchingData, setFetchingData] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti, pageSize, userInformation } = useWrap();
 	const expandedRowKeys = [1];
 	const todoApiDataSource = {
 		pageIndex: 1,
@@ -158,14 +158,16 @@ const FAQ = () => {
 				dataSource={dataSource}
 				TitlePage="Danh sách câu hỏi thường gặp"
 				TitleCard={
-					<AddQuesForm
-						mode="add-questions"
-						currentPage={currentPage}
-						onFetchData={() => {
-							getPagination(1);
-							setTodoApi({ ...todoApi, pageIndex: 1 });
-						}}
-					/>
+					(userInformation.RoleID === 1 || userInformation.RoleID === 5) && (
+						<AddQuesForm
+							mode="add-questions"
+							currentPage={currentPage}
+							onFetchData={() => {
+								getPagination(1);
+								setTodoApi({ ...todoApi, pageIndex: 1 });
+							}}
+						/>
+					)
 				}
 				expandable={{
 					expandedRowRender

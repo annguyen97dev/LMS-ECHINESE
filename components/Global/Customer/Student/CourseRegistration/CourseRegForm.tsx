@@ -10,52 +10,43 @@ import { courseRegistrationApi } from '~/apiBase/customer/student/course-registr
 
 const CourseRegForm = React.memo((props: any) => {
 	const { Option } = Select;
-	const { TextArea } = Input;
+	const [programID, setProgramID] = useState();
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { infoId, reloadData, infoDetail, currentPage, listStudent } = props;
+	const { infoId, reloadData, infoDetail, currentPage, listStudent, programList } = props;
 	const [form] = Form.useForm();
 	const { showNoti } = useWrap();
 	const [loading, setLoading] = useState(false);
-	const { setValue } = useForm();
-	// const [courseStudentPrice, setCourseStudentPrice] = useState(null);
+
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
 	});
 	const [isLoadingCourseDetail, setIsLoadingCourseDetail] = useState(false);
+	const [isAnyCourse, setIsAnyCourse] = useState(true);
 
 	const [courseAfter, setCourseAfter] = useState<ICourse[]>();
 	const [courseAfterId, setCourseAfterId] = useState();
 	const [courseAfterDetail, setCourseAfterDetail] = useState<ICourseDetail>();
 	const [isContract, setIsContract] = useState(false);
-	// const [requestMoney, setRequestMoney] = useState();
 
-	// const fetchDataPrice = () => {
-	//   setIsLoading(true);
-	//   (async () => {
-	//     try {
-	//       const _courseStudentPrice = await courseStudentPriceApi.getAll({
-	//         UserInformationID: infoDetail.UserInformationID,
-	//       });
-	//       _courseStudentPrice.status == 200 &&
-	//         setCourseStudentPrice(_courseStudentPrice.data.data);
-	//     } catch (err) {
-	//       showNoti("danger", err.message);
-	//     } finally {
-	//       setIsLoading(false);
-	//     }
-	//   })();
-	// };
-
-	const fetchDataCourseAfter = () => {
+	const fetchDataCourseAfter = (programID) => {
 		setIsLoading(true);
 		(async () => {
 			try {
 				const _courseAfter = await courseApi.getAll({
 					pageIndex: 1,
-					pageSize: 99999
+					pageSize: 99999,
+					ProgramID: programID
 				});
-				_courseAfter.status == 200 && setCourseAfter(_courseAfter.data.data);
+				console.log(_courseAfter.data.data);
+				if (_courseAfter.status == 200) {
+					setIsAnyCourse(true);
+					setCourseAfter(_courseAfter.data.data);
+				}
+				if (_courseAfter.status == 204) {
+					setCourseAfter([]);
+					setIsAnyCourse(false);
+				}
 			} catch (err) {
 				showNoti('danger', err.message);
 			} finally {
@@ -66,6 +57,10 @@ const CourseRegForm = React.memo((props: any) => {
 
 	function handleChangeCourseAfter(idCourseAfter: number) {
 		setCourseAfterId(idCourseAfter);
+	}
+
+	function handleChangeProgram(idProgram) {
+		fetchDataCourseAfter(idProgram);
 	}
 
 	const fetchDataCourseAfterDetail = () => {
@@ -84,8 +79,6 @@ const CourseRegForm = React.memo((props: any) => {
 
 	const onSubmit = async (data: any) => {
 		setLoading(true);
-		// if (infoId) {
-		// }
 		try {
 			let res = await courseRegistrationApi.intoCourse({
 				...data,
@@ -119,7 +112,7 @@ const CourseRegForm = React.memo((props: any) => {
 
 	useEffect(() => {
 		if (isModalVisible) {
-			fetchDataCourseAfter();
+			fetchDataCourseAfter(null);
 		}
 	}, [isModalVisible]);
 
@@ -137,9 +130,6 @@ const CourseRegForm = React.memo((props: any) => {
 					setIsModalVisible(true);
 				}}
 			>
-				{/* <Tooltip title="Chuyển học viên vào khóa học">
-          <Move />
-        </Tooltip> */}
 				Chuyển vào khóa
 			</button>
 			<Modal title="Chuyển học viên vào khóa học" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
@@ -147,18 +137,6 @@ const CourseRegForm = React.memo((props: any) => {
 					<Form form={form} layout="vertical" onFinish={onSubmit}>
 						<Spin spinning={isLoading}>
 							<div className="row">
-								{/* <div className="col-8">
-                  <Form.Item
-                    // name="FullNameUnicode"
-                    label="Học viên"
-                  >
-                    <Input
-                      className="style-input"
-                      readOnly={true}
-                      value={infoDetail.FullNameUnicode}
-                    />
-                  </Form.Item>
-                </div> */}
 								<div className="col-12">
 									<Form.Item name="isContract" label="Hợp đồng">
 										<Switch onChange={() => setIsContract(!isContract)} />
@@ -166,8 +144,28 @@ const CourseRegForm = React.memo((props: any) => {
 								</div>
 							</div>
 
-							{courseAfter != null && (
+							{programList != null && (
 								<div className="row">
+									<div className="col-12">
+										<Form.Item name="ProgramID" label="Chương trình học">
+											<Select
+												style={{ width: '100%' }}
+												className="style-input"
+												onChange={handleChangeProgram}
+												placeholder="Chọn chương trình"
+											>
+												{programList?.map((item, index) => (
+													<Option key={index} value={item.ID}>
+														{item.ProgramName}
+													</Option>
+												))}
+											</Select>
+										</Form.Item>
+									</div>
+								</div>
+							)}
+							{isAnyCourse ? (
+								<div className="row ">
 									<div className="col-12">
 										<Form.Item name="CourseID" label="Khóa học chuyển đến">
 											<Select
@@ -175,16 +173,22 @@ const CourseRegForm = React.memo((props: any) => {
 												className="style-input"
 												onChange={handleChangeCourseAfter}
 												placeholder="Chọn khóa học"
+												defaultActiveFirstOption={false}
 											>
-												{courseAfter?.map((item, index) => (
-													<Option key={index} value={item.ID}>
-														{/* {item.CourseName} */}
-														{returnNameCourse(item)}
-													</Option>
-												))}
+												{courseAfter != null &&
+													courseAfter !== [] &&
+													courseAfter?.map((item, index) => (
+														<Option key={index} value={item.ID}>
+															{returnNameCourse(item)}
+														</Option>
+													))}
 											</Select>
 										</Form.Item>
 									</div>
+								</div>
+							) : (
+								<div className="mb-4">
+									<h5 className="font-weight-primary">Chương trình không có sẵn khóa học</h5>
 								</div>
 							)}
 

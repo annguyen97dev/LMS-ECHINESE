@@ -21,7 +21,7 @@ type dataOject = {
 
 const DeleteExam = (props) => {
 	const { examID, onFetchData } = props;
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -77,7 +77,7 @@ const DeleteExam = (props) => {
 };
 
 const ExamList = (props) => {
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [dataExam, setDataExam] = useState<IExamTopic[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const listTodoApi = {
@@ -299,7 +299,6 @@ const ExamList = (props) => {
 	return (
 		<div className="question-create exam-create">
 			<TitlePage title="Tạo đề thi" />
-
 			<div className="row">
 				<div className="col-md-8 col-12">
 					<Card
@@ -311,7 +310,7 @@ const ExamList = (props) => {
 								</h3>
 							</div>
 						}
-						extra={<CreateExamForm onFetchData={onFetchData} />}
+						extra={userInformation && userInformation.RoleID !== 2 && <CreateExamForm onFetchData={onFetchData} />}
 					>
 						<div className="question-list" ref={boxEl} onScroll={onScroll}>
 							<div className="row mb-3">
@@ -333,8 +332,12 @@ const ExamList = (props) => {
 										<div className="col-md-6 col-12" key={index}>
 											<div className="package-set">
 												<div className="edit-exam">
-													<CreateExamForm onFetchData={() => onFetchData()} dataItem={item} />
-													<DeleteExam examID={item.ID} onFetchData={onFetchData} />
+													{userInformation && userInformation.RoleID !== 2 && (
+														<CreateExamForm onFetchData={() => onFetchData()} dataItem={item} />
+													)}
+													{userInformation && userInformation.RoleID !== 2 && (
+														<DeleteExam examID={item.ID} onFetchData={onFetchData} />
+													)}
 												</div>
 												<div className="wrap-set">
 													<div className="wrap-set-content">
