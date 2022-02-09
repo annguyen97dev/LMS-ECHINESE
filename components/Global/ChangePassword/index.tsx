@@ -36,6 +36,7 @@ const optionGender = [
 ];
 
 const ChangePassword = (props) => {
+	const router = useRouter();
 	const {
 		register,
 		handleSubmit,
@@ -182,6 +183,17 @@ const ChangePassword = (props) => {
 								<div className="col-12 d-flex justify-content-center">
 									<button type="submit" className="btn btn-primary">
 										Lưu
+										{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
+									</button>
+									<button
+										type="button"
+										className="btn btn-warning ml-4"
+										onClick={() => {
+											localStorage.setItem('isNewUser', 'false');
+											router.push('/');
+										}}
+									>
+										Bỏ qua
 										{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 									</button>
 								</div>

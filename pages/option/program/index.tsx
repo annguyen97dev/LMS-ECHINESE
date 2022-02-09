@@ -346,6 +346,7 @@ const Programs = () => {
 						unCheckedChildren="Ẩn"
 						checked={Enable}
 						size="default"
+						disabled={userInformation && userInformation.RoleID === 2}
 						onChange={(checked) => changeStatus(checked, record.ID)}
 					/>
 				</>

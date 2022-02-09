@@ -32,7 +32,7 @@ const Dashboard = () => {
 		<DynamicStatisticalJobOfStudent />,
 		<DynamicStatisticalSalaryOfStaff />,
 		<DynamicStatisticalTotalLessonOfTeacher />,
-		<DynamicStatisticalRankTeacher />
+		<DynamicStatisticalRevenue />
 	];
 	const loadMore = () => {
 		setCountItem((preState) => (preState += 2));
@@ -53,7 +53,7 @@ const Dashboard = () => {
 			<TitlePage title="Dashboard" />
 			<DynamicStatisticalTotal />
 
-			<DynamicStatisticalRevenue />
+			<DynamicStatisticalRankTeacher />
 
 			<div className="mt-5">
 				<DynamicStatisticalAcademic />
