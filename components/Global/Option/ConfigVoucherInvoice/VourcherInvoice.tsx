@@ -6,6 +6,7 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import ExpandTable from '~/components/ExpandTable';
+import TitlePage from '~/components/TitlePage';
 
 const ConfigVoucherInvoice = () => {
 	const [dataTable, setDataTable] = useState<IConfig[]>([]);
@@ -184,16 +185,20 @@ const ConfigVoucherInvoice = () => {
 	};
 
 	return (
-		<ExpandTable
-			loading={isLoading}
-			dataSource={dataTable}
-			columns={columns}
-			currentPage={filters.pageIndex}
-			totalPage={totalPage}
-			getPagination={getPagination}
-			TitleCard={<ConfigVoucherInvoiceForm isLoading={isLoading} handleSubmit={onCreate} optionFormList={optionFormList} />}
-			expandable={{ expandedRowRender }}
-		/>
+		<>
+			<TitlePage title="Mẫu" />
+			<ExpandTable
+				loading={isLoading}
+				dataSource={dataTable}
+				columns={columns}
+				currentPage={filters.pageIndex}
+				totalPage={totalPage}
+				getPagination={getPagination}
+				TitleCard={<ConfigVoucherInvoiceForm isLoading={isLoading} handleSubmit={onCreate} optionFormList={optionFormList} />}
+				expandable={{ expandedRowRender }}
+			/>
+		</>
 	);
 };
+
 export default ConfigVoucherInvoice;

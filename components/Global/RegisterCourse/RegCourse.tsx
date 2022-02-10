@@ -243,7 +243,7 @@ const RegCourse = React.memo((props: any) => {
 			</Spin>
 
 			<div className="row">
-				{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 ? (
+				{userInformation?.RoleID !== 2 && userInformation?.RoleID !== 6 ? (
 					<>
 						<div className="col-md-6 col-12">
 							<Form.Item label="Tổng giá tiền">
@@ -313,7 +313,7 @@ const RegCourse = React.memo((props: any) => {
 				</div>
 			</div>
 
-			{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 && (
+			{userInformation?.RoleID !== 2 && userInformation?.RoleID !== 6 && (
 				<div className="row">
 					<div className="col-md-6 col-12">
 						<Form.Item name="Paid" label="Thanh toán" rules={[{ required: true, message: 'Bạn không được để trống' }]}>
@@ -337,7 +337,7 @@ const RegCourse = React.memo((props: any) => {
 				</div>
 			)}
 
-			{userInformation.RoleID !== 2 && userInformation.RoleID !== 6 && (
+			{userInformation?.RoleID !== 2 && userInformation?.RoleID !== 6 && (
 				<div className="row">
 					<div className="col-md-6 col-12">
 						<Form.Item

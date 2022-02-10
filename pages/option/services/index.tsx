@@ -397,7 +397,7 @@ const ServiceList = () => {
 				totalPage={totalPage && totalPage}
 				getPagination={getPagination}
 				addClass="basic-header"
-				TitlePage="Services List"
+				TitlePage="Danh sách dịch vụ"
 				TitleCard={
 					isAdmin && (
 						<ServiceForm

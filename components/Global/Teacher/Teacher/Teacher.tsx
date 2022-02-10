@@ -516,7 +516,7 @@ const Teacher = () => {
 						handleFetchWard={fetchWardByDistrictID}
 						optionBranchList={optionAreaSystemList.branchListTotal}
 					/>
-					{userInformation && userInformation.RoleID == 1 && (
+					{userInformation && userInformation?.RoleID == 1 && (
 						<PromoteTeacher
 							isLoading={isLoading}
 							type="teacher"

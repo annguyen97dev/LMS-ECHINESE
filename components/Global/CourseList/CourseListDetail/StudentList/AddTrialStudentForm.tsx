@@ -178,12 +178,14 @@ const AddTrialStudentForm = (props) => {
 			>
 				<Form form={form} onFinish={_onSubmit} layout="vertical">
 					<div className="row">
-						<div className="col-12">
-							<p className="font-weight-green">Giá khóa học: {numberWithCommas(coursePrice)}vnd</p>
-						</div>
+						{!isTrial && (
+							<div className="col-12">
+								<p className="font-weight-green">Giá khóa học: {numberWithCommas(coursePrice)}vnd</p>
+							</div>
+						)}
 						<div className="row m-0" style={{ width: '100%' }}>
 							<div className="col-md-6 col-12">
-								<Form.Item name="isTrial" label=" " required={false}>
+								<Form.Item name="isTrial" label="" required={false} style={{ height: 30, marginTop: isTrial ? 0 : 20 }}>
 									<Checkbox checked={isTrial} onChange={() => setIsTrial(!isTrial)}>
 										Học thử
 									</Checkbox>

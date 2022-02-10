@@ -745,7 +745,7 @@ const ManageTask = () => {
 				addClass="basic-header"
 				columns={columns}
 				dataSource={taskGroupList}
-				TitlePage="Danh sách giáo viên"
+				TitlePage="Quản lý công việc"
 				TitleCard={
 					checkAuthorization() === 'Accept' && <TaskGroupForm isLoading={isLoading} handleCreateTaskGroup={onCreateTaskGroup} />
 				}

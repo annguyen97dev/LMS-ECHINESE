@@ -1,7 +1,8 @@
 import { Modal, Spin, Form, Input } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { RotateCcw, X } from 'react-feather';
 import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
+import TitlePage from '~/components/TitlePage';
 import { useWrap } from '~/context/wrap';
 
 const DocModal = (props) => {
@@ -9,7 +10,7 @@ const DocModal = (props) => {
 	const [isVisible, setIsVisible] = useState(false);
 	const [submitLoading, setSubmitLoading] = useState({ type: '', loading: false });
 	const [form] = Form.useForm();
-	const { showNoti, pageSize } = useWrap();
+	const { showNoti } = useWrap();
 
 	const addDocument = async (data) => {
 		console.log('add category', data);
@@ -62,6 +63,7 @@ const DocModal = (props) => {
 
 	return (
 		<>
+			<TitlePage title="Danh sách tài liệu" />
 			{type == 'ADD_DOC' && (
 				<button
 					onClick={() => {

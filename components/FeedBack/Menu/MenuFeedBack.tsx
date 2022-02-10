@@ -80,7 +80,7 @@ function MenuFeedBack(props) {
 	const Menu = () => (
 		<div className="wrap-fb-menu">
 			<Card loading={loading} className="card-newsfeed" bordered={false}>
-				{userInformation && userInformation.RoleID !== 10 && (
+				{userInformation && userInformation?.RoleID !== 10 && (
 					<Button onClick={handleCreateNew} type="primary" className="student-fb__btn-add">
 						Tạo phản hồi
 					</Button>

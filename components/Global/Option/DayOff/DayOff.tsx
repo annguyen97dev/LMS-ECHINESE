@@ -299,7 +299,7 @@ const DayOff = () => {
 			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
-			TitlePage="Day Off"
+			TitlePage="Ngày nghỉ"
 			TitleCard={isAdmin && <DayOffForm isLoading={isLoading} isUpdate={false} handleCreateDayOff={onCreateDayOff} />}
 			dataSource={dayOffList}
 			columns={columns}

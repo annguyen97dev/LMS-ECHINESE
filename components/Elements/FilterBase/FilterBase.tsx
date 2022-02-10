@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Select, DatePicker, Input, Form, Popover } from 'antd';
-import { Eye, Filter } from 'react-feather';
+import { Select, DatePicker, Input, Form, Popover } from 'antd';
+import { Filter } from 'react-feather';
 import moment from 'moment';
 import { useWrap } from '~/context/wrap';
 
@@ -28,8 +28,6 @@ const FilterBase = (props) => {
 	// ------------- ON SUBMIT -----------------
 	const onSubmit = () => {
 		handleFilter(listFilter);
-		// resetFilter();
-		// form.resetFields();
 		setVisible(false);
 	};
 
@@ -47,8 +45,6 @@ const FilterBase = (props) => {
 
 	// ------------- GET VALUE FILTER ----------------
 	const getValueFilter = (value, typeFilter, nameFilter) => {
-		console.log('getValueFilter: ', value);
-
 		switch (typeFilter) {
 			case 'date-range':
 				if (value.length > 1) {

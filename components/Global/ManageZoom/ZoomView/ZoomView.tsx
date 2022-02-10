@@ -33,7 +33,7 @@ function ZoomView() {
 				setDataZoom({
 					apiKey: ApiKey,
 					signature:
-						SignatureTeacher && SignatureStudent ? (userInformation.RoleID === 2 ? SignatureTeacher : SignatureStudent) : '',
+						SignatureTeacher && SignatureStudent ? (userInformation?.RoleID === 2 ? SignatureTeacher : SignatureStudent) : '',
 					meetingNumber: ZoomRoomID,
 					passWord: ZoomRoomPass,
 					userName: userInformation.FullNameUnicode

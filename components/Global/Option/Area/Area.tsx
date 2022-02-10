@@ -139,7 +139,7 @@ const Area = () => {
 				Enable: true
 			});
 			res.status === 200 && showNoti('success', res.data.message);
-			onResetSearch(); // <== khi tạo xong r trở về trang đầu tiên
+			onResetSearch();
 		} catch (error) {
 			showNoti('danger', error.message);
 		} finally {
@@ -150,6 +150,7 @@ const Area = () => {
 		}
 		return res;
 	};
+
 	// UPDATE
 	const onUpdateArea = async (newObj: any, idx: number) => {
 		setIsLoading({
@@ -175,6 +176,7 @@ const Area = () => {
 		}
 		return res;
 	};
+
 	// DELETE
 	const onDeleteArea = (idx: number) => {
 		return async () => {
@@ -215,12 +217,9 @@ const Area = () => {
 			}
 		};
 	};
+
 	// COLUMN FOR TABLE
 	const columns = [
-		// {
-		//   title: "Mã tỉnh/thành phố",
-		//   dataIndex: "AreaID",
-		// },
 		{
 			title: 'Tên tỉnh/thành phố',
 			dataIndex: 'AreaName',
@@ -253,6 +252,7 @@ const Area = () => {
 			)
 		}
 	];
+
 	// RETURN
 	return (
 		<PowerTable
@@ -261,7 +261,7 @@ const Area = () => {
 			getPagination={getPagination}
 			loading={isLoading}
 			addClass="basic-header"
-			TitlePage="Provincial List"
+			TitlePage="Danh sách tỉnh"
 			TitleCard={<AreaForm isLoading={isLoading} isUpdate={false} handleCreateArea={onCreateArea} />}
 			dataSource={areaList}
 			columns={columns}

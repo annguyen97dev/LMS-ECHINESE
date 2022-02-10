@@ -302,7 +302,7 @@ const Purpose = () => {
 				totalPage={totalPage && totalPage}
 				getPagination={getPagination}
 				addClass="basic-header"
-				TitlePage="PURPOSES list"
+				TitlePage="Mục đích học"
 				TitleCard={<PurposeForm showAdd={true} isLoading={isLoading} _onSubmit={(data: any) => _onSubmit(data)} />}
 				dataSource={dataTable}
 				columns={columns}

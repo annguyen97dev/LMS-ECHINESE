@@ -1,17 +1,13 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import PowerTable from '~/components/PowerTable';
-import { data } from '../../../lib/option/dataOption2';
 import FilterColumn from '~/components/Tables/FilterColumn';
-import FilterDateColumn from '~/components/Tables/FilterDateColumn';
 import SortBox from '~/components/Elements/SortBox';
-import FilterTable from '~/components/Global/CourseList/FilterTable';
 import SupplierForm from '~/components/Global/Option/SupplierForm';
 import LayoutBase from '~/components/LayoutBase';
 import FilterSupplierTable from '~/components/Global/Option/FilterTable/FilterSupplierTable';
-
 import { useWrap } from '~/context/wrap';
 import { supplierApi, userInformationApi } from '~/apiBase';
-import { Tag, Tooltip, Switch, Input, Button, Space } from 'antd';
+import { Tooltip } from 'antd';
 import { AlertTriangle, X } from 'react-feather';
 import Modal from 'antd/lib/modal/Modal';
 import moment from 'moment';
@@ -105,13 +101,10 @@ const SupplierList = () => {
 			try {
 				let res = await supplierApi.getAll(todoApi);
 				if (res.status == 204) {
-					// showNoti("danger", "Không có dữ liệu");
-					// handleReset();
 					setDataTable([]);
 				}
 				if (res.status == 200) {
 					setDataTable(res.data.data);
-
 					setTotalPage(res.data.totalRow);
 				}
 			} catch (error) {
@@ -131,9 +124,7 @@ const SupplierList = () => {
 			type: 'ADD_DATA',
 			status: true
 		});
-
 		let res = null;
-
 		if (data.ID) {
 			console.log(data);
 			try {
@@ -162,7 +153,6 @@ const SupplierList = () => {
 				});
 			}
 		}
-
 		return res;
 	};
 
@@ -182,7 +172,6 @@ const SupplierList = () => {
 		setCurrentPage(pageNumber);
 		setTodoApi({
 			...todoApi,
-			//   ...listFieldSearch,
 			pageIndex: pageIndex,
 			pageSize: pageSize
 		});
@@ -205,13 +194,11 @@ const SupplierList = () => {
 
 	const onSearch = (valueSearch, dataIndex) => {
 		let clearKey = compareField(valueSearch, dataIndex);
-
 		setTodoApi({
 			...todoApi,
 			pageIndex: 1,
 			...clearKey
 		});
-
 		setCurrentPage(pageIndex);
 	};
 
@@ -259,8 +246,6 @@ const SupplierList = () => {
 
 	// HANDLE SORT
 	const handleSort = async (option) => {
-		console.log('Show option: ', option);
-
 		let newTodoApi = {
 			...listTodoApi,
 			sort: option.title.sort,
@@ -272,8 +257,6 @@ const SupplierList = () => {
 
 	// HANDLE FILTER
 	const _onFilterTable = (data) => {
-		console.log('Show value: ', data);
-
 		let newTodoApi = {
 			...listTodoApi,
 			fromDate: data.fromDate,
@@ -296,12 +279,10 @@ const SupplierList = () => {
 		{
 			title: 'Địa chỉ',
 			dataIndex: 'Address'
-			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
 		},
 		{
 			title: 'Mã số thuế',
 			dataIndex: 'Taxcode'
-			// ...FilterColumn('SupplierName', onSearch, handleReset, "text")
 		},
 		{
 			title: 'Nhân viên quản lí',
@@ -314,13 +295,11 @@ const SupplierList = () => {
 		{
 			title: 'Thay đổi bởi',
 			dataIndex: 'ModifiedBy'
-			// ...FilterColumn('ModifiedBy', onSearch, handleReset, "text")},
 		},
 		{
 			title: 'Thay đổi lúc',
 			dataIndex: 'ModifiedOn',
 			render: (date) => moment(date).format('DD/MM/YYYY')
-			// ...FilterDateColumn("modDate"),
 		},
 		{
 			render: (record) => (
@@ -372,7 +351,7 @@ const SupplierList = () => {
 				totalPage={totalPage && totalPage}
 				getPagination={getPagination}
 				addClass="basic-header"
-				TitlePage="Supplier List"
+				TitlePage="Danh sách nhà cung cấp"
 				TitleCard={
 					<SupplierForm
 						showAdd={true}
@@ -393,5 +372,6 @@ const SupplierList = () => {
 		</Fragment>
 	);
 };
+
 SupplierList.layout = LayoutBase;
 export default SupplierList;

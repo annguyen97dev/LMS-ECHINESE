@@ -356,7 +356,7 @@ const StaffSalary = () => {
 				totalPage={totalPage && totalPage}
 				getPagination={getPagination}
 				addClass="basic-header"
-				TitlePage="Staff salary"
+				TitlePage="Cấu hình lương"
 				TitleCard={
 					<StaffSalaryForm
 						showAdd={true}

@@ -466,7 +466,7 @@ export const StaffManagerChildMenu = [
 
 	{
 		MenuName: 'tab-document',
-		MenuTitle: 'Document List',
+		MenuTitle: 'Danh sách tài liệu',
 		MenuKey: '/document-list',
 		MenuItem: [
 			{
@@ -955,7 +955,7 @@ export const StaffManagerChildMenu = [
 						ItemType: 'single',
 						Key: '/option/staff-salary',
 						Route: '/option/staff-salary',
-						Text: 'Lương office',
+						Text: 'Cấu hình lương',
 						Icon: ''
 					},
 
@@ -1135,7 +1135,7 @@ export const StaffManagerChildMenu = [
 		// 		ItemType: 'single',
 		// 		Key: '/option/staff-salary',
 		// 		Route: '/option/staff-salary',
-		// 		Text: 'Lương office',
+		// 		Text: 'Cấu hình lương',
 		// 		Icon: '',
 		// 	},
 		// 	// {

@@ -240,7 +240,7 @@ const VideoCourseDetail = (props) => {
 									</h6>
 								)}
 
-								{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
+								{userInformation !== null && userInformation?.RoleID !== 1 && userInformation?.RoleID !== 2 && (
 									<>
 										{activing ? (
 											<>
@@ -343,7 +343,7 @@ const VideoCourseDetail = (props) => {
 									</h6>
 								)}
 
-								{userInformation !== null && userInformation.RoleID !== 1 && userInformation.RoleID !== 2 && (
+								{userInformation !== null && userInformation?.RoleID !== 1 && userInformation?.RoleID !== 2 && (
 									<>
 										{activing ? (
 											<>

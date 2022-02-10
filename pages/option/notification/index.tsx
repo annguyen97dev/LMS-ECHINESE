@@ -272,7 +272,7 @@ const Notification = () => {
 			totalPage={totalPage && totalPage}
 			getPagination={getPagination}
 			addClass="basic-header"
-			TitlePage="Notification List"
+			TitlePage="Danh sách thông báo"
 			expandable={{
 				expandedRowRender: (record) => <p style={{ margin: 0 }}>{ReactHtmlParser(record.NotificationContent)}</p>,
 				rowExpandable: (record) => record.NotificationTitle !== 'Not Expandable'

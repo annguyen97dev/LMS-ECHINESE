@@ -1,9 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LayoutBase from '~/components/LayoutBase';
 import { Form, Input, Select, Card, Switch, Spin } from 'antd';
 import { useWrap } from '~/context/wrap';
-import { useForm } from 'react-hook-form';
-import { branchApi, courseApi, programApi, studentApi, studyTimeApi } from '~/apiBase';
+import { studentApi } from '~/apiBase';
 import moment from 'moment';
 import { courseRegistrationApi } from '~/apiBase/customer/student/course-registration';
 import StudentExamOfServices from '~/components/Global/RegisterCourse/StudentExamOfServices';
@@ -14,10 +13,11 @@ import RegCourse from '~/components/Global/RegisterCourse/RegCourse';
 import { courseStudentPriceApi } from '~/apiBase/customer/student/course-student-price';
 import CreateCustomer from './../../../components/Global/RegisterCourse/CreateCustomer';
 import OverStudentConfirmBox from '~/components/Global/RegisterCourse/OverStudentConfirmBox';
+import TitlePage from '~/components/TitlePage';
 
 const now = new Date();
 
-const RegisterCourse = (props: any) => {
+const RegisterCourse = () => {
 	const { Option } = Select;
 	const [option, setOption] = useState(null);
 	const [form] = Form.useForm();
@@ -33,24 +33,23 @@ const RegisterCourse = (props: any) => {
 	const [dataSubmit, setDataSubmit] = useState(null);
 	const [isFetchDataCourses, setIsFetchDataCourses] = useState(false);
 
-	const fetchDataUser = () => {
+	useEffect(() => {
+		fetchDataUser();
+	}, []);
+
+	const fetchDataUser = async () => {
 		(async () => {
 			try {
 				const res = await studentApi.getAll({
 					pageIndex: 1,
 					pageSize: 99999
 				});
-				//@ts-ignore
 				res.status == 200 && setUserAll(res.data.data);
 			} catch (err) {
 				showNoti('danger', err.message);
 			}
 		})();
 	};
-
-	useEffect(() => {
-		fetchDataUser();
-	}, []);
 
 	const onChange = (value) => {
 		setOption(value);
@@ -61,7 +60,6 @@ const RegisterCourse = (props: any) => {
 		(async () => {
 			try {
 				const _detail = await studentApi.getWithID(value);
-				//@ts-ignore
 				_detail.status == 200 &&
 					(setUserDetail(_detail.data.data), form.setFieldsValue({ UserInformationID: _detail.data.data.UserInformationID }));
 			} catch (err) {
@@ -70,8 +68,13 @@ const RegisterCourse = (props: any) => {
 				setIsLoading(false);
 			}
 		})();
+	};
 
-		console.log('userDetail: ', userDetail);
+	const resetForm = () => {
+		form.setFieldsValue({ UserInformationID: '' });
+		// @ts-ignore
+		setUserDetail('');
+		form.resetFields();
 	};
 
 	const onSubmit = async (data: any) => {
@@ -85,7 +88,7 @@ const RegisterCourse = (props: any) => {
 				});
 				showNoti('success', res?.data.message);
 				setLoading(false);
-				form.resetFields();
+				resetForm();
 			} catch (error) {
 				showNoti('danger', error.message);
 				setLoading(false);
@@ -97,7 +100,7 @@ const RegisterCourse = (props: any) => {
 				let res = await courseRegistrationApi.add(data);
 				showNoti('success', res?.data.message);
 				setLoading(false);
-				form.resetFields();
+				resetForm();
 			} catch (error) {
 				showNoti('danger', error.message);
 				setLoading(false);
@@ -110,8 +113,6 @@ const RegisterCourse = (props: any) => {
 			} else {
 				data.Course = '';
 			}
-
-			console.log('data.PayDate: ', data.PayDate);
 
 			if (courseOverStudent && courseOverStudent.length > 0) {
 				setVisibleModalConfirm(true);
@@ -128,7 +129,7 @@ const RegisterCourse = (props: any) => {
 						showNoti('success', res?.data.message);
 						setLoading(false);
 						setVisibleModalConfirm(false);
-						form.resetFields();
+						resetForm();
 						setIsFetchDataCourses(!isFetchDataCourses);
 					}
 				} catch (error) {
@@ -143,6 +144,7 @@ const RegisterCourse = (props: any) => {
 
 	return (
 		<div className="container-fluid">
+			<TitlePage title="Đăng ký khóa học" />
 			<Form form={form} layout="vertical" onFinish={onSubmit}>
 				<OverStudentConfirmBox
 					visibleModalConfirm={visibleModalConfirm}
@@ -160,14 +162,13 @@ const RegisterCourse = (props: any) => {
 							title="Thông tin cá nhân"
 							extra={
 								userInformation &&
-								(userInformation.RoleID === 1 ||
-									userInformation.RoleID === 5 ||
-									userInformation.RoleID === 2 ||
-									userInformation.RoleID === 6 ||
-									userInformation.RoleID === 7) && <CreateCustomer fetchDataUser={() => fetchDataUser()} />
+								(userInformation?.RoleID === 1 ||
+									userInformation?.RoleID === 5 ||
+									userInformation?.RoleID === 2 ||
+									userInformation?.RoleID === 6 ||
+									userInformation?.RoleID === 7) && <CreateCustomer fetchDataUser={() => fetchDataUser()} />
 							}
 						>
-							{/* Button create student for admin, manager, academic, seller, teacher */}
 							<div className="row">
 								<div className="col-md-6 col-12">
 									<Form.Item label="Loại đăng ký">
@@ -283,89 +284,6 @@ const RegisterCourse = (props: any) => {
 											/>
 										</Form.Item>
 									</div>
-								</div>
-								{/*  */}
-								{/*  */}
-								{/* <div className="row">
-									<div className="col-md-6 col-12">
-										<Form.Item label="Phường xã">
-											<Input readOnly={true} value={userDetail ? userDetail.WardName : ''} className="style-input" />
-										</Form.Item>
-									</div>
-									<div className="col-md-6 col-12">
-										<Form.Item label="Địa chỉ - Mô tả">
-											<Input
-												readOnly={true}
-												value={
-													userDetail
-														? `${userDetail.HouseNumber ? userDetail.HouseNumber : ''} ${
-																userDetail.Address ? userDetail.Address : ''
-														  }`
-														: ''
-												}
-												className="style-input"
-											/>
-										</Form.Item>
-									</div>
-								</div> */}
-								{/*  */}
-								{/*  */}
-								{/* <div className="row">
-									<div className="col-md-6 col-12">
-										<Form.Item label="CMND">
-											<Input readOnly={true} value={userDetail ? userDetail.CMND : ''} className="style-input" />
-										</Form.Item>
-									</div>
-									<div className="col-md-6 col-12">
-										<Form.Item label="Nơi cấp">
-											<Input
-												readOnly={true}
-												value={userDetail ? userDetail.CMNDRegister : ''}
-												className="style-input"
-											/>
-										</Form.Item>
-									</div>
-								</div> */}
-								{/*  */}
-								{/*  */}
-								{/* <div className="row">
-									<div className="col-md-6 col-12">
-										<Form.Item label="Ngày cấp">
-											<Input
-												readOnly={true}
-												value={userDetail?.CMNDDate ? moment(userDetail.CMNDDate).format('DD/MM/YYYY') : ''}
-												className="style-input"
-											/>
-										</Form.Item>
-									</div>
-									<div className="col-md-6 col-12">
-										<Form.Item label="Công việc">
-											<Input readOnly={true} className="style-input" value={userDetail ? userDetail.JobName : ''} />
-										</Form.Item>
-									</div>
-								</div> */}
-								{/*  */}
-								{/*  */}
-								<div className="row">
-									{/* <div className="col-md-6 col-12">
-										<Form.Item label="Người nhà, liên hệ">
-											<Input
-												className="style-input"
-												readOnly={true}
-												value={userDetail ? userDetail.ParentsNameOf : ''}
-											/>
-										</Form.Item>
-									</div> */}
-									{/* <div className="col-md-6 col-12">
-										<Form.Item label="Tư vấn viên">
-											<Input
-												className="style-input"
-												readOnly={true}
-												//@ts-ignore
-												value={userDetail ? userDetail.CounselorsName : ''}
-											/>
-										</Form.Item>
-									</div> */}
 								</div>
 								{/*  */}
 								{/*  */}

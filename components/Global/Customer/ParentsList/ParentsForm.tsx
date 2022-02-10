@@ -458,7 +458,7 @@ const ParentsForm = (props) => {
 
 							<div className="col-md-6 col-12">
 								<SelectField
-									disabled={!rowID ? true : userInformation.RoleID === 1 ? false : true}
+									disabled={!rowID ? true : userInformation?.RoleID === 1 ? false : true}
 									form={form}
 									name="StatusID"
 									label="Trạng thái hoạt động"

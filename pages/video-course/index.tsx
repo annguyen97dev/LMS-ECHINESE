@@ -73,11 +73,11 @@ const VideoCourseStore = () => {
 	const getAllArea = async () => {
 		// ADMIN & HOC VIEN
 		setIsLoading({ type: 'GET_ALL', status: true });
-		if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
+		if (userInformation?.RoleID == 1 || userInformation?.RoleID == 2) {
 			getCategory();
 		}
 		try {
-			if (userInformation.RoleID == 1 || userInformation.RoleID == 2) {
+			if (userInformation?.RoleID == 1 || userInformation?.RoleID == 2) {
 				// ADMIN
 				const res = await VideoCourseStoreApi.getAll({ ...todoApi, pageSize: 10 });
 				res.status == 200 && (setData(res.data.data), setTotalPage(res.data.totalRow));
@@ -325,7 +325,7 @@ const VideoCourseStore = () => {
 					loading={isLoading.status}
 					title={<div className="m-2">{Extra()}</div>}
 					extra={
-						userInformation.RoleID !== 1 ? null : (
+						userInformation?.RoleID !== 1 ? null : (
 							<div className="vc-teach-modal_header">
 								<ModalCreateVideoCourse
 									dataTeacher={dataTeacher}

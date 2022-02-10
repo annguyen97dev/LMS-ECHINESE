@@ -28,6 +28,7 @@ import { useWrap } from '~/context/wrap';
 import { Roles } from '~/lib/roles/listRoles';
 import { fmSelectArr } from '~/utils/functions';
 import { useRouter } from 'next/router';
+import TitlePage from '~/components/TitlePage';
 
 const initialNewsFeedList = [];
 const initialPageIndex = 1;
@@ -817,6 +818,7 @@ const NewsFeed = () => {
 
 	return (
 		<>
+			<TitlePage title="Tin Tức" />
 			<div className="row wrap-newsfeed">
 				<div className="col-md-8 col-12">
 					<div className="list-newsfeed">

@@ -250,10 +250,10 @@ const Subject = (props) => {
 			render: (text, data, index) => <>{text == true && <CheckCircle className="icon-additional" />}</>
 		},
 		{
-			width: userInformation && userInformation.RoleID !== 2 ? 50 : 0,
+			width: userInformation && userInformation?.RoleID !== 2 ? 50 : 0,
 			render: (text, data, index) => (
 				<>
-					{userInformation && userInformation.RoleID !== 2 && (
+					{userInformation && userInformation?.RoleID !== 2 && (
 						<SubjectForm
 							dataProgram={dataProgram}
 							getIndex={() => setIndexRow(index)}

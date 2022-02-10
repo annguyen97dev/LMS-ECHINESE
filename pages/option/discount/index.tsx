@@ -342,7 +342,7 @@ const Discount = () => {
 	return (
 		<div className="row">
 			<div className="col-12">
-				<TitlePage title="Discount List" />
+				<TitlePage title="Danh sách mã khuyến mãi" />
 			</div>
 			<div className="col-12">
 				<Modal

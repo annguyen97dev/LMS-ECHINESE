@@ -18,6 +18,8 @@ class StudentAdviseApi {
 	updateNote = (data: any) => instance.put('/api/NoteOfCustomer', data, {});
 
 	sendEmail = (data: any) => instance.post('/api/SendMailCustomer', data, {});
+
+	sendEmailStudents = (data: any) => instance.post('/api/SendMailStudent', data, {});
 }
 
 export const studentAdviseApi = new StudentAdviseApi();

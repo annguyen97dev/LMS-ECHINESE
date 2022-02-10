@@ -13,14 +13,11 @@ let returnSchema = {};
 let schema = null;
 
 const StudentAdvisoryMail = (props) => {
-	const { onFetchData, dataSource, loadingOutside, dataRow, listCustomer, resetListCustomer, showCheckBox } = props;
+	const { onFetchData, isStudent, dataRow, listCustomer, resetListCustomer, showCheckBox } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const { showNoti } = useWrap();
 	const [listSendEmail, setListSendEmail] = useState([]);
-
-	// console.log('dataRow: ', dataRow);
-	// console.log('listCustomer: ', listCustomer);
 
 	const showModal = () => {
 		if (!dataRow) {
@@ -42,14 +39,6 @@ const StudentAdvisoryMail = (props) => {
 		setIsModalVisible(false);
 	};
 
-	const listID = () => {
-		let arrID = dataSource.map((item) => item.ID);
-
-		console.log('arrID: ', arrID);
-
-		return arrID;
-	};
-
 	const defaultValuesInit = {
 		title: null,
 		content: null
@@ -65,13 +54,10 @@ const StudentAdvisoryMail = (props) => {
 				case 'content':
 					returnSchema[key] = yup.mixed().required('Nội dung không được để trống');
 					break;
-
 				default:
-					// returnSchema[key] = yup.mixed().required("Bạn không được để trống");
 					break;
 			}
 		});
-
 		schema = yup.object().shape(returnSchema);
 	})();
 
@@ -85,25 +71,28 @@ const StudentAdvisoryMail = (props) => {
 		if (!dataRow) {
 			dataSubmit = {
 				...data,
-				customerIDs: listSendEmail
+				customerIDs: listSendEmail,
+				studentIDs: listSendEmail
 			};
 		} else {
 			if (dataRow.ID == null) {
 				dataSubmit = {
 					...data,
-					customerIDs: [dataRow.UserInformationID]
+					customerIDs: [dataRow.UserInformationID],
+					studentIDs: [dataRow.UserInformationID]
 				};
 			} else {
 				dataSubmit = {
 					...data,
-					customerIDs: [dataRow.ID]
+					customerIDs: [dataRow.ID],
+					studentIDs: [dataRow.UserInformationID]
 				};
 			}
 		}
 
 		setIsLoading(true);
 		try {
-			let res = await studentAdviseApi.sendEmail(dataSubmit);
+			let res = isStudent ? await studentAdviseApi.sendEmailStudents(dataSubmit) : await studentAdviseApi.sendEmail(dataSubmit);
 			if (res.status === 200) {
 				showNoti('success', 'Gửi email thành công');
 				setIsModalVisible(false);

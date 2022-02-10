@@ -29,7 +29,7 @@ const CourseStudent = () => {
 		setParams(listParamsDefault);
 	};
 	const columns =
-		userInformation && userInformation.RoleID !== 10
+		userInformation && userInformation?.RoleID !== 10
 			? [
 					{
 						width: 200,
@@ -111,7 +111,7 @@ const CourseStudent = () => {
 											currentPage={currentPage}
 										/>
 										{/* yêu cầu thanh toán thêm */}
-										{(userInformation.RoleID == 1 || userInformation.RoleID == 5) && <UpdatePriceForm data={data} />}
+										{(userInformation?.RoleID == 1 || userInformation?.RoleID == 5) && <UpdatePriceForm data={data} />}
 									</>
 								)}
 							</Fragment>

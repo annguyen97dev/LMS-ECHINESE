@@ -1,5 +1,5 @@
 import { AimOutlined, DeploymentUnitOutlined, MailOutlined, UserOutlined, WhatsAppOutlined } from '@ant-design/icons';
-import { Avatar, Card, Tabs, Divider, Skeleton, Button, Spin } from 'antd';
+import { Avatar, Card, Tabs, Divider, Skeleton, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useWrap } from '~/context/wrap';
 import InfoCourseCard from './InfoCourseCard/InfoCourseCard';
@@ -93,9 +93,7 @@ function ProfileCustomer(props) {
 	const [activeKey, setActiveKey] = useState(1);
 	const [isUpdateInfo, setIsUpdateInfo] = useState(false);
 
-	// FOR STUDENT FORM
 	// ------------- ADD data to list --------------
-
 	const makeNewData = (data, name) => {
 		let newData = null;
 		switch (name) {
@@ -207,9 +205,7 @@ function ProfileCustomer(props) {
 							Enable: true
 						});
 					}
-
 					res.status == 200 && getDataTolist(res.data.data, item.name);
-
 					res.status == 204 && console.log(item.text + ' Không có dữ liệu');
 				} catch (error) {
 					console.log(error.message);
@@ -330,6 +326,7 @@ function ProfileCustomer(props) {
 						)}
 					</Card>
 				</div>
+
 				<div className="col-md-9 col-12">
 					<Card
 						className="space-top-card"

@@ -291,9 +291,9 @@ const PayFixList = (props) => {
 
 	useEffect(() => {
 		if (userInformation) {
-			setRole(userInformation.RoleID);
+			setRole(userInformation?.RoleID);
 			setUserID(userInformation.UserInformationID);
-			if (userInformation.RoleID == 3) {
+			if (userInformation?.RoleID == 3) {
 				setTodoApi({
 					...todoApi,
 					StudentID: userInformation.UserInformationID

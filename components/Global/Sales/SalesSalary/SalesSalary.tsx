@@ -11,9 +11,10 @@ type IOptionListFilter = {
 	optionSaleCampaignList: IOptionCommon[];
 	optionCounselorList: IOptionCommon[];
 };
-function SalesSalary(props) {
+
+function SalesSalary() {
 	const [saleSalaryList, setSaleSalaryList] = useState<ISaleSalary[]>([]);
-	const { showNoti, isAdmin } = useWrap();
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -58,6 +59,7 @@ function SalesSalary(props) {
 			text: 'Tổng lương giảm dần'
 		}
 	];
+
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -75,6 +77,7 @@ function SalesSalary(props) {
 		sort: -1,
 		sortType: false
 	});
+
 	const [filters, setFilters] = useState(listFieldInit);
 
 	// PAGINATION
@@ -146,6 +149,7 @@ function SalesSalary(props) {
 			});
 		}
 	};
+
 	useEffect(() => {
 		fetchSaleCampaignList();
 	}, [filters]);
@@ -180,6 +184,7 @@ function SalesSalary(props) {
 			});
 		}
 	};
+
 	useEffect(() => {
 		fetchDataForFilter();
 	}, []);
@@ -213,9 +218,7 @@ function SalesSalary(props) {
 					status: true
 				});
 				const newSaleSalaryList = [...saleSalaryList];
-
 				const { ID, Bonus, Note } = newSaleSalaryList[idx];
-
 				const newSaleSalary: {
 					ID: number;
 					Bonus: number;
@@ -311,6 +314,7 @@ function SalesSalary(props) {
 			)
 		}
 	];
+
 	return (
 		<PowerTable
 			loading={isLoading}
@@ -318,7 +322,7 @@ function SalesSalary(props) {
 			totalPage={totalPage}
 			getPagination={getPagination}
 			addClass="basic-header"
-			TitlePage="Danh sách phiếu chi"
+			TitlePage="Duyệt lương"
 			dataSource={saleSalaryList}
 			columns={columns}
 			Extra={

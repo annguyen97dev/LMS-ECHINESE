@@ -1,4 +1,3 @@
-import { ControlOutlined } from '@ant-design/icons';
 import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -25,12 +24,9 @@ const CourseListDetail = () => {
 	const router = useRouter();
 	const [groupID, setGroupID] = useState({ groupID: null, groupInfo: null });
 	const [courseDetail, setCourseDetail] = useState<ICourseDetail>();
-	console.log(courseDetail);
 	const { showNoti, pageSize } = useWrap();
 	const { slug: ID, type } = router.query;
 	const parseIntID = parseInt(ID as string);
-
-	console.log('courseDetail: ', courseDetail);
 
 	const isStudent = () => {
 		let role = userInformation?.RoleID;
@@ -50,12 +46,10 @@ const CourseListDetail = () => {
 			let res = await groupNewsFeedApi.getAll({ pageSize: pageSize, pageIndex: 1, CourseID: Number(router.query.slug) });
 			if (res.status === 200) {
 				if (res.data.totalRow && res.data.data.length) {
-					// @ts-ignore
 					setGroupID({ groupID: res.data.data[0].ID, groupInfo: res.data.data });
 				}
 			} else if (res.status === 204) {
 				setGroupID(null);
-				// showNoti('danger', 'Nhóm chưa tồn tại, bạn có thể tạo nhóm!');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -130,6 +124,7 @@ const CourseListDetail = () => {
 				>
 					<CourseDetailCalendar courseID={parseIntID} isAdmin={isAdmin || userInformation?.RoleID === 2} />
 				</TabPane>
+
 				<TabPane
 					tab={
 						<>
@@ -141,32 +136,39 @@ const CourseListDetail = () => {
 				>
 					<LessonDetail disable={true} />
 				</TabPane>
-				<TabPane
-					tab={
-						<>
-							<Edit />
-							<span title="Giáo trình">Kiểm tra</span>
-						</>
-					}
-					key="11"
-				>
-					{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
-				</TabPane>
-				<TabPane
-					tab={
-						<>
-							<Edit />
-							<span title="Giáo trình">Bài tập</span>
-						</>
-					}
-					key="12"
-				>
-					{!isAdmin ? (
-						<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
-					) : (
-						<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
-					)}
-				</TabPane>
+
+				{userInformation?.RoleID !== 6 && (
+					<TabPane
+						tab={
+							<>
+								<Edit />
+								<span title="Giáo trình">Kiểm tra</span>
+							</>
+						}
+						key="11"
+					>
+						{!isAdmin ? <CourseExamStudent /> : <CourseExamAdmin />}
+					</TabPane>
+				)}
+
+				{userInformation?.RoleID !== 6 && (
+					<TabPane
+						tab={
+							<>
+								<Edit />
+								<span title="Giáo trình">Bài tập</span>
+							</>
+						}
+						key="12"
+					>
+						{!isAdmin ? (
+							<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
+						) : (
+							<Homework courseID={courseDetail?.ID} CurriculumID={courseDetail?.CurriculumID} />
+						)}
+					</TabPane>
+				)}
+
 				<TabPane
 					tab={
 						<>
@@ -200,7 +202,7 @@ const CourseListDetail = () => {
 							</TabPane>
 					  )
 					: userInformation &&
-					  userInformation.RoleID === 1 && (
+					  userInformation?.RoleID === 1 && (
 							<TabPane
 								tab={
 									<>
@@ -216,7 +218,7 @@ const CourseListDetail = () => {
 							</TabPane>
 					  )}
 
-				{(isAdmin || userInformation?.RoleID == 2) && (
+				{(isAdmin || userInformation?.RoleID == 2 || userInformation?.RoleID == 6) && (
 					<TabPane
 						tab={
 							<>
@@ -230,41 +232,35 @@ const CourseListDetail = () => {
 					</TabPane>
 				)}
 
-				<TabPane
-					tab={
-						<>
-							<CheckCircle />
-							<span title="Điểm danh"> Điểm danh</span>
-						</>
-					}
-					key="4"
-				>
-					<RollUp courseID={parseIntID} />
-				</TabPane>
-				{/* <TabPane
-					tab={
-						<>
-							<Activity />
-							<span title="Nhập điểm"> Nhập điểm</span>
-						</>
-					}
-					key="5"
-				>
-					<Transcript />
-				</TabPane> */}
-				<TabPane
-					tab={
-						<>
-							<FileText />
-							<span title="Tài liệu"> Tài liệu</span>
-						</>
-					}
-					key="6"
-				>
-					<DocumentCourse courseID={parseIntID} courseDetail={courseDetail} />
-				</TabPane>
+				{userInformation?.RoleID !== 6 && (
+					<TabPane
+						tab={
+							<>
+								<CheckCircle />
+								<span title="Điểm danh"> Điểm danh</span>
+							</>
+						}
+						key="4"
+					>
+						<RollUp courseID={parseIntID} />
+					</TabPane>
+				)}
 
-				{!isStudent() && (
+				{userInformation?.RoleID !== 6 && (
+					<TabPane
+						tab={
+							<>
+								<FileText />
+								<span title="Tài liệu"> Tài liệu</span>
+							</>
+						}
+						key="6"
+					>
+						<DocumentCourse courseID={parseIntID} courseDetail={courseDetail} />
+					</TabPane>
+				)}
+
+				{!isStudent() && userInformation?.RoleID !== 6 && (
 					<TabPane
 						tab={
 							<>
@@ -278,20 +274,22 @@ const CourseListDetail = () => {
 					</TabPane>
 				)}
 
-				<TabPane
-					tab={
-						<>
-							<Bell />
-							<span title="Thông báo"> Thông báo qua email</span>
-						</>
-					}
-					key="8"
-				>
-					<NotificationCourse courseID={parseIntID} />
-				</TabPane>
+				{userInformation?.RoleID !== 6 && (
+					<TabPane
+						tab={
+							<>
+								<Bell />
+								<span title="Thông báo"> Thông báo qua email</span>
+							</>
+						}
+						key="8"
+					>
+						<NotificationCourse courseID={parseIntID} />
+					</TabPane>
+				)}
 
 				{userInformation &&
-					(userInformation.RoleID == 1 || userInformation.RoleID == 2 || userInformation.RoleID == 5) &&
+					(userInformation?.RoleID == 1 || userInformation?.RoleID == 2 || userInformation?.RoleID == 5) &&
 					(groupID ? (
 						<TabPane
 							tab={

@@ -2,6 +2,7 @@ import { Skeleton } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { statisticalApi } from '~/apiBase/statistical/statistical-total';
 import ChartCard from './ChartCard';
+import { useWrap } from '~/context/wrap';
 
 const StatisticalTotalDefault = {
 	Warning: 0,
@@ -50,6 +51,7 @@ const StatisticalTotalDefault = {
 };
 
 export default function StatisticalTotal() {
+	const { userInformation } = useWrap();
 	const [statisticalTotal, setStatisticalTotal] = useState<IStatistical>(StatisticalTotalDefault);
 	const [isLoading, setIsLoading] = useState({
 		status: '',
@@ -139,21 +141,37 @@ export default function StatisticalTotal() {
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard typeChart={4} styleName="up" title="Học viên bị cảnh cáo" statisticalTotal={statisticalTotal} />
 						</div>
-						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard typeChart={1} styleName="up" title="Doanh thu khóa học video" statisticalTotal={statisticalTotal} />
-						</div>
+						{userInformation?.RoleID !== 6 && (
+							<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+								<ChartCard
+									typeChart={1}
+									styleName="up"
+									title="Doanh thu khóa học video"
+									statisticalTotal={statisticalTotal}
+								/>
+							</div>
+						)}
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard typeChart={2} styleName="up" title="Lượt xem khóa học video" statisticalTotal={statisticalTotal} />
 						</div>
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard typeChart={4} styleName="up" title="Lượt xem video trung bình" statisticalTotal={statisticalTotal} />
 						</div>
-						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard typeChart={3} styleName="up" title="Tỉ lệ nợ học phí" statisticalTotal={statisticalTotal} />
-						</div>
-						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
-							<ChartCard typeChart={1} styleName="up" title="Tỉ lệ hoàn thành học phí" statisticalTotal={statisticalTotal} />
-						</div>
+						{userInformation?.RoleID !== 6 && (
+							<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+								<ChartCard typeChart={3} styleName="up" title="Tỉ lệ nợ học phí" statisticalTotal={statisticalTotal} />
+							</div>
+						)}
+						{userInformation?.RoleID !== 6 && (
+							<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
+								<ChartCard
+									typeChart={1}
+									styleName="up"
+									title="Tỉ lệ hoàn thành học phí"
+									statisticalTotal={statisticalTotal}
+								/>
+							</div>
+						)}
 						<div className="mb-4 col-xl-2 col-md-3 col-sm-4 col-6">
 							<ChartCard typeChart={2} styleName="up" title="Tỉ lệ nộp bài đúng hạn" statisticalTotal={statisticalTotal} />
 						</div>

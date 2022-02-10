@@ -85,7 +85,7 @@ const RenderItemCard = (props) => {
 	return (
 		<>
 			<div className="vc-store_container">
-				<div className="vc-store_item" style={{ height: userInformation.RoleID == 1 || userInformation.RoleID == 2 ? 300 : 305 }}>
+				<div className="vc-store_item" style={{ height: userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? 300 : 305 }}>
 					<div className="flip-card-front">
 						<div className="warp-image">
 							<Link
@@ -182,7 +182,7 @@ const RenderItemCard = (props) => {
 
 									<div style={{ flex: 1 }} />
 									{/* button action */}
-									{userInformation.RoleID == 1 || userInformation.RoleID == 2 ? (
+									{userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? (
 										<div style={{ zIndex: 99999 }}>
 											<button
 												type="button"

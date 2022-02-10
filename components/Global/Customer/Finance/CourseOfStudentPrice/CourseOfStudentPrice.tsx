@@ -426,7 +426,7 @@ const CourseOfStudentPrice = () => {
 							</button>
 						</Tooltip>
 					</Link>
-					{userInformation && userInformation.RoleID == 1 && (
+					{userInformation && userInformation?.RoleID == 1 && (
 						<UpdatePaidStatus
 							record={record}
 							setFilters={() => {

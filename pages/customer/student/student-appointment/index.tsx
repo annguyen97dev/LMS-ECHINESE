@@ -51,7 +51,7 @@ const CourseRegistration = () => {
 	}
 
 	const columns =
-		userInformation && userInformation.RoleID !== 10
+		userInformation && userInformation?.RoleID !== 10
 			? [
 					{
 						title: 'Học viên',

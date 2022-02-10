@@ -4,6 +4,7 @@ import LayoutBase from '~/components/LayoutBase';
 import dynamic from 'next/dynamic';
 import { Waypoint } from 'react-waypoint';
 import { Skeleton } from 'antd';
+import { useWrap } from '~/context/wrap';
 
 const DynamicStatisticalRate = dynamic(() => import('~/components/Dashboard/StatisticalRate'));
 const DynamicStatisticalTotal = dynamic(() => import('~/components/Dashboard/StatisticalTotal'));
@@ -23,6 +24,7 @@ const DynamicStatisticalPercentOfStudentBySource = dynamic(() => import('~/compo
 const Dashboard = () => {
 	const [countItem, setCountItem] = useState(0);
 	const [isOverList, setIsOverList] = useState(false);
+	const { userInformation } = useWrap();
 	let loadList = [
 		<DynamicStatisticalCourse />,
 		<DynamicStatisticalAverageAgeOfStudent />,
@@ -50,7 +52,7 @@ const Dashboard = () => {
 
 	return (
 		<div>
-			<TitlePage title="Dashboard" />
+			<TitlePage title="Thống kê" />
 			<DynamicStatisticalTotal />
 
 			<DynamicStatisticalRankTeacher />

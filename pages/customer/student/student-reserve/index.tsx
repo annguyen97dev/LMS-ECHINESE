@@ -55,7 +55,7 @@ const StudentCourseReserve = () => {
 	};
 
 	const columns =
-		userInformation && userInformation.RoleID !== 10
+		userInformation && userInformation?.RoleID !== 10
 			? [
 					{
 						title: 'Học viên',
@@ -149,7 +149,7 @@ const StudentCourseReserve = () => {
 											</>
 										)}
 										{/* chỉ có admin mới được update hạn bảo lưu */}
-										{userInformation.RoleID == 1 && (data.StatusID == 1 || data.StatusID == 4) && (
+										{userInformation?.RoleID == 1 && (data.StatusID == 1 || data.StatusID == 4) && (
 											<UpdateStudentReserveDate
 												infoDetail={data}
 												onUpdateStudentReserveDate={onUpdateStudentReserveDate}
