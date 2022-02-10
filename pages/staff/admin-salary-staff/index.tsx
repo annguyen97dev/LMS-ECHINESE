@@ -428,6 +428,8 @@ const SalaryReview = () => {
 				<>
 					<div className="d-none d-xl-inline-block">
 						<div className="d-flex justify-content-end align-items-center ">
+							<button className="btn btn-success mr-1">Xuất file Excel</button>
+
 							<Input
 								onChange={(event) => {
 									setWorkDays({ ...workDays, days: Number(event.target.value) });

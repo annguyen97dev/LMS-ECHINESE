@@ -149,8 +149,6 @@ const StaffForm = (props) => {
 			}
 		});
 
-		console.log('getDataTolist: ', listData);
-
 		setListData({ ...listData });
 	};
 
@@ -253,6 +251,7 @@ const StaffForm = (props) => {
 		BankAccountNumber: null,
 		BankAccountHolderName: null,
 		BankBranch: null,
+		Bank: null,
 		UserName: null
 	};
 
@@ -309,7 +308,6 @@ const StaffForm = (props) => {
 
 	// Get file
 	const getFile = (file, type) => {
-		console.log('File: ', file);
 		switch (type) {
 			case 'contract':
 				form.setValue('ContractOfStaff', file);
@@ -581,13 +579,16 @@ const StaffForm = (props) => {
 									<Divider orientation="center">Thông tin ngân hàng</Divider>
 								</div>
 								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="BankBranch" label="Chi nhánh ngân hàng" />
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="Bank" label="Tên ngân hàng" />
+								</div>
+								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="BankAccountHolderName" label="Tên chủ thẻ" />
 								</div>
 								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="BankAccountNumber" label="Số tài khoản" />
-								</div>
-								<div className="col-md-12 col-12">
-									<InputTextField form={form} name="BankBranch" label="Chi nhánh ngân hàng" />
 								</div>
 
 								{/** ==== Khác  ====*/}
