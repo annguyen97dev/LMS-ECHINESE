@@ -114,6 +114,7 @@ const TeacherForm = (props) => {
 		BankAccountNumber: null,
 		BankAccountHolderName: null,
 		BankBranch: null,
+		Bank: null,
 		UserName: null
 	};
 
@@ -432,8 +433,11 @@ const TeacherForm = (props) => {
 								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="BankAccountNumber" label="Số tài khoản" />
 								</div>
-								<div className="col-md-12 col-12">
+								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="BankBranch" label="Chi nhánh ngân hàng" />
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="Bank" label="Tên ngân hàng" />
 								</div>
 							</div>
 						) : (
@@ -523,8 +527,11 @@ const TeacherForm = (props) => {
 								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="BankAccountNumber" label="Số tài khoản" />
 								</div>
-								<div className="col-md-12 col-12">
+								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="BankBranch" label="Chi nhánh ngân hàng" />
+								</div>
+								<div className="col-md-6 col-12">
+									<InputTextField form={form} name="Bank" label="Tên ngân hàng" />
 								</div>
 								<div className="col-12 mt-3">
 									<button
