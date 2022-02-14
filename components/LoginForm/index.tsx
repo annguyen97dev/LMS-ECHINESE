@@ -137,6 +137,8 @@ function index(props: any) {
 									Đăng kí
 								</a>
 							</div>
+
+							<div className="mt-4 text-center">Username: admin / Pass: 123456</div>
 						</form>
 					</div>
 				</div>
