@@ -156,7 +156,6 @@ const ZoomRoom = () => {
 				showNoti('danger', 'Danh sách trống');
 			}
 		} catch (error) {
-			console.log('fetchRoomList', error.message);
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
@@ -192,6 +191,9 @@ const ZoomRoom = () => {
 			});
 		}
 	};
+
+	const onChangeEnable = async () => {};
+
 	const columns = [
 		{
 			title: 'ID phòng',
@@ -208,9 +210,9 @@ const ZoomRoom = () => {
 			dataIndex: 'Date',
 			render: (date) => moment(date).format('DD/MM/YYYY')
 		},
-        {
+		{
 			title: 'Giờ học',
-			dataIndex: 'StudyTimeName',
+			dataIndex: 'StudyTimeName'
 		},
 		{
 			align: 'center',
@@ -220,8 +222,8 @@ const ZoomRoom = () => {
 			...FilterColumn('IsRoomStart', onSearch, onResetSearch, 'select', optionActiveList)
 		},
 		{
-			width: 100,
-			align: 'center',
+			width: 180,
+			align: 'left',
 			dataIndex: 'IsRoomStart',
 			render: (IsRoomStart, record: IZoomRoom, idx) =>
 				IsRoomStart && (

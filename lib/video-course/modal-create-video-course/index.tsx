@@ -172,7 +172,14 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const createTag = async () => {
 		setLoading(true);
 		try {
-			await VideoCuorseTag.add({ Name: newTag });
+			let res = await VideoCuorseTag.add({ Name: newTag });
+			res.status == 200 &&
+				(setModalTags(false),
+				setIsModalVisible(true),
+				refeshData(),
+				showNoti('success', 'Thêm thành công'),
+				setNewTag(''),
+				form.setFieldsValue({ Name: '' }));
 		} catch (error) {
 			error?.message?.ID !== undefined
 				? (showNoti('success', 'Thêm thành công'),
@@ -330,11 +337,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 										</Form.Item>
 									</div>
 									<div className="col-md-6 col-12">
-										<Form.Item
-											name="Name"
-											label="Tên tiếng Anh"
-											rules={[{ required: true, message: 'Bạn không được để trống' }]}
-										>
+										<Form.Item name="Name" label="Tên tiếng Anh">
 											<Input
 												placeholder=""
 												className="style-input"
@@ -362,11 +365,7 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 									</div>
 
 									<div className="col-md-6 col-12">
-										<Form.Item
-											name="chineseName"
-											label="Tên tiếng Trung"
-											rules={[{ required: true, message: 'Bạn không được để trống' }]}
-										>
+										<Form.Item name="chineseName" label="Tên tiếng Trung">
 											<Input
 												placeholder=""
 												className="style-input"

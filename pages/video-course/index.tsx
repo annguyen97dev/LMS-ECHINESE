@@ -305,7 +305,7 @@ const VideoCourseStore = () => {
 						<Search
 							className="fb-btn-search style-input vc-teach-modal_search"
 							size="large"
-							placeholder="input search text"
+							placeholder="Tìm khóa học"
 							onSearch={(e) => {
 								handleSearch(e);
 							}}

@@ -7,10 +7,24 @@ import { useWrap } from '~/context/wrap';
 type Props = {
 	roleID: number;
 	type: string;
+	item?: {
+		CreatedBy: string;
+		CreatedOn: string;
+		Enable: boolean;
+		ID: number;
+		Icon: string;
+		Level: number;
+		MenuName: string;
+		ModifiedBy: string;
+		ModifiedOn: string;
+		ParentID?: number;
+		RoleID: number;
+		Route: string;
+	};
 };
 
 const AddParentMenuModal = (props: Props) => {
-	const { roleID, type } = props;
+	const { roleID, type, item } = props;
 	const [form] = Form.useForm();
 	const { showNoti } = useWrap();
 	const [isVisible, setIsVisible] = useState(false);
@@ -18,17 +32,33 @@ const AddParentMenuModal = (props: Props) => {
 
 	const handleSubmit = async (data) => {
 		setLoading(true);
+		console.log(data);
 		try {
-			let res = await devApi.insertMenu({
-				Level: 1,
-				RoleID: roleID,
-				ParentID: 1,
-				Icon: data.Icon,
-				MenuName: data.MenuName,
-				Route: data.Route
-			});
-			if (res.status === 200) {
-				showNoti('success', 'Add success!');
+			if (type === 'add') {
+				let res = await devApi.insertMenu({
+					Level: 1,
+					RoleID: roleID,
+					Icon: data.Icon,
+					MenuName: data.MenuName
+				});
+				if (res.status === 200) {
+					showNoti('success', 'Add success!');
+					setIsVisible(false);
+				}
+			}
+			if (type === 'edit') {
+				let res = await devApi.updateMenu({
+					ID: item.ID,
+					Level: 1,
+					RoleID: roleID,
+					Icon: data.Icon,
+					MenuName: data.MenuName,
+					Enable: true
+				});
+				if (res.status === 200) {
+					showNoti('success', 'Add success!');
+					setIsVisible(false);
+				}
 			}
 		} catch (error) {
 		} finally {
@@ -70,18 +100,13 @@ const AddParentMenuModal = (props: Props) => {
 				<Form onFinish={handleSubmit} form={form} layout="vertical">
 					<div className="row">
 						<div className="col-12">
-							<Form.Item label="TabName" name="TabName">
+							<Form.Item label="Menu Name" name="MenuName">
 								<Input className="style-input" placeholder="Add TabName" />
 							</Form.Item>
 						</div>
 						<div className="col-12">
 							<Form.Item label="Icon" name="Icon">
 								<Input className="style-input" placeholder="Add Icon" />
-							</Form.Item>
-						</div>
-						<div className="col-12">
-							<Form.Item label="Route" name="Route">
-								<Input className="style-input" placeholder="Add Route" />
 							</Form.Item>
 						</div>
 						<div className="col-12">

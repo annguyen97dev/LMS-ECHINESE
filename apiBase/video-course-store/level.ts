@@ -17,8 +17,11 @@ export const VideoCourseLevelApi = {
 
 const urlTag = '/api/VideoCoursesTagArray';
 export const VideoCuorseTag = {
+	getAll() {
+		return instance.get<IApiResultData<IVideoTags[]>>(urlTag);
+	},
 	// Thêm mới data
 	add(data) {
-		return instance.post(urlTag, data);
+		return instance.post('/api/VideoCoursesTagArray/CreateOrUpdateTag', data);
 	}
 };

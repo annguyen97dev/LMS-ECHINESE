@@ -1,11 +1,12 @@
-import { Form, Input, Spin, Select } from 'antd';
+import { Form, Input, Spin, Select, Modal } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { signIn, getProviders } from 'next-auth/client';
 import { devApi } from './../../apiBase/dev/dev';
 import { Collapse } from 'antd';
 import AddParentMenuModal from '~/components/Dev/AddLevelOneMenuModal';
-import { htmlparser2, ReactHtmlParser } from 'react-html-parser';
 import { RotateCcw, Trash } from 'react-feather';
+import { useWrap } from '~/context/wrap';
+import AddLevelTwoMenuModal from '~/components/Dev/AddLevelTwoMenuModal';
 
 const { Panel } = Collapse;
 
@@ -17,8 +18,11 @@ export default function BelongingToDev(props) {
 	const [levelFour, setLevelFour] = useState<IMenuByRole[]>(null);
 	const [levelFive, setLevelFive] = useState<IMenuByRole[]>(null);
 	const [levelSix, setLevelSix] = useState<IMenuByRole[]>(null);
+	const [isVisibleModal, setIsVisibleModal] = useState(false);
+	const [menuID, setMenuID] = useState(null);
 	const [roleID, setRoleID] = useState(null);
 	const [form] = Form.useForm();
+	const { showNoti } = useWrap();
 	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const { Option } = Select;
 	const useAllRoles = [
@@ -32,15 +36,16 @@ export default function BelongingToDev(props) {
 	];
 
 	const handleAccess = async (data) => {
+		console.log(data);
 		setIsLoading({ type: 'ACCESS', status: true });
 		try {
-			let res = await devApi.checkPass({ pass: 'mon4medi4' });
+			let res = await devApi.checkPass({ pass: data.pass });
 			if (res.status === 200) {
 				setIsAccess(true);
 			}
 		} catch (error) {
 		} finally {
-			setIsLoading({ type: 'ACCESS', status: true });
+			setIsLoading({ type: 'ACCESS', status: false });
 		}
 	};
 
@@ -82,14 +87,13 @@ export default function BelongingToDev(props) {
 		}
 	};
 
-	const handleSelect = async (event) => {
-		console.log(event);
+	const getAllMenuByRole = async (RoleID) => {
 		setIsLoading({ type: 'SELECT_ROLE', status: true });
 		try {
-			let res = await devApi.getAllMenuByRole({ roleId: event });
+			let res = await devApi.getAllMenuByRole({ roleId: RoleID });
 			if (res.status === 200) {
 				setLevelOne(res.data.data);
-				setRoleID(event);
+				setRoleID(RoleID);
 			}
 			if (res.status === 204) {
 				setLevelOne([]);
@@ -99,6 +103,22 @@ export default function BelongingToDev(props) {
 		} finally {
 			setIsLoading({ type: 'SELECT_ROLE', status: true });
 		}
+	};
+
+	const handleSelect = async (event) => {
+		console.log(event);
+		getAllMenuByRole(event);
+	};
+
+	const handleDeleteMenuLevelOne = async (ID) => {
+		try {
+			let res = await devApi.updateMenu({ ID: ID, Enable: false });
+			if (res.status === 200) {
+				setIsVisibleModal(false);
+				showNoti('success', 'Xóa thành công!');
+				getAllMenuByRole(roleID);
+			}
+		} catch (error) {}
 	};
 
 	const text = `
@@ -114,6 +134,18 @@ export default function BelongingToDev(props) {
 	const renderMenu = () => {
 		return (
 			<div className="mb-5">
+				<Modal visible={isVisibleModal} footer={false} onCancel={() => setIsVisibleModal(false)}>
+					<div className="row">
+						<div className="col-12">
+							<p>Bạn xác nhận muốn xóa menu này?</p>
+						</div>
+						<div className="col-12">
+							<button className="btn btn-primary w-100" onClick={() => handleDeleteMenuLevelOne(menuID)}>
+								Xác nhận
+							</button>
+						</div>
+					</div>
+				</Modal>
 				<Collapse onChange={callBack}>
 					{levelOne &&
 						levelOne?.map((itemFirst, indexFirst) => {
@@ -123,8 +155,13 @@ export default function BelongingToDev(props) {
 										<div className="d-flex justify-content-between align-items-center">
 											<div>{itemFirst.MenuName}</div>
 											<div className="d-flex">
-												<AddParentMenuModal type="edit" roleID={roleID} />
-												<button className="btn-icon btn delete">
+												<AddParentMenuModal type="edit" roleID={roleID} item={itemFirst} />
+												<button
+													className="btn-icon btn delete"
+													onClick={() => {
+														setIsVisibleModal(true), setMenuID(itemFirst.ID);
+													}}
+												>
 													<Trash />
 												</button>
 											</div>
@@ -142,6 +179,7 @@ export default function BelongingToDev(props) {
 											</Collapse>
 										</Panel>
 									</Collapse>
+									<AddLevelTwoMenuModal type="add" roleID={roleID} />
 								</Panel>
 							);
 						})}

@@ -55,3 +55,23 @@
 		}
 	}
 }
+
+.term__service {
+	overflow: auto;
+	height: 70vh;
+	&::-webkit-scrollbar-track {
+		border-radius: 10px;
+		background-color: white;
+	}
+
+	&::-webkit-scrollbar {
+		border: none;
+		width: 4px;
+		background-color: #f5f5f5;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		border-radius: 10px;
+		background-color: rgb(153, 212, 241);
+	}
+}

@@ -1,44 +1,45 @@
 import React, { Fragment } from 'react';
+import { ReactHtmlParser } from 'react-html-parser';
 import { Home, Airplay, User, Package, Book, UserCheck, Tool, FileText } from 'react-feather';
 
 export const AdminParentMenu = [
 	{
-		TabName: 'tab-home',
+		TabName: 'Trang chủ',
 		Icon: <Home />
 	},
 	{
-		TabName: 'tab-course',
+		TabName: 'Khóa học',
 		Icon: <Airplay />
 	},
 	{
-		TabName: 'tab-customer',
+		TabName: 'Khách hàng',
 		Icon: <User />
 	},
 	{
-		TabName: 'tab-staff',
+		TabName: 'Quản lí nhân viên',
 		Icon: <UserCheck />
 	},
 	{
-		TabName: 'tab-package',
+		TabName: 'Bộ đề',
 		Icon: <Package />
 	},
 	{
-		TabName: 'tab-document',
+		TabName: 'Danh sách tài liệu',
 		Icon: <Book />
 	},
 	{
-		TabName: 'tab-question-bank',
+		TabName: 'Ngân hàng đề thi',
 		Icon: <FileText />
 	},
 	{
-		TabName: 'tab-option',
+		TabName: 'Cấu hình',
 		Icon: <Tool />
 	}
 ];
 
 export const AdminChildMenu = [
 	{
-		MenuName: 'tab-home',
+		MenuName: 'Trang chủ',
 		MenuTitle: 'Trang chủ',
 		MenuKey: '/dashboard',
 		MenuItem: [
@@ -59,7 +60,7 @@ export const AdminChildMenu = [
 		]
 	},
 	{
-		MenuName: 'tab-course',
+		MenuName: 'Khóa học',
 		MenuTitle: 'Khóa học',
 		MenuKey: '/course',
 		MenuItem: [
@@ -204,6 +205,27 @@ export const AdminChildMenu = [
 						Icon: '',
 						Route: '/video-course-list',
 						Text: 'Khóa học đã Active'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-type-video-course',
+						Icon: '',
+						Route: '/config-type-video-course',
+						Text: 'Cấu hình loại video'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-level-video-course',
+						Icon: '',
+						Route: '/config-level-video-course',
+						Text: 'Cấu hình cấp độ'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-tag-video-course',
+						Icon: '',
+						Route: '/config-tag-video-course',
+						Text: 'Cấu hình cấp độ'
 					}
 				]
 			}
@@ -211,7 +233,7 @@ export const AdminChildMenu = [
 	},
 
 	{
-		MenuName: 'tab-customer',
+		MenuName: 'Khách hàng',
 		MenuTitle: 'Khách hàng',
 		MenuKey: '/customer',
 		MenuItem: [
@@ -458,7 +480,7 @@ export const AdminChildMenu = [
 	},
 
 	{
-		MenuName: 'tab-document',
+		MenuName: 'Danh sách tài liệu',
 		MenuTitle: 'Danh sách tài liệu',
 		MenuKey: '/document-list',
 		MenuItem: [
@@ -472,7 +494,7 @@ export const AdminChildMenu = [
 		]
 	},
 	{
-		MenuName: 'tab-staff',
+		MenuName: 'Quản lí nhân viên',
 		MenuTitle: 'Quản lí nhân viên',
 		MenuKey: '/staff',
 		MenuItem: [
@@ -653,7 +675,7 @@ export const AdminChildMenu = [
 		]
 	},
 	{
-		MenuName: 'tab-package',
+		MenuName: 'Bộ đề',
 		MenuTitle: 'Bộ đề',
 		MenuKey: '/package',
 		MenuItem: [
@@ -756,7 +778,7 @@ export const AdminChildMenu = [
 	},
 
 	{
-		MenuName: 'tab-question-bank',
+		MenuName: 'Ngân hàng đề thi',
 		MenuTitle: 'Ngân hàng đề thi',
 		MenuKey: '/question-bank',
 		MenuItem: [
@@ -777,7 +799,7 @@ export const AdminChildMenu = [
 		]
 	},
 	{
-		MenuName: 'tab-option',
+		MenuName: 'Cấu hình',
 		MenuTitle: 'Cấu hình',
 		MenuKey: '/option',
 		MenuItem: [

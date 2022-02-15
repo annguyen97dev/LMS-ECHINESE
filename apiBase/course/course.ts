@@ -8,6 +8,11 @@ export const courseApi = {
 			params
 		});
 	},
+	getAllFull(params) {
+		return instance.get<IApiResultData<ICourseAdmin[]>>('/api/CourseGetAllFull', {
+			params
+		});
+	},
 	// Thêm mới data
 	add(data) {
 		return instance.post(url, data);

@@ -6,5 +6,6 @@ class TeacherSalaryApi {
 	getFixExam = (Params: any) => instance.get<IApiResultData<ITeacherSalaryFixExam[]>>('/api/TeacherFixExam', { params: Params });
 	postSalaryClosing = () => instance.post('/api/SalaryOfTeacherClosing');
 	update = (data) => instance.put('/api/SalaryOfTeacher', data);
+	exportExcel = (params) => instance.get<IApiResultData<ITeacherExportExcel[]>>('/api/ExportSalaryTeacher', { params: params });
 }
 export const teacherSalaryApi = new TeacherSalaryApi();

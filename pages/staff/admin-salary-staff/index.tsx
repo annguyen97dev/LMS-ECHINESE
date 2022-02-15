@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { DatePicker, Tooltip, Select, Popconfirm, Dropdown, Card } from 'antd';
+import { DatePicker, Tooltip, Select, Popconfirm, Dropdown, Card, Spin } from 'antd';
 import { staffSalaryApi } from '~/apiBase/staff-manage/staff-salary';
 import SortBox from '~/components/Elements/SortBox';
 import LayoutBase from '~/components/LayoutBase';
@@ -12,6 +12,7 @@ import { Input } from 'antd';
 import { Form } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import XLSX from 'xlsx';
 
 const now = new Date();
 
@@ -382,6 +383,18 @@ const SalaryReview = () => {
 						placeholder="Nhập ngày công"
 					/>
 
+					{userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2) && (
+						<button
+							className="btn btn-success mb-4 w-100"
+							disabled={isLoading.type === 'EXCEL' && isLoading.status}
+							onClick={() => {
+								exportExcelFile();
+							}}
+						>
+							{isLoading.type === 'EXCEL' && isLoading.status ? <Spin /> : 'Xuất file Excel'}
+						</button>
+					)}
+
 					<Popconfirm
 						className="w-100 mb-4"
 						title={renderTitle}
@@ -395,6 +408,7 @@ const SalaryReview = () => {
 						</button>
 					</Popconfirm>
 					<DatePicker
+						className="w-100 style-input mb-4"
 						defaultValue={moment(new Date(getLastYear() + '-' + getDateNumber(now.getMonth())), 'MM/yyyy')}
 						onChange={(e, a) => {
 							// @ts-ignore
@@ -408,6 +422,72 @@ const SalaryReview = () => {
 				</Card>
 			</div>
 		);
+	};
+
+	const exportExcelFile = async () => {
+		setIsLoading({ type: 'EXCEL', status: true });
+		try {
+			let res = await staffSalaryApi.exportExcel({ year: params.Year, month: params.Month });
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item, index) =>
+					temp.push({
+						A: index + 1,
+						B: item.BankAccountNumber,
+						C: item.BankAccountHolderName,
+						D: `${item.Bank}/${item.BankBranch}`,
+						E: item.Salary,
+						F: item.Reason,
+						G: item.RoleName
+					})
+				);
+				createExcelFile1(temp);
+			}
+			if (res.status === 204) {
+				showNoti('danger', 'Không có dự liệu lương!');
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'EXCEL', status: false });
+		}
+	};
+
+	const createExcelFile1 = async (data) => {
+		let wb = XLSX.utils.book_new();
+
+		/* Initial row */
+		var ws = XLSX.utils.json_to_sheet([], {
+			header: ['DANH SÁCH GIAO DỊCH (LIST OF TRANSACTIONS)'],
+			skipHeader: false
+		});
+		/* Write data starting at E2 */
+		XLSX.utils.sheet_add_json(
+			ws,
+			[
+				{
+					A: 'STT (1)',
+					B: 'Số  Số tài khoản (2)',
+					C: 'Tên đơn vị thụ hưởng (3)',
+					D: 'Ngân hàng thụ hưởng/Chi nhánh (4)',
+					E: 'Số tiền (5)',
+					F: 'Chi tiết thanh toán (6)',
+					G: 'Chức vụ (7)'
+				}
+			],
+			{ skipHeader: true, origin: 'A2' }
+		);
+
+		/* Write data starting at A2 */
+		XLSX.utils.sheet_add_json(ws, data, { skipHeader: true, origin: 'A3' });
+
+		// set width
+		let wscols = [{ wch: 8 }, { wch: 20 }, { wch: 22 }, { wch: 32 }, { wch: 18 }, { wch: 24 }, { wch: 22 }, { wch: 22 }];
+		let wsrows = [{ hpt: 22 }];
+		ws['!cols'] = wscols;
+		ws['!rows'] = wsrows;
+		// });
+		XLSX.utils.book_append_sheet(wb, ws, 'Bảng lương nhân viên');
+		XLSX.writeFile(wb, 'bangluong.xlsx', { type: 'binary', bookType: 'xlsx' });
 	};
 
 	useEffect(() => {
@@ -428,7 +508,18 @@ const SalaryReview = () => {
 				<>
 					<div className="d-none d-xl-inline-block">
 						<div className="d-flex justify-content-end align-items-center ">
-							<button className="btn btn-success mr-1">Xuất file Excel</button>
+							{userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2) && (
+								<button
+									className="btn btn-success mr-1"
+									style={{ width: 130 }}
+									disabled={isLoading.type === 'EXCEL' && isLoading.status}
+									onClick={() => {
+										exportExcelFile();
+									}}
+								>
+									{isLoading.type === 'EXCEL' && isLoading.status ? <Spin /> : 'Xuất file Excel'}
+								</button>
+							)}
 
 							<Input
 								onChange={(event) => {

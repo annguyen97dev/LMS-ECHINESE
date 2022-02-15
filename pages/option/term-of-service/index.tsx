@@ -58,7 +58,7 @@ const TermOfService = () => {
 	return (
 		<div className="row">
 			<div className="col-12">
-				<TitlePage title="Điều khoản" />
+				<TitlePage title="" />
 				<Card>
 					<EditorBase handleChangeDataEditor={changeContractContent} content={data?.RulesContent} />
 					<div className="row pt-3">

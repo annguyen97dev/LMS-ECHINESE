@@ -15,5 +15,8 @@ export const devApi = {
 	},
 	insertMenu(data: IMenuAddData) {
 		return instance.post('/api/Menu', data, {});
+	},
+	updateMenu(data: IMenuEditData) {
+		return instance.put('/api/Menu', data, {});
 	}
 };

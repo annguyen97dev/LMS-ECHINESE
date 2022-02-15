@@ -1,12 +1,17 @@
+import { Modal } from 'antd';
 import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { rulesApi } from '~/apiBase';
 import { idiomsApi } from '~/apiBase/options/idioms';
 import { createDateObject } from '~/utils/functions';
 
 import styles from './AuthLayout.module.scss';
+import ReactHtmlParser from 'react-html-parser';
 
 function AuthLayout({ children }) {
 	const [idiom, setIdiom] = useState<{ content: string; author: string }>({ content: '', author: '' });
 	const [dateState, setDateState] = useState(createDateObject(new Date(), 'en'));
+	const [isVisible, setIsVisible] = useState(false);
+	const [termContent, setTermContent] = useState(null);
 
 	function getFirstIdiom() {
 		(async () => {
@@ -24,6 +29,18 @@ function AuthLayout({ children }) {
 		})();
 	}
 
+	const getTermsInformation = async () => {
+		try {
+			let res = await rulesApi.getAll({});
+			console.log(res.data.data);
+			if (res.status) {
+				setTermContent(res.data.data);
+			}
+		} catch (error) {
+		} finally {
+		}
+	};
+
 	useEffect(() => {
 		const timeID = setInterval(() => {
 			setDateState(createDateObject(new Date(), 'en'));
@@ -35,10 +52,36 @@ function AuthLayout({ children }) {
 
 	useEffect(() => {
 		getFirstIdiom();
+		getTermsInformation();
 	}, []);
 
 	return (
 		<>
+			<Modal
+				style={{ overflow: 'hidden' }}
+				zIndex={99999}
+				width={1000}
+				footer={false}
+				visible={isVisible}
+				onCancel={() => {
+					setIsVisible(false);
+				}}
+			>
+				<div className="row ">
+					<div className="col-12 term__service mb-4">{ReactHtmlParser(termContent && termContent.RulesContent)}</div>
+
+					<div className="col-12">
+						<button
+							className="btn btn-primary w-100"
+							onClick={() => {
+								setIsVisible(false);
+							}}
+						>
+							Xác nhận
+						</button>
+					</div>
+				</div>
+			</Modal>
 			<div className={styles.wrapper}>
 				<div className={styles['image-wrapper']}>
 					<div className={styles['calendar-wrapper']}>
@@ -74,7 +117,12 @@ function AuthLayout({ children }) {
 					<span>2021 ECHINESE</span>
 				</div>
 
-				<div className={styles.rules}>
+				<div
+					className={styles.rules}
+					onClick={() => {
+						setIsVisible(true);
+					}}
+				>
 					<a>điều khoản</a>
 				</div>
 			</div>

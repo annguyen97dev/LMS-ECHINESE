@@ -471,11 +471,7 @@ const ModalUpdateInfo = React.memo((props: any) => {
 											</Form.Item>
 										</div>
 										<div className="col-md-6 col-12">
-											<Form.Item
-												name="EnglishName"
-												label="Tên tiếng Anh"
-												rules={[{ required: true, message: 'Bạn không được để trống' }]}
-											>
+											<Form.Item name="EnglishName" label="Tên tiếng Anh">
 												<Input
 													placeholder=""
 													className="style-input"
@@ -506,7 +502,6 @@ const ModalUpdateInfo = React.memo((props: any) => {
 											<Form.Item
 												name="ChineseName"
 												label="Tên tiếng Trung"
-												rules={[{ required: true, message: 'Bạn không được để trống' }]}
 												initialValue={rowData && rowData.ChineseName}
 											>
 												<Input

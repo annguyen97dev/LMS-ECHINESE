@@ -4,19 +4,31 @@ type IRole = IBaseApi<{
 }>;
 
 type IMenuByRole = IBaseApi<{
+	Enable: boolean;
 	ID: number;
-	MenuName: string;
 	Icon: string;
+	Level: number;
+	MenuName: string;
 	ParentID: number;
-	Route: string;
 	RoleID: number;
+	Route: string;
+	SingleMenu?: boolean;
 }>;
 
 type IMenuAddData = {
-	MenuName: string;
 	Level: number;
-	Icon: string;
-	ParentID: number;
-	Route: string;
 	RoleID: number;
+	Icon: string;
+	MenuName: string;
+	SingleMenu?: boolean;
+};
+type IMenuEditData = {
+	ID: number;
+	Level?: number;
+	RoleID?: number;
+	ParentID?: number;
+	Icon?: string;
+	MenuName?: string;
+	Enable: boolean;
+	SingleMenu?: boolean;
 };
