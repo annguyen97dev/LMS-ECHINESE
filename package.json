@@ -37,6 +37,7 @@
 		"date-fns": "^2.11.1",
 		"devextreme": "^20.2.7",
 		"devextreme-react": "^20.2.7",
+		"excel4node": "^1.7.2",
 		"form-data": "^4.0.0",
 		"fslightbox-react": "^1.6.2-2",
 		"fullcalendar": "^5.7.0",
@@ -80,6 +81,7 @@
 		"swiper": "^6.8.4",
 		"tinymce": "^5.8.0",
 		"xlsx": "^0.17.2",
+		"xlsx-style": "^0.8.13",
 		"yup": "^0.32.9"
 	},
 	"devDependencies": {

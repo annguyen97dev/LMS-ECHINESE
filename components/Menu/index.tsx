@@ -380,6 +380,7 @@ const MenuDefault = ({
 								<b className={tab === item.TabName ? '' : 'd-none'}></b>
 								<a href="#" onClick={changeTabsClick} onMouseEnter={changeTabs} data-tabs={item.TabName}>
 									{item.Icon}
+									{/* {ReactHtmlParser(item.Icon)} */}
 								</a>
 							</li>
 						))}

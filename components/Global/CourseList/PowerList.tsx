@@ -5,9 +5,11 @@ import PropTypes from 'prop-types';
 import { cloneElement } from 'react';
 import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
+import UpdataShowCourse from './CourseListDetail/UpdataShowCourse';
 
 const PowerList = (props) => {
-	const { dataSource, isLoading, totalPage, currentPage, getPagination, children } = props;
+	const { dataSource, isLoading, totalPage, currentPage, getPagination, children, setFilters, filters } = props;
+
 	const { userInformation } = useWrap();
 	const checkGetPagination = (page) => {
 		if (!getPagination) return;
@@ -88,12 +90,20 @@ const PowerList = (props) => {
 				BranchID,
 				MaximumStudent,
 				SalaryOfLesson,
-				TotalDayStudieds
+				TotalDayStudieds,
+				Enable
 			}: ICourse) => (
 				<List.Item
-					extra={cloneElement(children, {
-						courseObj: { ID, BranchID, AcademicUID, TeacherLeaderUID, SalaryOfLesson }
-					})}
+					extra={
+						<>
+							{cloneElement(children, {
+								courseObj: { ID, BranchID, AcademicUID, TeacherLeaderUID, SalaryOfLesson }
+							})}
+							{userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2) && (
+								<UpdataShowCourse ID={ID} Enable={Enable} setFilters={setFilters} filters={filters} />
+							)}
+						</>
+					}
 				>
 					<List.Item.Meta
 						avatar={checkStatus(Status, StatusName)}
@@ -167,7 +177,9 @@ PowerList.propTypes = {
 	}),
 	children: PropTypes.element,
 	//
-	getPagination: PropTypes.func
+	getPagination: PropTypes.func,
+	setFilters: PropTypes.object,
+	filters: PropTypes.object
 };
 PowerList.defaultProps = {
 	totalPage: 1,

@@ -1,4 +1,4 @@
-import { Card } from 'antd';
+import { Card, Switch, message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { branchApi, courseApi, programApi, teacherApi } from '~/apiBase';
 import TitlePage from '~/components/Elements/TitlePage';
@@ -6,6 +6,7 @@ import CourseListFilterForm from '~/components/Global/CourseList/CourseListFilte
 import PowerList from '~/components/Global/CourseList/PowerList';
 import { useWrap } from '~/context/wrap';
 import { fmSelectArr } from '~/utils/functions';
+import UpdataShowCourse from './CourseListDetail/UpdataShowCourse';
 import CourseListUpdate from './CourseListUpdate';
 
 const statusList = [
@@ -24,6 +25,7 @@ const statusList = [
 ];
 const CourseList = () => {
 	const [courseList, setCourseList] = useState<ICourse[]>([]);
+	const [courseListAdmin, setCourseListAdmin] = useState<ICourseAdmin[]>([]);
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -131,8 +133,35 @@ const CourseList = () => {
 			});
 		}
 	};
+
+	const fetchScheduleListAdmin = async () => {
+		setIsLoading({
+			type: 'GET_ALL',
+			status: true
+		});
+		try {
+			let res = await courseApi.getAllFull(filters);
+			if (res.status === 200) {
+				if (res.data.totalRow && res.data.data.length) {
+					setCourseListAdmin(res.data.data);
+					setTotalPage(res.data.totalRow);
+				}
+			} else if (res.status === 204) {
+				showNoti('danger', 'Không tìm thấy');
+			}
+		} catch (error) {
+			showNoti('danger', error.message);
+		} finally {
+			setIsLoading({
+				type: 'GET_ALL',
+				status: false
+			});
+		}
+	};
+
 	useEffect(() => {
 		fetchScheduleList();
+		fetchScheduleListAdmin();
 	}, [filters]);
 
 	// FETCH DATA FOR UPDATE FORM
@@ -225,10 +254,16 @@ const CourseList = () => {
 							<div className="course-list-content">
 								<PowerList
 									isLoading={isLoading}
-									dataSource={courseList}
+									dataSource={
+										userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2)
+											? courseListAdmin
+											: courseList
+									}
 									totalPage={totalPage}
 									currentPage={filters.pageIndex}
 									getPagination={getPagination}
+									setFilters={setFilters}
+									filters={filters}
 								>
 									{isShowUpdate ? (
 										<CourseListUpdate

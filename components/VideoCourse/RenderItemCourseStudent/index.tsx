@@ -27,7 +27,7 @@ const RenderItemCard = (props) => {
 		onRefeshTags
 	} = props;
 	const { userInformation, showNoti } = useWrap();
-
+	const [isLoading, setIsLoading] = useState(false);
 	const [showModalUpdate, setShowModalUpdate] = useState(false);
 	const [showModalEdit, setShowModalEdit] = useState(false);
 	const [activing, setActiving] = useState(false);
@@ -78,6 +78,20 @@ const RenderItemCard = (props) => {
 			showNoti('danger', 'Thêm không thành công');
 		} finally {
 			setShowModalEdit(false);
+			refeshData();
+		}
+	};
+
+	const handleShowCourse = async () => {
+		setIsLoading(true);
+		try {
+			const res = await VideoCourseStoreApi.update({ ID: item.ID, Enable: item.Enable ? false : true });
+			res.status == 200 && showNoti('success', 'Thành công');
+			res.status !== 200 && showNoti('danger', 'Ẩn khóa học không thành công');
+		} catch (error) {
+			showNoti('danger', 'Ẩn khóa học không thành công');
+		} finally {
+			setIsLoading(false);
 			refeshData();
 		}
 	};
@@ -181,6 +195,22 @@ const RenderItemCard = (props) => {
 									</span>
 
 									<div style={{ flex: 1 }} />
+									{userInformation?.RoleID == 1 && (
+										<div style={{ zIndex: 99999, marginBottom: 5 }}>
+											<button
+												type="button"
+												disabled={isLoading}
+												className=" btn btn-primary"
+												style={{ width: '100%' }}
+												onClick={(e) => {
+													e.stopPropagation();
+													handleShowCourse();
+												}}
+											>
+												{item && item.Enable ? 'Ẩn khóa học' : 'Hiện khóa học'}
+											</button>
+										</div>
+									)}
 									{/* button action */}
 									{userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? (
 										<div style={{ zIndex: 99999 }}>

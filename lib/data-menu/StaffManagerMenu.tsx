@@ -211,6 +211,27 @@ export const StaffManagerChildMenu = [
 						Icon: '',
 						Route: '/video-course-list',
 						Text: 'Khóa học đã Active'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-type-video-course',
+						Icon: '',
+						Route: '/config-type-video-course',
+						Text: 'Cấu hình loại video'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-level-video-course',
+						Icon: '',
+						Route: '/config-level-video-course',
+						Text: 'Cấu hình cấp độ'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-tag-video-course',
+						Icon: '',
+						Route: '/config-tag-video-course',
+						Text: 'Cấu hình cấp độ'
 					}
 				]
 			}

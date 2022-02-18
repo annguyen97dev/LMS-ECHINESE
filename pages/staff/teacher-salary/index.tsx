@@ -1,4 +1,4 @@
-import { InputNumber, DatePicker, Tooltip, Select, Popconfirm, Input, Dropdown, Card } from 'antd';
+import { InputNumber, DatePicker, Tooltip, Select, Popconfirm, Input, Dropdown, Card, Spin } from 'antd';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { payRollApi } from '~/apiBase/staff-manage/pay-roll';
@@ -19,6 +19,7 @@ import ConfirmForm from '../../../components/Global/Teacher/TeacherSalary/confir
 import { isBuffer } from 'util';
 import { EllipsisOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import XLSX from 'xlsx';
 
 const now = new Date();
 
@@ -377,6 +378,17 @@ const SalaryReview = () => {
 			<>
 				<div className="d-md-none">
 					<Card title="Thao tác" style={{ width: 300 }}>
+						{userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2) && (
+							<button
+								className="btn btn-success mb-4 w-100"
+								disabled={isLoading.type === 'EXCEL' && isLoading.status}
+								onClick={() => {
+									exportExcelFile();
+								}}
+							>
+								{isLoading.type === 'EXCEL' && isLoading.status ? <Spin /> : 'Xuất file Excel'}
+							</button>
+						)}
 						<Popconfirm
 							title={renderTitle}
 							visible={visible}
@@ -391,6 +403,7 @@ const SalaryReview = () => {
 						</Popconfirm>
 
 						<DatePicker
+							className="style-input w-100 mb-4"
 							defaultValue={moment(new Date(), 'MM/yyyy')}
 							onChange={(e, a) => {
 								// @ts-ignore
@@ -411,10 +424,71 @@ const SalaryReview = () => {
 		getDataPayroll(currentPage);
 	}, [params]);
 
-	console.log(
-		'now.getMonth() == 0 ? now.getFullYear() : now.getFullYear(): ',
-		now.getMonth() == 0 ? now.getFullYear() - 1 : now.getFullYear()
-	);
+	const exportExcelFile = async () => {
+		setIsLoading({ type: 'EXCEL', status: true });
+		try {
+			let res = await teacherSalaryApi.exportExcel({ year: params.Year, month: params.Month });
+			if (res.status === 200) {
+				let temp = [];
+				res.data.data.forEach((item, index) =>
+					temp.push({
+						A: index + 1,
+						B: item.BankAccountNumber,
+						C: item.BankAccountHolderName,
+						D: `${item.Bank}/${item.BankBranch}`,
+						E: item.Salary,
+						F: item.Reason,
+						G: item.RoleName
+					})
+				);
+				createExcelFile1(temp);
+			}
+			if (res.status === 204) {
+				showNoti('danger', 'Không có dự liệu lương!');
+			}
+		} catch (error) {
+		} finally {
+			setIsLoading({ type: 'EXCEL', status: false });
+		}
+	};
+
+	const createExcelFile1 = async (data) => {
+		let wb = XLSX.utils.book_new();
+
+		/* Initial row */
+		var ws = XLSX.utils.json_to_sheet([], {
+			header: ['DANH SÁCH GIAO DỊCH (LIST OF TRANSACTIONS)'],
+			skipHeader: false
+		});
+		/* Write data starting at E2 */
+		XLSX.utils.sheet_add_json(
+			ws,
+			[
+				{
+					A: 'STT (1)',
+					B: 'Số  Số tài khoản (2)',
+					C: 'Tên đơn vị thụ hưởng (3)',
+					D: 'Ngân hàng thụ hưởng/Chi nhánh (4)',
+					E: 'Số tiền (5)',
+					F: 'Chi tiết thanh toán (6)',
+					G: 'Chức vụ (7)'
+				}
+			],
+			{ skipHeader: true, origin: 'A2' }
+		);
+
+		/* Write data starting at A2 */
+		XLSX.utils.sheet_add_json(ws, data, { skipHeader: true, origin: 'A3' });
+
+		// set width
+		let wscols = [{ wch: 8 }, { wch: 20 }, { wch: 22 }, { wch: 32 }, { wch: 18 }, { wch: 24 }, { wch: 22 }, { wch: 22 }];
+		let wsrows = [{ hpt: 22 }];
+		ws['!cols'] = wscols;
+		ws['!rows'] = wsrows;
+		// });
+		XLSX.utils.book_append_sheet(wb, ws, 'Bảng lương giáo viên');
+		XLSX.writeFile(wb, 'bangluong.xlsx', { type: 'binary', bookType: 'xlsx' });
+	};
 
 	return (
 		<PowerTable
@@ -429,6 +503,18 @@ const SalaryReview = () => {
 			TitleCard={
 				<>
 					<div className="d-none d-sm-inline-block">
+						{userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2) && (
+							<button
+								className="btn btn-success mr-1"
+								style={{ width: 130 }}
+								disabled={isLoading.type === 'EXCEL' && isLoading.status}
+								onClick={() => {
+									exportExcelFile();
+								}}
+							>
+								{isLoading.type === 'EXCEL' && isLoading.status ? <Spin /> : 'Xuất file Excel'}
+							</button>
+						)}
 						<Popconfirm
 							title={renderTitle}
 							visible={visible}
@@ -458,19 +544,6 @@ const SalaryReview = () => {
 			}
 			Extra={
 				<div className="extra-table d-none d-sm-inline-block">
-					{/* <Select
-						onChange={onChangeMonth}
-						style={{ width: 200 }}
-						disabled={false}
-						className="style-input"
-						defaultValue={months[new Date().getMonth() - 1]}
-					>
-						{months.map((item, index) => (
-							<Option key={index} value={index + 1}>
-								{item}
-							</Option>
-						))}
-					</Select> */}
 					<DatePicker
 						defaultValue={moment(new Date(getLastYear() + '-' + getDateNumber(now.getMonth())), 'MM/yyyy')}
 						onChange={(e, a) => {
