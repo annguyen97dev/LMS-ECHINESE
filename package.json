@@ -2,6 +2,9 @@
 	"name": "my-app",
 	"version": "0.1.0",
 	"private": true,
+	"engines": {
+		"npm": "6.x"
+	},
 	"scripts": {
 		"dev": "next dev -p 3000",
 		"build": "next build",
@@ -91,5 +94,8 @@
 		"@types/react-big-calendar": "^0.31.0",
 		"prettier": "^2.2.1",
 		"typescript": "^4.4.4"
+	},
+	"resolutions": {
+		"typeorm": "0.2.41"
 	}
 }

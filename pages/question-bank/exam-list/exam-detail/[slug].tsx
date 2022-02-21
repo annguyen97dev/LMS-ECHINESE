@@ -1,38 +1,30 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react';
-
-import { Popover, Card, Skeleton, Spin } from 'antd';
-import TitlePage from '~/components/Elements/TitlePage';
-import { Info, Bookmark } from 'react-feather';
-
-import LayoutBase from '~/components/LayoutBase';
+import { AlignRightOutlined } from '@ant-design/icons';
+import { Card, Popover, Skeleton, Spin } from 'antd';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { Bookmark, Info } from 'react-feather';
 import { examDetailApi, examTopicApi } from '~/apiBase';
-import { useWrap } from '~/context/wrap';
+import PopupConfirm from '~/components/Elements/PopupConfirm';
+import TitlePage from '~/components/Elements/TitlePage';
+import AddQuestionAuto from '~/components/Global/ExamDetail/AddQuestionAuto';
 import AddQuestionModal from '~/components/Global/ExamDetail/AddQuestionModal';
 import ChoiceList from '~/components/Global/ExamList/ExamShow/ChoiceList';
-import MultipleList from '~/components/Global/ExamList/ExamShow/MultipleList';
-import WrapList from '~/components/Global/ExamList/ExamShow/WrapList';
-import MapList from '~/components/Global/ExamList/ExamShow/MapList';
 import DragList from '~/components/Global/ExamList/ExamShow/DragList';
-import TypingList from '~/components/Global/ExamList/ExamShow/TypingList';
-import WrittingList from '~/components/Global/ExamList/ExamShow/WrittingList';
-import AddQuestionAuto from '~/components/Global/ExamDetail/AddQuestionAuto';
-import Link from 'next/link';
-import ChangePosition from '~/components/Global/ExamList/ExamForm/ChangePosition';
+import MapList from '~/components/Global/ExamList/ExamShow/MapList';
+import MultipleList from '~/components/Global/ExamList/ExamShow/MultipleList';
 import SpeakingList from '~/components/Global/ExamList/ExamShow/Speaking';
-import { AlignRightOutlined } from '@ant-design/icons';
-import PopupConfirm from '~/components/Elements/PopupConfirm';
+import TypingList from '~/components/Global/ExamList/ExamShow/TypingList';
+import WrapList from '~/components/Global/ExamList/ExamShow/WrapList';
+import WrittingList from '~/components/Global/ExamList/ExamShow/WrittingList';
+import LayoutBase from '~/components/LayoutBase';
+import { useWrap } from '~/context/wrap';
 
 const listAlphabet = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'];
 
 type objectQuestionAddOutside = {
 	type: number;
 	ExerciseOrExerciseGroupID: number;
-};
-
-type objectDataChange = {
-	IDChangeOne: number;
-	IDChangeTwo: number;
 };
 
 export type IProps = {
@@ -69,8 +61,9 @@ const ExamDetailContext = createContext<IProps>({
 });
 
 const ExamDetail = () => {
-	const { showNoti, userInformation } = useWrap();
-	const [tabActive, setTabActive] = useState(0);
+	const { showNoti } = useWrap();
+	const [rr, setRerender] = useState(''); // ĐỂ CÁI NÀY BUỘC NÓ RERENDER - BÙA CHÚ CẢ
+	const [arPosition, setArPositions] = useState([]);
 	const router = useRouter();
 	const examID = parseInt(router.query.slug as string);
 	const [dataExamDetail, setDataExamDetail] = useState([]);
@@ -98,8 +91,66 @@ const ExamDetail = () => {
 	const [isConfirmChange, setIsConfirmChange] = useState(false);
 	const [visiblePopover, setVisiblePopover] = useState(false);
 
-	// console.log("List question: ", listQuestionID);
-	// console.log("List Group ID: ", listGroupID);
+	const setArPosition = (param) => {
+		setArPositions(param);
+	};
+
+	const getPosi = (ar, it) => {
+		for (let i = 0; i < ar.length; i++) {
+			if (ar[i].value == it) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
+	const removeItem = (ar, po, old) => {
+		let temp = [];
+		for (let i = 0; i < ar.length; i++) {
+			if (i !== po) {
+				temp.push(ar[i]);
+			}
+		}
+		if (old > 0) {
+			addItem(old, temp);
+		} else {
+			setArPosition(temp);
+		}
+	};
+
+	const addItem = async (item, ar) => {
+		let temp = ar;
+		let po = await getPosi(arPosition, item);
+		if (po == -1) {
+			temp.push({ value: item, label: item });
+			setArPosition(temp);
+		}
+		reRender(po);
+	};
+
+	const addOldItem = async (item) => {
+		let temp = arPosition;
+		let po = await getPosi(arPosition, item);
+		if (po == -1) {
+			temp.push({ value: item, label: item });
+			setArPosition(temp);
+		}
+		let now = new Date();
+		setRerender(item + now + '');
+	};
+
+	const handleChange = async (value, old) => {
+		let po = await getPosi(arPosition, value);
+		reRender(value);
+		if (po !== -1) {
+			await removeItem(arPosition, po, old);
+		}
+	};
+
+	const reRender = (value) => {
+		let now = new Date();
+		value !== undefined ? setRerender(value + now + '') : setRerender('fuck - ' + now + '');
+	};
 
 	// ---- GET LIST EXAM ----
 	const getListExam = async () => {
@@ -109,6 +160,7 @@ const ExamDetail = () => {
 				CurriculumID: examTopicDetail.CurriculumID,
 				Type: examTopicDetail.Type
 			});
+
 			if (res.status == 200) {
 				setListExam(res.data.data);
 			}
@@ -119,8 +171,6 @@ const ExamDetail = () => {
 			setIsLoading(false);
 		}
 	};
-
-	console.log('DAtaChange: ', dataChange);
 
 	// ---- GET ALL LIST QUESTION ID ----
 	const getAllListQuestionID = async () => {
@@ -222,24 +272,37 @@ const ExamDetail = () => {
 								dataQuestion={item}
 								listAlphabet={listAlphabet}
 								showScore={true}
+								arPosition={arPosition}
+								handleChange={handleChange}
+								addOldItem={addOldItem}
 							/>
 						</WrapList>
 					</div>
 				);
-				break;
 			case 2:
 				return (
 					<div key={index}>
-						<WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+						<WrapList
+							dataQuestion={item}
+							listQuestionID={listQuestionID}
+							arPosition={arPosition}
+							handleChange={handleChange}
+							addOldItem={addOldItem}
+						>
 							<DragList isDoingTest={false} listQuestionID={listQuestionID} dataQuestion={item} listAlphabet={listAlphabet} />
 						</WrapList>
 					</div>
 				);
-				break;
 			case 3:
 				return (
 					<div key={index}>
-						<WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+						<WrapList
+							dataQuestion={item}
+							listQuestionID={listQuestionID}
+							arPosition={arPosition}
+							handleChange={handleChange}
+							addOldItem={addOldItem}
+						>
 							<TypingList
 								isDoingTest={false}
 								listQuestionID={listQuestionID}
@@ -249,7 +312,6 @@ const ExamDetail = () => {
 						</WrapList>
 					</div>
 				);
-				break;
 			case 4:
 				return (
 					<div key={index}>
@@ -259,34 +321,44 @@ const ExamDetail = () => {
 								listQuestionID={listQuestionID}
 								dataQuestion={item}
 								listAlphabet={listAlphabet}
+								arPosition={arPosition}
+								handleChange={handleChange}
+								addOldItem={addOldItem}
 							/>
 						</WrapList>
 					</div>
 				);
-				break;
 			case 5:
 				return (
 					<div key={index}>
-						<WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+						<WrapList
+							dataQuestion={item}
+							listQuestionID={listQuestionID}
+							arPosition={arPosition}
+							handleChange={handleChange}
+							addOldItem={addOldItem}
+						>
 							<MapList isDoingTest={false} listQuestionID={listQuestionID} dataQuestion={item} listAlphabet={listAlphabet} />
 						</WrapList>
 					</div>
 				);
-				break;
 			case 6:
 				return (
 					<div key={index}>
-						<WrapList dataQuestion={item} listQuestionID={listQuestionID}>
+						<WrapList dataQuestion={item} listQuestionID={listQuestionID} arPosition={arPosition} handleChange={handleChange}>
 							<WrittingList
 								isDoingTest={false}
 								listQuestionID={listQuestionID}
 								dataQuestion={item}
 								listAlphabet={listAlphabet}
+								arPosition={arPosition}
+								handleChange={handleChange}
+								removeItem={removeItem}
+								addOldItem={addOldItem}
 							/>
 						</WrapList>
 					</div>
 				);
-				break;
 			case 7:
 				return (
 					<div key={index}>
@@ -296,14 +368,15 @@ const ExamDetail = () => {
 								listQuestionID={listQuestionID}
 								dataQuestion={item}
 								listAlphabet={listAlphabet}
+								arPosition={arPosition}
+								handleChange={handleChange}
+								addOldItem={addOldItem}
 							/>
 						</WrapList>
 					</div>
 				);
-				break;
 			default:
 				return;
-				break;
 		}
 	};
 
@@ -396,6 +469,8 @@ const ExamDetail = () => {
 
 	// ACTION CHANGE POSITION
 	const actionChangePosition = async () => {
+		console.log('dataChange: ', dataChange);
+
 		setLoadingPosition(true);
 		// let cloneListQuestionID = [];
 		// let cloneListGroupID = [];
@@ -406,9 +481,7 @@ const ExamDetail = () => {
 				onFetchData();
 				setIsConfirmChange(false);
 				setIsChangePosition(false);
-
 				// changePositionInArray();
-
 				// res.data.data.forEach((item) => {
 				// 	if (item.Enable) {
 				// 		item.ExerciseGroupID !== 0 && cloneListGroupID.push(item.ExerciseGroupID);
@@ -515,10 +588,8 @@ const ExamDetail = () => {
 					{isChangePosition ? 'Lưu' : 'Sắp xếp'}
 				</div>
 			</button>
-			{userInformation && userInformation.RoleID !== 2 && (
-				<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
-			)}
-			{userInformation && userInformation.RoleID !== 2 && <AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} />}
+			<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
+			<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} />
 		</div>
 	);
 
@@ -577,7 +648,9 @@ const ExamDetail = () => {
 				>
 					<p style={{ fontWeight: 500 }}>Thay đổi vị trí câu hỏi ngay bây giờ?</p>
 				</PopupConfirm>
+
 				<TitlePage title="Tạo đề thi" />
+
 				<div className="row">
 					<div className="col-md-9 col-12">
 						<Card
@@ -612,12 +685,10 @@ const ExamDetail = () => {
 													<span className="text text-curriculum">{examTopicDetail?.CurriculumName}</span>
 												</li>
 												{/* <li>
-                          <span className="title">Thời gian:</span>
-                          <span className="text">
-                            {examTopicDetail?.Time} phút
-                          </span>
-                        </li> */}
-												{/* <li>
+													<span className="title">Thời gian:</span>
+													<span className="text">{examTopicDetail?.Time} phút</span>
+												</li>
+												<li>
 													<span className="title">Tổng số câu:</span>
 													<span className="text">{listQuestionID.length}</span>
 												</li> */}
@@ -667,6 +738,7 @@ const ExamDetail = () => {
 								) : (
 									dataExamDetail?.map((item, index) => item.Enable && returnQuestionType(item, index))
 								)}
+
 								{loadingQuestion && (
 									<div>
 										<Skeleton />
@@ -675,12 +747,9 @@ const ExamDetail = () => {
 							</div>
 						</Card>
 					</div>
+
 					<div className="col-md-3 col-12 fixed-card">
-						<Card
-							className="card-exam-bank"
-							title="Danh sách đề cùng giáo trình"
-							// extra={<AddQuestionForm />}
-						>
+						<Card className="card-exam-bank" title="Danh sách đề cùng giáo trình">
 							<ul className="list-exam-bank">
 								{loadingExam ? (
 									<div className="text-center mt-4">

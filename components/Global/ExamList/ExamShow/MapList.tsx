@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import React from 'react';
+import ReactHtmlParser from 'react-html-parser';
 import { Checkbox } from 'antd';
 import { useDoingTest } from '~/context/useDoingTest';
 import { useDoneTest } from '~/context/useDoneTest';
+import _ from '~/appConfig';
 
 const MapList = (props) => {
 	const { doneTestData } = useDoneTest();
-	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
+	const { dataQuestion, listQuestionID, isDoingTest } = props;
 	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
 
 	let indexQuestion = null;
 	if (isDoingTest) {
-		// Find index
 		indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
 	}
 
@@ -30,13 +30,9 @@ const MapList = (props) => {
 				let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
 					indexQuestion
 				].SetPackageExerciseStudentInfoList.findIndex((item) => item.ExerciseID === quesID);
-
-				// Remove all data in list answer (because this single question)
 				packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
 					indexQuestionDetail
 				].SetPackageExerciseAnswerStudentList = [];
-
-				// Add new answer to list
 				packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
 					indexQuestionDetail
 				].SetPackageExerciseAnswerStudentList.push({
@@ -44,7 +40,6 @@ const MapList = (props) => {
 					AnswerContent: dataAns.AnswerContent,
 					FileAudio: ''
 				});
-
 				getPackageResult({ ...packageResult });
 			}
 		}
@@ -54,17 +49,12 @@ const MapList = (props) => {
 		if (!doneTestData) {
 			if (isDoingTest) {
 				let checked = false;
-
-				// Find Index
 				let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
 					(item) => item.ExamTopicDetailID === dataQuestion.ID
 				);
-
 				let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
 					indexQuestion
 				].SetPackageExerciseStudentInfoList.findIndex((item) => item.ExerciseID === quesID);
-
-				// Find anh return checked
 				if (
 					packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
 						indexQuestionDetail
@@ -72,7 +62,6 @@ const MapList = (props) => {
 				) {
 					checked = true;
 				}
-
 				return checked;
 			}
 		}
@@ -80,7 +69,6 @@ const MapList = (props) => {
 
 	const returnCheckedDoneTest = (dataAns, dataQuestion) => {
 		let checked = false;
-
 		dataQuestion?.ExerciseAnswer.every((item) => {
 			if (item.AnswerID === dataAns.ExerciseAnswerID) {
 				checked = true;
@@ -94,13 +82,11 @@ const MapList = (props) => {
 			}
 			return true;
 		});
-
 		return checked;
 	};
 
 	const returnClassDoneTest = (dataAns, dataQuestion) => {
 		let className = 'isCorrect';
-
 		dataQuestion?.ExerciseAnswer.every((item) => {
 			if (item.AnswerID === dataAns.ExerciseAnswerID) {
 				if (item.AnswerID !== item.ExerciseAnswerID) {
@@ -111,7 +97,6 @@ const MapList = (props) => {
 
 			return true;
 		});
-
 		return className;
 	};
 
@@ -119,7 +104,6 @@ const MapList = (props) => {
 		<>
 			<div className="box-map-question">
 				<h6 className="font-italic mb-3 mt-4">Tích chọn đáp án đúng</h6>
-
 				<table className="table-question w-100" style={{ maxWidth: '100%' }}>
 					<thead>
 						<tr>
@@ -141,7 +125,7 @@ const MapList = (props) => {
 									style={{
 										width: '5%',
 										fontWeight: 500,
-										color: `${item.ExerciseID === activeID ? '#dd4667' : 'inherit'}`
+										color: `${item.ExerciseID === activeID ? _.primaryColor : 'inherit'}`
 									}}
 									className={`${item.ExerciseID === activeID ? 'active-doing' : ''}`}
 								>
