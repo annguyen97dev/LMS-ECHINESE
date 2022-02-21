@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
-import index from '~/components/LoginForm';
+import ReactHtmlParser from 'react-html-parser';
 import { useDoingTest } from '~/context/useDoingTest';
 import { useDoneTest } from '~/context/useDoneTest';
-import { data } from '~/lib/option/dataOption2';
 
 const TypingList = (props) => {
 	const { doneTestData } = useDoneTest();
@@ -17,20 +15,16 @@ const TypingList = (props) => {
 	useEffect(() => {
 		if (dataQuestion.Paragraph !== '') {
 			let spaceEditor = document.querySelectorAll('.box-typing .space-editor');
-
 			if (spaceEditor && spaceEditor.length > 0) {
 				spaceEditor.forEach((item, index) => {
 					let quesID = parseInt(item.getAttribute('ques-id'));
-
 					// Sắp xếp lại thứ tự các ô input trong đoạn văn
 					let indexQues = null;
 					if (listQuestionID.includes(quesID)) {
 						indexQues = listQuestionID.indexOf(quesID);
 					}
-
 					if (indexQues) {
 						let positionSpace = document.querySelectorAll('.box-typing .position-space');
-
 						if (positionSpace.length < spaceEditor.length) {
 							let span = document.createElement('span');
 							span.classList.add('position-space');
@@ -55,20 +49,15 @@ const TypingList = (props) => {
 		let text = '';
 		let indexQuestion = listQuestionID.findIndex((id) => id === quesID);
 		text = (indexQuestion + 1).toString() + '/';
-
 		return text;
 	};
 
 	const handleChangeText = (text, quesID) => {
-		// getListPicked(quesID);
-
 		// Find index
 		let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
-
 		let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList.findIndex(
 			(item) => item.ExerciseID === quesID
 		);
-
 		// Add new answer to list - Kiểm tra xem mảng có data chưa, nếu chưa thì thêm mới, ngược lại thì cập nhật object
 		// Đối với loại Điền từ thì mảng chỉ có 1 object đáp án
 		if (
@@ -87,7 +76,6 @@ const TypingList = (props) => {
 				indexQuestionDetail
 			].SetPackageExerciseAnswerStudentList[0].AnswerContent = text;
 		}
-
 		getPackageResult({ ...packageResult });
 	};
 
@@ -96,20 +84,16 @@ const TypingList = (props) => {
 			if (isDoingTest) {
 				if (dataQuestion.Paragraph !== '') {
 					let spaceEditor = document.querySelectorAll('.doingtest-group .box-typing .space-editor');
-
 					if (spaceEditor && spaceEditor.length > 0) {
 						spaceEditor.forEach((item, index) => {
 							let quesID = parseInt(item.getAttribute('ques-id'));
-
 							// Trường hợp điền từ xong một lát quay lại vẫn còn
 							let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
 								(item) => item.ExamTopicDetailID === dataQuestion.ID
 							);
-
 							let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
 								indexQuestion
 							].SetPackageExerciseStudentInfoList.findIndex((item) => item.ExerciseID === quesID);
-
 							if (
 								packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
 									indexQuestionDetail
@@ -130,7 +114,6 @@ const TypingList = (props) => {
 									}
 								}
 							}
-
 							//Tìm và active đúng ô input
 							item.classList.remove('active-type-input');
 							if (quesID === activeID) {
@@ -143,9 +126,6 @@ const TypingList = (props) => {
 		} else {
 			if (dataQuestion.Paragraph !== '') {
 				let spaceEditor = document.querySelectorAll('.box-typing  .space-editor');
-
-				let tooltipAns = document.querySelectorAll('.box-typing .tooltip-answer');
-
 				spaceEditor.forEach((item) => {
 					item.setAttribute('contenteditable', 'false');
 					let quesID = parseInt(item.getAttribute('ques-id'));
@@ -157,7 +137,6 @@ const TypingList = (props) => {
 							} else {
 								item.classList.add('wrong-answer');
 							}
-
 							// Find answer content of user
 							if (ques.ExerciseAnswer.length > 0) {
 								if (ques.ExerciseAnswer[0].AnswerContent && ques.ExerciseAnswer[0].AnswerContent !== '') {
@@ -165,7 +144,6 @@ const TypingList = (props) => {
 								} else {
 									item.classList.add('center-row');
 								}
-
 								// Tạo đáp án đúng để hover
 								let getNodes = (str) => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
 								let node = getNodes(
@@ -177,7 +155,6 @@ const TypingList = (props) => {
 									content: ques.ExerciseAnswer[0].ExerciseAnswerContent
 								});
 							}
-
 							return false;
 						}
 						return true;
@@ -204,7 +181,6 @@ const TypingList = (props) => {
 			if (listCorrectAnswer.length > 0) {
 				let spaceEditor = document.querySelectorAll('.test-wrapper .box-typing .space-editor');
 				let tooltipAns = document.querySelectorAll('.test-wrapper .box-typing .tooltip-answer');
-
 				spaceEditor.forEach((item) => {
 					// Mouse over
 					item.addEventListener('mouseover', (event: MouseEvent) => {
@@ -216,7 +192,6 @@ const TypingList = (props) => {
 							}
 						});
 					});
-
 					// Mouse out
 					item.addEventListener('mouseout', () => {
 						let quesID = item.getAttribute('ques-id');
@@ -235,30 +210,19 @@ const TypingList = (props) => {
 	useEffect(() => {
 		if (!doneTestData) {
 			let el = document.querySelectorAll('.doingtest-group .box-typing .space-editor');
-
 			el.forEach((item) => {
 				listInput.push(item.innerHTML);
 				let quesID = parseInt(item.getAttribute('ques-id'));
-
 				item.addEventListener('click', (event) => {
 					event.preventDefault();
 					getActiveID(quesID);
 					setIsActive(quesID);
-
-					const input = event.target as HTMLElement;
-					// if (listInput.includes(input.innerHTML)) {
-					// 	input.innerHTML = '';
-					// }
 				});
-
 				item.addEventListener('keyup', (event) => {
 					const input = event.target as HTMLElement;
-
 					handleChangeText(input.innerText, quesID);
-
 					// Điều kiện đề input co giãn theo text
 					let lengthText = input.innerText.length;
-
 					if (lengthText > 14) {
 						item.classList.add('auto');
 					} else {
@@ -271,7 +235,6 @@ const TypingList = (props) => {
 					}
 				});
 			});
-
 			setListInput([...listInput]);
 		}
 	}, []);

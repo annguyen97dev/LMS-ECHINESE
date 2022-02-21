@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
-import { Radio, Tooltip, Popconfirm, Modal, Input, Spin, Space } from 'antd';
-import { Trash2, Edit } from 'react-feather';
+import ReactHtmlParser from 'react-html-parser';
+import { Radio, Tooltip, Popconfirm, Space } from 'antd';
+import { Trash2 } from 'react-feather';
 import { examDetailApi } from '~/apiBase';
 import { useExamDetail } from '~/pages/question-bank/exam-list/exam-detail/[slug]';
 import { useWrap } from '~/context/wrap';
@@ -11,39 +11,17 @@ import { useDoingTest } from '~/context/useDoingTest';
 import { useDoneTest } from '~/context/useDoneTest';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
-let dataAnswer = {
-	ExamTopicDetailID: null,
-	ExerciseGroupID: null,
-	Level: null,
-	Type: null,
-	SkillID: null,
-	SetPackageExerciseStudentInfoList: [
-		{
-			ExerciseID: null,
-			//Dạng tự luận thì chỉ cần nhập AnswerContent hoặc FileAudio
-			SetPackageExerciseAnswerStudentList: [
-				{
-					AnswerID: null,
-					AnswerContent: '',
-					FileAudio: ''
-				}
-			]
-		}
-	]
-};
-
 const ChoiceList = (props) => {
 	const { onDeleteQuestion } = useExamDetail();
 	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
 	const { doneTestData } = useDoneTest();
-	const { showNoti, userInformation } = useWrap();
-	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest, showScore } = props;
+	const { showNoti } = useWrap();
+	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest, showScore, arPosition, handleChange, addOldItem } = props;
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
 		id: null,
 		status: false
 	});
-	const [dataAnswer, setDataAnswer] = useState(null);
 	const [activeValue, setAcitveValue] = useState(null);
 
 	const returnPosition = (quesID) => {
@@ -51,6 +29,8 @@ const ChoiceList = (props) => {
 		let text = 'Câu ' + (index + 1).toString();
 		return text;
 	};
+
+	const { isChangePosition } = useExamDetail();
 
 	// Chấp nhận xóa câu hỏi
 	const handleOk = async (quesItem) => {
@@ -131,23 +111,6 @@ const ChoiceList = (props) => {
 		getPackageResult({ ...packageResult });
 	};
 
-	const returnChecked = (ans, quesID) => {
-		let checked = null;
-
-		let indexQuestion = dataQuestion.ExerciseTopic.findIndex((i) => i.ExerciseID == quesID);
-
-		dataQuestion.ExerciseTopic[indexQuestion].ExerciseAnswer.every((ans) => {
-			if (ans.isTrue) {
-				checked = ans.ExerciseAnswerID;
-				setAcitveValue(ans.ExerciseAnswerID);
-				return false;
-			}
-			return true;
-		});
-
-		return checked;
-	};
-
 	useEffect(() => {
 		if (!doneTestData) {
 			if (isDoingTest) {
@@ -168,17 +131,7 @@ const ChoiceList = (props) => {
 				}
 			}
 		} else {
-			// if (dataQuestion) {
-			//   dataQuestion.ExerciseTopic.forEach((item) => {
-			//     item.ExerciseAnswer.every((ques) => {
-			//       if (ques.isTrue) {
-			//         setAcitveValue(ques.ExerciseAnswerID);
-			//         return false;
-			//       }
-			//       return true;
-			//     });
-			//   });
-			// }
+			//
 		}
 	}, [packageResult]);
 
@@ -194,7 +147,6 @@ const ChoiceList = (props) => {
 									<source src={ques.LinkAudio} type="audio/mpeg" />
 								</audio>
 							)}
-							{/* {returnAudio(item)} */}
 							<div className="title-text">{ReactHtmlParser(ques.Content)}</div>
 						</div>
 						<div className="box-answer">
@@ -208,11 +160,6 @@ const ChoiceList = (props) => {
 									>
 										<Space direction="vertical">
 											<Radio
-												// checked={
-												//   doneTestData
-												//     ? returnChecked(ans, ques.ExerciseID)
-												//     : null
-												// }
 												className="d-block"
 												key={i}
 												value={!doneTestData ? ans.ID : ans.ExerciseAnswerID}
@@ -243,30 +190,39 @@ const ChoiceList = (props) => {
 							</div>
 						</div>
 					</div>
+
 					{dataQuestion.ExerciseGroupID == 0 && (
 						<div className="box-action">
 							{!doneTestData && !isDoingTest && (
 								<>
-									<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
-									{userInformation && userInformation.RoleID !== 2 && (
-										<Popconfirm
-											title="Bạn có chắc muốn xóa?"
-											// visible={item.ID == visible.id && visible.status}
-											onConfirm={() => handleOk(ques)}
-											okButtonProps={{ loading: confirmLoading }}
-											onCancel={() => handleCancel(ques.ID)}
-										>
-											<Tooltip title="Xóa câu hỏi" placement="rightTop">
-												<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
-													<Trash2 />
-												</button>
-											</Tooltip>
-										</Popconfirm>
+									{!isChangePosition && (
+										<>
+											<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
+											<Popconfirm
+												title="Bạn có chắc muốn xóa?"
+												onConfirm={() => handleOk(ques)}
+												okButtonProps={{ loading: confirmLoading }}
+												onCancel={() => handleCancel(ques.ID)}
+											>
+												<Tooltip title="Xóa câu hỏi" placement="rightTop">
+													<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
+														<Trash2 />
+													</button>
+												</Tooltip>
+											</Popconfirm>
+										</>
 									)}
-									<ChangePosition questionID={dataQuestion.ID} />
+									<ChangePosition
+										dataQuestion={dataQuestion}
+										arPosition={arPosition}
+										questionID={dataQuestion.ID}
+										handleChange={handleChange}
+										addOldItem={addOldItem}
+									/>
 								</>
 							)}
-							{showScore && (
+
+							{!isChangePosition && showScore && (
 								<div className="point-question mt-2">
 									<p className="text">{ques.Point}</p>
 								</div>

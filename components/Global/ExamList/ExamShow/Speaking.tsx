@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
-import { Radio, Tooltip, Popconfirm } from 'antd';
+import ReactHtmlParser from 'react-html-parser';
+import { Tooltip, Popconfirm } from 'antd';
 import { Trash2 } from 'react-feather';
-import { examDetailApi, packageResultApi } from '~/apiBase';
+import { examDetailApi } from '~/apiBase';
 import { useExamDetail } from '~/pages/question-bank/exam-list/exam-detail/[slug]';
 import { useWrap } from '~/context/wrap';
 import EditPoint from '../ExamForm/EditPoint';
@@ -10,17 +10,15 @@ import ChangePosition from '../ExamForm/ChangePosition';
 import AudioRecord from '~/components/Elements/AudioRecord/AudioRecord';
 import { useDoingTest } from '~/context/useDoingTest';
 import { useDoneTest } from '~/context/useDoneTest';
-import router from 'next/router';
-import { FormOutlined } from '@ant-design/icons';
 import MarkingExam from '../MarkingExam/MarkingExam';
 
 const SpeakingList = (props) => {
-	const { teacherMarking: teacherMarking, packageResultID: packageResultID } = router.query;
+	const { isChangePosition } = useExamDetail();
 	const { doneTestData, dataMarking, getDataMarking } = useDoneTest();
 	const { onDeleteQuestion } = useExamDetail();
 	const { activeID, packageResult, getPackageResult, getListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest, isMarked, hideScore } = props;
-	const { showNoti, userInformation } = useWrap();
+	const { dataQuestion, listQuestionID, isDoingTest, isMarked, arPosition, handleChange, addOldItem } = props;
+	const { showNoti } = useWrap();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
 		id: null,
@@ -33,8 +31,6 @@ const SpeakingList = (props) => {
 		let text = 'Câu ' + (index + 1).toString();
 		return text;
 	};
-
-	// console.log('Data question: ', dataQuestion);
 
 	// Chấp nhận xóa câu hỏi
 	const handleOk = async (quesItem) => {
@@ -83,16 +79,6 @@ const SpeakingList = (props) => {
 			  });
 	};
 
-	// ----------- ACTION IN  MARKING OF TEACHER  ------------
-	// const getInfoPackage = async () => {
-	// 	try {
-	// 		let res = await packageResultApi.getDetail(parseInt(packageResultID as string));
-	// 		if (res.status == 200) {
-	// 			setIsMarked(res.data.data.isDone);
-	// 		}
-	// 	} catch (error) {}
-	// };
-
 	const onGetPoint = (point, questionID) => {
 		if (dataMarking.setPackageExerciseStudentsList.some((item, index) => item['ID'] === questionID)) {
 			dataMarking.setPackageExerciseStudentsList.every((item) => {
@@ -111,12 +97,6 @@ const SpeakingList = (props) => {
 
 		getDataMarking({ ...dataMarking });
 	};
-
-	// useEffect(() => {
-	// 	if (doneTestData) {
-	// 		getInfoPackage();
-	// 	}
-	// }, []);
 
 	// ----------- ALL ACTION IN DOINGTEST -------------
 
@@ -200,23 +180,30 @@ const SpeakingList = (props) => {
 						<div className="box-action-list mb-2">
 							{!doneTestData && !isDoingTest && (
 								<>
-									<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
-									{userInformation && userInformation.RoleID !== 2 && (
-										<Popconfirm
-											title="Bạn có chắc muốn xóa?"
-											// visible={item.ID == visible.id && visible.status}
-											onConfirm={() => handleOk(ques)}
-											okButtonProps={{ loading: confirmLoading }}
-											onCancel={() => handleCancel(ques.ID)}
-										>
-											<Tooltip title="Xóa câu hỏi" placement="rightTop">
-												<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
-													<Trash2 />
-												</button>
-											</Tooltip>
-										</Popconfirm>
+									{!isChangePosition && (
+										<>
+											<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
+											<Popconfirm
+												title="Bạn có chắc muốn xóa?"
+												onConfirm={() => handleOk(ques)}
+												okButtonProps={{ loading: confirmLoading }}
+												onCancel={() => handleCancel(ques.ID)}
+											>
+												<Tooltip title="Xóa câu hỏi" placement="rightTop">
+													<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
+														<Trash2 />
+													</button>
+												</Tooltip>
+											</Popconfirm>
+										</>
 									)}
-									<ChangePosition questionID={dataQuestion.ID} />
+									<ChangePosition
+										dataQuestion={dataQuestion}
+										arPosition={arPosition}
+										questionID={dataQuestion.ID}
+										handleChange={handleChange}
+										addOldItem={addOldItem}
+									/>
 								</>
 							)}
 						</div>
@@ -227,17 +214,11 @@ const SpeakingList = (props) => {
 									: dataMarking.setPackageExerciseStudentsList.find((item) => item['ID'] === ques.ID).Point}
 							</p>
 						</div>
-
-						{dataMarking && !isMarked && (
+						{!isChangePosition && dataMarking && !isMarked && (
 							<div className="point-marking">
 								<MarkingExam onGetPoint={(point) => onGetPoint(point, ques.ID)} dataRow={ques} dataMarking={dataMarking} />
 							</div>
 						)}
-						{/* {dataMarking && (
-							<div className="point-show mt-3">
-								<p className="mb-0">Điểm tối đa: {ques.PointMax}</p>
-							</div>
-						)} */}
 					</div>
 				</div>
 			))}
