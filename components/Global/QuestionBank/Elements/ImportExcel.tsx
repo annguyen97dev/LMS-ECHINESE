@@ -33,7 +33,7 @@ const ImportExcel = (props) => {
 		<>
 			<Upload onChange={onChange_ImportExcel} showUploadList={false}>
 				<button
-					className="btn btn-warning mr-2 d-flex align-items-center"
+					className="btn btn-warning d-flex align-items-center"
 					// style={{ height: "42.59px" }}
 				>
 					<UploadOutlined className="mr-2" /> Import Excel

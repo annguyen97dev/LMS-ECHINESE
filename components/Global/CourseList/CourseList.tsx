@@ -1,4 +1,4 @@
-import { Card, Switch, message } from 'antd';
+import { Card } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { branchApi, courseApi, programApi, teacherApi } from '~/apiBase';
 import TitlePage from '~/components/Elements/TitlePage';
@@ -6,7 +6,6 @@ import CourseListFilterForm from '~/components/Global/CourseList/CourseListFilte
 import PowerList from '~/components/Global/CourseList/PowerList';
 import { useWrap } from '~/context/wrap';
 import { fmSelectArr } from '~/utils/functions';
-import UpdataShowCourse from './CourseListDetail/UpdataShowCourse';
 import CourseListUpdate from './CourseListUpdate';
 
 const statusList = [
@@ -256,8 +255,8 @@ const CourseList = () => {
 									isLoading={isLoading}
 									dataSource={
 										userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2)
-											? courseListAdmin
-											: courseList
+											? courseList
+											: courseListAdmin
 									}
 									totalPage={totalPage}
 									currentPage={filters.pageIndex}

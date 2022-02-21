@@ -231,7 +231,7 @@ export const StaffManagerChildMenu = [
 						Key: '/config-tag-video-course',
 						Icon: '',
 						Route: '/config-tag-video-course',
-						Text: 'Cấu hình cấp độ'
+						Text: 'Cấu hình tags'
 					}
 				]
 			}

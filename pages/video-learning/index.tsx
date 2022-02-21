@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Tabs, Drawer } from 'antd';
+import { Tabs, Drawer, Spin } from 'antd';
 import 'react-circular-progressbar/dist/styles.css';
 import HeaderVideo from '~/components/VideoLearning/header';
 import VideoTabs from '~/components/VideoLearning/tabs';
@@ -351,23 +351,28 @@ const VideoLearning = () => {
 								</h1> */}
 								{currentVideo[0] == 'h' ? (
 									<>
-										{/* {currentLession.Type !== 0 ? (
-											<video src={currentVideo} ref={videoStudy} controls>
-												<track default kind="captions" />
-											</video>
-										) : ( */}
-										<iframe
+										{/* <iframe
 											id="movie_player"
 											ref={videoStudy}
 											className="html-iframe"
 											src={currentVideo}
 											title="cc"
 											allowFullScreen
-										/>
-										{/* )} */}
+										/> */}
+										<div className="html-iframe d-flex justify-content-center align-items-between">
+											<Spin tip="Loading..." style={{ height: 100, marginTop: '25%' }} size="large"></Spin>
+										</div>
 									</>
 								) : (
-									<Iframe iframe={currentVideo} allow="autoplay" />
+									<iframe
+										id="movie_player"
+										ref={videoStudy}
+										className="html-iframe"
+										src={currentVideo}
+										title="cc"
+										allowFullScreen
+									/>
+									// <Iframe iframe={currentVideo} allow="autoplay" />
 								)}
 
 								{data.length > 0 && currentLession.Type === 0

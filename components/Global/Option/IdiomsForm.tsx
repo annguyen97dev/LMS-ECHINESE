@@ -1,28 +1,45 @@
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Tooltip, Select, Spin } from 'antd';
 import { RotateCcw } from 'react-feather';
-import { useForm } from 'react-hook-form';
-import { useWrap } from '~/context/wrap';
 import { idiomsApi } from '~/apiBase/options/idioms';
 import EditorBase from '~/components/Elements/EditorBase';
+import { useWrap } from '~/context/wrap';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import EditorField from '~/components/FormControl/EditorField';
 
 const IdiomsForm = React.memo((props: any) => {
 	const { idiomsId, reloadData, idiomsDetail, currentPage } = props;
 	const { setValue } = useForm();
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [form] = Form.useForm();
+
 	const { showNoti } = useWrap();
 	const [loading, setLoading] = useState(false);
 	const [idiomsInput, setIdiomsInput] = useState();
 	const [isReset, setIsReset] = useState(false);
 
+	const defaultValuesInit = {
+		Idioms: ''
+	};
+	const schema = yup.object().shape({
+		Idioms: yup.string().required('Bạn không được để trống')
+	});
+	const form = useForm({
+		defaultValues: defaultValuesInit,
+		resolver: yupResolver(schema)
+	});
+	console.log(idiomsInput);
+
 	const onSubmit = async (data: any) => {
+		console.log(data);
 		setLoading(true);
 		if (idiomsId) {
 			try {
 				let res = await idiomsApi.update({
 					...data,
-					ID: idiomsId
+					ID: idiomsId,
+					Idioms: idiomsInput
 				});
 				afterSubmit(res?.data.message);
 				reloadData(currentPage);
@@ -37,6 +54,11 @@ const IdiomsForm = React.memo((props: any) => {
 					Enable: true,
 					Idioms: idiomsInput
 				});
+				if (res.status === 200) {
+					form.reset({
+						Idioms: ''
+					});
+				}
 				afterSubmit(res?.data.message);
 				reloadData(1);
 				setIdiomsInput(null);
@@ -56,7 +78,8 @@ const IdiomsForm = React.memo((props: any) => {
 
 	useEffect(() => {
 		if (idiomsDetail) {
-			form.setFieldsValue(idiomsDetail);
+			form.setValue('Idioms', idiomsDetail.Idioms);
+			console.log(idiomsDetail.Idioms);
 		}
 	}, [isModalVisible]);
 
@@ -92,23 +115,16 @@ const IdiomsForm = React.memo((props: any) => {
 				footer={null}
 			>
 				<div className="container-fluid">
-					<Form form={form} layout="vertical" onFinish={onSubmit}>
+					<Form layout="vertical" onFinish={onSubmit}>
 						<div className="row">
 							<div className="col-12">
-								<Form.Item label="Câu thành ngữ" rules={[{ required: true, message: 'Vui lòng điền đủ thông tin!' }]}>
-									<EditorBase
-										content={idiomsDetail ? idiomsDetail.Idioms : ''}
-										handleChangeDataEditor={(value) => setIdiomsInput(value)}
-									/>
-									{/* <EditorBase
-                    handleChange={(value) => setIdiomsInput(value)}
-                    onChange={(value) => {
-                      setValue("Idioms", value.target.value);
-                    }}
-                    isReset={isReset}
-                    questionContent={idiomsDetail ? idiomsDetail.Idioms : ""}
-                  /> */}
-								</Form.Item>
+								<EditorField
+									form={form}
+									label="Câu thành ngữ"
+									name="Idioms"
+									// content={idiomsDetail ? idiomsDetail.Idioms : idiomsInput}
+									handleChange={(value) => setIdiomsInput(value)}
+								/>
 							</div>
 						</div>
 						<div className="row">

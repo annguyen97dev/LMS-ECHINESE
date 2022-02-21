@@ -78,10 +78,8 @@ function SalerListForm(props) {
 	const { userInformation } = useWrap();
 	const openModal = () => {
 		setIsModalVisible(true);
+		handleFetchBranch();
 		if (isUpdate && updateObj && updateObj.AreaID) {
-			if (handleFetchBranch) {
-				handleFetchBranch(updateObj.AreaID);
-			}
 			if (handleFetchDistrict) {
 				handleFetchDistrict(updateObj.AreaID);
 			}
@@ -95,7 +93,7 @@ function SalerListForm(props) {
 	const schema = yup.object().shape({
 		Branch: yup.array().min(1, 'Bạn phải chọn ít nhất 1 trung tâm').required('Bạn không được để trống'),
 		FullNameUnicode: yup.string().required('Bạn không được để trống'),
-		Jobdate: yup.string().required('Bạn không được để trống'),
+		Jobdate: yup.string().nullable(),
 		Email: yup.string().email('Email không đúng định dạng').required('Bạn không được để trống'),
 		Mobile: yup
 			.string()
@@ -105,7 +103,7 @@ function SalerListForm(props) {
 				'Sdt không đúng định dạng'
 			),
 		Address: yup.string(),
-		AreaID: yup.number().nullable().required('Bạn không được để trống'),
+		AreaID: yup.number().nullable(),
 		DistrictID: yup.number().nullable(),
 		WardID: yup.number().nullable(),
 		HouseNumber: yup.string().nullable(),

@@ -208,7 +208,10 @@ const ShoppingCart = () => {
 					}
 					className="cart__item-img"
 				>
-					<img src={item.ImageThumbnails.length ? item.ImageThumbnails : '/images/logo-thumnail.jpg'} alt="img course"></img>
+					<img
+						src={item.ImageThumbnails && item.ImageThumbnails.length ? item.ImageThumbnails : '/images/logo-thumnail.jpg'}
+						alt="img course"
+					></img>
 				</div>
 
 				<div className="cart__item-detail d-none d-sm-inline-block mt-sm-0 mb-sm-0">
