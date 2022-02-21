@@ -84,14 +84,6 @@ export const SellerChildMenu = [
 				SubMenuList: [
 					{
 						ItemType: 'single',
-						Key: '/course/create-course-online',
-						Route: '/course/create-course-online',
-						Text: 'Tạo khóa học online',
-						Icon: ''
-					},
-
-					{
-						ItemType: 'single',
 						Key: '/course/course-list',
 						Route: '/course/course-list',
 						Text: 'Danh sách khóa học',

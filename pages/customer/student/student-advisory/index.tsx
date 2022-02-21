@@ -219,7 +219,7 @@ export default function StudentAdvisory() {
 			default:
 				break;
 		}
-
+		console.log('new data', newData);
 		return newData;
 	};
 
@@ -435,7 +435,7 @@ export default function StudentAdvisory() {
 	}, [todoApi]);
 
 	useEffect(() => {
-		isAdmin && getDataStudentForm(listApi);
+		(isAdmin || userInformation.RoleID === 6 || userInformation.RoleID === 5) && getDataStudentForm(listApi);
 	}, [isAdmin]);
 
 	const expandedRowRender = (data) => {

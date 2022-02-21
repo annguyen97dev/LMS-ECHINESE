@@ -32,9 +32,9 @@ const Dashboard = () => {
 		<DynamicStatisticalPercentOfStudentBySource />,
 		<DynamicStatisticalCoursePurchases />,
 		<DynamicStatisticalJobOfStudent />,
-		<DynamicStatisticalSalaryOfStaff />,
+		userInformation && userInformation.RoleID === 6 ? null : <DynamicStatisticalSalaryOfStaff />,
 		<DynamicStatisticalTotalLessonOfTeacher />,
-		<DynamicStatisticalRevenue />
+		userInformation && userInformation.RoleID === 6 ? null : <DynamicStatisticalRevenue />
 	];
 	const loadMore = () => {
 		setCountItem((preState) => (preState += 2));
@@ -45,7 +45,9 @@ const Dashboard = () => {
 	const renderLoadMore = () => {
 		return loadList.map((item, index) => {
 			if (index <= countItem) {
-				return item;
+				if (item !== null) {
+					return item;
+				} else return;
 			} else if (index > countItem) return;
 		});
 	};
