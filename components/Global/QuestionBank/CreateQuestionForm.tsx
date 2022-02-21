@@ -1,17 +1,15 @@
+import { AppstoreAddOutlined, FormOutlined, PlusOutlined } from '@ant-design/icons';
+import { Drawer, Modal, Spin, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Drawer, Tooltip, Spin, Modal } from 'antd';
-import Editor from '~/components/Elements/Editor';
 import { Edit, Plus } from 'react-feather';
 import ChoiceForm from './QuestionFormType/ChoiceForm';
-import MultipleForm from './QuestionFormType/MultipleForm';
-import GroupForm from './QuestionFormType/GroupForm';
-import { FormOutlined, DeleteOutlined, AppstoreAddOutlined, PlusOutlined, DiffOutlined } from '@ant-design/icons';
-import WrittingForm from './QuestionFormType/WrittingForm';
-import GroupFormTyping from './QuestionFormType/TypingForm';
-import TypingForm from './QuestionFormType/TypingForm';
 import DragForm from './QuestionFormType/DragForm';
+import GroupForm from './QuestionFormType/GroupForm';
 import MapForm from './QuestionFormType/MapForm';
+import MultipleForm from './QuestionFormType/MultipleForm';
 import SpeakingForm from './QuestionFormType/SpeakingForm';
+import TypingForm from './QuestionFormType/TypingForm';
+import WrittingForm from './QuestionFormType/WrittingForm';
 
 const CreateQuestionForm = (props) => {
 	const { questionData, isGroup, onFetchData, handlePopover, onEditData, onAddData, getActiveID } = props;

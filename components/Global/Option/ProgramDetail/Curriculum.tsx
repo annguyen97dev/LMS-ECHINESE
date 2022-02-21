@@ -285,7 +285,7 @@ const Curriculum = (props) => {
 		},
 		{
 			width: 120,
-			title: 'Số buổi học',
+			title: 'Buổi học',
 			dataIndex: 'Lesson',
 			key: 'lesson',
 			className: 'text-center'
@@ -338,7 +338,7 @@ const Curriculum = (props) => {
 	return (
 		<div>
 			<ExpandTable
-				addClass="table-medium"
+				// addClass="table-medium"
 				currentPage={currentPage}
 				totalPage={totalPage && totalPage}
 				getPagination={(pageNumber: number) => getPagination(pageNumber)}

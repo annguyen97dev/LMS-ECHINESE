@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useWrap } from '~/context/wrap';
-import { lessonDetailApi } from '~/apiBase/options/lesson-detail';
 import Link from 'next/link';
-import ExpandTable from '~/components/ExpandTable';
-import LayoutBase from '~/components/LayoutBase';
 import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { courseApi, subjectApi } from '~/apiBase';
-import CurriculumDetail from '~/components/Global/Option/ProgramDetail/CurriculumDetail';
 import TitlePage from '~/components/Elements/TitlePage';
+import CurriculumDetail from '~/components/Global/Option/ProgramDetail/CurriculumDetail';
+import { useWrap } from '~/context/wrap';
 
 const LessonDetail = (props) => {
 	const router = useRouter();

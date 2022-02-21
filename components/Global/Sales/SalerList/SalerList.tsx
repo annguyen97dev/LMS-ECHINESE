@@ -26,12 +26,12 @@ const SalerList = () => {
 		status: false
 	});
 	const [totalPage, setTotalPage] = useState(null);
-	const { showNoti } = useWrap();
+	const { showNoti, pageSize } = useWrap();
 	const [activeColumnSearch, setActiveColumnSearch] = useState('');
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: 1,
 		sortType: false,
 
@@ -44,7 +44,7 @@ const SalerList = () => {
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: 1,
 		sortType: false
 	});
@@ -205,11 +205,12 @@ const SalerList = () => {
 		}
 	};
 	// BRANCH BY AREA
-	const fetchBranchByAreaId = async (id: number) => {
+	const fetchBranch = async (id: number) => {
 		setIsLoading({ type: 'FETCH_DATA_BY_AREA', status: true });
 		try {
 			let res = await branchApi.getAll({
-				areaID: id
+				pageIndex: 1,
+				pageSize: pageSize
 			});
 			if (res.status === 200 && res.data.totalRow) {
 				const newBranchList = fmSelectArr(res.data.data, 'BranchName', 'ID');
@@ -376,7 +377,7 @@ const SalerList = () => {
 					handleFetchDistrict={fetchDistrictByAreaID}
 					handleFetchWard={fetchWardByDistrictID}
 					optionBranchList={branchList}
-					handleFetchBranch={fetchBranchByAreaId}
+					handleFetchBranch={fetchBranch}
 					//
 					handleSubmit={onUpdateTeacher}
 				/>
@@ -405,7 +406,7 @@ const SalerList = () => {
 						handleFetchDistrict={fetchDistrictByAreaID}
 						handleFetchWard={fetchWardByDistrictID}
 						optionBranchList={branchList}
-						handleFetchBranch={fetchBranchByAreaId}
+						handleFetchBranch={fetchBranch}
 						//
 						handleSubmit={onCreateTeacher}
 					/>

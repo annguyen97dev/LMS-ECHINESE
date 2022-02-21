@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Modal, Form, Spin, Tooltip } from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { RotateCcw } from 'react-feather';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import { useWrap } from '~/context/wrap';
-import TextAreaField from '~/components/FormControl/TextAreaField';
 
 let returnSchema = {};
 let schema = null;
@@ -53,11 +52,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 				case 'Number':
 					returnSchema[key] = yup.mixed().required('Bạn không được để trống');
 					break;
-				// case 'CounselorsID':
-				// 	returnSchema[key] = yup.mixed().required('Bạn không được để trống');
-				// 	break;
 				default:
-					// returnSchema[key] = yup.mixed().required("Bạn không được để trống");
 					break;
 			}
 		});
@@ -91,6 +86,8 @@ const StudentAdviseForm = React.memo((props: any) => {
 		}
 	}, [isModalVisible]);
 
+	// listData && console.log(listData);
+
 	return (
 		<>
 			{rowID ? (
@@ -98,7 +95,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 					className="btn btn-icon edit"
 					onClick={() => {
 						setIsModalVisible(true);
-						getIndex(index);
+						// getIndex(index);
 					}}
 				>
 					<Tooltip title="Cập nhật">

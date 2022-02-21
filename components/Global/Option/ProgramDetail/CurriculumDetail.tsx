@@ -292,7 +292,7 @@ const CurriculumDetail = (props) => {
 			)
 		},
 		{
-			title: 'Số buổi học',
+			title: 'Buổi học',
 			dataIndex: 'LessonNumber',
 			key: 'lessonnumber',
 			className: 'col-short text-center'

@@ -86,11 +86,11 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	}, [form.getFieldValue('OriginalPrice')]);
 
 	useEffect(() => {
-		const value = form.getFieldValue('OriginalPrice');
+		const value = form.getFieldValue('SellPrice');
 		if (value !== null && value !== undefined) {
-			form.setFieldsValue({ OriginalPrice: parseToMoney(value.replace(/[^0-9\.]+/g, '')) });
+			form.setFieldsValue({ SellPrice: parseToMoney(value.toString().replace(/[^0-9\.]+/g, '')) });
 		}
-	}, [form.getFieldValue('OriginalPrice')]);
+	}, [form.getFieldValue('SellPrice')]);
 
 	useEffect(() => {
 		let value = form.getFieldValue('ExpiryDays');

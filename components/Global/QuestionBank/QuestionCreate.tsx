@@ -1,24 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
-
-import { Card, Select, Spin, Switch, Tooltip } from 'antd';
-import TitlePage from '~/components/Elements/TitlePage';
+import { DownloadOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { Card, Dropdown, Select, Spin, Switch, Tooltip } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bookmark } from 'react-feather';
+import { curriculumApi, exerciseApi, exerciseGroupApi, programApi } from '~/apiBase';
+import TitlePage from '~/components/Elements/TitlePage';
 import CreateQuestionForm from '~/components/Global/QuestionBank/CreateQuestionForm';
-import { dataTypeGroup, dataTypeSingle } from '~/lib/question-bank/dataBoxType';
-import LayoutBase from '~/components/LayoutBase';
-import QuestionSingle from '~/components/Global/QuestionBank/QuestionShow/QuestionSingle';
-import QuestionMultiple from '~/components/Global/QuestionBank/QuestionShow/QuestionMultiple';
-import { programApi, curriculumApi, exerciseApi, exerciseGroupApi } from '~/apiBase';
-import { useWrap } from '~/context/wrap';
-import { questionObj } from '~/lib/TypeData';
 import GroupWrap from '~/components/Global/QuestionBank/GroupWrap';
-import QuestionWritting from '~/components/Global/QuestionBank/QuestionShow/QuestionWritting';
-import QuestionTyping from '~/components/Global/QuestionBank/QuestionShow/QuestionTyping';
 import QuestionDrag from '~/components/Global/QuestionBank/QuestionShow/QuestionDrag';
 import QuestionMap from '~/components/Global/QuestionBank/QuestionShow/QuestionMap';
-import QuestionSpeaking from './QuestionShow/QuestionSpeaking';
+import QuestionMultiple from '~/components/Global/QuestionBank/QuestionShow/QuestionMultiple';
+import QuestionSingle from '~/components/Global/QuestionBank/QuestionShow/QuestionSingle';
+import QuestionTyping from '~/components/Global/QuestionBank/QuestionShow/QuestionTyping';
+import QuestionWritting from '~/components/Global/QuestionBank/QuestionShow/QuestionWritting';
+import LayoutBase from '~/components/LayoutBase';
+import { useWrap } from '~/context/wrap';
+import { dataTypeGroup, dataTypeSingle } from '~/lib/question-bank/dataBoxType';
+import { questionObj } from '~/lib/TypeData';
 import ImportExcel from './Elements/ImportExcel';
-import { DownloadOutlined } from '@ant-design/icons';
+import QuestionSpeaking from './QuestionShow/QuestionSpeaking';
 
 const { Option, OptGroup } = Select;
 let isOpenTypeQuestion = false;
@@ -37,12 +36,13 @@ const listAlphabet = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'
 
 const QuestionCreate = (props) => {
 	const { dataExam, isOpenModal } = props;
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState(false);
 	const [dataProgram, setDataProgram] = useState<IProgram[]>(null);
 	const [dataCurriculum, setDataCurriculum] = useState<ICurriculum[]>(null);
 	const [loadingSelect, setLoadingSelect] = useState(false);
 	const [questionData, setQuestionData] = useState(questionObj);
+	const [dropDownVisible, setDropDownVisible] = useState(false);
 	const [showListQuestion, setShowListQuestion] = useState(false);
 	const [showTypeQuetion, setShowTypeQuestion] = useState({
 		type: null,
@@ -66,8 +66,6 @@ const QuestionCreate = (props) => {
 	const [dataExercise, setDataExercise] = useState();
 	const [isTest, setIsTest] = useState(false);
 	const [loadingProgram, setLoadingProgram] = useState(false);
-
-	console.log('Data ');
 
 	// Phân loại dạng câu hỏi để trả ra danh sách
 	const returnQuestionType = () => {
@@ -240,8 +238,6 @@ const QuestionCreate = (props) => {
 				break;
 		}
 	};
-
-	console.log('Todo Api: ', todoApi);
 
 	// GET DATA SOURCE - DATA EXERCISE
 	const getDataSource = async () => {
@@ -754,6 +750,38 @@ const QuestionCreate = (props) => {
 		}
 	}, [isOpenModal]);
 
+	const menuDropdown = () => {
+		return (
+			<>
+				<div className="menu__dropdown d-inline-block d-xl-none" style={{ width: 170 }}>
+					{/* <div className="d-inline-block d-lg-none ">
+												</div> */}
+					<div className="mb-4 w-100">
+						<Tooltip title="Tải file excel mẫu">
+							<a className="btn btn-light mr-2 btn-have-icon" href="https://lmsv2.monamedia.net/Upload/Exercise/Excel.xlsx">
+								<span className="d-flex align-items-center text-center">
+									<DownloadOutlined className="mr-2" />
+									File mẫu
+								</span>
+							</a>
+						</Tooltip>
+					</div>
+					<div className="mb-4">
+						<ImportExcel onFetchData={onFetchData} />
+					</div>
+					<div className="mb-4">
+						<CreateQuestionForm
+							questionData={questionData}
+							onFetchData={onFetchData}
+							isGroup={isGroup}
+							onAddData={(data) => onAddData(data)}
+						/>
+					</div>
+				</div>
+			</>
+		);
+	};
+
 	return (
 		<div className="question-create">
 			<TitlePage title="Tạo câu hỏi" />
@@ -761,7 +789,7 @@ const QuestionCreate = (props) => {
 				<div className="col-md-12"></div>
 			</div>
 			<div className="row">
-				<div className="col-md-8 col-12">
+				<div className="col-xl-8 col-12">
 					<Card
 						className="card-detail-question"
 						title={
@@ -780,33 +808,47 @@ const QuestionCreate = (props) => {
 								>
 									{showTypeQuetion.type && questionData.TypeName}
 								</p>
-								{/* <p className="text-lesson">
-                  <span className="font-weight-black">Môn học:</span>
-                  <span>{questionData?.CurriculumName}</span>
-                </p> */}
 							</div>
 						}
 						extra={
-							<>
-								<Tooltip title="Tải file excel mẫu">
-									<a
-										className="btn btn-light mr-2 btn-have-icon"
-										href="https://lmsv2.monamedia.net/Upload/Exercise/Excel.xlsx"
-									>
-										<span className="d-flex align-items-center">
-											<DownloadOutlined className="mr-2" />
-											File mẫu
-										</span>
-									</a>
-								</Tooltip>
-								<ImportExcel onFetchData={onFetchData} />
-								<CreateQuestionForm
-									questionData={questionData}
-									onFetchData={onFetchData}
-									isGroup={isGroup}
-									onAddData={(data) => onAddData(data)}
-								/>
-							</>
+							userInformation?.RoleID !== 2 && (
+								<>
+									<div className="d-none d-lg-flex justify-content-between" style={{ width: 410 }}>
+										<Tooltip title="Tải file excel mẫu">
+											<a
+												className="btn btn-light mr-1 btn-have-icon"
+												href="https://lmsv2.monamedia.net/Upload/Exercise/Excel.lgsx"
+											>
+												<span className="d-flex align-items-center">
+													<DownloadOutlined className="mr-2" />
+													File mẫu
+												</span>
+											</a>
+										</Tooltip>
+										<ImportExcel className="mr-1" onFetchData={onFetchData} />
+										<CreateQuestionForm
+											className="ml-1"
+											questionData={questionData}
+											onFetchData={onFetchData}
+											isGroup={isGroup}
+											onAddData={(data) => onAddData(data)}
+										/>
+									</div>
+									<div className="d-lg-none">
+										<Dropdown overlay={menuDropdown} trigger={['click']} visible={dropDownVisible}>
+											<a
+												className="ant-dropdown-link"
+												onClick={(e) => {
+													e.preventDefault();
+													setDropDownVisible(!dropDownVisible);
+												}}
+											>
+												<EllipsisOutlined />
+											</a>
+										</Dropdown>
+									</div>
+								</>
+							)
 						}
 					>
 						{!showListQuestion ? (
@@ -831,7 +873,7 @@ const QuestionCreate = (props) => {
 				</div>
 
 				{/** Menu Question */}
-				<div className="col-md-4 col-12">
+				<div className="col-xl-4 col-12">
 					<Card className="card-box-type">
 						<div className={`row ${showTypeQuetion ? 'mb-2' : ''}`}>
 							{/** CHỌN LOẠI ĐỀ */}

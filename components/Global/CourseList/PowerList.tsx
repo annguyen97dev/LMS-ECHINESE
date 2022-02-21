@@ -9,7 +9,7 @@ import UpdataShowCourse from './CourseListDetail/UpdataShowCourse';
 
 const PowerList = (props) => {
 	const { dataSource, isLoading, totalPage, currentPage, getPagination, children, setFilters, filters } = props;
-
+	console.log(dataSource);
 	const { userInformation } = useWrap();
 	const checkGetPagination = (page) => {
 		if (!getPagination) return;
