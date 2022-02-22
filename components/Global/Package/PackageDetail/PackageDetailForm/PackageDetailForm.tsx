@@ -1,17 +1,17 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 PackageDetailForm.propTypes = {
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	handleSubmit: PropTypes.func,
 	optionExamTopicList: optionCommonPropTypes,
@@ -22,35 +22,35 @@ PackageDetailForm.propTypes = {
 		Level: PropTypes.number,
 		Type: PropTypes.number,
 		TypeName: PropTypes.string,
-		Price: PropTypes.number,
-	}),
+		Price: PropTypes.number
+	})
 };
 PackageDetailForm.defaultProps = {
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	handleSubmit: null,
 	optionExamTopicList: [],
-	packageInfo: {},
+	packageInfo: {}
 };
 
 function PackageDetailForm(props) {
-	const {isLoading, handleSubmit, optionExamTopicList, packageInfo} = props;
+	const { isLoading, handleSubmit, optionExamTopicList, packageInfo } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 
 	const schema = yup.object().shape({
 		Name: yup.string().required('Bạn không được để trống'),
-		ExamTopicID: yup.number().nullable().required('Bạn không được để trống'),
+		ExamTopicID: yup.number().nullable().required('Bạn không được để trống')
 	});
 
 	const defaultValuesInit = {
 		Name: '',
-		ExamTopicID: null,
+		ExamTopicID: null
 	};
 
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
@@ -59,12 +59,12 @@ function PackageDetailForm(props) {
 		}
 	}, [packageInfo]);
 
-	const checkHandleSubmit = (data: {Name: number; ExamTopicID: number}) => {
+	const checkHandleSubmit = (data: any) => {
 		if (!handleSubmit) return;
 		handleSubmit(data).then((res) => {
 			if (res?.status === 200) {
 				closeModal();
-				form.reset({Name: packageInfo.Name, ExamTopicID: null});
+				form.reset({ Name: packageInfo.Name, ExamTopicID: null });
 			}
 		});
 	};
@@ -74,26 +74,12 @@ function PackageDetailForm(props) {
 			<button className="btn btn-warning add-new" onClick={openModal}>
 				Thêm đề thi
 			</button>
-			<Modal
-				title="Thêm đề thi"
-				visible={isModalVisible}
-				footer={null}
-				onCancel={closeModal}
-			>
+			<Modal title="Thêm đề thi" visible={isModalVisible} footer={null} onCancel={closeModal}>
 				<div className="wrap-form">
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleSubmit)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-md-12 col-12">
-								<InputTextField
-									form={form}
-									name="Name"
-									label="Tên bộ đề"
-									placeholder="Nhập tên bộ đề"
-									disabled={true}
-								/>
+								<InputTextField form={form} name="Name" label="Tên bộ đề" placeholder="Nhập tên bộ đề" disabled={true} />
 							</div>
 							<div className="col-md-12 col-12">
 								<SelectField
@@ -104,19 +90,14 @@ function PackageDetailForm(props) {
 									optionList={optionExamTopicList}
 								/>
 							</div>
-							<div
-								className="col-md-12 col-12 mt-3 "
-								style={{textAlign: 'center'}}
-							>
+							<div className="col-md-12 col-12 mt-3 " style={{ textAlign: 'center' }}>
 								<button
 									type="submit"
 									className="btn btn-primary"
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									Khởi tạo
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
