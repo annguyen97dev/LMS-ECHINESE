@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Tooltip, Menu, Dropdown } from 'antd';
-import Link from 'next/link';
 import { EditOutlined } from '@ant-design/icons';
+import { Dropdown, Menu } from 'antd';
+import Link from 'next/link';
+import React from 'react';
+import { useWrap } from '~/context/wrap';
 
 const RegCourseBtn = () => {
+	const { userInformation } = useWrap();
 	const menu = () => {
 		return (
 			<div style={{ backgroundColor: '#ccc', boxShadow: '1px 2px 12px #00000038' }}>
@@ -13,11 +15,13 @@ const RegCourseBtn = () => {
 							<a>Đăng ký khóa học</a>
 						</Link>
 					</Menu.Item>
-					<Menu.Item>
-						<Link href={'/course/create-course-online/'}>
-							<a>Tạo khóa học</a>
-						</Link>
-					</Menu.Item>
+					{userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2 || userInformation.RoleID === 5) && (
+						<Menu.Item>
+							<Link href={'/course/create-course-online/'}>
+								<a>Tạo khóa học</a>
+							</Link>
+						</Menu.Item>
+					)}
 					<Menu.Item>
 						<Link href={'/customer/student/student-advisory/'}>
 							<a>Tạo khách hàng</a>

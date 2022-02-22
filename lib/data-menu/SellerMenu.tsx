@@ -91,7 +91,13 @@ export const SellerChildMenu = [
 					}
 				]
 			},
-
+			{
+				TypeItem: 'single',
+				Key: '/course/schedule-study',
+				Icon: '<span class="anticon"><img src="/images/icons/calendar.svg"></span>',
+				Route: '/course/schedule-study',
+				Text: 'Kiểm tra lịch'
+			},
 			{
 				TypeItem: 'single',
 				Key: '/course/register-course',
@@ -140,20 +146,6 @@ export const SellerChildMenu = [
 						Text: 'Dữ liệu học viên',
 						Icon: ''
 					},
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/customer/student/student-appointment',
-					// 	Route: '/customer/student/student-appointment',
-					// 	Text: 'HV chờ xếp lớp',
-					// 	Icon: ''
-					// },
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/customer/student/student-course',
-					// 	Route: '/customer/student/student-course',
-					// 	Text: 'HV trong khóa',
-					// 	Icon: ''
-					// },
 					{
 						ItemType: 'single',
 						Key: '/customer/student/student-change-course',
@@ -161,20 +153,6 @@ export const SellerChildMenu = [
 						Text: 'HV chuyển khóa',
 						Icon: ''
 					},
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/customer/student/student-reserve',
-					// 	Route: '/customer/student/student-reserve',
-					// 	Text: 'HV bảo lưu',
-					// 	Icon: ''
-					// },
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/customer/student/exchange-student',
-					// 	Route: '/customer/student/exchange-student',
-					// 	Text: 'HV chuyển giao',
-					// 	Icon: ''
-					// },
 
 					{
 						ItemType: 'single',
@@ -264,34 +242,6 @@ export const SellerChildMenu = [
 						Text: 'Chiến dịch kinh doanh',
 						Icon: ''
 					}
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/staff/sales-salary',
-					// 	Route: '/staff/sales-salary',
-					// 	Text: 'Duyệt lương',
-					// 	Icon: ''
-					// },
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/staff/sales-salary-history',
-					// 	Route: '/staff/sales-salary-history',
-					// 	Text: 'Lịch sử duyệt',
-					// 	Icon: ''
-					// },
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/staff/saler-list',
-					// 	Route: '/staff/saler-list',
-					// 	Text: 'Danh sách tư vấn viên',
-					// 	Icon: ''
-					// },
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/staff/saler-revenue',
-					// 	Route: '/staff/saler-revenue',
-					// 	Text: 'Doanh thu tư vấn viên',
-					// 	Icon: ''
-					// }
 				]
 			},
 			{

@@ -435,8 +435,10 @@ export default function StudentAdvisory() {
 	}, [todoApi]);
 
 	useEffect(() => {
-		(isAdmin || userInformation.RoleID === 6 || userInformation.RoleID === 5) && getDataStudentForm(listApi);
-	}, [isAdmin]);
+		userInformation &&
+			(userInformation.RoleID === 1 || userInformation.RoleID === 6 || userInformation.RoleID === 5) &&
+			getDataStudentForm(listApi);
+	}, [userInformation]);
 
 	const expandedRowRender = (data) => {
 		return (

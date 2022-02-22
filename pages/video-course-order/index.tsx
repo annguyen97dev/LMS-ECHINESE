@@ -1,16 +1,15 @@
-import React, { FC, useEffect, useState } from 'react';
-import 'antd/dist/antd.css';
-import { List, Card, Progress, Rate, Modal, Input, Tooltip, Popconfirm, message, Spin, Skeleton } from 'antd';
-import LayoutBase from '~/components/LayoutBase';
-import { VideoCourseListApi, DonePayApi } from '~/apiBase';
-import { useWrap } from '~/context/wrap';
-import Link from 'next/link';
-import CourseVideoTable from '~/components/CourseVideoTable';
-import { Filter, Eye, CheckCircle } from 'react-feather';
-import { parseToMoney } from '~/utils/functions';
 import { EyeOutlined } from '@ant-design/icons';
-import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
+import { Card, Input, List, Modal, Popconfirm, Spin, Tooltip } from 'antd';
+import 'antd/dist/antd.css';
 import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { CheckCircle } from 'react-feather';
+import { DonePayApi } from '~/apiBase';
+import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
+import CourseVideoTable from '~/components/CourseVideoTable';
+import LayoutBase from '~/components/LayoutBase';
+import { useWrap } from '~/context/wrap';
+import { parseToMoney } from '~/utils/functions';
 
 const { Search } = Input;
 
@@ -291,7 +290,11 @@ const VideoCourseList = () => {
 												style={{ width: 50, height: 50, borderRadius: 6, marginRight: 10 }}
 											/>
 											<div className="column">
-												<span style={{ fontWeight: 'bold' }}>{item?.VideoCourseName}</span>
+												<Tooltip title={item?.VideoCourseName}>
+													<span style={{ fontWeight: 'bold' }} className="limit-text">
+														{item?.VideoCourseName}
+													</span>
+												</Tooltip>
 												<span>{parseToMoney(item?.VideoCoursePrice)}đ</span>
 											</div>
 											<div className="column">
