@@ -72,7 +72,7 @@ function index(props: any) {
 		});
 	};
 
-	const _Submit = async (data: {}) => {
+	const _Submit = async (data: any) => {
 		setLoading(true);
 		props?.onSubmit(data);
 	};
