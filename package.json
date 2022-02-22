@@ -8,7 +8,7 @@
 	"scripts": {
 		"dev": "next dev -p 3000",
 		"build": "next build",
-		"start": "next start",
+		"start": "next start -p $PORT",
 		"docker": "docker build -t react-docker .",
 		"react-docker": "docker run -p 3000:80 react-docker"
 	},
