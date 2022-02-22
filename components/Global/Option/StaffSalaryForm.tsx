@@ -249,7 +249,7 @@ const StaffSalaryForm = (props) => {
 												onSearch={onSearch}
 												optionFilterProp="children"
 												showSearch
-												filterOption={(input, option) =>
+												filterOption={(input: any, option: any) =>
 													!isLoading.loading && option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 												}
 											>

@@ -114,7 +114,7 @@ const ProgramForm = React.memo((props: any) => {
 										optionFilterProp="children"
 										onChange={onChangeSelect('GradeID')}
 
-										//   filterOption={(input, option) =>
+										//   filterOption={(input: any, option: any) =>
 										//     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 										//   }
 									>

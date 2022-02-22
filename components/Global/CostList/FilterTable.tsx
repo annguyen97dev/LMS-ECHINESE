@@ -24,7 +24,7 @@ const FilterTable = () => {
 								className="style-input"
 								defaultValue="all"
 								onChange={handleChange}
-								filterOption={(input, option) => option.children.indexOf(input) >= 0}
+								filterOption={(input: any, option: any) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
 							>
 								<Option value="jack">Active</Option>
 								<Option value="lucy">Not Actived</Option>

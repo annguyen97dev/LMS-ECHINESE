@@ -231,7 +231,7 @@ export default function Header({
                 placeholder="Chọn trung tâm"
                 optionFilterProp="children"
                 onChange={onChange}
-                filterOption={(input, option) =>
+                filterOption={(input: any, option: any) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
