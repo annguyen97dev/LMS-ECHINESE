@@ -6,7 +6,6 @@ import { documentApi } from '~/apiBase/course-detail/document';
 import { documentCategoryApi } from '~/apiBase/course-detail/document-category';
 import FileExtension from '~/components/Global/CourseList/CourseListDetail/Document/FileExtension';
 import { useWrap } from '~/context/wrap';
-// import  FileExtension  from '~/components/Global/document-list/FileExtension';
 
 DocumentCourse.propTypes = {
 	courseID: PropTypes.number,
@@ -25,6 +24,8 @@ function DocumentCourse(props) {
 	const [categoryDoc, setCategoryDoc] = useState<ICategoryDoc[]>([]);
 	const { showNoti, pageSize } = useWrap();
 	const [documentList, setDocumentList] = useState<IDocument[]>([]);
+	console.log('courseDetail', courseDetail);
+	console.log('categoryDoc', categoryDoc);
 
 	const getDataCategoryDoc = async () => {
 		try {
@@ -33,7 +34,7 @@ function DocumentCourse(props) {
 				status: true
 			});
 			const res = await documentCategoryApi.getAll({
-				CurriculumID: courseDetail.CurriculumID,
+				CurriculumnID: courseDetail.CurriculumID,
 				pageIndex: 1,
 				pageSize: pageSize
 			});

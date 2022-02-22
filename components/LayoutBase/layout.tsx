@@ -38,17 +38,6 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 		return true;
 	});
 
-	// --------------- //
-
-	//   const defaultOptions = {
-	//     loop: true,
-	//     autoplay: true,
-	//     animationData: panda,
-	//     rendererSettings: {
-	//       preserveAspectRatio: "xMidYMid slice",
-	//     },
-	//   };
-
 	const [isOpen, setIsOpen] = useState(true);
 
 	const [openMenuMobile, setOpenMenuMobile] = useState(false);
@@ -56,23 +45,6 @@ function Layout({ children, home }: { children: React.ReactNode; home?: boolean 
 	const funcMenuMobile = () => {
 		!openMenuMobile ? setOpenMenuMobile(true) : setOpenMenuMobile(false);
 	};
-	//   const [session, loading] = useSession();
-	//   const [isLoading, setIsLoading] = useState(true);
-
-	//   useEffect(() => {
-	//     console.log("Session: ", session);
-
-	//     if (typeof session !== "undefined") {
-	//       if (session == null) {
-	//         // console.log("Test path: ", path.search("signin") < 0);
-	//         if (path.search("signin") < 0) {
-	//           signIn();
-	//         }
-	//       } else {
-	//         setIsLoading(false);
-	//       }
-	//     }
-	//   }, [session]);
 
 	const resetMenuMobile = () => {
 		setOpenMenuMobile(false);

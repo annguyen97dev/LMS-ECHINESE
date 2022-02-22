@@ -620,23 +620,23 @@ const StudentForm = (props) => {
 											</Select>
 										</Form.Item>
 									</div>
-									<div className="col-md-6 col-12">
+									{/* <div className="col-md-6 col-12">
 										<DateField form={form} name="DOB" label="Ngày sinh" placeholder="Chọn ngày sinh" />
-									</div>
-									<div className="col-md-6 col-12">
+									</div> */}
+									{/* <div className="col-md-6 col-12">
 										<InputTextField form={form} name="CMND" label="Số CMND" placeholder="Nhập số CMND" />
-									</div>
-									<div className="col-md-6 col-12">
+									</div> */}
+									{/* <div className="col-md-6 col-12">
 										<InputTextField
 											form={form}
 											name="CMNDRegister"
 											label="Nơi cấp CMND"
 											placeholder="Nhập nơi cấp CMND"
 										/>
-									</div>
-									<div className="col-md-6 col-12">
+									</div> */}
+									{/* <div className="col-md-6 col-12">
 										<DateField form={form} name="CMNDDate" label="Ngày cấp" placeholder="Chọn ngày cấp" />
-									</div>
+									</div> */}
 									<div className="col-md-6 col-12">
 										<SelectField
 											form={form}
@@ -646,7 +646,7 @@ const StudentForm = (props) => {
 											placeholder="Chọn giới tính"
 										/>
 									</div>
-									<div className="col-md-6 col-12">
+									{/* <div className="col-md-6 col-12">
 										<SelectField
 											form={form}
 											name="JobID"
@@ -654,8 +654,8 @@ const StudentForm = (props) => {
 											optionList={listData.Job}
 											placeholder="Chọn công việc"
 										/>
-									</div>
-									<div className="col-12">
+									</div> */}
+									{/* <div className="col-12">
 										<SelectField
 											form={form}
 											optionList={[
@@ -667,9 +667,9 @@ const StudentForm = (props) => {
 											label="Trạng thái"
 											placeholder="Chọn trạng thái"
 										/>
-									</div>
+									</div> */}
 									{/** ==== Địa chỉ  ====*/}
-									<div className="col-12">
+									{/* <div className="col-12">
 										<Divider orientation="center">Địa chỉ</Divider>
 									</div>
 									<div className="col-md-6 col-12">
@@ -694,9 +694,9 @@ const StudentForm = (props) => {
 											onChangeSelect={(value) => handleChange_select(value, 'WardID')}
 											placeholder="Chọn quận/huyện"
 										/>
-									</div>
+									</div> */}
 									{/*  */}
-									<div className="col-md-6 col-12">
+									{/* <div className="col-md-6 col-12">
 										<SelectField
 											isLoading={loadingSelect.name == 'WardID' && loadingSelect.status}
 											form={form}
@@ -716,7 +716,7 @@ const StudentForm = (props) => {
 											label="Số nhà/tên đường"
 											placeholder="Nhập số nhà/tên đường"
 										/>
-									</div>
+									</div> */}
 									{/** Hẹn Test */}
 									<div className="col-12">
 										<Divider orientation="center">{isStudentDetail ? 'Trung tâm' : 'Hẹn test'}</Divider>

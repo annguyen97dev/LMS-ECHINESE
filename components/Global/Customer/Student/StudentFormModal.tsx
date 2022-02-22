@@ -55,7 +55,7 @@ const StudentFormModal = (props) => {
 
 	const [isStudentDetail, setIsStudentDetail] = useState(url.includes('student-list') || url.includes('student-detail'));
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -668,6 +668,7 @@ const StudentFormModal = (props) => {
 							</div>
 							<div className="col-md-6 col-12">
 								<SelectField
+									disabled={userInformation && userInformation.RoleID === 6}
 									form={form}
 									name="CounselorsID"
 									label="Tư vấn viên"
