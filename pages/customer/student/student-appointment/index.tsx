@@ -1,17 +1,16 @@
-import { Tooltip } from 'antd';
+import { Checkbox, Tooltip } from 'antd';
 import Link from 'next/link';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Eye } from 'react-feather';
 import { branchApi, programApi } from '~/apiBase';
+import { courseRegistrationApi } from '~/apiBase/customer/student/course-registration';
 import FilterBase from '~/components/Elements/FilterBase/FilterBase';
 import SortBox from '~/components/Elements/SortBox';
+import CourseRegForm from '~/components/Global/Customer/Student/CourseRegistration/CourseRegForm';
 import LayoutBase from '~/components/LayoutBase';
+import PowerTable from '~/components/PowerTable';
 import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
-import { courseRegistrationApi } from '~/apiBase/customer/student/course-registration';
-import CourseRegForm from '~/components/Global/Customer/Student/CourseRegistration/CourseRegForm';
-import { Checkbox } from 'antd';
-import { Eye } from 'react-feather';
-import PowerTable from '~/components/PowerTable';
 
 const CourseRegistration = () => {
 	const [listStudent, setListStudent] = useState([]);

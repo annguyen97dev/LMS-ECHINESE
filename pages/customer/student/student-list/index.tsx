@@ -407,8 +407,8 @@ const StudentData = () => {
 	}, [todoApi]);
 
 	useEffect(() => {
-		isAdmin && getDataStudentForm(listApi);
-	}, [isAdmin]);
+		isAdmin || (userInformation && userInformation.RoleID === 6 && getDataStudentForm(listApi));
+	}, [userInformation]);
 
 	// EXPAND ROW
 	const expandedRowRender = (data, index) => {

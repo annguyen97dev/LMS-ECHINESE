@@ -55,15 +55,19 @@ const FAQ = () => {
 			width: 130,
 			render: (text, data) => (
 				<div className="d-flex">
-					<AddQuesForm
-						mode="edit-questions"
-						onFetchData={() => {
-							// getPagination(1);
-							setTodoApi({ ...todoApi, pageIndex: currentPage });
-						}}
-						dataEdit={data}
-					/>
-					<DeleteTableRow handleDelete={() => updateDataDelete(data)} text="câu hỏi này" />
+					{userInformation?.RoleID == 1 ||
+						(userInformation?.RoleID == 5 && (
+							<AddQuesForm
+								mode="edit-questions"
+								onFetchData={() => {
+									// getPagination(1);
+									setTodoApi({ ...todoApi, pageIndex: currentPage });
+								}}
+								dataEdit={data}
+							/>
+						))}
+					{userInformation?.RoleID == 1 ||
+						(userInformation?.RoleID == 5 && <DeleteTableRow handleDelete={() => updateDataDelete(data)} text="câu hỏi này" />)}
 				</div>
 			)
 		}

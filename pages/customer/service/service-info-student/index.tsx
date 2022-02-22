@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import TitlePage from '~/components/TitlePage';
-import LayoutBase from '~/components/LayoutBase';
-import { areaApi, jobApi, puroseApi, branchApi, sourceInfomationApi, parentsApi, staffApi, teacherApi, examTopicApi } from '~/apiBase';
+import { areaApi, branchApi, examTopicApi, jobApi, parentsApi, puroseApi, sourceInfomationApi, staffApi, teacherApi } from '~/apiBase';
 import StudentForm from '~/components/Global/Customer/Student/StudentForm';
+import LayoutBase from '~/components/LayoutBase';
+import TitlePage from '~/components/TitlePage';
 
 // -- FOR DIFFERENT VIEW --
 interface listDataForm {
@@ -18,21 +18,6 @@ interface listDataForm {
 	Teacher: Array<Object>;
 	Exam: Array<Object>;
 }
-
-const optionGender = [
-	{
-		value: 0,
-		title: 'Nữ'
-	},
-	{
-		value: 1,
-		title: 'Nam'
-	},
-	{
-		value: 0,
-		title: 'Khác'
-	}
-];
 
 const listApi = [
 	{
