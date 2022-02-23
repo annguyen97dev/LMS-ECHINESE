@@ -61,7 +61,7 @@ const CreateCourseOnline = () => {
 	const router = useRouter();
 	// -----------STATE-----------
 	// FORM
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [isLoading, setIsLoading] = useState({
 		type: '',
 		status: false
@@ -261,17 +261,27 @@ const CreateCourseOnline = () => {
 			type: 'ProgramID',
 			status: true
 		});
-
 		try {
 			const res = await teacherApi.getTeacherByProgram(dataToFetchTeacher);
 			if (res.status === 200) {
 				const newTeacherList = fmSelectArr(res.data.data, 'FullNameUnicode', 'UserInformationID');
-				setOptionListForForm((prevState) => ({
-					...prevState,
-					teacherList: newTeacherList
-				}));
+				if (userInformation && userInformation.RoleID === 2) {
+					setOptionListForForm((prevState) => ({
+						...prevState,
+						teacherList: newTeacherList.filter((item) => item.value === userInformation.UserInformationID)
+					}));
+					if (newTeacherList.filter((item) => item.value === userInformation.UserInformationID).length == 0) {
+						showNoti('danger', 'Giáo viên không được phép dạy chương trình này!');
+					}
+				} else {
+					setOptionListForForm((prevState) => ({
+						...prevState,
+						teacherList: newTeacherList
+					}));
+				}
 			}
 			if (res.status === 204) {
+				showNoti('danger', 'Không tìm thấy giáo viên!');
 				setOptionListForForm((prevState) => ({
 					...prevState,
 					teacherList: []

@@ -9,6 +9,7 @@ import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
+import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
 import { optionCommonPropTypes } from '~/utils/proptypes';
 
@@ -26,6 +27,7 @@ const CreateCourseOnlineForm = (props) => {
 	} = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
+	const { userInformation } = useWrap();
 	const closeModal = () => setIsModalVisible(false);
 
 	const schema = yup.object().shape({
@@ -242,6 +244,7 @@ const CreateCourseOnlineForm = (props) => {
 							<div className="col-md-6 col-12">
 								<SelectField
 									form={form}
+									disabled={userInformation && userInformation.RoleID === 2}
 									name="TeacherID"
 									label="Giáo viên"
 									isRequired

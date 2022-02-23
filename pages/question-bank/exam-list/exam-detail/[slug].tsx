@@ -1,27 +1,25 @@
-import React, { useEffect, useRef, useState, useContext, createContext } from 'react';
-
-import { Popover, Card, Skeleton, Spin } from 'antd';
-import TitlePage from '~/components/Elements/TitlePage';
-import { Info, Bookmark } from 'react-feather';
-
-import LayoutBase from '~/components/LayoutBase';
+import { AlignRightOutlined } from '@ant-design/icons';
+import { Card, Popover, Skeleton, Spin } from 'antd';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { userInfo } from 'os';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { Bookmark, Info } from 'react-feather';
 import { examDetailApi, examTopicApi } from '~/apiBase';
-import { useWrap } from '~/context/wrap';
+import PopupConfirm from '~/components/Elements/PopupConfirm';
+import TitlePage from '~/components/Elements/TitlePage';
+import AddQuestionAuto from '~/components/Global/ExamDetail/AddQuestionAuto';
 import AddQuestionModal from '~/components/Global/ExamDetail/AddQuestionModal';
 import ChoiceList from '~/components/Global/ExamList/ExamShow/ChoiceList';
-import MultipleList from '~/components/Global/ExamList/ExamShow/MultipleList';
-import WrapList from '~/components/Global/ExamList/ExamShow/WrapList';
-import MapList from '~/components/Global/ExamList/ExamShow/MapList';
 import DragList from '~/components/Global/ExamList/ExamShow/DragList';
-import TypingList from '~/components/Global/ExamList/ExamShow/TypingList';
-import WrittingList from '~/components/Global/ExamList/ExamShow/WrittingList';
-import AddQuestionAuto from '~/components/Global/ExamDetail/AddQuestionAuto';
-import Link from 'next/link';
-import ChangePosition from '~/components/Global/ExamList/ExamForm/ChangePosition';
+import MapList from '~/components/Global/ExamList/ExamShow/MapList';
+import MultipleList from '~/components/Global/ExamList/ExamShow/MultipleList';
 import SpeakingList from '~/components/Global/ExamList/ExamShow/Speaking';
-import { AlignRightOutlined } from '@ant-design/icons';
-import PopupConfirm from '~/components/Elements/PopupConfirm';
+import TypingList from '~/components/Global/ExamList/ExamShow/TypingList';
+import WrapList from '~/components/Global/ExamList/ExamShow/WrapList';
+import WrittingList from '~/components/Global/ExamList/ExamShow/WrittingList';
+import LayoutBase from '~/components/LayoutBase';
+import { useWrap } from '~/context/wrap';
 
 const listAlphabet = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'];
 
@@ -119,8 +117,6 @@ const ExamDetail = () => {
 			setIsLoading(false);
 		}
 	};
-
-	console.log('DAtaChange: ', dataChange);
 
 	// ---- GET ALL LIST QUESTION ID ----
 	const getAllListQuestionID = async () => {
@@ -611,16 +607,6 @@ const ExamDetail = () => {
 													<span className="title">Giáo trình:</span>
 													<span className="text text-curriculum">{examTopicDetail?.CurriculumName}</span>
 												</li>
-												{/* <li>
-                          <span className="title">Thời gian:</span>
-                          <span className="text">
-                            {examTopicDetail?.Time} phút
-                          </span>
-                        </li> */}
-												{/* <li>
-													<span className="title">Tổng số câu:</span>
-													<span className="text">{listQuestionID.length}</span>
-												</li> */}
 											</ul>
 										)}
 									</Popover>
@@ -628,25 +614,22 @@ const ExamDetail = () => {
 							}
 							extra={
 								<>
-									{/* <button className="btn btn-primary" onClick={startChangePosition}>
-										<div className="d-flex align-items-center">
-											<AlignRightOutlined className="mr-2" style={{ width: '18px' }} />
-											{isChangePosition ? 'Lưu' : 'Sắp xếp'}
-										</div>
-									</button>
-									<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
-									<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} /> */}
-									<Popover
-										visible={visiblePopover}
-										content={contentButton}
-										placement="bottomRight"
-										title={null}
-										trigger="click"
-									>
-										<button className="btn btn-light btn-function" onClick={() => setVisiblePopover(!visiblePopover)}>
-											Chức năng
-										</button>
-									</Popover>
+									{userInformation && userInformation.RoleID !== 2 && (
+										<Popover
+											visible={visiblePopover}
+											content={contentButton}
+											placement="bottomRight"
+											title={null}
+											trigger="click"
+										>
+											<button
+												className="btn btn-light btn-function"
+												onClick={() => setVisiblePopover(!visiblePopover)}
+											>
+												Chức năng
+											</button>
+										</Popover>
+									)}
 								</>
 							}
 						>
@@ -676,11 +659,7 @@ const ExamDetail = () => {
 						</Card>
 					</div>
 					<div className="col-md-3 col-12 fixed-card">
-						<Card
-							className="card-exam-bank"
-							title="Danh sách đề cùng giáo trình"
-							// extra={<AddQuestionForm />}
-						>
+						<Card className="card-exam-bank" title="Danh sách đề cùng giáo trình">
 							<ul className="list-exam-bank">
 								{loadingExam ? (
 									<div className="text-center mt-4">

@@ -299,12 +299,12 @@ const SalesCampaign = () => {
 		},
 		{
 			title: 'Số ngày',
-			width: 100,
+			width: 150,
 			dataIndex: 'TotalDay'
 		},
 		{
 			title: 'Doanh thu',
-			width: 100,
+			width: 150,
 			dataIndex: 'TotalRevenue',
 			render: (text) => numberWithCommas(text)
 		},

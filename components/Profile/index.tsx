@@ -209,34 +209,37 @@ const ProfileBase = (props) => {
 											</>
 										)}
 									</TabPane>
+									{userInformation && userInformation.RoleID === 3 && (
+										<>
+											<TabPane tab="Kiểm tra đầu vào" key="2" className="profile-tabs">
+												<InfoTestCard studentID={userInformation && userInformation.UserInformationID} />
+											</TabPane>
 
-									<TabPane tab="Kiểm tra đầu vào" key="2" className="profile-tabs">
-										<InfoTestCard studentID={userInformation.UserInformationID} />
-									</TabPane>
+											<TabPane tab="Lộ trình" key="9" className="profile-tabs">
+												<InfoStudyCard studentID={userInformation && userInformation.UserInformationID} />
+											</TabPane>
 
-									<TabPane tab="Lộ trình" key="9" className="profile-tabs">
-										<InfoStudyCard studentID={userInformation.UserInformationID} />
-									</TabPane>
+											<TabPane tab="Mã khuyến mãi" key="7" className="profile-tabs">
+												<InfoDiscountCard studentID={userInformation && userInformation.UserInformationID} />
+											</TabPane>
 
-									<TabPane tab="Mã khuyến mãi" key="7" className="profile-tabs">
-										<InfoDiscountCard studentID={userInformation.UserInformationID} />
-									</TabPane>
+											<TabPane tab="Khóa học" key="3" className="profile-tabs">
+												<InfoCourseCard studentID={userInformation && userInformation.UserInformationID} />
+											</TabPane>
 
-									<TabPane tab="Khóa học" key="3" className="profile-tabs">
-										<InfoCourseCard studentID={userInformation.UserInformationID} />
-									</TabPane>
+											<TabPane tab="Kết quả kiểm tra" key="6" className="profile-tabs">
+												<InfoTestResultCard studentID={userInformation && userInformation.UserInformationID} />
+											</TabPane>
 
-									<TabPane tab="Kết quả kiểm tra" key="6" className="profile-tabs">
-										<InfoTestResultCard studentID={userInformation.UserInformationID} />
-									</TabPane>
+											<TabPane tab="Thanh toán" key="4" className="profile-tabs">
+												<InfoPaymentCard studentID={userInformation && userInformation.UserInformationID} />
+											</TabPane>
 
-									<TabPane tab="Thanh toán" key="4" className="profile-tabs">
-										<InfoPaymentCard studentID={userInformation.UserInformationID} />
-									</TabPane>
-
-									<TabPane tab="Lịch sử tài khoản" key="5" className="profile-tabs">
-										<InfoTimelineCard studentID={userInformation.UserInformationID} />
-									</TabPane>
+											<TabPane tab="Lịch sử tài khoản" key="5" className="profile-tabs">
+												<InfoTimelineCard studentID={userInformation && userInformation.UserInformationID} />
+											</TabPane>
+										</>
+									)}
 								</Tabs>
 							</Form>
 						)}

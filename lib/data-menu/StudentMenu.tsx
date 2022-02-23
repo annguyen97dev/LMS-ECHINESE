@@ -6,22 +6,6 @@ export const StudentParentMenu = [
 		TabName: 'tab-home',
 		Icon: <Home />
 	},
-	//   {
-	//     TabName: "tab-course",
-	//     Icon: <Airplay />,
-	//   },
-	//   {
-	//     TabName: "tab-exercise",
-	//     Icon: <FileText />,
-	//   },
-	//   {
-	//     TabName: "tab-student",
-	//     Icon: <User />,
-	//   },
-	//   {
-	//     TabName: "tab-staff",
-	//     Icon: <UserCheck />,
-	//   },
 	{
 		TabName: 'tab-package',
 		Icon: <Package />
@@ -174,13 +158,6 @@ export const StudentChildMenu = [
 				Key: '/package/pay-fix-list',
 				Route: '/package/pay-fix-list',
 				Text: 'Mua lượt chấm bài',
-				Icon: ''
-			},
-			{
-				ItemType: 'single',
-				Key: '/package/rank-result-student',
-				Route: '/package/rank-result-student',
-				Text: 'Bảng xếp hạng làm bài',
 				Icon: ''
 			}
 		]

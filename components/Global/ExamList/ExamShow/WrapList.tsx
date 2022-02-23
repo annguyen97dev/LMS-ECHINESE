@@ -11,7 +11,7 @@ import ChangePosition from '../ExamForm/ChangePosition';
 const WrapList = (props) => {
 	const { children, dataQuestion, listQuestionID } = props;
 	const { onDeleteQuestion } = useExamDetail();
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
 		id: null,
@@ -75,32 +75,6 @@ const WrapList = (props) => {
 			  });
 	};
 
-	// useEffect(() => {
-	//   if (dataQuestion.Paragraph !== "") {
-	//     let spaceEditor = document.querySelectorAll(".space-editor");
-
-	//     if (spaceEditor && spaceEditor.length > 0) {
-	//       spaceEditor.forEach((item, index) => {
-	//         let quesID = parseInt(item.getAttribute("ques-id"));
-
-	//         let indexQues = null;
-	//         if (listQuestionID.includes(quesID)) {
-	//           indexQues = listQuestionID.indexOf(quesID);
-	//         }
-
-	//         let span = document.createElement("span");
-	//         span.classList.add("position-space");
-	//         span.id = quesID.toString();
-
-	//         span.append(`(${indexQues + 1})`);
-
-	//         item.innerHTML = `(${indexQues + 1})`;
-	//         item.before(span);
-	//       });
-	//     }
-	//   }
-	// }, []);
-
 	useEffect(() => {
 		dataQuestion?.ExerciseTopic.forEach((element) => {
 			listQuesiton.push({
@@ -128,11 +102,6 @@ const WrapList = (props) => {
 							{ReactHtmlParser(dataQuestion?.Content)}
 						</div>
 						{dataQuestion.Type == 3 && <h6 className="font-italic mb-3 mt-4">Điền vào ô trống</h6>}
-						{/* {dataQuestion?.Paragraph && (
-              <div className="paragraph">
-                {ReactHtmlParser(dataQuestion?.Paragraph)}
-              </div>
-            )} */}
 
 						<>{React.cloneElement(children)}</>
 					</div>
@@ -140,19 +109,21 @@ const WrapList = (props) => {
 						{listQuesiton.length > 0 && (
 							<EditPoint quesItem={null} listQuestionGroup={listQuesiton} dataQuestion={dataQuestion} />
 						)}
-						<Popconfirm
-							title="Bạn có chắc muốn xóa?"
-							// visible={item.ID == visible.id && visible.status}
-							onConfirm={() => handleOk(dataQuestion)}
-							okButtonProps={{ loading: confirmLoading }}
-							onCancel={() => handleCancel(dataQuestion.ID)}
-						>
-							<Tooltip title="Xóa nhóm câu hỏi" placement="rightTop">
-								<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(dataQuestion.ID)}>
-									<Trash2 />
-								</button>
-							</Tooltip>
-						</Popconfirm>
+						{userInformation && userInformation.RoleID !== 2 && (
+							<Popconfirm
+								title="Bạn có chắc muốn xóa?"
+								// visible={item.ID == visible.id && visible.status}
+								onConfirm={() => handleOk(dataQuestion)}
+								okButtonProps={{ loading: confirmLoading }}
+								onCancel={() => handleCancel(dataQuestion.ID)}
+							>
+								<Tooltip title="Xóa nhóm câu hỏi" placement="rightTop">
+									<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(dataQuestion.ID)}>
+										<Trash2 />
+									</button>
+								</Tooltip>
+							</Popconfirm>
+						)}
 						<ChangePosition questionID={dataQuestion.ID} />
 						<div className="point-question mt-2">
 							<p className="text">{dataQuestion.ExerciseTopic[0].Point}</p>
