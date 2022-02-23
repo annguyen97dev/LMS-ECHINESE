@@ -12,6 +12,7 @@ import SelectField from '~/components/FormControl/SelectField';
 import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
 import { optionCommonPropTypes } from '~/utils/proptypes';
+import { useEffect } from 'react';
 
 const CreateCourseOnlineForm = (props) => {
 	const {
@@ -59,6 +60,15 @@ const CreateCourseOnlineForm = (props) => {
 		CourseName: '',
 		TimeCourse: [{ DaySelected: null, StudyTimeID: null }]
 	};
+
+	useEffect(() => {
+		if (optionListForForm && optionListForForm.teacherList.length === 1) {
+			form.setValue('TeacherID', optionListForForm.teacherList[0].value);
+		} else {
+			form.setValue('TeacherID', null);
+		}
+	}, [optionListForForm]);
+
 	const form = useForm<ICOCreateForm>({
 		defaultValues: defaultValuesInit,
 		resolver: yupResolver(schema)
