@@ -1,35 +1,28 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 
 const AreaForm = (props) => {
-	const {
-		handleCreateArea,
-		isUpdate,
-		handleUpdateArea,
-		updateObj,
-		isLoading,
-		indexUpdateObj,
-	} = props;
+	const { handleCreateArea, isUpdate, handleUpdateArea, updateObj, isLoading, indexUpdateObj } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 
 	const schema = yup.object().shape({
-		AreaName: yup.string().required('Bạn không được để trống'),
+		AreaName: yup.string().required('Bạn không được để trống')
 	});
 
 	const defaultValuesInit = {
-		AreaName: '',
+		AreaName: ''
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
@@ -53,7 +46,7 @@ const AreaForm = (props) => {
 				handleCreateArea(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
-						form.reset({...defaultValuesInit});
+						form.reset({ ...defaultValuesInit });
 					}
 				});
 				break;
@@ -67,7 +60,7 @@ const AreaForm = (props) => {
 			{isUpdate ? (
 				<button className="btn btn-icon edit" onClick={openModal}>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			) : (
@@ -101,9 +94,7 @@ const AreaForm = (props) => {
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Update' : 'Create'}
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
@@ -120,16 +111,16 @@ AreaForm.propTypes = {
 	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
-	indexUpdateObj: PropTypes.number,
+	indexUpdateObj: PropTypes.number
 };
 AreaForm.defaultProps = {
 	handleCreateArea: null,
 	isUpdate: false,
 	handleUpdateArea: null,
 	updateObj: {},
-	isLoading: {type: '', status: false},
-	indexUpdateObj: -1,
+	isLoading: { type: '', status: false },
+	indexUpdateObj: -1
 };
 export default AreaForm;

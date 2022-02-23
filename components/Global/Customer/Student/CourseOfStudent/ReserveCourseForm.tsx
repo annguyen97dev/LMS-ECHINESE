@@ -23,7 +23,7 @@ const ReserveCourseForm = React.memo((props: any) => {
 	const onSubmit = async (data: any) => {
 		setLoading(true);
 		try {
-            console.log('date check', data)
+			console.log('date check', data);
 			let res = await courseReserveApi.add({
 				...data,
 				CourseOfStudentID: infoDetail.ID
@@ -52,7 +52,7 @@ const ReserveCourseForm = React.memo((props: any) => {
 				}}
 			>
 				<Tooltip title="Bảo lưu khóa">
-					<RotateCcw />
+					<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 				</Tooltip>
 			</button>
 

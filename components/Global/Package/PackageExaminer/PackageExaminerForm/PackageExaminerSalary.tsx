@@ -1,31 +1,31 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Checkbox, Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Checkbox, Form, Modal, Spin, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
-import {numberWithCommas} from '~/utils/functions';
+import { numberWithCommas } from '~/utils/functions';
 
 PackageExaminerSalary.propTypes = {
 	isUpdate: PropTypes.bool,
 	examinerObj: PropTypes.object,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
-	handleSubmit: PropTypes.func,
+	handleSubmit: PropTypes.func
 };
 PackageExaminerSalary.defaultProps = {
 	isUpdate: false,
 	examinerObj: {},
-	isLoading: {type: '', status: false},
-	handleSubmit: null,
+	isLoading: { type: '', status: false },
+	handleSubmit: null
 };
 
 function PackageExaminerSalary(props) {
-	const {isLoading, isUpdate, examinerObj, handleSubmit} = props;
+	const { isLoading, isUpdate, examinerObj, handleSubmit } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const openModal = () => {
@@ -38,16 +38,16 @@ function PackageExaminerSalary(props) {
 	const schema = yup.object().shape({
 		TeacherName: yup.string().required('Bạn không được để trống'),
 		TeacherID: yup.number().required('Bạn không được để trống'),
-		Salary: yup.string().required('Bạn không được để trống'),
+		Salary: yup.string().required('Bạn không được để trống')
 	});
 	const defaultValuesInit = {
 		TeacherName: '',
 		TeacherID: '',
-		Salary: '',
+		Salary: ''
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
@@ -55,12 +55,12 @@ function PackageExaminerSalary(props) {
 			form.reset({
 				Salary: examinerObj.Salary ? numberWithCommas(examinerObj.Salary) : '',
 				TeacherID: examinerObj.UserInformationID || examinerObj.TeacherID,
-				TeacherName: examinerObj.FullNameUnicode || examinerObj.TeacherName,
+				TeacherName: examinerObj.FullNameUnicode || examinerObj.TeacherName
 			});
 		} else {
 			form.reset({
 				TeacherID: examinerObj.UserInformationID || examinerObj.TeacherID,
-				TeacherName: examinerObj.FullNameUnicode || examinerObj.TeacherName,
+				TeacherName: examinerObj.FullNameUnicode || examinerObj.TeacherName
 			});
 		}
 	}, [examinerObj]);
@@ -71,7 +71,7 @@ function PackageExaminerSalary(props) {
 			if (res) {
 				closeModal();
 				if (!isUpdate) {
-					form.reset({...defaultValuesInit});
+					form.reset({ ...defaultValuesInit });
 				}
 			}
 		});
@@ -82,7 +82,7 @@ function PackageExaminerSalary(props) {
 			{isUpdate ? (
 				<button className="btn btn-icon edit" onClick={openModal}>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			) : (
@@ -92,18 +92,9 @@ function PackageExaminerSalary(props) {
 					onChange={openModal}
 				></Checkbox>
 			)}
-			<Modal
-				title="Danh sách giáo viên"
-				visible={isModalVisible}
-				onOk={closeModal}
-				onCancel={closeModal}
-				footer={null}
-			>
+			<Modal title="Danh sách giáo viên" visible={isModalVisible} onOk={closeModal} onCancel={closeModal} footer={null}>
 				<div>
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleSubmit)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-12">
 								<InputTextField
@@ -133,19 +124,14 @@ function PackageExaminerSalary(props) {
 								/>
 							</div>
 
-							<div
-								className="col-md-12 col-12 mt-3 "
-								style={{textAlign: 'center'}}
-							>
+							<div className="col-md-12 col-12 mt-3 " style={{ textAlign: 'center' }}>
 								<button
 									type="submit"
 									className="btn btn-primary"
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									Lưu
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

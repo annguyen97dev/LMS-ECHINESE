@@ -1,13 +1,13 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 const PointColumnForm = (props) => {
 	const {
@@ -17,7 +17,7 @@ const PointColumnForm = (props) => {
 		updateObj,
 		isLoading,
 		//
-		optionType,
+		optionType
 	} = props;
 	const [isDisabled, setIsDisabled] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -32,26 +32,23 @@ const PointColumnForm = (props) => {
 			.when('Type', (type, schema) => {
 				return type !== 1
 					? schema
-					: schema
-							.min(1, 'Hệ số tối thiểu: 1')
-							.max(10, 'Hệ số tối đa: 10')
-							.required('Bạn không được để trống');
-			}),
+					: schema.min(1, 'Hệ số tối thiểu: 1').max(10, 'Hệ số tối đa: 10').required('Bạn không được để trống');
+			})
 	});
 	const defaultValuesInit = {
 		Name: '',
 		Type: 1,
-		Coefficient: 1,
+		Coefficient: 1
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
 		if (isUpdate && updateObj) {
 			form.reset({
-				...updateObj,
+				...updateObj
 			});
 			if (updateObj.Type !== 1) {
 				setIsDisabled(true);
@@ -84,7 +81,7 @@ const PointColumnForm = (props) => {
 					if (res && res.status === 200) {
 						closeModal();
 						setIsDisabled(false);
-						form.reset({...defaultValuesInit});
+						form.reset({ ...defaultValuesInit });
 					}
 				});
 				break;
@@ -97,7 +94,7 @@ const PointColumnForm = (props) => {
 			{isUpdate ? (
 				<button className="btn btn-icon edit" onClick={openModal}>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			) : (
@@ -105,25 +102,12 @@ const PointColumnForm = (props) => {
 					Thêm mới
 				</button>
 			)}
-			<Modal
-				title={isUpdate ? 'Cập nhật cột điểm' : 'Tạo cột điểm'}
-				visible={isModalVisible}
-				onCancel={closeModal}
-				footer={null}
-			>
+			<Modal title={isUpdate ? 'Cập nhật cột điểm' : 'Tạo cột điểm'} visible={isModalVisible} onCancel={closeModal} footer={null}>
 				<div>
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(pointColumnSwitchFunc)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(pointColumnSwitchFunc)}>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="Name"
-									label="Tên kỳ thi"
-									placeholder="Nhập tên kỳ thi"
-								/>
+								<InputTextField form={form} name="Name" label="Tên kỳ thi" placeholder="Nhập tên kỳ thi" />
 							</div>
 						</div>
 						<div className="row">
@@ -158,9 +142,7 @@ const PointColumnForm = (props) => {
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Cập nhật' : 'Khởi tạo'}
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
@@ -178,16 +160,16 @@ PointColumnForm.propTypes = {
 	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
-	optionType: optionCommonPropTypes,
+	optionType: optionCommonPropTypes
 };
 PointColumnForm.defaultProps = {
 	handleCreatePointColumn: null,
 	isUpdate: false,
 	handleUpdatePointColumn: null,
 	updateObj: {},
-	isLoading: {type: '', status: false},
-	optionType: [],
+	isLoading: { type: '', status: false },
+	optionType: []
 };
 export default PointColumnForm;

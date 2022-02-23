@@ -76,7 +76,7 @@ const AddProductTypeForm = ({ mode, onFetchData, data }) => {
 					}}
 				>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			)}
