@@ -50,7 +50,7 @@ function RegisterForm(props) {
 
 	let timerID;
 
-	const _Submit = async (data: dataNewAccount) => {
+	const _Submit = async (data: any) => {
 		setLoading(true);
 
 		try {

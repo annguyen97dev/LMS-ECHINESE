@@ -1,33 +1,33 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {MinusCircle, PlusCircle, RotateCcw} from 'react-feather';
-import {useFieldArray, useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { MinusCircle, PlusCircle, RotateCcw } from 'react-feather';
+import { useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
 import TextAreaField from '~/components/FormControl/TextAreaField';
-import {numberWithCommas} from '~/utils/functions';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { numberWithCommas } from '~/utils/functions';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 SalesCampaignForm.propTypes = {
 	isUpdate: PropTypes.bool,
 	updateObj: PropTypes.shape({}),
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	handleSubmit: PropTypes.func,
-	optionStatusList: optionCommonPropTypes,
+	optionStatusList: optionCommonPropTypes
 };
 SalesCampaignForm.defaultProps = {
 	isUpdate: false,
 	updateObj: {},
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	handleSubmit: null,
-	optionStatusList: [],
+	optionStatusList: []
 };
 
 interface SalesCampaignFormProps {
@@ -41,8 +41,7 @@ interface SalesCampaignFormProps {
 	optionStatusList: IOptionCommon[];
 }
 function SalesCampaignForm(props: SalesCampaignFormProps) {
-	const {isUpdate, isLoading, updateObj, handleSubmit, optionStatusList} =
-		props;
+	const { isUpdate, isLoading, updateObj, handleSubmit, optionStatusList } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
@@ -54,23 +53,15 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 			.date()
 			.nullable()
 			.required('Bạn không được để trống')
-			.when(
-				'StartTime',
-				(startDate, schema) =>
-					startDate && schema.min(startDate, `Ngày không hợp lệ`)
-			),
+			.when('StartTime', (startDate, schema) => startDate && schema.min(startDate, `Ngày không hợp lệ`)),
 		Note: yup.string(),
 		StatusID: yup.number().nullable(),
 		SaleBonusList: yup.array().of(
 			yup.object().shape({
 				MoneyCollected: yup.string().required('Bạn không được để trống'),
-				PercentBonus: yup
-					.number()
-					.typeError('Bạn không được để trống')
-					.nullable()
-					.required('Bạn không được để trống'),
+				PercentBonus: yup.number().typeError('Bạn không được để trống').nullable().required('Bạn không được để trống')
 			})
-		),
+		)
 	});
 	const defaultValuesInit = {
 		Name: '',
@@ -78,15 +69,15 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 		EndTime: undefined,
 		Note: '',
 		StatusID: null,
-		SaleBonusList: [],
+		SaleBonusList: []
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
-	const {fields, append, remove} = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		control: form.control,
-		name: 'SaleBonusList',
+		name: 'SaleBonusList'
 	});
 
 	useEffect(() => {
@@ -95,8 +86,8 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 				...updateObj,
 				SaleBonusList: updateObj.SaleBonusList.map((s) => ({
 					...s,
-					MoneyCollected: numberWithCommas(s.MoneyCollected),
-				})),
+					MoneyCollected: numberWithCommas(s.MoneyCollected)
+				}))
 			});
 		}
 	}, [updateObj]);
@@ -107,7 +98,7 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 			if (res) {
 				closeModal();
 				if (!isUpdate) {
-					form.reset({...defaultValuesInit});
+					form.reset({ ...defaultValuesInit });
 				}
 			}
 		});
@@ -117,7 +108,7 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 			{isUpdate ? (
 				<button className="btn btn-icon edit" onClick={openModal}>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			) : (
@@ -126,64 +117,37 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 				</button>
 			)}
 			<Modal
-				style={{top: 50}}
+				style={{ top: 50 }}
 				title={isUpdate ? 'Cập nhật chiến dịch' : 'Tạo chiến dịch mới'}
 				visible={isModalVisible}
 				footer={null}
 				onCancel={closeModal}
 			>
 				<div className="wrap-form">
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(checkHandleSubmit)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(checkHandleSubmit)}>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="Name"
-									label="Tên chiến dịch"
-									placeholder="Nhập tên chiến dịch"
-								/>
+								<InputTextField form={form} name="Name" label="Tên chiến dịch" placeholder="Nhập tên chiến dịch" />
 							</div>
-							{isUpdate &&
-								optionStatusList
-									.map((o) => o.value)
-									.includes(form.getValues('StatusID')) && (
-									<div className="col-12">
-										<SelectField
-											form={form}
-											name="StatusID"
-											label="Trạng thái"
-											placeholder="Chọn trạng thái"
-											optionList={optionStatusList}
-										/>
-									</div>
-								)}
+							{isUpdate && optionStatusList.map((o) => o.value).includes(form.getValues('StatusID')) && (
+								<div className="col-12">
+									<SelectField
+										form={form}
+										name="StatusID"
+										label="Trạng thái"
+										placeholder="Chọn trạng thái"
+										optionList={optionStatusList}
+									/>
+								</div>
+							)}
 							<div className="col-md-6 col-12">
-								<DateField
-									form={form}
-									name="StartTime"
-									label="Ngày bắt đầu"
-									placeholder="Chọn ngày bắt đầu"
-								/>
+								<DateField form={form} name="StartTime" label="Ngày bắt đầu" placeholder="Chọn ngày bắt đầu" />
 							</div>
 							<div className="col-md-6 col-12">
-								<DateField
-									form={form}
-									name="EndTime"
-									label="Ngày kết thúc"
-									placeholder="Chọn ngày kết thúc"
-								/>
+								<DateField form={form} name="EndTime" label="Ngày kết thúc" placeholder="Chọn ngày kết thúc" />
 							</div>
 							<div className="col-md-12 col-12">
-								<TextAreaField
-									form={form}
-									name="Note"
-									label="Ghi chú"
-									placeholder="Nhập ghi chú"
-									rows={2}
-								/>
+								<TextAreaField form={form} name="Note" label="Ghi chú" placeholder="Nhập ghi chú" rows={2} />
 							</div>
 							<div className="col-12">
 								<div className="more-revenue">
@@ -191,12 +155,10 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 										size="20px"
 										className="add"
 										onClick={() => {
-											append({MoneyCollected: '', PercentBonus: null});
+											append({ MoneyCollected: '', PercentBonus: null });
 										}}
 										style={{
-											right: `${
-												form.getValues('SaleBonusList').length > 2 ? '10px' : 0
-											}`,
+											right: `${form.getValues('SaleBonusList').length > 2 ? '10px' : 0}`
 										}}
 									/>
 									<Form.Item label="Mốc doanh thu">
@@ -239,19 +201,14 @@ function SalesCampaignForm(props: SalesCampaignFormProps) {
 									</Form.Item>
 								</div>
 							</div>
-							<div
-								className="col-md-12 col-12 mt-3 "
-								style={{textAlign: 'center'}}
-							>
+							<div className="col-md-12 col-12 mt-3 " style={{ textAlign: 'center' }}>
 								<button
 									type="submit"
 									className="btn btn-primary w-100"
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Cập nhật' : 'Khởi tạo'}
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>

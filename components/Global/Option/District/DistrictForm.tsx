@@ -1,40 +1,32 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputTextField from '~/components/FormControl/InputTextField';
 import SelectField from '~/components/FormControl/SelectField';
-import {optionCommonPropTypes} from '~/utils/proptypes';
+import { optionCommonPropTypes } from '~/utils/proptypes';
 
 const DistrictForm = (props) => {
-	const {
-		handleCreateDistrict,
-		optionAreaList,
-		isUpdate,
-		handleUpdateDistrict,
-		updateObj,
-		isLoading,
-		indexUpdateObj,
-	} = props;
+	const { handleCreateDistrict, optionAreaList, isUpdate, handleUpdateDistrict, updateObj, isLoading, indexUpdateObj } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 
 	const schema = yup.object().shape({
 		AreaID: yup.number().nullable().required('Bạn không được để trống'),
-		DistrictName: yup.string().required('Bạn không được để trống'),
+		DistrictName: yup.string().required('Bạn không được để trống')
 	});
 
 	const defaultValuesInit = {
 		AreaID: null,
-		DistrictName: '',
+		DistrictName: ''
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 
 	useEffect(() => {
@@ -58,7 +50,7 @@ const DistrictForm = (props) => {
 				handleCreateDistrict(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
-						form.reset({...defaultValuesInit});
+						form.reset({ ...defaultValuesInit });
 					}
 				});
 				break;
@@ -72,7 +64,7 @@ const DistrictForm = (props) => {
 			{isUpdate ? (
 				<button className="btn btn-icon edit" onClick={openModal}>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			) : (
@@ -80,17 +72,9 @@ const DistrictForm = (props) => {
 					Thêm mới
 				</button>
 			)}
-			<Modal
-				title={isUpdate ? 'Update District' : 'Create District'}
-				visible={isModalVisible}
-				onCancel={closeModal}
-				footer={null}
-			>
+			<Modal title={isUpdate ? 'Update District' : 'Create District'} visible={isModalVisible} onCancel={closeModal} footer={null}>
 				<div>
-					<Form
-						layout="vertical"
-						onFinish={form.handleSubmit(districtSwitchFunc)}
-					>
+					<Form layout="vertical" onFinish={form.handleSubmit(districtSwitchFunc)}>
 						<div className="row">
 							<div className="col-12">
 								<SelectField
@@ -104,12 +88,7 @@ const DistrictForm = (props) => {
 						</div>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="DistrictName"
-									label="Tên quận"
-									placeholder="Nhập tên quận"
-								/>
+								<InputTextField form={form} name="DistrictName" label="Tên quận" placeholder="Nhập tên quận" />
 							</div>
 						</div>
 						<div className="row mt-3">
@@ -120,9 +99,7 @@ const DistrictForm = (props) => {
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Update' : 'Create'}
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
@@ -136,21 +113,21 @@ DistrictForm.propTypes = {
 	isUpdate: PropTypes.bool,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
+		status: PropTypes.bool.isRequired
 	}),
 	optionAreaList: optionCommonPropTypes,
 	updateObj: PropTypes.shape({}),
 	indexUpdateObj: PropTypes.number,
 	handleUpdateDistrict: PropTypes.func,
-	handleCreateDistrict: PropTypes.func,
+	handleCreateDistrict: PropTypes.func
 };
 DistrictForm.defaultProps = {
 	isUpdate: false,
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false },
 	optionAreaList: [],
 	updateObj: {},
 	indexUpdateObj: -1,
 	handleUpdateDistrict: null,
-	handleCreateDistrict: null,
+	handleCreateDistrict: null
 };
 export default DistrictForm;

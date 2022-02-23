@@ -88,7 +88,7 @@ const PriceFixExamForm = (props) => {
 			{dataRow ? (
 				<Tooltip title="Sửa giá">
 					<button className="btn btn-icon edit mr-1" onClick={showModal}>
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</button>
 				</Tooltip>
 			) : (

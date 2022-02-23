@@ -87,17 +87,17 @@ const ConfirmForm = ({ isLoading, record, userInformationID, setParams, params }
 				>
 					{record.StatusID == 1 && (
 						<Tooltip title="Cập nhật lương">
-							<RotateCcw />
+							<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 						</Tooltip>
 					)}
 					{record.StatusID == 3 && (
 						<Tooltip title="Cập nhật lại lương">
-							<RotateCcw />
+							<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 						</Tooltip>
 					)}
 					{record.StatusID == 4 && (
 						<Tooltip title="Gửi yêu cầu xác nhận lại">
-							<RotateCcw />
+							<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 						</Tooltip>
 					)}
 				</button>

@@ -6,9 +6,9 @@
 		"npm": "6.x"
 	},
 	"scripts": {
-		"dev": "next dev -p 3000",
+		"dev": "next dev -p 3009",
 		"build": "next build",
-		"start": "next start",
+		"start": "next start -p $PORT",
 		"docker": "docker build -t react-docker .",
 		"react-docker": "docker run -p 3000:80 react-docker"
 	},
