@@ -11,7 +11,7 @@ import ChangePosition from '../ExamForm/ChangePosition';
 const WrapList = (props) => {
 	const { children, dataQuestion, listQuestionID, arPosition, handleChange, addOldItem } = props;
 	const { onDeleteQuestion, isChangePosition } = useExamDetail();
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
 		id: null,
@@ -133,6 +133,25 @@ const WrapList = (props) => {
 								<p className="text">{dataQuestion.ExerciseTopic[0]?.Point}</p>
 							</div>
 						)}
+						{userInformation && userInformation.RoleID !== 2 && (
+							<Popconfirm
+								title="Bạn có chắc muốn xóa?"
+								// visible={item.ID == visible.id && visible.status}
+								onConfirm={() => handleOk(dataQuestion)}
+								okButtonProps={{ loading: confirmLoading }}
+								onCancel={() => handleCancel(dataQuestion.ID)}
+							>
+								<Tooltip title="Xóa nhóm câu hỏi" placement="rightTop">
+									<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(dataQuestion.ID)}>
+										<Trash2 />
+									</button>
+								</Tooltip>
+							</Popconfirm>
+						)}
+						<ChangePosition questionID={dataQuestion.ID} />
+						<div className="point-question mt-2">
+							<p className="text">{dataQuestion.ExerciseTopic[0].Point}</p>
+						</div>
 					</div>
 				</div>
 			) : (

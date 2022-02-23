@@ -2,7 +2,8 @@ import { AlignRightOutlined } from '@ant-design/icons';
 import { Card, Popover, Skeleton, Spin } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { userInfo } from 'os';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Bookmark, Info } from 'react-feather';
 import { examDetailApi, examTopicApi } from '~/apiBase';
 import PopupConfirm from '~/components/Elements/PopupConfirm';
@@ -61,7 +62,7 @@ const ExamDetailContext = createContext<IProps>({
 });
 
 const ExamDetail = () => {
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	const [rr, setRerender] = useState(''); // ĐỂ CÁI NÀY BUỘC NÓ RERENDER - BÙA CHÚ CẢ
 	const [arPosition, setArPositions] = useState([]);
 	const router = useRouter();
@@ -684,14 +685,6 @@ const ExamDetail = () => {
 													<span className="title">Giáo trình:</span>
 													<span className="text text-curriculum">{examTopicDetail?.CurriculumName}</span>
 												</li>
-												{/* <li>
-													<span className="title">Thời gian:</span>
-													<span className="text">{examTopicDetail?.Time} phút</span>
-												</li>
-												<li>
-													<span className="title">Tổng số câu:</span>
-													<span className="text">{listQuestionID.length}</span>
-												</li> */}
 											</ul>
 										)}
 									</Popover>
@@ -699,25 +692,22 @@ const ExamDetail = () => {
 							}
 							extra={
 								<>
-									{/* <button className="btn btn-primary" onClick={startChangePosition}>
-										<div className="d-flex align-items-center">
-											<AlignRightOutlined className="mr-2" style={{ width: '18px' }} />
-											{isChangePosition ? 'Lưu' : 'Sắp xếp'}
-										</div>
-									</button>
-									<AddQuestionAuto dataExam={examTopicDetail} onFetchData={onFetchData} examTopicID={examID} />
-									<AddQuestionModal dataExam={examTopicDetail} onFetchData={onFetchData} /> */}
-									<Popover
-										visible={visiblePopover}
-										content={contentButton}
-										placement="bottomRight"
-										title={null}
-										trigger="click"
-									>
-										<button className="btn btn-light btn-function" onClick={() => setVisiblePopover(!visiblePopover)}>
-											Chức năng
-										</button>
-									</Popover>
+									{userInformation && userInformation.RoleID !== 2 && (
+										<Popover
+											visible={visiblePopover}
+											content={contentButton}
+											placement="bottomRight"
+											title={null}
+											trigger="click"
+										>
+											<button
+												className="btn btn-light btn-function"
+												onClick={() => setVisiblePopover(!visiblePopover)}
+											>
+												Chức năng
+											</button>
+										</Popover>
+									)}
 								</>
 							}
 						>

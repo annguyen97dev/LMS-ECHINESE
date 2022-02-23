@@ -205,50 +205,12 @@ export default function Header({
 							<div className="icon-action">{!openMenuMobile ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</div>
 						</div>
 					</div>
-					{/* <div className="col-search">
-            <div className="box-input">
-              <SearchOutlined className="icon-search" />
-              <input type="text" placeholder="Search in app..." />
-            </div>
-          </div> */}
 					<div className="col-title-page">
 						<TitlePageHeader title={titlePage} />
 					</div>
 				</div>
 				<div className="col-setting">
 					<ul className="col-setting-list">
-						{/* <li className="notification">
-              <span className="notification-icon">
-                <i className="fal fa-bell" />
-              </span>
-              <span className="notification-number">5</span>
-            </li> */}
-						{/* <li className="select-center">
-              <Select
-                className="style-input"
-                showSearch
-                style={{ width: 200 }}
-                placeholder="Chọn trung tâm"
-                optionFilterProp="children"
-                onChange={onChange}
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-				xxx
-              >
-                <Option value="center-1">Trung tâm Anh Ngữ Zim</Option>
-                <Option value="center-2">Trung tâm Việt Hoa</Option>
-                <Option value="center-3">Mona Media</Option>
-              </Select>
-            </li> */}
-						{/* <li className="search">
-              <Popover content={content_search} trigger="click">
-                <a className="search-icon">
-                  <SearchOutlined />
-                </a>
-              </Popover>
-            </li> */}
 						{userInformation?.RoleID !== undefined &&
 							userInformation?.RoleID !== 1 &&
 							userInformation?.RoleID !== 2 &&
@@ -263,18 +225,9 @@ export default function Header({
 						<li className="notification">
 							<Notifiaction />
 						</li>
-						<li className="user">
-							<Popover
-								content={!session ? contentLogin : contentLogout}
-								// visible={userFunc}
-								// onVisibleChange={openUserFunc}
-								trigger="click"
-								title=""
-							>
+						<li className="user" style={{ paddingRight: 20 }}>
+							<Popover content={!session ? contentLogin : contentLogout} trigger="click" title="">
 								<div className="user-wrap">
-									{/* <div className="user-img">
-                    <img src="/images/user.jpg" alt="" />
-                  </div> */}
 									<div className="user-info">
 										{session?.user ? (
 											<div className="user-name-desktop">
@@ -300,19 +253,9 @@ export default function Header({
 										<div className="user-name-mobile">
 											<User />
 										</div>
-										{/* <p className="user-position">Teacher</p> */}
 									</div>
 								</div>
 							</Popover>
-						</li>
-						<li className="custom-wrap">
-							<div className="custom" onClick={showDrawer}>
-								{/* <SettingOutlined /> */}
-								<Grid />
-							</div>
-							<Drawer title="Chỉnh sửa" placement="right" onClose={onClose} visible={openMenuCustom}>
-								<p className="text-center font-weight-bold">Chức năng này đang được cập nhật...</p>
-							</Drawer>
 						</li>
 					</ul>
 				</div>

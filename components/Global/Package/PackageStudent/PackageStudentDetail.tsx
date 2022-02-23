@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { packageDetailApi } from '~/apiBase/package/package-detail';
 import TitlePage from '~/components/Elements/TitlePage';
 import { useWrap } from '~/context/wrap';
+import RankStudentModal from './RankStudentModal';
 
 const PackageStudentDetail = () => {
 	const router = useRouter();
@@ -16,6 +17,7 @@ const PackageStudentDetail = () => {
 	});
 	const [totalPage, setTotalPage] = useState(null);
 	const { showNoti } = useWrap();
+
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -32,6 +34,7 @@ const PackageStudentDetail = () => {
 		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
+
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
 		if (!pageSize) pageSize = 10;
@@ -108,47 +111,52 @@ const PackageStudentDetail = () => {
 									} = item;
 									return (
 										<List.Item>
-											<div className="wrap-set" style={{ paddingRight: 12 }}>
-												<div className="wrap-set-content">
-													<h6 className="set-title">
-														<Link
-															href={{
-																pathname: '/exam/exam-review',
-																query: {
-																	examID: ExamTopicID,
-																	packageDetailID: ID,
-																	type: 'examination' // Thi cử
-																}
-															}}
-														>
-															<a>{ExamTopicName}</a>
-														</Link>
-													</h6>
-													<ul className="set-list">
-														<li>
-															Môn: <span>{SubjectName}</span>
-														</li>
-														<li>
-															Thời gian: <span>{Time} phút</span>
-														</li>
-														<li>
-															Hình thức: <span>{TypeName}</span>
-														</li>
-													</ul>
-													<div className="set-btn">
-														<Link
-															href={{
-																pathname: '/exam/exam-review',
-																query: {
-																	examID: ExamTopicID,
-																	packageDetailID: ID,
-																	type: 'examination' // Thi cử
-																}
-															}}
-														>
-															<a className="btn btn-warning">Chi tiết đề thi</a>
-														</Link>
+											<div className="row wrap-set">
+												<div className=" col-11" style={{ paddingRight: 12 }}>
+													<div className="wrap-set-content">
+														<h6 className="set-title">
+															<Link
+																href={{
+																	pathname: '/exam/exam-review',
+																	query: {
+																		examID: ExamTopicID,
+																		packageDetailID: ID,
+																		type: 'examination' // Thi cử
+																	}
+																}}
+															>
+																<a>{ExamTopicName}</a>
+															</Link>
+														</h6>
+														<ul className="set-list">
+															<li>
+																Môn: <span>{SubjectName}</span>
+															</li>
+															<li>
+																Thời gian: <span>{Time} phút</span>
+															</li>
+															<li>
+																Hình thức: <span>{TypeName}</span>
+															</li>
+														</ul>
+														<div className="set-btn">
+															<Link
+																href={{
+																	pathname: '/exam/exam-review',
+																	query: {
+																		examID: ExamTopicID,
+																		packageDetailID: ID,
+																		type: 'examination' // Thi cử
+																	}
+																}}
+															>
+																<a className="btn btn-warning">Chi tiết đề thi</a>
+															</Link>
+														</div>
 													</div>
+												</div>
+												<div className="col-1" style={{ zIndex: 1000 }}>
+													<RankStudentModal ExamTopicID={ExamTopicID} />
 												</div>
 											</div>
 										</List.Item>
