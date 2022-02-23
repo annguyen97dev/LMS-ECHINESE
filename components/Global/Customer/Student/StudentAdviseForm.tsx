@@ -15,7 +15,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { isLoading, rowID, _onSubmit, getIndex, index, rowData, listData, dataProgram } = props;
 
-	const { showNoti } = useWrap();
+	const { showNoti, userInformation } = useWrap();
 
 	// -----  HANDLE ALL IN FORM -------------
 	const defaultValuesInit = {
@@ -181,6 +181,7 @@ const StudentAdviseForm = React.memo((props: any) => {
 										label="Tư vấn viên"
 										optionList={listData.Counselors}
 										isRequired={true}
+										disabled={userInformation && userInformation.RoleID === 6}
 									/>
 								</div>
 							)}

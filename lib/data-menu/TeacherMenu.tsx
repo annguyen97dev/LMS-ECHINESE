@@ -157,6 +157,56 @@ export const TeacherChildMenu = [
 				Icon: '<span class="anticon"><img src="/images/icons/shopping-bag.svg"></span>',
 				Route: '/course/register-course',
 				Text: 'Đăng ký khóa học'
+			},
+			{
+				ItemType: 'sub-menu',
+				Key: 'video-course',
+				Icon: '<span class="anticon"><img src="/images/icons/zoom-video.svg" ></span>',
+				TitleSub: 'Khóa học video',
+				SubMenuList: [
+					{
+						TypeItem: 'single',
+						Key: '/video-course',
+						Route: '/video-course',
+						Icon: '',
+						Text: 'Danh sách khóa học'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-order',
+						Icon: '',
+						Route: '/video-course-order',
+						Text: 'Danh sách đơn hàng'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/video-course-list',
+						Icon: '',
+						Route: '/video-course-list',
+						Text: 'Khóa học đã Active'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-type-video-course',
+						Icon: '',
+						Route: '/config-type-video-course',
+						Text: 'Cấu hình loại video'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-level-video-course',
+						Icon: '',
+						Route: '/config-level-video-course',
+						Text: 'Cấu hình cấp độ'
+					},
+					{
+						TypeItem: 'single',
+						Key: '/config-tag-video-course',
+						Icon: '',
+						Route: '/config-tag-video-course',
+						Text: 'Cấu hình tags'
+					}
+				]
 			}
 			// {
 			// 	ItemType: 'sub-menu',

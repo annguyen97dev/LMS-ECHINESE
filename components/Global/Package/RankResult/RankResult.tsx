@@ -256,10 +256,12 @@ const RankResult = (props) => {
 		{
 			title: 'Hạng',
 			dataIndex: 'Rank',
+			width: 100,
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Học viên',
+			width: 150,
 			dataIndex: 'StudentName',
 			render: (text, data) => (
 				<p className="font-weight-primary d-flex align-items-center">
@@ -269,11 +271,13 @@ const RankResult = (props) => {
 		},
 		{
 			title: 'Đề thi',
+			width: 150,
 			dataIndex: 'ExamTopicName',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		},
 		{
 			title: 'Điểm',
+			width: 100,
 			dataIndex: 'Point',
 			render: (text) => <p className="font-weight-black">{text}</p>
 		}
@@ -331,12 +335,6 @@ const RankResult = (props) => {
 									</Option>
 								))}
 						</Select>
-						{/* <FilterBase
-								dataFilter={dataFilter}
-								handleFilter={(listFilter: any) => handleFilter(listFilter)}
-								handleReset={handleReset}
-							/>
-							<SortBox handleSort={(value) => handleSort(value)} dataOption={dataOption} /> */}
 					</div>
 				}
 			/>

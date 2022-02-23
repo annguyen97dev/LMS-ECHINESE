@@ -241,7 +241,6 @@ const QuestionCreate = (props) => {
 
 	// GET DATA SOURCE - DATA EXERCISE
 	const getDataSource = async () => {
-		console.log('Chạy data source');
 		let res = null;
 		try {
 			if (!isGroup.status) {

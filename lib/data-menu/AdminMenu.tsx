@@ -70,13 +70,6 @@ export const AdminChildMenu = [
 				Icon: '<span class="anticon"><img src="/images/icons/study-course.svg" ></span>',
 				TitleSub: 'Quản lí khóa học',
 				SubMenuList: [
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/course/create-course',
-					// 	Route: '/course/create-course',
-					// 	Text: 'Tạo khóa học',
-					// 	Icon: ''
-					// },
 					{
 						ItemType: 'single',
 						Key: '/course/create-course-online',
@@ -84,20 +77,6 @@ export const AdminChildMenu = [
 						Text: 'Tạo khóa học online',
 						Icon: ''
 					},
-					// {
-					// 	ItemType: 'single',
-					// 	Key: '/course/create-self-course',
-					// 	Route: '/course/create-self-course',
-					// 	Text: 'Tạo khóa học 1 - 1',
-					// 	Icon: ''
-					// },
-					// {
-					//   ItemType: "single",
-					//   Key: "/course/create-course-self",
-					//   Route: "/course/create-course-self",
-					//   Text: "Tạo khóa tự học",
-					//   Icon: "",
-					// },
 					{
 						ItemType: 'single',
 						Key: '/course/course-list',
@@ -105,13 +84,6 @@ export const AdminChildMenu = [
 						Text: 'Danh sách khóa học',
 						Icon: ''
 					}
-					// {
-					//   ItemType: "single",
-					//   Key: "/course/course-list-self",
-					//   Route: "/course/course-list-self",
-					//   Text: "Danh sách khóa tự học",
-					//   Icon: "",
-					// },
 				]
 			},
 			{
@@ -121,27 +93,6 @@ export const AdminChildMenu = [
 				Route: '/course/schedule-study',
 				Text: 'Kiểm tra lịch'
 			},
-			//   {
-			//     TypeItem: "single",
-			//     Key: "/course/schedule-study-teacher",
-			//     Icon: '<span class="anticon"><img src="/images/icons/calendar.svg"></span>',
-			//     Route: "/course/schedule-study-teacher",
-			//     Text: "Lịch dạy giáo viên",
-			//   },
-			// {
-			// 	TypeItem: 'single',
-			// 	Key: '/course/course-list-report',
-			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
-			// 	Route: '/course/course-list-report',
-			// 	Text: 'Danh sách khóa học - báo cáo'
-			// },
-			// {
-			// 	TypeItem: 'single',
-			// 	Key: '/course/course-buy',
-			// 	Icon: '<span class="anticon"><img src="/images/icons/list.svg"></span>',
-			// 	Route: '/course/course-buy',
-			// 	Text: 'Danh sách khóa học - mua bán'
-			// },
 			{
 				TypeItem: 'single',
 				Key: '/course/register-course',

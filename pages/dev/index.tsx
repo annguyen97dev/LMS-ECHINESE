@@ -56,7 +56,7 @@ export default function BelongingToDev(props) {
 					<div className="dev__screen-content row">
 						<div className="col-12 d-flex justify-content-center align-items-end">
 							<Form.Item name="pass">
-								<Input placeholder="show me your power" style={{ width: 300 }} className="style-input" />
+								<Input.Password placeholder="show me your power" style={{ width: 300 }} className="style-input" />
 							</Form.Item>
 						</div>
 						<div className="col-12 d-flex justify-content-center align-items-center">
