@@ -10,7 +10,6 @@ import { useWrap } from '~/context/wrap';
 import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
 import { usePageVisibility } from '~/utils/functions';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
-// import YoutubePlayer from 'react-native-youtube-iframe';
 
 const initDetails = {
 	VideoCourseName: '',
@@ -327,11 +326,7 @@ const VideoLearning = () => {
 		);
 	}
 
-	console.log('videoStudy: ', videoStudy);
-
-	// useEffect(() => {
-	// 	ytplayer = document.getElementById('movie_player');
-	// }, []);
+	console.log(currentVideo);
 
 	// RENDER
 	return (
@@ -342,14 +337,7 @@ const VideoLearning = () => {
 					<div className="wrap-video pl-3">
 						<div ref={ref} className="wrap-video__video">
 							<div className="box-video" ref={boxVideo}>
-								{/* <h1
-									onClick={() => {
-										console.log('ytplayer.getCurrentTime(): ', videoStudy?.getCurrentTime());
-									}}
-								>
-									sssss
-								</h1> */}
-								{currentVideo[0] == 'h' ? (
+								{currentVideo == 'h' ? (
 									<>
 										{/* <iframe
 											id="movie_player"
