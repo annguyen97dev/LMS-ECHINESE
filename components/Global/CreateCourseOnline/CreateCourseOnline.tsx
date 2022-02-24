@@ -256,6 +256,7 @@ const CreateCourseOnline = () => {
 			[key]: value
 		}));
 	};
+	console.log(optionListForForm);
 	const fetchTeacher = async () => {
 		setIsLoading({
 			type: 'ProgramID',
@@ -265,6 +266,9 @@ const CreateCourseOnline = () => {
 			const res = await teacherApi.getTeacherByProgram(dataToFetchTeacher);
 			if (res.status === 200) {
 				const newTeacherList = fmSelectArr(res.data.data, 'FullNameUnicode', 'UserInformationID');
+				newTeacherList.forEach((item) => {
+					delete item.options;
+				});
 				if (userInformation && userInformation.RoleID === 2) {
 					setOptionListForForm((prevState) => ({
 						...prevState,
