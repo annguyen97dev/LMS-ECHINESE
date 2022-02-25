@@ -1,10 +1,11 @@
+import { Menu, Dropdown } from 'antd';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { ShoppingCart } from 'react-feather';
-import { useWrap } from '~/context/wrap';
-import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
-import { useRouter } from 'next/router';
 import { orderProductDetail } from '~/apiBase/product/order-product-detail';
-import { Dropdown, Menu } from 'antd';
+import { shoppingCartApi } from '~/apiBase/shopping-cart/shopping-cart';
+import { useWrap } from '~/context/wrap';
 
 const Cart = () => {
 	const router = useRouter();
@@ -75,14 +76,20 @@ const Cart = () => {
 					</div>
 				</button>
 			</Dropdown> */}
-			<div className="shopping__cart-detail d-flex justify-content-center align-items-center">
-				<a href="/cart/shopping-cart" style={{ textDecoration: 'none' }}>
-					<ShoppingCart size={18} />
-				</a>
-				<span className={countNoti > 0 ? 'count-notification' : 'hide'}>
-					<span>{countNoti > 9 ? `9+` : countNoti}</span>
-				</span>
-			</div>
+			<Link
+				href={{
+					pathname: '/cart/shopping-cart'
+				}}
+			>
+				<div className="shopping__cart-detail cart-icon d-flex justify-content-center align-items-center">
+					<a style={{ textDecoration: 'none' }}>
+						<ShoppingCart size={18} />
+					</a>
+					<span className={countNoti > 0 ? 'count-notification' : 'hide'}>
+						<span>{countNoti > 9 ? `9+` : countNoti}</span>
+					</span>
+				</div>
+			</Link>
 		</>
 	);
 };

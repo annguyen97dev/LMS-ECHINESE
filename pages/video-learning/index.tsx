@@ -299,10 +299,10 @@ const VideoLearning = () => {
 
 	// -- PAUSE VIDEO
 	const handlePause = () => {
-		videoStudy.current.pause();
+		// videoStudy.current.pause();
 	};
 
-	const fake = 'https://www.youtube.com/embed/m_IN8LPRlcs';
+	const fake = '/public/static/videos/playlist_1645696823-testfile.mp4.m3u8';
 
 	function Iframe(props) {
 		const [hei, setHei] = useState(0);
@@ -316,13 +316,17 @@ const VideoLearning = () => {
 		}, [ref.current]);
 
 		return (
-			<div
-				className="iframe-video"
-				ref={ref}
-				style={{ width: '100%', height: hei || 'auto' }}
-				id="PStyle"
-				dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }}
-			/>
+			// <div
+			// 	className="iframe-video"
+			// 	ref={ref}
+			// 	style={{ width: '100%', height: hei || 'auto' }}
+			// 	id="PStyle"
+			// 	dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }}
+			// />
+			// <iframe id="movie_player" ref={ref} className="html-iframe" src={props.iframe} title="cc" allowFullScreen />
+			<video ref={ref} style={{ width: '100%', height: hei || 'auto' }} controls>
+				<source src={fake} type="application/x-mpegURL" />
+			</video>
 		);
 	}
 
@@ -339,28 +343,20 @@ const VideoLearning = () => {
 							<div className="box-video" ref={boxVideo}>
 								{currentVideo == 'h' ? (
 									<>
-										{/* <iframe
-											id="movie_player"
-											ref={videoStudy}
-											className="html-iframe"
-											src={currentVideo}
-											title="cc"
-											allowFullScreen
-										/> */}
 										<div className="html-iframe d-flex justify-content-center align-items-between">
 											<Spin tip="Loading..." style={{ height: 100, marginTop: '25%' }} size="large"></Spin>
 										</div>
 									</>
 								) : (
-									<iframe
-										id="movie_player"
-										ref={videoStudy}
-										className="html-iframe"
-										src={currentVideo}
-										title="cc"
-										allowFullScreen
-									/>
-									// <Iframe iframe={currentVideo} allow="autoplay" />
+									// <iframe
+									// 	id="movie_player"
+									// 	ref={videoStudy}
+									// 	className="html-iframe"
+									// 	src={currentVideo}
+									// 	title="cc"
+									// 	allowFullScreen
+									// />
+									<Iframe iframe={currentVideo} allow="autoplay" />
 								)}
 
 								{data.length > 0 && currentLession.Type === 0

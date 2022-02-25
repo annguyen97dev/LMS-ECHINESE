@@ -32,7 +32,8 @@ const RenderItemCard = (props) => {
 	const [showModalEdit, setShowModalEdit] = useState(false);
 	const [activing, setActiving] = useState(false);
 	const [code, setCode] = useState('');
-
+	
+	console.log('item', item)
 	const params = {
 		Category: item.CategoryName,
 		Level: item.LevelName,

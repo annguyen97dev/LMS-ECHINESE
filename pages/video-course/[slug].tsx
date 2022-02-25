@@ -11,7 +11,7 @@ import CourseDetailsFeedBack from '~/components/VideoCourse/CourseDetailsFeedBac
 import { VideoCourseCardApi } from '~/apiBase/video-course-store';
 import CourseDetailsPreview from '~/components/VideoCourse/CourseDetailsPreview';
 import Link from 'next/link';
-import { VideoCourseListApi } from '~/apiBase';
+import { VideoCourseListApi, VideoCourseOfStudent } from '~/apiBase';
 
 const initDetails = {
 	VideoCourseName: '',
@@ -28,15 +28,17 @@ const initDetails = {
 
 const VideoCourseDetail = (props) => {
 	const router = useRouter();
+	console.log('router', router.query);
 	const slug = router.query.slug;
 	let path: string = router.pathname;
 	let pathString: string[] = path.split('/');
 	path = pathString[pathString.length - 2];
 
 	const [isLoading, setLoading] = useState(true);
-	const { showNoti, getTitlePage, handleReloadNoti, userInformation } = useWrap();
+	const { showNoti, getTitlePage, handleReloadNoti, userInformation, pageSize } = useWrap();
 	const [details, setDetails] = useState(initDetails);
 	const [content, setContent] = useState({});
+	const [registers, setRegisters] = useState<IVideoCourseOfStudentAdmin[]>([]);
 
 	const [showPreview, setShowPreview] = useState(false);
 	const [buyLoading, setByLoading] = useState(false);
@@ -47,15 +49,23 @@ const VideoCourseDetail = (props) => {
 		if (userInformation !== null) {
 			getCourseDetails(slug);
 		}
+		getCourseRegisters();
 	}, [userInformation]);
 
 	// CALL API DETAILS
 	const getCourseDetails = async (param) => {
-		console.log('===========================================');
-		console.log('GET DATA DETAILS');
 		try {
 			const res = await VideoCourseDetailApi.getDetails(param);
 			res.status == 200 && (setDetails(res.data.data), getCourseContent(res.data.data.CurriculumID));
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const getCourseRegisters = async () => {
+		try {
+			const res = await VideoCourseOfStudent.getAllAdmin({ pageIndex: 1, pageSize: pageSize, VideoCourseID: slug });
+			res.status == 200 && (setRegisters(res.data.data), console.log('data video course of student', res.data.data));
 		} catch (error) {
 			console.log(error);
 		}
@@ -132,14 +142,8 @@ const VideoCourseDetail = (props) => {
 		getCourseFeedback(temp);
 	};
 
-	// useEffect(() => {
-	// 	onChangeIndex();
-	// }, [feedbackIndex]);
-
 	// HANDLE SEARCH
 	const onChangeIndex = (index) => {
-		console.log('onChangeIndex');
-
 		let temp = {
 			videocourseId: slug,
 			rating: 0,
@@ -207,8 +211,8 @@ const VideoCourseDetail = (props) => {
 	return (
 		<>
 			<div className="row feedback-user">
-				<div className="vc-details_menu" style={{ zIndex: 9 }}>
-					<Card loading={isLoading} className="vc-details col-md-3 col-12 p-0">
+				<div className="vc-details_menu">
+					<Card loading={isLoading} className="vc-details col-lg-3 col-12 p-0">
 						<div
 							onClick={() => {
 								videoPreView.length > 0 ? setShowPreview(true) : showNoti('danger', 'Không có video xem trước');
@@ -306,11 +310,27 @@ const VideoCourseDetail = (props) => {
 								)}
 							</div>
 						</div>
+
+						<div className="registers">
+							<h6>Học viên đã đăng kí</h6>
+							{registers.map((item, index) => {
+								return (
+									<div className="row mb-2" key={index}>
+										<div className="col-3 register-avatar mb-0">
+											<img src="/images/user.png" alt="user image" style={{ width: 40, height: 40 }} />
+										</div>
+										<div className="col-9 register-info pl-1">
+											<p className="mb-1">{item.StudentName}</p>
+											<p>{item.Email}</p>
+										</div>
+									</div>
+								);
+							})}
+						</div>
 					</Card>
-					<div className="col-md-9 col-12"></div>
 				</div>
 
-				<div className="col-md-3 col-12 vc-details_mobile" style={{ zIndex: 9 }}>
+				<div className="col-lg-3 col-12 vc-details_mobile">
 					<Card loading={isLoading} className="vc-details">
 						<div
 							onClick={() => {
@@ -409,12 +429,29 @@ const VideoCourseDetail = (props) => {
 								)}
 							</div>
 						</div>
+
+						<div className="registers">
+							<h6>Học viên đã đăng kí</h6>
+							{registers.map((item, index) => {
+								return (
+									<div className="row mb-2" key={index}>
+										<div className="col-3 register-avatar mb-0">
+											<img src="/images/user.png" alt="user image" style={{ width: 40, height: 40 }} />
+										</div>
+										<div className="col-9 register-info pl-1">
+											<p className="mb-1">{item.StudentName}</p>
+											<p>{item.Email}</p>
+										</div>
+									</div>
+								);
+							})}
+						</div>
 					</Card>
 				</div>
 
-				<div className="col-md-3 col-12" />
+				<div className="col-lg-3 col-12" />
 
-				<div className="col-md-9 col-12" style={{ zIndex: 9 }}>
+				<div className="col-lg-9 col-12">
 					<Card loading={isLoading} className="space-top-card vc-details_main">
 						<div className="card-newsfeed-wrap__label">
 							<div className="m-feedback st-fb-100w">
