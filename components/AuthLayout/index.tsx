@@ -32,7 +32,6 @@ function AuthLayout({ children }) {
 	const getTermsInformation = async () => {
 		try {
 			let res = await rulesApi.getAll({});
-			console.log(res.data.data);
 			if (res.status) {
 				setTermContent(res.data.data);
 			}
@@ -103,7 +102,6 @@ function AuthLayout({ children }) {
 										__html: `${idiom.content}`
 									}}
 								></div>
-								{/* <p>{idiom.author}</p> */}
 							</div>
 						</div>
 					</div>
