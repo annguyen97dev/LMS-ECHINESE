@@ -40,7 +40,6 @@ export const instance = axios.create({
 instance.interceptors.request.use(
 	async (config: AxiosRequestConfig) => {
 		const url = getUrl(config);
-		console.log('url AxiosRequestConfig - ', url);
 		if (!url.toString().includes('/auth/')) {
 			const authHeader = await authHeader_X();
 			config.headers = {
@@ -48,8 +47,9 @@ instance.interceptors.request.use(
 				...authHeader
 			};
 		}
-		console.log(`%c ${config.method.toUpperCase()} - ${url}:`, 'color: #0086b3; font-weight: bold', config);
-
+		if (url !== '/api/Idioms/getRandoms' && url !== '/api/Rules') {
+			console.log(`%c ${config.method.toUpperCase()} - ${url}:`, 'color: #0086b3; font-weight: bold', config);
+		}
 		return config;
 	},
 	(error) => {
@@ -80,8 +80,10 @@ const checkResponse = (error) => {
 
 instance.interceptors.response.use(
 	(response: AxiosResponse) => {
-		// checkResponse(response);
-		console.log(` %c ${response?.status} - ${getUrl(response?.config)}:`, 'color: #008000; font-weight: bold', response);
+		let url = getUrl(response?.config);
+		if (url !== '/api/Idioms/getRandoms' && url !== '/api/Rules') {
+			console.log(` %c ${response?.status} - ${getUrl(response?.config)}:`, 'color: #008000; font-weight: bold', response);
+		}
 		return response;
 	},
 	function (error) {
