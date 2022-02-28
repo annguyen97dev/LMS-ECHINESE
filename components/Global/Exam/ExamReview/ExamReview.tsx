@@ -13,6 +13,18 @@ function ExamReview() {
 	const { examID: ID, isExercise: isExercise } = route.query;
 	const { packageDetailID: packageDetailID, type: type, CurriculumDetailID: CurriculumDetailID } = route.query;
 	const [examInfo, setExamInfo] = useState<IExamTopic>(null);
+
+	useEffect(() => {
+		getPermissiton();
+	}, []);
+
+	const getPermissiton = async () => {
+		await navigator.mediaDevices
+			.getUserMedia({ audio: true })
+			.then((stream) => console.log('OK'))
+			.catch((err) => console.log('NO'));
+	};
+
 	const fetchExam = async () => {
 		try {
 			const res = await examTopicApi.getByID(ID);

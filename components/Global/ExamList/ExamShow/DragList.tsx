@@ -8,15 +8,12 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 let activeDrag = null;
 
 const DragList = (props) => {
-	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked, removeListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest, arPosition, setArPosition } = props;
+	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked } = useDoingTest();
+	const { dataQuestion, listQuestionID, isDoingTest, setChild, openPagi } = props;
 	const { doneTestData } = useDoneTest();
 	const [dataQuestionClone, setDataQuestionClone] = useState(dataQuestion);
 	const [dataAnswer, setDataAnswer] = useState([]);
 	const [listCorrectAnswer, setListCorrectAnswer] = useState([]);
-	// console.log("Data question in drag: ", dataQuestion);
-	// console.log('Data Answer is: ', dataAnswer);
-	// console.log("DATA QUESTION IN DRAG: ", dataQuestionClone);
 	const [isDrop, setIsDrop] = useState(false);
 
 	if (isDoingTest) {
@@ -267,13 +264,6 @@ const DragList = (props) => {
 					spaceEditor.forEach((item) => {
 						const quesID = parseInt(item.getAttribute('ques-id'));
 
-						// Kiểm tra nếu rỗng thì xóa id khỏi mảng của footer pagination
-						// console.log('ITEMMM: ', item.childNodes);
-						// if (item.childNodes[0].nodeName !== 'DIV') {
-						// 	console.log('start removeee');
-						// 	removeListPicked(quesID);
-						// }
-
 						let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
 							indexQuestion
 						].SetPackageExerciseStudentInfoList.findIndex((e) => e.ExerciseID === quesID);
@@ -297,11 +287,6 @@ const DragList = (props) => {
 						// --- --------------- ---
 
 						let indexFind = dataAnswer.findIndex((item) => item.quesID === quesID);
-
-						console.log('=================================');
-						console.log('=================================');
-						console.log('=================================');
-						console.log('dataAnswer: ', dataAnswer);
 
 						if (dataAnswer[indexFind].ansID == null) {
 							if (
@@ -477,6 +462,8 @@ const DragList = (props) => {
 							}
 							// -- Reset data
 							setDataQuestionClone({ ...dataQuestionClone });
+
+							setChild({ ...dataQuestionClone });
 						};
 
 						if (item.children.length == 0) {
@@ -586,57 +573,42 @@ const DragList = (props) => {
 		}
 	}, [listCorrectAnswer]);
 
-	const returnPosition = (quesID) => {
-		let text = '';
-		let indexQuestion = listQuestionID.findIndex((id) => id === quesID);
-		text = (indexQuestion + 1).toString() + '/';
-
-		return text;
-	};
-
 	return (
-		<div className="drag-list h-100">
-			<h6 className="font-italic mb-3 mt-4">Kéo đáp án vào ô thích hợp</h6>
+		<div className="drag-list" style={{ height: '100%', marginLeft: -40 }}>
+			<div className="wrap-drag">
+				<div className="main-drag test-body">
+					<div className="">{ReactHtmlParser(dataQuestion.Content)}</div>
+					<h6 className="font-italic mb-3 mt-4">Kéo đáp án vào ô thích hợp</h6>
 
-			{ReactHtmlParser(dataQuestion.Paragraph)}
-
-			{doneTestData ? (
-				<>
-					<div className="wrap-list-answer-typing mt-4">
-						<h6 className="mb-2">
-							<ExclamationCircleOutlined /> Đáp án
-						</h6>
-						<ul className="list-answer-typing w-100  pl-0">
-							{dataQuestion?.ExerciseTopic.map(
-								(item) =>
-									item.ExerciseAnswer.length > 0 && (
-										<li className="answer-item">
-											<span className="number">{returnPosition(item.ExerciseID)}</span>
-											<span className="text">{item.ExerciseAnswer[0].ExerciseAnswerContent}</span>
-										</li>
-									)
-							)}
-						</ul>
+					<div className="col-lg-6 col-md-12 col-sm-12 col-12" style={{}}>
+						{ReactHtmlParser(dataQuestion.Paragraph)}
 					</div>
-				</>
-			) : (
-				<div className="area-drop h-100" id="area-drop" onDrop={(e) => drop(e)} onDragOver={(e) => allowDrop(e)}>
-					{dataQuestionClone?.ExerciseTopic.map((item, index) =>
-						item.ExerciseAnswer.map((ans, indexAns) => (
-							<div
-								className="drag-list-answer"
-								key={indexAns}
-								draggable="true"
-								onDrop={(e) => (e.preventDefault(), e.stopPropagation())}
-								onDragStart={(e) => drag(e)}
-								id={ans.ID}
-							>
-								<span> {ans.AnswerContent}</span>
-							</div>
-						))
-					)}
 				</div>
-			)}
+
+				{!openPagi && (
+					<div className="fixed-ans">
+						<div className="row m-0" id="area-drop" onDrop={(e) => drop(e)} onDragOver={(e) => allowDrop(e)}>
+							{dataQuestionClone?.ExerciseTopic.map((item, index) =>
+								item.ExerciseAnswer.map((ans, indexAns) => (
+									<div
+										className="drag-list-answer ml-3"
+										key={indexAns}
+										draggable="true"
+										onDrop={(e) => (e.preventDefault(), e.stopPropagation())}
+										onDragStart={(e) => drag(e)}
+										id={ans.ID}
+									>
+										<span> {ans.AnswerContent}</span>
+									</div>
+								))
+							)}
+						</div>
+					</div>
+				)}
+			</div>
+			{/* 
+
+			*/}
 		</div>
 	);
 };
