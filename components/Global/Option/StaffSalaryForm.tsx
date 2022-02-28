@@ -181,7 +181,7 @@ const StaffSalaryForm = (props) => {
 					}}
 				>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			)}
@@ -249,7 +249,7 @@ const StaffSalaryForm = (props) => {
 												onSearch={onSearch}
 												optionFilterProp="children"
 												showSearch
-												filterOption={(input, option) =>
+												filterOption={(input: any, option: any) =>
 													!isLoading.loading && option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 												}
 											>

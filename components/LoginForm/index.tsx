@@ -18,7 +18,8 @@ interface LoginInputs {
 
 // SOCIAL LOGIN
 const _GGID = '390876628477-6boo4bsj7pijjkebp9lji2aeq422qhfh.apps.googleusercontent.com'; // Client Secret: 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
-const _FBID = '444447504039960'; // LocalHost: 4898676230192926, Heroku: 454502496316073, Live: 444447504039960
+const _GGID_NEW = '286438363258-ilh01tlojsmeq1fgb8mpcvv4iqrcd5rn.apps.googleusercontent.com';
+const _FBID = '444447504039960';
 
 function index(props: any) {
 	const {
@@ -72,7 +73,7 @@ function index(props: any) {
 		});
 	};
 
-	const _Submit = async (data: {}) => {
+	const _Submit = async (data: any) => {
 		setLoading(true);
 		props?.onSubmit(data);
 	};
@@ -136,7 +137,7 @@ function index(props: any) {
 							<div className="row m-0 p-0 social-login">
 								<div className="wrap-google-login">
 									<GoogleLogin
-										clientId={_GGID}
+										clientId={_GGID_NEW}
 										onSuccess={handleGoogleLogin}
 										onFailure={(e) => console.log(e)}
 										style={{ borderRadius: 999, backgroundColor: 'red' }}

@@ -23,7 +23,7 @@ const ConfirmAssignModal = (props) => {
 					setIsVisible(true);
 				}}
 			>
-				<RotateCcw />
+				<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 			</button>
 			<Modal
 				footer={null}

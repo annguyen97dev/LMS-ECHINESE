@@ -195,7 +195,7 @@ export const AddCurriculumForm = (props) => {
 			<button className="btn btn-icon edit" onClick={showModal}>
 				{callFrom === 'main' ? (
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				) : callFrom === 'modal' ? (
 					<Tooltip title="Thêm mới">
@@ -211,7 +211,7 @@ export const AddCurriculumForm = (props) => {
 					</Tooltip>
 				) : (
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				)}
 			</button>

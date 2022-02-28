@@ -42,7 +42,7 @@ const UploadAvatarField = (props) => {
 	const { errors } = form.formState;
 	const hasError = errors[name];
 
-	const handleUploadAvatar = async (file: IFile) => {
+	const handleUploadAvatar = async (file: any) => {
 		try {
 			if (file.status === 'uploading') {
 				setLoadingImage(true);
@@ -62,7 +62,7 @@ const UploadAvatarField = (props) => {
 		}
 	};
 
-	const beforeUpload = (file: IFile) => {
+	const beforeUpload = (file: any) => {
 		const validTypeList = ['image/png', 'image/jpg', 'image/jpeg', 'image/bmp'];
 		const isValidType = validTypeList.includes(file.type);
 		if (!isValidType) {
@@ -98,7 +98,7 @@ const UploadAvatarField = (props) => {
 							disabled={disabled}
 							showUploadList={false}
 							beforeUpload={beforeUpload}
-							onChange={(obj) => {
+							onChange={(obj: any) => {
 								handleUploadAvatar(obj.file).then((res) => res?.status === 200 && field.onChange(res.data.data));
 							}}
 						>

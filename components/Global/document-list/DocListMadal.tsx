@@ -88,7 +88,7 @@ const DocListModal = ({ type, docInfo, onFetchDataForm, docID, docName }) => {
 					}}
 					className="btn btn-icon edit"
 				>
-					<RotateCcw />
+					<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 				</button>
 			)}
 			{type == 'DELETE_DOC' && (

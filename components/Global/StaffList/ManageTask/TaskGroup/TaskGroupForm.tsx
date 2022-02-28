@@ -1,44 +1,37 @@
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Form, Modal, Spin, Tooltip} from 'antd';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Form, Modal, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {RotateCcw} from 'react-feather';
-import {useForm} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { RotateCcw } from 'react-feather';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import DateField from '~/components/FormControl/DateField';
 import InputTextField from '~/components/FormControl/InputTextField';
 
 const TaskGroupForm = (props) => {
-	const {
-		handleCreateTaskGroup,
-		isUpdate,
-		handleUpdateTaskGroup,
-		updateObj,
-		isLoading,
-		indexUpdateObj,
-	} = props;
+	const { handleCreateTaskGroup, isUpdate, handleUpdateTaskGroup, updateObj, isLoading, indexUpdateObj } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const openModal = () => setIsModalVisible(true);
 	const closeModal = () => setIsModalVisible(false);
 	const schema = yup.object().shape({
 		TaskGroupName: yup.string().required('Bạn không được để trống'),
 		Note: yup.string().required('Bạn không được để trống'),
-		Deadline: yup.string().required('Bạn không được để trống'),
+		Deadline: yup.string().required('Bạn không được để trống')
 	});
 	const defaultValuesInit = {
 		TaskGroupName: '',
 		Note: '',
-		Deadline: moment().format('YYYY/MM/DD'),
+		Deadline: moment().format('YYYY/MM/DD')
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
-		resolver: yupResolver(schema),
+		resolver: yupResolver(schema)
 	});
 	useEffect(() => {
 		if (isUpdate && updateObj) {
 			form.reset({
-				...updateObj,
+				...updateObj
 			});
 		}
 	}, [updateObj]);
@@ -57,7 +50,7 @@ const TaskGroupForm = (props) => {
 				handleCreateTaskGroup(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
-						form.reset({...defaultValuesInit});
+						form.reset({ ...defaultValuesInit });
 					}
 				});
 				break;
@@ -71,7 +64,7 @@ const TaskGroupForm = (props) => {
 			{isUpdate ? (
 				<button className="btn btn-icon edit" onClick={openModal}>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			) : (
@@ -86,11 +79,7 @@ const TaskGroupForm = (props) => {
 				footer={null}
 			>
 				<div>
-					<Form
-						key="2"
-						layout="vertical"
-						onFinish={form.handleSubmit(taskGroupSwitchFunc)}
-					>
+					<Form key="2" layout="vertical" onFinish={form.handleSubmit(taskGroupSwitchFunc)}>
 						<div className="row">
 							<div className="col-12">
 								<InputTextField
@@ -103,22 +92,12 @@ const TaskGroupForm = (props) => {
 						</div>
 						<div className="row">
 							<div className="col-12">
-								<InputTextField
-									form={form}
-									name="Note"
-									label="Ghi chú"
-									placeholder="Nhập ghi chú"
-								/>
+								<InputTextField form={form} name="Note" label="Ghi chú" placeholder="Nhập ghi chú" />
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-12">
-								<DateField
-									form={form}
-									name="Deadline"
-									label="Thời hạn"
-									placeholder="Chọn ngày"
-								/>
+								<DateField form={form} name="Deadline" label="Thời hạn" placeholder="Chọn ngày" />
 							</div>
 						</div>
 						<div className="row ">
@@ -129,9 +108,7 @@ const TaskGroupForm = (props) => {
 									disabled={isLoading.type == 'ADD_DATA' && isLoading.status}
 								>
 									{isUpdate ? 'Update' : 'Create'}
-									{isLoading.type == 'ADD_DATA' && isLoading.status && (
-										<Spin className="loading-base" />
-									)}
+									{isLoading.type == 'ADD_DATA' && isLoading.status && <Spin className="loading-base" />}
 								</button>
 							</div>
 						</div>
@@ -149,8 +126,8 @@ TaskGroupForm.propTypes = {
 	indexUpdateObj: PropTypes.number,
 	isLoading: PropTypes.shape({
 		type: PropTypes.string.isRequired,
-		status: PropTypes.bool.isRequired,
-	}),
+		status: PropTypes.bool.isRequired
+	})
 };
 TaskGroupForm.defaultProps = {
 	handleCreateTaskGroup: null,
@@ -158,6 +135,6 @@ TaskGroupForm.defaultProps = {
 	handleUpdateTaskGroup: null,
 	updateObj: {},
 	indexUpdateObj: -1,
-	isLoading: {type: '', status: false},
+	isLoading: { type: '', status: false }
 };
 export default TaskGroupForm;

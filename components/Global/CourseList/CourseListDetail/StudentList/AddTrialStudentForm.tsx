@@ -211,7 +211,9 @@ const AddTrialStudentForm = (props) => {
 										onChange={(value) => handleChangeUser(value)}
 										size="large"
 										showSearch
-										filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+										filterOption={(input: any, option: any) =>
+											option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+										}
 									>
 										{students &&
 											students.map((item, index) => (

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import ReactHtmlParser from 'react-html-parser';
 import { Modal, Tooltip, Popconfirm } from 'antd';
 import { Trash2 } from 'react-feather';
-import { examDetailApi, packageResultApi } from '~/apiBase';
+import { examDetailApi } from '~/apiBase';
 import { useExamDetail } from '~/pages/question-bank/exam-list/exam-detail/[slug]';
 import { useWrap } from '~/context/wrap';
 import EditPoint from '../ExamForm/EditPoint';
@@ -10,12 +10,11 @@ import ChangePosition from '../ExamForm/ChangePosition';
 import { useDoingTest } from '~/context/useDoingTest';
 import { useDoneTest } from '~/context/useDoneTest';
 import EditorSimple from '~/components/Elements/EditorSimple';
-import router from 'next/router';
 import MarkingExam from '../MarkingExam/MarkingExam';
 
 // ---- COMPONENT CHILDREN ----
 const WrittingModal = (props) => {
-	const { onGetDataEditor, contentOfStudent, isDoingTest } = props;
+	const { onGetDataEditor, contentOfStudent } = props;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [contentEditor, setContentEditor] = useState(null);
 	const [isModalConfirm, setIsModalConfirm] = useState(false);
@@ -77,7 +76,6 @@ const WrittingModal = (props) => {
 					/>
 				)}
 			</Modal>
-
 			<Modal
 				title="Chú ý"
 				visible={isModalConfirm}
@@ -94,14 +92,12 @@ const WrittingModal = (props) => {
 
 // ---- COMPONENT PARENT ----
 const WrittingList = (props) => {
-	const { teacherMarking: teacherMarking, packageResultID: packageResultID } = router.query;
 	const { doneTestData, dataMarking, getDataMarking } = useDoneTest();
-	const { onDeleteQuestion } = useExamDetail();
+	const { onDeleteQuestion, isChangePosition } = useExamDetail();
 	const { activeID, packageResult, getPackageResult, getListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest, isMarked, hideScore } = props;
-	const { showNoti, userInformation } = useWrap();
+	const { dataQuestion, listQuestionID, isDoingTest, isMarked, hideScore, arPosition, handleChange, addOldItem } = props;
+	const { showNoti } = useWrap();
 	const [contentOfStudent, setContentOfStudent] = useState('');
-
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
 		id: null,
@@ -126,7 +122,6 @@ const WrittingList = (props) => {
 				}
 			]
 		};
-
 		setConfirmLoading(true);
 		try {
 			let res = await examDetailApi.update(itemDelete);
@@ -161,17 +156,6 @@ const WrittingList = (props) => {
 			  });
 	};
 
-	// ----------- ACTION IN  MARKING OF TEACHER  ------------
-	// const getInfoPackage = async () => {
-	// 	try {
-	// 		let res = await packageResultApi.getDetail(parseInt(packageResultID as string));
-	// 		if (res.status == 200) {
-	// 			console.log('Coi thử nha: ', res.data.data);
-	// 			setIsMarked(res.data.data.isDone);
-	// 		}
-	// 	} catch (error) {}
-	// };
-
 	const onGetPoint = (point, questionID) => {
 		if (dataMarking.setPackageExerciseStudentsList.some((item, index) => item['ID'] === questionID)) {
 			dataMarking.setPackageExerciseStudentsList.every((item) => {
@@ -187,7 +171,6 @@ const WrittingList = (props) => {
 				Point: point
 			});
 		}
-
 		getDataMarking({ ...dataMarking });
 	};
 
@@ -197,11 +180,9 @@ const WrittingList = (props) => {
 		setContentOfStudent(dataAns);
 		// Find index
 		let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
-
 		let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList.findIndex(
 			(item) => item.ExerciseID === quesID
 		);
-
 		// Add new answer to list
 		if (
 			packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[indexQuestionDetail]
@@ -219,7 +200,6 @@ const WrittingList = (props) => {
 				indexQuestionDetail
 			].SetPackageExerciseAnswerStudentList[0].AnswerContent = dataAns;
 		}
-
 		getPackageResult({ ...packageResult });
 	};
 
@@ -254,9 +234,7 @@ const WrittingList = (props) => {
 					<div className="box-detail">
 						<div className="box-title">
 							<span className={`title-ques`}>{returnPosition(ques.ExerciseID)}</span>
-
 							<div className="title-text mt-3">{ReactHtmlParser(ques.Content)}</div>
-
 							<div className="box-doing-wrting mt-3">
 								{contentOfStudent ? (
 									<h6 className="text-underline mb-2">
@@ -266,7 +244,6 @@ const WrittingList = (props) => {
 									isDoingTest && <h6 className="text-underline">Bấm vào nút bên dưới để làm bài tự luận</h6>
 								)}
 								{<div className="content-of-student">{ReactHtmlParser(contentOfStudent)}</div>}
-
 								{!doneTestData && isDoingTest && (
 									<div className="writting-editor mt-2">
 										<WrittingModal
@@ -282,23 +259,30 @@ const WrittingList = (props) => {
 						<div className="box-action-list mb-2">
 							{!doneTestData && !isDoingTest && (
 								<>
-									<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
-									{userInformation && userInformation.RoleID !== 2 && (
-										<Popconfirm
-											title="Bạn có chắc muốn xóa?"
-											// visible={item.ID == visible.id && visible.status}
-											onConfirm={() => handleOk(ques)}
-											okButtonProps={{ loading: confirmLoading }}
-											onCancel={() => handleCancel(ques.ID)}
-										>
-											<Tooltip title="Xóa câu hỏi" placement="rightTop">
-												<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
-													<Trash2 />
-												</button>
-											</Tooltip>
-										</Popconfirm>
+									{!isChangePosition && (
+										<>
+											<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
+											<Popconfirm
+												title="Bạn có chắc muốn xóa?"
+												onConfirm={() => handleOk(ques)}
+												okButtonProps={{ loading: confirmLoading }}
+												onCancel={() => handleCancel(ques.ID)}
+											>
+												<Tooltip title="Xóa câu hỏi" placement="rightTop">
+													<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
+														<Trash2 />
+													</button>
+												</Tooltip>
+											</Popconfirm>
+										</>
 									)}
-									<ChangePosition questionID={dataQuestion.ID} />
+									<ChangePosition
+										dataQuestion={dataQuestion}
+										arPosition={arPosition}
+										questionID={dataQuestion.ID}
+										handleChange={handleChange}
+										addOldItem={addOldItem}
+									/>
 								</>
 							)}
 						</div>
@@ -313,7 +297,6 @@ const WrittingList = (props) => {
 								</p>
 							</div>
 						)}
-
 						{dataMarking && !isMarked && (
 							<div className="point-marking">
 								<MarkingExam onGetPoint={(point) => onGetPoint(point, ques.ID)} dataRow={ques} dataMarking={dataMarking} />

@@ -9,7 +9,7 @@ let activeDrag = null;
 
 const DragList = (props) => {
 	const { activeID, getActiveID, packageResult, getPackageResult, getListPicked, removeListPicked } = useDoingTest();
-	const { dataQuestion, listQuestionID, isDoingTest } = props;
+	const { dataQuestion, listQuestionID, isDoingTest, arPosition, setArPosition } = props;
 	const { doneTestData } = useDoneTest();
 	const [dataQuestionClone, setDataQuestionClone] = useState(dataQuestion);
 	const [dataAnswer, setDataAnswer] = useState([]);
@@ -298,6 +298,11 @@ const DragList = (props) => {
 
 						let indexFind = dataAnswer.findIndex((item) => item.quesID === quesID);
 
+						console.log('=================================');
+						console.log('=================================');
+						console.log('=================================');
+						console.log('dataAnswer: ', dataAnswer);
+
 						if (dataAnswer[indexFind].ansID == null) {
 							if (
 								packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
@@ -460,6 +465,7 @@ const DragList = (props) => {
 									}
 									return true;
 								});
+
 								setDataAnswer([...dataAnswer]);
 
 								// -- XÓA TRONG AREA-DROP

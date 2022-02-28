@@ -80,7 +80,7 @@ const ProgramForm = React.memo((props: any) => {
 					}}
 				>
 					<Tooltip title="Cập nhật">
-						<RotateCcw />
+						<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 					</Tooltip>
 				</button>
 			) : (
@@ -114,7 +114,7 @@ const ProgramForm = React.memo((props: any) => {
 										optionFilterProp="children"
 										onChange={onChangeSelect('GradeID')}
 
-										//   filterOption={(input, option) =>
+										//   filterOption={(input: any, option: any) =>
 										//     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 										//   }
 									>

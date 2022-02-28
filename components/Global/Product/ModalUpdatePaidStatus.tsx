@@ -58,7 +58,7 @@ const ModalUpdatePaidStatus = (props) => {
 				}}
 			>
 				<Tooltip title="Cập nhật trạng thái thanh toán">
-					<RotateCcw />
+					<i className="fas fa-edit" style={{ color: '#34c4a4', fontSize: 16 }}></i>
 				</Tooltip>
 			</button>
 

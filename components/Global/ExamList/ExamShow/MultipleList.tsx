@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import React, { useState } from 'react';
+import ReactHtmlParser from 'react-html-parser';
 import { Checkbox, Popconfirm, Tooltip } from 'antd';
 import { Trash2 } from 'react-feather';
 import { examDetailApi } from '~/apiBase';
@@ -18,10 +18,10 @@ type ansTrue = {
 };
 
 const MultipleList = (props) => {
-	const { onDeleteQuestion } = useExamDetail();
+	const { onDeleteQuestion, isChangePosition } = useExamDetail();
 	const { doneTestData } = useDoneTest();
-	const { showNoti, userInformation } = useWrap();
-	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest } = props;
+	const { showNoti } = useWrap();
+	const { dataQuestion, listAlphabet, listQuestionID, isDoingTest, arPosition, handleChange, addOldItem } = props;
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const [visible, setVisible] = useState({
 		id: null,
@@ -84,20 +84,16 @@ const MultipleList = (props) => {
 	};
 
 	// ----------- ALL ACTION IN DOINGTEST -------------
-
 	const returnChecked = (ansID, quesID) => {
 		if (!doneTestData) {
 			let checked = false;
-
 			// Find Index
 			let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex(
 				(item) => item.ExamTopicDetailID === dataQuestion.ID
 			);
-
 			let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[
 				indexQuestion
 			].SetPackageExerciseStudentInfoList.findIndex((item) => item.ExerciseID === quesID);
-
 			// Find anh return checked
 			if (
 				packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
@@ -106,32 +102,13 @@ const MultipleList = (props) => {
 			) {
 				checked = true;
 			}
-
 			return checked;
 		}
-	};
-
-	const checkIsOver = (quesID) => {
-		let check = false;
-		ansTrue.every((item) => {
-			if (item.questionID === quesID) {
-				if (item.yourTotal == item.totalAnsTrue) {
-					check = true;
-				}
-				return false;
-			}
-			return true;
-		});
-
-		return check;
 	};
 
 	const onChange_selectAnswer = (dataAns, quesID) => {
 		getActiveID(quesID);
 		getListPicked(quesID);
-
-		// let checkOver = checkIsOver(quesID);
-
 		ansTrue.every((item) => {
 			if (item.questionID === quesID) {
 				item.yourTotal = item.yourTotal + 1;
@@ -140,18 +117,14 @@ const MultipleList = (props) => {
 			return true;
 		});
 		setAnsTrue([...ansTrue]);
-
 		// Find index
 		let indexQuestion = packageResult.SetPackageResultDetailInfoList.findIndex((item) => item.ExamTopicDetailID === dataQuestion.ID);
-
 		let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList.findIndex(
 			(item) => item.ExerciseID === quesID
 		);
-
 		let indexAnswer = packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
 			indexQuestionDetail
 		].SetPackageExerciseAnswerStudentList.findIndex((item) => item.AnswerID === dataAns.ID);
-
 		if (indexAnswer > -1) {
 			packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
 				indexQuestionDetail
@@ -170,27 +143,6 @@ const MultipleList = (props) => {
 		getPackageResult({ ...packageResult });
 	};
 
-	// useEffect(() => {
-	// 	if (dataQuestion) {
-	// 		dataQuestion.ExerciseTopic.forEach((ques) => {
-	// 			let totalAnsTrue = 0;
-	// 			ques.ExerciseAnswer.forEach((ans, index) => {
-	// 				if (ans.isTrue) {
-	// 					totalAnsTrue++;
-	// 				}
-	// 				if (index == ques.ExerciseAnswer.length - 1) {
-	// 					ansTrue.push({
-	// 						questionID: ques.ExerciseID,
-	// 						totalAnsTrue: totalAnsTrue,
-	// 						yourTotal: 0
-	// 					});
-	// 				}
-	// 			});
-	// 		});
-	// 		setAnsTrue([...ansTrue]);
-	// 	}
-	// }, [dataQuestion]);
-
 	return (
 		<>
 			{dataQuestion.ExerciseTopic.map((ques, ind) => (
@@ -203,7 +155,6 @@ const MultipleList = (props) => {
 									<source src={ques.LinkAudio} type="audio/mpeg" />
 								</audio>
 							)}
-							{/* {returnAudio(item)} */}
 							<div className="title-text">{ReactHtmlParser(ques.Content)}</div>
 						</div>
 						<div className="box-answer">
@@ -247,28 +198,37 @@ const MultipleList = (props) => {
 						<div className="box-action">
 							{!doneTestData && !isDoingTest && (
 								<>
-									<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
-									{userInformation && userInformation.RoleID !== 2 && (
-										<Popconfirm
-											title="Bạn có chắc muốn xóa?"
-											// visible={item.ID == visible.id && visible.status}
-											onConfirm={() => handleOk(ques)}
-											okButtonProps={{ loading: confirmLoading }}
-											onCancel={() => handleCancel(ques.ID)}
-										>
-											<Tooltip title="Xóa câu hỏi" placement="rightTop">
-												<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
-													<Trash2 />
-												</button>
-											</Tooltip>
-										</Popconfirm>
+									{!isChangePosition && (
+										<>
+											<EditPoint quesItem={ques} dataQuestion={dataQuestion} />
+											<Popconfirm
+												title="Bạn có chắc muốn xóa?"
+												onConfirm={() => handleOk(ques)}
+												okButtonProps={{ loading: confirmLoading }}
+												onCancel={() => handleCancel(ques.ID)}
+											>
+												<Tooltip title="Xóa câu hỏi" placement="rightTop">
+													<button className="btn btn-icon delete" onClick={() => deleteQuestionItem(ques.ID)}>
+														<Trash2 />
+													</button>
+												</Tooltip>
+											</Popconfirm>
+										</>
 									)}
-									<ChangePosition questionID={dataQuestion.ID} />
+									<ChangePosition
+										dataQuestion={dataQuestion}
+										arPosition={arPosition}
+										questionID={dataQuestion.ID}
+										handleChange={handleChange}
+										addOldItem={addOldItem}
+									/>
 								</>
 							)}
-							<div className="point-question mt-2">
-								<p className="text">{ques.Point}</p>
-							</div>
+							{!isChangePosition && (
+								<div className="point-question mt-2">
+									<p className="text">{ques.Point}</p>
+								</div>
+							)}
 						</div>
 					)}
 				</div>
