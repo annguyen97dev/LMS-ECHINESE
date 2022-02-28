@@ -12,17 +12,20 @@ function ExamReview() {
 	const route = useRouter();
 	const { examID: ID, isExercise: isExercise } = route.query;
 	const { packageDetailID: packageDetailID, type: type, CurriculumDetailID: CurriculumDetailID } = route.query;
-	const [examInfo, setExamInfo] = useState<IExamTopic>(null);
+	const [examInfo, setExamInfo] = useState<any>(null);
+	const [permissed, setPermissed] = useState<any>(false);
 
 	useEffect(() => {
-		getPermissiton();
-	}, []);
+		if (examInfo?.Speaking > 0) {
+			getPermissiton();
+		}
+	}, [examInfo]);
 
 	const getPermissiton = async () => {
 		await navigator.mediaDevices
 			.getUserMedia({ audio: true })
-			.then((stream) => console.log('OK'))
-			.catch((err) => console.log('NO'));
+			.then((stream) => setPermissed(true))
+			.catch((err) => setPermissed(false));
 	};
 
 	const fetchExam = async () => {
@@ -35,6 +38,7 @@ function ExamReview() {
 			console.log('fetchExam', error);
 		}
 	};
+
 	useEffect(() => {
 		fetchExam();
 	}, []);
@@ -118,17 +122,49 @@ function ExamReview() {
 				<Card.Grid className="exam-review-item span-3" hoverable={false}>
 					<SoundTest />
 				</Card.Grid>
-				<Link
-					href={{
-						pathname: '/doing-test',
-						query:
-							type !== 'check'
-								? { examID: ID, packageDetailID: packageDetailID, type: type, isExercise: isExercise }
-								: { examID: ID, packageDetailID: packageDetailID, type: type, CurriculumDetailID: CurriculumDetailID }
-					}}
-				>
-					<a className="exam-review-btn btn btn-primary">Bắt đầu thi</a>
-				</Link>
+
+				{examInfo?.Speaking > 0 ? (
+					<>
+						{permissed ? (
+							<Link
+								href={{
+									pathname: '/doing-test',
+									query:
+										type !== 'check'
+											? { examID: ID, packageDetailID: packageDetailID, type: type, isExercise: isExercise }
+											: {
+													examID: ID,
+													packageDetailID: packageDetailID,
+													type: type,
+													CurriculumDetailID: CurriculumDetailID
+											  }
+								}}
+							>
+								<a className="exam-review-btn btn btn-primary">Bắt đầu thi</a>
+							</Link>
+						) : (
+							<Button
+								onClick={() => getPermissiton()}
+								className="exam-review-btn btn btn-light"
+								style={{ marginBottom: 5, color: 'red' }}
+							>
+								Cho phép sử dụng micro để làm bài tập
+							</Button>
+						)}
+					</>
+				) : (
+					<Link
+						href={{
+							pathname: '/doing-test',
+							query:
+								type !== 'check'
+									? { examID: ID, packageDetailID: packageDetailID, type: type, isExercise: isExercise }
+									: { examID: ID, packageDetailID: packageDetailID, type: type, CurriculumDetailID: CurriculumDetailID }
+						}}
+					>
+						<a className="exam-review-btn btn btn-primary">Bắt đầu thi</a>
+					</Link>
+				)}
 			</Card>
 		</div>
 	);
