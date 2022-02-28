@@ -241,7 +241,10 @@ const TypingList = (props) => {
 
 	return (
 		<>
-			<div className="box-typing">{ReactHtmlParser(dataQuestion.Paragraph)}</div>
+			<div className="">{ReactHtmlParser(dataQuestion.Content)}</div>
+			<div className="box-typing col-lg-6 col-md-12" style={{ marginLeft: -15 }}>
+				{ReactHtmlParser(dataQuestion.Paragraph)}
+			</div>
 			{doneTestData && (
 				<>
 					<div className="wrap-list-answer-typing mt-4">

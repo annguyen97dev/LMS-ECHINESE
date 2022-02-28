@@ -13,14 +13,8 @@ import SpeakingList from '../ExamList/ExamShow/Speaking';
 import { useDoneTest } from '~/context/useDoneTest';
 
 const ListQuestion = (props) => {
-	//   const { listQuestionID } = useDoingTest();
-	const { dataQuestion, listQuestionID, isMarked, showScore } = props;
+	const { dataQuestion, listQuestionID, isMarked, showScore, setChild, openPagi } = props;
 	const { doneTestData } = useDoneTest();
-	console.log('showScore: ', showScore);
-
-	console.log('isMarked: ', isMarked);
-
-	// console.log("Data question in list: ", dataQuestion);
 
 	// RETURN QUESTION TYPE
 	const returnQuestionType = (dataQuestion) => {
@@ -44,6 +38,8 @@ const ListQuestion = (props) => {
 						listQuestionID={listQuestionID}
 						dataQuestion={dataQuestion}
 						listAlphabet={ListAlphabet}
+						setChild={setChild}
+						openPagi={openPagi}
 					/>
 				);
 				break;
@@ -108,9 +104,11 @@ const ListQuestion = (props) => {
 	};
 
 	return (
-		<div className="question-create h-100">
-			<div className="card-detail-exam card-detail-question h-100">
-				<div className="question-list h-100">{returnQuestionType(dataQuestion)}</div>
+		<div className="question-create">
+			<div className="card-detail-exam card-detail-question" style={{ height: '100%' }}>
+				<div className="question-list" style={{ height: '100%' }}>
+					{returnQuestionType(dataQuestion)}
+				</div>
 			</div>
 		</div>
 	);

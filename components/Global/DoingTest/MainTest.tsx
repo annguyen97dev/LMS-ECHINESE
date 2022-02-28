@@ -38,7 +38,6 @@ const MainTest = (props) => {
 		pageSize: 999,
 		ExamTopicID: examID
 	};
-	// console.log('infoExam: ', infoExam);
 
 	const { showNoti } = useWrap();
 	const [todoApi, setTodoApi] = useState(listTodoApi);
@@ -66,6 +65,7 @@ const MainTest = (props) => {
 	const [openTimeUpModal, setOpenTimeUpModal] = useState(false);
 	const [checkTested, setCheckTested] = useState(false);
 	const [openPagi, setOpenPagi] = useState(false); // Use for list question in mobile
+	const [child, setChild] = useState<any>('');
 
 	const checkIsTested = async () => {
 		setIsLoading(true);
@@ -438,7 +438,7 @@ const MainTest = (props) => {
 			case 'check':
 				obj = {
 					pathname: '/course-exam/detail/[slug]',
-					query: { slug: data.ID, examID: data.ExamTopicID, packageDetailID: data.CourseID }
+					query: { slug: data.ID, examID: data.ExamTopicID, packageDetailID: router.query?.packageDetailID }
 				};
 				break;
 
@@ -448,7 +448,7 @@ const MainTest = (props) => {
 					query: {
 						slug: router.query?.isExercise ? data.HomeworkID : data.ID,
 						examID: data.ExamTopicID,
-						packageDetailID: data.SetPackageDetailID
+						packageDetailID: router.query?.packageDetailID
 					}
 				};
 				break;
@@ -696,6 +696,52 @@ const MainTest = (props) => {
 		}
 	};
 
+	// On Drop
+	const drop = (ev) => {
+		ev.preventDefault();
+		var data = ev.dataTransfer.getData('text');
+		data && ev.target.appendChild(document.getElementById(data));
+
+		let nodeList = [...ev.target.childNodes];
+
+		// nodeList.forEach((item) => {
+		// 	dataAnswer.every((element) => {
+		// 		if (element.ansID === parseInt(item.id)) {
+		// 			// Xử lí mảng dataAnswer
+		// 			element.ansID = null
+		// 			element.html = null
+		// 			element.text = null
+		// 			setDataAnswer([...dataAnswer])
+
+		// 			// Xử lí package
+		// 			let indexQuestionDetail = packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList.findIndex(
+		// 				(e) => e.ExerciseID === element.quesID
+		// 			)
+		// 			packageResult.SetPackageResultDetailInfoList[indexQuestion].SetPackageExerciseStudentInfoList[
+		// 				indexQuestionDetail
+		// 			].SetPackageExerciseAnswerStudentList = []
+
+		// 			getPackageResult({ ...packageResult })
+		// 			return false
+		// 		}
+		// 		return true
+		// 	})
+		// })
+	};
+
+	const isDrag = () => {
+		let flag = 0;
+		for (let i = 0; i < dataQuestion.length; i++) {
+			for (let j = 0; j < dataQuestion[i]?.ExerciseTopic.length; j++) {
+				if (dataQuestion[i]?.ExerciseTopic[j]?.ExerciseID == activeID && dataQuestion[i]?.Type == 2) {
+					flag = 0;
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
 	return (
 		<div className={`test-wrapper doing-test ${isDone && 'done-test'}`}>
 			{/** Modal báo hết giờ làm bài */}
@@ -735,12 +781,11 @@ const MainTest = (props) => {
 
 						{infoExam !== null && infoExam?.Audio !== undefined && infoExam.Audio !== null && infoExam.Audio !== '' && (
 							<audio
-								className="none-poiter"
+								className="none-poiter hide-on-mobile"
 								autoPlay={true}
 								controls
 								ref={audio}
 								onEnded={() => setIsPlaying(false)}
-								// style={{ width: isPlaying ? 300 : 0 }}
 							>
 								<source src={infoExam.Audio} type="audio/mpeg" />
 							</audio>
@@ -753,131 +798,148 @@ const MainTest = (props) => {
 					addMinutes && <CountDown addMinutes={addMinutes} onFinish={() => !isModalVisible && timeUp()} />
 				}
 			>
-				<div className="test-body">
-					{loadingSubmit && (
-						<div className="loading-submit text-center">
-							<div className="w-100 text-center">
-								<Spin />
-								<p className="mt-3" style={{ fontStyle: 'italic', fontWeight: 500 }}>
-									Đang tiến hành nộp bài...
-								</p>
-							</div>
-						</div>
-					)}
-					{isLoading ? (
-						<div className="w-100 mt-4 ">
-							<div className="w-50">
-								<Skeleton />
-								<Skeleton />
-							</div>
-						</div>
-					) : dataQuestion?.length > 0 ? (
-						dataQuestion.slice(spaceQuestion.start, spaceQuestion.end).map((item, index) => {
-							if (isGroup) {
-								return (
-									<div className="doingtest-group h-100" key={index}>
-										<div className="row h-100">
-											<div className="col-lg-6 col-md-12 col-sm-12 col-12 h-100">
-												<div className="box-paragraph h-100">{ReactHtmlParser(item.Content)}</div>
-											</div>
-											<div className="col-lg-6 col-md-12 col-sm-12 col-12 h-100 pl-0 pl-0-mobile">
-												<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />
+				<div style={{ width: '100%', height: '105%', display: 'flex', flexDirection: 'column' }}>
+					<div style={{ width: '100%', height: '90%' }}>
+						{dataQuestion !== null && (
+							<>
+								<div className={isDrag() ? 'test-body' : 'test-body'}>
+									{loadingSubmit && (
+										<div className="loading-submit text-center">
+											<div className="w-100 text-center">
+												<Spin />
+												<p className="mt-3" style={{ fontStyle: 'italic', fontWeight: 500 }}>
+													Đang tiến hành nộp bài...
+												</p>
 											</div>
 										</div>
-									</div>
-								);
-							} else {
-								return (
-									<div className="doingtest-single" key={index}>
-										<div className="row">
-											<div className="col-12">
-												<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />
+									)}
+
+									{isLoading ? (
+										<div className="w-100 mt-4 ">
+											<div className="w-50">
+												<Skeleton />
+												<Skeleton />
 											</div>
 										</div>
-									</div>
-								);
-							}
-						})
-					) : (
-						<div className="w-100 text-center">
-							{!checkTested ? (
-								<p style={{ fontWeight: 500 }}>Đề thi này chưa có câu hỏi</p>
-							) : (
-								<div>
-									<p style={{ fontWeight: 500 }}>Bạn đã làm đề test này rồi</p>
-									<Link
-										href={{
-											pathname: '/customer/service/service-test-student'
-										}}
-									>
-										<a className="btn btn-warning">Thoát ra</a>
-									</Link>
+									) : dataQuestion?.length > 0 ? (
+										dataQuestion.slice(spaceQuestion.start, spaceQuestion.end).map((item, index) => {
+											if (isGroup) {
+												return (
+													<div className="doingtest-group" key={index}>
+														<div className="" style={{ height: '100%' }}>
+															<div
+																className="col-lg-6 col-md-12 col-sm-12 col-12 pl-0 pl-0-mobile"
+																style={{ height: '100%' }}
+															>
+																<ListQuestion
+																	setChild={setChild}
+																	dataQuestion={item}
+																	listQuestionID={listQuestionID}
+																	openPagi={openPagi}
+																/>
+															</div>
+														</div>
+													</div>
+												);
+											} else {
+												return (
+													<div className="doingtest-single" key={index}>
+														<div className="row">
+															<div className="col-12">
+																<ListQuestion dataQuestion={item} listQuestionID={listQuestionID} />
+															</div>
+														</div>
+													</div>
+												);
+											}
+										})
+									) : (
+										<div className="w-100 text-center">
+											{!checkTested ? (
+												<p style={{ fontWeight: 500 }}>Đề thi này chưa có câu hỏi</p>
+											) : (
+												<div>
+													<p style={{ fontWeight: 500 }}>Bạn đã làm đề test này rồi</p>
+													<Link
+														href={{
+															pathname: '/customer/service/service-test-student'
+														}}
+													>
+														<a className="btn btn-warning">Thoát ra</a>
+													</Link>
+												</div>
+											)}
+										</div>
+									)}
 								</div>
-							)}
-						</div>
-					)}
-				</div>
-				{dataQuestion?.length > 0 && (
-					<div className="test-footer" id="test-footer">
-						<div className="pagination-mobile ">
-							<button className="listQuestion" onClick={handleClick_openPagi}>
-								<ProfileFilled />
-							</button>
-							<button className="pagi-btn previous" onClick={onChange_PreviousPage}>
-								<LeftOutlined />
-							</button>
-							<button className="pagi-btn next" onClick={onChange_NextPage}>
-								<RightOutlined />
-							</button>
-						</div>
-						<div className={`footer-pagination row-pagination ${openPagi ? 'show-mobile' : ''}`}>
-							<button className="close-icon" onClick={handleClick_openPagi}>
-								<CloseOutlined />
-							</button>
-							<p className="pagi-name">Danh sách câu hỏi</p>
-							<div className="box-preview">
-								<Checkbox checked={listPreview.includes(activeID) ? true : false} onChange={onChange_preview}>
-									Preview
-								</Checkbox>
-							</div>
-							<button className="pagi-btn previous" onClick={onChange_PreviousPage}>
-								<LeftOutlined />
-							</button>
-							<ul className="list-answer">
-								{listQuestionID?.length > 0 &&
-									listQuestionID.map((questionID, index) => (
-										<li
-											className={`item `}
-											value={questionID}
-											key={questionID}
-											style={{ marginBottom: isLong ? '10px' : '' }}
-										>
-											<a
-												href=""
-												onClick={(e) => onChange_pagination(e, index + 1)}
-												className={`
-                      ${questionID == activeID ? 'activeDoing' : ''}
-                      ${listPicked.includes(questionID) ? 'checked' : ''} ${listPreview.includes(questionID) ? 'checked_preview' : ''}`}
-											>
-												{index + 1}
-											</a>
-										</li>
-									))}
-							</ul>
-							<button className="pagi-btn next" onClick={onChange_NextPage}>
-								<RightOutlined />
-							</button>
-						</div>
-						<div className="footer-submit text-right">
-							<button
-								className="btn btn-primary"
-								onClick={() => (!dataDoneTest ? setIsModalConfirm(true) : closeMainTest && closeMainTest())}
-							>
-								{!dataDoneTest ? 'Nộp bài' : 'Đóng'}
-							</button>
-						</div>
+							</>
+						)}
 					</div>
-				)}
+
+					<div style={{ marginBottom: -100 }}>
+						{dataQuestion?.length > 0 && (
+							<div className={!openPagi ? 'test-footer' : 'test-footer-mobile'} id="test-footer">
+								<div className="pagination-mobile ">
+									<button className="listQuestion" onClick={handleClick_openPagi}>
+										<ProfileFilled />
+									</button>
+									<button className="pagi-btn previous" onClick={onChange_PreviousPage}>
+										<LeftOutlined />
+									</button>
+									<button className="pagi-btn next" onClick={onChange_NextPage}>
+										<RightOutlined />
+									</button>
+								</div>
+								<div className={`footer-pagination row-pagination ${openPagi ? 'show-mobile' : ''}`}>
+									<button className="close-icon" onClick={handleClick_openPagi}>
+										<CloseOutlined />
+									</button>
+									<p className="pagi-name">Danh sách câu hỏi</p>
+									<div className="box-preview">
+										<Checkbox checked={listPreview.includes(activeID) ? true : false} onChange={onChange_preview}>
+											Preview
+										</Checkbox>
+									</div>
+									<button className="pagi-btn previous" onClick={onChange_PreviousPage}>
+										<LeftOutlined />
+									</button>
+									<ul className="list-answer">
+										{listQuestionID?.length > 0 &&
+											listQuestionID.map((questionID, index) => (
+												<li
+													className={`item `}
+													value={questionID}
+													key={questionID}
+													style={{ marginBottom: isLong ? '10px' : '' }}
+												>
+													<a
+														href=""
+														onClick={(e) => onChange_pagination(e, index + 1)}
+														className={`
+                      		${questionID == activeID ? 'activeDoing' : ''}
+                      		${listPicked.includes(questionID) ? 'checked' : ''} ${listPreview.includes(questionID) ? 'checked_preview' : ''}`}
+													>
+														{index + 1}
+													</a>
+												</li>
+											))}
+									</ul>
+									<button className="pagi-btn next" onClick={onChange_NextPage}>
+										<RightOutlined />
+									</button>
+								</div>
+								<div className="footer-submit text-right">
+									<button
+										className="btn btn-primary"
+										onClick={() => (!dataDoneTest ? setIsModalConfirm(true) : closeMainTest && closeMainTest())}
+									>
+										{!dataDoneTest ? 'Nộp bài' : 'Đóng'}
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+				</div>
 			</Card>
 		</div>
 	);

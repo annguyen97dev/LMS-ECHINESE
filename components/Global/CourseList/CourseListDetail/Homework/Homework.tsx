@@ -274,7 +274,6 @@ function Homework(props) {
 	const [homeWorks, setHomeWorks] = useState([]);
 
 	useEffect(() => {
-		console.log('props: ', props);
 		getDataExam();
 	}, []);
 
