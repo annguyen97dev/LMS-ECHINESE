@@ -1,6 +1,6 @@
-import { day } from 'date-arithmetic';
 import moment from 'moment';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+
 //  ---------EXPORT TO ARRAY FOR SELECT FIELD---------
 export const fmSelectArr = (arr: Array<{ [key: string]: any }>, title: string, value: string, options = []) => {
 	if (Array.isArray(arr) && arr.length > 0) {
@@ -38,13 +38,27 @@ export const fmArrayToObjectWithSpecialKey = (arr, key) => {
 		return newObj;
 	}, {});
 };
-export const numberWithCommas = (number, commas = ',') => {
-	if (!number) return number;
-	return number
-		.toString()
-		.replace(/\D/g, '')
-		.replace(/(?<=\..*)\./g, '')
-		.replace(/\B(?=(\d{3})+(?!\d))/g, commas);
+export const numberWithCommas = (number: any) => {
+	// try {
+	// 	if (!number) return number
+	// 	return number
+	// 		.toString()
+	// 		.replace(/\D/g, '')
+	// 		.replace(/(?<=\..*)\./g, '')
+	// 		.replace(/\B(?=(\d{3})+(?!\d))/g, commas)
+	// } catch (error) {
+	// 	return number
+	// }
+
+	number += '';
+	let x = number.split('.');
+	let x1 = x[0];
+	let x2 = x.length > 1 ? '.' + x[1] : '';
+	let rgx = /(\d+)(\d{3})/;
+	while (rgx.test(x1)) {
+		x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	}
+	return x1 + x2;
 };
 export const mathRound = (number) => {
 	return Math.round(number * 100) / 100;
@@ -116,8 +130,22 @@ export function usePageVisibility(cb) {
 	}, [cb]);
 }
 
-export const parseToMoney = (value) => {
-	return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+export const parseToMoney = (value: any) => {
+	// try {
+	// 	return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+	// } catch (error) {
+	// 	return value
+	// }
+
+	value += '';
+	let x = value.split('.');
+	let x1 = x[0];
+	let x2 = x.length > 1 ? '.' + x[1] : '';
+	let rgx = /(\d+)(\d{3})/;
+	while (rgx.test(x1)) {
+		x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	}
+	return x1 + x2;
 };
 
 export const createDateObject = (dateState, locale) => {
@@ -127,5 +155,19 @@ export const createDateObject = (dateState, locale) => {
 	const hour = ('0' + dateState.getHours()).slice(-2);
 	const minute = ('0' + dateState.getMinutes()).slice(-2);
 	const second = ('0' + dateState.getSeconds()).slice(-2);
-    return { year, month, date, hour, minute, second }
-}
+	return { year, month, date, hour, minute, second };
+};
+
+export const getTypeURL = (param: any) => {
+	if (param !== undefined && param !== null && param !== '') {
+		if (param[4] == ':') {
+			return 'LOCALHOST';
+		} else {
+			if (param[4] == 's' && param[8] == 'm' && param[9] == 'o') {
+				return 'DEMO';
+			} else {
+				return 'HEROKU';
+			}
+		}
+	}
+};
