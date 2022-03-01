@@ -33,6 +33,16 @@
 		.flip-card-front {
 			width: 100%;
 			height: 100%;
+			position: relative;
+			.course-paid-icon {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				img {
+					width: 50px;
+					height: 50px;
+				}
+			}
 
 			.warp-image {
 				width: 100%;
@@ -53,6 +63,7 @@
 
 			.content {
 				flex: 1;
+				height: 50%;
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
@@ -408,6 +419,12 @@
 					font-weight: bold;
 					color: #b27007;
 				}
+				.sum-rate {
+					font-size: 14px;
+					@include max-media(556px) {
+						font-size: 10px;
+					}
+				}
 			}
 			.stars {
 				display: flex;
@@ -423,7 +440,7 @@
 						height: 8px;
 						width: 200px !important;
 						@include max-media(556px) {
-							width: 100px !important;
+							display: none;
 						}
 					}
 					.start {

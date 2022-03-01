@@ -33,7 +33,7 @@ interface IStudentRollUp {
 type TypeDataRollUp = {
 	RollUp: IRollUp[];
 	ScheduleList: IOptionCommon[];
-	StudentList: IStudentRollUp[];
+	StudentList: any;
 };
 function RollUp(props) {
 	let today = new Date();
@@ -46,8 +46,6 @@ function RollUp(props) {
 		ScheduleList: [],
 		StudentList: []
 	});
-	console.log('currentDate', currentDate);
-	console.log('selectedDate', selectedDate);
 
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
@@ -127,15 +125,27 @@ function RollUp(props) {
 			showNoti('danger', error.message);
 		}
 	};
+
 	const debounceOnChangeValue = useDebounce(onChangeValue, 500, []);
+
+	useEffect(() => {
+		console.log('dataRollUp: ', dataRollUp);
+	}, [dataRollUp]);
+
 	const getRollUpList = async () => {
 		try {
 			setIsLoading({
 				type: 'GET_ALL',
 				status: true
 			});
-			const res = await rollUpApi.getAll(filters);
-			if (res.status === 200) {
+			const res: any = await rollUpApi.getAll({
+				...filters,
+				StudentID: userInformation !== null && userInformation.RoleID == 3 ? userInformation?.UserInformationID : 0
+			});
+			if (res.status === 200 && userInformation.RoleID == 3) {
+				setDataRollUp({ ...dataRollUp, StudentList: res?.data?.data });
+			}
+			if (res.status === 200 && userInformation.RoleID !== 3) {
 				const { RollUp, ScheduleList, StudentList, TotalRow } = res.data;
 				const fmScheduleList = ScheduleList.map((item, index) => {
 					const date = moment(item.StartTime).format('DD/MM/YYYY');
@@ -189,8 +199,6 @@ function RollUp(props) {
 	useEffect(() => {
 		getRollUpList();
 	}, [filters]);
-
-	// console.log('selectedDate: ', selectedDate);
 
 	const columns = [
 		{
@@ -276,6 +284,45 @@ function RollUp(props) {
 			}
 		}
 	];
+
+	const columnsStudent = [
+		{
+			title: 'Môn học',
+			dataIndex: 'SubjectName',
+			render: (text) => <p className="">{text}</p>
+		},
+		{
+			title: 'Buổi học',
+			dataIndex: 'Date',
+			width: 250,
+			render: (Date: any, item: any, idx: number) => {
+				return <div>{Date}</div>;
+			}
+		},
+		{
+			title: 'Điểm danh',
+			dataIndex: 'StatusID',
+			render: (status: any, item: any, idx: number) => {
+				return <div>{item?.StatusName}</div>;
+			}
+		},
+		{
+			title: 'Đánh giá',
+			dataIndex: 'Note',
+			width: 400,
+			render: (text) => <p className="">{text}</p>
+		},
+		{
+			width: 120,
+			title: 'Cảnh cáo',
+			dataIndex: 'Warning',
+			align: 'center',
+			render: (warning, item: IStudentRollUp, idx) => {
+				return <Checkbox disabled={warning || (userInformation?.RoleID === 2 && currentDate !== selectedDate)} checked={warning} />;
+			}
+		}
+	];
+
 	return (
 		<PowerTable
 			loading={isLoading}
@@ -283,27 +330,30 @@ function RollUp(props) {
 			totalPage={totalPage}
 			getPagination={getPagination}
 			dataSource={dataRollUp.StudentList}
-			columns={columns}
+			columns={userInformation.RoleID == 3 ? columnsStudent : columns}
 			TitleCard={
-				<div className="d-flex align-items-center">
-					<div className="">
-						<b>Ca học:</b>
+				userInformation !== null &&
+				userInformation.RoleID !== 3 && (
+					<div className="d-flex align-items-center">
+						<div className="">
+							<b>Ca học:</b>
+						</div>
+						<div>
+							<Select
+								defaultValue={0}
+								style={{ width: 280, paddingLeft: 20, marginBottom: 0 }}
+								className="style-input"
+								onChange={onSelectCourseSchedule}
+							>
+								{dataRollUp.ScheduleList.map((o, idx) => (
+									<Option key={idx} value={o.value}>
+										{o.title}
+									</Option>
+								))}
+							</Select>
+						</div>
 					</div>
-					<div>
-						<Select
-							defaultValue={0}
-							style={{ width: 280, paddingLeft: 20, marginBottom: 0 }}
-							className="style-input"
-							onChange={onSelectCourseSchedule}
-						>
-							{dataRollUp.ScheduleList.map((o, idx) => (
-								<Option key={idx} value={o.value}>
-									{o.title}
-								</Option>
-							))}
-						</Select>
-					</div>
-				</div>
+				)
 			}
 		/>
 	);

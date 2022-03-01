@@ -1,15 +1,15 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Tabs, Drawer, Spin } from 'antd';
+import { Drawer, Spin } from 'antd';
+import { useRouter } from 'next/router';
+import React, { useEffect, useRef, useState } from 'react';
 import 'react-circular-progressbar/dist/styles.css';
-import HeaderVideo from '~/components/VideoLearning/header';
-import VideoTabs from '~/components/VideoLearning/tabs';
-import VideoList from '~/components/VideoLearning/list-video';
-import { VideoCourseOfStudent, VideoCourseInteraction, VideoCourses } from '~/apiBase/video-learning';
-import Router, { useRouter } from 'next/router';
-import { useWrap } from '~/context/wrap';
-import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
-import { usePageVisibility } from '~/utils/functions';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
+import { VideoCourseInteraction, VideoCourseOfStudent, VideoCourses } from '~/apiBase/video-learning';
+import { VideoNoteApi } from '~/apiBase/video-learning/video-note';
+import HeaderVideo from '~/components/VideoLearning/header';
+import VideoList from '~/components/VideoLearning/list-video';
+import VideoTabs from '~/components/VideoLearning/tabs';
+import { useWrap } from '~/context/wrap';
+import { usePageVisibility } from '~/utils/functions';
 
 const initDetails = {
 	VideoCourseName: '',
@@ -25,7 +25,7 @@ const initDetails = {
 };
 
 const useUnload = (fn) => {
-	const cb = useRef(fn); // init with fn, so that type checkers won't assume that current might be undefined
+	const cb = useRef(fn);
 
 	useEffect(() => {
 		cb.current = fn;
@@ -33,9 +33,7 @@ const useUnload = (fn) => {
 
 	useEffect(() => {
 		const onUnload = (...args) => cb.current?.(...args);
-
 		window.addEventListener('beforeunload', onUnload);
-
 		return () => window.removeEventListener('beforeunload', onUnload);
 	}, []);
 };
@@ -47,8 +45,6 @@ const useBeforeUnload = (fn) => {
 	};
 };
 
-let ytplayer = '';
-
 const VideoLearning = () => {
 	const router = useRouter();
 	const ref = useRef<HTMLDivElement>(null);
@@ -56,13 +52,20 @@ const VideoLearning = () => {
 
 	const videoStudy = useRef(null);
 	const boxVideo = useRef(null);
-	const [currentVideo, setCurrentVideo] = useState('h');
+	const [currentVideo, setCurrentVideo] = useState(null);
 	const [data, setData] = useState([]);
 	const [render, setRender] = useState('');
 	const [videos, setVideos] = useState([]);
 	const [dataQA, setDataQA] = useState([]);
 	const [dataNotification, setDataNotification] = useState([]);
-	const [currentLession, setCurrentLession] = useState({ ID: '', Title: '', Description: '', Type: 0, SectionID: '', Second: 0 });
+	const [currentLession, setCurrentLession] = useState({
+		ID: '',
+		Title: '',
+		Description: '',
+		Type: 0,
+		SectionID: '',
+		Second: 0
+	});
 
 	useEffect(() => {
 		if (router.query.course !== undefined) {
@@ -138,7 +141,7 @@ const VideoLearning = () => {
 		const temp = {
 			pageIndex: 1,
 			pageSize: 10,
-			VideoCourseID: router.query.ID,
+			VideoCourseID: router.query.course,
 			LessonDetailID: LessonDetailID,
 			Title: '',
 			sort: 0
@@ -147,7 +150,7 @@ const VideoLearning = () => {
 			const res = await VideoCourseInteraction.ListQA(temp);
 			res.status == 200 && res.data.data !== undefined ? setDataQA(res.data.data) : setDataQA([]);
 		} catch (err) {}
-		getListNotification(router.query.ID);
+		getListNotification(router.query.course);
 	};
 
 	//GET DATA
@@ -155,7 +158,7 @@ const VideoLearning = () => {
 		const temp = {
 			pageIndex: 1,
 			pageSize: 10,
-			VideoCourseID: router.query.ID,
+			VideoCourseID: router.query.course,
 			LessonDetailID: LessonDetailID,
 			searchCreateby: userInformation?.UserAccountID,
 			sort: 0
@@ -182,7 +185,7 @@ const VideoLearning = () => {
 	const addNewQuestion = async (comment, title) => {
 		try {
 			let temp = {
-				VideoCourseID: router.query.ID,
+				VideoCourseID: router.query.course,
 				LessonDetailID: currentLession.ID,
 				Title: title,
 				TextContent: comment,
@@ -198,7 +201,7 @@ const VideoLearning = () => {
 		try {
 			let curTime = videoStudy.current.currentTime;
 			let temp = {
-				VideoCourseID: router.query.ID,
+				VideoCourseID: router.query.course,
 				LessonDetailID: currentLession.ID,
 				Title: param.title,
 				TextContent: param.newContent,
@@ -256,15 +259,9 @@ const VideoLearning = () => {
 	};
 
 	// HANDLE EDIT QUESTION
-	const handleEditQuestion = async (id, title, content) => {
-		let temp = {
-			ID: id,
-			Title: title,
-			TextContent: content,
-			Type: 1
-		};
+	const handleEditQuestion = async (param) => {
 		try {
-			await VideoNoteApi.update(temp);
+			await VideoNoteApi.update(param);
 		} catch (error) {}
 		getListNote(currentLession.ID);
 	};
@@ -285,11 +282,11 @@ const VideoLearning = () => {
 		try {
 			let curTime = videoStudy.current.currentTime;
 			let temp = {
-				VideoCourseID: router.query.ID,
+				VideoCourseID: router.query.course,
 				LessonDetailID: currentLession.ID,
 				Title: param.title,
 				TextContent: param.newContent,
-				TimeNote: curTime,
+				TimeNote: curTime || 0,
 				Type: 2
 			};
 			await VideoCourseInteraction.add(temp);
@@ -298,35 +295,47 @@ const VideoLearning = () => {
 	};
 
 	// -- PAUSE VIDEO
-	const handlePause = () => {
-		videoStudy.current.pause();
-	};
+	function handlePause() {
+		// videoStudy.current.contentWindow.postMessage('{"event":"command","func":"' + 'pauseVideo' + '","args":""}', '*')
+		// console.log(videoStudy.current.contentWindow.document)
+		// console.log(videoStudy.current.contentWindow.window)
+	}
 
-	const fake = 'https://www.youtube.com/embed/m_IN8LPRlcs';
+	const fake = 'http://www.youtube.com/embed/NlOF03DUoWc';
 
 	function Iframe(props) {
 		const [hei, setHei] = useState(0);
-		const ref = useRef(null);
-
 		useEffect(() => {
-			console.log('eleValue?.offsetWidth: ', ref.current.clientWidth);
-			if (ref.current.clientWidth > 0) {
-				setHei(ref.current.clientWidth / 1.75);
+			if (videoStudy.current.clientWidth > 0) {
+				setHei(videoStudy.current.clientWidth / 1.75);
 			}
-		}, [ref.current]);
+		}, [videoStudy.current && videoStudy.current.clientWidth]);
 
 		return (
-			<div
-				className="iframe-video"
-				ref={ref}
-				style={{ width: '100%', height: hei || 'auto' }}
-				id="PStyle"
-				dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }}
-			/>
+			// <div
+			// 	className="iframe-video"
+			// 	ref={ref}
+			// 	style={{ width: '100%', height: hei || 'auto' }}
+			// 	id="PStyle"
+			// 	dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }}
+			// />
+			<>
+				<iframe
+					// ref={ref}
+					id="video__course__iframe"
+					ref={videoStudy}
+					width="100%"
+					height={hei}
+					src={props?.iframe}
+					frameBorder="0"
+					allow="autoplay; clipboard-write; picture-in-picture"
+					allowFullScreen
+					title="Embedded youtube"
+				></iframe>
+				{/* <ReactPlayer ref={videoStudy} width="900px" height="600px" url={fake} /> */}
+			</>
 		);
 	}
-
-	console.log(currentVideo);
 
 	// RENDER
 	return (
@@ -337,41 +346,20 @@ const VideoLearning = () => {
 					<div className="wrap-video pl-3">
 						<div ref={ref} className="wrap-video__video">
 							<div className="box-video" ref={boxVideo}>
-								{currentVideo == 'h' ? (
+								{currentVideo === null ? (
 									<>
-										{/* <iframe
-											id="movie_player"
-											ref={videoStudy}
-											className="html-iframe"
-											src={currentVideo}
-											title="cc"
-											allowFullScreen
-										/> */}
 										<div className="html-iframe d-flex justify-content-center align-items-between">
 											<Spin tip="Loading..." style={{ height: 100, marginTop: '25%' }} size="large"></Spin>
 										</div>
 									</>
 								) : (
-									<iframe
-										id="movie_player"
-										ref={videoStudy}
-										className="html-iframe"
-										src={currentVideo}
-										title="cc"
-										allowFullScreen
-									/>
-									// <Iframe iframe={currentVideo} allow="autoplay" />
+									// <iframe id="movie_player" ref={videoStudy} className="html-iframe" src={fake} title="cc" allowFullScreen />
+									<Iframe iframe={currentVideo} allow="autoplay" />
 								)}
 
 								{data.length > 0 && currentLession.Type === 0
 									? data.map((item) => (
-											<a
-												href="/#"
-												key={item.ID}
-												style={{ left: item.TimeNote + '%' }}
-												className="marked"
-												// onClick={moveToCurTime}
-											>
+											<a href="/#" key={item.ID} style={{ left: item.TimeNote + '%' }} className="marked">
 												<div data-time={item.TimeNote}></div>
 											</a>
 									  ))
@@ -379,36 +367,30 @@ const VideoLearning = () => {
 							</div>
 
 							<VideoTabs
+								videoRef={videoStudy}
 								params={currentLession}
 								details={details}
 								dataNote={data}
 								dataQA={dataQA}
-								onCreateNew={(p) => {
-									handleSubmit(p);
-								}}
+								onCreateNew={(p) => handleSubmit(p)}
 								onPress={(p) => {
 									videoStudy.current.currentTime = p.TimeNote;
 								}}
-								onDelete={(p) => {
-									removeItem(p.ID);
-								}}
-								onEdit={(p) => {
-									handleFixed(p.item.ID, p.title, p.content);
-								}}
-								onPauseVideo={() => {
-									handlePause();
-								}}
-								videoRef={videoStudy}
-								addNewQuest={(p) => {
-									addNewQuestion(p.comment, p.title);
-								}}
-								onEditQuest={(e) => {
-									handleEditQuestion(e.item.ID, e.title, e.content);
-								}}
+								onDelete={(p) => removeItem(p.ID)}
+								onEdit={(p) => handleFixed(p.item.ID, p.title, p.content)}
+								onPauseVideo={() => handlePause()}
+								addNewQuest={(p) => addNewQuestion(p.comment, p.title)}
+								onEditQuest={(e) =>
+									handleEditQuestion({
+										ID: e.item.ID,
+										Title: e.title,
+										TextContent: e.content,
+										Type: 1
+									})
+								}
+								onDeleteQuest={(e) => handleEditQuestion({ ID: e?.ID, Enable: false })}
 								dataNotification={dataNotification}
-								createNewNotification={(e) => {
-									addNewNotification(e);
-								}}
+								createNewNotification={(e) => addNewNotification(e)}
 							/>
 						</div>
 					</div>
@@ -418,8 +400,6 @@ const VideoLearning = () => {
 					<div className="wrap-menu">
 						<VideoList
 							onPress={(p) => {
-								console.log('VideoList - onPress: ', p);
-
 								setCurrentLession(p);
 								getListNote(p.ID);
 

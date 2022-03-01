@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { List, Tooltip, Spin } from 'antd';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
 
+const SHOW_TIME = false;
+
 const RenderSubItemContent = (props) => {
 	const { item } = props;
 	return (
@@ -12,7 +14,7 @@ const RenderSubItemContent = (props) => {
 					{item?.Title}
 				</span>
 			</div>
-			<span className="ml-3">{item?.SecondVideo} giây</span>
+			{SHOW_TIME && <span className="ml-3">{item?.SecondVideo} giây</span>}
 		</div>
 	);
 };
@@ -61,7 +63,7 @@ const RenderItemContent = (props) => {
 					</span>
 				</div>
 				<span className="ml-3">
-					{item?.TotalLesson} bài giảng • thời lượng {item?.TotalLesson} giây
+					{item?.TotalLesson} bài giảng {SHOW_TIME && `• thời lượng ${item.TotalLesson} giây`}
 				</span>
 			</div>
 			{show && (
@@ -83,7 +85,8 @@ const CourseDetailsContent = (props) => {
 		<div className="vc-details_main">
 			<Tooltip title="Xóa"></Tooltip>
 			<span className="total-student">
-				{contentData.TotalSections} chương • {contentData.TotalLessons} bài giảng • thời lượng {contentData.TotalSecondVideos}
+				{contentData.TotalSections} chương • {contentData.TotalLessons} bài giảng{' '}
+				{SHOW_TIME && `• thời lượng ${contentData.TotalSecondVideos} giây`}
 			</span>
 			<List
 				header={null}

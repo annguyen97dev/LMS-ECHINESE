@@ -1,19 +1,17 @@
-import React, { FC, useEffect, useState } from 'react';
+import { Card, Input, List, Modal, Progress, Rate, Tooltip } from 'antd';
 import 'antd/dist/antd.css';
-import { List, Card, Progress, Rate, Modal, Input, Tooltip, Popconfirm, message } from 'antd';
-import LayoutBase from '~/components/LayoutBase';
-import { VideoCourseListApi, DonePayApi } from '~/apiBase';
-import { useWrap } from '~/context/wrap';
 import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import { VideoCourseListApi } from '~/apiBase';
 import CourseVideoTable from '~/components/CourseVideoTable';
-import { DollarOutlined } from '@ant-design/icons';
-import { Filter, Eye, CheckCircle } from 'react-feather';
-import moment from 'moment';
+import LayoutBase from '~/components/LayoutBase';
+import { useWrap } from '~/context/wrap';
 
 const { TextArea, Search } = Input;
 
 const ItemVideo = ({ item, onRate }) => {
 	const [rerender, setRender] = useState('');
+	const { userInformation } = useWrap();
 
 	useEffect(() => {
 		setRender(item);
@@ -25,7 +23,7 @@ const ItemVideo = ({ item, onRate }) => {
 				href={{
 					pathname: '/video-learning',
 					query: {
-						ID: item.VideoCourseID,
+						ID: userInformation.RoleID == 3 ? item.ID : item.VideoCourseID,
 						course: item.VideoCourseID,
 						complete: item.Complete + '/' + item.TotalLesson,
 						name: item.VideoCourseName
@@ -37,7 +35,7 @@ const ItemVideo = ({ item, onRate }) => {
 						href={{
 							pathname: '/video-learning',
 							query: {
-								ID: item.ID,
+								ID: userInformation.RoleID == 3 ? item.ID : item.VideoCourseID,
 								course: item.VideoCourseID,
 								complete: item.Complete + '/' + item.TotalLesson,
 								name: item.VideoCourseName
@@ -57,7 +55,7 @@ const ItemVideo = ({ item, onRate }) => {
 				href={{
 					pathname: '/video-learning',
 					query: {
-						ID: item.ID,
+						ID: userInformation.RoleID == 3 ? item.ID : item.VideoCourseID,
 						course: item.VideoCourseID,
 						complete: item.Complete + '/' + item.TotalLesson,
 						name: item.VideoCourseName
@@ -200,7 +198,7 @@ const VideoCourseList = () => {
 			key: 'StudentName'
 		},
 		{
-			title: 'Ngày mua',
+			title: 'Ngày kích hoạt',
 			dataIndex: 'CreatedOn',
 			key: 'CreatedOn',
 			render: (Action, data, index) => <div>{data.CreatedOn}</div>
@@ -254,9 +252,7 @@ const VideoCourseList = () => {
 							className="fb-btn-search style-input vc-teach-modal_search"
 							size="large"
 							placeholder="input search text"
-							onSearch={(e) => {
-								handleSearch(e);
-							}}
+							onSearch={(e) => handleSearch(e)}
 						/>
 					</div>
 				</div>
@@ -264,6 +260,7 @@ const VideoCourseList = () => {
 		);
 	};
 
+	// RENDER
 	return (
 		<div className="">
 			<Card title={Extra()} className="video-course-list" style={{ width: '100%' }}>
@@ -324,26 +321,12 @@ const VideoCourseList = () => {
 						updateRate();
 					}}
 					confirmLoading={false}
-					onCancel={() => {
-						setShowModal(false);
-					}}
+					onCancel={() => setShowModal(false)}
 				>
-					<Rate
-						value={parseInt(state.RatingNumber)}
-						onChange={(e) => {
-							console.log('change: ', e);
-							dispatch({ type: 'RatingNumber', RatingNumber: e });
-						}}
-					/>
-
+					<Rate value={parseInt(state.RatingNumber)} onChange={(e) => dispatch({ type: 'RatingNumber', RatingNumber: e })} />
 					<TextArea
 						value={state.RatingComment}
-						onChange={(p) => {
-							dispatch({
-								type: 'RatingComment',
-								RatingComment: p.target.value
-							});
-						}}
+						onChange={(p) => dispatch({ type: 'RatingComment', RatingComment: p.target.value })}
 						rows={4}
 						className="mt-4"
 					/>
@@ -352,6 +335,7 @@ const VideoCourseList = () => {
 		</div>
 	);
 };
+
 VideoCourseList.layout = LayoutBase;
 
 export default VideoCourseList;

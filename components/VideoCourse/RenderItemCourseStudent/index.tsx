@@ -45,7 +45,9 @@ const RenderItemCard = (props) => {
 		Sell: item.SellPrice,
 		Active: item.StatusActive,
 		TotalVideo: item.TotalVideoCourseSold,
-		TotalVideoViews: item?.TotalVideoViews
+		TotalVideoViews: item?.TotalVideoViews,
+		TeacherID: item?.TeacherID,
+		CurriculumID: item?.CurriculumID
 	};
 
 	// UPDATE COURSE
@@ -99,7 +101,7 @@ const RenderItemCard = (props) => {
 	return (
 		<>
 			<div className="vc-store_container">
-				<div className="vc-store_item" style={{ height: userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? 300 : 305 }}>
+				<div className="vc-store_item" style={{ height: userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? 340 : 305 }}>
 					<div className="flip-card-front">
 						<div className="warp-image">
 							<Link
@@ -214,17 +216,38 @@ const RenderItemCard = (props) => {
 									{/* button action */}
 									{userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? (
 										<div style={{ zIndex: 99999 }}>
-											<button
-												type="button"
-												className=" btn btn-warning"
-												style={{ width: '100%' }}
-												onClick={(e) => {
-													e.stopPropagation();
-													setShowModalUpdate(true);
-												}}
-											>
-												Chỉnh sửa
-											</button>
+											{userInformation?.RoleID == 1 && (
+												<button
+													type="button"
+													className=" btn btn-warning"
+													style={{ width: '100%' }}
+													onClick={(e) => {
+														e.stopPropagation();
+														setShowModalUpdate(true);
+													}}
+												>
+													Chỉnh sửa
+												</button>
+											)}
+
+											{userInformation !== null &&
+												(userInformation?.RoleID == 1 || userInformation.UserInformationID == item?.TeacherID) && (
+													<Link
+														href={{
+															pathname: '/video-learning',
+															query: {
+																ID: item.ID,
+																course: item.ID,
+																complete: 0 + '/' + 0,
+																name: item.VideoCourseName
+															}
+														}}
+													>
+														<button className="btn btn-dark btn-add mt-2" style={{ width: '100%' }}>
+															Xem khóa học
+														</button>
+													</Link>
+												)}
 										</div>
 									) : (
 										<>

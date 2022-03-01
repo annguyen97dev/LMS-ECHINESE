@@ -1,26 +1,27 @@
-import React, { FC, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
 import { List, Avatar, Form, Button, Input, Tooltip } from 'antd';
 import { useWrap } from '~/context/wrap';
+import { ReplyInteractionInVideoCourseApi } from '~/apiBase/ReplyInteractionInVideoCourse';
 
 const { TextArea } = Input;
 
-type props = {
-	params: any[];
-	addNew: any;
-	onEdit: any;
-};
-
 // MY EDITOR - TEXTAREA
-const Editor = ({ onChange, onSubmit, onSubmitEdit, submitting, value, type, setType }) => (
+const Editor = ({ onChange, onSubmit, onSubmitEdit, submitting, value, isEdit, onCancel }) => (
 	<>
 		<Form.Item>
 			<TextArea placeholder="Nội dung" rows={4} onChange={onChange} value={value} />
 		</Form.Item>
 		<Form.Item>
-			<Button htmlType="submit" loading={submitting} onClick={type === 0 ? onSubmit : onSubmitEdit} type="primary">
-				{type === 0 ? 'Thêm câu hỏi' : 'Lưu thay đổi'}
+			<Button className="btn btn-success" loading={submitting} onClick={isEdit === false ? onSubmit : onSubmitEdit}>
+				{isEdit === false ? 'Thêm câu hỏi' : 'Lưu thay đổi'}
 			</Button>
+
+			{isEdit && (
+				<Button className="btn btn-cancel ml-3" loading={submitting} onClick={onCancel}>
+					Huỷ
+				</Button>
+			)}
 		</Form.Item>
 	</>
 );
@@ -45,91 +46,313 @@ const getNumber = (num) => {
 	return num > 9 ? num : '0' + num;
 };
 
-// RENDER ITEM QUESTION
-const RenderItem = ({ item, onEdit, userInformation }: { item: any; onEdit: any; userInformation: any }) => {
-	return (
-		<div className="m-3 wrap-render-item-quest">
-			<Avatar className="avatar custom-avt" src={item.AuthorAvatar} />
-			<div className="ml-3 comment">
-				<div className="m-0 row vl-t-sb">
-					<p className="title">{item.Title}</p>
-					<div className="row mr-1 ml-3 vocab-item__menu">
-						{userInformation.UserInformationID == item.AuthorID && (
-							<Tooltip title="Sửa">
-								<button
-									onClick={() => {
-										onEdit(item);
-									}}
-									className="btn btn-icon edit"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="24"
-										height="24"
-										viewBox="0 0 26 26"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-										<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-									</svg>
-								</button>
-							</Tooltip>
-						)}
+const RenderItemReply = (props: any) => {
+	const { item, onEdit, onDelete, userInformation } = props;
 
-						{/* <Tooltip title="Xóa">
-							<button
-								onClick={() => {
-									// onDelete(item);
-								}}
-								className="btn btn-icon delete"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									viewBox="0 0 26 26"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<polyline points="3 6 5 6 21 6"></polyline>
-									<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-									<line x1="10" y1="11" x2="10" y2="17"></line>
-									<line x1="14" y1="11" x2="14" y2="17"></line>
-								</svg>
-							</button>
-						</Tooltip> */}
+	return (
+		<div className={`wrap-render-item-quest`} style={{ marginLeft: -15 }}>
+			<div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+				<Avatar
+					className="avatar custom-avt"
+					src={item.AuthorAvatar !== '' && item.AuthorAvatar !== null ? item.AuthorAvatar : '/images/default-echinese.png'}
+				/>
+				<div className="ml-3 comment">
+					<span className="name">{item.AuthorName} - </span>
+					<span className="date">{getDateString(item.CreatedDate)}</span>
+
+					<div className="m-0 row vl-t-sb">
+						<p className="content">{item.ReplyContent}</p>
+
+						<div className="row ml-3 vocab-item__menu" style={{ marginRight: -35 }}>
+							{userInformation?.UserInformationID == item?.AuthorID && (
+								<>
+									<Tooltip title="Sửa">
+										<button
+											onClick={() => {
+												onEdit(item);
+											}}
+											className="btn btn-icon edit"
+										>
+											<div className="mini-reply-button">
+												<i className="fas fa-edit" style={{ color: '#4bcbaf', fontSize: 16, marginRight: 2 }}></i>
+											</div>
+										</button>
+									</Tooltip>
+									<Tooltip title="Xoá">
+										<button
+											onClick={() => {
+												onDelete(item);
+											}}
+											className="btn btn-icon edit"
+										>
+											<div className="mini-reply-button">
+												<i
+													className="fas fa-trash-alt"
+													style={{ color: '#dd4667', fontSize: 16, marginRight: 2 }}
+												></i>
+											</div>
+										</button>
+									</Tooltip>
+								</>
+							)}
+						</div>
 					</div>
 				</div>
-				<p className="content">{item.TextContent}</p>
-				<span className="date">
-					<span className="name">{item.AuthorName}</span> {' - '}
-					{getDateString(item.CreatedDate)}
-				</span>
 			</div>
 		</div>
 	);
 };
 
-const VideoQuestion: FC<props> = ({ params, addNew, onEdit }) => {
+// RENDER ITEM QUESTION
+const RenderItem = (props: any) => {
+	const { item, onEdit, userInformation, onDelete } = props;
+
+	const [showReply, setShowReply] = useState(false);
+	const [content, setContent] = useState('');
+	const [replyList, setReplyList] = useState<any>([]);
+	const [edit, setEdit] = useState('');
+
+	useEffect(() => {
+		getReply();
+	}, []);
+
+	// CALL API GET REPLY
+	const getReply = async () => {
+		try {
+			setContent('');
+			const res = await ReplyInteractionInVideoCourseApi.getAll(item?.ID);
+			setReplyList(res.data.data.obj);
+		} catch (error) {
+			console.log('getReply: ', error);
+		}
+	};
+
+	// CALL API CREATE REPLY
+	const postReply = async (param: any) => {
+		try {
+			await ReplyInteractionInVideoCourseApi.add(param);
+			getReply();
+		} catch (error) {
+			console.log('postReply: ', error);
+		}
+	};
+
+	// CALL API UPDATE REPLY
+	const updateReply = async (param: any) => {
+		try {
+			await ReplyInteractionInVideoCourseApi.update(param);
+			getReply();
+		} catch (error) {
+			console.log('postReply: ', error);
+		} finally {
+			setEdit('');
+			setContent('');
+		}
+	};
+
+	// ON EDIT REPLY
+	const handleEditReply = (e) => {
+		setEdit(e?.ID);
+		setContent(e?.ReplyContent);
+		setShowReply(true);
+	};
+
+	// ON DELETE REPLY
+	const handleDeleteReply = (e) => {
+		updateReply({ ID: e?.ID, Enable: false });
+	};
+
+	// SHOW ALL REPLY
+	const [showAll, setShowAll] = useState(false);
+
+	// RESET INPUT AND BUTTON
+	const reset = () => {
+		setContent('');
+		setEdit('');
+	};
+
+	// RENDER
+	return (
+		<div className={`m-3 wrap-render-item-quest ${showReply && 'qa-item-active'}`}>
+			<div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+				<Avatar
+					className="avatar custom-avt"
+					src={item.AuthorAvatar !== '' && item.AuthorAvatar !== null ? item.AuthorAvatar : '/images/default-echinese.png'}
+				/>
+				<div className="ml-3 comment">
+					<div className="m-0 row vl-t-sb">
+						<p className="title">{item.Title}</p>
+						<div className="row mr-1 ml-3 vocab-item__menu">
+							{userInformation?.UserInformationID == item?.AuthorID && (
+								<>
+									<Tooltip title="Sửa">
+										<button onClick={() => onEdit(item)} className="btn btn-icon edit">
+											<div className="mini-reply-button">
+												<i className="fas fa-edit" style={{ color: '#4bcbaf', fontSize: 16, marginRight: 2 }}></i>
+											</div>
+										</button>
+									</Tooltip>
+									<Tooltip title="Xoá">
+										<button onClick={() => onDelete(item)} className="btn btn-icon edit">
+											<div className="mini-reply-button">
+												<i
+													className="fas fa-trash-alt"
+													style={{ color: '#dd4667', fontSize: 16, marginRight: 2 }}
+												></i>
+											</div>
+										</button>
+									</Tooltip>
+								</>
+							)}
+
+							<Tooltip title={showReply ? 'Đóng trả lời' : 'Trả lời'}>
+								<button
+									onClick={() => {
+										edit !== '' ? reset() : setShowReply(!showReply);
+									}}
+									className="btn btn-icon delete"
+								>
+									<div className="mini-reply-button">
+										{showReply && edit == '' ? (
+											<i className="fas fa-times" style={{ color: '#2196F3', fontSize: 16, marginRight: 2 }}></i>
+										) : (
+											<i className="fas fa-reply" style={{ color: '#2196F3', fontSize: 16, marginRight: 1 }}></i>
+										)}
+									</div>
+								</button>
+							</Tooltip>
+						</div>
+					</div>
+					<p className="content">{item.TextContent}</p>
+					<span className="date">
+						<span className="name">{item.AuthorName}</span> {' - '}
+						{getDateString(item.CreatedDate)}
+					</span>
+				</div>
+			</div>
+
+			<div className="qa-wrap-reply">
+				{replyList.length !== 0 && (
+					<>
+						{replyList.length < 4 || showAll ? (
+							<>
+								<List
+									className="mt-3"
+									itemLayout="horizontal"
+									dataSource={replyList}
+									pagination={null}
+									renderItem={(item) => (
+										<RenderItemReply
+											onDelete={handleDeleteReply}
+											item={item}
+											userInformation={userInformation}
+											onEdit={handleEditReply}
+										/>
+									)}
+								/>
+
+								{replyList.length > 3 && (
+									<Button onClick={() => setShowAll(false)} className="btn btn-light mb-3" style={{ width: '100%' }}>
+										Ẩn bớt
+									</Button>
+								)}
+							</>
+						) : (
+							<>
+								<List
+									className="mt-3"
+									itemLayout="horizontal"
+									dataSource={[replyList[0], replyList[1]]}
+									pagination={null}
+									renderItem={(item) => (
+										<RenderItemReply
+											onDelete={handleDeleteReply}
+											item={item}
+											userInformation={userInformation}
+											onEdit={handleEditReply}
+										/>
+									)}
+								/>
+								<Button onClick={() => setShowAll(true)} className="btn btn-light mb-3" style={{ width: '100%' }}>
+									Xem tất cả
+								</Button>
+							</>
+						)}
+					</>
+				)}
+
+				{showReply && (
+					<div className="input">
+						<Input
+							value={content}
+							onChange={(t) => {
+								setContent(t.target.value);
+							}}
+							placeholder="Nội dung"
+						/>
+						<Button
+							onClick={() =>
+								edit !== ''
+									? updateReply({ ID: edit, ReplyContent: content })
+									: postReply({ InteractionInVideoCourseID: item?.ID, ReplyContent: content })
+							}
+							className="btn btn-success ml-3"
+						>
+							{edit == '' ? 'Trả lời' : 'Lưu'}
+						</Button>
+
+						{edit !== '' && (
+							<Button
+								onClick={() => {
+									setEdit('');
+									setContent('');
+									setShowReply(false);
+								}}
+								className="btn btn-cancel ml-3"
+							>
+								Hủy
+							</Button>
+						)}
+					</div>
+				)}
+			</div>
+		</div>
+	);
+};
+
+const VideoQuestion = (props: any) => {
+	const { params, addNew, onEdit, onDeleteQuest } = props;
+
 	const { userInformation } = useWrap();
 	const [comment, setComment] = useState('');
 	const [title, setTile] = useState('');
-	const [type, setType] = useState(0);
 	const [editItem, setEditItem] = useState('');
 
-	// ONEDIT
+	// ON EDIT
 	const edit = (param) => {
 		setEditItem(param);
-		setType(1);
 		setTile(param.Title);
 		setComment(param.TextContent);
+	};
+
+	// RESET INPUT
+	const reset = () => {
+		setTile('');
+		setComment('');
+		setEditItem('');
+	};
+
+	// ADD QUESTION
+	const handleSubmit = () => {
+		addNew({ comment: comment, title: title });
+		setComment('');
+		setTile('');
+	};
+
+	// EDIT QUESTION
+	const handleSubmitEdit = () => {
+		onEdit({ item: editItem, title: title, content: comment });
+		reset();
 	};
 
 	// RENDER
@@ -144,36 +367,21 @@ const VideoQuestion: FC<props> = ({ params, addNew, onEdit }) => {
 					pagination={{
 						pageSize: 10
 					}}
-					renderItem={(item) => <RenderItem item={item} onEdit={edit} userInformation={userInformation} />}
+					renderItem={(item) => (
+						<RenderItem item={item} onEdit={edit} onDelete={onDeleteQuest} userInformation={userInformation} />
+					)}
 				/>
+
 				<div className="ml-3 mt-4">
-					<Input
-						value={title}
-						onChange={(t) => {
-							setTile(t.target.value);
-						}}
-						className="mb-3"
-						placeholder="Tiêu đề"
-					/>
+					<Input value={title} onChange={(t) => setTile(t.target.value)} className="mb-3" placeholder="Tiêu đề" />
 					<Editor
-						onChange={(t) => {
-							setComment(t.target.value);
-						}}
-						onSubmit={() => {
-							addNew({ comment: comment, title: title });
-							setComment('');
-							setTile('');
-						}}
+						onChange={(t) => setComment(t.target.value)}
+						onSubmit={handleSubmit}
 						submitting={false}
 						value={comment}
-						type={type}
-						setType={setType}
-						onSubmitEdit={() => {
-							onEdit({ item: editItem, title: title, content: comment });
-							setTile('');
-							setComment('');
-							setType(0);
-						}}
+						isEdit={editItem !== '' ? true : false}
+						onCancel={reset}
+						onSubmitEdit={handleSubmitEdit}
 					/>
 				</div>
 			</div>
