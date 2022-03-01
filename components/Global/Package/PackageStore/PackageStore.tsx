@@ -1,24 +1,24 @@
-import {Card, Image, List} from 'antd';
-import {useRouter} from 'next/router';
-import React, {useEffect, useRef, useState} from 'react';
-import {packageApi, packageStudentApi} from '~/apiBase';
+import { Card, Image, List } from 'antd';
+import { useRouter } from 'next/router';
+import React, { useEffect, useRef, useState } from 'react';
+import { packageApi, packageStudentApi } from '~/apiBase';
 import SortBox from '~/components/Elements/SortBox';
 import TitlePage from '~/components/Elements/TitlePage';
-import {useWrap} from '~/context/wrap';
-import {numberWithCommas} from '~/utils/functions';
+import { useWrap } from '~/context/wrap';
+import { numberWithCommas } from '~/utils/functions';
 import PackageStoreFilterForm from './PackageStoreFilterForm/PackageStoreFilterForm';
 import PackageStoreForm from './PackageStoreForm/PackageStoreForm';
 
 const PackageStore = () => {
 	const router = useRouter();
-	const {type} = router.query;
+	const { type } = router.query;
 	const [isLoading, setIsLoading] = useState({
 		type: '',
-		status: false,
+		status: false
 	});
 	const [storePackageList, setStorePackageList] = useState<IPackage[]>([]);
 	const [totalPage, setTotalPage] = useState(null);
-	const {showNoti, userInformation} = useWrap();
+	const { showNoti, userInformation } = useWrap();
 	// FILTER
 	const listFieldInit = {
 		pageIndex: 1,
@@ -30,85 +30,85 @@ const PackageStore = () => {
 		Type: null,
 		Level: null,
 		fromDate: '',
-		toDate: '',
+		toDate: ''
 	};
 	let refValue = useRef({
 		pageIndex: 1,
 		pageSize: 10,
 		sort: -1,
-		sortType: false,
+		sortType: false
 	});
 	const [filters, setFilters] = useState(listFieldInit);
 	const typeOptionList = [
 		{
 			value: 1,
-			title: 'Miễn phí',
+			title: 'Miễn phí'
 		},
 		{
 			value: 2,
-			title: 'Cao cấp',
-		},
+			title: 'Cao cấp'
+		}
 	];
 	const levelOptionList = [
 		{
 			value: 1,
-			title: 'HSK 1',
+			title: 'HSK 1'
 		},
 		{
 			value: 2,
-			title: 'HSK 2',
+			title: 'HSK 2'
 		},
 		{
 			value: 3,
-			title: 'HSK 3',
+			title: 'HSK 3'
 		},
 		{
 			value: 4,
-			title: 'HSK 4',
+			title: 'HSK 4'
 		},
 		{
 			value: 5,
-			title: 'HSK 5',
+			title: 'HSK 5'
 		},
 		{
 			value: 6,
-			title: 'HSK 6',
-		},
+			title: 'HSK 6'
+		}
 	];
 	// SORT OPTION
 	const sortOptionList = [
 		{
 			dataSort: {
 				sort: 0,
-				sortType: true,
+				sortType: true
 			},
 			value: 1,
-			text: 'Level tăng dần',
+			text: 'Level tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 0,
-				sortType: false,
+				sortType: false
 			},
 			value: 2,
-			text: 'Level giảm dần',
+			text: 'Level giảm dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: true,
+				sortType: true
 			},
 			value: 3,
-			text: 'Giá tăng dần',
+			text: 'Giá tăng dần'
 		},
 		{
 			dataSort: {
 				sort: 1,
-				sortType: false,
+				sortType: false
 			},
 			value: 4,
-			text: 'Giá giảm dần',
-		},
+			text: 'Giá giảm dần'
+		}
 	];
 	// FILTER
 	const onFilter = (obj) => {
@@ -116,7 +116,7 @@ const PackageStore = () => {
 			...listFieldInit,
 			...refValue.current,
 			pageIndex: 1,
-			...obj,
+			...obj
 		});
 	};
 	// PAGINATION
@@ -125,11 +125,11 @@ const PackageStore = () => {
 		refValue.current = {
 			...refValue.current,
 			pageSize,
-			pageIndex,
+			pageIndex
 		};
 		setFilters({
 			...filters,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// SORT
@@ -137,25 +137,25 @@ const PackageStore = () => {
 		refValue.current = {
 			...refValue.current,
 			sort: option.title.sort,
-			sortType: option.title.sortType,
+			sortType: option.title.sortType
 		};
 		setFilters({
 			...listFieldInit,
-			...refValue.current,
+			...refValue.current
 		});
 	};
 	// RESET SEARCH
 	const onResetSearch = () => {
 		setFilters({
 			...listFieldInit,
-			pageSize: refValue.current.pageSize,
+			pageSize: refValue.current.pageSize
 		});
 	};
 	// GET DATA IN FIRST TIME
 	const fetchPackageList = async () => {
 		setIsLoading({
 			type: 'GET_ALL',
-			status: true,
+			status: true
 		});
 		try {
 			const res = await packageApi.getAll(filters);
@@ -174,7 +174,7 @@ const PackageStore = () => {
 		} finally {
 			setIsLoading({
 				type: 'GET_ALL',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -189,32 +189,24 @@ const PackageStore = () => {
 				...listFieldInit,
 				...refValue.current,
 				pageIndex: 1,
-				Type: type,
+				Type: type
 			});
 		}
 	}, [type]);
 
-	const onSubmit = async (data: {
-		ID: number;
-		Price: string;
-		PaymentMethodsID: number;
-		Note: string;
-	}) => {
+	const onSubmit = async (data: { ID: number; Price: string; PaymentMethodsID: number; Note: string }) => {
 		setIsLoading({
 			type: 'ADD_DATA',
-			status: true,
+			status: true
 		});
 		try {
-			const {ID, Price, PaymentMethodsID, Note} = data;
+			const { ID, Price, PaymentMethodsID, Note } = data;
 			const newPackageStudent = {
 				StudentID: userInformation.UserInformationID,
 				SetPackageID: ID,
-				Paid:
-					Price === 'Miễn phí'
-						? 0
-						: parseInt(Price.toString().replace(/\D/g, '')),
+				Paid: Price === 'Miễn phí' ? 0 : parseInt(Price.toString().replace(/\D/g, '')),
 				PaymentMethodsID,
-				Note,
+				Note
 			};
 			const res = await packageStudentApi.add(newPackageStudent);
 			if (res.status === 200) {
@@ -231,7 +223,7 @@ const PackageStore = () => {
 		} finally {
 			setIsLoading({
 				type: 'ADD_DATA',
-				status: false,
+				status: false
 			});
 		}
 	};
@@ -249,7 +241,7 @@ const PackageStore = () => {
 									handleResetFilter={onResetSearch}
 									optionListForFilter={{
 										levelOptionList: levelOptionList,
-										typeOptionList: typeOptionList,
+										typeOptionList: typeOptionList
 									}}
 								/>
 								<SortBox dataOption={sortOptionList} handleSort={onSort} />
@@ -262,25 +254,17 @@ const PackageStore = () => {
 								onChange: getPagination,
 								total: totalPage,
 								size: 'small',
-								current: filters.pageIndex,
+								current: filters.pageIndex
 							}}
 							itemLayout="horizontal"
 							dataSource={storePackageList}
 							renderItem={(item: IPackage, idx) => {
-								const {
-									ID,
-									Name,
-									Avatar,
-									Level,
-									Type,
-									TypeName,
-									Price,
-									Description,
-								} = item;
+								const { ID, Name, Avatar, Level, Type, TypeName, Price, Description } = item;
 								return (
 									<List.Item>
 										<div className="wrap-set d-flex">
 											{Type === 1 && <div className="tag-free">{TypeName}</div>}
+											{console.log('avatar', item)}
 											<div className="wrap-set-avatar">
 												<Image
 													width="100%"
@@ -288,7 +272,7 @@ const PackageStore = () => {
 													src={Avatar}
 													title="Ảnh bìa bộ đề"
 													alt="Ảnh bìa bộ đề"
-													style={{objectFit: 'cover'}}
+													style={{ objectFit: 'cover' }}
 												/>
 											</div>
 											<div className="wrap-set-content">

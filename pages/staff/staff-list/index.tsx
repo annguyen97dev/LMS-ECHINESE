@@ -148,27 +148,6 @@ const listApi = [
 ];
 
 const StaffList = () => {
-	// const [dataRoles, setDataRoles] = useState([]);
-	// const getListRole = async () => {
-	// 	let tempRole = [];
-	// 	try {
-	// 		let res = await userInformationApi.getRole(1);
-	// 		if (res.status === 200) {
-	// 			tempRole = res.data.data.map((item) => ({
-	// 				title: item.name,
-	// 				value: item.ID
-	// 			}));
-	// 			setDataRoles(tempRole);
-	// 		}
-	// 	} catch (error) {
-	// 	} finally {
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	getListRole();
-	// }, []);
-
 	const [listDataForm, setListDataForm] = useState<listDataForm>({
 		Area: [],
 		DistrictID: [],
@@ -180,10 +159,6 @@ const StaffList = () => {
 		Parent: [],
 		Counselors: []
 	});
-
-	useEffect(() => {
-		console.log('listDataForm: ', listDataForm);
-	}, [listDataForm]);
 
 	const [isOpenReset, setIsOpenReset] = useState(false);
 
@@ -367,6 +342,9 @@ const StaffList = () => {
 						});
 					} else if (item.name == 'Role') {
 						res = await item.api.getRole(1);
+						if (res.status === 200) {
+							console.log('🚀 ~ file: index.tsx ~ line 368 ~ res.data.data', res.data.data);
+						}
 					} else {
 						res = await item.api.getAll({
 							pageIndex: 1,
@@ -435,10 +413,6 @@ const StaffList = () => {
 		let listID = branchID.split(',');
 
 		listID.forEach((item) => {
-			console.log(
-				'TESTT: ',
-				listDataForm?.Branch.find((a) => a.value === parseInt(item))
-			);
 			let newObj = {
 				ID: parseInt(item),
 				BranchName: listDataForm?.Branch.find((a) => a.value === parseInt(item)).title
@@ -519,7 +493,6 @@ const StaffList = () => {
 	const checkField = (valueSearch, dataIndex) => {
 		let newList = { ...listFieldSearch };
 		Object.keys(newList).forEach(function (key) {
-			console.log('key: ', key);
 			if (key != dataIndex) {
 				if (key != 'pageIndex') {
 					newList[key] = null;
@@ -682,6 +655,7 @@ const StaffList = () => {
 		},
 		{
 			title: 'Vị trí',
+			width: 100,
 			dataIndex: 'RoleName'
 		},
 		{

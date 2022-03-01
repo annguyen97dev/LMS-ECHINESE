@@ -12,6 +12,10 @@ import { parseToMoney } from '~/utils/functions';
 const { Option } = Select;
 
 const ModalCreateVideoCourse = React.memo((props: any) => {
+	const listTypeID = [
+		{ title: 'Hàng 1', value: 1 },
+		{ title: 'Hàng Ebook', value: 2 }
+	];
 	const { isLoading, _onSubmit, dataLevel, dataCategory, dataTeacher, dataCurriculum, refeshData, tags, onRefeshTags } = props;
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -24,6 +28,8 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const [expiryDays, setExpiryDays] = useState(0);
 	const [videoCourseName, setVideoCourseName] = useState('');
 	const [vietnamName, setVietnamName] = useState('');
+	const [typeID, setTypeID] = useState(null);
+	const [number, setNumber] = useState(null);
 	const [videoChinaCourseName, setVideoCourseChinaName] = useState('');
 	const [originalPrice, setOriginalPrice] = useState('');
 	const [sellPrice, setSellPrice] = useState('');
@@ -63,7 +69,9 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			ResultsAchieved: resultsAchieved,
 			CourseForObject: courseForObject,
 			TeacherID: teacherID,
-			ExpiryDays: expiryDays
+			ExpiryDays: expiryDays,
+			TypeID: typeID,
+			Number: number
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
 		setIsModalVisible(false);
@@ -94,7 +102,6 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 
 	useEffect(() => {
 		let value = form.getFieldValue('ExpiryDays');
-		console.log('value');
 
 		if (value !== null && value !== undefined) {
 			form.setFieldsValue({ ExpiryDays: value.replace(/[^0-9\.]+/g, '') });
@@ -529,6 +536,43 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 												className="style-input"
 												value={sellPrice}
 												onChange={(e) => setSellPrice(e.target.value)}
+											/>
+										</Form.Item>
+									</div>
+									{/* TypeID / number */}
+									<div className="col-md-6 col-12">
+										<Form.Item
+											name="TypeID"
+											label="Loại hàng"
+											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<Select
+												style={{ width: '100%' }}
+												className="style-input"
+												aria-selected
+												placeholder="Chọn loại hàng"
+												optionFilterProp="children"
+												onChange={(e: number) => setTypeID(e)}
+											>
+												{listTypeID.map((item, index) => (
+													<Option key={index} value={item.value}>
+														{item.title}
+													</Option>
+												))}
+											</Select>
+										</Form.Item>
+									</div>
+									<div className="col-md-6 col-12">
+										<Form.Item
+											name="Number"
+											label="Số thứ tự"
+											rules={[{ required: true, message: 'Bạn không được để trống' }]}
+										>
+											<Input
+												placeholder="Nhập số thứ tự"
+												className="style-input"
+												value={number}
+												onChange={(e) => setNumber(e.target.value)}
 											/>
 										</Form.Item>
 									</div>

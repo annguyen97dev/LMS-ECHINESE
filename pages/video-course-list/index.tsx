@@ -200,7 +200,7 @@ const VideoCourseList = () => {
 			key: 'StudentName'
 		},
 		{
-			title: 'Ngày mua',
+			title: 'Ngày kích hoạt',
 			dataIndex: 'CreatedOn',
 			key: 'CreatedOn',
 			render: (Action, data, index) => <div>{data.CreatedOn}</div>

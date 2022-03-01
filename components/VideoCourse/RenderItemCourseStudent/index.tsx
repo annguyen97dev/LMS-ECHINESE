@@ -32,8 +32,7 @@ const RenderItemCard = (props) => {
 	const [showModalEdit, setShowModalEdit] = useState(false);
 	const [activing, setActiving] = useState(false);
 	const [code, setCode] = useState('');
-	
-	console.log('item', item)
+
 	const params = {
 		Category: item.CategoryName,
 		Level: item.LevelName,
@@ -69,7 +68,9 @@ const RenderItemCard = (props) => {
 			Description: param.Description,
 			ResultsAchieved: param.ResultsAchieved,
 			CourseForObject: param.CourseForObject,
-			ExpiryDays: param?.ExpiryDays
+			ExpiryDays: param?.ExpiryDays,
+			TypeID: param.TypeID,
+			Number: param.Number
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);
@@ -100,8 +101,18 @@ const RenderItemCard = (props) => {
 	return (
 		<>
 			<div className="vc-store_container">
-				<div className="vc-store_item" style={{ height: userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? 300 : 305 }}>
+				<div
+					className="vc-store_item"
+					style={{
+						height: userInformation?.RoleID == 1 || userInformation?.RoleID == 2 || userInformation?.RoleID == 3 ? 380 : 305
+					}}
+				>
 					<div className="flip-card-front">
+						{userInformation && userInformation.RoleID === 3 && item && item.isBought && (
+							<div className="course-paid-icon">
+								<img src="/images/paid.png" alt="paid icon" />
+							</div>
+						)}
 						<div className="warp-image">
 							<Link
 								href={{
@@ -127,6 +138,12 @@ const RenderItemCard = (props) => {
 							<h3 style={{ width: '90%', fontSize: 12, color: '#000' }} className="title ml-3 mr-3 in-1-line">
 								{item.ChineseName}
 							</h3>
+							{userInformation && userInformation.RoleID && (
+								<div className="ml-3 mr-3 d-flex flex-column">
+									<span>Loại {item.TypeName}</span>
+									<span>STT {item.Number}</span>
+								</div>
+							)}
 							<span style={{ width: '90%' }} className="ml-3 mr-3 in-1-line">
 								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán - {item.TotalVideoViews} lượt
 								xem

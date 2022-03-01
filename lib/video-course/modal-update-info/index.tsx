@@ -26,6 +26,11 @@ const initDetails = {
 	CreatedBy: ''
 };
 
+const listTypeID = [
+	{ title: 'Hàng 1', value: 1 },
+	{ title: 'Hàng Ebook', value: 2 }
+];
+
 const ModalUpdateInfo = React.memo((props: any) => {
 	const {
 		_onSubmitEdit,
@@ -50,6 +55,8 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const [previewImage, setPreviewImage] = useState('');
 	const [buttonLoading, setButtonLoading] = useState(false);
 	const [teacherID, setTeacherID] = useState(0);
+	const [typeID, setTypeID] = useState(null);
+	const [number, setNumber] = useState(null);
 
 	const [modalCate, setModalCate] = useState(false);
 	const [modalLevel, setModalLevel] = useState(false);
@@ -109,6 +116,8 @@ const ModalUpdateInfo = React.memo((props: any) => {
 				setChineseName(rowData.ChineseName);
 				setTagArray(rowData?.TagArray);
 				setExpiryDays(rowData?.ExpiryDays);
+				setTypeID(rowData?.TypeID);
+				setNumber(rowData?.Number);
 				form.setFieldsValue({
 					Name: rowData.VideoCourseName,
 					SellPrice: rowData.SellPrice,
@@ -124,7 +133,9 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					Description: rowData.Description,
 					ResultsAchieved: rowData.ResultsAchieved,
 					ExpiryDays: rowData.ExpiryDays,
-					CourseForObject: rowData.CourseForObject
+					CourseForObject: rowData.CourseForObject,
+					TypeID: rowData.TypeID,
+					Number: rowData.Number
 				});
 
 				getCourseDetails(programID);
@@ -272,7 +283,9 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			Description: description,
 			ResultsAchieved: resultsAchieved,
 			CourseForObject: courseForObject,
-			ExpiryDays: expiryDays
+			ExpiryDays: expiryDays,
+			TypeID: typeID,
+			Number: number
 		};
 		try {
 			if (imageSelected.name === '') {
@@ -672,6 +685,44 @@ const ModalUpdateInfo = React.memo((props: any) => {
 													className="style-input"
 													value={originalPrice}
 													onChange={(e) => setOriginalPrice(e.target.value)}
+												/>
+											</Form.Item>
+										</div>
+
+										{/* TypeID / number */}
+										<div className="col-md-6 col-12">
+											<Form.Item
+												name="TypeID"
+												label="Loại hàng"
+												rules={[{ required: true, message: 'Bạn không được để trống' }]}
+											>
+												<Select
+													style={{ width: '100%' }}
+													className="style-input"
+													aria-selected
+													placeholder="Chọn loại hàng"
+													optionFilterProp="children"
+													onChange={(e: number) => setTypeID(e)}
+												>
+													{listTypeID.map((item, index) => (
+														<Option key={index} value={item.value}>
+															{item.title}
+														</Option>
+													))}
+												</Select>
+											</Form.Item>
+										</div>
+										<div className="col-md-6 col-12">
+											<Form.Item
+												name="Number"
+												label="Số thứ tự"
+												rules={[{ required: true, message: 'Bạn không được để trống' }]}
+											>
+												<Input
+													placeholder="Nhập số thứ tự"
+													className="style-input"
+													value={number}
+													onChange={(e) => setNumber(e.target.value)}
 												/>
 											</Form.Item>
 										</div>

@@ -46,8 +46,6 @@ function RollUp(props) {
 		ScheduleList: [],
 		StudentList: []
 	});
-	console.log('currentDate', currentDate);
-	console.log('selectedDate', selectedDate);
 
 	const [isLoading, setIsLoading] = useState({
 		type: 'GET_ALL',
@@ -189,8 +187,6 @@ function RollUp(props) {
 	useEffect(() => {
 		getRollUpList();
 	}, [filters]);
-
-	// console.log('selectedDate: ', selectedDate);
 
 	const columns = [
 		{
