@@ -129,11 +129,7 @@ const ExamServicesForm = React.memo((props: any) => {
 
 	useEffect(() => {
 		if (examServicesDetail) {
-			// examServicesDetail.InitialPrice = numberWithCommas(examServicesDetail.InitialPrice);
-			// examServicesDetail.Price = numberWithCommas(examServicesDetail.Price);
 			let cloneTimeExam = examServicesDetail.TimeExam.split(' ');
-
-			console.log('Check time: ', cloneTimeExam);
 
 			form.setFieldsValue({
 				...examServicesDetail,

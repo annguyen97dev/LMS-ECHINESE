@@ -64,7 +64,7 @@ const PayFixExamForm = (props) => {
 	const onChange_ChangeAmount = (amount) => {
 		if (activePrice) {
 			if (amount > 0) {
-				let totalPrice = amount * activePrice;
+				let totalPrice: any = amount * activePrice;
 				totalPrice = numberWithCommas(totalPrice);
 				form.setValue('Paid', totalPrice);
 			}
