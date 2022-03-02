@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { Card, Rate, Modal, Spin, Input } from 'antd';
 import { useWrap } from '~/context/wrap';
@@ -28,6 +28,8 @@ const initDetails = {
 
 const VideoCourseDetail = (props) => {
 	const router = useRouter();
+	const videoStudy = useRef(null);
+
 	const slug = router.query.slug;
 	let path: string = router.pathname;
 	let pathString: string[] = path.split('/');
@@ -51,8 +53,6 @@ const VideoCourseDetail = (props) => {
 
 	// CALL API DETAILS
 	const getCourseDetails = async (param) => {
-		console.log('===========================================');
-		console.log('GET DATA DETAILS');
 		try {
 			const res = await VideoCourseDetailApi.getDetails(param);
 			res.status == 200 && (setDetails(res.data.data), getCourseContent(res.data.data.CurriculumID));
@@ -63,6 +63,8 @@ const VideoCourseDetail = (props) => {
 
 	const [feedBack, setFeedBack] = useState({});
 	const [feedbackIndex, setIndex] = useState(1);
+
+	console.log('router.query?.CurriculumID: ', router.query?.CurriculumID);
 
 	// CALL API GET CONTENT
 	const getCourseContent = async (param) => {
@@ -80,7 +82,7 @@ const VideoCourseDetail = (props) => {
 				pageSize: 10
 			};
 			getCourseFeedback(temp);
-			getCoursePreview(slug);
+			getCoursePreview(router.query?.CurriculumID);
 		}
 	};
 
@@ -131,10 +133,6 @@ const VideoCourseDetail = (props) => {
 		};
 		getCourseFeedback(temp);
 	};
-
-	// useEffect(() => {
-	// 	onChangeIndex();
-	// }, [feedbackIndex]);
 
 	// HANDLE SEARCH
 	const onChangeIndex = (index) => {
@@ -204,6 +202,39 @@ const VideoCourseDetail = (props) => {
 		}
 	};
 
+	function Iframe(props) {
+		const [hei, setHei] = useState(0);
+		useEffect(() => {
+			if (videoStudy.current.clientWidth > 0) {
+				setHei(videoStudy.current.clientWidth / 1.75);
+			}
+		}, [videoStudy.current && videoStudy.current.clientWidth]);
+
+		const fake = 'http://www.youtube.com/embed/NlOF03DUoWc';
+
+		return (
+			// <div
+			// 	className="iframe-video"
+			// 	ref={videoStudy}
+			// 	style={{ width: '100%', height: hei || 'auto' }}
+			// 	id="PStyle"
+			// 	dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }}
+			// />
+			<>
+				<iframe
+					id="video__course__iframe"
+					ref={videoStudy}
+					width="100%"
+					height={hei}
+					src={props?.iframe}
+					frameBorder="0"
+					allow="autoplay; clipboard-write; picture-in-picture"
+					allowFullScreen
+				/>
+			</>
+		);
+	}
+
 	return (
 		<>
 			<div className="row feedback-user">
@@ -239,6 +270,26 @@ const VideoCourseDetail = (props) => {
 										Giá gốc: {parseToMoney(router.query.Original)}đ
 									</h6>
 								)}
+
+								{userInformation &&
+									(userInformation.RoleID === 1 ||
+										userInformation.UserInformationID.toString() === router.query.TeacherID) && (
+										<Link
+											href={{
+												pathname: '/video-learning',
+												query: {
+													ID: router.query.CategoryID,
+													course: slug,
+													complete: 0 + '/' + 0,
+													name: details.VideoCourseName
+												}
+											}}
+										>
+											<button className="btn btn-warning" type="button" style={{ width: '100%' }}>
+												Xem khóa học
+											</button>
+										</Link>
+									)}
 
 								{userInformation !== null && userInformation?.RoleID !== 1 && userInformation?.RoleID !== 2 && (
 									<>
@@ -342,6 +393,26 @@ const VideoCourseDetail = (props) => {
 										Giá gốc: {parseToMoney(router.query.Original)}đ
 									</h6>
 								)}
+
+								{userInformation &&
+									(userInformation.RoleID === 1 ||
+										userInformation.UserInformationID.toString() === router.query.TeacherID) && (
+										<Link
+											href={{
+												pathname: '/video-learning',
+												query: {
+													ID: slug,
+													course: slug,
+													complete: 0 + '/' + 0,
+													name: details.VideoCourseName
+												}
+											}}
+										>
+											<button className="btn btn-warning" type="button" style={{ width: '100%' }}>
+												Xem khóa học
+											</button>
+										</Link>
+									)}
 
 								{userInformation !== null && userInformation?.RoleID !== 1 && userInformation?.RoleID !== 2 && (
 									<>
@@ -502,14 +573,10 @@ const VideoCourseDetail = (props) => {
 				width={600}
 			>
 				<div className="m-0 row vc-store-space-beetween">
-					<video
-						// http://lmsv2.monamedia.net/Upload/NewsFeed/5664def9-2c95-4655-8561-7a80c7fff633.mp4
-						style={{ width: '100%' }}
-						src={currentVideo}
-						controls
-					>
+					{/* <video style={{ width: '100%' }} src={currentVideo} controls>
 						<track default kind="captions" />
-					</video>
+					</video> */}
+					<Iframe iframe={currentVideo} allow="autoplay" />
 				</div>
 
 				<CourseDetailsPreview videoPreView={videoPreView} onClick={handlePlayVideo} />

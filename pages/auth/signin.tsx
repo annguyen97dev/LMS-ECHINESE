@@ -5,6 +5,7 @@ import LoginForm from '~/components/LoginForm';
 import { useWrap } from '~/context/wrap';
 import AuthLayout from '~/components/AuthLayout';
 import { Console } from 'console';
+import { getTypeURL } from '~/utils/functions';
 
 function SignIn({ providers, csrfToken }) {
 	const { showNoti } = useWrap();
@@ -36,11 +37,23 @@ function SignIn({ providers, csrfToken }) {
 		return () => {};
 	}, []);
 
+	const [currentUrl, setCurrentUrl] = useState('');
+
+	useEffect(() => {
+		setCurrentUrl(window.location.href);
+	}, []);
+
 	const _Submit = (data) => {
-		console.log(data);
+		let type = getTypeURL(currentUrl);
 		signIn('credentials-signin', {
 			...data,
-			callbackUrl: router.query?.callbackUrl ?? '/'
+			callbackUrl:
+				type == 'LOCALHOST'
+					? 'http://localhost:3009'
+					: type == 'DEMO'
+					? 'https://app.echinese.vn'
+					: 'https://echinese-dev.herokuapp.com',
+			redirect: true
 		});
 	};
 

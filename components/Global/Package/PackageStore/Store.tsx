@@ -1,4 +1,5 @@
-import { Card, Image, List } from 'antd';
+import { Button, Card, Image, List } from 'antd';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { packageApi, packageStudentApi } from '~/apiBase';
@@ -9,7 +10,7 @@ import { numberWithCommas } from '~/utils/functions';
 import PackageStoreFilterForm from './PackageStoreFilterForm/PackageStoreFilterForm';
 import PackageStoreForm from './PackageStoreForm/PackageStoreForm';
 
-const PackageStore = () => {
+const Store = () => {
 	const router: any = useRouter();
 	const { type } = router.query;
 	const [isLoading, setIsLoading] = useState({
@@ -247,6 +248,7 @@ const PackageStore = () => {
 								<SortBox dataOption={sortOptionList} handleSort={onSort} />
 							</div>
 						}
+						style={{ width: '100%' }}
 					>
 						<List
 							loading={isLoading?.type === 'GET_ALL' && isLoading?.status}
@@ -256,13 +258,14 @@ const PackageStore = () => {
 								size: 'small',
 								current: filters.pageIndex
 							}}
+							grid={{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 }}
 							itemLayout="horizontal"
 							dataSource={storePackageList}
 							renderItem={(item: IPackage, idx) => {
 								const { ID, Name, Avatar, Level, Type, TypeName, Price, Description } = item;
 								return (
 									<List.Item>
-										<div className="wrap-set d-flex">
+										<div className="wrap-set d-flex dw-50" style={{}}>
 											{Type === 1 && <div className="tag-free">{TypeName}</div>}
 											<div className="wrap-set-avatar">
 												<Image
@@ -288,22 +291,16 @@ const PackageStore = () => {
 													</li>
 												</ul>
 												<div className="set-btn">
-													{userInformation?.RoleID !== 1 &&
-														userInformation?.RoleID !== 5 &&
-														(Type === 1 ? (
-															<PackageStoreForm
-																isAddPackageFree={true}
-																isLoading={isLoading}
-																packageItem={item}
-																handleSubmit={onSubmit}
-															/>
-														) : (
-															<PackageStoreForm
-																isLoading={isLoading}
-																packageItem={item}
-																handleSubmit={onSubmit}
-															/>
-														))}
+													<Link
+														key={item.ID}
+														href={{
+															pathname: 'https://app.echinese.vn'
+														}}
+													>
+														<Button className="btn btn-warning" style={{ height: 36 }}>
+															Mua bộ đề
+														</Button>
+													</Link>
 												</div>
 											</div>
 										</div>
@@ -318,4 +315,4 @@ const PackageStore = () => {
 	);
 };
 
-export default PackageStore;
+export default Store;

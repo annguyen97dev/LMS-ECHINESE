@@ -33,6 +33,16 @@
 		.flip-card-front {
 			width: 100%;
 			height: 100%;
+			position: relative;
+			.course-paid-icon {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				img {
+					width: 50px;
+					height: 50px;
+				}
+			}
 
 			.warp-image {
 				width: 100%;
@@ -53,6 +63,7 @@
 
 			.content {
 				flex: 1;
+				height: 50%;
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
@@ -408,6 +419,12 @@
 					font-weight: bold;
 					color: #b27007;
 				}
+				.sum-rate {
+					font-size: 14px;
+					@include max-media(556px) {
+						font-size: 10px;
+					}
+				}
 			}
 			.stars {
 				display: flex;
@@ -423,7 +440,216 @@
 						height: 8px;
 						width: 200px !important;
 						@include max-media(556px) {
-							width: 100px !important;
+							display: none;
+						}
+					}
+					.start {
+						margin-bottom: 4px;
+						font-size: 14px;
+					}
+				}
+			}
+		}
+		.ant-select-selector {
+			height: 36px !important;
+			border-radius: 6px !important;
+		}
+		.item-fb {
+			display: flex;
+			align-items: flex-start;
+			flex-direction: row;
+			width: 100%;
+			border-bottom-style: solid;
+			border-color: #e3e3e3;
+			.main {
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+			}
+		}
+	}
+}
+
+.vc-details-fuck {
+	&_main-thum {
+		display: flex;
+		width: 100%;
+		height: 150px;
+		align-items: center;
+		flex-direction: column;
+
+		@include max-media(1000px) {
+			height: 200px;
+		}
+	}
+	&_thum {
+		width: 100%;
+		height: 100%;
+		border-radius: 6px;
+	}
+	&_thum-mark {
+		width: 100%;
+		height: 100%;
+		border-radius: 6px;
+		background: rgba($color: #000000, $alpha: 0.3);
+		z-index: 999;
+		margin-top: -150px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		@include max-media(1000px) {
+			margin-top: -200px;
+		}
+	}
+	&_icon-play {
+		font-size: 38px;
+		color: #fff;
+		opacity: 0.9;
+	}
+	&_thum-mark:hover {
+		background: rgba($color: #000000, $alpha: 0.4);
+		i {
+			font-size: 42px;
+		}
+	}
+	.btn-add {
+		width: 100% !important;
+	}
+	&_menu {
+		position: fixed;
+		width: 76%;
+		@include max-media(1250px) {
+			width: 70%;
+		}
+		@include max-media(1000px) {
+			width: 75%;
+			left: 15px;
+		}
+		@include max-media(767px) {
+			display: none;
+		}
+	}
+
+	&_mobile {
+		display: none;
+		@include max-media(767px) {
+			display: block;
+			margin-bottom: 15px;
+		}
+	}
+
+	&_fake {
+		@include max-media(767px) {
+			display: none;
+		}
+	}
+
+	&_main {
+		width: 100% !important;
+		.header {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			.center-row {
+				align-items: center;
+			}
+			.name {
+				font-size: 16px;
+				font-weight: bold;
+			}
+			.title {
+				font-size: 16px;
+				font-weight: bold;
+			}
+			.slogan {
+				font-size: 14px;
+				i {
+					color: #f53882;
+				}
+			}
+			.rate {
+				font-size: 16px;
+			}
+			.total-student {
+				font-size: 14px;
+				span {
+					font-weight: bold;
+				}
+			}
+		}
+		.list-content {
+			width: 100% !important;
+		}
+		.item {
+			display: flex;
+			justify-content: space-between;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			width: 100% !important;
+			background: #ebeef7;
+			border-bottom-style: solid;
+			border-color: rgb(167, 167, 167);
+			cursor: pointer;
+		}
+		.item:hover {
+			background: #e5f5d8;
+		}
+		.sub-item {
+			display: flex;
+			justify-content: space-between;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			width: 100% !important;
+			background: #fff;
+			border-bottom-style: solid;
+			border-color: rgb(167, 167, 167);
+			cursor: pointer;
+		}
+		.sub-item:hover {
+			background: #e5f5d8;
+		}
+		.fb-header {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			// background: #000;
+			width: 100%;
+			// height: 50px;
+			.number {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				h1 {
+					font-size: 60px;
+					color: #b27007;
+				}
+				h4 {
+					font-size: 14px;
+					font-weight: bold;
+					color: #b27007;
+				}
+				.sum-rate {
+					font-size: 14px;
+					@include max-media(556px) {
+						font-size: 10px;
+					}
+				}
+			}
+			.stars {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				flex: 1;
+				.star-row {
+					width: 100%;
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					.progress {
+						height: 8px;
+						width: 200px !important;
+						@include max-media(556px) {
+							display: none;
 						}
 					}
 					.start {

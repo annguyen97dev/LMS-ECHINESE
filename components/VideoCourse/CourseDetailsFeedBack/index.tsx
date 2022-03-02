@@ -44,6 +44,7 @@ const CourseDetailsFeedBack = (props) => {
 							: feedBack?.StarModel?.Average || 0}
 					</h1>
 					<Rate
+						className="sum-rate"
 						allowHalf
 						value={
 							feedBack?.StarModel?.Average == 'NaN' || feedBack?.StarModel?.Average == NaN
@@ -51,7 +52,6 @@ const CourseDetailsFeedBack = (props) => {
 								: feedBack?.StarModel?.Average || 0
 						}
 						disabled
-						style={{ fontSize: 16 }}
 					/>
 					<h4>Trung Bình</h4>
 				</div>

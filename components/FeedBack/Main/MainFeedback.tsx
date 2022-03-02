@@ -1,4 +1,4 @@
-import { Avatar, Card, Drawer, Empty, Rate, Tooltip } from 'antd';
+import { Avatar, Card, Empty, Rate, Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useWrap } from '~/context/wrap';
@@ -15,7 +15,6 @@ MainFeedback.propTypes = {
 	handleClickItem: PropTypes.func,
 	handleClickMenu: PropTypes.func,
 	handleCreateNew: PropTypes.func,
-
 	current: PropTypes.object
 };
 
@@ -27,7 +26,6 @@ MainFeedback.defaultProps = {
 	handleClickItem: null,
 	handleClickMenu: null,
 	handleCreateNew: null,
-
 	current: {}
 };
 
@@ -47,8 +45,7 @@ export const ButtonImportant = ({ status }: { status: boolean }) => {
 };
 
 function MainFeedback(props) {
-	const { current, handleClickItem, feedbackList, currentItem, feedbackMenu, handleClickMenu, handleCreateNew, allDataLength } = props;
-
+	const { current, currentItem } = props;
 	const { showNoti, userInformation } = useWrap();
 	const [currentInfomation, setCurrentInfomation] = useState({ CreatedBy: '', Rate: 0, Title: '', ContentFeedBack: '' });
 	const [isImportant, setImportant] = useState(false);
@@ -67,13 +64,10 @@ function MainFeedback(props) {
 	const getNum = (num) => {
 		return num > 9 ? num : '0' + num;
 	};
+
 	const getDateString = (date) => {
 		let nDate = new Date(date);
 		return getNum(nDate.getDate()) + '-' + getNum(nDate.getMonth() + 1) + '-' + nDate.getFullYear();
-	};
-
-	const setFeedbackImportant = async () => {
-		setImportant(!isImportant);
 	};
 
 	// CALL API UPDATE
@@ -107,17 +101,18 @@ function MainFeedback(props) {
 
 	// ADD DATA REPLY TO SELECTED FEEDBACK
 	const addReply = async () => {
-		setReset(true);
-		let temp = {
-			FeedbackID: current.ID,
-			Content: content
-		};
-		try {
-			const res = await FeedbackReplyApi.add(temp);
-			// res.status == 200 && setReply(res.data.data);
-			getReply(current.ID);
-		} catch (error) {}
-		setReset(false);
+		if (content !== '<p><br></p>') {
+			setReset(true);
+			let temp = {
+				FeedbackID: current.ID,
+				Content: content
+			};
+			try {
+				await FeedbackReplyApi.add(temp);
+				getReply(current.ID);
+			} catch (error) {}
+			setReset(false);
+		}
 	};
 
 	// HANDLE RATE
@@ -128,8 +123,6 @@ function MainFeedback(props) {
 		};
 		updateCurrentFeedback(temp);
 	};
-
-	console.log(current);
 
 	// RENDER
 	return (
