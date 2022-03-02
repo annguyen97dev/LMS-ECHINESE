@@ -106,14 +106,14 @@ export const TeacherChildMenu = [
 						Route: '/course/course-list',
 						Text: 'Danh sách khóa học',
 						Icon: ''
-					},
-					{
-						TypeItem: 'single',
-						Key: '/video-course',
-						Route: '/video-course',
-						Icon: '',
-						Text: 'Danh sách khóa học video'
 					}
+					// {
+					// 	TypeItem: 'single',
+					// 	Key: '/video-course',
+					// 	Route: '/video-course',
+					// 	Icon: '',
+					// 	Text: 'Danh sách khóa học video'
+					// }
 					// {
 					//   ItemType: "single",
 					//   Key: "/course/course-list-self",
@@ -184,28 +184,28 @@ export const TeacherChildMenu = [
 						Icon: '',
 						Route: '/video-course-list',
 						Text: 'Khóa học đã Active'
-					},
-					{
-						TypeItem: 'single',
-						Key: '/config-type-video-course',
-						Icon: '',
-						Route: '/config-type-video-course',
-						Text: 'Cấu hình loại video'
-					},
-					{
-						TypeItem: 'single',
-						Key: '/config-level-video-course',
-						Icon: '',
-						Route: '/config-level-video-course',
-						Text: 'Cấu hình cấp độ'
-					},
-					{
-						TypeItem: 'single',
-						Key: '/config-tag-video-course',
-						Icon: '',
-						Route: '/config-tag-video-course',
-						Text: 'Cấu hình tags'
 					}
+					// {
+					// 	TypeItem: 'single',
+					// 	Key: '/config-type-video-course',
+					// 	Icon: '',
+					// 	Route: '/config-type-video-course',
+					// 	Text: 'Cấu hình loại video'
+					// },
+					// {
+					// 	TypeItem: 'single',
+					// 	Key: '/config-level-video-course',
+					// 	Icon: '',
+					// 	Route: '/config-level-video-course',
+					// 	Text: 'Cấu hình cấp độ'
+					// },
+					// {
+					// 	TypeItem: 'single',
+					// 	Key: '/config-tag-video-course',
+					// 	Icon: '',
+					// 	Route: '/config-tag-video-course',
+					// 	Text: 'Cấu hình tags'
+					// }
 				]
 			}
 			// {
@@ -293,7 +293,7 @@ export const TeacherChildMenu = [
 				ItemType: 'single',
 				Key: '/customer/student/course-exam',
 				Route: '/customer/student/course-exam',
-				Text: 'Chấm bài tập & kiểm tra',
+				Text: 'Chấm kiểm tra',
 				Icon: ''
 			}
 		]

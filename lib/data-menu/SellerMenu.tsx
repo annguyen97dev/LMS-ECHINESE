@@ -241,6 +241,20 @@ export const SellerChildMenu = [
 						Route: '/staff/sales-campaign',
 						Text: 'Chiến dịch kinh doanh',
 						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/staff/sales-salary',
+						Route: '/staff/sales-salary',
+						Text: 'Duyệt lương',
+						Icon: ''
+					},
+					{
+						ItemType: 'single',
+						Key: '/staff/sales-salary-history',
+						Route: '/staff/sales-salary-history',
+						Text: 'Lịch sử duyệt',
+						Icon: ''
 					}
 				]
 			},

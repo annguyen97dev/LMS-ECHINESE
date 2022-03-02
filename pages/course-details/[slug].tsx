@@ -45,11 +45,8 @@ const VideoCourseDetailF = (props) => {
 	const [buyNowLoading, setByNowLoading] = useState(false);
 
 	useEffect(() => {
-		getTitlePage('Khóa học video');
-		if (userInformation !== null) {
-			getCourseDetails(slug);
-		}
-	}, [userInformation]);
+		getCourseDetails(slug);
+	}, []);
 
 	// CALL API DETAILS
 	const getCourseDetails = async (param) => {

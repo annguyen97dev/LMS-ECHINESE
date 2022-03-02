@@ -129,7 +129,7 @@ const VideoLearning = () => {
 	//GET DATA
 	const getVideos = async () => {
 		try {
-			const res = await VideoCourses.ListSection(router.query.ID);
+			const res = await VideoCourses.ListSection(router.query.course);
 			res.status == 200 && setVideos(res.data.data);
 		} catch (err) {
 			// showNoti("danger", err);

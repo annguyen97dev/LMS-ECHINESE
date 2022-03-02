@@ -35,6 +35,10 @@ const DiscountForm = (props) => {
 		{
 			id: 2,
 			text: 'Gói combo'
+		},
+		{
+			id: 3,
+			text: 'Gói All'
 		}
 	];
 

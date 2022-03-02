@@ -213,13 +213,6 @@ const VideoCourseDetail = (props) => {
 		const fake = 'http://www.youtube.com/embed/NlOF03DUoWc';
 
 		return (
-			// <div
-			// 	className="iframe-video"
-			// 	ref={videoStudy}
-			// 	style={{ width: '100%', height: hei || 'auto' }}
-			// 	id="PStyle"
-			// 	dangerouslySetInnerHTML={{ __html: props.iframe ? props.iframe : '' }}
-			// />
 			<>
 				<iframe
 					id="video__course__iframe"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { studentApi } from '~/apiBase';
 import { useWrap } from '~/context/wrap';
-import { Button, Select } from 'antd';
+import { Button, Popover, Select } from 'antd';
 import PowerTable from '~/components/PowerTable';
 import LayoutBase from '~/components/LayoutBase';
 import { scheduleOfStudentApi } from './../../../apiBase/customer/parents/schedule-of-student';
@@ -25,6 +25,7 @@ const ScoreOfStudent = () => {
 		type: '',
 		status: false
 	});
+	const [visiblePopover, setVisiblePopover] = useState(false);
 
 	const studentParams = {
 		pageSize: pageSize,
@@ -486,6 +487,37 @@ const ScoreOfStudent = () => {
 		setTypeBtn(index);
 	};
 
+	const contentButton = (
+		<div onClick={() => setVisiblePopover(false)}>
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
+				<button
+					className={typeBtn == 1 ? 'btn btn-primary ml-2 mb-2' : 'btn btn-warning ml-2 mb-2'}
+					onClick={() => {
+						onChangeType(1);
+					}}
+				>
+					Điểm kiểm tra đầu vào{' '}
+				</button>
+				<button
+					className={typeBtn == 2 ? 'btn btn-primary ml-2 mb-2' : 'btn btn-warning ml-2 mb-2'}
+					onClick={() => {
+						onChangeType(2);
+					}}
+				>
+					Điểm kiểm tra
+				</button>
+				<button
+					className={typeBtn == 3 ? 'btn btn-primary ml-2 mb-2' : 'btn btn-warning ml-2 mb-2'}
+					onClick={() => {
+						onChangeType(3);
+					}}
+				>
+					Điểm làm bộ đề
+				</button>
+			</div>
+		</div>
+	);
+
 	const expandedRowRender = (record) => {
 		return <NestedTable columns={columns} dataSource={dataTest} />;
 	};
@@ -504,32 +536,11 @@ const ScoreOfStudent = () => {
 				// dataSource={dataTest}
 				TitlePage="Bảng điểm học viên"
 				TitleCard={
-					<div style={{}}>
-						<button
-							className={typeBtn == 1 ? 'btn btn-primary ml-2' : 'btn btn-warning ml-2'}
-							onClick={() => {
-								onChangeType(1);
-							}}
-						>
-							Điểm kiểm tra đầu vào{' '}
+					<Popover visible={visiblePopover} content={contentButton} placement="bottomRight" title={null} trigger="click">
+						<button className="btn btn-light btn-function" onClick={() => setVisiblePopover(!visiblePopover)}>
+							Bộ lọc
 						</button>
-						<button
-							className={typeBtn == 2 ? 'btn btn-primary ml-2' : 'btn btn-warning ml-2'}
-							onClick={() => {
-								onChangeType(2);
-							}}
-						>
-							Điểm kiểm tra
-						</button>
-						<button
-							className={typeBtn == 3 ? 'btn btn-primary ml-2' : 'btn btn-warning ml-2'}
-							onClick={() => {
-								onChangeType(3);
-							}}
-						>
-							Điểm làm bộ đề
-						</button>
-					</div>
+					</Popover>
 				}
 				Extra={
 					<Select

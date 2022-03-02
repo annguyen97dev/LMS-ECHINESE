@@ -572,11 +572,7 @@ const CheckOut = () => {
 									<p>Tổng cộng:</p>
 								</div>
 								<div className="col-5" style={{ fontWeight: 700 }}>
-									<span className="mr-2">
-										{numberWithCommas(dataOrder?.TotalPayment - discounts) != NaN
-											? numberWithCommas(dataOrder?.TotalPayment - discounts)
-											: 0}
-									</span>
+									<span className="mr-2">{numberWithCommas(dataOrder?.TotalPayment - discounts)}</span>
 									<span>VND</span>
 								</div>
 							</div>
