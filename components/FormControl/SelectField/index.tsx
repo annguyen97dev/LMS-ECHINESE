@@ -56,9 +56,17 @@ const SelectField = (props) => {
 				name={name}
 				control={form.control}
 				render={({ field }) => {
+					let temp: any = 'fuck';
+
+					if (field?.value == 0 || field?.value == null || field?.value == undefined) {
+						temp == { ...field, value: null };
+					} else {
+						temp = field;
+					}
+
 					return (
 						<Select
-							{...field}
+							{...temp}
 							mode={mode}
 							className="style-input"
 							showSearch

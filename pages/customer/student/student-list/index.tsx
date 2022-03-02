@@ -174,10 +174,7 @@ const StudentData = () => {
 
 	// ------ BASE USESTATE TABLE -------
 	const [dataSource, setDataSource] = useState<IStudent[]>([]);
-	const [isLoading, setIsLoading] = useState({
-		type: '',
-		status: false
-	});
+	const [isLoading, setIsLoading] = useState({ type: '', status: false });
 	const [totalPage, setTotalPage] = useState(null);
 	const [todoApi, setTodoApi] = useState(listTodoApi);
 
@@ -278,6 +275,7 @@ const StudentData = () => {
 							Enable: true
 						});
 					}
+
 					res.status == 200 && getDataTolist(res.data.data, item.name);
 				} catch (error) {
 					console.log(error.message);
@@ -295,6 +293,7 @@ const StudentData = () => {
 		});
 		try {
 			let res = await studentApi.getAll(todoApi);
+			console.log('getDataSource: ', res);
 			res.status == 200 && (setDataSource(res.data.data), setTotalPage(res.data.totalRow), showNoti('success', 'Thành công'));
 			res.status == 204 && setDataSource([]);
 		} catch (error) {
@@ -406,8 +405,12 @@ const StudentData = () => {
 		getDataSource();
 	}, [todoApi]);
 
+	const isFetch = () => {
+		return userInformation?.RoleID == 1 || userInformation?.RoleID == 6 ? true : false;
+	};
+
 	useEffect(() => {
-		isAdmin || (userInformation && userInformation.RoleID === 6 && getDataStudentForm(listApi));
+		userInformation && isFetch() && getDataStudentForm(listApi);
 	}, [userInformation]);
 
 	// EXPAND ROW

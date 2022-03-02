@@ -71,8 +71,13 @@ const StudentFormModal = (props) => {
 	const showModal = () => {
 		setIsModalVisible(true);
 	};
-	// ------------- ADD data to list --------------
 
+	useEffect(() => {
+		// console.log('=====================');
+		// console.log('listData: ', listData);
+	}, [listData]);
+
+	// ------------- ADD data to list --------------
 	const makeNewData = (data, name) => {
 		let newData = null;
 		switch (name) {
