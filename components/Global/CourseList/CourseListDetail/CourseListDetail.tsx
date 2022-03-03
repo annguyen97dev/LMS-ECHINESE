@@ -1,7 +1,7 @@
 import { Spin, Tabs } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users, Edit3 } from 'react-feather';
+import { Bell, Book, BookOpen, Calendar, CheckCircle, Edit, FileText, Flag, Users, Edit3, UserCheck } from 'react-feather';
 import { courseApi, groupNewsFeedApi } from '~/apiBase';
 import DocumentCourse from '~/components/Global/CourseList/CourseListDetail/Document/DocumentCourse';
 import RollUp from '~/components/Global/CourseList/CourseListDetail/RollUp/RollUp';
@@ -15,6 +15,7 @@ import LessonDetail from '../LessonDetail';
 import CourseDetailCalendar from './CourseDetailCalendar/CourseDetailCalendar';
 import Homework from './Homework/Homework';
 import NotificationCourse from './NotificationCourse/NotificationCourse';
+import TeacherRollUp from './TeacherRoleUp';
 import TimelineCourse from './Timeline/Timeline';
 
 const { TabPane } = Tabs;
@@ -243,6 +244,20 @@ const CourseListDetail = () => {
 						key="4"
 					>
 						<RollUp courseID={parseIntID} />
+					</TabPane>
+				)}
+
+				{userInformation?.RoleID !== 6 && (
+					<TabPane
+						tab={
+							<>
+								<UserCheck />
+								<span title="Điểm danh giáo viên"> Điểm danh giáo viên</span>
+							</>
+						}
+						key="5"
+					>
+						<TeacherRollUp courseID={parseIntID} />
 					</TabPane>
 				)}
 

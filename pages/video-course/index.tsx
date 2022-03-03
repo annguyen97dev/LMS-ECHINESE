@@ -211,7 +211,10 @@ const VideoCourseStore = () => {
 			ResultsAchieved: param.ResultsAchieved,
 			CourseForObject: param.CourseForObject,
 			TeacherID: param.TeacherID,
-			ExpiryDays: param.ExpiryDays
+			ExpiryDays: param.ExpiryDays,
+			TypeID: param.TypeID,
+			Number: param.Number,
+			Website_ImageThumbnails: param.Website_ImageThumbnails
 		};
 
 		try {

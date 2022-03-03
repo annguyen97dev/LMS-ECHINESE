@@ -1,10 +1,6 @@
-import { useEffect } from 'react';
-import { message } from 'antd';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { getSession } from 'next-auth/client';
+import { getSession, signIn } from 'next-auth/client';
 import _ from '~/appConfig';
-import { signIn, useSession } from 'next-auth/client';
-import { useWrap } from '~/context/wrap';
 
 function getUrl(config) {
 	if (config.baseURL) {

@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Spin, Upload, Button, Select, Tooltip, Image } from 'antd';
-import { useForm } from 'react-hook-form';
 import { UploadOutlined } from '@ant-design/icons';
-import { useWrap } from '~/context/wrap';
-import { newsFeedApi } from '~/apiBase';
-import EditorSimple from '~/components/Elements/EditorSimple';
-import { parseToMoney } from '~/utils/functions';
+import { Button, Form, Image, Input, Modal, Select, Spin, Tooltip, Upload } from 'antd';
 import 'antd/dist/antd.css';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { newsFeedApi } from '~/apiBase';
 import { VideoCourseDetailApi } from '~/apiBase/video-course-details';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
+import EditorSimple from '~/components/Elements/EditorSimple';
+import { useWrap } from '~/context/wrap';
+import { parseToMoney } from '~/utils/functions';
 
 const { Option } = Select;
 
@@ -25,6 +25,11 @@ const initDetails = {
 	TotalStudent: 0,
 	CreatedBy: ''
 };
+
+const listTypeID = [
+	{ title: 'Hàng 1', value: 1 },
+	{ title: 'Hàng Ebook', value: 2 }
+];
 
 const ModalUpdateInfo = React.memo((props: any) => {
 	const {
@@ -50,6 +55,8 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const [previewImage, setPreviewImage] = useState('');
 	const [buttonLoading, setButtonLoading] = useState(false);
 	const [teacherID, setTeacherID] = useState(0);
+	const [typeID, setTypeID] = useState(null);
+	const [number, setNumber] = useState(null);
 
 	const [modalCate, setModalCate] = useState(false);
 	const [modalLevel, setModalLevel] = useState(false);
@@ -109,6 +116,8 @@ const ModalUpdateInfo = React.memo((props: any) => {
 				setChineseName(rowData.ChineseName);
 				setTagArray(rowData?.TagArray);
 				setExpiryDays(rowData?.ExpiryDays);
+				setTypeID(rowData?.TypeID);
+				setNumber(rowData?.Number);
 				form.setFieldsValue({
 					Name: rowData.VideoCourseName,
 					SellPrice: rowData.SellPrice,
@@ -124,7 +133,9 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					Description: rowData.Description,
 					ResultsAchieved: rowData.ResultsAchieved,
 					ExpiryDays: rowData.ExpiryDays,
-					CourseForObject: rowData.CourseForObject
+					CourseForObject: rowData.CourseForObject,
+					TypeID: rowData.TypeID,
+					Number: rowData.Number
 				});
 
 				getCourseDetails(programID);
@@ -200,7 +211,11 @@ const ModalUpdateInfo = React.memo((props: any) => {
 					Description: description,
 					ResultsAchieved: resultsAchieved,
 					CourseForObject: courseForObject,
-					ExpiryDays: expiryDays
+					ExpiryDays: expiryDays,
+					Website_ImageThumbnails:
+						localStorage.getItem('webImageCourseUpdateID') === null
+							? rowData.Website_ImageThumbnails
+							: localStorage.getItem('webImageCourseUpdateID')
 				};
 				_onSubmitEdit(temp);
 			}
@@ -213,6 +228,28 @@ const ModalUpdateInfo = React.memo((props: any) => {
 	const handleUploadFile = async (info) => {
 		setImageSelected(info.file);
 		setPreviewImage(URL.createObjectURL(info.file.originFileObj));
+
+		var axios = require('axios');
+
+		var config = {
+			method: 'post',
+			url: 'https://echineseweb.monamedia.net/wp-json/wp/v2/media',
+			headers: {
+				'Content-Disposition': 'attachment;filename=img-group1.jpg',
+				Authorization: 'Basic bW9uYW1lZGlhOmlhQmEgQUI4NiA5OUhnIG9ZN3Qgd3MzaiBUaHhx',
+				'Content-Type': 'image/jpeg'
+			},
+			data: info.file.originFileObj
+		};
+
+		axios(config)
+			.then(function (res) {
+				console.log(res.data.id);
+				localStorage.setItem('webImageCourseUpdateID', res.data.id);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 	};
 
 	const [details, setDetails] = useState(initDetails);
@@ -272,7 +309,11 @@ const ModalUpdateInfo = React.memo((props: any) => {
 			Description: description,
 			ResultsAchieved: resultsAchieved,
 			CourseForObject: courseForObject,
-			ExpiryDays: expiryDays
+			ExpiryDays: expiryDays,
+			TypeID: typeID,
+			Number: number,
+			Website_ImageThumbnails:
+				localStorage.getItem('webImageCourseUpdateID') === null ? null : localStorage.getItem('webImageCourseUpdateID')
 		};
 		try {
 			if (imageSelected.name === '') {
@@ -676,6 +717,44 @@ const ModalUpdateInfo = React.memo((props: any) => {
 											</Form.Item>
 										</div>
 
+										{/* TypeID / number */}
+										<div className="col-md-6 col-12">
+											<Form.Item
+												name="TypeID"
+												label="Loại hàng"
+												rules={[{ required: true, message: 'Bạn không được để trống' }]}
+											>
+												<Select
+													style={{ width: '100%' }}
+													className="style-input"
+													aria-selected
+													placeholder="Chọn loại hàng"
+													optionFilterProp="children"
+													onChange={(e: number) => setTypeID(e)}
+												>
+													{listTypeID.map((item, index) => (
+														<Option key={index} value={item.value}>
+															{item.title}
+														</Option>
+													))}
+												</Select>
+											</Form.Item>
+										</div>
+										<div className="col-md-6 col-12">
+											<Form.Item
+												name="Number"
+												label="Số thứ tự"
+												rules={[{ required: true, message: 'Bạn không được để trống' }]}
+											>
+												<Input
+													placeholder="Nhập số thứ tự"
+													className="style-input"
+													value={number}
+													onChange={(e) => setNumber(e.target.value)}
+												/>
+											</Form.Item>
+										</div>
+
 										{programID && (
 											<div className="col-md-6 col-12">
 												<Form.Item name="Image" label="Hình ảnh thu nhỏ">
@@ -694,8 +773,6 @@ const ModalUpdateInfo = React.memo((props: any) => {
 															<Button danger onClick={handleDeleteImage}>
 																Xoá hình ảnh
 															</Button>
-															{/* <PaperClipOutlined /> */}
-															{/* <span>...{imageSelected.name.slice(-20, imageSelected.name.length)}</span> */}
 														</div>
 													)}
 												</Form.Item>

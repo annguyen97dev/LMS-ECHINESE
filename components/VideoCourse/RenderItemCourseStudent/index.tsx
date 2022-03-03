@@ -52,6 +52,29 @@ const RenderItemCard = (props) => {
 
 	// UPDATE COURSE
 	const updateCourse = async (param) => {
+		console.log('🚀 ~ file: index.tsx ~ line 53 ~ updateCourse ~ param', {
+			ID: param.ID,
+			CategoryID: param.CategoryID,
+			TeacherID: param.TeacherID,
+			LevelID: param.LevelID,
+			CurriculumID: param.CurriculumID,
+			TagArray: param.TagArray,
+			ChineseName: param.ChineseName,
+			EnglishName: param.EnglishName,
+			VideoCourseName: param.VideoCourseName,
+			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
+			OriginalPrice: param.OriginalPrice,
+			SellPrice: param.SellPrice,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject,
+			ExpiryDays: param?.ExpiryDays,
+			TypeID: param.TypeID,
+			Number: param.Number,
+			Website_ImageThumbnails: param.Website_ImageThumbnails
+		});
 		let temp = {
 			ID: param.ID,
 			CategoryID: param.CategoryID,
@@ -70,7 +93,10 @@ const RenderItemCard = (props) => {
 			Description: param.Description,
 			ResultsAchieved: param.ResultsAchieved,
 			CourseForObject: param.CourseForObject,
-			ExpiryDays: param?.ExpiryDays
+			ExpiryDays: param?.ExpiryDays,
+			TypeID: param.TypeID,
+			Number: param.Number,
+			Website_ImageThumbnails: param.Website_ImageThumbnails
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);
@@ -101,8 +127,18 @@ const RenderItemCard = (props) => {
 	return (
 		<>
 			<div className="vc-store_container">
-				<div className="vc-store_item" style={{ height: userInformation?.RoleID == 1 || userInformation?.RoleID == 2 ? 340 : 305 }}>
+				<div
+					className="vc-store_item"
+					style={{
+						height: userInformation?.RoleID == 1 || userInformation?.RoleID == 2 || userInformation?.RoleID == 3 ? 380 : 305
+					}}
+				>
 					<div className="flip-card-front">
+						{userInformation && userInformation.RoleID === 3 && item && item.isBought && (
+							<div className="course-paid-icon">
+								<img src="/images/paid.png" alt="paid icon" />
+							</div>
+						)}
 						<div className="warp-image">
 							<Link
 								href={{
@@ -128,6 +164,12 @@ const RenderItemCard = (props) => {
 							<h3 style={{ width: '90%', fontSize: 12, color: '#000' }} className="title ml-3 mr-3 in-1-line">
 								{item.ChineseName}
 							</h3>
+							{userInformation && userInformation.RoleID && (
+								<div className="ml-3 mr-3 d-flex flex-column">
+									<span>Loại {item.TypeName}</span>
+									<span>STT {item.Number}</span>
+								</div>
+							)}
 							<span style={{ width: '90%' }} className="ml-3 mr-3 in-1-line">
 								<i className="fas fa-play-circle mr-1"></i> {item.TotalVideoCourseSold} đã bán - {item.TotalVideoViews} lượt
 								xem

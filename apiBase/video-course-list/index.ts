@@ -23,6 +23,9 @@ export const VideoCourseListApi = {
 	// Cập nhật data
 	updateActiveCode(data) {
 		return instance.put(url + 'UpdateActiveCode', data);
+	},
+	addStudent(data) {
+		return instance.post('/api/VideoCourseOfStudent/Create', data);
 	}
 };
 

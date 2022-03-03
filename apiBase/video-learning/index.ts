@@ -10,6 +10,10 @@ export const VideoCourseOfStudent = {
 		});
 	},
 
+	getAllAdmin(params) {
+		return instance.get<IApiResultData<IVideoCourseOfStudentAdmin[]>>('/api/VideoCourseOfStudent/GetAll', { params });
+	},
+
 	// Lấy data theo user
 	GetByID(ID) {
 		return instance.get<IApiResultData<IVideoLearning[]>>(`${url + 'GetByID/'}${ID}`);

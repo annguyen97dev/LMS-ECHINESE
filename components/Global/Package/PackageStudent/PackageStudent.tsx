@@ -260,9 +260,6 @@ const PackageStudent = () => {
 														<li className="price">
 															Giá:<span>{numberWithCommas(Price)} VNĐ</span>
 														</li>
-														{/* <li className="desc">
-															Mô tả:<span>{Description}</span>
-														</li> */}
 													</ul>
 													<div className="set-btn">
 														{(Approval === 1 || Approval === 2) && (

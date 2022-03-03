@@ -70,12 +70,6 @@ const StaffForm = (props) => {
 	const [dataStaff, setDataStaff] = useState(null);
 	const [submitSalary, setSubmitSalary] = useState(true);
 
-	// useEffect(() => {
-	// 	console.log('listDataForm: ', listDataForm);
-	// }, [listData]);
-
-	// console.log("Row Data: ", rowData);
-
 	const makeNewData = (data, name) => {
 		let newData = null;
 		switch (name) {
@@ -131,6 +125,12 @@ const StaffForm = (props) => {
 				newData = data.map((item) => ({
 					title: item.FullNameUnicode,
 					value: item.UserInformationID
+				}));
+				break;
+			case 'Role':
+				newData = data.map((item) => ({
+					title: item.name,
+					value: item.ID
 				}));
 				break;
 			default:
@@ -199,8 +199,6 @@ const StaffForm = (props) => {
 
 	// ----- HANDLE CHANGE - AREA ----------
 	const handleChange_select = (value, name) => {
-		console.log('Value is: ', value);
-
 		if (name == 'DistrictID') {
 			form.setValue('WardID', null);
 

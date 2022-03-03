@@ -10,6 +10,7 @@ import FilterColumn from '~/components/Tables/FilterColumn';
 import { useWrap } from '~/context/wrap';
 import { numberWithCommas } from '~/utils/functions';
 import PackageForm from './PackageForm/PackageForm';
+import PackageFormFilterForm from './PackageForm/PakageFormFilterForm';
 
 function Package() {
 	const [packageList, setPackageList] = useState<IPackage[]>([]);
@@ -44,7 +45,7 @@ function Package() {
 		{ label: 'Miễn phí', value: 1 },
 		{ label: 'Cao cấp', value: 2 }
 	];
-	const typeOptionList = [
+	const typeFilterList = [
 		{
 			value: 1,
 			title: 'Miễn phí'
@@ -89,6 +90,32 @@ function Package() {
 			text: 'Giá giảm dần'
 		}
 	];
+	const levelFilterList = [
+		{
+			value: 1,
+			title: 'HSK 1'
+		},
+		{
+			value: 2,
+			title: 'HSK 2'
+		},
+		{
+			value: 3,
+			title: 'HSK 3'
+		},
+		{
+			value: 4,
+			title: 'HSK 4'
+		},
+		{
+			value: 5,
+			title: 'HSK 5'
+		},
+		{
+			value: 6,
+			title: 'HSK 6'
+		}
+	];
 	// PAGINATION
 	const getPagination = (pageIndex: number, pageSize: number) => {
 		if (!pageSize) pageSize = 10;
@@ -112,6 +139,16 @@ function Package() {
 		setFilters({
 			...listFieldInit,
 			...refValue.current
+		});
+	};
+
+	// FILTER
+	const onFilter = (obj) => {
+		setFilters({
+			...listFieldInit,
+			...refValue.current,
+			pageIndex: 1,
+			...obj
 		});
 	};
 	// RESET SEARCH
@@ -264,7 +301,7 @@ function Package() {
 				const newPackageUpdate: IPackage = {
 					...packageItem,
 					Price: Type === 1 ? 0 : parseInt(Price.toString().replace(/\D/g, '')),
-					TypeName: typeOptionList.find((t) => t.value === Type).title || ''
+					TypeName: typeFilterList.find((t) => t.value === Type).title || ''
 				};
 				const res = await packageApi.update(newPackageUpdate);
 				if (res.status === 200) {
@@ -285,13 +322,12 @@ function Package() {
 			}
 		};
 	};
+
 	const columns = [
 		{
 			title: 'Ảnh bìa',
 			dataIndex: 'Avatar',
 			render: (url) => {
-				console.log(url);
-
 				return (
 					<Image
 						width={70}
@@ -318,7 +354,7 @@ function Package() {
 		{
 			title: 'Loại',
 			dataIndex: 'TypeName',
-			...FilterColumn('Type', onSearch, onResetSearch, 'select', typeOptionList),
+			...FilterColumn('Type', onSearch, onResetSearch, 'select', typeFilterList),
 			className: activeColumnSearch === 'Type' ? 'active-column-search' : ''
 		},
 		{
@@ -391,6 +427,14 @@ function Package() {
 				TitlePage="Danh sách bộ đề"
 				Extra={
 					<div className="extra-table">
+						<PackageFormFilterForm
+							handleFilter={onFilter}
+							handleResetFilter={onResetSearch}
+							optionListForFilter={{
+								levelFilterList: levelFilterList,
+								typeFilterList: typeFilterList
+							}}
+						/>
 						<SortBox dataOption={sortOptionList} handleSort={onSort} />
 					</div>
 				}
