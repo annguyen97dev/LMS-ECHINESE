@@ -307,6 +307,7 @@ const StaffList = () => {
 					title: item.name,
 					value: item.ID
 				}));
+				setDataFunc('RoleID', newData);
 				break;
 			default:
 				break;
