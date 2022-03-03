@@ -50,6 +50,29 @@ const RenderItemCard = (props) => {
 
 	// UPDATE COURSE
 	const updateCourse = async (param) => {
+		console.log('🚀 ~ file: index.tsx ~ line 53 ~ updateCourse ~ param', {
+			ID: param.ID,
+			CategoryID: param.CategoryID,
+			TeacherID: param.TeacherID,
+			LevelID: param.LevelID,
+			CurriculumID: param.CurriculumID,
+			TagArray: param.TagArray,
+			ChineseName: param.ChineseName,
+			EnglishName: param.EnglishName,
+			VideoCourseName: param.VideoCourseName,
+			ImageThumbnails: param.ImageThumbnails == '' ? null : param.ImageThumbnails,
+			OriginalPrice: param.OriginalPrice,
+			SellPrice: param.SellPrice,
+			Slogan: param.Slogan,
+			Requirements: param.Requirements,
+			Description: param.Description,
+			ResultsAchieved: param.ResultsAchieved,
+			CourseForObject: param.CourseForObject,
+			ExpiryDays: param?.ExpiryDays,
+			TypeID: param.TypeID,
+			Number: param.Number,
+			Website_ImageThumbnails: param.Website_ImageThumbnails
+		});
 		let temp = {
 			ID: param.ID,
 			CategoryID: param.CategoryID,
@@ -70,7 +93,8 @@ const RenderItemCard = (props) => {
 			CourseForObject: param.CourseForObject,
 			ExpiryDays: param?.ExpiryDays,
 			TypeID: param.TypeID,
-			Number: param.Number
+			Number: param.Number,
+			Website_ImageThumbnails: param.Website_ImageThumbnails
 		};
 		try {
 			const res = await VideoCourseStoreApi.update(temp);

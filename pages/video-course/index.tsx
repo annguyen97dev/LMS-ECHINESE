@@ -213,7 +213,8 @@ const VideoCourseStore = () => {
 			TeacherID: param.TeacherID,
 			ExpiryDays: param.ExpiryDays,
 			TypeID: param.TypeID,
-			Number: param.Number
+			Number: param.Number,
+			Website_ImageThumbnails: param.Website_ImageThumbnails
 		};
 
 		try {

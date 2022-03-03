@@ -34,13 +34,37 @@ type IFileList = {
 	fileList: IFile[];
 };
 const UploadAvatarField = (props) => {
-	const { form, name, label, disabled, style, className } = props;
+	const { form, name, label, disabled, style, className, isUploadWeb } = props;
 
 	const [imgUrl, setImgUrl] = useState('');
 	const [loadingImage, setLoadingImage] = useState(false);
 	const { showNoti } = useWrap();
 	const { errors } = form.formState;
 	const hasError = errors[name];
+
+	const fetchWebsiteImage = (data) => {
+		var axios = require('axios');
+
+		var config = {
+			method: 'post',
+			url: 'https://echineseweb.monamedia.net/wp-json/wp/v2/media',
+			headers: {
+				'Content-Disposition': 'attachment;filename=img-group1.jpg',
+				Authorization: 'Basic bW9uYW1lZGlhOmlhQmEgQUI4NiA5OUhnIG9ZN3Qgd3MzaiBUaHhx',
+				'Content-Type': 'image/jpeg'
+			},
+			data: data.originFileObj
+		};
+
+		axios(config)
+			.then(function (res) {
+				console.log(res.data.id);
+				localStorage.setItem('webImageID', res.data.id);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
 
 	const handleUploadAvatar = async (file: any) => {
 		try {
@@ -100,23 +124,24 @@ const UploadAvatarField = (props) => {
 							beforeUpload={beforeUpload}
 							onChange={(obj: any) => {
 								handleUploadAvatar(obj.file).then((res) => res?.status === 200 && field.onChange(res.data.data));
+								isUploadWeb && isUploadWeb && fetchWebsiteImage(obj.file);
 							}}
 						>
 							{loadingImage ? (
 								<Spin size="large" />
 							) : (
 								<img
-									src={imgUrl || field.value}
+									src={field.value}
 									alt="avatar"
 									style={{
 										width: '100%',
 										height: '100%',
 										objectFit: 'cover',
-										display: imgUrl || field.value ? 'block' : 'none'
+										display: field.value ? 'block' : 'none'
 									}}
 								/>
 							)}
-							{/* <UploadButton /> */}
+							<UploadButton />
 						</Upload>
 					);
 				}}
@@ -135,7 +160,8 @@ UploadAvatarField.propTypes = {
 	label: PropTypes.string,
 	disabled: PropTypes.bool,
 	style: PropTypes.shape({}),
-	className: PropTypes.string
+	className: PropTypes.string,
+	isUploadWeb: PropTypes.bool
 };
 UploadAvatarField.defaultProps = {
 	label: '',

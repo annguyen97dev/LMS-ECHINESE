@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Spin, Tooltip, Select, Upload, Button, InputNumber } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Select, Spin, Tooltip, Upload, Image } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { newsFeedApi } from '~/apiBase';
 import { VideoCourseCategoryApi } from '~/apiBase/video-course-store/category';
 import { VideoCourseLevelApi, VideoCuorseTag } from '~/apiBase/video-course-store/level';
-import { useWrap } from '~/context/wrap';
 import EditorSimple from '~/components/Elements/EditorSimple';
-import { UploadOutlined } from '@ant-design/icons';
-import { newsFeedApi } from '~/apiBase';
+import { useWrap } from '~/context/wrap';
 import { parseToMoney } from '~/utils/functions';
 
 const { Option } = Select;
@@ -71,7 +71,8 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 			TeacherID: teacherID,
 			ExpiryDays: expiryDays,
 			TypeID: typeID,
-			Number: number
+			Number: number,
+			Website_ImageThumbnails: localStorage.getItem('webImageCourseID') === null ? null : localStorage.getItem('webImageCourseID')
 		});
 		form.setFieldsValue({ Name: '', OriginalPrice: '', SellPrice: '', Type: '', Level: '', Description: '' });
 		setIsModalVisible(false);
@@ -205,6 +206,28 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 	const handleUploadFile = async (info) => {
 		setImageSelected(info.file);
 		setPreviewImage(URL.createObjectURL(info.file.originFileObj));
+
+		var axios = require('axios');
+
+		var config = {
+			method: 'post',
+			url: 'https://echineseweb.monamedia.net/wp-json/wp/v2/media',
+			headers: {
+				'Content-Disposition': 'attachment;filename=img-group1.jpg',
+				Authorization: 'Basic bW9uYW1lZGlhOmlhQmEgQUI4NiA5OUhnIG9ZN3Qgd3MzaiBUaHhx',
+				'Content-Type': 'image/jpeg'
+			},
+			data: info.file.originFileObj
+		};
+
+		axios(config)
+			.then(function (res) {
+				console.log('🚀 ~ file: index.tsx ~ line 225 ~ webImageCourseID', res.data.id);
+				localStorage.setItem('webImageCourseID', res.data.id);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 	};
 
 	// Handle delete image
@@ -309,7 +332,10 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 					className="m-create-vc"
 					title={`Tạo khoá học video`}
 					visible={isModalVisible}
-					onCancel={() => setIsModalVisible(false)}
+					onCancel={() => {
+						setIsModalVisible(false);
+						form.resetFields();
+					}}
 					footer={null}
 				>
 					<div className="row m-0 p-0">
@@ -599,10 +625,14 @@ const ModalCreateVideoCourse = React.memo((props: any) => {
 											)}
 										</Form.Item>
 
-										{/* end preview image */}
-
 										<div className="col-12"></div>
 									</div>
+									{/* end preview image */}
+									{previewImage !== '' && (
+										<div className="col-md-6 col-12">
+											<Image className="image_wrapper" src={previewImage} />
+										</div>
+									)}
 
 									{/* end preview image */}
 
