@@ -4,12 +4,11 @@ import { Divider, Form, Modal, Spin, Tooltip } from 'antd';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { RotateCcw } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import UploadFile from '~/components/Elements/UploadFile/UploadFile';
 import DateField from '~/components/FormControl/DateField';
-import InputNumberField from '~/components/FormControl/InputNumberField';
+import EditorField from '~/components/FormControl/EditorField';
 import InputPassField from '~/components/FormControl/InputPassField';
 import InputPreventText from '~/components/FormControl/InputPreventText';
 import InputTextField from '~/components/FormControl/InputTextField';
@@ -37,10 +36,12 @@ const TeacherForm = (props) => {
 		optionBranchList,
 		handleFetchBranch
 	} = props;
+
 	const { areaList, districtList, wardList } = optionAreaSystemList;
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const { userInformation } = useWrap();
 	const openModal = () => {
+		localStorage.removeItem('webImageID');
 		setIsModalVisible(true);
 		if (isUpdate && updateObj && updateObj.AreaID) {
 			if (handleFetchBranch) {
@@ -54,12 +55,16 @@ const TeacherForm = (props) => {
 			}
 		}
 	};
-	const closeModal = () => setIsModalVisible(false);
+	const closeModal = () => {
+		setIsModalVisible(false);
+		!isUpdate && form.reset({ ...defaultValuesInit });
+		localStorage.removeItem('webImageID');
+	};
 	const schemaBase = yup.object().shape({
 		AreaID: yup.number().nullable().required('Bạn không được để trống'),
-		Branch: yup.array().min(1, 'Bạn phải chọn ít nhất 1 trung tâm').required('Bạn không được để trống'),
+		Branch: yup.array().nullable().min(1, 'Bạn phải chọn ít nhất 1 trung tâm').required('Bạn không được để trống'),
 		FullNameUnicode: yup.string().required('Bạn không được để trống'),
-		Jobdate: yup.string().required('Bạn không được để trống'),
+		Jobdate: yup.string().nullable().required('Bạn không được để trống'),
 		Email: yup.string().email('Email không đúng định dạng').required('Bạn không được để trống'),
 		Address: yup.string()
 	});
@@ -115,7 +120,8 @@ const TeacherForm = (props) => {
 		BankAccountHolderName: null,
 		BankBranch: null,
 		Bank: null,
-		UserName: null
+		UserName: null,
+		Website_Teacher_Content: null
 	};
 
 	const form = useForm({
@@ -170,7 +176,16 @@ const TeacherForm = (props) => {
 		switch (isUpdate) {
 			case true:
 				if (!handleUpdateTeacher) return;
-				handleUpdateTeacher(data, indexUpdateObj).then((res) => {
+				handleUpdateTeacher(
+					{
+						...data,
+						Website_Thumbnail_id:
+							localStorage.getItem('webImageID') === null
+								? updateObj.Website_Thumbnail_id
+								: localStorage.getItem('webImageID')
+					},
+					indexUpdateObj
+				).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
 					}
@@ -181,6 +196,7 @@ const TeacherForm = (props) => {
 				handleCreateTeacher(data).then((res) => {
 					if (res && res.status === 200) {
 						closeModal();
+						form.reset({ ...defaultValuesInit });
 					}
 				});
 				break;
@@ -233,7 +249,7 @@ const TeacherForm = (props) => {
 								<div className="col-12">
 									<div className="info-modal">
 										<div className="info-modal-avatar">
-											<UploadAvatarField style={{ marginBottom: 0 }} form={form} name="Avatar" />
+											<UploadAvatarField style={{ marginBottom: 0 }} form={form} name="Avatar" isUploadWeb={true} />
 										</div>
 										<div className="info-modal-content">
 											{isUpdate && (
@@ -422,6 +438,9 @@ const TeacherForm = (props) => {
 								<div className="col-md-6 col-12">
 									<InputTextField form={form} name="Address" label="Địa chỉ" placeholder="Nhập địa chỉ" />
 								</div>
+								<div className="col-12">
+									<EditorField form={form} name="Website_Teacher_Content" label="Thông tin giáo viên" height={100} />
+								</div>
 
 								{/** ==== Thông tin ngân hàng  ====*/}
 								<div className="col-12">
@@ -442,6 +461,15 @@ const TeacherForm = (props) => {
 							</div>
 						) : (
 							<div className="row">
+								<div className="col-12">
+									<UploadAvatarField
+										style={{ marginBottom: 0 }}
+										form={form}
+										name="Avatar"
+										label="Ảnh đại diện"
+										isUploadWeb={true}
+									/>
+								</div>
 								<div className="col-md-6 col-12">
 									<SelectField
 										form={form}
@@ -517,7 +545,11 @@ const TeacherForm = (props) => {
 										)}
 									</Form.Item>
 								</div>
+								<div className="col-12">
+									<EditorField form={form} name="Website_Teacher_Content" label="Thông tin giáo viên" height={100} />
+								</div>
 								{/** ==== Thông tin ngân hàng  ====*/}
+
 								<div className="col-12">
 									<Divider orientation="center">Thông tin ngân hàng</Divider>
 								</div>

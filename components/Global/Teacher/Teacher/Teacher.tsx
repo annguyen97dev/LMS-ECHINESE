@@ -50,7 +50,7 @@ const Teacher = () => {
 	};
 	let refValue = useRef({
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: pageSize,
 		sort: 1,
 		sortType: false
 	});
@@ -330,6 +330,11 @@ const Teacher = () => {
 	};
 	// CREATE
 	const onCreateTeacher = async (data: any) => {
+		console.log('🚀 ~ file: Teacher.tsx ~ line 333 ~ onCreateTeacher ~ data', {
+			...data,
+			Branch: data.Branch.join(','),
+			Website_Thumbnail_id: data.Avatar.length === 0 ? null : localStorage.getItem('webImageID')
+		});
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
@@ -338,13 +343,16 @@ const Teacher = () => {
 		try {
 			const newTeacher = {
 				...data,
-				Branch: data.Branch.join(',')
+				Branch: data.Branch.join(','),
+				Website_Thumbnail_id: localStorage.getItem('webImageID') === null ? null : localStorage.getItem('webImageID')
 			};
 			res = await teacherApi.add(newTeacher);
 			if (res.status === 200) {
 				onOpenSalaryForm(res.data.data.UserInformationID);
 				showNoti('success', res.data.message);
 				onResetSearch(); // <== khi tạo xong r reset search để trở về trang đầu tiên
+				fetchTeacherList();
+				localStorage.removeItem('webImageID');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);
@@ -358,6 +366,7 @@ const Teacher = () => {
 	};
 	// UPDATE
 	const onUpdateTeacher = async (newObj: any, idx: number) => {
+		console.log('🚀 ~ file: Teacher.tsx ~ line 369 ~ onUpdateTeacher ~ newObj', newObj);
 		setIsLoading({
 			type: 'ADD_DATA',
 			status: true
@@ -384,6 +393,8 @@ const Teacher = () => {
 				});
 				setTeacherList(newTeacherList);
 				showNoti('success', res.data.message);
+				fetchTeacherList();
+				localStorage.removeItem('webImageID');
 			}
 		} catch (error) {
 			showNoti('danger', error.message);

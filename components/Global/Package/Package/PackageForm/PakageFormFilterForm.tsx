@@ -8,21 +8,22 @@ import * as yup from 'yup';
 import SelectField from '~/components/FormControl/SelectField';
 import { optionCommonPropTypes } from '~/utils/proptypes';
 
-const PackageStudentFilterForm = (props) => {
-	const { handleFilter, handleResetFilter, typeOptionList } = props;
+const PackageFormFilterForm = (props) => {
+	const { handleFilter, handleResetFilter, optionListForFilter } = props;
+	const { levelFilterList, typeFilterList } = optionListForFilter;
 	const [showFilter, showFilterSet] = useState(false);
 
 	const funcShowFilter = () => {
 		showFilter ? showFilterSet(false) : showFilterSet(true);
 	};
 	const schema = yup.object().shape({
-		Type: yup.number().nullable(),
-		Level: yup.number().nullable()
+		Level: yup.number().nullable(),
+		Type: yup.number().nullable()
 	});
 
 	const defaultValuesInit = {
-		Type: null,
-		Level: null
+		Level: null,
+		Type: null
 	};
 	const form = useForm({
 		defaultValues: defaultValuesInit,
@@ -44,7 +45,10 @@ const PackageStudentFilterForm = (props) => {
 			<Form layout="vertical" onFinish={form.handleSubmit(checkHandleFilter)}>
 				<div className="row">
 					<div className="col-md-12">
-						<SelectField form={form} name="Type" label="Loại" placeholder="Chọn loại" optionList={typeOptionList} />
+						<SelectField form={form} name="Level" label="Level" placeholder="Chọn level" optionList={levelFilterList} />
+					</div>
+					<div className="col-md-12">
+						<SelectField form={form} name="Type" label="Loại" placeholder="Chọn loại" optionList={typeFilterList} />
 					</div>
 					<div className="col-md-12 mt-3">
 						<button type="submit" className="btn btn-primary" style={{ marginRight: '10px' }}>
@@ -78,14 +82,20 @@ const PackageStudentFilterForm = (props) => {
 		</>
 	);
 };
-PackageStudentFilterForm.propTypes = {
+PackageFormFilterForm.propTypes = {
 	handleFilter: PropTypes.func,
 	handleResetFilter: PropTypes.func,
-	typeOptionList: optionCommonPropTypes
+	optionListForFilter: PropTypes.shape({
+		levelFilterList: optionCommonPropTypes,
+		typeFilterList: optionCommonPropTypes
+	})
 };
-PackageStudentFilterForm.defaultProps = {
+PackageFormFilterForm.defaultProps = {
 	handleFilter: null,
 	handleResetFilter: null,
-	typeOptionList: []
+	optionListForFilter: {
+		levelFilterList: [],
+		typeFilterList: []
+	}
 };
-export default PackageStudentFilterForm;
+export default PackageFormFilterForm;

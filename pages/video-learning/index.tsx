@@ -295,13 +295,11 @@ const VideoLearning = () => {
 	};
 
 	// -- PAUSE VIDEO
-	function handlePause() {
-		// videoStudy.current.contentWindow.postMessage('{"event":"command","func":"' + 'pauseVideo' + '","args":""}', '*')
-		// console.log(videoStudy.current.contentWindow.document)
-		// console.log(videoStudy.current.contentWindow.window)
-	}
+	const handlePause = () => {
+		// videoStudy.current.pause();
+	};
 
-	const fake = 'http://www.youtube.com/embed/NlOF03DUoWc';
+	const fake = '/public/static/videos/playlist_1645696823-testfile.mp4.m3u8';
 
 	function Iframe(props) {
 		const [hei, setHei] = useState(0);
@@ -353,7 +351,14 @@ const VideoLearning = () => {
 										</div>
 									</>
 								) : (
-									// <iframe id="movie_player" ref={videoStudy} className="html-iframe" src={fake} title="cc" allowFullScreen />
+									// <iframe
+									// 	id="movie_player"
+									// 	ref={videoStudy}
+									// 	className="html-iframe"
+									// 	src={currentVideo}
+									// 	title="cc"
+									// 	allowFullScreen
+									// />
 									<Iframe iframe={currentVideo} allow="autoplay" />
 								)}
 

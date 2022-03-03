@@ -14,14 +14,9 @@ class StudentApi {
 
 	update = (data: any) => instance.put('/api/Student/', data, {});
 
-	// uploadImage = (file: any) =>
-
-	//   instance.post("/api/UserInformation/uploadImage", file, {});
-
 	uploadImage = (file: any) => {
 		let fData = new FormData();
 		fData.append('File', file);
-		console.log('FDATA: ', fData);
 		return instance.post('/api/UserInformation/uploadImage', fData, {});
 	};
 

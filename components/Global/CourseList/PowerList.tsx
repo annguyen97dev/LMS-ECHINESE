@@ -99,7 +99,7 @@ const PowerList = (props) => {
 							{cloneElement(children, {
 								courseObj: { ID, BranchID, AcademicUID, TeacherLeaderUID, SalaryOfLesson }
 							})}
-							{userInformation && (userInformation.RoleID === 1 || userInformation.RoleID === 2) && (
+							{userInformation && userInformation.RoleID === 1 && (
 								<UpdataShowCourse ID={ID} Enable={Enable} setFilters={setFilters} filters={filters} />
 							)}
 						</>

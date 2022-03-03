@@ -264,6 +264,7 @@ const PackageStore = () => {
 									<List.Item>
 										<div className="wrap-set d-flex">
 											{Type === 1 && <div className="tag-free">{TypeName}</div>}
+											{console.log('avatar', item)}
 											<div className="wrap-set-avatar">
 												<Image
 													width="100%"

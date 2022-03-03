@@ -124,9 +124,9 @@ const FilterColumn = (dataIndex = null, handleSearch = null, handleReset = null,
 	}, [isVisible]);
 	const getColumnSearchProps = (dataIndex) => ({
 		filterDropdown: () => (
-			<span style={{ padding: 8 }}>
+			<div className="filter-box" style={{ padding: 8 }}>
 				{checkType()}
-				<Space>
+				<Space style={{ width: '100%' }}>
 					<Button
 						type="primary"
 						onClick={() => checkHandleSearch(valueSearch)}
@@ -140,7 +140,7 @@ const FilterColumn = (dataIndex = null, handleSearch = null, handleReset = null,
 						Reset
 					</Button>
 				</Space>
-			</span>
+			</div>
 		),
 		filterDropdownVisible: isVisible,
 		filterIcon: (filtered) => <SearchOutlined />,
